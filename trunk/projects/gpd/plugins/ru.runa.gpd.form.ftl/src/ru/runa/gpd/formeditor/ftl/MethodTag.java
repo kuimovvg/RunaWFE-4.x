@@ -113,8 +113,8 @@ public class MethodTag {
 
     private static Map<String, MethodTag> ftlMethods;
 
-    public static MethodTag getTag(String key) {
-        if (!getAll().containsKey(key)) {
+    public static MethodTag getTagNotNull(String key) {
+        if (!hasTag(key)) {
             throw new RuntimeException("FTL Method not found for '" + key + "'");
         }
         return getAll().get(key);
