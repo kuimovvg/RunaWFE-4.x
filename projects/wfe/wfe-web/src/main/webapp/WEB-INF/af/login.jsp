@@ -33,7 +33,7 @@
 							</tr>
 							<tr>			
 								<td><bean:message key="login.page.login.message"/></td>
-								<td style="width:170px"><input type="text" name="login" value="<%= userName %>" style="width: 100%;"></td>
+								<td style="width:170px"><input type="text" name="login" value="<%= userName %>" style="width: 100%;" class="required"></td>
 				  			</tr>
 							<tr>
 		  						<td><bean:message key="login.page.password.message"/></td>
@@ -64,7 +64,7 @@
 							<tr>
 								<td>
 									<html:link action="/krblogin">
-										<bean:message key="login.page.login.ntlm"/>
+										<bean:message key="login.page.login.kerberos"/>
 									</html:link> 	
 								</td>
 							</tr>

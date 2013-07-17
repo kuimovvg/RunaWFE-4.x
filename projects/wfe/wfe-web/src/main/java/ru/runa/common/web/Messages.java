@@ -32,16 +32,20 @@ public class Messages {
     public static final String BUTTON_REMOVE = "button.remove";
     public static final String BUTTON_SAVE = "button.save";
     public static final String BUTTON_SAVE_AS = "button.save_as";
+    public static final String BUTTON_CREATE = "button.create";
+    public static final String BUTTON_UPDATE = "button.update";
 
     public static final String TITLE_RELATIONS = "title.relations";
     public static final String LINK_CREATE_RELATION = "link.create_relation";
-    public static final String LABEL_CREATE_RELATION_TO = "label.create_relation.to";
-    public static final String LABEL_CREATE_RELATION_FROM = "label.create_relation.from";
-    public static final String LINK_CREATE_RELATION_GROUP = "link.create_relation_group";
-    public static final String LABEL_CREATE_RELATION_GROUP_NAME = "label.create_relation_group.name";
-    public static final String LABEL_CREATE_RELATION_GROUP_DESCRIPTION = "label.create_relation_group.description";
+    public static final String LINK_CREATE_RELATION_PAIR = "link.create_relation_pair";
+    public static final String LABEL_RELATION_FROM = "label.relation_pair.from";
+    public static final String LABEL_RELATION_TO = "label.relation_pair.to";
+    public static final String LABEL_RELATION_NAME = "label.relation.name";
+    public static final String LABEL_RELATION_DESCRIPTION = "label.relation.description";
     public static final String TITLE_EXECUTOR_RIGHT_RELATIONS = "title.executor.right.relations";
     public static final String TITLE_EXECUTOR_LEFT_RELATIONS = "title.executor.left.relations";
+    public static final String TITLE_RELATION_DETAILS = "title.relation.details";
+    public static final String TITLE_CREATE_RELATION_PAIR = "title.create.relation_pair";
 
     public static final String MESSAGE_RELATION_GROUP_EXISTS = "label.relation_group.exists";
     public static final String MESSAGE_RELATION_GROUP_DOESNOT_EXISTS = "label.relation_group.not_exists";
@@ -148,32 +152,33 @@ public class Messages {
     public static final String LABEL_SUBSTITUTION_CRITERIA_TYPE = "label.substitution_criteria_type";
     public static final String LABEL_SUBSTITUTION_CRITERIA_CONF = "label.substitution_criteria_conf";
 
-    public static final String EXCEPTION_WEB_CLIENT_UNKNOWN = "unknown.exception";
+    public static final String EXCEPTION_UNKNOWN = "unknown.exception";
 
-    public static final String EXCEPTION_WEB_CLIENT_SESSION_INVALID = "session.invalid";
+    public static final String EXCEPTION_SESSION_INVALID = "session.invalid";
 
-    public static final String EXCEPTION_WEB_CLIENT_TABLE_VIEW_SETUP_FORMAT_INCORRECT = "view.setup.format.invalid";
+    public static final String EXCEPTION_TABLE_VIEW_SETUP_FORMAT_INCORRECT = "view.setup.format.invalid";
 
-    public static final String EXCEPTION_WEB_CLIENT_AUTHORIZATION = "authorization.exception";
-    public static final String EXCEPTION_WEB_CLIENT_AUTHENTICATION = "authentication.exception";
+    public static final String EXCEPTION_AUTHORIZATION = "authorization.exception";
+    public static final String EXCEPTION_AUTHENTICATION = "authentication.exception";
 
-    public static final String EXCEPTION_WEB_CLIENT_PASSWORD_IS_WEAK = "executor.weak.password";
-    public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_ALREADY_EXISTS = "executor.already.exists.exception";
-    public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_DOES_NOT_EXISTS = "executor.does.not.exists.exception";
+    public static final String EXCEPTION_PASSWORD_IS_WEAK = "executor.weak.password";
+    public static final String EXCEPTION_EXECUTOR_ALREADY_EXISTS = "executor.already.exists.exception";
+    public static final String EXCEPTION_EXECUTOR_DOES_NOT_EXISTS = "executor.does.not.exists.exception";
     public static final String EXCEPTION_ACTOR_DOES_NOT_EXISTS = "ru.runa.wf.web.actor.does.not.exists.exception";
     public static final String EXCEPTION_GROUP_DOES_NOT_EXISTS = "ru.runa.wf.web.group.does.not.exists.exception";
-    public static final String EXCEPTION_WEB_CLIENT_EXECUTOR_PARTICIPATES_IN_PROCESSES = "executor.participates.in.processes";
+    public static final String EXCEPTION_EXECUTOR_PARTICIPATES_IN_PROCESSES = "executor.participates.in.processes";
 
-    public static final String ERROR_WEB_CLIENT_NULL_VALUE = "emptyvalue";
-    public static final String ERROR_WEB_CLIENT_VALIDATION = "validation.error";
-    public static final String ERROR_WEB_CLIENT_PASSWORDS_NOT_MATCH = "executor.passwords.not.match";
+    public static final String ERROR_NULL_VALUE = "emptyvalue";
+    public static final String ERROR_FILL_REQUIRED_VALUES = "error.fill.required.values";
+    public static final String ERROR_VALIDATION = "validation.error";
+    public static final String ERROR_PASSWORDS_NOT_MATCH = "executor.passwords.not.match";
 
-    public static final String ERROR_WEB_CLIENT_DEFINITION_ALREADY_EXISTS = "definition.already.exists.error";
+    public static final String ERROR_DEFINITION_ALREADY_EXISTS = "definition.already.exists.error";
 
-    public static final String ERROR_WEB_CLIENT_DEFINITION_DOES_NOT_EXIST = "definition.does.not.exist.error";
-    public static final String ERROR_WEB_CLIENT_DEFINITION_NAME_MISMATCH = "definition.name.mismatch.error";
-    public static final String ERROR_WEB_CLIENT_PROCESS_DOES_NOT_EXIST = "process.does.not.exist.error";
-    public static final String ERROR_WEB_CLIENT_TASK_DOES_NOT_EXIST = "task.does.not.exist.error";
+    public static final String ERROR_DEFINITION_DOES_NOT_EXIST = "definition.does.not.exist.error";
+    public static final String ERROR_DEFINITION_NAME_MISMATCH = "definition.name.mismatch.error";
+    public static final String ERROR_PROCESS_DOES_NOT_EXIST = "process.does.not.exist.error";
+    public static final String ERROR_TASK_DOES_NOT_EXIST = "task.does.not.exist.error";
 
     public static final String DEFINITION_ARCHIVE_FORMAT_ERROR = "definition.archive.format.error";
     public static final String DEFINITION_FILE_FORMAT_ERROR = "definition.file.format.error";
@@ -184,8 +189,8 @@ public class Messages {
     public static final String PROCESS_STARTED = "process.started";
     public static final String PROCESS_CANCELED = "process.canceled";
 
-    public static final String MESSAGE_WEB_CLIENT_VARIABLE_FORMAT_ERROR = "variable.format.error";
-    public static final String MESSAGE_WEB_CLIENT_VALIDATION_ERROR = "validation.form.error";
+    public static final String MESSAGE_VARIABLE_FORMAT_ERROR = "variable.format.error";
+    public static final String MESSAGE_VALIDATION_ERROR = "validation.form.error";
 
     public static final String TASK_WAS_ALREADY_ACCEPTED = "task.was.already.accepted";
     public static final String TASK_WAS_ALREADY_COMPLETED = "task.was.already.completed";
@@ -211,7 +216,7 @@ public class Messages {
     public static final String LABEL_BOT_STATION_ADDRESS = "label.bot_station_address";
     public static final String LABEL_BOT_PASSWORD = "label.bot_password";
     public static final String LABEL_BOT_NAME = "label.bot_name";
-    public static final String LABEL_BOT_TIMEOUT = "label.bot_timeout";
+    // public static final String LABEL_BOT_TIMEOUT = "label.bot_timeout";
     public static final String LABEL_BOT_TASK_NAME = "label.bot_task_name";
     public static final String LABEL_BOT_TASK_HANDLER = "label.bot_task_handler";
     public static final String LABEL_BOT_TASK_CONFIG = "label.bot_task_config";
@@ -219,7 +224,6 @@ public class Messages {
     public static final String TITLE_BOT_STATION_STATUS = "title.bot_station_status";
     public static final String TITLE_BOT_DETAILS = "title.bot_details";
     public static final String LABEL_UNKNOWN_BOT_HANDLER = "label.unknown_bot_handler";
-    public static final String LABEL_BOT_WFE_USER = "label.bot_wfe_user";
     public static final String LABEL_BOT_TASK_CONFIG_DOWNLOAD = "label.bot_task_config.download";
     public static final String LABEL_BOT_TASK_CONFIG_EDIT = "label.bot_task_config.edit";
     public static final String MESSAGE_BOTSTATION_ON = "button.botstation_on";

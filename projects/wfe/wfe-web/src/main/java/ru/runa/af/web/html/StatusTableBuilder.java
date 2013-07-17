@@ -22,32 +22,26 @@ import javax.servlet.jsp.PageContext;
 import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.form.UpdateStatusForm;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.wfe.user.Actor;
 
-/**
- * Created on Mar 2, 2006
- * 
- */
-public class StatusTableBuilder extends BaseDetailTableBuilder {
-
-    private final boolean disabled;
-
+public class StatusTableBuilder {
+    private final boolean enabled;
     private final PageContext pageContext;
-
     private final Actor actor;
 
     public StatusTableBuilder(Actor actor, boolean disabled, PageContext pageContext) {
         this.actor = actor;
-        this.disabled = disabled;
+        enabled = !disabled;
         this.pageContext = pageContext;
     }
 
     public Table build() {
         Table table = new Table();
         table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
-        table.addElement(createTRWithLabelAndCheckbox(Messages.getMessage(Messages.LABEL_ACTOR_IS_ACTIVE, pageContext),
-                UpdateStatusForm.IS_ACTIVE_INPUT_NAME, actor.isActive(), disabled));
+        table.addElement(HTMLUtils.createCheckboxRow(Messages.getMessage(Messages.LABEL_ACTOR_IS_ACTIVE, pageContext),
+                UpdateStatusForm.IS_ACTIVE_INPUT_NAME, actor.isActive(), enabled, false));
         return table;
     }
 }

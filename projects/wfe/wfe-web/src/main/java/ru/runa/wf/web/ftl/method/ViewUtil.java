@@ -1,6 +1,7 @@
 package ru.runa.wf.web.ftl.method;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -43,24 +44,29 @@ public class ViewUtil {
 
     public static String createExecutorSelect(User user, String variableName, String formatClassName, Object value, boolean enabled) {
         BatchPresentation batchPresentation;
+        int sortColumn = 0;
+        boolean javaSort = false;
         if (ActorFormat.class.getName().equals(formatClassName)) {
             batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
+            sortColumn = 1;
         } else if (ExecutorFormat.class.getName().equals(formatClassName)) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
+            javaSort = true;
         } else if (GroupFormat.class.getName().equals(formatClassName)) {
             batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         } else {
             throw new InternalApplicationException("Unexpected format " + formatClassName);
         }
-        int[] sortIds = { 1 };
-        boolean[] sortOrder = { true };
-        batchPresentation.setFieldsToSort(sortIds, sortOrder);
+        batchPresentation.setFieldsToSort(new int[] { sortColumn }, new boolean[] { true });
         List<Executor> executors = (List<Executor>) Delegates.getExecutorService().getExecutors(user, batchPresentation);
         String html = "<select name=\"" + variableName + "\"";
         if (!enabled) {
             html += " disabled=\"true\"";
         }
         html += ">";
+        if (javaSort) {
+            Collections.sort(executors);
+        }
         for (Executor executor : executors) {
             html += "<option value=\"ID" + executor.getId() + "\"";
             if (Objects.equal(executor, value)) {
@@ -75,7 +81,7 @@ public class ViewUtil {
     public static String getComponentInput(User user, String variableName, String formatClassName, Object value, boolean enabled) {
         String html = "";
         if (StringFormat.class.getName().equals(formatClassName)) {
-            html += "<input name=\"" + variableName + "\" class=\"inputString\" ";
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
             if (value != null) {
                 html += "value=\"" + value + "\" ";
             }
@@ -96,7 +102,7 @@ public class ViewUtil {
         }
         if (LongFormat.class.getName().equals(formatClassName) || DoubleFormat.class.getName().equals(formatClassName)
                 || BigDecimalFormat.class.getName().equals(formatClassName)) {
-            html += "<input name=\"" + variableName + "\" class=\"inputNumber\" ";
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputNumber\" ";
             if (value instanceof Number) {
                 html += "value=\"" + value + "\" ";
             }

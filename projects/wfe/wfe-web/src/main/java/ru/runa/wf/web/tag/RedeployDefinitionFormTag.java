@@ -31,6 +31,7 @@ import org.apache.ecs.xhtml.br;
 
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
+import ru.runa.common.web.Resources;
 import ru.runa.wf.web.ProcessTypesIterator;
 import ru.runa.wf.web.action.RedeployProcessDefinitionAction;
 import ru.runa.wf.web.html.DefinitionFileOperationsFormBuilder;
@@ -103,6 +104,7 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         }
         tdFormElement.addElement("  " + Messages.getMessage("batch_presentation.process.create_new_process_type", pageContext) + ": ");
         Input inputType = new Input(Input.TEXT, "type", newType);
+        inputType.setClass(Resources.CLASS_REQUIRED);
         tdFormElement.addElement(inputType);
     }
 

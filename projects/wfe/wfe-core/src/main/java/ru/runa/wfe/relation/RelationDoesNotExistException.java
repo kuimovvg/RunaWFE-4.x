@@ -23,56 +23,10 @@ import ru.runa.wfe.InternalApplicationException;
  * Thrown if {@link Relation} not found.
  */
 public class RelationDoesNotExistException extends InternalApplicationException {
-
     private static final long serialVersionUID = 1L;
 
-    /**
-     * If {@link Relation} identity is unspecified, when {@link #relationId} was
-     * set to {@link #UNSET_RELATION_ID}
-     */
-    public final long UNSET_RELATION_ID = -1;
-
-    /**
-     * Name of {@link Relation}, which can't be found. May be null, if
-     * {@link Relation} searching by id.
-     */
-    final String relationName;
-
-    /**
-     * Identity of {@link Relation}, which can't be found. May be
-     * {@link #UNSET_RELATION_ID}, if {@link Relation} searching by name.
-     */
-    final Long relationId;
-
-    /**
-     * Return name of relation, which can't be found. May be null, if relation
-     * searching by identity.
-     * 
-     * @return Name of relation.
-     */
-    public String getName() {
-        return relationName;
+    public RelationDoesNotExistException(Object identity) {
+        super(String.valueOf(identity));
     }
 
-    /**
-     * Create instance with specified relation name.
-     * 
-     * @param name
-     *            Name of relation, which can't be found.
-     */
-    public RelationDoesNotExistException(String name) {
-        relationName = name;
-        relationId = UNSET_RELATION_ID;
-    }
-
-    /**
-     * Create instance with specified relation identity.
-     * 
-     * @param relationId
-     *            Identity of relation, which can't e found.
-     */
-    public RelationDoesNotExistException(Long relationId) {
-        relationName = null;
-        this.relationId = relationId;
-    }
 }

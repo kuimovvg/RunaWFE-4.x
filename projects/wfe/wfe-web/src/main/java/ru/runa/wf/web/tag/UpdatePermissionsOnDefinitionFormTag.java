@@ -24,7 +24,7 @@ import org.apache.ecs.html.Table;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
-import ru.runa.wf.web.action.UpdatePermissionOnProcessDefinitionAction;
+import ru.runa.wf.web.action.UpdatePermissionsOnProcessDefinitionAction;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.Permission;
@@ -75,7 +75,7 @@ public class UpdatePermissionsOnDefinitionFormTag extends ProcessDefinitionBaseF
 
     @Override
     public String getAction() {
-        return UpdatePermissionOnProcessDefinitionAction.ACTION_PATH;
+        return UpdatePermissionsOnProcessDefinitionAction.ACTION_PATH;
     }
 
 }

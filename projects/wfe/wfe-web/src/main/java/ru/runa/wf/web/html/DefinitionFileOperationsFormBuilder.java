@@ -21,6 +21,7 @@ import org.apache.ecs.html.Form;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.FileForm;
 
 /**
@@ -31,6 +32,7 @@ public class DefinitionFileOperationsFormBuilder {
 
     public static void displayTable(Form form, TD tdFormElement) {
         Input input = new Input(Input.FILE, FileForm.FILE_INPUT_NAME);
+        input.setClass(Resources.CLASS_REQUIRED);
         tdFormElement.addElement(input);
         form.setEncType(Form.ENC_UPLOAD);
     }

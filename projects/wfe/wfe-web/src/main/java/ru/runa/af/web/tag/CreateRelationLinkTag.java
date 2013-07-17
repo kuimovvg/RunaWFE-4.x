@@ -21,37 +21,17 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPermission;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.RelationService;
+import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.service.delegate.Delegates;
 
-/**
- * Created on 03.09.2004
- * 
- * @jsp.tag name = "createRelationLink" body-content = "empty"
- */
 public class CreateRelationLinkTag extends LinkTag {
 
     private static final long serialVersionUID = 1L;
 
-    private String relationName;
-
-    /**
-     * @jsp.attribute required = "true" rtexprvalue = "true"
-     */
-    public String getRelationName() {
-        return relationName;
-    }
-
-    public void setRelationName(String relationName) {
-        this.relationName = relationName;
-    }
-
     @Override
     protected String getHref() {
-        return Commons.getActionUrl("create_relation.do", "relationName", relationName, pageContext, PortletUrlType.Action);
+        return Commons.getActionUrl("create_relation.do", pageContext, PortletUrlType.Action);
     }
 
     @Override
@@ -62,10 +42,7 @@ public class CreateRelationLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() {
         try {
-            RelationService relationService = Delegates.getRelationService();
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            Relation relationGroup = relationService.getRelationByName(getUser(), getRelationName());
-            return authorizationService.isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, relationGroup);
+            return Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE, RelationsGroupSecure.INSTANCE);
         } catch (Exception e) {
             return false;
         }

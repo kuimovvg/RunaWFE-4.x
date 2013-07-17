@@ -67,8 +67,6 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     public WfDefinition redeployProcessDefinition(User user, Long processId, byte[] processArchive, List<String> processType) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(processType != null);
-        Preconditions.checkArgument(processArchive != null);
-        Preconditions.checkArgument(processType != null);
         return definitionLogic.redeployProcessDefinition(user, processId, processArchive, processType);
     }
 

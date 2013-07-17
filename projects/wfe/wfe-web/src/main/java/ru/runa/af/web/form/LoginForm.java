@@ -27,6 +27,8 @@ import org.apache.struts.action.ActionMessages;
 
 import ru.runa.common.web.Messages;
 
+import com.google.common.base.Strings;
+
 /**
  * Created on 09.08.2004
  * 
@@ -40,14 +42,16 @@ public class LoginForm extends ActionForm {
 
     private String login;
 
+    @Override
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
-        if (login == null || login.length() == 0) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
+        if (Strings.isNullOrEmpty(login)) {
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_FILL_REQUIRED_VALUES));
         }
         return errors;
     }
 
+    @Override
     public void reset(ActionMapping mapping, HttpServletRequest request) {
         password = "";
     }

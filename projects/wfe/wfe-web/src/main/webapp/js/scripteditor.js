@@ -1,4 +1,4 @@
-var editDialogContent = "<div><input id=\"fileName\" style=\"width: 100%\"><br><textarea id=\"documentArea\" style=\"width: 100%; height: 90%; display: none; border: 1px solid black !important;\"></textarea></div>";
+var editDialogContent = "<div><input id=\"fileName\" style=\"width: 100%\" class=\"required\"><br><textarea id=\"documentArea\" style=\"width: 100%; height: 90%; display: none; border: 1px solid black !important;\"></textarea></div>";
 var uploadDialogContent = "<div><form id=\"uploadForm\" method=\"post\" action='/wfe/admin_scripts.do' enctype='multipart/form-data'><input type=\"hidden\" name=\"action\"><input name=\"fileName\" style=\"width: 100%\"><br><input name=\"uploadFile\" type=\"file\" style=\"width: 100%\"></form></div>";
 var xmleditor = null;
 
@@ -88,7 +88,11 @@ function saveScript() {
 		},
 		dataType: "html",
 		success: function(msg) {
-			setStatusMessage(saveSuccessMessage);
+			if (msg == "") {
+				setStatusMessage(saveSuccessMessage);
+			} else {
+				setStatusMessage(msg);
+			}
 			destroyEditor();
 		}
 	});

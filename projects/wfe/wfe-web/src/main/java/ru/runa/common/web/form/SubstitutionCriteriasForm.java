@@ -69,7 +69,7 @@ public class SubstitutionCriteriasForm extends ActionForm {
         ActionErrors errors = new ActionErrors();
 
         if (ids == null || getRemoveMethod() == null || getRemoveMethod().isEmpty()) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_NULL_VALUE));
         }
         return errors;
     }

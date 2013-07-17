@@ -19,52 +19,33 @@ package ru.runa.af.web.tag;
 
 import java.util.Map;
 
-import ru.runa.af.web.action.GrantPermissionOnRelationAction;
+import ru.runa.af.web.action.GrantPermissionsOnRelationAction;
+import ru.runa.af.web.form.RelationForm;
+import ru.runa.common.web.form.IdForm;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Maps;
 
-/**
- * Created on 31.08.2004
- * 
- * @author Vitaliy S aka Yilativs
- * @author Gordienko_m
- * @jsp.tag name = "listExecutorsWithoutPermissionsOnRelationForm" body-content
- *          = "JSP"
- */
 public class ListExecutorsWithoutPermissionsOnRelationFormTag extends ListExecutorsWithoutPermissionsBase {
-
     private static final long serialVersionUID = 1L;
-
-    private String relationName;
 
     @Override
     public String getAction() {
-        return GrantPermissionOnRelationAction.ACTION_PATH;
+        return GrantPermissionsOnRelationAction.ACTION_PATH;
     }
 
     @Override
     protected Identifiable getIdentifiable() {
-        return Delegates.getRelationService().getRelationByName(getUser(), getRelationName());
+        return Delegates.getRelationService().getRelation(getUser(), getIdentifiableId());
     }
 
     @Override
     protected Map<String, Object> getFormButtonParam() {
         Map<String, Object> params = Maps.newHashMap();
-        params.put("relationName", getRelationName());
-        params.put("id", getIdentifiableId());
+        params.put(RelationForm.RELATION_ID, getIdentifiableId());
+        params.put(IdForm.ID_INPUT_NAME, getIdentifiableId());
         return params;
     }
 
-    /**
-     * @jsp.attribute required = "false" rtexprvalue = "true"
-     */
-    public void setRelationName(String relationName) {
-        this.relationName = relationName;
-    }
-
-    public String getRelationName() {
-        return relationName;
-    }
 }

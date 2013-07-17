@@ -39,23 +39,13 @@ public class Permission implements Serializable {
     private static final long serialVersionUID = -3672653529467591904L;
 
     /**
-     * Name of read permission. Read permission usually allows read/get object.
-     */
-    public static final String READ_PERMISSION_NAME = "permission.read";
-    /**
-     * Name of update permission. Update permission usually allows change object
-     * state.
-     */
-    public static final String UPDATE_PERMISSIONS_PERMISSOIN_NAME = "permission.update_permissions";
-
-    /**
      * Read permission. Read permission usually allows read/get object.
      */
-    public static final Permission READ = new Permission((byte) 0, READ_PERMISSION_NAME);
+    public static final Permission READ = new Permission(0, "permission.read");
     /**
      * Update permission. Update permission usually allows change object state.
      */
-    public static final Permission UPDATE_PERMISSIONS = new Permission((byte) 1, UPDATE_PERMISSIONS_PERMISSOIN_NAME);
+    public static final Permission UPDATE_PERMISSIONS = new Permission(1, "permission.update_permissions");
 
     /**
      * All defined permissions.
@@ -82,7 +72,7 @@ public class Permission implements Serializable {
      * @param name
      *            Permission name.
      */
-    protected Permission(byte maskPower, String name) {
+    protected Permission(int maskPower, String name) { // TODO byte hierarchy
         mask = getMask(maskPower);
         this.name = name;
     }

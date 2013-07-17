@@ -27,11 +27,9 @@ import com.google.common.collect.Lists;
  * Created on 10.09.2004
  */
 public class ExecutorPermission extends Permission {
-
     private static final long serialVersionUID = -8626848851132307465L;
-    public static final String UPDATE_EXECUTOR_PERMISSION_NAME = "permission.update_executor";
 
-    public static final Permission UPDATE = new ExecutorPermission((byte) 2, UPDATE_EXECUTOR_PERMISSION_NAME);
+    public static final Permission UPDATE = new ExecutorPermission((byte) 2, "permission.update_executor");
     private static final List<Permission> EXECUTOR_PERMISSIONS = fillPermissions();
 
     protected ExecutorPermission(byte maskPower, String name) {

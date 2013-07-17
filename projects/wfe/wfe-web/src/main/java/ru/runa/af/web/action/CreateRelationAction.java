@@ -17,9 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,56 +24,25 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.form.CreateRelationForm;
-import ru.runa.common.web.Commons;
+import ru.runa.af.web.form.RelationForm;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
+import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.Executor;
 
-/**
- * @struts:action path="/createRelation" name="createRelationForm"
- *                validate="true" input = "/WEB-INF/af/create_relation.jsp"
- * @struts.action-forward name="success" path="/manage_relation.do" redirect =
- *                        "true"
- * @struts.action-forward name="failure" path="/create_relation.do" redirect =
- *                        "true"
- */
 public class CreateRelationAction extends ActionBase {
-
     public static final String ACTION_PATH = "/createRelation";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-        CreateRelationForm relationForm = (CreateRelationForm) form;
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
+        RelationForm form = (RelationForm) actionForm;
         try {
-            Executor executorFrom = Delegates.getExecutorService().getExecutorByName(getLoggedUser(request), relationForm.getRelationFrom());
-            Executor executorTo = Delegates.getExecutorService().getExecutorByName(getLoggedUser(request), relationForm.getRelationTo());
-            Delegates.getRelationService().addRelationPair(getLoggedUser(request), relationForm.getRelationName(), executorFrom, executorTo);
+            Relation relation = new Relation(form.getName(), form.getDescription());
+            Delegates.getRelationService().createRelation(getLoggedUser(request), relation);
         } catch (Exception e) {
             addError(request, e);
-            return getFailureForward(mapping, relationForm);
+            return mapping.findForward(Resources.FORWARD_FAILURE);
         }
-        return getSuccessForward(mapping, relationForm);
-    }
-
-    private ActionForward getSuccessForward(ActionMapping mapping, CreateRelationForm relationForm) {
-        if (relationForm.getSuccess() == null) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), "relationName", relationForm.getRelationName());
-        }
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("relationName", relationForm.getRelationName());
-        params.put("executorId", relationForm.getExecutorId());
-        return Commons.forward(new ActionForward(relationForm.getSuccess()), params);
-    }
-
-    private ActionForward getFailureForward(ActionMapping mapping, CreateRelationForm relationForm) {
-        if (relationForm.getFailure() == null) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), "relationName", relationForm.getRelationName());
-        }
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("relationName", relationForm.getRelationName());
-        params.put("executorId", relationForm.getExecutorId());
-        return Commons.forward(new ActionForward(relationForm.getFailure()), params);
+        return mapping.findForward(Resources.FORWARD_SUCCESS);
     }
 }
