@@ -86,15 +86,20 @@ public class FreemarkerUtil {
                         }
                         boolean surroundWithBrackets = true;
                         try {
-                            MethodTag tag = MethodTag.getTag(tagName);
-                            if (tag.params.size() > j) {
-                                Param param = tag.params.get(j);
-                                if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(params[j]))) {
-                                    surroundWithBrackets = false;
+                            if (MethodTag.hasTag(tagName)) {
+                                MethodTag tag = MethodTag.getTagNotNull(tagName);
+                                if (tag.params.size() > j) {
+                                    Param param = tag.params.get(j);
+                                    if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(params[j]))) {
+                                        surroundWithBrackets = false;
+                                    }
                                 }
                             }
                         } catch (Exception e) {
                             PluginLogger.logErrorWithoutDialog("FTL tag problem found for " + tagName + "(" + j + "): '" + params[j] + "'", e);
+                        }
+                        if (!MethodTag.hasTag(tagName)) {
+                            throw new NullPointerException();
                         }
                         if (surroundWithBrackets) {
                             ftlTag.append("\"");
@@ -290,7 +295,7 @@ public class FreemarkerUtil {
         int w = 250;
         int h = 40;
         if (tagName != null && MethodTag.hasTag(tagName)) {
-            MethodTag tag = MethodTag.getTag(tagName);
+            MethodTag tag = MethodTag.getTagNotNull(tagName);
             w = tag.width;
             h = tag.height;
         }
@@ -351,7 +356,7 @@ public class FreemarkerUtil {
             @Override
             public Object exec(List args) throws TemplateModelException {
                 stageRenderingParams = false;
-                MethodTag tag = MethodTag.getTag(tagId);
+                MethodTag tag = MethodTag.getTagNotNull(tagId);
                 int paramsSize = tag.params.size();
                 if (paramsSize != args.size()) {
                     if (args.size() < paramsSize) {
