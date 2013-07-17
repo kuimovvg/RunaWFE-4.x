@@ -80,7 +80,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                 InputStream imageStream = null;
                 String tagImageName = null;
                 if (MethodTag.hasTag(tagName)) {
-                    MethodTag tag = MethodTag.getTag(tagName);
+                    MethodTag tag = MethodTag.getTagNotNull(tagName);
                     try {
                         if (tag.hasImage()) {
                             imageStream = tag.openImageStream();
@@ -125,7 +125,7 @@ public class FtlTagSupportServlet extends HttpServlet {
             } else if ("GetParameters".equals(commandStr)) {
                 resultHtml.append("<table style=\"width: 100%;\">");
                 int paramCounter = 0;
-                for (Param param : MethodTag.getTag(tagName).params) {
+                for (Param param : MethodTag.getTagNotNull(tagName).params) {
                     resultHtml.append("<tr><td class='leftParam'>");
                     resultHtml.append(param.label);
                     resultHtml.append("</td><td class='rightParam'>");
@@ -188,9 +188,9 @@ public class FtlTagSupportServlet extends HttpServlet {
             } else if ("GetTagImage".equals(commandStr)) {
                 // resultHtml.append(MethodTag.getTag(tagName).image);
             } else if ("GetVarTagWidth".equals(commandStr)) {
-                resultHtml.append(MethodTag.getTag(tagName).width);
+                resultHtml.append(MethodTag.getTagNotNull(tagName).width);
             } else if ("GetVarTagHeight".equals(commandStr)) {
-                resultHtml.append(MethodTag.getTag(tagName).height);
+                resultHtml.append(MethodTag.getTagNotNull(tagName).height);
             } else if ("IsAvailable".equals(commandStr)) {
                 resultHtml.append(WYSIWYGHTMLEditor.getCurrent().isFtlFormat());
                 WYSIWYGHTMLEditor.getCurrent().setBrowserLoaded(true);
