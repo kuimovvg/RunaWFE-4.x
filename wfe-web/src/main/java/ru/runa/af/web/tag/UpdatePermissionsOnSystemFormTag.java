@@ -19,7 +19,7 @@ package ru.runa.af.web.tag;
 
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.action.UpdatePermissionOnSystemAction;
+import ru.runa.af.web.action.UpdatePermissionsOnSystemAction;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
 import ru.runa.wfe.security.Permission;
@@ -55,7 +55,7 @@ public class UpdatePermissionsOnSystemFormTag extends UpdateSystemBaseFormTag {
 
     @Override
     public String getAction() {
-        return UpdatePermissionOnSystemAction.ACTION_PATH_NAME;
+        return UpdatePermissionsOnSystemAction.ACTION_PATH_NAME;
     }
 
 }

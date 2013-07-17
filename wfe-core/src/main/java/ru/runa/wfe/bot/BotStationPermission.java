@@ -24,12 +24,12 @@ import ru.runa.wfe.security.Permission;
 import com.google.common.collect.Lists;
 
 public class BotStationPermission extends Permission {
-    public static final String BOT_STATION_CONFIGURE_PERMISSION_NAME = "permission.bot_station_configure";
-    public static final Permission BOT_STATION_CONFIGURE = new BotStationPermission((byte) 4, BOT_STATION_CONFIGURE_PERMISSION_NAME);
-    private static List<Permission> BOT_STATION_CONFIGURE_PERMISSIONS = fillPermissions();
     private static final long serialVersionUID = 4427423782185434181L;
 
-    protected BotStationPermission(byte maskPower, String name) {
+    public static final Permission BOT_STATION_CONFIGURE = new BotStationPermission(4, "permission.bot_station_configure");
+    private static List<Permission> BOT_STATION_CONFIGURE_PERMISSIONS = fillPermissions();
+
+    protected BotStationPermission(int maskPower, String name) {
         super(maskPower, name);
     }
 

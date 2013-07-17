@@ -17,7 +17,7 @@
  */
 package ru.runa.af.web.tag;
 
-import ru.runa.af.web.action.GrantLoginPermissionOnSystemAction;
+import ru.runa.af.web.action.GrantPermissionsOnSystemAction;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
 
@@ -35,7 +35,7 @@ public class ListExecutorsWithoutPermissionsOnSystemFormTag extends ListExecutor
 
     @Override
     public String getAction() {
-        return GrantLoginPermissionOnSystemAction.ACTION_PATH;
+        return GrantPermissionsOnSystemAction.ACTION_PATH;
     }
 
     @Override

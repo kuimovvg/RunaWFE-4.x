@@ -22,7 +22,7 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
-import ru.runa.common.web.action.UpdatePermissionOnIdentifiableAction;
+import ru.runa.common.web.action.UpdatePermissionsOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -39,7 +39,7 @@ import ru.runa.wfe.user.User;
  * @struts.action-forward name="failure" path="/manage_executor_permissions.do"
  *                        redirect = "true"
  */
-public class UpdatePermissionsOnExecutorAction extends UpdatePermissionOnIdentifiableAction {
+public class UpdatePermissionsOnExecutorAction extends UpdatePermissionsOnIdentifiableAction {
     public static final String ACTION_PATH = "/updatePermissionsOnExecutor";
 
     @Override

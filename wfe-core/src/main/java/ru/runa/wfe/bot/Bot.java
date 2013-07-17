@@ -49,7 +49,8 @@ public class Bot implements Serializable {
     private BotStation botStation;
     private String username;
     private String password;
-    private long startTimeout;
+
+    // private long startTimeout;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
@@ -110,14 +111,14 @@ public class Bot implements Serializable {
      * Last time when this bot was invoked successfully. Used for periodic bot
      * invocation.
      */
-    @Column(name = "START_TIMEOUT")
-    public long getStartTimeout() {
-        return startTimeout;
-    }
-
-    public void setStartTimeout(long lastInvoked) {
-        startTimeout = lastInvoked;
-    }
+    // @Column(name = "START_TIMEOUT")
+    // public long getStartTimeout() {
+    // return startTimeout;
+    // }
+    //
+    // public void setStartTimeout(long lastInvoked) {
+    // startTimeout = lastInvoked;
+    // }
 
     @Override
     public String toString() {

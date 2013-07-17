@@ -21,12 +21,12 @@ import javax.servlet.jsp.tagext.Tag;
 
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
-import org.apache.ecs.html.Div;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
+import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.html.TDBuilder;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -54,7 +54,6 @@ public abstract class TitledFormTag extends FormTag {
     @Override
     protected ConcreteElement getStartElement() {
         StringBuilder sb = new StringBuilder();
-        sb.append(new Div().createStartTag());
         Table table = new Table();
         if (id != null) {
             table.setID(id);
@@ -69,8 +68,7 @@ public abstract class TitledFormTag extends FormTag {
         sb.append(table.createStartTag());
         TR trh = new TR(((TH) new TH().setClass(Resources.CLASS_BOX_TITLE)).addElement(getTitle()));
         sb.append(trh.toString());
-        TR trb = new TR();
-        sb.append(trb.createStartTag());
+        sb.append(new TR().createStartTag());
         TD td = new TD();
         td.setClass(Resources.CLASS_BOX_BODY);
         if (align != null) {
@@ -85,11 +83,18 @@ public abstract class TitledFormTag extends FormTag {
 
     @Override
     protected ConcreteElement getEndElement() {
-        StringBuilder sb = new StringBuilder(super.getEndElement().toString());
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(super.getEndElement());
+        } catch (Throwable th) {
+            // DEBUG category set due to logging in EJB layer; stack trace
+            // is logged only for Web layer errors.
+            log.debug("", th);
+            sb.append("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th, pageContext) + "</span>");
+        }
         sb.append(new TD().createEndTag());
         sb.append(new TR().createEndTag());
         sb.append(new Table().createEndTag());
-        sb.append(new Div().createEndTag());
         return new StringElement(sb.toString());
     }
 

@@ -30,7 +30,6 @@ import ru.runa.wf.web.html.ProcessSwimlaneRowBuilder;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Lists;
@@ -52,8 +51,7 @@ public class ProcessSwimlaneMonitorTag extends ProcessBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        ExecutionService executionService = Delegates.getExecutionService();
-        List<WfSwimlane> swimlanes = executionService.getSwimlanes(getUser(), getIdentifiableId());
+        List<WfSwimlane> swimlanes = Delegates.getExecutionService().getSwimlanes(getUser(), getIdentifiableId());
         List<String> headerNames = Lists.newArrayList();
         headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_NAME, pageContext));
         headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext));

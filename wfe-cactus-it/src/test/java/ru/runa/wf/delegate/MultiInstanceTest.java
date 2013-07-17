@@ -45,9 +45,9 @@ public class MultiInstanceTest extends ServletTestCase {
         actor3 = th.createActorIfNotExist("actor3", MultiInstanceTest.class.getName());
         th.addExecutorToGroup(actor3, group1);
         actor4 = th.createActorIfNotExist("relationparam1", MultiInstanceTest.class.getName());
-        th.addRelationPair(relation1.getName(), actor1, actor4);
-        th.addRelationPair(relation1.getName(), actor2, actor4);
-        th.addRelationPair(relation1.getName(), actor3, actor4);
+        th.addRelationPair(relation1.getId(), actor1, actor4);
+        th.addRelationPair(relation1.getId(), actor2, actor4);
+        th.addRelationPair(relation1.getId(), actor3, actor4);
         th.deployValidProcessDefinition("multiinstance superprocess.par");
         th.deployValidProcessDefinition("multiinstance subprocess.par");
         th.deployValidProcessDefinition("MultiInstance - MainProcess.par");

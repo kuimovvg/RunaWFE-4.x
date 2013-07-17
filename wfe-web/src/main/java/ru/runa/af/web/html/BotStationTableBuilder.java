@@ -17,7 +17,6 @@
  */
 package ru.runa.af.web.html;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.jsp.PageContext;
@@ -31,6 +30,7 @@ import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.form.BotStationForm;
 import ru.runa.common.web.Commons;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdsForm;
@@ -53,8 +53,7 @@ public class BotStationTableBuilder {
         table.setClass(Resources.CLASS_LIST_TABLE);
         table.setWidth("100%");
         table.addElement(createTableHeaderTR());
-        for (Iterator<BotStation> botStationIterator = botStations.iterator(); botStationIterator.hasNext();) {
-            BotStation botStation = botStationIterator.next();
+        for (BotStation botStation : botStations) {
             table.addElement(createTR(botStation));
         }
         return table;
@@ -86,18 +85,10 @@ public class BotStationTableBuilder {
     public static Table createBotStationDetailsTable(PageContext pageContext, String name, String address) {
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
-        Input nameInput = new Input(Input.TEXT, BotStationForm.BOT_STATION_NAME, name);
-        Input botStationRMIAddress = new Input(Input.TEXT, BotStationForm.BOT_STATION_RMI_ADDRESS, address);
-        TR tr = new TR();
-        tr.setClass(Resources.CLASS_LIST_TABLE_TH);
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(nameInput).setClass(Resources.CLASS_LIST_TABLE_TD));
-        table.addElement(tr);
-        tr = new TR();
-        tr.setClass(Resources.CLASS_LIST_TABLE_TH);
-        tr.addElement(new TD(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(botStationRMIAddress).setClass(Resources.CLASS_LIST_TABLE_TD));
-        table.addElement(tr);
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext), BotStationForm.BOT_STATION_NAME,
+                name, true, true));
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext),
+                BotStationForm.BOT_STATION_RMI_ADDRESS, address, true, false));
         return table;
     }
 

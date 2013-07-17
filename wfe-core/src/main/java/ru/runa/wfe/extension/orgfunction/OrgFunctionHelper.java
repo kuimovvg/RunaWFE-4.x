@@ -32,8 +32,8 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.extension.OrgFunction;
 import ru.runa.wfe.extension.OrgFunctionException;
+import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;
-import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.IVariableProvider;
@@ -48,8 +48,8 @@ import com.google.common.collect.Sets;
  * 'ru.runa.af.organizationfunction.ExecutorByNameFunction(userName)' 2)
  * 
  * @relationName(FQDN class name(param1, param2, ...)) for example
- *                    '@boss(ru.runa.af.organizationfunction.ExecutorByNameFunction(${processVariableNam
- *                    e } ) ) ' Each param can be given as string or as
+ *                    '@boss(ru.runa.af.organizationfunction.ExecutorByNameFunction(${processVariable
+ *                    N a m e } ) ) ' Each param can be given as string or as
  *                    substituted variable name in form of ${userVarName}.
  * 
  * @author Dofs
@@ -92,16 +92,16 @@ public class OrgFunctionHelper {
             return executors;
         }
         ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
-        RelationDAO relationDAO = ApplicationContextFactory.getRelationDAO();
-        Set<Executor> relationExecutors = new HashSet<Executor>();
+        Set<Executor> relationExecutorsSet = new HashSet<Executor>();
         for (Executor executor : executors) {
-            relationExecutors.add(executor);
-            relationExecutors.addAll(executorDAO.getExecutorParentsAll(executor));
+            relationExecutorsSet.add(executor);
+            relationExecutorsSet.addAll(executorDAO.getExecutorParentsAll(executor));
         }
         Set<Executor> resultSet = Sets.newHashSet();
-        List<RelationPair> pairs = relationDAO.getExecutorsRelationPairsRight(function.getRelationName(), Lists.newArrayList(relationExecutors));
-        for (RelationPair relation : pairs) {
-            resultSet.add(relation.getLeft());
+        Relation relation = ApplicationContextFactory.getRelationDAO().getNotNull(function.getRelationName());
+        List<RelationPair> pairs = ApplicationContextFactory.getRelationPairDAO().getExecutorsRelationPairsRight(relation, relationExecutorsSet);
+        for (RelationPair pair : pairs) {
+            resultSet.add(pair.getLeft());
         }
         return Lists.newArrayList(resultSet);
     }

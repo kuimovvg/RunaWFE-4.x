@@ -45,7 +45,7 @@ public class ReturnActionForm extends IdForm {
         ActionErrors errors = new ActionErrors();
 
         if (returnAction == null || returnAction.length() < 1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_NULL_VALUE));
         }
         return errors;
     }

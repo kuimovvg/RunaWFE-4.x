@@ -667,12 +667,12 @@ public class ServiceTestHelper {
 
     public Relation createRelation(String name, String description) throws RelationAlreadyExistException, AuthorizationException,
             AuthenticationException {
-        return relationService.createRelation(adminUser, name, description);
+        return relationService.createRelation(adminUser, new Relation(name, description));
     }
 
-    public RelationPair addRelationPair(String relationName, Executor left, Executor right) throws RelationDoesNotExistException,
-            AuthorizationException, AuthenticationException {
-        return relationService.addRelationPair(adminUser, relationName, left, right);
+    public RelationPair addRelationPair(Long relationId, Executor left, Executor right) throws RelationDoesNotExistException, AuthorizationException,
+            AuthenticationException {
+        return relationService.addRelationPair(adminUser, relationId, left, right);
     }
 
     public void removeRelation(Long relationId) throws RelationDoesNotExistException, AuthorizationException, AuthenticationException {

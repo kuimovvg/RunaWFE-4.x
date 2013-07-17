@@ -14,7 +14,6 @@ import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
-import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -60,12 +59,7 @@ public class BotListTag extends TitledFormTag {
 
     @Override
     public boolean isFormButtonEnabled() {
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override

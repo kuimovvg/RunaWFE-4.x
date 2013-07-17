@@ -32,7 +32,9 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
+import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.relation.RelationPair;
+import ru.runa.wfe.relation.RelationPairDoesNotExistException;
 import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.service.decl.RelationServiceLocal;
 import ru.runa.wfe.service.decl.RelationServiceRemote;
@@ -59,17 +61,24 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     private RelationLogic relationLogic;
 
     @Override
-    public RelationPair addRelationPair(User user, String relationGroupName, Executor from, Executor to) {
+    public RelationPair addRelationPair(User user, Long relationId, Executor from, Executor to) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
-        return relationLogic.addRelationPair(user, relationGroupName, from, to);
+        return relationLogic.addRelationPair(user, relationId, from, to);
     }
 
     @Override
-    public Relation createRelation(User user, String name, String description) {
+    public Relation createRelation(User user, Relation relation) {
         Preconditions.checkNotNull(user);
-        return relationLogic.createRelation(user, name, description);
+        Preconditions.checkNotNull(relation);
+        return relationLogic.createRelation(user, relation);
+    }
+
+    @Override
+    public Relation updateRelation(User user, Relation relation) throws RelationDoesNotExistException {
+        Preconditions.checkNotNull(user);
+        return relationLogic.updateRelation(user, relation);
     }
 
     @Override
@@ -88,44 +97,52 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public Relation getRelation(User user, Long relationId) {
+    public Relation getRelation(User user, Long id) {
         Preconditions.checkNotNull(user);
-        return relationLogic.getRelation(user, relationId);
+        return relationLogic.getRelation(user, id);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsRight(User user, String relationName, List<? extends Executor> right) {
+    public List<RelationPair> getExecutorsRelationPairsRight(User user, String name, List<? extends Executor> right) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(right);
-        return relationLogic.getExecutorRelationPairsRight(user, relationName, right);
+        return relationLogic.getExecutorRelationPairsRight(user, name, right);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String relationName, List<? extends Executor> left) {
+    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String name, List<? extends Executor> left) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(left);
-        return relationLogic.getExecutorRelationPairsLeft(user, relationName, left);
+        return relationLogic.getExecutorRelationPairsLeft(user, name, left);
     }
 
     @Override
-    public List<RelationPair> getRelationPairs(User user, String relationName, BatchPresentation batchPresentation) {
+    public List<RelationPair> getRelationPairs(User user, String name, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createDefault();
         }
-        return relationLogic.getRelations(user, relationName, batchPresentation);
+        return relationLogic.getRelations(user, name, batchPresentation);
     }
 
     @Override
-    public void removeRelationPair(User user, Long relationId) {
+    public void removeRelationPair(User user, Long id) throws RelationPairDoesNotExistException {
         Preconditions.checkNotNull(user);
-        relationLogic.removeRelationPair(user, relationId);
+        relationLogic.removeRelationPair(user, id);
     }
 
     @Override
-    public void removeRelation(User user, Long relationGroupId) {
+    public void removeRelationPairs(User user, List<Long> ids) {
         Preconditions.checkNotNull(user);
-        relationLogic.removeRelation(user, relationGroupId);
+        for (Long id : ids) {
+            relationLogic.removeRelationPair(user, id);
+        }
+    }
+
+    @Override
+    public void removeRelation(User user, Long id) {
+        Preconditions.checkNotNull(user);
+        relationLogic.removeRelation(user, id);
     }
 
 }

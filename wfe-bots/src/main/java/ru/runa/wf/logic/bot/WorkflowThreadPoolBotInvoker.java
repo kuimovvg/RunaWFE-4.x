@@ -134,7 +134,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                 Set<WfTask> tasks = botExecutor.getNewTasks();
                 for (WfTask task : tasks) {
                     WorkflowBotTaskExecutor botTaskExecutor = botExecutor.createBotTaskExecutor(task);
-                    ScheduledFuture<?> future = executor.schedule(botTaskExecutor, botExecutor.getBot().getStartTimeout(), TimeUnit.MILLISECONDS);
+                    ScheduledFuture<?> future = executor.schedule(botTaskExecutor, 200, TimeUnit.MILLISECONDS);
                     scheduledTasks.put(botTaskExecutor, future);
                 }
             } catch (AuthenticationException e) {

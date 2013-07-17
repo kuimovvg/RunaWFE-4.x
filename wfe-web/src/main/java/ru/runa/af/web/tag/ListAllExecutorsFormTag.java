@@ -37,7 +37,6 @@ import ru.runa.common.web.html.TDBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.common.web.tag.BatchReturningTitledFormTag;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
@@ -57,9 +56,8 @@ public class ListAllExecutorsFormTag extends BatchReturningTitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        ExecutorService executorService = Delegates.getExecutorService();
-        int executorsCount = executorService.getExecutorsCount(getUser(), getBatchPresentation());
-        List<Executor> executors = (List<Executor>) executorService.getExecutors(getUser(), getBatchPresentation());
+        int executorsCount = Delegates.getExecutorService().getExecutorsCount(getUser(), getBatchPresentation());
+        List<Executor> executors = (List<Executor>) Delegates.getExecutorService().getExecutors(getUser(), getBatchPresentation());
         BatchPresentation batchPresentation = getBatchPresentation();
         buttonEnabled = BatchExecutorPermissionHelper.isAllowedForAnyone(getUser(), executors, batchPresentation, ExecutorPermission.UPDATE);
         PagingNavigationHelper navigation = new PagingNavigationHelper(pageContext, batchPresentation, executorsCount, getReturnAction());

@@ -24,23 +24,24 @@ import ru.runa.wfe.security.Permission;
 import com.google.common.collect.Lists;
 
 /**
- * Represents Permissions on a {@link ru.runa.wfe.definition.dto.WfDefinition} Created on 21.09.2004
+ * Represents Permissions on a {@link ru.runa.wfe.definition.dto.WfDefinition}
+ * Created on 21.09.2004
  */
 public class DefinitionPermission extends Permission {
     private static final long serialVersionUID = 4981030703856496613L;
-    public static final String REDEPLOY_DEFINITION_PERMISSION_NAME = "permission.redeploy_definition";
-    public static final String UNDERPLOY_DEFINITION_PERMISSOIN_NAME = "permission.undeploy_definition";
-    public static final String START_PROCESS_PERMISSION_NAME = "permission.start_process";
-    public static final String READ_STARTED_PROCESS_PERMISSION_NAME = "permission.read_process";
-    public static final String CANCEL_STARTED_PROCESS_PERMISSION_NAME = "permission.cancel_process";
 
-    public static final Permission REDEPLOY_DEFINITION = new DefinitionPermission((byte) 2, REDEPLOY_DEFINITION_PERMISSION_NAME);
-    public static final Permission UNDEPLOY_DEFINITION = new DefinitionPermission((byte) 3, UNDERPLOY_DEFINITION_PERMISSOIN_NAME);
-    public static final Permission START_PROCESS = new DefinitionPermission((byte) 4, START_PROCESS_PERMISSION_NAME);
+    public static final Permission REDEPLOY_DEFINITION = new DefinitionPermission((byte) 2, "permission.redeploy_definition");
+    public static final Permission UNDEPLOY_DEFINITION = new DefinitionPermission((byte) 3, "permission.undeploy_definition");
+    public static final Permission START_PROCESS = new DefinitionPermission((byte) 4, "permission.start_process");
 
-    // UGLY HACK the following permission would be given to executors on created process instance
-    public static final Permission READ_STARTED_PROCESS = new DefinitionPermission((byte) 5, READ_STARTED_PROCESS_PERMISSION_NAME);
-    public static final Permission CANCEL_STARTED_PROCESS = new DefinitionPermission((byte) 6, CANCEL_STARTED_PROCESS_PERMISSION_NAME);
+    /**
+     * permission would be given to executors on created process
+     */
+    public static final Permission READ_STARTED_PROCESS = new DefinitionPermission((byte) 5, "permission.read_process");
+    /**
+     * permission would be given to executors on created process
+     */
+    public static final Permission CANCEL_STARTED_PROCESS = new DefinitionPermission((byte) 6, "permission.cancel_process");
 
     private static final List<Permission> ALL_PERMISSIONS = fillPermissions();
 

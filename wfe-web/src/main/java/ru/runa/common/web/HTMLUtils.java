@@ -29,6 +29,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.ecs.html.Div;
+import org.apache.ecs.html.Input;
+import org.apache.ecs.html.Option;
+import org.apache.ecs.html.Select;
+import org.apache.ecs.html.TD;
+import org.apache.ecs.html.TR;
 import org.cyberneko.html.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -81,6 +87,62 @@ public class HTMLUtils {
             throw Throwables.propagate(e);
         }
         return fileName;
+    }
+
+    public static TR createInputRow(String label, String name, String value, boolean enabled, boolean required) {
+        return createInputRow(label, name, value, enabled, required, Input.TEXT);
+    }
+
+    public static TR createCheckboxRow(String label, String name, boolean checked, boolean enabled, boolean required) {
+        TR tr = new TR();
+        tr.addElement(new TD(label).setClass(Resources.CLASS_LIST_TABLE_TD));
+        Input input = new Input(Input.CHECKBOX, name);
+        input.setChecked(checked);
+        input.setDisabled(!enabled);
+        if (required) {
+            input.setClass(Resources.CLASS_REQUIRED);
+        }
+        tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
+        return tr;
+    }
+
+    public static TR createSelectRow(String label, String name, Option[] options, boolean enabled, boolean required) {
+        TR tr = new TR();
+        tr.addElement(new TD(label).setClass(Resources.CLASS_LIST_TABLE_TD));
+        Select select = new Select(name, options);
+        select.setID(name);
+        select.setDisabled(!enabled);
+        return createSelectRow(label, select, required);
+    }
+
+    public static TR createSelectRow(String label, Select select, boolean required) {
+        TR tr = new TR();
+        tr.addElement(new TD(label).setClass(Resources.CLASS_LIST_TABLE_TD));
+        TD td;
+        if (required) {
+            Div div = new Div();
+            div.addElement(select);
+            div.setClass(Resources.CLASS_REQUIRED);
+            td = new TD(div);
+        } else {
+            td = new TD(select);
+        }
+        tr.addElement(td.setClass(Resources.CLASS_LIST_TABLE_TD));
+        return tr;
+    }
+
+    public static TR createInputRow(String label, String name, String value, boolean enabled, boolean required, String type) {
+        TR tr = new TR();
+        TD labelTd = new TD(label);
+        labelTd.setClass(Resources.CLASS_LIST_TABLE_TD);
+        tr.addElement(labelTd);
+        Input input = new Input(type, name, String.valueOf(value));
+        input.setDisabled(!enabled);
+        if (required) {
+            input.setClass(Resources.CLASS_REQUIRED);
+        }
+        tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
+        return tr;
     }
 
 }

@@ -28,6 +28,8 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 
+import com.google.common.base.Strings;
+
 /**
  * @struts:form name = "updateExecutorDetailsForm"
  */
@@ -102,26 +104,26 @@ public class UpdateExecutorDetailsForm extends IdForm {
     public ActionErrors validate(ActionMapping mapping, HttpServletRequest request) {
         ActionErrors errors = new ActionErrors();
 
-        if (getNewName() == null || getNewName().length() < 1) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_NULL_VALUE));
+        if (Strings.isNullOrEmpty(getNewName())) {
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_FILL_REQUIRED_VALUES));
         } else if (getNewName().length() > WebResources.VALIDATOR_STRING_255) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_VALIDATION));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_VALIDATION));
         }
 
         if (getDescription() == null) {
             setDescription("");
         } else if (getDescription().length() > WebResources.VALIDATOR_STRING_255) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_VALIDATION));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_VALIDATION));
         }
         if (getFullName() == null) {
             setFullName("");
         } else if (getFullName().length() > WebResources.VALIDATOR_STRING_255) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_VALIDATION));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_VALIDATION));
         }
         if (getEmail() == null) {
             setEmail("");
         } else if (getEmail().length() > WebResources.VALIDATOR_STRING_255) {
-            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_WEB_CLIENT_VALIDATION));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage(Messages.ERROR_VALIDATION));
         }
         return errors;
     }

@@ -22,6 +22,7 @@ import java.util.List;
 import junit.framework.TestSuite;
 
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.PermissionNotFoundException;
 import ru.runa.wfe.security.SystemPermission;
@@ -125,16 +126,16 @@ public class PermissionTest extends ServletTestCase {
 
     final public void testGetPermissionByName() throws Exception {
         String name;
-        name = Permission.READ_PERMISSION_NAME;
+        name = Permission.READ.getName();
         assertEquals(Permission.READ, new Permission().getPermission(name));
 
-        name = ActorPermission.UPDATE_EXECUTOR_PERMISSION_NAME;
+        name = ActorPermission.UPDATE.getName();
         assertEquals(ActorPermission.UPDATE, new ActorPermission().getPermission(name));
 
-        name = GroupPermission.ADD_TO_GROUP_PERMISSION_NAME;
+        name = GroupPermission.ADD_TO_GROUP.getName();
         assertEquals(GroupPermission.ADD_TO_GROUP, new GroupPermission().getPermission(name));
 
-        name = SystemPermission.CREATE_EXECUTOR_PERMISSION_NAME;
+        name = SystemPermission.CREATE_EXECUTOR.getName();
         assertEquals(SystemPermission.CREATE_EXECUTOR, new SystemPermission().getPermission(name));
 
         try {

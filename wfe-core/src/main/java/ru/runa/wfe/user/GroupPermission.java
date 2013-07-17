@@ -29,13 +29,10 @@ import com.google.common.collect.Lists;
  */
 public class GroupPermission extends ExecutorPermission {
     private static final long serialVersionUID = 8101858243353378772L;
-    public static final String LIST_GROUP_PERMISSION_NAME = "permission.list_group";
-    public static final String ADD_TO_GROUP_PERMISSION_NAME = "permission.add_to_group";
-    public static final String REMOVE_FROM_GROUP_PERMISSION_NAME = "permission.remove_from_group";
 
-    public static final Permission LIST_GROUP = new GroupPermission((byte) 3, LIST_GROUP_PERMISSION_NAME);
-    public static final Permission ADD_TO_GROUP = new GroupPermission((byte) 4, ADD_TO_GROUP_PERMISSION_NAME);
-    public static final Permission REMOVE_FROM_GROUP = new GroupPermission((byte) 5, REMOVE_FROM_GROUP_PERMISSION_NAME);
+    public static final Permission LIST_GROUP = new GroupPermission((byte) 3, "permission.list_group");
+    public static final Permission ADD_TO_GROUP = new GroupPermission((byte) 4, "permission.add_to_group");
+    public static final Permission REMOVE_FROM_GROUP = new GroupPermission((byte) 5, "permission.remove_from_group");
 
     private static List<Permission> GROUP_PERMISSIONS = fillPermissions();
 

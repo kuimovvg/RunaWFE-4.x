@@ -17,38 +17,16 @@
  */
 package ru.runa.wfe.relation;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import ru.runa.wfe.InternalApplicationException;
 
 /**
- * Exception, which was thrown, if {@link RelationPair} is not exists.
+ * Thrown if {@link RelationPair} does not exist.
  */
 public class RelationPairDoesNotExistException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Identity of {@link RelationPair}, which is not exists.
-     */
-    final Long relationId;
-
-    /**
-     * Create instance with specified {@link RelationPair} identity.
-     * 
-     * @param relationId
-     */
-    public RelationPairDoesNotExistException(Long relationId) {
-        this.relationId = relationId;
+    public RelationPairDoesNotExistException(Object identity) {
+        super(String.valueOf(identity));
     }
 
-    /**
-     * Return relation pair identity.
-     * 
-     * @return Relation pair identity.
-     */
-    public Long getRelationId() {
-        return relationId;
-    }
 }

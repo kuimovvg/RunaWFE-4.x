@@ -34,8 +34,6 @@ import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.security.Permission;
 
 /**
  * Provides attibutes action and method for sub classes. Created on 19.08.2004
@@ -97,13 +95,6 @@ abstract public class FormTag extends VisibleTag {
         return true;
     }
 
-    /**
-     * @return returns true if form button must be displayed
-     */
-    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
-        return true;
-    }
-
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_FORM, pageContext);
     }
@@ -162,7 +153,12 @@ abstract public class FormTag extends VisibleTag {
                 for (String buttonName : getFormButtonNames()) {
                     Input submitButton = new Input(Input.SUBMIT, SUBMIT_BUTTON_NAME, buttonName);
                     submitButton.setClass(Resources.CLASS_BUTTON);
-                    if (!isFormButtonEnabled()) {
+                    try {
+                        if (!isFormButtonEnabled()) {
+                            submitButton.setDisabled(true);
+                        }
+                    } catch (Exception e) {
+                        log.debug("isFormButtonEnabled", e);
                         submitButton.setDisabled(true);
                     }
                     td.addElement(submitButton);
@@ -171,12 +167,10 @@ abstract public class FormTag extends VisibleTag {
             } else {
                 Input submitButton = new Input(Input.SUBMIT, SUBMIT_BUTTON_NAME, getFormButtonName());
                 submitButton.setClass(Resources.CLASS_BUTTON);
-
                 if (isConfirmationPopupEnabled()) {
                     submitButton.addAttribute("onclick",
                             ConfirmationPopupHelper.getInstance().getConfirmationPopupCodeHTML(getConfirmationPopupParameter(), pageContext));
                 }
-
                 if (!isFormButtonEnabled()) {
                     submitButton.setDisabled(true);
                 }

@@ -57,7 +57,8 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
         Element createBotElement = root.addElement("createBot", XmlUtils.RUNA_NAMESPACE);
         createBotElement.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
         createBotElement.addAttribute(PASSWORD_ATTRIBUTE_NAME, "");
-        createBotElement.addAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" + bot.getStartTimeout());
+        // createBotElement.addAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" +
+        // bot.getStartTimeout());
 
         if (tasks.size() > 0) {
             Element removeTasks = root.addElement("removeConfigurationsFromBot", XmlUtils.RUNA_NAMESPACE);
