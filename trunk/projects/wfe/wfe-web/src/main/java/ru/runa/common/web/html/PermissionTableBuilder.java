@@ -106,26 +106,23 @@ public class PermissionTableBuilder {
         TR tr = new TR();
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, String.valueOf(executor.getId()));
         input.setChecked(true);
-        boolean executorCheckboxDisabled = true;
         tr.addElement(new TD(input).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
         String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, executor.getId(), pageContext,
                 PortletUrlType.Render);
         ConcreteElement tdElement = new A(url, ExecutorNameConverter.getName(executor, pageContext));
         tr.addElement(new TD(tdElement).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
         List<Permission> ownPermissions = Delegates.getAuthorizationService().getIssuedPermissions(user, executor, identifiable);
+        boolean executorIsPrivileged = ownPermissions.isEmpty() && !additionalExecutor;
         for (Permission permission : permissions) {
             String name = UpdatePermissionsOnIdentifiableForm.EXECUTOR_INPUT_NAME_PREFIX + "(" + executor.getId() + ")."
                     + UpdatePermissionsOnIdentifiableForm.PERMISSION_INPUT_NAME_PREFIX + "(" + permission.getMask() + ")";
-            // empty ownPermissions means that executor is privileged
             boolean checked = (!additionalExecutor && ownPermissions.isEmpty()) || ownPermissions.contains(permission);
-            boolean enabled = allowedUpdatePermissions && !unmodifiablePermissions.contains(permission);
-            executorCheckboxDisabled &= !enabled;
             Input checkbox = new Input(Input.CHECKBOX, name);
             checkbox.setChecked(checked);
-            checkbox.setDisabled(!enabled);
+            checkbox.setDisabled(executorIsPrivileged || !allowedUpdatePermissions || unmodifiablePermissions.contains(permission));
             tr.addElement(new TD(checkbox).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
         }
-        input.setDisabled(executorCheckboxDisabled);
+        input.setDisabled(executorIsPrivileged || additionalExecutor);
         return tr;
     }
 }

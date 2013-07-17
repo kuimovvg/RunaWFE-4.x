@@ -22,6 +22,7 @@ public enum SecuredObjectType {
         this.permissionClass = permissionClass;
     }
 
+    // TODO find another way
     public Permission getNoPermission() {
         return ClassLoaderUtil.instantiate(permissionClass);
     }

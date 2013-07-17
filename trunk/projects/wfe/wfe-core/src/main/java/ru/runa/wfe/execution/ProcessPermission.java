@@ -29,12 +29,9 @@ import com.google.common.collect.Lists;
  * @since 2.0
  */
 public class ProcessPermission extends Permission {
-
     private static final long serialVersionUID = -6364900233533057786L;
 
-    public static final String CANCEL_PROCESS_PERMISSION_NAME = "permission.cancel_process";
-
-    public static final Permission CANCEL_PROCESS = new ProcessPermission((byte) 2, CANCEL_PROCESS_PERMISSION_NAME);
+    public static final Permission CANCEL_PROCESS = new ProcessPermission((byte) 2, "permission.cancel_process");
 
     private static final List<Permission> ALL_PERMISSIONS = fillPermissions();
 

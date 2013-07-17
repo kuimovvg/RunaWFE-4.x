@@ -17,7 +17,7 @@
  */
 package ru.runa.af.web.tag;
 
-import ru.runa.af.web.action.GrantBotStationConfigurePermissionAction;
+import ru.runa.af.web.action.GrantPermissionsOnBotStationAction;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.security.Identifiable;
 
@@ -34,7 +34,7 @@ public class ListExecutorsWithoutPermissionsOnBotStationFormTag extends ListExec
 
     @Override
     public String getAction() {
-        return GrantBotStationConfigurePermissionAction.ACTION_PATH;
+        return GrantPermissionsOnBotStationAction.ACTION_PATH;
     }
 
     @Override

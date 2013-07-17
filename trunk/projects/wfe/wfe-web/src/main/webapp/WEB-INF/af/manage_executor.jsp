@@ -11,7 +11,7 @@
 	String returnAction="/manage_executor.do?" + parameterName+ "=" +id;
 %>
 
-<wf:updateExecutorDetailsForm  identifiableId="<%= id %>" >
+<wf:updateExecutorDetailsForm identifiableId="<%= id %>">
 <table width="100%">
 	<tr>
 		<td align="right">
@@ -21,9 +21,9 @@
 </table>
 </wf:updateExecutorDetailsForm>
 
-<wf:updateStatusForm  identifiableId="<%= id %>"  />
+<wf:updateStatusForm identifiableId="<%= id %>"  />
 
-<wf:updatePasswordForm  identifiableId="<%= id %>"  />
+<wf:updatePasswordForm identifiableId="<%= id %>"  />
 
 <wf:listExecutorGroupsForm batchPresentationId="listExecutorGroupsForm" buttonAlignment="right" identifiableId="<%= id %>" returnAction="<%= returnAction %>" >
 	<div>

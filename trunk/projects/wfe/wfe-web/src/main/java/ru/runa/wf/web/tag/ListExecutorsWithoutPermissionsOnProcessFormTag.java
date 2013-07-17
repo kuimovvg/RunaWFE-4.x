@@ -18,7 +18,7 @@
 package ru.runa.wf.web.tag;
 
 import ru.runa.af.web.tag.ListExecutorsWithoutPermissionsBase;
-import ru.runa.wf.web.action.GrantReadPermissionOnProcessAction;
+import ru.runa.wf.web.action.GrantPermissionsOnProcessAction;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -36,7 +36,7 @@ public class ListExecutorsWithoutPermissionsOnProcessFormTag extends ListExecuto
 
     @Override
     public String getAction() {
-        return GrantReadPermissionOnProcessAction.ACTION_PATH;
+        return GrantPermissionsOnProcessAction.ACTION_PATH;
     }
 
     @Override

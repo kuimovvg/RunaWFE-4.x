@@ -33,12 +33,13 @@ import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.action.UpdateSubstitutionAction;
 import ru.runa.af.web.form.SubstitutionForm;
-import ru.runa.af.web.html.BaseDetailTableBuilder;
 import ru.runa.af.web.orgfunction.FunctionDef;
 import ru.runa.af.web.orgfunction.ParamDef;
 import ru.runa.af.web.orgfunction.SubstitutionDefinitions;
 import ru.runa.af.web.orgfunction.SubstitutionHelper;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.security.Identifiable;
@@ -136,7 +137,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
         return UpdateSubstitutionAction.UPDATE_ACTION;
     }
 
-    class SubstitutionTableBuilder extends BaseDetailTableBuilder {
+    class SubstitutionTableBuilder {
 
         private final PageContext pageContext;
 
@@ -147,15 +148,15 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
         public Table buildTable() {
             Table table = new Table();
             table.setID("paramsTable");
-            table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
+            table.setClass(Resources.CLASS_LIST_TABLE);
             String criteriaId = null;
             if (substitution != null && substitution.getCriteria() != null) {
                 criteriaId = substitution.getCriteria().getId().toString();
             }
-            table.addElement(createTRWithLabelAndSelect(Messages.getMessage(Messages.LABEL_SUBSTITUTORS_CRITERIA, pageContext),
-                    SubstitutionForm.CRITERIA_ID_INPUT_NAME, getCriteriaOptions(criteriaId), false));
-            table.addElement(createTRWithLabelAndCheckbox(Messages.getMessage(Messages.LABEL_SUBSTITUTORS_ENABLED, pageContext),
-                    SubstitutionForm.ENABLED_INPUT_NAME, substitution == null || substitution.isEnabled(), false));
+            table.addElement(HTMLUtils.createSelectRow(Messages.getMessage(Messages.LABEL_SUBSTITUTORS_CRITERIA, pageContext),
+                    SubstitutionForm.CRITERIA_ID_INPUT_NAME, getCriteriaOptions(criteriaId), true, false));
+            table.addElement(HTMLUtils.createCheckboxRow(Messages.getMessage(Messages.LABEL_SUBSTITUTORS_ENABLED, pageContext),
+                    SubstitutionForm.ENABLED_INPUT_NAME, substitution == null || substitution.isEnabled(), true, false));
             if (!terminator) {
                 String function = "";
                 if (substitution != null) {
@@ -165,8 +166,8 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
                 if (function.length() == 0 && functionOptions.length > 0) {
                     function = functionOptions[0].getValue();
                 }
-                table.addElement(createTRWithLabelAndSelect(Messages.getMessage(Messages.LABEL_SWIMLANE_ORGFUNCTION, pageContext),
-                        SubstitutionForm.FUNCTION_INPUT_NAME, functionOptions, false));
+                table.addElement(HTMLUtils.createSelectRow(Messages.getMessage(Messages.LABEL_SWIMLANE_ORGFUNCTION, pageContext),
+                        SubstitutionForm.FUNCTION_INPUT_NAME, functionOptions, true, true));
                 if (function.length() > 0) {
                     FunctionDef functionDef = SubstitutionDefinitions.getByClassNameNotNull(function);
                     if (functionDef != null) {
@@ -234,6 +235,7 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
     private Element createEditElement(ParamRenderer renderer, PageContext pageContext, String value, int index, boolean enabled) {
         Span span = new Span();
         Input input = new Input(Input.TEXT, SubstitutionForm.PARAMS_INPUT_NAME, value);
+        input.setClass(Resources.CLASS_REQUIRED);
         input.setStyle("width: 300px");
         input.setDisabled(!enabled);
         input.addAttribute("paramIndex", index);

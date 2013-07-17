@@ -33,20 +33,19 @@
 		<form-bean name="taskIdForm" type="ru.runa.wf.web.form.TaskIdForm" />
 		<form-bean name="commonProcessForm" type="ru.runa.wf.web.form.CommonProcessForm" />
 		<form-bean name="fileForm" type="ru.runa.common.web.form.FileForm" />
-		<form-bean name="createRelationGroupForm"
-			type="ru.runa.af.web.form.CreateRelationGroupForm" />
+		<form-bean name="relationForm" type="ru.runa.af.web.form.RelationForm" />
+		<form-bean name="relationPairForm" type="ru.runa.af.web.form.RelationPairForm" />
+		<form-bean name="relationPairsForm" type="ru.runa.af.web.form.RelationPairsForm" />
 		<form-bean name="idsForm" type="ru.runa.common.web.form.IdsForm" />
 		<form-bean name="updateExecutorDetailsForm"
 			type="ru.runa.af.web.form.UpdateExecutorDetailsForm" />
 		<form-bean name="botStationForm" type="ru.runa.af.web.form.BotStationForm" />
 		<form-bean name="idUrlForm" type="ru.runa.wf.web.form.DefinitionFileForm" />
 		<form-bean name="variableForm" type="ru.runa.wf.web.form.VariableForm" />
-		<form-bean name="relationIdsForm" type="ru.runa.af.web.form.RelationIdsForm" />
 		<form-bean name="substitutionForm" type="ru.runa.af.web.form.SubstitutionForm" />
 		<form-bean name="batchPresentationForm"
 			type="ru.runa.common.web.form.BatchPresentationForm" />
 		<form-bean name="settingsForm" type="ru.runa.wf.web.form.SettingsForm" />
-		<form-bean name="createRelationForm" type="ru.runa.af.web.form.CreateRelationForm" />
 		<form-bean name="viewLogForm" type="ru.runa.common.web.form.ViewLogForm" />
 		<form-bean name="updateStatusForm" type="ru.runa.af.web.form.UpdateStatusForm" />
 		<form-bean name="pagingForm" type="ru.runa.wf.web.form.PagingForm" />
@@ -101,12 +100,12 @@
 			<forward name="submitTask" path="/submit_task.do" redirect="false" />
 			<forward name="tasksList" path="/manage_tasks.do" redirect="true" />
 		</action>
-		<action path="/grantPermissionOnRelations"
-			type="ru.runa.af.web.action.GrantPermissionOnRelationsAction" name="idsForm"
+		<action path="/grantPermissionsOnRelationGroup"
+			type="ru.runa.af.web.action.GrantPermissionsOnRelationGroupAction" name="idsForm"
 			scope="request" unknown="false" validate="false">
-			<forward name="success" path="/group_of_relations_permission.do"
+			<forward name="success" path="/manage_relation_group_permissions.do"
 				redirect="true" />
-			<forward name="failure" path="/group_of_relations_permission.do"
+			<forward name="failure" path="/manage_relation_group_permissions.do"
 				redirect="true" />
 		</action>
 		<action path="/save_bot" type="ru.runa.af.web.action.SaveBotAction"
@@ -116,13 +115,13 @@
 		<action path="/setSorting" type="ru.runa.common.web.action.SetSortingAction"
 			name="setSortingForm" scope="request" unknown="false" validate="false">
 		</action>
-		<action path="/updatePermissionOnRelation" type="ru.runa.af.web.action.UpdatePermissionOnRelation"
+		<action path="/updatePermissionsOnRelation" type="ru.runa.af.web.action.UpdatePermissionsOnRelation"
 			name="updatePermissionsOnIdentifiableForm" scope="request"
-			input="/WEB-INF/af/manage_relation_members.jsp" unknown="false"
+			input="/WEB-INF/af/manage_relation.jsp" unknown="false"
 			validate="true">
-			<forward name="success" path="/relation_permission.do"
+			<forward name="success" path="/manage_relation_permissions.do"
 				redirect="true" />
-			<forward name="failure" path="/relation_permission.do"
+			<forward name="failure" path="/manage_relation_permissions.do"
 				redirect="true" />
 		</action>
 		<action path="/deploy_bot_station" type="ru.runa.af.web.action.DeployBotStationAction"
@@ -171,7 +170,7 @@
 				redirect="false" />
 		</action>
 		<action path="/updatePermissionOnProcessDefinition"
-			type="ru.runa.wf.web.action.UpdatePermissionOnProcessDefinitionAction"
+			type="ru.runa.wf.web.action.UpdatePermissionsOnProcessDefinitionAction"
 			name="updatePermissionsOnIdentifiableForm" scope="request"
 			input="/WEB-INF/wf/manage_process_definition.jsp" unknown="false"
 			validate="true">
@@ -181,7 +180,7 @@
 				redirect="true" />
 		</action>
 		<action path="/grantLoginPermissionOnSystem"
-			type="ru.runa.af.web.action.GrantLoginPermissionOnSystemAction" name="idsForm"
+			type="ru.runa.af.web.action.GrantPermissionsOnSystemAction" name="idsForm"
 			scope="request" unknown="false" validate="false">
 			<forward name="success" path="/manage_system.do" redirect="true" />
 			<forward name="failure" path="/manage_system.do" redirect="true" />
@@ -196,14 +195,14 @@
 			name="botForm" scope="request" input="/WEB-INF/wf/add_bot.jsp"
 			unknown="false" validate="false">
 			<forward name="success" path="/bot_station.do" redirect="true" />
-			<forward name="failure" path="/create_bot.do" redirect="true" />
+			<forward name="failure" path="/add_bot.do" redirect="true" />
 		</action>
 		<action path="/startImageProcess" type="ru.runa.wf.web.action.StartImageProcessAction"
 			name="idForm" scope="request" input="/WEB-INF/wf/manage_process_definitions.jsp"
 			unknown="false" validate="true">
 		</action>
 		<action path="/grantReadPermissionOnProcess"
-			type="ru.runa.wf.web.action.GrantReadPermissionOnProcessAction" name="idsForm"
+			type="ru.runa.wf.web.action.GrantPermissionsOnProcessAction" name="idsForm"
 			scope="request" input="/WEB-INF/wf/manage_process.jsp" unknown="false"
 			validate="true">
 			<forward name="success" path="/manage_process_permissions.do"
@@ -265,15 +264,15 @@
 			type="ru.runa.common.web.action.TableViewSetupFormAction" name="tableViewSetupForm"
 			scope="request" parameter="dispatch" unknown="false" validate="false">
 		</action>
-		<action path="/createRelation" type="ru.runa.af.web.action.CreateRelationAction"
-			name="createRelationForm" scope="request" input="/WEB-INF/af/create_relation.jsp"
+		<action path="/createRelationPair" type="ru.runa.af.web.action.CreateRelationPairAction"
+			name="relationPairForm" scope="request" input="/WEB-INF/af/create_relation_pair.jsp"
 			unknown="false" validate="true">
 			<forward name="success" path="/manage_relation.do" redirect="true" />
-			<forward name="failure" path="/create_relation.do" redirect="true" />
+			<forward name="failure" path="/create_relation_pair.do" redirect="true" />
 		</action>
-		<action path="/removeRelation" type="ru.runa.af.web.action.RemoveRelationAction"
-			name="relationIdsForm" scope="request"
-			input="/WEB-INF/af/manage_relation_members.jsp" unknown="false"
+		<action path="/removeRelationPairs" type="ru.runa.af.web.action.RemoveRelationPairsAction"
+			name="relationPairsForm" scope="request"
+			input="/WEB-INF/af/manage_relation.jsp" unknown="false"
 			validate="false">
 			<forward name="success" path="/manage_relation.do" redirect="true" />
 			<forward name="failure" path="/manage_relation.do" redirect="true" />
@@ -291,22 +290,22 @@
 			scope="request" input="/WEB-INF/wf/manage_process_definitions.jsp"
 			unknown="false" validate="true">
 		</action>
-		<action path="/grantPermissionOnRelation"
-			type="ru.runa.af.web.action.GrantPermissionOnRelationAction" name="relationIdsForm"
-			scope="request" input="/WEB-INF/af/relation_permission.jsp" unknown="false"
+		<action path="/grantPermissionsOnRelation"
+			type="ru.runa.af.web.action.GrantPermissionsOnRelationAction" name="idsForm"
+			scope="request" input="/WEB-INF/af/manage_relation_permissions.jsp" unknown="false"
 			validate="false">
-			<forward name="success" path="/relation_permission.do"
+			<forward name="success" path="/manage_relation_permissions.do"
 				redirect="true" />
-			<forward name="failure" path="/relation_permission.do"
+			<forward name="failure" path="/manage_relation_permissions.do"
 				redirect="true" />
 		</action>
-		<action path="/updatePermissionOnGroupsOfRelations"
-			type="ru.runa.af.web.action.UpdatePermissionOnGroupsOfRelations"
+		<action path="/updatePermissionsOnRelationGroup"
+			type="ru.runa.af.web.action.UpdatePermissionsOnRelationGroup"
 			name="updatePermissionsOnIdentifiableForm" scope="request" unknown="false"
 			validate="false">
-			<forward name="success" path="/group_of_relations_permission.do"
+			<forward name="success" path="/manage_relation_group_permissions.do"
 				redirect="true" />
-			<forward name="failure" path="/group_of_relations_permission.do"
+			<forward name="failure" path="/manage_relation_group_permissions.do"
 				redirect="true" />
 		</action>
 		<action path="/getHtmlFile"
@@ -344,7 +343,7 @@
 				redirect="true" />
 		</action>
 		<action path="/updatePermissionOnProcess"
-			type="ru.runa.wf.web.action.UpdatePermissionOnProcessAction" name="updatePermissionsOnIdentifiableForm"
+			type="ru.runa.wf.web.action.UpdatePermissionsOnProcessAction" name="updatePermissionsOnIdentifiableForm"
 			scope="request" input="/WEB-INF/wf/manage_process.jsp" unknown="false"
 			validate="true">
 			<forward name="success" path="/manage_process_permissions.do"
@@ -406,7 +405,7 @@
 				redirect="false" />
 		</action>
 		<action path="/grantReadPermissionOnProcessDefinition"
-			type="ru.runa.wf.web.action.GrantReadPermissionOnProcessDefinitionAction"
+			type="ru.runa.wf.web.action.GrantPermissionsOnProcessDefinitionAction"
 			name="idsForm" scope="request" input="/WEB-INF/wf/manage_process_definition.jsp"
 			unknown="false" validate="true">
 			<forward name="success" path="/manage_process_definition_permissions.do"
@@ -419,7 +418,7 @@
 			unknown="false" validate="false">
 			<forward name="success" path="/configure_bot_station.do"
 				redirect="true" />
-			<forward name="failure" path="/create_bot_station.do"
+			<forward name="failure" path="/add_bot_station.do"
 				redirect="true" />
 		</action>
 		<action path="/login" type="ru.runa.af.web.action.LoginAction"
@@ -433,7 +432,7 @@
 			unknown="false" validate="false">
 		</action>
 		<action path="/grantBotStationPermission"
-			type="ru.runa.af.web.action.GrantBotStationConfigurePermissionAction"
+			type="ru.runa.af.web.action.GrantPermissionsOnBotStationAction"
 			name="idsForm" scope="request" unknown="false" validate="false">
 			<forward name="success" path="/bot_station_permission.do"
 				redirect="true" />
@@ -445,7 +444,7 @@
 			<forward name="success" path="/manage_tasks.do" redirect="true" />
 			<forward name="failure" path="/start.do" redirect="true" />
 		</action>
-		<action path="/removeRelationGroup" type="ru.runa.af.web.action.RemoveRelationGroupAction"
+		<action path="/removeRelation" type="ru.runa.af.web.action.RemoveRelationAction"
 			name="idsForm" scope="request" unknown="false" validate="false">
 			<forward name="success" path="/manage_relations.do" redirect="true" />
 			<forward name="failure" path="/manage_relations.do" redirect="true" />
@@ -463,7 +462,7 @@
 			validate="false">
 		</action>
 		<action path="/updatePermissionOnSystem"
-			type="ru.runa.af.web.action.UpdatePermissionOnSystemAction" name="updatePermissionsOnIdentifiableForm"
+			type="ru.runa.af.web.action.UpdatePermissionsOnSystemAction" name="updatePermissionsOnIdentifiableForm"
 			scope="request" unknown="false" validate="false">
 			<forward name="success" path="/manage_system.do" redirect="true" />
 			<forward name="failure" path="/manage_system.do" redirect="true" />
@@ -541,16 +540,23 @@
 		<action path="/setViewPage" type="ru.runa.wf.web.action.SetViewPageAction"
 			name="pagingForm" scope="request" unknown="false" validate="false">
 		</action>
-		<action path="/createRelationGroup" type="ru.runa.af.web.action.CreateRelationGroupAction"
-			name="createRelationGroupForm" scope="request"
-			input="/WEB-INF/af/create_relation_group.jsp" unknown="false"
+		<action path="/createRelation" type="ru.runa.af.web.action.CreateRelationAction"
+			name="relationForm" scope="request"
+			input="/WEB-INF/af/create_relation.jsp" unknown="false"
 			validate="true">
 			<forward name="success" path="/manage_relations.do" redirect="true" />
-			<forward name="failure" path="/create_relation_group.do"
+			<forward name="failure" path="/create_relation.do"
 				redirect="true" />
 		</action>
+		<action path="/updateRelation" type="ru.runa.af.web.action.UpdateRelationAction"
+			name="relationForm" scope="request"
+			input="/WEB-INF/af/manage_relation.jsp" unknown="false"
+			validate="true">
+			<forward name="success" path="/manage_relations.do" redirect="true" />
+			<forward name="failure" path="/manage_relation.do" redirect="true" />
+		</action>
 		<action path="/grantReadPermissionOnExecutor"
-			type="ru.runa.af.web.action.GrantReadPermissionOnExecutorAction"
+			type="ru.runa.af.web.action.GrantPermissionsOnExecutorAction"
 			name="idsForm" scope="request" input="/WEB-INF/af/manage_executor.jsp"
 			unknown="false" validate="true">
 			<forward name="success" path="/manage_executor_permissions.do"
@@ -559,7 +565,7 @@
 				redirect="true" />
 		</action>
 		<action path="/updateBotStationPermission"
-			type="ru.runa.af.web.action.UpdateBotStationPermissionAction" name="updatePermissionsOnIdentifiableForm"
+			type="ru.runa.af.web.action.UpdatePermissionsOnBotStationAction" name="updatePermissionsOnIdentifiableForm"
 			scope="request" unknown="false" validate="false">
 			<forward name="success" path="/bot_station_permission.do"
 				redirect="true" />
@@ -602,11 +608,11 @@
 		<action path="/manage_relations" type="ru.runa.common.web.action.TabHeaderForwardAction"
 			parameter="/WEB-INF/af/manage_relations.jsp" />
 
-		<action path="/grant_group_of_relations_permission" type="ru.runa.common.web.action.TabHeaderForwardAction"
-			parameter="/WEB-INF/af/grant_permission_on_relations.jsp" />
+		<action path="/grant_permissions_on_relation_group" type="ru.runa.common.web.action.TabHeaderForwardAction"
+			parameter="/WEB-INF/af/grant_permissions_on_relation_group.jsp" />
 
-		<action path="/grant_permission_on_relation" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/grant_permission_on_relation.jsp" />
+		<action path="/grant_permissions_on_relation" type="org.apache.struts.actions.ForwardAction"
+			parameter="/WEB-INF/af/grant_permissions_on_relation.jsp" />
 
 		<action path="/grant_read_permission_on_executor" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/af/grant_read_permission_on_executor.jsp" />
@@ -681,31 +687,20 @@
 			parameter="/WEB-INF/wf/display_swimlane.jsp" />
 
 		<action path="/manage_relation" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/manage_relation_members.jsp" />
-
-		<action path="/manage_executor_relation_right" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/manage_executor_right_relations.jsp" />
-
-		<action path="/manage_executor_relation_left" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/manage_executor_left_relations.jsp" />
+			parameter="/WEB-INF/af/manage_relation.jsp" />
 
 		<action path="/create_relation" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/af/create_relation.jsp" />
 
-		<action path="/create_relation_right_executor" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/create_relation_right_executor.jsp" />
+		<action path="/create_relation_pair" type="org.apache.struts.actions.ForwardAction"
+			parameter="/WEB-INF/af/create_relation_pair.jsp" />
 
-		<action path="/create_relation_left_executor" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/create_relation_left_executor.jsp" />
+		<action path="/manage_relation_group_permissions" type="org.apache.struts.actions.ForwardAction"
+			parameter="/WEB-INF/af/manage_relation_group_permissions.jsp" />
 
-		<action path="/create_relation_group" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/create_relation_group.jsp" />
-
-		<action path="/group_of_relations_permission" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/group_of_relations_permission.jsp" />
-
-		<action path="/relation_permission" type="org.apache.struts.actions.ForwardAction"
-			parameter="/WEB-INF/af/relation_permission.jsp" />
+		<action path="/manage_relation_permissions" type="org.apache.struts.actions.ForwardAction"
+			parameter="/WEB-INF/af/manage_relation_permissions.jsp" />
+			
 		<action path="/configure_bot_station" type="ru.runa.common.web.action.TabHeaderForwardAction"
 			parameter="/WEB-INF/wf/configure_bot_station.jsp" />
 

@@ -44,28 +44,15 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
             String actorVarName = getParameterAs(String.class, 0);
             String relationName = getParameterAs(String.class, 1);
             Executor relationParam = getParameterAs(Executor.class, 2);
+            if (relationParam == null) {
+                // TODO right way?
+                relationParam = user.getActor();
+            }
             List<Actor> actors = getActors(relationName, relationParam);
             return createSelect(actorVarName, actors).toString();
         } catch (Exception e) {
             throw new TemplateModelException(e);
         }
-    }
-
-    /**
-     * Load executors according to tag parameters to apply relations for.
-     * 
-     * @param executorService
-     *            Executor delegate to load data.
-     * @param param
-     *            Tag parameter - actor code or executor name.
-     * @return Executors from right part of relation.
-     */
-    private List<Executor> getExecutors(Executor param) {
-        List<Executor> result = new ArrayList<Executor>();
-        result.add(param);
-        BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
-        result.addAll(Delegates.getExecutorService().getExecutorGroups(user, param, batchPresentation, false));
-        return result;
     }
 
     /**
@@ -78,7 +65,10 @@ public class ChooseActorByRelationTag extends FreemarkerTag {
      * @return Actors list.
      */
     private List<Actor> getActors(String relationName, Executor relationParam) throws TemplateModelException {
-        List<Executor> executorRightList = getExecutors(relationParam);
+        List<Executor> executorRightList = new ArrayList<Executor>();
+        executorRightList.add(relationParam);
+        BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
+        executorRightList.addAll(Delegates.getExecutorService().getExecutorGroups(user, relationParam, batchPresentation, false));
         List<RelationPair> relationPairList = Delegates.getRelationService().getExecutorsRelationPairsRight(user, relationName, executorRightList);
         HashSet<Actor> result = new HashSet<Actor>();
         for (RelationPair relationPair : relationPairList) {

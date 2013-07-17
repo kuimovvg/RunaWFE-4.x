@@ -31,7 +31,7 @@ import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
-import ru.runa.wfe.relation.dao.RelationDAO;
+import ru.runa.wfe.relation.dao.RelationPairDAO;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
@@ -62,7 +62,7 @@ public class ExecutorLogic extends CommonLogic {
     @Autowired
     private ProfileDAO profileDAO;
     @Autowired
-    private RelationDAO relationDAO;
+    private RelationPairDAO relationPairDAO;
 
     @Required
     public void setPasswordCheckPattern(String passwordCheckPattern) {
@@ -142,7 +142,7 @@ public class ExecutorLogic extends CommonLogic {
         }
         permissionDAO.deleteOwnPermissions(executor);
         permissionDAO.deleteAllPermissions(executor);
-        relationDAO.removeAllRelationPairs(executor);
+        relationPairDAO.removeAllRelationPairs(executor);
         executorDAO.remove(executor);
     }
 

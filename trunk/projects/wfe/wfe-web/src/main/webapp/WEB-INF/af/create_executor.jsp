@@ -7,16 +7,8 @@
 <tiles:put name="body" type="string" >
 <% 
 	String executorType = request.getParameter(CreateExecutorForm.EXECUTOR_TYPE_INPUT_NAME);
-	String title;
-	if("actor".equals(executorType)) {
-		title = ru.runa.common.web.Commons.getMessage("title.create_actor", pageContext);
-	} else {
-		title = ru.runa.common.web.Commons.getMessage("title.create_group", pageContext);
-	}
 %>
-	<wf:box title='<%= title %>'>
-		<wf:createExecutorForm type="<%= executorType %>"  />
-	</wf:box>
+	<wf:createExecutorForm type="<%= executorType %>" />
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />
 </tiles:insert>

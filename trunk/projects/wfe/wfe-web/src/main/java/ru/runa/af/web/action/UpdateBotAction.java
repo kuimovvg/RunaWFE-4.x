@@ -30,7 +30,7 @@ public class UpdateBotAction extends ActionBase {
             Bot bot = botService.getBot(getLoggedUser(request), botForm.getBotId());
             bot.setUsername(botForm.getWfeUser());
             bot.setPassword(botForm.getWfePassword());
-            bot.setStartTimeout(botForm.getBotTimeout());
+            // bot.setStartTimeout(botForm.getBotTimeout());
             bot.setBotStation(botService.getBotStation(botForm.getBotStationId()));
             botService.updateBot(getLoggedUser(request), bot);
         } catch (Exception e) {

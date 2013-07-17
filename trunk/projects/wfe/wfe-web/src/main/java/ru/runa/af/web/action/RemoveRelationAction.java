@@ -17,9 +17,6 @@
  */
 package ru.runa.af.web.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,54 +24,24 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import ru.runa.af.web.form.RelationIdsForm;
-import ru.runa.common.web.Commons;
-import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
+import ru.runa.common.web.form.IdsForm;
 import ru.runa.wfe.service.delegate.Delegates;
 
-/**
- * @struts:action path="/removeRelation" name="relationIdsForm" validate="false"
- *                input = "/WEB-INF/af/manage_relation_members.jsp"
- * @struts.action-forward name="success" path="/manage_relation.do" redirect =
- *                        "true"
- * @struts.action-forward name="failure" path="/manage_relation.do" redirect =
- *                        "true"
- */
 public class RemoveRelationAction extends ActionBase {
     public static final String ACTION_PATH = "/removeRelation";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse responce) {
-        RelationIdsForm relationForm = (RelationIdsForm) form;
         try {
-            for (Long relationId : relationForm.getIds()) {
-                Delegates.getRelationService().removeRelationPair(getLoggedUser(request), relationId);
+            IdsForm listAllForm = (IdsForm) form;
+            for (Long id : listAllForm.getIds()) {
+                Delegates.getRelationService().removeRelation(getLoggedUser(request), id);
             }
         } catch (Exception e) {
             addError(request, e);
-            return getFailureForward(mapping, relationForm);
+            return mapping.findForward(ru.runa.common.web.Resources.FORWARD_FAILURE);
         }
-        return getSucessForward(mapping, relationForm);
-    }
-
-    private ActionForward getSucessForward(ActionMapping mapping, RelationIdsForm relationForm) {
-        if (relationForm.getSuccess() == null) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), "relationName", relationForm.getRelationName());
-        }
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("relationName", relationForm.getRelationName());
-        params.put("executorId", relationForm.getExecutorId());
-        return Commons.forward(new ActionForward(relationForm.getSuccess()), params);
-    }
-
-    private ActionForward getFailureForward(ActionMapping mapping, RelationIdsForm relationForm) {
-        if (relationForm.getFailure() == null) {
-            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), "relationName", relationForm.getRelationName());
-        }
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("relationName", relationForm.getRelationName());
-        params.put("executorId", relationForm.getExecutorId());
-        return Commons.forward(new ActionForward(relationForm.getFailure()), params);
+        return mapping.findForward(ru.runa.common.web.Resources.FORWARD_SUCCESS);
     }
 }

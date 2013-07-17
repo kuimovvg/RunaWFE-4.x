@@ -21,7 +21,7 @@ import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
-import ru.runa.wf.web.action.UpdatePermissionOnProcessAction;
+import ru.runa.wf.web.action.UpdatePermissionsOnProcessAction;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Permission;
 
@@ -57,6 +57,6 @@ public class UpdatePermissionsOnProcessFormTag extends ProcessBaseFormTag {
 
     @Override
     public String getAction() {
-        return UpdatePermissionOnProcessAction.ACTION_PATH;
+        return UpdatePermissionsOnProcessAction.ACTION_PATH;
     }
 }

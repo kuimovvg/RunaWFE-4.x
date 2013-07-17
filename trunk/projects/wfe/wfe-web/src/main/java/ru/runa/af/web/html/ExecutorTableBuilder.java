@@ -19,10 +19,10 @@ package ru.runa.af.web.html;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.ecs.html.Input;
 import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.form.UpdateExecutorDetailsForm;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -31,15 +31,9 @@ import ru.runa.wfe.user.Group;
 /*
  * Created on 20.08.2004
  */
-public class ExecutorTableBuilder extends BaseDetailTableBuilder {
-    private final boolean isEmpty;
-
-    private Executor executor;
-
-    private final boolean isActor;
-
-    private boolean areInputsDisabled = false;
-
+public class ExecutorTableBuilder {
+    private final Executor executor;
+    private final boolean enabled;
     private final PageContext pageContext;
 
     /**
@@ -51,9 +45,7 @@ public class ExecutorTableBuilder extends BaseDetailTableBuilder {
     public ExecutorTableBuilder(Executor executor, boolean areInputsDisabled, PageContext pageContext) {
         this.executor = executor;
         this.pageContext = pageContext;
-        isActor = (executor instanceof Actor);
-        isEmpty = false;
-        this.areInputsDisabled = areInputsDisabled;
+        enabled = !areInputsDisabled;
     }
 
     /**
@@ -63,38 +55,38 @@ public class ExecutorTableBuilder extends BaseDetailTableBuilder {
      *            type of table
      */
     public ExecutorTableBuilder(boolean isActor, PageContext pageContext) {
-        this.isActor = isActor;
-        isEmpty = true;
+        if (isActor) {
+            executor = new Actor("", "", "", null, "", "");
+        } else {
+            executor = new Group("", "");
+        }
+        enabled = true;
         this.pageContext = pageContext;
     }
 
     public Table buildTable() {
+        Actor actor = (Actor) (executor instanceof Actor ? executor : null);
         Table table = new Table();
         table.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE);
-        table.addElement(createTRWith2TDRequired(Messages.getMessage(Messages.LABEL_EXECUTOR_NAME, pageContext),
-                UpdateExecutorDetailsForm.NEW_NAME_INPUT_NAME, isEmpty || executor == null ? "" : executor.getName(), areInputsDisabled, Input.TEXT));
-        if (isActor) {
-            table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_ACTOR_FULL_NAME, pageContext),
-                    UpdateExecutorDetailsForm.FULL_NAME_INPUT_NAME, isEmpty ? "" : ((Actor) executor).getFullName(), areInputsDisabled));
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_EXECUTOR_NAME, pageContext),
+                UpdateExecutorDetailsForm.NEW_NAME_INPUT_NAME, executor.getName(), enabled, true));
+        if (actor != null) {
+            table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_ACTOR_FULL_NAME, pageContext),
+                    UpdateExecutorDetailsForm.FULL_NAME_INPUT_NAME, actor.getFullName(), enabled, false));
         }
-        table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_EXECUTOR_DESCRIPTION, pageContext),
-                UpdateExecutorDetailsForm.DESCRIPTION_INPUT_NAME, isEmpty ? "" : executor.getDescription(), areInputsDisabled));
-        if (isActor) {
-            table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_ACTOR_CODE, pageContext), UpdateExecutorDetailsForm.CODE_INPUT_NAME,
-                    isEmpty ? "" : String.valueOf(((Actor) executor).getCode()), areInputsDisabled));
-            table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_ACTOR_EMAIL, pageContext),
-                    UpdateExecutorDetailsForm.EMAIL_INPUT_NAME,
-                    isEmpty || ((Actor) executor).getEmail() == null ? "" : String.valueOf(((Actor) executor).getEmail()), areInputsDisabled));
-            table.addElement(createTRWith2TD(Messages.getMessage(Messages.LABEL_ACTOR_PHONE, pageContext),
-                    UpdateExecutorDetailsForm.PHONE_INPUT_NAME,
-                    isEmpty || ((Actor) executor).getPhone() == null ? "" : ((Actor) executor).getPhone(), areInputsDisabled));
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_EXECUTOR_DESCRIPTION, pageContext),
+                UpdateExecutorDetailsForm.DESCRIPTION_INPUT_NAME, executor.getDescription() == null ? "" : executor.getDescription(), enabled, false));
+        if (actor != null) {
+            table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_ACTOR_CODE, pageContext),
+                    UpdateExecutorDetailsForm.CODE_INPUT_NAME, actor.getCode() != null ? actor.getCode().toString() : "", enabled, false));
+            table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_ACTOR_EMAIL, pageContext),
+                    UpdateExecutorDetailsForm.EMAIL_INPUT_NAME, actor.getEmail() == null ? "" : actor.getEmail(), enabled, false));
+            table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_ACTOR_PHONE, pageContext),
+                    UpdateExecutorDetailsForm.PHONE_INPUT_NAME, actor.getPhone() == null ? "" : actor.getPhone(), enabled, false));
         } else {
-            table.addElement(createTRWith2TD(
-                    Messages.getMessage(Messages.LABEL_GROUP_AD, pageContext),
-                    UpdateExecutorDetailsForm.EMAIL_INPUT_NAME,
-                    isEmpty ? ""
-                            : ((Group) executor).getLdapGroupName() != null ? String.valueOf(((Group) executor).getLdapGroupName())
-                                    : "", areInputsDisabled));
+            Group group = (Group) executor;
+            table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_GROUP_AD, pageContext),
+                    UpdateExecutorDetailsForm.EMAIL_INPUT_NAME, group.getLdapGroupName() != null ? group.getLdapGroupName() : "", enabled, false));
         }
         return table;
     }

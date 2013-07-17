@@ -52,7 +52,6 @@ import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.BotService;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -77,8 +76,7 @@ public class BotTaskListTag extends TitledFormTag {
 
     @Override
     public boolean isFormButtonEnabled() {
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        return authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+        return Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
     }
 
     @Override
@@ -86,8 +84,7 @@ public class BotTaskListTag extends TitledFormTag {
         tdFormElement.addElement(new Input(Input.hidden, IdsForm.ID_INPUT_NAME, Long.toString(botId)));
         BotService botService = Delegates.getBotService();
         getForm().setEncType(Form.ENC_UPLOAD);
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        boolean disabled = !authorizationService.isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
+        boolean disabled = !Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.BOT_STATION_CONFIGURE, BotStation.INSTANCE);
         List<BotTask> tasks = botService.getBotTasks(getUser(), botId);
         int nameSize = 1;
         for (BotTask botTask : tasks) {
@@ -161,7 +158,7 @@ public class BotTaskListTag extends TitledFormTag {
         public TR buildNext() {
             TR tr = new TR();
             BotTask task = iterator.next();
-            tr.addElement(buildSelectTD(task));
+            tr.addElement(buildCheckboxTD(task));
             tr.addElement(buildNameTD(task));
             tr.addElement(buildHandlerTD(task));
             tr.addElement(buildConfigurationUploadTD(task));
@@ -208,7 +205,7 @@ public class BotTaskListTag extends TitledFormTag {
             return resTD;
         }
 
-        private TD buildSelectTD(BotTask task) {
+        private TD buildCheckboxTD(BotTask task) {
             TD checkboxTD = new TD();
             Input checkBoxInput = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, String.valueOf(task.getId()));
             checkBoxInput.setChecked(true);

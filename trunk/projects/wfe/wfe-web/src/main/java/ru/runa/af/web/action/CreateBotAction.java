@@ -6,12 +6,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 
 import ru.runa.af.web.form.BotForm;
+import ru.runa.common.web.Messages;
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.service.BotService;
 import ru.runa.wfe.service.delegate.Delegates;
+
+import com.google.common.base.Strings;
 
 /**
  * @author petrmikheev
@@ -30,15 +34,19 @@ public class CreateBotAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         BotForm botForm = (BotForm) form;
         try {
-            BotService botService = Delegates.getBotService();
+            if (Strings.isNullOrEmpty(botForm.getWfeUser())) {
+                addError(request, new ActionMessage(Messages.ERROR_FILL_REQUIRED_VALUES));
+                return mapping.findForward(Resources.FORWARD_FAILURE);
+            }
             Bot bot = new Bot();
             bot.setUsername(botForm.getWfeUser());
             bot.setPassword(botForm.getWfePassword());
-            bot.setStartTimeout(botForm.getBotTimeout());
-            bot.setBotStation(botService.getBotStation(botForm.getBotStationId()));
-            botService.createBot(getLoggedUser(request), bot);
+            // bot.setStartTimeout(botForm.getBotTimeout());
+            bot.setBotStation(Delegates.getBotService().getBotStation(botForm.getBotStationId()));
+            Delegates.getBotService().createBot(getLoggedUser(request), bot);
         } catch (Exception e) {
             addError(request, e);
+            return mapping.findForward(Resources.FORWARD_FAILURE);
         }
         return new ActionForward("/bot_station.do?botStationId=" + botForm.getBotStationId());
     }

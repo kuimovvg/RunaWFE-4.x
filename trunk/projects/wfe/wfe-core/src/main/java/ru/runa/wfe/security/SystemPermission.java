@@ -24,15 +24,10 @@ import com.google.common.collect.Lists;
 public class SystemPermission extends Permission {
     private static final long serialVersionUID = 1L;
 
-    public static final String LOGIN_TO_SYSTEM_PERMISSION_NAME = "permission.login_to_system";
-    public static final String CREATE_EXECUTOR_PERMISSION_NAME = "permission.create_executor";
-    public static final String CHANGE_SELF_PASSWORD_PERMISSION_NAME = "permission.change_self_password";
-    public static final String VIEW_LOGS_PERMISSION_NAME = "permission.view_logs";
-
-    public static final Permission LOGIN_TO_SYSTEM = new SystemPermission((byte) 2, LOGIN_TO_SYSTEM_PERMISSION_NAME);
-    public static final Permission CREATE_EXECUTOR = new SystemPermission((byte) 3, CREATE_EXECUTOR_PERMISSION_NAME);
-    public static final Permission CHANGE_SELF_PASSWORD = new SystemPermission((byte) 5, CHANGE_SELF_PASSWORD_PERMISSION_NAME);
-    public static final Permission VIEW_LOGS = new SystemPermission((byte) 7, VIEW_LOGS_PERMISSION_NAME);
+    public static final Permission LOGIN_TO_SYSTEM = new SystemPermission((byte) 2, "permission.login_to_system");
+    public static final Permission CREATE_EXECUTOR = new SystemPermission((byte) 3, "permission.create_executor");
+    public static final Permission CHANGE_SELF_PASSWORD = new SystemPermission((byte) 5, "permission.change_self_password");
+    public static final Permission VIEW_LOGS = new SystemPermission((byte) 7, "permission.view_logs");
     private static final List<Permission> SYSTEM_PERMISSIONS = fillPermissions();
 
     public SystemPermission(byte maskPower, String name) {

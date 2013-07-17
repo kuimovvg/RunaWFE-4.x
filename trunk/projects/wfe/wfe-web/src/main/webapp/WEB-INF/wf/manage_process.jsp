@@ -83,9 +83,9 @@ function Reload() {
 </table>
 </wf:processInfoForm>
 
-<wf:processActiveTaskMonitor identifiableId='<%= id %>'  />
-<wf:processSwimlaneMonitor identifiableId='<%= id %>'  />
-<wf:processVariableMonitor identifiableId='<%= id %>'  />
+<wf:processActiveTaskMonitor identifiableId='<%= id %>' />
+<wf:processSwimlaneMonitor identifiableId='<%= id %>' />
+<wf:processVariableMonitor identifiableId='<%= id %>' />
 <% if(!graphMode) { %>
 	<wf:processGraphForm identifiableId='<%= id %>' taskId='<%= taskId %>' childProcessId='<%= childProcessId %>'/>
 <% } %>
