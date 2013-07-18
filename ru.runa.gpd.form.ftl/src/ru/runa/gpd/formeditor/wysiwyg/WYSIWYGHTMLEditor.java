@@ -362,14 +362,15 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 if (DEBUG) {
                     PluginLogger.logInfo("Designer html = " + html);
                 }
+                return html;
             } catch (Exception e) {
                 PluginLogger.logErrorWithoutDialog("freemarker html transform", e);
+                return null;
             }
         } else {
             // bug in closing customtag tag
-            html = VarTagUtil.normalizeVarTags(html);
+            return VarTagUtil.normalizeVarTags(html);
         }
-        return html;
     }
 
     private String getSourceDocumentHTML() {
@@ -419,6 +420,9 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             }
             if (sync) {
                 String html = getDesignDocumentHTML(text);
+                if (html == null) {
+                    return null;
+                }
                 String oldContent = getSourceDocumentHTML();
                 if (!oldContent.equals(html)) {
                     sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
@@ -428,6 +432,9 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 }
             } else {
                 String html = getDesignDocumentHTML(text);
+                if (html == null) {
+                    return null;
+                }
                 String diff = StringUtils.difference(savedHTML, html);
                 boolean setDirty = (diff.length() != 0);
                 if (setDirty != isDirty()) {
