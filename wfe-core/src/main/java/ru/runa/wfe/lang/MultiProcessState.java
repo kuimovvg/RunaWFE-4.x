@@ -1,7 +1,6 @@
 package ru.runa.wfe.lang;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import ru.runa.wfe.var.VariableMapping;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.ListFormat;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class MultiProcessState extends SubProcessState {
@@ -98,13 +98,13 @@ public class MultiProcessState extends SubProcessState {
             } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
                 Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
                 Group group = TypeConversionUtil.convertTo(Group.class, miVar);
-                discriminatorValue = getActorCodes(executorDAO.getGroupActors(group));
+                discriminatorValue = executorDAO.getGroupActors(group);
             } else if ("relation".equals(miDiscriminatorType) && miVarName != null && miRelationDiscriminatorTypeParam != null) {
                 String relationName = (String) ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
                 Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(),
                         miRelationDiscriminatorTypeParam);
                 Executor rightExecutor = TypeConversionUtil.convertTo(Executor.class, relationParam);
-                discriminatorValue = getActorCodes(getActorsByRelation(relationName, rightExecutor));
+                discriminatorValue = getActorsByRelation(relationName, rightExecutor);
             }
         } else {
             for (VariableMapping variableMapping : variableMappings) {
@@ -170,29 +170,20 @@ public class MultiProcessState extends SubProcessState {
         }
     }
 
-    private List<String> getActorCodes(Collection<Actor> actors) {
-        List<String> actorCodes = new ArrayList<String>(actors.size());
-        for (Actor actor : actors) {
-            actorCodes.add(String.valueOf(actor.getCode()));
-        }
-        return actorCodes;
-    }
-
-    private Set<Actor> getActorsByRelation(String relationName, Executor rightExecutor) {
-        List<Executor> executorRightList = new ArrayList<Executor>();
-        executorRightList.add(rightExecutor);
+    private Set<Actor> getActorsByRelation(String relationName, Executor paramExecutor) {
+        List<Executor> executors = Lists.newArrayList(paramExecutor);
         Relation relation = relationDAO.getNotNull(relationName);
-        List<RelationPair> relationPairList = relationPairDAO.getExecutorsRelationPairsRight(relation, executorRightList);
-        Set<Actor> actorList = new HashSet<Actor>();
-        for (RelationPair pair : relationPairList) {
-            Executor executorleft = pair.getLeft();
-            if (executorleft instanceof Actor) {
-                actorList.add((Actor) executorleft);
-            } else if (executorleft instanceof Group) {
-                actorList.addAll(executorDAO.getGroupActors((Group) executorleft));
+        List<RelationPair> relationPairs = relationPairDAO.getExecutorsRelationPairsLeft(relation, executors);
+        Set<Actor> actors = new HashSet<Actor>();
+        for (RelationPair pair : relationPairs) {
+            Executor executor = pair.getRight();
+            if (executor instanceof Actor) {
+                actors.add((Actor) executor);
+            } else if (executor instanceof Group) {
+                actors.addAll(executorDAO.getGroupActors((Group) executor));
             }
         }
-        return actorList;
+        return actors;
     }
 
     @Override
