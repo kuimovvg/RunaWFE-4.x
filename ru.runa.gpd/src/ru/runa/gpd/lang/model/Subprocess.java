@@ -78,8 +78,8 @@ public class Subprocess extends Node implements Active {
     }
 
     @Override
-    protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
-        return super.allowLeavingTransition(target, transitions) && transitions.size() == 0;
+    protected boolean allowLeavingTransition(List<Transition> transitions) {
+        return super.allowLeavingTransition(transitions) && transitions.size() == 0;
     }
 
     @Override
