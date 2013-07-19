@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.StringFormat;
 
 import com.google.common.collect.Lists;
 
@@ -16,6 +18,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         List<String> variableNames = Lists.newArrayList();
+        List<String> componentFormatClassNames = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
         int i = 0;
         int rowsCount = 0;
@@ -24,11 +27,15 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
             if (variableName == null) {
                 break;
             }
-            variableNames.add(variableName);
-            List<Object> list = variableProvider.getValue(List.class, variableName);
+            WfVariable variable = variableProvider.getVariableNotNull(variableName);
+            String[] componentClassNames = variable.getDefinition().getFormatComponentClassNames();
+            String elementFormatClassName = (componentClassNames.length > 0) ? componentClassNames[0] : StringFormat.class.getName();
+            List<Object> list = (List<Object>) variable.getValue();
             if (list == null) {
                 list = new ArrayList<Object>();
             }
+            variableNames.add(variableName);
+            componentFormatClassNames.add(elementFormatClassName);
             lists.add(list);
             if (list.size() > rowsCount) {
                 rowsCount = list.size();

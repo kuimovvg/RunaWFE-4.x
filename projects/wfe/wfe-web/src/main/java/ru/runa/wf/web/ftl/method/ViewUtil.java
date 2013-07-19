@@ -67,6 +67,7 @@ public class ViewUtil {
         if (javaSort) {
             Collections.sort(executors);
         }
+        html += "<option value=\"\"> ------------------------- </option>";
         for (Executor executor : executors) {
             html += "<option value=\"ID" + executor.getId() + "\"";
             if (Objects.equal(executor, value)) {
