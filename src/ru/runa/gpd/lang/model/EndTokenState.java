@@ -4,7 +4,7 @@ import java.util.List;
 
 public class EndTokenState extends Node {
     @Override
-    protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
+    protected boolean allowLeavingTransition(List<Transition> transitions) {
         return false;
     }
 }
