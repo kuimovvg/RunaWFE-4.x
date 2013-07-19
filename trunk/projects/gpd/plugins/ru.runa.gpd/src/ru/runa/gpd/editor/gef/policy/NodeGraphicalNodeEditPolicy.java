@@ -26,7 +26,7 @@ public class NodeGraphicalNodeEditPolicy extends GraphicalNodeEditPolicy {
     @Override
     protected Command getConnectionCreateCommand(CreateConnectionRequest request) {
         Node node = getNode();
-        if (!node.canAddLeavingTransition(null)) {
+        if (!node.canAddLeavingTransition()) {
             return null;
         }
         TransitionCreateCommand command = new TransitionCreateCommand();

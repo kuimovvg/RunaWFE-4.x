@@ -37,8 +37,8 @@ public class ReceiveMessageNode extends Node implements Active, ITimed {
     }
 
     @Override
-    protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
-        return super.allowLeavingTransition(target, transitions) && (transitions.size() == 0 || (transitions.size() == 1 && getTimer() != null));
+    protected boolean allowLeavingTransition(List<Transition> transitions) {
+        return super.allowLeavingTransition(transitions) && (transitions.size() == 0 || (transitions.size() == 1 && getTimer() != null));
     }
 
     @Override
