@@ -46,7 +46,7 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
         Object source = getBusinessObjectForPictogramElement(context.getSourcePictogramElement());
         if (source instanceof Node) {
             Node sourceNode = (Node) source;
-            return sourceNode.canAddLeavingTransition(null /*TODO*/);
+            return sourceNode.canAddLeavingTransition();
         }
         return false;
     }
@@ -55,7 +55,10 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
     public boolean canCreate(ICreateConnectionContext context) {
         Object source = getBusinessObjectForPictogramElement(context.getSourcePictogramElement());
         Object target = getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
-        return (target instanceof Node && source != target);
+        if (target instanceof Node) {
+            return ((Node) target).canAddArrivingTransition((Node) source);
+        }
+        return false;
     }
 
     @Override

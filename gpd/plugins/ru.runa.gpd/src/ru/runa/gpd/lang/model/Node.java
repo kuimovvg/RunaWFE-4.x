@@ -191,15 +191,15 @@ public abstract class Node extends NamedGraphElement implements Describable {
     public final boolean canReconnectLeavingTransition(Transition transition, Node target) {
         List<Transition> transitions = getLeavingTransitions();
         transitions.remove(transition);
-        return allowLeavingTransition(target, transitions);
+        return allowLeavingTransition(transitions);
     }
 
-    public final boolean canAddLeavingTransition(Node target) {
+    public final boolean canAddLeavingTransition() {
         List<Transition> transitions = getLeavingTransitions();
-        return allowLeavingTransition(target, transitions);
+        return allowLeavingTransition(transitions);
     }
 
-    protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
+    protected boolean allowLeavingTransition(List<Transition> transitions) {
         return true;
     }
 

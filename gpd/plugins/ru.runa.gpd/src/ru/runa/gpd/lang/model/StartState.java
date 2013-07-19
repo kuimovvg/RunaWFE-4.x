@@ -9,7 +9,7 @@ public class StartState extends FormNode {
     }
 
     @Override
-    protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
+    protected boolean allowLeavingTransition(List<Transition> transitions) {
         return true;
     }
 }

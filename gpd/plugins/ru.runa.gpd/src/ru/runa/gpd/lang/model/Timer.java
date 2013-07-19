@@ -91,7 +91,16 @@ public class Timer extends Node {
     }
 
     @Override
-    protected boolean allowLeavingTransition(Node target, List<Transition> transitions) {
+    protected boolean allowArrivingTransition(Node source, List<Transition> transitions) {
+        if (getParent() instanceof ITimed) {
+            // boundary timer
+            return false;
+        }
+        return super.allowArrivingTransition(source, transitions);
+    }
+
+    @Override
+    protected boolean allowLeavingTransition(List<Transition> transitions) {
         return transitions.size() == 0;
     }
 
