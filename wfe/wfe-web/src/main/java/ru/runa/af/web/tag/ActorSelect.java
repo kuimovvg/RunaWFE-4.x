@@ -28,6 +28,7 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.TemporaryGroup;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Strings;
@@ -48,6 +49,9 @@ public class ActorSelect extends Select {
         List<Executor> executors = (List<Executor>) Delegates.getExecutorService().getExecutors(user, batchPresentation);
         ArrayList<Option> options = new ArrayList<Option>();
         for (Executor executor : executors) {
+            if (executor instanceof TemporaryGroup) {
+                continue;
+            }
             Option option = new Option();
             option.setValue(executor.getName());
             option.addElement(executor.getName() + (executor instanceof Actor ? (" (" + executor.getLabel() + ")") : ""));
