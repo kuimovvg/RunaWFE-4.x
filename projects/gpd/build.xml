@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project basedir="." default="build" name="Runa Graphical Process Designer">
+	<dirname property="WFE.RUNA GPD.basedir" file="${ant.file.Runa Graphical Process Designer}"/>
+
+	<property name="project.version" value="dev"/>
+	<property name="project.build.id" value="dev"/>
+
+	<dirname property="RunaWFE-commons.basedir" file="${ant.file.RunaWFE-commons}"/>
+	<property file="${RunaWFE-commons.basedir}/build.properties" />
+	<property file="build.properties" />
+
+	<property name="javadoc" value="http://java.sun.com/j2se/1.5/docs/api" />
+	<property name="build.dir" value="build" />
+	<property name="dist.dir" value="dist" />
+	<property name="lib.dir" value="lib" />
+	<property name="deploy.dir" value="deploy" />
+	<property name="report.dir" location="report" />
+	<property name="resources.dir" value="resources" />
+	<property name="operation.system" value="Windows"/>
+	<property name="jboss.timeout" value="120"/>
+	<property name="web.port" value="8080"/>
+
+	<!-- Third party lib, which stored in repository (in lib from build.properties) -->
+	<fileset id="local.lib.fileset" dir="${lib.dir}">
+		<include name="**/*.jar" />
+	</fileset>
+
+        <fileset id="system.lib.fileset" dir=".">
+                <include name="no match file pattern" />
+        </fileset>
+			
+        <fileset id="cactustests.lib.fileset" dir=".">
+                <include name="lib/cactus/*.jar" />
+                <include name="lib/commons/*.jar" />
+                <include name="lib/nekohtml/*.jar" />
+                <include name="lib/jboss/*.jar" />
+        </fileset>
+
+	<!-- Jar files from JBOSS which used by build and AdminKit -->
+	<fileset id="libJBoss.fileset" dir="${jboss.home.dir}/client">
+		<include name="jbossall-client.jar" />
+		<include name="mail.jar" />
+	</fileset>
+
+	<!-- This lib used on Build -->
+	<path id="lib.classpath">
+		<fileset refid="local.lib.fileset" />
+		<fileset refid="libJBoss.fileset" />
+		<fileset refid="system.lib.fileset" />
+	</path>
+
+	<path id="app.class.path">
+		<fileset dir="${dist.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+		<fileset refid="local.lib.fileset" />
+		<fileset refid="libJBoss.fileset" />
+		<fileset refid="system.lib.fileset" />
+	</path>
+
+       <taskdef resource="cactus.tasks">
+               <classpath>
+                       <fileset refid="system.lib.fileset"/>
+                       <fileset refid="cactustests.lib.fileset"/>
+               </classpath>
+       </taskdef>
+
+	<target name="abs-test">
+		<antcall target="start.jboss-server" />
+		<antcall target="test" />
+		<antcall target="stop.jboss-server" />
+	</target>
+
+	<target name="check.jboss.running"> 
+		<condition property="is.jboss.running">
+			<http url="http://localhost:${web.port}"/>
+		</condition>
+	</target>
+
+	<target name="report.tests">
+		<junitreport todir="${report.dir}">
+			<fileset dir="${report.dir}" includes="TEST-*.xml" />
+			<report todir="${report.dir}" format="frames" />
+		</junitreport>
+	</target>
+	
+	<target name="build">
+		<replace dir="${basedir}/plugins" token="_RunaWFE-Version_" value="${project.version}"/>
+		<java jar="${eclipse.home.dir}/plugins/org.eclipse.equinox.launcher_1.2.0.v20110502.jar" fork="true" failonerror="true">
+			<arg value="-application"/>
+			<arg value="org.eclipse.ant.core.antRunner"/>
+			<arg value="-buildfile"/>
+			<arg value="${eclipse.home.dir}/plugins/org.eclipse.pde.build_3.7.0.v20111116-2009/scripts/productBuild/productBuild.xml"/>
+			<arg value="-Dbuilder=${basedir}/build.conf"/>
+			<arg value="-Dproduct=${basedir}/plugins/ru.runa.gpd.app/gpd.product"/>
+			<arg value="-DbuildDirectory=${basedir}"/>
+			<arg value="-Dbase=${eclipse.home.dir}/.."/>
+			<arg value="-DbaseLocation=${eclipse.home.dir}"/>
+			<arg value="-Dproject.version=${project.version}"/>
+			<arg value="-Dproject.build.id=${project.build.id}"/>
+		</java>
+	</target>
+	
+	<target name="copy.libs" unless="skip.gpd.libs">
+		<ant dir="${basedir}/plugins/org.jbpm.core" antfile="libs.build.xml"/>
+	</target>
+	
+	<target name="abs-build" depends="copy.libs,build"/>
+	
+</project>
