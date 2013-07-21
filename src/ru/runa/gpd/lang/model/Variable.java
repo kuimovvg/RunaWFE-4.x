@@ -141,7 +141,7 @@ public class Variable extends NamedGraphElement {
             return getFormatLabel();
         }
         if (PROPERTY_PUBLIC_VISIBILITY.equals(id)) {
-            return publicVisibility ? Localization.getString("message.yes") : Localization.getString("message.no");
+            return publicVisibility ? Localization.getString("yes") : Localization.getString("false");
         }
         if (PROPERTY_DEFAULT_VALUE.equals(id)) {
             return defaultValue == null ? "" : defaultValue;

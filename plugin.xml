@@ -1339,14 +1339,14 @@
    <extension
          point="ru.runa.gpd.swimlaneElements">
       <element
-            className="ru.runa.gpd.extension.orgfunction.SwimlaneRelationsElement"
+            className="ru.runa.gpd.swimlane.RelationSwimlaneElement"
             name="SwimlaneElement.RelationLabel">
       </element>
       <element
-            className="ru.runa.gpd.extension.orgfunction.SwimlaneGroupElement"
+            className="ru.runa.gpd.swimlane.GroupSwimlaneElement"
             name="SwimlaneElement.OrgFunctionsGroupLabel">
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.swimlane.DynamicSwimlaneElement"
                name="SwimlaneElement.ChiefFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
@@ -1354,7 +1354,7 @@
             </param>
          </element>
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.swimlane.DynamicSwimlaneElement"
                name="SwimlaneElement.DirectorFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
@@ -1362,7 +1362,7 @@
             </param>
          </element>
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.swimlane.DynamicSwimlaneElement"
                name="SwimlaneElement.DemoChiefFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
@@ -1370,7 +1370,7 @@
             </param>
          </element>
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneGeneralElement"
+               className="ru.runa.gpd.swimlane.DynamicSwimlaneElement"
                name="SwimlaneElement.ExecutorByNameFunctionLabel">
             <param
                   name="orgFunctionDefinitionName"
@@ -1379,14 +1379,14 @@
          </element>
       </element>
       <element
-            className="ru.runa.gpd.extension.orgfunction.SwimlaneWFGroupElement"
+            className="ru.runa.gpd.swimlane.ExecutorGroupSwimlaneElement"
             name="SwimlaneElement.WFFunctionsGroupLabel">
          <param
                name="description"
                value="SwimlaneElement.WFFunctionsGroupDescription">
          </param>
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneWFElement"
+               className="ru.runa.gpd.swimlane.ExecutorSwimlaneElement"
                name="SwimlaneElement.WFUsersLabel">
             <param
                   name="mask"
@@ -1394,7 +1394,7 @@
             </param>
          </element>
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneWFElement"
+               className="ru.runa.gpd.swimlane.ExecutorSwimlaneElement"
                name="SwimlaneElement.WFGroupsLabel">
             <param
                   name="mask"
@@ -1402,7 +1402,7 @@
             </param>
          </element>
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneWFElement"
+               className="ru.runa.gpd.swimlane.ExecutorSwimlaneElement"
                name="SwimlaneElement.WFUsersGroupsLabel">
             <param
                   name="mask"
@@ -1411,19 +1411,19 @@
          </element>
       </element>
       <element
-            className="ru.runa.gpd.extension.orgfunction.SwimlaneGroupElement"
+            className="ru.runa.gpd.swimlane.GroupSwimlaneElement"
             name="SwimlaneElement.CustomFunctionsGroupLabel">
          <element
-               className="ru.runa.gpd.extension.orgfunction.SwimlaneADElement"
+               className="ru.runa.gpd.swimlane.ActiveDirectorySwimlaneElement"
                name="SwimlaneElement.ADExecutorsLabel">
          </element>
       </element>
       <element
-            className="ru.runa.gpd.extension.orgfunction.SwimlaneManualElement"
+            className="ru.runa.gpd.swimlane.ManualSwimlaneElement"
             name="SwimlaneElement.ManualLabel">
       </element>
       <element
-            className="ru.runa.gpd.extension.orgfunction.SwimlaneBotElement"
+            className="ru.runa.gpd.swimlane.BotSwimlaneElement"
             name="SwimlaneElement.BotLabel">
       </element>
    </extension>

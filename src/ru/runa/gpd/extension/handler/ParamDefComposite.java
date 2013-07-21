@@ -9,13 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.MenuDetectEvent;
-import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -23,16 +19,17 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.ParamDef.Presentation;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
-import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+
+import com.google.common.base.Objects;
 
 public class ParamDefComposite extends Composite {
     protected final ParamDefConfig config;
@@ -42,6 +39,7 @@ public class ParamDefComposite extends Composite {
     private MessageDisplay messageDisplay;
     private boolean helpInlined = false;
     private boolean menuForSettingVariable = false;
+    private String[] booleanValues = { Localization.getString("yes"), Localization.getString("no") };
 
     public ParamDefComposite(Composite parent, ParamDefConfig config, Map<String, String> properties, List<Variable> variables) {
         super(parent, SWT.NONE);
@@ -136,40 +134,28 @@ public class ParamDefComposite extends Composite {
         }
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
-            textInput.addMenuDetectListener(new MenuDetectListener() {
-                @Override
-                public void menuDetected(MenuDetectEvent e) {
-                    if (textInput.getMenu() == null) {
-                        MenuManager menuManager = new MenuManager();
-                        Menu menu = menuManager.createContextMenu(getShell());
-                        menuManager.add(new Action(Localization.getString("button.insert_variable")) {
-                            @Override
-                            public void run() {
-                                Set<String> formatFilters = new HashSet<String>();
-                                formatFilters.add(String.class.getName());
-                                ChooseVariableDialog dialog = new ChooseVariableDialog(getVariableNames(formatFilters));
-                                String variableName = dialog.openDialog();
-                                if (variableName != null) {
-                                    String r = "${" + variableName + "}";
-                                    textInput.setText(r);
-                                }
-                            }
-                        });
-                        textInput.setMenu(menu);
-                    }
-                }
-            });
+            Set<String> formatFilters = new HashSet<String>();
+            formatFilters.add(String.class.getName());
+            new InsertVariableTextMenuDetectListener(textInput, getVariableNames(formatFilters));
         }
         return textInput;
     }
 
     private Combo addComboField(final ParamDef paramDef, boolean editable) {
+        String selectedValue = properties.get(paramDef.getName());
+        if (selectedValue == null) {
+            selectedValue = paramDef.getDefaultValue();
+        }
         List<String> variableNames = new ArrayList<String>();
         if (paramDef.isUseVariable()) {
             variableNames.addAll(getVariableNames(paramDef.getFormatFilters()));
         }
-        for (String string : paramDef.getComboItems()) {
-            variableNames.add(string);
+        boolean localizeTextValue = false;
+        for (String option : paramDef.getComboItems()) {
+            variableNames.add(Localization.getString(option));
+            if (Objects.equal(option, selectedValue)) {
+                localizeTextValue = true;
+            }
         }
         Collections.sort(variableNames);
         if (paramDef.isOptional()) {
@@ -181,10 +167,6 @@ public class ParamDefComposite extends Composite {
         gridData.minimumWidth = 200;
         label.setLayoutData(gridData);
         label.setText(getLabelText(paramDef));
-        String selectedValue = properties.get(paramDef.getName());
-        if (selectedValue == null) {
-            selectedValue = paramDef.getDefaultValue();
-        }
         Combo combo;
         if (editable) {
             String lastUserInputValue = variableNames.contains(selectedValue) ? null : selectedValue;
@@ -200,7 +182,12 @@ public class ParamDefComposite extends Composite {
             combo.add(item);
         }
         if (editable) {
-            ((TypedUserInputCombo) combo).setTypeClassName(paramDef.getFormatFilters().size() > 0 ? paramDef.getFormatFilters().get(0) : String.class.getName());
+            String typeClassName = paramDef.getFormatFilters().size() > 0 ? paramDef.getFormatFilters().get(0) : String.class.getName();
+            if (Boolean.class.getName().equals(typeClassName)) {
+                ((TypedUserInputCombo) combo).setBooleanValues(booleanValues);
+                localizeTextValue = true;
+            }
+            ((TypedUserInputCombo) combo).setTypeClassName(typeClassName);
         }
         if (!helpInlined) {
             combo.addFocusListener(new FocusAdapter() {
@@ -214,7 +201,7 @@ public class ParamDefComposite extends Composite {
         typeComboData.minimumWidth = 200;
         combo.setLayoutData(typeComboData);
         if (selectedValue != null) {
-            combo.setText(selectedValue);
+            combo.setText(localizeTextValue ? Localization.getString(selectedValue) : selectedValue);
         }
         return combo;
     }
@@ -286,6 +273,20 @@ public class ParamDefComposite extends Composite {
                     }
                 } else { // Combo
                     propertyValue = ((Combo) control).getText();
+                    String[] comboItems = config.getParamDef(propertyName).getComboItems();
+                    for (String comboValue : comboItems) {
+                        // TODO ILocalization from plugin
+                        if (Objects.equal(propertyValue, Localization.getString(comboValue))) {
+                            propertyValue = comboValue;
+                            break;
+                        }
+                    }
+                    if (Objects.equal(propertyValue, booleanValues[0])) {
+                        propertyValue = "true";
+                    }
+                    if (Objects.equal(propertyValue, booleanValues[1])) {
+                        propertyValue = "false";
+                    }
                 }
                 if (propertyValue != null && propertyValue.trim().length() > 0) {
                     properties.put(propertyName, propertyValue);

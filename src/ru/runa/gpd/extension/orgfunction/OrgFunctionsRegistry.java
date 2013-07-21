@@ -11,6 +11,8 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.ArtifactContentProvider;
 import ru.runa.gpd.extension.ArtifactRegistry;
 
+import com.google.common.collect.Lists;
+
 public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition> {
     private static final OrgFunctionsRegistry instance = new OrgFunctionsRegistry();
 
@@ -29,6 +31,7 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
 
     @Override
     protected void loadDefaults(List<OrgFunctionDefinition> list) {
+        list.add(OrgFunctionDefinition.DEFAULT);
         IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.orgFunctions").getExtensions();
         for (IExtension extension : extensions) {
             IConfigurationElement[] configElements = extension.getConfigurationElements();
@@ -36,17 +39,14 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
                 try {
                     String className = configElement.getAttribute("className");
                     String label = configElement.getAttribute("label");
-                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(className, label);
+                    List<OrgFunctionParameterDefinition> parameters = Lists.newArrayList();
                     IConfigurationElement[] parameterElements = configElement.getChildren();
                     for (IConfigurationElement paramElement : parameterElements) {
-                        OrgFunctionParameter orgFunctionParameter = new OrgFunctionParameter(paramElement.getAttribute("name"), paramElement.getAttribute("type"),
-                                Boolean.valueOf(paramElement.getAttribute("multiple")));
-                        String initValue = paramElement.getAttribute("value");
-                        if (initValue != null) {
-                            orgFunctionParameter.setValue(initValue);
-                        }
-                        orgFunctionDefinition.addParameter(orgFunctionParameter);
+                        OrgFunctionParameterDefinition parameterDefinition = new OrgFunctionParameterDefinition(paramElement.getAttribute("name"),
+                                paramElement.getAttribute("type"), Boolean.valueOf(paramElement.getAttribute("multiple")));
+                        parameters.add(parameterDefinition);
                     }
+                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(className, label, parameters);
                     orgFunctionDefinition.checkMultipleParameters();
                     list.add(orgFunctionDefinition);
                 } catch (Exception e) {
@@ -55,40 +55,4 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
             }
         }
     }
-
-    public static OrgFunctionDefinition parseSwimlaneConfiguration(String swimlaneConfiguration) {
-        if (swimlaneConfiguration.length() == 0) {
-            return OrgFunctionDefinition.DEFAULT;
-        }
-        int startIndex = 0;
-        String relationName = null;
-        if (swimlaneConfiguration.startsWith("@")) {
-            int leftBracketIndex = swimlaneConfiguration.indexOf("(");
-            relationName = swimlaneConfiguration.substring(1, leftBracketIndex);
-            startIndex = relationName.length() + 2;
-        }
-        int leftBracketIndex = swimlaneConfiguration.indexOf("(", startIndex);
-        int rightBracketIndex = swimlaneConfiguration.indexOf(")");
-        String orgFunctionName = swimlaneConfiguration.substring(startIndex, leftBracketIndex);
-        OrgFunctionDefinition definition = getInstance().getArtifactNotNull(orgFunctionName);
-        definition.setRelationName(relationName);
-        String parametersString = swimlaneConfiguration.substring(leftBracketIndex + 1, rightBracketIndex);
-        String[] parameters = parametersString.split(",", -1);
-        int definitionParamsSize = definition.getParameters().size();
-        if (parameters.length != definitionParamsSize) {
-            OrgFunctionParameter lastParameter = definition.getParameters().get(definitionParamsSize - 1);
-            if (definitionParamsSize < parameters.length && lastParameter.isMultiple()) {
-                // last parameter is multiple
-                definition.propagateParameter(lastParameter, parameters.length - definitionParamsSize);
-            } else {
-                throw new RuntimeException("Unapplicable parameters to org function: " + orgFunctionName);
-            }
-        }
-        for (int i = 0; i < parameters.length; i++) {
-            OrgFunctionParameter functionParameter = definition.getParameters().get(i);
-            functionParameter.setValue(parameters[i]);
-        }
-        return definition;
-    }
-
 }

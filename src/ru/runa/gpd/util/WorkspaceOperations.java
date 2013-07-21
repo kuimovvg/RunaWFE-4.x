@@ -3,7 +3,6 @@ package ru.runa.gpd.util;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,9 +72,8 @@ public class WorkspaceOperations {
             try {
                 resource.refreshLocal(IResource.DEPTH_INFINITE, null);
                 boolean processFolder = (resource instanceof IProject);
-                String message = Localization.getString(processFolder ? "Delete.project.message" : "Delete.process.message");
-                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"),
-                        MessageFormat.format(message, resource.getName()))) {
+                String message = Localization.getString(processFolder ? "Delete.project.message" : "Delete.process.message", resource.getName());
+                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"), message)) {
                     List<IFile> tmpFiles = new ArrayList<IFile>();
                     if (processFolder) {
                         for (IFile definitionFile : ProjectFinder.getProcessDefinitionFiles((IProject) resource)) {
@@ -140,7 +138,7 @@ public class WorkspaceOperations {
         IDE.saveAllEditors(new IResource[] { processDefinitionFolder }, true);
         CopyProcessDefinitionWizard wizard = new CopyProcessDefinitionWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
-        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        CompactWizardDialog dialog = new CompactWizardDialog(wizard);
         dialog.open();
     }
 
@@ -236,9 +234,8 @@ public class WorkspaceOperations {
         for (IResource resource : resources) {
             try {
                 resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-                String message = Localization.getString(getConfirmMessage(resource));
-                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"),
-                        MessageFormat.format(message, resource.getName()))) {
+                String message = Localization.getString(getConfirmMessage(resource), resource.getName());
+                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"), message)) {
                     if (resource instanceof IFile) {
                         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                         IEditorPart editor = page.findEditor(new FileEditorInput((IFile) resource));
@@ -451,7 +448,7 @@ public class WorkspaceOperations {
     public static void copyBotTask(IStructuredSelection selection) {
         CopyBotTaskWizard wizard = new CopyBotTaskWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
-        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        CompactWizardDialog dialog = new CompactWizardDialog(wizard);
         dialog.open();
         BotCache.reload();
     }

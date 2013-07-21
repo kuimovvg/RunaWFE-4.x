@@ -29,7 +29,11 @@ public abstract class GroovyTypeSupport {
         GroovyTypeSupport typeSupport = TYPES_MAP.get(className);
         while (typeSupport == null) {
             try {
-                className = Class.forName(className).getSuperclass().getName();
+                Class<?> superClass = Class.forName(className).getSuperclass();
+                if (superClass == null) {
+                    superClass = Object.class;
+                }
+                className = superClass.getName();
                 typeSupport = TYPES_MAP.get(className);
             } catch (Exception e) {
                 PluginLogger.logInfo("Not found type support for type: " + className + ", using default (" + e + ")");

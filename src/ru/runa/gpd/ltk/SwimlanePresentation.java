@@ -2,8 +2,6 @@ package ru.runa.gpd.ltk;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -13,6 +11,8 @@ import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.swimlane.SwimlaneInitializer;
+import ru.runa.gpd.swimlane.SwimlaneInitializerParser;
 
 public class SwimlanePresentation extends VariableRenameProvider<Swimlane> {
     public SwimlanePresentation(Swimlane swimlane) {
@@ -23,22 +23,15 @@ public class SwimlanePresentation extends VariableRenameProvider<Swimlane> {
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<Change> changes = new ArrayList<Change>();
         String config = element.getDelegationConfiguration();
-        if (config != null && config.contains(getVariableRef(oldVariable.getName()))) {
-            changes.add(new SwimlaneChange(element, oldVariable.getName(), newVariable.getName()));
+        SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(config);
+        if (swimlaneInitializer.hasReference(oldVariable)) {
+            changes.add(new SwimlaneInitializerChange(element, oldVariable.getName(), newVariable.getName()));
         }
         return changes;
     }
 
-    private String getVariableRef(String variableName) {
-        return "${" + variableName + "}";
-    }
-
-    private String getVariableRefQuoted(String variableName) {
-        return Pattern.quote(getVariableRef(variableName));
-    }
-
-    private class SwimlaneChange extends TextCompareChange {
-        public SwimlaneChange(Object element, String currentVariableName, String previewVariableName) {
+    private class SwimlaneInitializerChange extends TextCompareChange {
+        public SwimlaneInitializerChange(Object element, String currentVariableName, String previewVariableName) {
             super(element, currentVariableName, previewVariableName);
         }
 
@@ -55,7 +48,9 @@ public class SwimlanePresentation extends VariableRenameProvider<Swimlane> {
 
         private String getReplacementConfig() {
             String config = element.getDelegationConfiguration();
-            return config.replaceAll(getVariableRefQuoted(currentVariableName), Matcher.quoteReplacement(getVariableRef(replacementVariableName)));
+            SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(config);
+            swimlaneInitializer.onVariableRename(currentVariableName, replacementVariableName);
+            return swimlaneInitializer.toString();
         }
 
         @Override

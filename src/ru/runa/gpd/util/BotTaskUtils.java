@@ -20,14 +20,15 @@ import ru.runa.gpd.extension.handler.ConfigBasedProvider;
 import ru.runa.gpd.extension.handler.ParamBasedProvider;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.extension.handler.ParamDefGroup;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskLink;
 import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
+import ru.runa.gpd.swimlane.OrgFunctionSwimlaneInitializer;
+import ru.runa.gpd.swimlane.SwimlaneInitializer;
+import ru.runa.gpd.swimlane.SwimlaneInitializerParser;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -152,10 +153,13 @@ public class BotTaskUtils {
      */
     public static String getBotName(Swimlane swimlane) {
         if (swimlane != null && swimlane.getDelegationConfiguration() != null) {
-            OrgFunctionDefinition definition = OrgFunctionsRegistry.parseSwimlaneConfiguration(swimlane.getDelegationConfiguration());
-            if (definition != null && BotTask.SWIMLANE_DEFINITION_NAME.equals(definition.getName())) {
-                if (definition.getParameters().size() > 0) {
-                    return definition.getParameters().get(0).getValue();
+            SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(swimlane.getDelegationConfiguration());
+            if (swimlaneInitializer instanceof OrgFunctionSwimlaneInitializer) {
+                OrgFunctionSwimlaneInitializer orgFunctionSwimlaneInitializer = (OrgFunctionSwimlaneInitializer) swimlaneInitializer;
+                if (BotTask.SWIMLANE_DEFINITION_NAME.equals(orgFunctionSwimlaneInitializer.getDefinition().getName())) {
+                    if (orgFunctionSwimlaneInitializer.getParameters().size() > 0) {
+                        return orgFunctionSwimlaneInitializer.getParameters().get(0).getValue();
+                    }
                 }
             }
         }
