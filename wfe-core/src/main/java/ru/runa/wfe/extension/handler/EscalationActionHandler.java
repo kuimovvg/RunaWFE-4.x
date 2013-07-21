@@ -30,8 +30,8 @@ import ru.runa.wfe.audit.TaskEscalationLog;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.ActionHandler;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.task.Task;
@@ -113,7 +113,7 @@ public class EscalationActionHandler implements ActionHandler {
             assignedExecutors.addAll(previousSwimlaneActors);
             for (Actor previousActor : previousSwimlaneActors) {
                 String swimlaneInitializer = orgFunctionClassName + "(" + previousActor.getCode() + ")";
-                List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(swimlaneInitializer);
+                List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(swimlaneInitializer, null);
                 if (executors.size() == 0) {
                     log.debug("No escalation will be done for member: " + swimlaneInitializer);
                 } else {

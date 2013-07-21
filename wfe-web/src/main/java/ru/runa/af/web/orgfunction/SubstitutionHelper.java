@@ -17,39 +17,17 @@
  */
 package ru.runa.af.web.orgfunction;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import ru.runa.wfe.extension.OrgFunction;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
+import ru.runa.wfe.execution.logic.OrgFunctionSwimlaneInitializer;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.user.User;
 
 public class SubstitutionHelper {
-    private static final Log log = LogFactory.getLog(SubstitutionHelper.class);
 
-    public static String injectFunction(String swimlaneInitializer) {
-        try {
-            return OrgFunctionHelper.parseOrgFunction(swimlaneInitializer).getClass().getName();
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return "";
-        }
-    }
-
-    public static String injectParameter(String swimlaneInitializer, int index) {
-        try {
-            return OrgFunctionHelper.parseOrgFunction(swimlaneInitializer).getParameterNames()[index];
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            return "";
-        }
-    }
-
-    public static String getUserFriendlyOrgFunction(User user, String swimlaneInitializer) {
+    public static String getUserFriendlyOrgFunction(User user, String swimlaneConfiguration) {
         StringBuffer result = new StringBuffer();
-        OrgFunction function = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);
-        FunctionDef functionDef = SubstitutionDefinitions.getByClassNameNotNull(function.getClass().getName());
+        OrgFunctionSwimlaneInitializer swimlaneInitializer = (OrgFunctionSwimlaneInitializer) SwimlaneInitializerHelper.parse(swimlaneConfiguration);
+        FunctionDef functionDef = SubstitutionDefinitions.getByClassNameNotNull(swimlaneInitializer.getOrgFunctionClassName());
         result.append(functionDef.getLabel());
         result.append("(");
         for (int i = 0; i < functionDef.getParams().size(); i++) {
@@ -57,7 +35,7 @@ public class SubstitutionHelper {
                 result.append(", ");
             }
             ParamRenderer renderer = functionDef.getParams().get(i).getRenderer();
-            result.append(renderer.getDisplayLabel(user, function.getParameterNames()[i]));
+            result.append(renderer.getDisplayLabel(user, swimlaneInitializer.getParameterNames()[i]));
         }
         result.append(")");
         return result.toString();

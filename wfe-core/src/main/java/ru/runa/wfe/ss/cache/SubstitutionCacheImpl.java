@@ -31,7 +31,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.cache.BaseCacheImpl;
 import ru.runa.wfe.commons.cache.Cache;
 import ru.runa.wfe.commons.cache.Change;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.TerminatorSubstitution;
@@ -155,7 +155,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                     subDescr.put(substitution, null);
                     continue;
                 }
-                List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(substitution.getOrgFunction());
+                List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(substitution.getOrgFunction(), null);
                 HashSet<Actor> substitutors = new HashSet<Actor>();
                 for (Executor sub : executors) {
                     if (sub instanceof Actor) {

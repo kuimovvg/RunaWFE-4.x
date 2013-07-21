@@ -22,9 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import ru.runa.wfe.extension.OrgFunction;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
@@ -43,7 +42,7 @@ public class SwimlaneAssignerTaskHandler extends TaskHandlerBase {
     private static final String SWIMLANE_NAME_PROPERTY = "swimlaneName";
     private static final String ASSIGNER_FUNCTION_PROPERTY = "assignerFunction";
     private String swimlaneName;
-    private OrgFunction function;
+    private String swimlaneInitializer;
 
     @Override
     public void setConfiguration(String configuration) throws Exception {
@@ -51,16 +50,12 @@ public class SwimlaneAssignerTaskHandler extends TaskHandlerBase {
         properties.load(new StringReader(configuration));
         swimlaneName = properties.getProperty(SWIMLANE_NAME_PROPERTY);
         Preconditions.checkNotNull(swimlaneName, SWIMLANE_NAME_PROPERTY);
-        String swimlaneInitializer = properties.getProperty(ASSIGNER_FUNCTION_PROPERTY);
-        function = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);
+        swimlaneInitializer = properties.getProperty(ASSIGNER_FUNCTION_PROPERTY);
     }
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
-        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(function, variableProvider);
-        if (executors.size() != 1) {
-            throw new Exception("assigner (organization) function return " + executors.size() + " actor to be assigned in swimlane");
-        }
+        List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(swimlaneInitializer, variableProvider);
         Delegates.getExecutionService().assignSwimlane(user, task.getProcessId(), swimlaneName, executors.get(0));
         return null;
     }

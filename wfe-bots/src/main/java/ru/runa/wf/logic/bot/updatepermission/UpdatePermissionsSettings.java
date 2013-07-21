@@ -20,7 +20,6 @@ package ru.runa.wf.logic.bot.updatepermission;
 import java.util.Collection;
 import java.util.List;
 
-import ru.runa.wfe.extension.OrgFunction;
 import ru.runa.wfe.security.Permission;
 
 import com.google.common.base.Strings;
@@ -28,7 +27,7 @@ import com.google.common.collect.Lists;
 
 public class UpdatePermissionsSettings {
     private final Collection<Permission> permissions = Lists.newArrayList();
-    private final List<OrgFunction> orgFunctions = Lists.newArrayList();
+    private final List<String> swimlaneInitializers = Lists.newArrayList();
     private Method method;
     private String conditionVarName;
     private String conditionVarValue;
@@ -50,8 +49,8 @@ public class UpdatePermissionsSettings {
         return conditionVarValue;
     }
 
-    public List<OrgFunction> getOrgFunctions() {
-        return orgFunctions;
+    public List<String> getSwimlaneInitializers() {
+        return swimlaneInitializers;
     }
 
     public Collection<Permission> getPermissions() {
