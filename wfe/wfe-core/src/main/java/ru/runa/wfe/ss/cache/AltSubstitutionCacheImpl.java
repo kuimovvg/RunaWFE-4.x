@@ -27,7 +27,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.cache.BaseCacheImpl;
 import ru.runa.wfe.commons.cache.Cache;
 import ru.runa.wfe.commons.cache.Change;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.TerminatorSubstitution;
@@ -67,7 +67,7 @@ class AltSubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCach
             return substitutors;
         }
         try {
-            List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(substitution.getOrgFunction());
+            List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(substitution.getOrgFunction(), null);
             for (Executor executor : executors) {
                 if (executor instanceof Actor) {
                     substitutors.add((Actor) executor);
@@ -100,7 +100,7 @@ class AltSubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCach
             return substitutors;
         }
         try {
-            List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(substitution.getOrgFunction());
+            List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(substitution.getOrgFunction(), null);
             for (Executor executor : executors) {
                 if (executor instanceof Actor) {
                     substitutors.add((Actor) executor);

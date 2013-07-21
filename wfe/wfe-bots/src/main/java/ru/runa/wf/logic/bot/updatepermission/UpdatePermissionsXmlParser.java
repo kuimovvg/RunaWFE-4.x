@@ -24,7 +24,6 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ProcessPermission;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 
 public class UpdatePermissionsXmlParser {
     private static final String CONDITION_ELEMENT_NAME = "condition";
@@ -42,7 +41,7 @@ public class UpdatePermissionsXmlParser {
         Element root = document.getRootElement();
         List<Element> orgFunctionElements = root.element(ORGFUNCTIONS_ELEMENT_NAME).elements(ORGFUNCTION_ELEMENT_NAME);
         for (Element element : orgFunctionElements) {
-            settings.getOrgFunctions().add(OrgFunctionHelper.parseOrgFunction(element.getTextTrim()));
+            settings.getSwimlaneInitializers().add(element.getTextTrim());
         }
         settings.setMethod(Method.valueOf(root.elementTextTrim(METHOD_ELEMENT_NAME)));
         List<Element> permissionElements = root.element(PERMISSIONS_ELEMENT_NAME).elements(PERMISSION_ELEMENT_NAME);

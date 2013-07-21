@@ -27,10 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.ActionHandler;
-import ru.runa.wfe.extension.OrgFunction;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.user.Executor;
 
@@ -44,7 +43,7 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
     @Autowired
     protected AssignmentHelper assignmentHelper;
     private String swimlaneName;
-    private OrgFunction orgFunction;
+    private String swimlaneInitializer;
 
     @Override
     public void setConfiguration(String configuration) {
@@ -59,16 +58,11 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
             swimlaneInitializer = root.elementTextTrim(SWIMLANE_INITITALIZER);
             Preconditions.checkNotNull(swimlaneInitializer, SWIMLANE_INITITALIZER);
         }
-        orgFunction = OrgFunctionHelper.parseOrgFunction(swimlaneInitializer);
     }
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
-        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(orgFunction, executionContext.getVariableProvider());
-        if (executors.size() == 0) {
-            log.warn("No assignment will be done (OrgFunction return empty array of executor ids)");
-            return;
-        }
+        List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(swimlaneInitializer, executionContext.getVariableProvider());
         SwimlaneDefinition swimlaneDefinition = executionContext.getProcessDefinition().getSwimlaneNotNull(swimlaneName);
         Swimlane swimlane = executionContext.getProcess().getSwimlaneNotNull(swimlaneDefinition);
         assignmentHelper.assignSwimlane(executionContext, swimlane, executors);

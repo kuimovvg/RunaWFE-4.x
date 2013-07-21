@@ -20,14 +20,14 @@ package ru.runa.wf.logic.bot;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ru.runa.wf.logic.bot.updatepermission.Method;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsSettings;
 import ru.runa.wf.logic.bot.updatepermission.UpdatePermissionsXmlParser;
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.extension.OrgFunction;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -37,6 +37,7 @@ import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Sets permissions to current process.
@@ -62,7 +63,10 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
             }
         }
         if (allowed) {
-            List<? extends Executor> executors = evaluateOrgFunctions(variableProvider, settings.getOrgFunctions());
+            Set<Executor> executors = Sets.newHashSet();
+            for (String swimlaneInitializer : settings.getSwimlaneInitializers()) {
+                executors.addAll(SwimlaneInitializerHelper.evaluate(swimlaneInitializer, variableProvider));
+            }
             List<Collection<Permission>> allPermissions = Lists.newArrayListWithExpectedSize(executors.size());
             Identifiable identifiable = Delegates.getExecutionService().getProcess(user, task.getProcessId());
             List<Long> executorIds = Lists.newArrayList();
@@ -74,14 +78,6 @@ public class UpdatePermissionsTaskHandler extends TaskHandlerBase {
             Delegates.getAuthorizationService().setPermissions(user, executorIds, allPermissions, identifiable);
         }
         return null;
-    }
-
-    private List<? extends Executor> evaluateOrgFunctions(IVariableProvider variableProvider, List<OrgFunction> orgFunctions) {
-        List<Executor> executors = Lists.newArrayList();
-        for (OrgFunction orgFunction : orgFunctions) {
-            executors.addAll(OrgFunctionHelper.evaluateOrgFunction(orgFunction, variableProvider));
-        }
-        return executors;
     }
 
     private Collection<Permission> getNewPermissions(Collection<Permission> oldPermissions, Collection<Permission> permissions, Method method) {
