@@ -1,4 +1,4 @@
-package ru.runa.gpd.extension.orgfunction;
+package ru.runa.gpd.swimlane;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -21,9 +21,6 @@ public class SwimlaneElementRegistry {
                 String paramName = paramElement.getAttribute("name");
                 String paramValue = paramElement.getAttribute("value");
                 setProperty(swimlaneElement, paramName, paramValue);
-                if (swimlaneElement.getOrgFunctionDefinitionName() != null) {
-                    swimlaneElement.createNew();
-                }
             }
             IConfigurationElement[] childElements = configElement.getChildren("element");
             for (IConfigurationElement childElement : childElements) {

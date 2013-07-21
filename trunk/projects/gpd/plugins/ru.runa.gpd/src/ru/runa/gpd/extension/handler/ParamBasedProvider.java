@@ -6,7 +6,6 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -25,6 +24,7 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 
 public abstract class ParamBasedProvider extends DelegableProvider {
     protected abstract ParamDefConfig getParamConfig(Delegable delegable);
@@ -48,7 +48,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     public static String showConfigurationDialog(ProcessDefinition definition, Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
         ConfigurationWizardPage page = new ConfigurationWizardPage(definition, delegable, config, logo);
         final ConfigurationWizard wizard = new ConfigurationWizard(page);
-        WizardDialog dialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
+        CompactWizardDialog dialog = new CompactWizardDialog(wizard) {
             @Override
             protected void createButtonsForButtonBar(Composite parent) {
                 Button copyButton = createButton(parent, 197, Localization.getString("button.copy"), false);

@@ -1,5 +1,6 @@
 package ru.runa.gpd;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -17,5 +18,10 @@ public class Localization {
             System.out.println("Missed localization: '" + key + "'");
             return key;
         }
+    }
+
+    public static String getString(String key, Object... parameters) {
+        String msg = getString(key);
+        return MessageFormat.format(msg, parameters);
     }
 }

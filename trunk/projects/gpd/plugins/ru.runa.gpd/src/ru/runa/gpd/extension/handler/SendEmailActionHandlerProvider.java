@@ -7,7 +7,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -24,6 +23,7 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.State;
+import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
@@ -33,7 +33,7 @@ public class SendEmailActionHandlerProvider extends DelegableProvider {
     public String showConfigurationDialog(Delegable delegable) {
         final EmailConfigWizardPage wizardPage = new EmailConfigWizardPage(bundle, delegable);
         final ConfigurationWizard wizard = new ConfigurationWizard(wizardPage);
-        WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard) {
+        CompactWizardDialog wizardDialog = new CompactWizardDialog(wizard) {
             @Override
             protected void createButtonsForButtonBar(Composite parent) {
                 Button testButton = createButton(parent, 101, Localization.getString("EmailDialog.test.button"), false);

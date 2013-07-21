@@ -7,16 +7,15 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
 import ru.runa.wfe.var.format.ListFormat;
 
@@ -72,7 +71,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
     private void createVariable() {
         Variable typedVariable = new Variable("", null, ListFormat.class.getName(), false, null);
         VariableWizard wizard = new VariableWizard(currentDefinition, typedVariable, true, false);
-        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        CompactWizardDialog dialog = new CompactWizardDialog(wizard);
         if (dialog.open() == Window.OK) {
             Variable variable = wizard.getVariable();
             currentDefinition.addVariable(variable);

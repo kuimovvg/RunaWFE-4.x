@@ -1,5 +1,5 @@
 package ru.runa.gpd.ui.action;
-import java.text.MessageFormat;
+
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
@@ -18,38 +18,34 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
 
-
-
 public class CheckUnlimitedTokenAction extends BaseActionDelegate {
-
-	@Override
-	public void run(IAction action) {
-		IEditorPart editorPart = getActiveEditor();
+    @Override
+    public void run(IAction action) {
+        IEditorPart editorPart = getActiveEditor();
         if (editorPart != null) {
             IEditorInput editorInput = editorPart.getEditorInput();
             if (editorInput instanceof FileEditorInput) {
                 ProcessDefinition definition = ProcessCache.getProcessDefinition(((FileEditorInput) editorInput).getFile());
-        		List<Transition> transitions = definition.getChildrenRecursive(Transition.class);
-        		List<Node> nodes = definition.getChildren(Node.class);
-        		CheckUnlimitedTokenAlgorithm algorithm = new CheckUnlimitedTokenAlgorithm(transitions, nodes);
-        		Transition redTransition = algorithm.startAlgorithm();
-        		if(redTransition != null) {
-        			MessageDialog.openInformation(Display.getCurrent().getActiveShell(), 
-        					Localization.getString("message.warning"),
-        					MessageFormat.format(Localization.getString("CheckingTokensAction.SituationExist.Message"), redTransition.getId()));
-        		} else {
-        			MessageDialog.openInformation(Display.getCurrent().getActiveShell(), 
-        					Localization.getString("message.warning"),
-        					Localization.getString("CheckingTokensAction.SituationNotExist.Message"));
-        		}
+                List<Transition> transitions = definition.getChildrenRecursive(Transition.class);
+                List<Node> nodes = definition.getChildren(Node.class);
+                CheckUnlimitedTokenAlgorithm algorithm = new CheckUnlimitedTokenAlgorithm(transitions, nodes);
+                Transition redTransition = algorithm.startAlgorithm();
+                if (redTransition != null) {
+                    MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Localization.getString("message.warning"),
+                            Localization.getString("CheckingTokensAction.SituationExist.Message", redTransition.getId()));
+                } else {
+                    MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Localization.getString("message.warning"),
+                            Localization.getString("CheckingTokensAction.SituationNotExist.Message"));
+                }
             }
         }
-	}
-	
-	@Override
+    }
+
+    @Override
     public void selectionChanged(IAction action, ISelection selection) {
-		ProcessEditorBase editor = getActiveDesignerEditor();
-        action.setEnabled(getDirtyEditors().length == 0 && editor != null && editor.getDefinition() != null && editor.getDefinition().isBPMNNotation() && !editor.getDefinition().isInvalid());
+        ProcessEditorBase editor = getActiveDesignerEditor();
+        action.setEnabled(getDirtyEditors().length == 0 && editor != null && editor.getDefinition() != null && editor.getDefinition().isBPMNNotation()
+                && !editor.getDefinition().isInvalid());
     }
 
     private IEditorPart[] getDirtyEditors() {

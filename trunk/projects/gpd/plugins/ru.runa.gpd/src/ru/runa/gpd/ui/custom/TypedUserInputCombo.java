@@ -19,7 +19,6 @@ import com.google.common.collect.Maps;
 
 public class TypedUserInputCombo extends Combo {
     public static final String INPUT_VALUE = Localization.getString("InputValue");
-
     private static Map<String, Class<? extends UserInputDialog>> dialogClassesForTypes = Maps.newHashMap();
     static {
         dialogClassesForTypes.put(String.class.getName(), UserInputDialog.class);
@@ -29,18 +28,17 @@ public class TypedUserInputCombo extends Combo {
         dialogClassesForTypes.put(Number.class.getName(), DoubleInputDialog.class);
         dialogClassesForTypes.put(Double.class.getName(), DoubleInputDialog.class);
     }
-
     private String userInputValue;
     private String typeClassName;
     private boolean showEmptyValue = true;
     private boolean readOnlyOnMissedTypeEditor = true;
     private String previousComboTextValue = "";
+    private String[] booleanValues = { "true", "false" };
 
     public TypedUserInputCombo(Composite parent, String oldUserInputValue) {
         super(parent, SWT.READ_ONLY);
         this.userInputValue = oldUserInputValue;
         addSelectionListener(new LoggingSelectionAdapter() {
-
             @Override
             protected void onSelection(SelectionEvent event) throws Exception {
                 if (!INPUT_VALUE.equals(getText())) {
@@ -69,11 +67,16 @@ public class TypedUserInputCombo extends Combo {
             }
         });
     }
-    
+
     @Override
     public void setText(String string) {
         previousComboTextValue = string;
         super.setText(string);
+    }
+
+    // TODO localize anywhere
+    public void setBooleanValues(String[] booleanValues) {
+        this.booleanValues = booleanValues;
     }
 
     @Override
@@ -98,8 +101,9 @@ public class TypedUserInputCombo extends Combo {
             add("", 0);
         }
         if (Boolean.class.getName().equals(typeClassName)) {
-            add("true");
-            add("false");
+            for (String booleanValue : booleanValues) {
+                add(booleanValue);
+            }
             return;
         }
         if (userInputValue != null) {

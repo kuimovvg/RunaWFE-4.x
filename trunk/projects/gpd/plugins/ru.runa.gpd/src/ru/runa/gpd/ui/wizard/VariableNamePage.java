@@ -22,8 +22,8 @@ public class VariableNamePage extends ContentWizardPage {
 
     public VariableNamePage(ProcessDefinition definition, Variable variable) {
         this.definition = definition;
-        this.variableName = variable != null ? variable.getName() : definition.getNextVariableName();
-        this.variableDesc = variable != null ? variable.getDescription() : "";
+        this.variableName = variable != null && variable.getName() != null ? variable.getName() : definition.getNextVariableName();
+        this.variableDesc = variable != null && variable.getDescription() != null ? variable.getDescription() : "";
     }
 
     @Override
