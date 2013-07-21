@@ -1,7 +1,6 @@
 package ru.runa.gpd.lang.action;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -111,7 +110,7 @@ public class BotTaskActionsDelegate extends BaseModelDropDownActionDelegate {
 
         public OpenBotTaskAction(String botTaskName) {
             this.botTaskName = botTaskName;
-            setText(MessageFormat.format(Localization.getString("BotTaskActionsDelegate.gotobottask"), botTaskName));
+            setText(Localization.getString("BotTaskActionsDelegate.gotobottask", botTaskName));
         }
 
         @Override
