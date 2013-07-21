@@ -13,7 +13,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.w3c.dom.Document;
@@ -27,7 +26,6 @@ import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 
 public abstract class BaseHtmlFormType extends FormType {
@@ -38,29 +36,7 @@ public abstract class BaseHtmlFormType extends FormType {
 
     @Override
     public IEditorPart openForm(final IFile formFile, final FormNode formNode) throws CoreException {
-        editor = (WYSIWYGHTMLEditor) IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), formFile, WYSIWYGHTMLEditor.ID, true);
-        editor.setFormNode(formNode);
-        editor.addPropertyListener(new IPropertyListener() {
-            @Override
-            public void propertyChanged(Object source, int propId) {
-                if (propId == WYSIWYGHTMLEditor.CLOSED && formFile.exists()) {
-                    String op = "create";
-                    try {
-                        if (!formNode.hasFormValidation()) {
-                            String validationFileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, validationFileName, formNode);
-                            formNode.setValidationFileName(validationFile.getName());
-                        } else {
-                            op = "update";
-                            ValidationUtil.updateValidation(formFile, formNode);
-                        }
-                    } catch (Exception e) {
-                        PluginLogger.logError("Failed to " + op + " form validation", e);
-                    }
-                }
-            }
-        });
-        return editor;
+        return IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), formFile, WYSIWYGHTMLEditor.ID, true);
     }
 
     @Override
