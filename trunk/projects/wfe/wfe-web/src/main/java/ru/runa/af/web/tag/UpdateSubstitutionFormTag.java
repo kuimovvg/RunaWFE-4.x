@@ -36,11 +36,12 @@ import ru.runa.af.web.form.SubstitutionForm;
 import ru.runa.af.web.orgfunction.FunctionDef;
 import ru.runa.af.web.orgfunction.ParamDef;
 import ru.runa.af.web.orgfunction.SubstitutionDefinitions;
-import ru.runa.af.web.orgfunction.SubstitutionHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.IdentifiableFormTag;
+import ru.runa.wfe.execution.logic.OrgFunctionSwimlaneInitializer;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -159,8 +160,10 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
                     SubstitutionForm.ENABLED_INPUT_NAME, substitution == null || substitution.isEnabled(), true, false));
             if (!terminator) {
                 String function = "";
+                OrgFunctionSwimlaneInitializer swimlaneInitializer = null;
                 if (substitution != null) {
-                    function = SubstitutionHelper.injectFunction(substitution.getOrgFunction());
+                    swimlaneInitializer = (OrgFunctionSwimlaneInitializer) SwimlaneInitializerHelper.parse(substitution.getOrgFunction());
+                    function = swimlaneInitializer.getOrgFunctionClassName();
                 }
                 Option[] functionOptions = getFunctionOptions(function);
                 if (function.length() == 0 && functionOptions.length > 0) {
@@ -173,8 +176,8 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
                     if (functionDef != null) {
                         for (int i = 0; i < functionDef.getParams().size(); i++) {
                             String value = "";
-                            if (substitution != null) {
-                                value = SubstitutionHelper.injectParameter(substitution.getOrgFunction(), i);
+                            if (swimlaneInitializer != null) {
+                                value = swimlaneInitializer.getParameterNames()[i];
                             }
                             ParamDef paramDef = functionDef.getParams().get(i);
                             table.addElement(createParameterTR(i, paramDef.getMessage(pageContext),
