@@ -171,6 +171,7 @@ public class MultiProcessState extends SubProcessState {
     }
 
     private Set<Actor> getActorsByRelation(String relationName, Executor paramExecutor) {
+        // TODO add reversed option in GPD
         List<Executor> executors = Lists.newArrayList(paramExecutor);
         Relation relation = relationDAO.getNotNull(relationName);
         List<RelationPair> relationPairs = relationPairDAO.getExecutorsRelationPairsLeft(relation, executors);

@@ -22,10 +22,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.extension.AssignmentHandler;
-import ru.runa.wfe.extension.OrgFunction;
-import ru.runa.wfe.extension.orgfunction.OrgFunctionHelper;
 import ru.runa.wfe.user.Executor;
 
 /**
@@ -34,16 +33,16 @@ import ru.runa.wfe.user.Executor;
 public class DefaultAssignmentHandler implements AssignmentHandler {
     @Autowired
     protected AssignmentHelper assignmentHelper;
-    private OrgFunction function;
+    private String configuration;
 
     @Override
     public void setConfiguration(String configuration) {
-        function = OrgFunctionHelper.parseOrgFunction(configuration);
+        this.configuration = configuration;
     }
 
     @Override
     public void assign(ExecutionContext executionContext, Assignable assignable) {
-        List<? extends Executor> executors = OrgFunctionHelper.evaluateOrgFunction(function, executionContext.getVariableProvider());
+        List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(configuration, executionContext.getVariableProvider());
         assignmentHelper.assignSwimlane(executionContext, assignable, executors);
     }
 }
