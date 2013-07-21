@@ -36,8 +36,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.internal.wizards.datatransfer.IFileExporter;
 import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExportPage1;
@@ -56,6 +56,7 @@ import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
+@SuppressWarnings("restriction")
 public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
     private final Map<String, IFile> definitionNameFileMap;
     private ListViewer definitionListViewer;
@@ -115,7 +116,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
 
     private void createViewer(Composite parent) {
         // process selection
-        definitionListViewer = new ListViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+        definitionListViewer = new ListViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
         definitionListViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
         definitionListViewer.setContentProvider(new ArrayContentProvider());
         definitionListViewer.setInput(definitionNameFileMap.keySet());
@@ -131,10 +132,6 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         return project.getName() + "/" + definition.getName();
     }
 
-    private String getProcessDefinitionSelection() {
-        return (String) ((IStructuredSelection) definitionListViewer.getSelection()).getFirstElement();
-    }
-
     @Override
     protected String getDestinationLabel() {
         return Localization.getString("ExportParWizardPage.label.destination_file");
@@ -142,21 +139,20 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
 
     @Override
     protected void handleDestinationBrowseButtonPressed() {
-        FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
-        dialog.setFilterExtensions(new String[] { "*.par", "*.*" });
-        String selectionName = getProcessDefinitionSelection();
-        if (selectionName != null) {
-            dialog.setFileName(selectionName.substring(selectionName.lastIndexOf("/") + 1) + ".par");
-        }
-        String currentSourceString = getDestinationValue();
-        int lastSeparatorIndex = currentSourceString.lastIndexOf(File.separator);
-        if (lastSeparatorIndex != -1) {
-            dialog.setFilterPath(currentSourceString.substring(0, lastSeparatorIndex));
-        }
-        String selectedFileName = dialog.open();
-        if (selectedFileName != null) {
+        DirectoryDialog dialog = new DirectoryDialog(getContainer().getShell(), SWT.SAVE);
+        //        dialog.setFilterExtensions(new String[] { "*.par", "*.*" });
+        //        String selectionName = getProcessDefinitionSelection();
+        //        if (selectionName != null) {
+        //            dialog.setFileName(selectionName.substring(selectionName.lastIndexOf("/") + 1) + ".par");
+        //        }
+        dialog.setFilterPath(getDestinationValue());
+        String selectedFolderName = dialog.open();
+        if (selectedFolderName != null) {
             setErrorMessage(null);
-            setDestinationValue(selectedFileName);
+            if (!selectedFolderName.endsWith(File.separator)) {
+                selectedFolderName += File.separator;
+            }
+            setDestinationValue(selectedFolderName);
         }
     }
 
@@ -166,74 +162,77 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
     }
 
     @Override
+    protected String getOutputSuffix() {
+        return "";
+    }
+
+    @Override
     public boolean finish() {
         boolean exportToFile = exportToFileButton.getSelection();
         // Save dirty editors if possible but do not stop if not all are saved
         saveDirtyEditors();
         // about to invoke the operation so save our state
         saveWidgetValues();
-        String selectedDefinitionName = getProcessDefinitionSelection();
-        if (selectedDefinitionName == null) {
+        List<String> selectedDefinitionNames = ((IStructuredSelection) definitionListViewer.getSelection()).toList();
+        if (selectedDefinitionNames.size() == 0) {
             setErrorMessage(Localization.getString("ExportParWizardPage.error.selectProcess"));
             return false;
         }
-        IFile definitionFile = definitionNameFileMap.get(selectedDefinitionName);
-        try {
-            ProjectFinder.refreshProcessFolder(definitionFile);
-        } catch (CoreException e1) {
-        }
-        ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
-        try {
-            int validationResult = definition.validateDefinition(definitionFile);
-            if (!exportToFile && validationResult != 0) {
-                Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ValidationErrorsView.ID);
-                if (validationResult == 2) {
-                    setErrorMessage(Localization.getString("ExportParWizardPage.page.errorsExist"));
-                    return false;
-                }
-            }
-            definition.getLanguage().getSerializer().validateProcessDefinitionXML(definitionFile);
-            if (exportToFile && (Strings.isNullOrEmpty(getDestinationValue()) || !ensureTargetIsValid())) {
-                setErrorMessage(Localization.getString("ExportParWizardPage.error.selectDestinationPath"));
-                return false;
-            }
-            if (!exportToFile && !WFEServerProcessDefinitionImporter.getInstance().isConfigured()) {
-                SyncUIHelper.openConnectionSettingsDialog(WFEConnectionPreferencePage.class);
-                if (!WFEServerProcessDefinitionImporter.getInstance().isConfigured()) {
-                    return false;
-                }
-            }
-            List<IFile> resourcesToExport = new ArrayList<IFile>();
-            IFolder processFolder = (IFolder) definitionFile.getParent();
-            processFolder.refreshLocal(1, null);
-            IResource[] members = processFolder.members();
-            for (IResource resource : members) {
-                if (resource instanceof IFile) {
-                    resourcesToExport.add((IFile) resource);
-                }
-            }
-            // TODO getContainer().run
-            if (exportToFile) {
-                if (definition.isInvalid()
-                        && !MessageDialog.openConfirm(getShell(), Localization.getString("message.confirm.operation"),
-                                Localization.getString("ExportParWizardPage.confirm.export.invalid.process"))) {
-                    return false;
-                }
-                new ParExportOperation(resourcesToExport, new FileOutputStream(getDestinationValue())).run(null);
-            } else {
-                new ParDeployOperation(resourcesToExport, definition.getName()).run(null);
-            }
-            return true;
-        } catch (Throwable th) {
-            PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), th);
-            setErrorMessage(Throwables.getRootCause(th).getMessage());
+        if (exportToFile && Strings.isNullOrEmpty(getDestinationValue())) {
+            setErrorMessage(Localization.getString("ExportParWizardPage.error.selectDestinationPath"));
             return false;
         }
-    }
-
-    @Override
-    protected String getOutputSuffix() {
-        return ".par";
+        if (!exportToFile && !WFEServerProcessDefinitionImporter.getInstance().isConfigured()) {
+            SyncUIHelper.openConnectionSettingsDialog(WFEConnectionPreferencePage.class);
+            if (!WFEServerProcessDefinitionImporter.getInstance().isConfigured()) {
+                return false;
+            }
+        }
+        for (String selectedDefinitionName : selectedDefinitionNames) {
+            IFile definitionFile = definitionNameFileMap.get(selectedDefinitionName);
+            try {
+                ProjectFinder.refreshProcessFolder(definitionFile);
+            } catch (CoreException e1) {
+            }
+            ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
+            try {
+                int validationResult = definition.validateDefinition(definitionFile);
+                if (!exportToFile && validationResult != 0) {
+                    Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ValidationErrorsView.ID);
+                    if (validationResult == 2) {
+                        setErrorMessage(Localization.getString("ExportParWizardPage.page.errorsExist"));
+                        return false;
+                    }
+                }
+                definition.getLanguage().getSerializer().validateProcessDefinitionXML(definitionFile);
+                List<IFile> resourcesToExport = new ArrayList<IFile>();
+                IFolder processFolder = (IFolder) definitionFile.getParent();
+                processFolder.refreshLocal(1, null);
+                IResource[] members = processFolder.members();
+                for (IResource resource : members) {
+                    if (resource instanceof IFile) {
+                        resourcesToExport.add((IFile) resource);
+                    }
+                }
+                // TODO getContainer().run
+                if (exportToFile) {
+                    if (definition.isInvalid()
+                            && !MessageDialog.openConfirm(getShell(), Localization.getString("message.confirm.operation"),
+                                    Localization.getString("ExportParWizardPage.confirm.export.invalid.process", definition.getName()))) {
+                        continue;
+                    }
+                    String outputFileName = getDestinationValue() + definition.getName() + ".par";
+                    new ParExportOperation(resourcesToExport, new FileOutputStream(outputFileName)).run(null);
+                } else {
+                    new ParDeployOperation(resourcesToExport, definition.getName()).run(null);
+                }
+            } catch (Throwable th) {
+                PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), th);
+                setErrorMessage(Throwables.getRootCause(th).getMessage());
+                return false;
+            }
+        }
+        return true;
     }
 
     private final static String STORE_DESTINATION_NAMES_ID = "WizardParExportPage1.STORE_DESTINATION_NAMES_ID";
