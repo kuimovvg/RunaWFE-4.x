@@ -7,7 +7,8 @@ import org.eclipse.swt.graphics.Image;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
-import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
+import ru.runa.gpd.swimlane.SwimlaneInitializer;
+import ru.runa.gpd.swimlane.SwimlaneInitializerParser;
 import ru.runa.wfe.extension.assign.DefaultAssignmentHandler;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
@@ -36,9 +37,9 @@ public class Swimlane extends Variable implements Delegable {
     protected void validate() {
         super.validate();
         try {
-            OrgFunctionDefinition definition = OrgFunctionsRegistry.parseSwimlaneConfiguration(getDelegationConfiguration());
-            if (definition != null) {
-                List<String> errors = definition.getErrors(getProcessDefinition());
+            SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(getDelegationConfiguration());
+            if (swimlaneInitializer != null) {
+                List<String> errors = swimlaneInitializer.getErrors(getProcessDefinition());
                 for (String errorKey : errors) {
                     addError(errorKey);
                 }
@@ -56,5 +57,4 @@ public class Swimlane extends Variable implements Delegable {
     public Image getEntryImage() {
         return SharedImages.getImage("icons/obj/swimlane.gif");
     }
-
 }

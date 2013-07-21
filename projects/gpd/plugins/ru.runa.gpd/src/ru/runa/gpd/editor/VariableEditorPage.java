@@ -17,7 +17,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
@@ -53,6 +51,7 @@ import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
+import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
 
 @SuppressWarnings("unchecked")
@@ -282,7 +281,7 @@ public class VariableEditorPage extends EditorPartBase {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
             VariableWizard wizard = new VariableWizard(getDefinition(), null, true, true);
-            WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+            CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
                 Variable variable = wizard.getVariable();
                 getDefinition().addVariable(variable);
@@ -298,7 +297,7 @@ public class VariableEditorPage extends EditorPartBase {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
             VariableWizard wizard = new VariableWizard(getDefinition(), variable, false, true);
-            WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+            CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
                 variable.setFormat(wizard.getVariable().getFormat());
                 variable.setPublicVisibility(wizard.getVariable().isPublicVisibility());

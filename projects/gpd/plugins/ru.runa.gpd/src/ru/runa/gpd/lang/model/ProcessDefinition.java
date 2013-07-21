@@ -1,6 +1,5 @@
 package ru.runa.gpd.lang.model;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +17,10 @@ import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.VariableFormatRegistry;
-import ru.runa.gpd.extension.orgfunction.SwimlaneGUIConfiguration;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
+import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
@@ -236,8 +235,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         try {
             IMarker marker = definitionFile.createMarker(ValidationErrorsView.ID);
             if (marker.exists()) {
-                String msg = Localization.getString("model.validation." + messageKey);
-                String formatted = MessageFormat.format(msg, params);
+                String formatted = Localization.getString("model.validation." + messageKey, params);
                 marker.setAttribute(IMarker.MESSAGE, formatted);
                 String elementId = element.toString();
                 if (element instanceof Node) {

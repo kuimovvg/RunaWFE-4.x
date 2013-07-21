@@ -1,11 +1,12 @@
-package ru.runa.gpd.extension.orgfunction;
+package ru.runa.gpd.swimlane;
 
 import org.eclipse.swt.widgets.Composite;
 
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.wfe.SyncUIHelper;
+import ru.runa.gpd.wfe.WFEServerExecutorsImporter;
 
-public class SwimlaneWFGroupElement extends SwimlaneGroupElement {
+public class ExecutorGroupSwimlaneElement extends GroupSwimlaneElement {
 
     @Override
     public void createGUI(Composite clientArea) {

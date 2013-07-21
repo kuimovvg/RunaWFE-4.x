@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StyledText;
@@ -40,7 +39,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -64,6 +62,7 @@ import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseHandlerClassDialog;
 import ru.runa.gpd.ui.dialog.InfoWithDetailsDialog;
 import ru.runa.gpd.ui.wizard.BotTaskParamDefWizard;
+import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
@@ -329,7 +328,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 for (ParamDefGroup group : botTask.getParamDefConfig().getGroups()) {
                     if (parameterType.equals(group.getName())) {
                         BotTaskParamDefWizard wizard = new BotTaskParamDefWizard(group, null);
-                        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+                        CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                         if (dialog.open() == Window.OK) {
                             setTableInput(parameterType);
                             setDirty(true);
@@ -355,7 +354,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                         for (ParamDef paramDef : group.getParameters()) {
                             if (paramDef.getName().equals(row[0])) {
                                 BotTaskParamDefWizard wizard = new BotTaskParamDefWizard(group, paramDef);
-                                WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+                                CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                                 if (dialog.open() == Window.OK) {
                                     setTableInput(parameterType);
                                     setDirty(true);
@@ -417,8 +416,8 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 String type = paramDef.getFormatFilters().get(0);
                 typeLabel = VariableFormatRegistry.getInstance().getArtifactNotNullByJavaClassName(type).getLabel();
             }
-            String required = Localization.getString(paramDef.isOptional() ? "message.no" : "message.yes");
-            String useVariable = Localization.getString(paramDef.isUseVariable() ? "message.yes" : "message.no");
+            String required = Localization.getString(paramDef.isOptional() ? "no" : "yes");
+            String useVariable = Localization.getString(paramDef.isUseVariable() ? "yes" : "no");
             input.add(new String[] { paramDef.getName(), typeLabel, required, useVariable });
         }
         confTableViewer.setInput(input);

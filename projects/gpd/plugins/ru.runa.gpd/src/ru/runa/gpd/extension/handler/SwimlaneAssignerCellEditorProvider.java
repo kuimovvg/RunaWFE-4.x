@@ -23,12 +23,12 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
-import ru.runa.gpd.extension.assign.SwimlaneConfigDialog;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
+import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
 import ru.runa.gpd.util.XmlUtil;
 
 public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {

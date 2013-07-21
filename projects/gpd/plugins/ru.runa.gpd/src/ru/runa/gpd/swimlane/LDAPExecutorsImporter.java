@@ -1,4 +1,4 @@
-package ru.runa.gpd.extension.orgfunction;
+package ru.runa.gpd.swimlane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.settings.PrefConstants;
+import ru.runa.gpd.wfe.ExecutorsImporter;
 import ru.runa.gpd.wfe.LDAPConnector;
 
 public class LDAPExecutorsImporter extends ExecutorsImporter implements PrefConstants {

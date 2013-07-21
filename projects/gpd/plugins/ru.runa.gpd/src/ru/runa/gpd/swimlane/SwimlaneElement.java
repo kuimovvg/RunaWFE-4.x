@@ -1,4 +1,4 @@
-package ru.runa.gpd.extension.orgfunction;
+package ru.runa.gpd.swimlane;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,18 +18,20 @@ import org.eclipse.ui.forms.widgets.Section;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 
-public abstract class SwimlaneElement {
+import com.google.common.collect.Lists;
+
+@SuppressWarnings({ "rawtypes", "unchecked" })
+public abstract class SwimlaneElement<T extends SwimlaneInitializer> {
     private String name;
     private String description = "";
     private SwimlaneElement parent;
-    private final List<SwimlaneElement> children = new ArrayList<SwimlaneElement>();
+    private final List<SwimlaneElement> children = Lists.newArrayList();
     protected List<ISwimlaneElementListener> listeners = new ArrayList<ISwimlaneElementListener>();
     protected Section section;
     protected Composite clientArea;
     protected String swimlaneName;
-    protected OrgFunctionDefinition currentDefinition;
+    private T swimlaneInitializer;
     protected ProcessDefinition processDefinition;
-    private String orgFunctionDefinitionName;
     private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
     private String treePath;
 
@@ -41,16 +43,17 @@ public abstract class SwimlaneElement {
         this.treePath = treePath;
     }
 
-    public void setOrgFunctionDefinitionName(String orgFunctionDefinitionName) {
-        this.orgFunctionDefinitionName = orgFunctionDefinitionName;
+    protected abstract T createNewSwimlaneInitializer();
+
+    public void setSwimlaneInitializer(T swimlaneInitializer) {
+        this.swimlaneInitializer = swimlaneInitializer;
     }
 
-    public String getOrgFunctionDefinitionName() {
-        return orgFunctionDefinitionName;
-    }
-
-    protected OrgFunctionDefinition createNew() {
-        return new OrgFunctionDefinition(OrgFunctionsRegistry.getInstance().getArtifactNotNull(orgFunctionDefinitionName));
+    public T getSwimlaneInitializerNotNull() {
+        if (swimlaneInitializer == null) {
+            swimlaneInitializer = createNewSwimlaneInitializer();
+        }
+        return swimlaneInitializer;
     }
 
     public void setDescription(String description) {
@@ -83,16 +86,17 @@ public abstract class SwimlaneElement {
         return name;
     }
 
-    public void open(String path, String swimlaneName, OrgFunctionDefinition currentDefinition) {
+    public void open(String path, String swimlaneName, T swimlaneInitializer) {
         if (!path.startsWith(getName())) {
             return;
         }
+        setSwimlaneInitializer(swimlaneInitializer);
         this.swimlaneName = swimlaneName;
         if (path.length() > getName().length()) {
             String childPath = path.substring(path.indexOf("/") + 1);
             for (SwimlaneElement element : children) {
                 if (childPath.startsWith(element.getName())) {
-                    element.open(childPath, swimlaneName, currentDefinition);
+                    element.open(childPath, swimlaneName, swimlaneInitializer);
                 } else {
                     element.close();
                 }
@@ -100,11 +104,6 @@ public abstract class SwimlaneElement {
         }
         if (section != null && !section.isExpanded()) {
             section.setExpanded(true);
-        }
-        if (currentDefinition != null && currentDefinition.getName().equals(orgFunctionDefinitionName)) {
-            this.currentDefinition = currentDefinition;
-        } else {
-            this.currentDefinition = null;
         }
     }
 
@@ -175,7 +174,7 @@ public abstract class SwimlaneElement {
             public void expansionStateChanged(ExpansionEvent e) {
                 if (e.getState()) {
                     for (ISwimlaneElementListener listener : listeners) {
-                        listener.opened(calculatePath());
+                        listener.opened(calculatePath(), true);
                     }
                 }
             }
@@ -203,9 +202,9 @@ public abstract class SwimlaneElement {
         return path;
     }
 
-    protected void fireCompletedEvent(OrgFunctionDefinition definition) {
+    protected void fireCompletedEvent() {
         for (ISwimlaneElementListener listener : listeners) {
-            listener.completed(calculatePath(), definition);
+            listener.completed(calculatePath(), swimlaneInitializer);
         }
     }
 }

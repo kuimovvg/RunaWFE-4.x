@@ -7,12 +7,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.MenuDetectEvent;
-import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
@@ -34,7 +29,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
-import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.var.format.LongFormat;
 
@@ -220,33 +215,13 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
                         operation.setExpression(text.getText());
                     }
                 });
-                text.addMenuDetectListener(new MenuDetectListener() {
-                    @Override
-                    public void menuDetected(MenuDetectEvent e) {
-                        if (text.getMenu() == null) {
-                            MenuManager menuManager = new MenuManager();
-                            Menu menu = menuManager.createContextMenu(getShell());
-                            menuManager.add(new Action(Localization.getString("button.insert_variable")) {
-                                @Override
-                                public void run() {
-                                    List<String> variableNames = new ArrayList<String>();
-                                    for (Map.Entry<String, String> entry : variables.entrySet()) {
-                                        if (setFormats.contains(entry.getValue())) {
-                                            variableNames.add(entry.getKey());
-                                        }
-                                    }
-                                    ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
-                                    String variableName = dialog.openDialog();
-                                    if (variableName != null) {
-                                        String r = "${" + variableName + "}";
-                                        text.setText(r);
-                                    }
-                                }
-                            });
-                            text.setMenu(menu);
-                        }
+                List<String> variableNames = new ArrayList<String>();
+                for (Map.Entry<String, String> entry : variables.entrySet()) {
+                    if (setFormats.contains(entry.getValue())) {
+                        variableNames.add(entry.getKey());
                     }
-                });
+                }
+                new InsertVariableTextMenuDetectListener(text, variableNames);
             }
             Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);
             hl1.setText("[X]");

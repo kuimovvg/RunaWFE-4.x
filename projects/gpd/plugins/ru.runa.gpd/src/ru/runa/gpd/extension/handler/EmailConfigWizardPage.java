@@ -9,7 +9,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
@@ -30,7 +29,6 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.osgi.framework.Bundle;
@@ -43,6 +41,9 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.util.IOUtils;
@@ -158,9 +159,9 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         setErrorMessage(errorMessage);
     }
 
-    private class TabSelectionHandler extends SelectionAdapter {
+    private class TabSelectionHandler extends LoggingSelectionAdapter {
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             generateCode();
         }
     }
@@ -192,9 +193,9 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             if (selectedValue == null) {
                 selectedValue = "true";
             }
-            bodyInlinedButton.addSelectionListener(new SelectionAdapter() {
+            bodyInlinedButton.addSelectionListener(new LoggingSelectionAdapter() {
                 @Override
-                public void widgetSelected(SelectionEvent e) {
+                protected void onSelection(SelectionEvent e) throws Exception {
                     styledText.setEditable(!bodyInlinedButton.getSelection());
                 }
             });
@@ -202,13 +203,13 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
             hl3.setLayoutData(gridData);
             hl3.setText(Localization.getString("button.insert_variable"));
-            hl3.addHyperlinkListener(new HyperlinkAdapter() {
+            hl3.addHyperlinkListener(new LoggingHyperlinkAdapter() {
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     ChooseVariableDialog dialog = new ChooseVariableDialog(ftlVariableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
-                        String r = "${" + variableName + "}";
+                        String r = VariableUtils.wrapVariableName(variableName);
                         styledText.insert(r);
                         styledText.setFocus();
                         styledText.setCaretOffset(styledText.getCaretOffset() + r.length());
@@ -257,9 +258,9 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             createButton(buttonsBar, Localization.getString("button.add"), new AddSelectionAdapter());
             final Button deleteButton = createButton(buttonsBar, Localization.getString("button.delete"), new DeleteSelectionAdapter());
             deleteButton.setEnabled(false);
-            tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            tableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
                 @Override
-                public void selectionChanged(SelectionChangedEvent event) {
+                protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
                     deleteButton.setEnabled(!tableViewer.getSelection().isEmpty());
                 }
             });
@@ -283,9 +284,9 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             tableViewer.setInput(attachments);
         }
 
-        private class AddSelectionAdapter extends SelectionAdapter {
+        private class AddSelectionAdapter extends LoggingSelectionAdapter {
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 ChooseVariableDialog dialog = new ChooseVariableDialog(fileVariableNames);
                 String variableName = dialog.openDialog();
                 if (variableName != null) {
@@ -295,9 +296,9 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             }
         }
 
-        private class DeleteSelectionAdapter extends SelectionAdapter {
+        private class DeleteSelectionAdapter extends LoggingSelectionAdapter {
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 String data = (String) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
                 attachments.remove(data);
                 setTableInput();
