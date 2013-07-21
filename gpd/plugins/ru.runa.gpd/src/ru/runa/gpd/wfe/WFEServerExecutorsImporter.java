@@ -1,10 +1,9 @@
-package ru.runa.gpd.extension.orgfunction;
+package ru.runa.gpd.wfe;
 
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
-import ru.runa.gpd.wfe.WFEServerConnector;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.ExecutorService;

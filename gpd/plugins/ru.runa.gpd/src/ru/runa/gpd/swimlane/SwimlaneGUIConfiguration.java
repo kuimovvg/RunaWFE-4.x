@@ -1,4 +1,4 @@
-package ru.runa.gpd.extension.orgfunction;
+package ru.runa.gpd.swimlane;
 
 import java.util.HashMap;
 import java.util.Map;

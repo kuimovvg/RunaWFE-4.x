@@ -33,7 +33,6 @@ import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
-import ru.runa.gpd.extension.assign.SwimlaneConfigDialog;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Swimlane;
@@ -43,6 +42,7 @@ import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 
 public class SwimlaneEditorPage extends EditorPartBase {

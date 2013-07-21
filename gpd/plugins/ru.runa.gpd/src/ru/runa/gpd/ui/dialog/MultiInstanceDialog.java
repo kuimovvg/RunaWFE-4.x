@@ -37,6 +37,7 @@ import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 
@@ -79,9 +80,9 @@ public class MultiInstanceDialog extends Dialog {
                     tabVariableSubProcessVariable = vm.getSubprocessVariableName();
                 } else if (vm.getProcessVariableName().equals("tabGroupName")) {
                     tabGroupName = vm.getSubprocessVariableName();
-                    if (tabGroupName.startsWith("${") && tabGroupName.endsWith("}")) {
+                    if (VariableUtils.isVariableNameWrapped(tabGroupName)) {
                         tabGroupNameType = TYPE_VARIABLE;
-                        tabGroupName = tabGroupName.substring(2, tabGroupName.length() - 1);
+                        tabGroupName = VariableUtils.unwrapVariableName(tabGroupName);
                     } else {
                         tabGroupNameType = TYPE_CONSTANT;
                     }
@@ -89,17 +90,17 @@ public class MultiInstanceDialog extends Dialog {
                     tabGroupSubProcessVariable = vm.getSubprocessVariableName();
                 } else if (vm.getProcessVariableName().equals("tabRelationName")) {
                     tabRelationName = vm.getSubprocessVariableName();
-                    if (tabRelationName.startsWith("${") && tabRelationName.endsWith("}")) {
+                    if (VariableUtils.isVariableNameWrapped(tabRelationName)) {
                         tabRelationNameType = TYPE_VARIABLE;
-                        tabRelationName = tabRelationName.substring(2, tabRelationName.length() - 1);
+                        tabRelationName = VariableUtils.unwrapVariableName(tabRelationName);
                     } else {
                         tabRelationNameType = TYPE_CONSTANT;
                     }
                 } else if (vm.getProcessVariableName().equals("tabRelationParam")) {
                     tabRelationParam = vm.getSubprocessVariableName();
-                    if (tabRelationParam.startsWith("${") && tabRelationParam.endsWith("}")) {
+                    if (VariableUtils.isVariableNameWrapped(tabRelationParam)) {
                         tabRelationParamType = TYPE_VARIABLE;
-                        tabRelationParam = tabRelationParam.substring(2, tabRelationParam.length() - 1);
+                        tabRelationParam = VariableUtils.unwrapVariableName(tabRelationParam);
                     } else {
                         tabRelationParamType = TYPE_CONSTANT;
                     }
@@ -316,7 +317,7 @@ public class MultiInstanceDialog extends Dialog {
         {
             Label labelProcessVariable = new Label(composite, SWT.READ_ONLY);
             labelProcessVariable.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-            labelProcessVariable.setText(Localization.getString("Multiinstance.RelationName") + ":");
+            labelProcessVariable.setText(Localization.getString("Relation.Name") + ":");
             final List<String> relationVariableNames = getProcessVariablesNames(definition.getName(), String.class.getName());
             String lastUserInputValue = TYPE_CONSTANT.equals(tabRelationNameType) ? tabRelationName : null;
             final TypedUserInputCombo relationNameCombo = new TypedUserInputCombo(composite, lastUserInputValue);
@@ -341,7 +342,7 @@ public class MultiInstanceDialog extends Dialog {
         {
             Label labelProcessVariable = new Label(composite, SWT.READ_ONLY);
             labelProcessVariable.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-            labelProcessVariable.setText(Localization.getString("Multiinstance.RelationParam") + ":");
+            labelProcessVariable.setText(Localization.getString("Relation.Parameter") + ":");
             final List<String> relationParamVariableNames = getProcessVariablesNames(definition.getName(), String.class.getName(), Executor.class.getName());
             String lastUserInputValue = TYPE_CONSTANT.equals(tabRelationParamType) ? tabRelationParam : null;
             final TypedUserInputCombo relationParamCombo = new TypedUserInputCombo(composite, lastUserInputValue);
@@ -534,7 +535,7 @@ public class MultiInstanceDialog extends Dialog {
             if (tabGroupNameType.equals(TYPE_CONSTANT)) {
                 vm.setSubprocessVariableName(tabGroupName);
             } else {
-                vm.setSubprocessVariableName("${" + tabGroupName + "}");
+                vm.setSubprocessVariableName(VariableUtils.wrapVariableName(tabGroupName));
             }
             subprocessVariables.add(vm);
         }
@@ -552,7 +553,7 @@ public class MultiInstanceDialog extends Dialog {
             if (tabRelationNameType.equals(TYPE_CONSTANT)) {
                 vm.setSubprocessVariableName(tabRelationName);
             } else {
-                vm.setSubprocessVariableName("${" + tabRelationName + "}");
+                vm.setSubprocessVariableName(VariableUtils.wrapVariableName(tabRelationName));
             }
             subprocessVariables.add(vm);
         }
@@ -563,7 +564,7 @@ public class MultiInstanceDialog extends Dialog {
             if (tabRelationParamType.equals(TYPE_CONSTANT)) {
                 vm.setSubprocessVariableName(tabRelationParam);
             } else {
-                vm.setSubprocessVariableName("${" + tabRelationParam + "}");
+                vm.setSubprocessVariableName(VariableUtils.wrapVariableName(tabRelationParam));
             }
             subprocessVariables.add(vm);
         }

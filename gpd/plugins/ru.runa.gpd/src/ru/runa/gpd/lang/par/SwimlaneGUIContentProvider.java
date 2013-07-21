@@ -8,8 +8,8 @@ import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 
-import ru.runa.gpd.extension.orgfunction.SwimlaneGUIConfiguration;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.XmlUtil;
 
 public class SwimlaneGUIContentProvider extends AuxContentProvider {

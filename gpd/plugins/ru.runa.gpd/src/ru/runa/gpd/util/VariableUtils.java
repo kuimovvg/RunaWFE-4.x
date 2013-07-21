@@ -122,4 +122,19 @@ public class VariableUtils {
         }
         return null;
     }
+
+    public static String wrapVariableName(String variableName) {
+        return "${" + variableName + "}";
+    }
+
+    public static boolean isVariableNameWrapped(String value) {
+        return value.length() > 3 && "${".equals(value.substring(0, 2)) && value.endsWith("}");
+    }
+
+    public static String unwrapVariableName(String value) {
+        if (value.length() > 3) {
+            return value.substring(2, value.length() - 1);
+        }
+        return "";
+    }
 }

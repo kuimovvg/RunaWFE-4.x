@@ -31,16 +31,18 @@ public class TaskState extends State implements Synchronizable {
     private AsyncCompletionMode asyncCompletionMode = AsyncCompletionMode.ON_MAIN_PROCESS_END;
     private BotTaskLink botTaskLink;
 
+    @Override
     public AsyncCompletionMode getAsyncCompletionMode() {
         return asyncCompletionMode;
     }
-    
+
+    @Override
     public void setAsyncCompletionMode(AsyncCompletionMode asyncCompletionMode) {
         AsyncCompletionMode old = this.asyncCompletionMode;
         this.asyncCompletionMode = asyncCompletionMode;
         firePropertyChange(PROPERTY_ASYNC_COMPLETION_MODE, old, asyncCompletionMode);
     }
-    
+
     /**
      * @see BotTaskUtils#getBotName(org.jbpm.ui.common.model.Swimlane)
      * @return bot name or <code>null</code>
@@ -175,10 +177,10 @@ public class TaskState extends State implements Synchronizable {
             return escalationAction;
         }
         if (PROPERTY_IGNORE_SUBSTITUTION.equals(id)) {
-            return ignoreSubstitution ? Localization.getString("message.yes") : Localization.getString("message.no");
+            return ignoreSubstitution ? Localization.getString("yes") : Localization.getString("no");
         }
         if (PROPERTY_ASYNC.equals(id)) {
-            return async ? Localization.getString("message.yes") : Localization.getString("message.no");
+            return async ? Localization.getString("yes") : Localization.getString("no");
         }
         if (PROPERTY_BOT_TASK_NAME.equals(id)) {
             return botTaskLink == null ? "" : botTaskLink.getBotTaskName();

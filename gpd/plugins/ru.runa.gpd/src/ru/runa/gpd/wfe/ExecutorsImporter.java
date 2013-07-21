@@ -1,4 +1,4 @@
-package ru.runa.gpd.extension.orgfunction;
+package ru.runa.gpd.wfe;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,8 +11,6 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.gpd.util.XmlUtil;
-import ru.runa.gpd.wfe.DataImporter;
-import ru.runa.gpd.wfe.IConnector;
 
 public abstract class ExecutorsImporter extends DataImporter {
     protected Map<String, Boolean> executors = new TreeMap<String, Boolean>();

@@ -1,34 +1,32 @@
 package ru.runa.gpd.ui.dialog;
 
 import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 
-public class ConnectionSettingsDialog extends WizardDialog {
-	private Button testButton;
-	private Button syncButton;
+public class ConnectionSettingsDialog extends CompactWizardDialog {
+    private Button testButton;
+    private Button syncButton;
 
     public ConnectionSettingsDialog(IWizard newWizard) {
-        super(Display.getCurrent().getActiveShell(), newWizard);
+        super(newWizard);
     }
-    
+
     public Button getTestButton() {
-		return testButton;
-	}
+        return testButton;
+    }
 
-	public Button getSyncButton() {
-		return syncButton;
-	}
+    public Button getSyncButton() {
+        return syncButton;
+    }
 
-	@Override
+    @Override
     protected void createButtonsForButtonBar(final Composite parent) {
         testButton = createButton(parent, 197, Localization.getString("button.test.connection"), false);
         syncButton = createButton(parent, 198, Localization.getString("button.Synchronize"), false);
         super.createButtonsForButtonBar(parent);
     }
-
 }
