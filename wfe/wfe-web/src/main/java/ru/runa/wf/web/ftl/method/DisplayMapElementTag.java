@@ -3,7 +3,9 @@ package ru.runa.wf.web.ftl.method;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 import freemarker.template.TemplateModelException;
 
 public class DisplayMapElementTag extends FreemarkerTag {
@@ -11,11 +13,17 @@ public class DisplayMapElementTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String mapVarName = getParameterAs(String.class, 0);
-        Map<?, ?> map = variableProvider.getValueNotNull(Map.class, mapVarName);
+        String variableName = getParameterAs(String.class, 0);
+        WfVariable variable = variableProvider.getVariableNotNull(variableName);
+        Map<?, ?> map = (Map<?, ?>) variable.getValue();
         Object key = getParameterAs(Object.class, 1);
         Object object = map.get(key);
-        return FormatCommons.getVarOut(user, object, webHelper, variableProvider.getProcessId(), mapVarName, 0, key);
+        String valueFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(1);
+        if (object instanceof FileVariable) {
+            return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, 0, key);
+        } else {
+            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, valueFormatClassName, object);
+        }
     }
 
 }

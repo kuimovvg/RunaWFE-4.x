@@ -3,11 +3,13 @@ package ru.runa.wfe.var.format;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.user.User;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySupport<List<?>>, VariableFormatContainer {
+import ru.runa.wfe.commons.TypeConversionUtil;
+
+public class ListFormat implements VariableFormat<List<?>>, VariableFormatContainer {
+    private static final Log log = LogFactory.getLog(ListFormat.class);
     private static final String LIST_DELIMITER = ", ";
     private static final String LIST_END = "]";
     private static final String LIST_START = "[";
@@ -21,10 +23,18 @@ public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySuppo
     @Override
     public void setComponentClassNames(String[] componentClassNames) {
         if (componentClassNames.length == 1 && componentClassNames[0] != null) {
-            this.componentClassName = componentClassNames[0];
+            componentClassName = componentClassNames[0];
         } else {
-            this.componentClassName = StringFormat.class.getName();
+            componentClassName = StringFormat.class.getName();
         }
+    }
+
+    @Override
+    public String getComponentClassName(int index) {
+        if (index == 0) {
+            return componentClassName;
+        }
+        return null;
     }
 
     @Override
@@ -36,7 +46,12 @@ public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySuppo
         ArrayList list = new ArrayList(source.length);
         VariableFormat<?> componentFormat = FormatCommons.create(componentClassName);
         for (String string : source) {
-            list.add(componentFormat.parse(new String[] { string }));
+            try {
+                list.add(componentFormat.parse(new String[] { string }));
+            } catch (Exception e) {
+                log.warn(e);
+                list.add(null);
+            }
         }
         return list;
     }
@@ -57,22 +72,6 @@ public class ListFormat implements VariableFormat<List<?>>, VariableDisplaySuppo
         }
         text.append(LIST_END);
         return text.toString();
-    }
-
-    @Override
-    public String getHtml(User user, WebHelper webHelper, Long processId, String name, List<?> list) {
-        StringBuffer html = new StringBuffer();
-        html.append(LIST_START);
-        for (int i = 0; i < list.size(); i++) {
-            if (i != 0) {
-                html.append(LIST_DELIMITER);
-            }
-            Object object = list.get(i);
-            String value = FormatCommons.getVarOut(user, object, webHelper, processId, name, i, null);
-            html.append(value);
-        }
-        html.append(LIST_END);
-        return html.toString();
     }
 
 }

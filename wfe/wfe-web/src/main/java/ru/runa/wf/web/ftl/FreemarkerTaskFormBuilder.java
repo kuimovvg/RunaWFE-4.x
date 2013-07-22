@@ -2,6 +2,7 @@ package ru.runa.wf.web.ftl;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 
 import ru.runa.common.web.StrutsWebHelper;
@@ -20,7 +21,7 @@ public class FreemarkerTaskFormBuilder extends BaseTaskFormBuilder implements Ta
     @Override
     public String build(User user, PageContext pageContext, Interaction interaction, WfTask task) {
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
-        Map<String, String[]> userDefinedVariables = FormUtils.getUserFormInputVariables(pageContext.getRequest());
+        Map<String, Object> userDefinedVariables = FormUtils.getUserFormInputVariables((HttpServletRequest) pageContext.getRequest(), interaction);
         if (userDefinedVariables != null) {
             variableProvider = new MapDelegableVariableProvider(userDefinedVariables, variableProvider);
         }

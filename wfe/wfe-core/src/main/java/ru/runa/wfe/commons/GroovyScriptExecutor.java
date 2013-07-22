@@ -32,8 +32,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             shell.evaluate(script);
             return adjustVariables(processDefinition, binding.getVariables());
         } catch (Exception e) {
+            log.error("Groovy execution failed, script=" + script, e);
             if (e instanceof GroovyExceptionInterface) {
-                log.error("Groovy", e);
                 throw new InternalApplicationException(e.getMessage());
             }
             throw Throwables.propagate(e);
@@ -47,8 +47,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             GroovyShell shell = new GroovyShell(binding);
             return (T) shell.evaluate(script);
         } catch (Exception e) {
+            log.error("Groovy evaluation failed, script=" + script, e);
             if (e instanceof GroovyExceptionInterface) {
-                log.error("Groovy", e);
                 throw new InternalApplicationException(e.getMessage());
             }
             throw Throwables.propagate(e);

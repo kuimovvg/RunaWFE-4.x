@@ -10,6 +10,7 @@ import ru.runa.wfe.office.excel.ExcelStorable;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
 import ru.runa.wfe.office.shared.OfficeFilesSupplierHandler;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 
 public class ExcelSaveHandler extends OfficeFilesSupplierHandler<ExcelBindings> {
 
@@ -19,16 +20,18 @@ public class ExcelSaveHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
+    @Override
     protected Map<String, Object> executeAction(IVariableProvider variableProvider) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
         ExcelDataStore dataStore = new ExcelDataStore();
-        Workbook workbook = dataStore.loadWorkbook(config.getFileInputStream(variableProvider, false), config.isInputFileXLSX(variableProvider, false));
+        Workbook workbook = dataStore.loadWorkbook(config.getFileInputStream(variableProvider, false),
+                config.isInputFileXLSX(variableProvider, false));
         for (ExcelBinding binding : config.getBindings()) {
-            Object value = variableProvider.getValue(binding.getVariableName());
-            if (value != null) {
+            WfVariable variable = variableProvider.getVariableNotNull(binding.getVariableName());
+            if (variable.getValue() != null) {
                 ExcelStorable storable = dataStore.createStorable(binding.getConstraints());
-                storable.setData(value);
+                storable.setFormat(variable.getFormatNotNull());
+                storable.setData(variable.getValue());
                 dataStore.save(workbook, storable);
             } else {
                 log.warn("Omitted binding as variable was null: " + binding.getVariableName());

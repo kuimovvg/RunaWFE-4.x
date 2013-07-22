@@ -60,7 +60,7 @@ public class TaskVariableTDBuilder implements TDBuilder {
         WfVariable variable = env.getProcessVariable(object, new ProcessIdExtractor(), variableName);
         if (variable.getValue() != null) {
             WfTask task = (WfTask) object;
-            return ViewUtil.getVariableValueHtml(env.getUser(), new StrutsWebHelper(env.getPageContext()), task.getProcessId(), variable);
+            return ViewUtil.getOutput(env.getUser(), new StrutsWebHelper(env.getPageContext()), task.getProcessId(), variable);
         }
         return "";
     }

@@ -73,7 +73,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
             formattedValue = Messages.getMessage("label.unset_empty.value", pageContext);
         } else {
             User user = Commons.getUser(pageContext.getSession());
-            formattedValue = ViewUtil.getVariableValueHtml(user, new StrutsWebHelper(pageContext), processId, variable);
+            formattedValue = ViewUtil.getOutput(user, new StrutsWebHelper(pageContext), processId, variable);
         }
         tr.addElement(new TD(formattedValue).setClass(Resources.CLASS_LIST_TABLE_TD));
 

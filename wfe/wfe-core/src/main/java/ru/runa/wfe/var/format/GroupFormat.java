@@ -1,11 +1,9 @@
 package ru.runa.wfe.var.format;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.user.User;
 
-public class GroupFormat implements VariableFormat<Group>, VariableDisplaySupport<Group> {
+public class GroupFormat implements VariableFormat<Group> {
 
     @Override
     public Class<? extends Group> getJavaClass() {
@@ -22,8 +20,4 @@ public class GroupFormat implements VariableFormat<Group>, VariableDisplaySuppor
         return object.getName();
     }
 
-    @Override
-    public String getHtml(User user, WebHelper webHelper, Long processId, String name, Group value) {
-        return FormatCommons.getVarOut(user, value, webHelper, processId, name, 0, null);
-    }
 }

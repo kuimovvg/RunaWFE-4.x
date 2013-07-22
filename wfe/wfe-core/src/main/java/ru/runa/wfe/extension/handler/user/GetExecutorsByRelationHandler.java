@@ -11,10 +11,13 @@ import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.dao.RelationDAO;
 import ru.runa.wfe.relation.dao.RelationPairDAO;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.collect.Lists;
 
 public class GetExecutorsByRelationHandler extends CommonParamBasedHandler {
+    @Autowired
+    private ExecutorDAO executorDAO;
     @Autowired
     private RelationDAO relationDAO;
     @Autowired
@@ -25,13 +28,17 @@ public class GetExecutorsByRelationHandler extends CommonParamBasedHandler {
         String relationName = handlerData.getInputParam(String.class, "name");
         Executor parameter = handlerData.getInputParam(Executor.class, "parameter");
         boolean inversed = handlerData.getInputParam(boolean.class, "inversed");
-        List<Executor> executors = Lists.newArrayList(parameter);
+        boolean recursively = handlerData.getInputParam(boolean.class, "recursively");
+        List<Executor> parameters = Lists.newArrayList(parameter);
+        if (recursively) {
+            parameters.addAll(executorDAO.getExecutorParentsAll(parameter));
+        }
         Relation relation = relationDAO.getNotNull(relationName);
         List<RelationPair> pairs;
         if (inversed) {
-            pairs = relationPairDAO.getExecutorsRelationPairsLeft(relation, executors);
+            pairs = relationPairDAO.getExecutorsRelationPairsLeft(relation, parameters);
         } else {
-            pairs = relationPairDAO.getExecutorsRelationPairsRight(relation, executors);
+            pairs = relationPairDAO.getExecutorsRelationPairsRight(relation, parameters);
         }
         List<Executor> result = Lists.newArrayList();
         for (RelationPair pair : pairs) {
