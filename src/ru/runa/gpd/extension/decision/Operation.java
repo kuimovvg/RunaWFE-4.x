@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.extension.decision.GroovyTypeSupport.DefaultType;
 import ru.runa.gpd.extension.decision.GroovyTypeSupport.StringType;
 import ru.runa.gpd.lang.model.Variable;
 
@@ -30,7 +31,7 @@ public class Operation {
                 return variable.getScriptingName() + " == " + NULL;
             }
             GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
-            if (typeSupport instanceof StringType) {
+            if (typeSupport instanceof StringType || typeSupport instanceof DefaultType) {
                 StringBuffer buffer = new StringBuffer();
                 buffer.append(typeSupport.wrap(variable));
                 buffer.append(".equals(");
@@ -54,7 +55,7 @@ public class Operation {
                 return variable.getScriptingName() + " != " + NULL;
             }
             GroovyTypeSupport typeSupport = GroovyTypeSupport.get(variable.getJavaClassName());
-            if (typeSupport instanceof StringType) {
+            if (typeSupport instanceof StringType || typeSupport instanceof DefaultType) {
                 StringBuffer buffer = new StringBuffer("!");
                 buffer.append(typeSupport.wrap(variable));
                 buffer.append(".equals(");

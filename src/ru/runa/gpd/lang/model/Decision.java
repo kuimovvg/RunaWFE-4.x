@@ -25,7 +25,7 @@ public class Decision extends Node implements Delegable, Active {
             Collection<String> modelTransitionNames = provider.getTransitionNames(this);
             for (Transition transition : getLeavingTransitions()) {
                 if (!modelTransitionNames.remove(transition.getName())) {
-                    addWarning("decision.unreachableTransition", transition.getName());
+                    //                    addWarning("decision.unreachableTransition", transition.getName());
                 }
             }
             for (String modelTransitionName : modelTransitionNames) {

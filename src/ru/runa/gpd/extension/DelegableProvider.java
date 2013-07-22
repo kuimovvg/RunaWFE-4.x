@@ -39,6 +39,10 @@ public class DelegableProvider implements IBotTaskHandlerProvider {
         return null;
     }
 
+    /**
+     * Validates configuration. Implementors can return <code>false</code> to raise default invalid configuration message. Or can invoke delegable.addError. 
+     * @return <code>false</code> for raising default invalid configuration message
+     */
     public boolean validateValue(Delegable delegable) {
         return true;
     }

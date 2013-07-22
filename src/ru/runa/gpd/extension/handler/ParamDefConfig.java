@@ -14,6 +14,9 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.handler.ParamDef.Presentation;
+import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
@@ -177,13 +180,22 @@ public class ParamDefConfig {
         return null;
     }
 
-    public boolean validate(String configuration) {
+    public boolean validate(Delegable delegable) {
+        String configuration = delegable.getDelegationConfiguration();
+        GraphElement graphElement = ((GraphElement) delegable);
         try {
             Map<String, String> props = parseConfiguration(configuration);
             for (ParamDefGroup group : groups) {
                 for (ParamDef paramDef : group.getParameters()) {
-                    if (!paramDef.isOptional() && !isValid(props.get(paramDef.getName()))) {
-                        return false;
+                    String value = props.get(paramDef.getName());
+                    if (!paramDef.isOptional() && !isValid(value)) {
+                        graphElement.addError("parambased.requiredParamIsNotSet", paramDef.getLabel());
+                    } else if (paramDef.isUseVariable() && paramDef.getPresentation() == Presentation.combo) {
+                        String[] filters = paramDef.getFormatFilters().toArray(new String[paramDef.getFormatFilters().size()]);
+                        List<String> variableNames = graphElement.getProcessDefinition().getVariableNames(true, filters);
+                        if (!variableNames.contains(value)) {
+                            graphElement.addError("parambased.missedParamVariable", paramDef.getLabel(), value);
+                        }
                     }
                 }
             }

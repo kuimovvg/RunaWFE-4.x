@@ -199,7 +199,7 @@ public class GroovyDecisionModel {
 
         public String getLexem2TextValue() {
             if (lexem2 instanceof Variable) {
-                return ((Variable) lexem2).getName();
+                return ((Variable) lexem2).getScriptingName();
             } else if (lexem2 instanceof String) {
                 return (String) lexem2;
             } else {

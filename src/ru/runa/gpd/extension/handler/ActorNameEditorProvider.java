@@ -45,11 +45,11 @@ public class ActorNameEditorProvider extends ParamBasedProvider {
         }
 
         @Override
-        public boolean validate(String configuration) {
-            if (!super.validate(configuration)) {
+        public boolean validate(Delegable delegable) {
+            if (!super.validate(delegable)) {
                 return false;
             }
-            Map<String, String> props = parseConfiguration(configuration);
+            Map<String, String> props = parseConfiguration(delegable.getDelegationConfiguration());
             return isValid(props.get(ACTOR_CODE)) || isValid(props.get(ACTOR_LOGIN));
         }
     }

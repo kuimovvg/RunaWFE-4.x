@@ -39,14 +39,14 @@ public class GroovyDecisionProvider extends DelegableProvider implements IDecisi
 
     @Override
     public boolean validateValue(Delegable delegable) {
+        String configuration = delegable.getDelegationConfiguration();
         try {
-            String configuration = delegable.getDelegationConfiguration();
             Binding binding = new Binding();
             GroovyShell shell = new GroovyShell(binding);
             shell.parse(configuration);
             return configuration.trim().length() > 0;
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("Script parse error", e);
+            PluginLogger.logErrorWithoutDialog("Script parse error: " + configuration, e);
             return false;
         }
     }
