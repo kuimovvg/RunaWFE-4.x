@@ -71,7 +71,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
 
     @Override
     public boolean validateValue(Delegable delegable) {
-        return getParamConfig(delegable).validate(delegable.getDelegationConfiguration());
+        return getParamConfig(delegable).validate(delegable);
     }
 
     public static class ConfigurationWizard extends Wizard {

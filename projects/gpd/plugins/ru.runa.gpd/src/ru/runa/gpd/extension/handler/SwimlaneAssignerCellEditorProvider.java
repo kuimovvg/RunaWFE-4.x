@@ -42,11 +42,12 @@ public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
 
     @Override
     public boolean validateValue(Delegable delegable) {
+        String configuration = delegable.getDelegationConfiguration();
         try {
-            XmlUtil.parseWithoutValidation(delegable.getDelegationConfiguration());
+            XmlUtil.parseWithoutValidation(configuration);
             return true;
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("SwimlaneAssignerActionHandler; invalid configuration", e);
+            PluginLogger.logErrorWithoutDialog("SwimlaneAssignerActionHandler: invalid configuration " + configuration, e);
             return false;
         }
     }

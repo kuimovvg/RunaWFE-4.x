@@ -23,7 +23,7 @@ public class MultiTaskStateFigure extends TaskStateFigure {
     @Override
     protected Rectangle getFrameArea(Rectangle origin) {
         if (!model.isMinimizedView()) {
-            return new Rectangle(origin.x + GRID_SIZE, origin.y, origin.width - 3 * GRID_SIZE / 2, origin.height - GRID_SIZE);
+            return new Rectangle(origin.x + GRID_SIZE, origin.y, origin.width - 2 * GRID_SIZE, origin.height - GRID_SIZE);
         }
         return super.getFrameArea(origin);
     }

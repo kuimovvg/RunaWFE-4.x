@@ -190,72 +190,76 @@ public class VariableSearchVisitor {
     }
 
     private void processFormNode(IFile definitionFile, FormNode formNode) throws Exception {
-        ElementMatch nodeElementMatch = new ElementMatch(formNode, definitionFile, ElementMatch.CONTEXT_SWIMLANE);
-        if (formNode.hasForm()) {
-            IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getFormFileName());
-            Map<String, Integer> formVariables = formNode.getFormVariables((IFolder) definitionFile.getParent());
-            ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM);
-            elementMatch.setParent(nodeElementMatch);
-            int matchesCount = 0;
-            if (formVariables.keySet().contains(query.getSearchText())) {
-                matchesCount++;
-            }
-            elementMatch.setMatchesCount(matchesCount);
-            List<Match> matches = findInFile(elementMatch, file, matcher);
-            elementMatch.setPotentialMatchesCount(matches.size() - matchesCount);
-            for (Match match : matches) {
-                query.getSearchResult().addMatch(match);
-            }
-        }
-        if (formNode.hasFormValidation()) {
-            IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
-            Set<String> validationVariables = formNode.getValidationVariables((IFolder) definitionFile.getParent());
-            ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM_VALIDATION);
-            elementMatch.setParent(nodeElementMatch);
-            int matchesCount = 0;
-            if (validationVariables.contains(query.getSearchText())) {
-                matchesCount++;
-            }
-            elementMatch.setMatchesCount(matchesCount);
-            List<Match> matches = findInFile(elementMatch, file, matcherWithBrackets);
-            elementMatch.setPotentialMatchesCount(matches.size() - matchesCount);
-            for (Match match : matches) {
-                query.getSearchResult().addMatch(match);
-            }
-        }
-        String swimlaneName = ((SwimlanedNode) formNode).getSwimlaneName();
-        if (query.getSearchText().equals(swimlaneName)) {
-            nodeElementMatch.setMatchesCount(1);
-            query.getSearchResult().addMatch(new Match(nodeElementMatch, 0, 0));
-        }
-        if (formNode instanceof TaskState) {
-            TaskState taskState = (TaskState) formNode;
-            if (taskState.getBotTaskLink() != null) {
-                ElementMatch elementMatch = new ElementMatch(taskState, null, ElementMatch.CONTEXT_BOT_TASK_LINK);
+        try {
+            ElementMatch nodeElementMatch = new ElementMatch(formNode, definitionFile, ElementMatch.CONTEXT_SWIMLANE);
+            if (formNode.hasForm()) {
+                IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getFormFileName());
+                Map<String, Integer> formVariables = formNode.getFormVariables((IFolder) definitionFile.getParent());
+                ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM);
                 elementMatch.setParent(nodeElementMatch);
-                Map<String, String> parameters = ParamDefConfig.getAllParameters(taskState.getBotTaskLink().getDelegationConfiguration());
-                for (Map.Entry<String, String> entry : parameters.entrySet()) {
-                    if (Objects.equal(query.getSearchText(), entry.getValue())) {
-                        query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
-                        elementMatch.setMatchesCount(elementMatch.getMatchesCount() + 1);
-                    }
+                int matchesCount = 0;
+                if (formVariables.keySet().contains(query.getSearchText())) {
+                    matchesCount++;
                 }
-            } else {
-                String botName = taskState.getSwimlaneBotName();
-                if (botName != null) {
-                    // if bot task exists with same as task name
-                    BotTask botTask = BotCache.getBotTask(botName, taskState.getName());
-                    if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
-                        ElementMatch elementMatch = new ElementMatch(taskState, BotCache.getBotTaskFile(botTask), ElementMatch.CONTEXT_BOT_TASK);
-                        elementMatch.setParent(nodeElementMatch);
-                        List<Match> matches = findInString(elementMatch, botTask.getDelegationConfiguration(), matcher);
-                        elementMatch.setPotentialMatchesCount(matches.size());
-                        for (Match match : matches) {
-                            query.getSearchResult().addMatch(match);
+                elementMatch.setMatchesCount(matchesCount);
+                List<Match> matches = findInFile(elementMatch, file, matcher);
+                elementMatch.setPotentialMatchesCount(matches.size() - matchesCount);
+                for (Match match : matches) {
+                    query.getSearchResult().addMatch(match);
+                }
+            }
+            if (formNode.hasFormValidation()) {
+                IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
+                Set<String> validationVariables = formNode.getValidationVariables((IFolder) definitionFile.getParent());
+                ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM_VALIDATION);
+                elementMatch.setParent(nodeElementMatch);
+                int matchesCount = 0;
+                if (validationVariables.contains(query.getSearchText())) {
+                    matchesCount++;
+                }
+                elementMatch.setMatchesCount(matchesCount);
+                List<Match> matches = findInFile(elementMatch, file, matcherWithBrackets);
+                elementMatch.setPotentialMatchesCount(matches.size() - matchesCount);
+                for (Match match : matches) {
+                    query.getSearchResult().addMatch(match);
+                }
+            }
+            String swimlaneName = ((SwimlanedNode) formNode).getSwimlaneName();
+            if (query.getSearchText().equals(swimlaneName)) {
+                nodeElementMatch.setMatchesCount(1);
+                query.getSearchResult().addMatch(new Match(nodeElementMatch, 0, 0));
+            }
+            if (formNode instanceof TaskState) {
+                TaskState taskState = (TaskState) formNode;
+                if (taskState.getBotTaskLink() != null) {
+                    ElementMatch elementMatch = new ElementMatch(taskState, null, ElementMatch.CONTEXT_BOT_TASK_LINK);
+                    elementMatch.setParent(nodeElementMatch);
+                    Map<String, String> parameters = ParamDefConfig.getAllParameters(taskState.getBotTaskLink().getDelegationConfiguration());
+                    for (Map.Entry<String, String> entry : parameters.entrySet()) {
+                        if (Objects.equal(query.getSearchText(), entry.getValue())) {
+                            query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
+                            elementMatch.setMatchesCount(elementMatch.getMatchesCount() + 1);
+                        }
+                    }
+                } else {
+                    String botName = taskState.getSwimlaneBotName();
+                    if (botName != null) {
+                        // if bot task exists with same as task name
+                        BotTask botTask = BotCache.getBotTask(botName, taskState.getName());
+                        if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
+                            ElementMatch elementMatch = new ElementMatch(taskState, BotCache.getBotTaskFile(botTask), ElementMatch.CONTEXT_BOT_TASK);
+                            elementMatch.setParent(nodeElementMatch);
+                            List<Match> matches = findInString(elementMatch, botTask.getDelegationConfiguration(), matcher);
+                            elementMatch.setPotentialMatchesCount(matches.size());
+                            for (Match match : matches) {
+                                query.getSearchResult().addMatch(match);
+                            }
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            throw new Exception(formNode.toString(), e);
         }
     }
 

@@ -140,11 +140,6 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
     @Override
     protected void handleDestinationBrowseButtonPressed() {
         DirectoryDialog dialog = new DirectoryDialog(getContainer().getShell(), SWT.SAVE);
-        //        dialog.setFilterExtensions(new String[] { "*.par", "*.*" });
-        //        String selectionName = getProcessDefinitionSelection();
-        //        if (selectionName != null) {
-        //            dialog.setFileName(selectionName.substring(selectionName.lastIndexOf("/") + 1) + ".par");
-        //        }
         dialog.setFilterPath(getDestinationValue());
         String selectedFolderName = dialog.open();
         if (selectedFolderName != null) {
