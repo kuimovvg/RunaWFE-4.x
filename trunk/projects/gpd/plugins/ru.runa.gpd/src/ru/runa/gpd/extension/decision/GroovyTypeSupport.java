@@ -67,7 +67,7 @@ public abstract class GroovyTypeSupport {
 
     abstract List<Operation> getTypedOperations();
 
-    private static class DefaultType extends GroovyTypeSupport {
+    static class DefaultType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
@@ -123,7 +123,7 @@ public abstract class GroovyTypeSupport {
         }
     }
 
-    private static class BooleanType extends GroovyTypeSupport {
+    static class BooleanType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
@@ -154,7 +154,7 @@ public abstract class GroovyTypeSupport {
         }
     }
 
-    private static class NumberType extends GroovyTypeSupport {
+    static class NumberType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {
@@ -182,7 +182,7 @@ public abstract class GroovyTypeSupport {
         }
     }
 
-    private static class DateType extends GroovyTypeSupport {
+    static class DateType extends GroovyTypeSupport {
         @Override
         String wrap(Object value) {
             if (value instanceof Variable) {

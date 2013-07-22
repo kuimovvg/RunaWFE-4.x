@@ -37,6 +37,7 @@ public abstract class NodeFigure<T extends GraphElement> extends Figure implemen
     protected TextFlow swimlaneLabel;
     protected TextFlow label;
     private static final Border TOOL_TIP_BORDER = new MarginBorder(0, 2, 0, 2);
+    private static final Border LABEL_BORDER = new MarginBorder(0, GRID_SIZE / 2, 0, GRID_SIZE / 2);
     protected ActionsContainer actionsContainer;
     protected ConnectionAnchor connectionAnchor = null;
     protected T model;
@@ -111,6 +112,7 @@ public abstract class NodeFigure<T extends GraphElement> extends Figure implemen
         fp.setLayoutManager(new PageFlowLayout(fp));
         fp.setHorizontalAligment(PositionConstants.CENTER);
         fp.add(label);
+        fp.setBorder(LABEL_BORDER);
         figure.add(fp, FlowLayout.ALIGN_CENTER);
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.horizontalSpan = 2;
