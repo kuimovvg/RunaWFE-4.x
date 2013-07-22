@@ -16,7 +16,7 @@ public class CellExcelStorable extends ExcelStorable<CellConstraints, Object> {
 
     @Override
     protected void storeIn(Workbook workbook) {
-        ExcelHelper.setCellValue(getCell(workbook), data);
+        ExcelHelper.setCellValue(getCell(workbook), format.format(data));
     }
 
     private Cell getCell(Workbook workbook) {

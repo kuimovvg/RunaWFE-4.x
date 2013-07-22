@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.collect.Lists;
 
@@ -44,9 +44,8 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                 break;
             }
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
-            String[] componentClassNames = variable.getDefinition().getFormatComponentClassNames();
-            String elementFormatClassName = (componentClassNames.length > 0) ? componentClassNames[0] : StringFormat.class.getName();
-            List<Object> list = (List<Object>) variable.getValue();
+            String elementFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(0);
+            List<Object> list = variableProvider.getValue(List.class, variableName);
             if (list == null) {
                 list = new ArrayList<Object>();
             }
@@ -55,7 +54,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             lists.add(list);
             jsHandlers += ViewUtil.getComponentJSFunction(elementFormatClassName);
             rowTemplate.append("<td>");
-            String inputTag = ViewUtil.getComponentInput(user, variableName, elementFormatClassName, null, true);
+            String inputTag = getComponentInput(user, variableName, elementFormatClassName, null, true);
             inputTag = inputTag.replaceAll("\"", "'");
             rowTemplate.append(inputTag);
             rowTemplate.append("</td>");
@@ -74,8 +73,8 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             html.append("<tr class=\"header\">");
             for (String variableName : variableNames) {
                 String headerVariableName = variableName + "_header";
-                Object o = variableProvider.getValue(headerVariableName);
-                String value = FormatCommons.getVarOut(user, o, webHelper, variableProvider.getProcessId(), headerVariableName, 0, null);
+                WfVariable headerVariable = variableProvider.getVariableNotNull(headerVariableName);
+                String value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), headerVariable);
                 html.append("<td><b>").append(value).append("</b></td>");
             }
             html.append("<td>");
@@ -88,10 +87,10 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                 String trId = "editLinkedLists" + (row + 1);
                 html.append("<tr id=\"").append(trId).append("\" class=\"cloned\">");
                 for (int column = 0; column < variableNames.size(); column++) {
-                    Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : "";
+                    Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
                     String variableName = variableNames.get(column);
                     html.append("<td>");
-                    html.append(ViewUtil.getComponentInput(user, variableName, componentFormatClassNames.get(column), o, allowToChangeElements));
+                    html.append(getComponentInput(user, variableName, componentFormatClassNames.get(column), o, allowToChangeElements));
                     html.append("</td>");
                 }
                 html.append("<td>");
@@ -105,6 +104,10 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             return html.toString();
         }
         return "-";
+    }
+
+    protected String getComponentInput(User user, String variableName, String formatClassName, Object value, boolean enabled) {
+        return ViewUtil.getComponentInput(user, variableName, formatClassName, value, enabled);
     }
 
     @Override
