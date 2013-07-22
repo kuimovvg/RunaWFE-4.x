@@ -425,20 +425,6 @@
             width="450">
          <param
                multiple="false"
-               name="%Param.ListRemoval"
-               type="combo"
-               variableAccess="NONE">
-            <paramValue
-                  name="false"
-                  value="false">
-            </paramValue>
-            <paramValue
-                  name="true"
-                  value="true">
-            </paramValue>
-         </param>
-         <param
-               multiple="false"
                name="%Param.ListAddition"
                type="combo"
                variableAccess="NONE">
@@ -454,6 +440,20 @@
          <param
                multiple="false"
                name="%Param.ListChange"
+               type="combo"
+               variableAccess="NONE">
+            <paramValue
+                  name="false"
+                  value="false">
+            </paramValue>
+            <paramValue
+                  name="true"
+                  value="true">
+            </paramValue>
+         </param>
+         <param
+               multiple="false"
+               name="%Param.ListRemoval"
                type="combo"
                variableAccess="NONE">
             <paramValue
