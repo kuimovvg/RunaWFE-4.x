@@ -35,21 +35,21 @@ public class ContainerElementsRequiredValidator extends FieldValidator {
         boolean nullValueExists = false;
         if (container instanceof Collection) {
             for (Object object : (Collection<?>) container) {
-                if (object == null) {
+                if (isNullValue(object)) {
                     nullValueExists = true;
                     break;
                 }
             }
         } else if (container.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(container); i++) {
-                if (Array.get(container, i) == null) {
+                if (isNullValue(Array.get(container, i))) {
                     nullValueExists = true;
                     break;
                 }
             }
         } else if (container instanceof Map<?, ?>) {
             for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) container).entrySet()) {
-                if (entry.getKey() == null || entry.getValue() == null) {
+                if (isNullValue(entry.getKey()) || isNullValue(entry.getValue())) {
                     nullValueExists = true;
                     break;
                 }
@@ -61,5 +61,9 @@ public class ContainerElementsRequiredValidator extends FieldValidator {
         if (nullValueExists) {
             addError();
         }
+    }
+
+    private boolean isNullValue(Object object) {
+        return object == null || (object instanceof String && ((String) object).isEmpty());
     }
 }
