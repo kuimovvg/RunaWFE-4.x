@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.collect.Lists;
 
@@ -43,8 +42,8 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             if (variableName == null) {
                 break;
             }
-            WfVariable variable = variableProvider.getVariableNotNull(variableName);
-            String elementFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(0);
+            WfVariable variable = variableProvider.getVariable(variableName);
+            String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
             List<Object> list = variableProvider.getValue(List.class, variableName);
             if (list == null) {
                 list = new ArrayList<Object>();
@@ -107,7 +106,10 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
     }
 
     protected String getComponentInput(User user, String variableName, String formatClassName, Object value, boolean enabled) {
-        return ViewUtil.getComponentInput(user, variableName, formatClassName, value, enabled);
+        if (enabled) {
+            return ViewUtil.getComponentInput(user, variableName, formatClassName, value);
+        }
+        return ViewUtil.getComponentOutput(user, variableName, formatClassName, value);
     }
 
     @Override
