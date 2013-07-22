@@ -17,19 +17,12 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
-
-import com.google.common.collect.Maps;
 
 /**
  * This class is marker class for validation.
  */
-public class FileFormat implements VariableFormat<FileVariable>, VariableDisplaySupport<FileVariable> {
+public class FileFormat implements VariableFormat<FileVariable> {
 
     @Override
     public Class<? extends FileVariable> getJavaClass() {
@@ -46,32 +39,4 @@ public class FileFormat implements VariableFormat<FileVariable>, VariableDisplay
         throw new UnsupportedOperationException("file variable cannot be representable as string");
     }
 
-    @Override
-    public String getHtml(User user, WebHelper webHelper, Long processId, String name, FileVariable value) {
-        return getHtml(value.getName(), webHelper, processId, name, 0, null);
-    }
-
-    public static String getHtml(String fileName, WebHelper webHelper, Long processId, String name, int listIndex, Object mapKey) {
-        HashMap<String, Object> params = Maps.newHashMap();
-        params.put("id", processId);
-        params.put("variableName", name);
-        if (listIndex != 0) {
-            params.put("listIndex", String.valueOf(listIndex));
-        }
-        if (mapKey != null) {
-            params.put("mapKey", String.valueOf(mapKey));
-        }
-        return getHtml(fileName, webHelper, params);
-    }
-
-    public static String getHtml(String fileName, WebHelper webHelper, Long logId) {
-        HashMap<String, Object> params = Maps.newHashMap();
-        params.put("logId", logId);
-        return getHtml(fileName, webHelper, params);
-    }
-
-    private static String getHtml(String fileName, WebHelper webHelper, Map<String, Object> params) {
-        String href = webHelper.getActionUrl("/variableDownloader", params);
-        return "<a href=\"" + href + "\">" + fileName + "</>";
-    }
 }

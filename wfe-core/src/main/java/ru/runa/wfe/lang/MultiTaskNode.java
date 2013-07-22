@@ -21,6 +21,7 @@
  */
 package ru.runa.wfe.lang;
 
+import java.util.HashSet;
 import java.util.List;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -72,10 +73,11 @@ public class MultiTaskNode extends BaseTaskNode {
     @Override
     public void execute(ExecutionContext executionContext) {
         TaskDefinition taskDefinition = getFirstTaskNotNull();
-        List<Object> executorIds = executionContext.getVariableProvider().getValueNotNull(List.class, executorsVariableName);
+        List<Object> executors = executionContext.getVariableProvider().getValueNotNull(List.class, executorsVariableName);
         boolean tasksCreated = false;
-        for (Object executorId : executorIds) {
-            Executor executor = TypeConversionUtil.convertTo(Executor.class, executorId);
+        // TODO temporary set, introduce unique property in GPD
+        for (Object executorIdentity : new HashSet<Object>(executors)) {
+            Executor executor = TypeConversionUtil.convertTo(Executor.class, executorIdentity);
             Task task = taskFactory.create(executionContext, taskDefinition);
             task.assignExecutor(executionContext, executor, false);
             taskFactory.notify(executionContext, task);
@@ -83,15 +85,18 @@ public class MultiTaskNode extends BaseTaskNode {
         }
         // check if we should continue execution
         if (async || !tasksCreated) {
+            log.debug("continue execution " + this);
             leave(executionContext);
         }
     }
 
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
-        for (Task task : executionContext.getToken().getTasks()) {
-            if (Objects.equal(task.getNodeId(), getNodeId())) {
-                task.end(executionContext);
+        if (!async) {
+            for (Task task : executionContext.getToken().getTasks()) {
+                if (Objects.equal(task.getNodeId(), getNodeId())) {
+                    task.end(executionContext);
+                }
             }
         }
         super.leave(executionContext, transition);

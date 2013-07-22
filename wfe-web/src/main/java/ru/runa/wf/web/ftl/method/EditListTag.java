@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -26,8 +26,7 @@ public class EditListTag extends AjaxFreemarkerTag {
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String[] componentClassNames = variable.getDefinition().getFormatComponentClassNames();
-        String elementFormatClassName = (componentClassNames.length > 0) ? componentClassNames[0] : StringFormat.class.getName();
+        String elementFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(0);
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
         String inputTag = ViewUtil.getComponentInput(user, variableName, elementFormatClassName, null, false);

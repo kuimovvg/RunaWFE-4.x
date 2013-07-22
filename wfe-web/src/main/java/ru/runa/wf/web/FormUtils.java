@@ -49,15 +49,28 @@ public class FormUtils {
      * @return saved in request values from previous form submit (used to
      *         re-open form in case of validation errors)
      */
-    public static Map<String, String[]> getUserFormInputVariables(ServletRequest request) {
+    public static Map<String, String[]> getUserFormInput(ServletRequest request) {
         return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
+    }
+
+    /**
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
+     */
+    public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
+        Map<String, String[]> userInput = getUserFormInput(request);
+        if (userInput != null) {
+            List<String> formatErrorsForFields = new ArrayList<String>();
+            return convert(request, userInput, interaction, formatErrorsForFields);
+        }
+        return null;
     }
 
     public static Map<String, String> getUserFormValidationErrors(ServletRequest request) {
         return (Map<String, String>) request.getAttribute(USER_ERRORS);
     }
 
-    public static Map<String, String[]> extractAllAvailableVariables(ActionForm actionForm) {
+    private static Map<String, String[]> extractAllAvailableVariables(ActionForm actionForm) {
         Hashtable<String, Object> hashtable = actionForm.getMultipartRequestHandler().getAllElements();
         Map<String, String[]> variablesMap = new HashMap<String, String[]>();
         for (String varName : hashtable.keySet()) {
@@ -74,12 +87,22 @@ public class FormUtils {
     }
 
     public static Map<String, Object> extractVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
+        List<String> formatErrorsForFields = new ArrayList<String>();
+        Hashtable<String, Object> userInput = actionForm.getMultipartRequestHandler().getAllElements();
+        Map<String, Object> variables = convert(request, userInput, interaction, formatErrorsForFields);
+        if (formatErrorsForFields.size() > 0) {
+            throw new VariablesFormatException(formatErrorsForFields);
+        }
+        log.debug("Submitted: " + variables);
+        return variables;
+    }
+
+    private static Map<String, Object> convert(HttpServletRequest request, Map<String, ? extends Object> userInput, Interaction interaction,
+            List<String> formatErrorsForFields) {
         try {
-            Hashtable<String, Object> hashtable = actionForm.getMultipartRequestHandler().getAllElements();
-            List<String> formatErrorsForFields = new ArrayList<String>();
             HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
-                Object value = hashtable.get(variableDefinition.getName());
+                Object value = userInput.get(variableDefinition.getName());
                 VariableFormat<?> format = FormatCommons.create(variableDefinition);
                 // in case from contains not optional check box with boolean
                 // format we must add boolean value as variable manually since
@@ -129,10 +152,6 @@ public class FormUtils {
                     variables.put(variableDefinition.getName(), variableValue);
                 }
             }
-            if (formatErrorsForFields.size() > 0) {
-                throw new VariablesFormatException(formatErrorsForFields);
-            }
-            log.debug("Submitted: " + variables);
             return variables;
         } catch (Exception e) {
             throw Throwables.propagate(e);
