@@ -17,6 +17,8 @@
  */
 package ru.runa.wf.web.tag;
 
+import java.util.Map;
+
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.Form;
 import org.apache.ecs.html.Input;
@@ -30,6 +32,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
+import ru.runa.wf.web.FormUtils;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 
@@ -49,12 +52,10 @@ public abstract class WFFormTag extends TitledFormTag {
             // TODO test user filling without this code
             // Map<String, String[]> userDefinedVariables =
             // FormUtils.getUserFormInput(pageContext.getRequest());
-            // if (userDefinedVariables != null) {
-            // Map<String, String> userErrors =
-            // FormUtils.getUserFormValidationErrors(pageContext.getRequest());
-            // wfFormContent = HTMLFormConverter.fillForm(pageContext,
-            // wfFormContent, userDefinedVariables, userErrors);
-            // }
+            Map<String, String> userErrors = FormUtils.getUserFormValidationErrors(pageContext.getRequest());
+            if (userErrors != null) {
+                wfFormContent = HTMLFormConverter.fillForm(pageContext, wfFormContent, null, userErrors);
+            }
             if (interaction.getCssData() != null) {
                 StringBuffer styles = new StringBuffer("<style>");
                 styles.append(new String(interaction.getCssData(), Charsets.UTF_8));

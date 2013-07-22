@@ -7,7 +7,6 @@ import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FileFormat;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.collect.Lists;
 
@@ -29,7 +28,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
                 break;
             }
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
-            String elementFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(0);
+            String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
             List<Object> list = (List<Object>) variable.getValue();
             if (list == null) {
                 list = new ArrayList<Object>();

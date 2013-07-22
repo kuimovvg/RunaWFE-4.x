@@ -13,7 +13,7 @@ public class DisplayVariableTag extends FreemarkerTag {
         boolean componentView = getParameterAs(boolean.class, 1);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         if (componentView) {
-            return ViewUtil.getComponentInput(user, variableName, variable.getFormatClassNameNotNull(), variable.getValue(), false);
+            return ViewUtil.getComponentOutput(user, variableName, variable.getFormatClassNameNotNull(), variable.getValue());
         } else {
             String html = "<span class=\"displayVariable\">";
             html += ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variable);

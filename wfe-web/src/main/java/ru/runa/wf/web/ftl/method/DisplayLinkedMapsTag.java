@@ -7,7 +7,6 @@ import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FileFormat;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -30,8 +29,8 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                     break;
                 }
                 WfVariable variable = variableProvider.getVariableNotNull(variableName);
-                String valueFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(1);
-                Map<?, ?> map = (Map<?, ?>) variable.getValue();
+                String valueFormatClassName = ViewUtil.getElementFormatClassName(variable, 1);
+                Map<?, ?> map = (Map<?, ?>) variableProvider.getValue(variableName);
                 if (map == null) {
                     map = Maps.newHashMap();
                 }

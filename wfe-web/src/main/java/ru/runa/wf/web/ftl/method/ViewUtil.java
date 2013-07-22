@@ -88,15 +88,12 @@ public class ViewUtil {
         return html;
     }
 
-    public static String getComponentInput(User user, String variableName, String formatClassName, Object value, boolean enabled) {
+    public static String getComponentInput(User user, String variableName, String formatClassName, Object value) {
         String html = "";
         if (StringFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
             if (value != null) {
                 html += "value=\"" + value + "\" ";
-            }
-            if (!enabled) {
-                html += "disabled=\"true\" ";
             }
             html += "/>";
         }
@@ -104,9 +101,6 @@ public class ViewUtil {
             html += "<textarea name=\"" + variableName + "\" class=\"inputText\">";
             if (value != null) {
                 html += value;
-            }
-            if (!enabled) {
-                html += "readonly=\"true\" ";
             }
             html += "</textarea>";
         }
@@ -116,25 +110,16 @@ public class ViewUtil {
             if (value instanceof Number) {
                 html += "value=\"" + value + "\" ";
             }
-            if (!enabled) {
-                html += "disabled=\"true\" ";
-            }
             html += "/>";
         }
         if (FileFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" ";
-            if (!enabled) {
-                html += "disabled=\"true\" ";
-            }
             html += "/>";
         }
         if (BooleanFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
             if (value instanceof Boolean && ((Boolean) value)) {
                 html += "checked=\"checked\" ";
-            }
-            if (!enabled) {
-                html += "disabled=\"true\" ";
             }
             html += "/>";
         }
@@ -143,18 +128,12 @@ public class ViewUtil {
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDate((Date) value) + "\" ";
             }
-            if (!enabled) {
-                html += "disabled=\"true\" ";
-            }
             html += "/>";
         }
         if (TimeFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputTime\" style=\"width: 50px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatTime((Date) value) + "\" ";
-            }
-            if (!enabled) {
-                html += "disabled=\"true\" ";
             }
             html += "/>";
         }
@@ -163,14 +142,77 @@ public class ViewUtil {
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDateTime((Date) value) + "\" ";
             }
-            if (!enabled) {
-                html += "disabled=\"true\" ";
+            html += "/>";
+        }
+        if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
+                || GroupFormat.class.getName().equals(formatClassName)) {
+            html = ViewUtil.createExecutorSelect(user, variableName, formatClassName, value, true);
+        }
+        return html;
+    }
+
+    public static String getComponentOutput(User user, String variableName, String formatClassName, Object value) {
+        String html = "";
+        if (StringFormat.class.getName().equals(formatClassName)) {
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
+            if (value != null) {
+                html += "value=\"" + value + "\" ";
+            }
+            html += "/>";
+        }
+        if (TextFormat.class.getName().equals(formatClassName)) {
+            html += "<textarea name=\"" + variableName + "\" class=\"inputText\" disabled=\"true\">";
+            if (value != null) {
+                html += value;
+            }
+            html += "</textarea>";
+        }
+        if (LongFormat.class.getName().equals(formatClassName) || DoubleFormat.class.getName().equals(formatClassName)
+                || BigDecimalFormat.class.getName().equals(formatClassName)) {
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputNumber\" disabled=\"true\" ";
+            if (value instanceof Number) {
+                html += "value=\"" + value + "\" ";
+            }
+            html += "/>";
+        }
+        if (FileFormat.class.getName().equals(formatClassName)) {
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
+            if (value instanceof FileVariable) {
+                html += "value=\"" + ((FileVariable) value).getName() + "\" ";
+            }
+            html += "/>";
+        }
+        if (BooleanFormat.class.getName().equals(formatClassName)) {
+            html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" disabled=\"true\" ";
+            if (value instanceof Boolean && ((Boolean) value)) {
+                html += "checked=\"checked\" ";
+            }
+            html += "/>";
+        }
+        if (DateFormat.class.getName().equals(formatClassName)) {
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDate\" style=\"width: 100px;\" disabled=\"true\" ";
+            if (value instanceof Date) {
+                html += "value=\"" + CalendarUtil.formatDate((Date) value) + "\" ";
+            }
+            html += "/>";
+        }
+        if (TimeFormat.class.getName().equals(formatClassName)) {
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputTime\" style=\"width: 50px;\" disabled=\"true\" ";
+            if (value instanceof Date) {
+                html += "value=\"" + CalendarUtil.formatTime((Date) value) + "\" ";
+            }
+            html += "/>";
+        }
+        if (DateTimeFormat.class.getName().equals(formatClassName)) {
+            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDateTime\" style=\"width: 150px;\" disabled=\"true\" ";
+            if (value instanceof Date) {
+                html += "value=\"" + CalendarUtil.formatDateTime((Date) value) + "\" ";
             }
             html += "/>";
         }
         if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
                 || GroupFormat.class.getName().equals(formatClassName)) {
-            html = ViewUtil.createExecutorSelect(user, variableName, formatClassName, value, enabled);
+            html = ViewUtil.createExecutorSelect(user, variableName, formatClassName, value, false);
         }
         return html;
     }
@@ -216,7 +258,7 @@ public class ViewUtil {
             }
             if (format instanceof ListFormat) {
                 List<Object> list = (List<Object>) variable.getValue();
-                String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);
+                String elementFormatClassName = getElementFormatClassName(variable, 0);
                 StringBuffer html = new StringBuffer();
                 html.append("[");
                 for (int i = 0; i < list.size(); i++) {
@@ -283,4 +325,14 @@ public class ViewUtil {
         return "<a href=\"" + href + "\">" + fileName + "</>";
     }
 
+    public static String getElementFormatClassName(WfVariable variable, int index) {
+        if (variable != null) {
+            VariableFormat format = variable.getFormatNotNull();
+            if (format instanceof VariableFormatContainer) {
+                return ((VariableFormatContainer) format).getComponentClassName(index);
+            }
+        }
+        return StringFormat.class.getName();
+
+    }
 }

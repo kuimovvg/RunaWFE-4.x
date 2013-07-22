@@ -183,39 +183,39 @@ public class HTMLFormConverter {
     public static String fillForm(PageContext pageContext, String formHtml, Map<String, String[]> variables, Map<String, String> errors) {
         try {
             Document document = HTMLUtils.readHtml(formHtml.getBytes(Charsets.UTF_8));
-
             NodeList htmlTagElements = document.getElementsByTagName("input");
             for (int i = 0; i < htmlTagElements.getLength(); i++) {
                 Element node = (Element) htmlTagElements.item(i);
                 String typeName = node.getAttribute(TYPE_ATTR);
                 String inputName = node.getAttribute(NAME_ATTR);
-
-                String[] valueArray = variables.get(inputName);
-                String stringValue = getStringForFillingUserInputValues(valueArray);
-                if (stringValue != null) {
-                    // handle input (type='text, password')
-                    if (hasValue(STD_INPUT_NAMES, typeName, true)) {
-                        node.setAttribute(VALUE_ATTR, stringValue);
-                    } else if ("checkbox".equalsIgnoreCase(typeName)) {
-                        String checkBoxValue = node.getAttribute(VALUE_ATTR);
-                        if (hasValue(valueArray, checkBoxValue, false)) {
-                            node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
+                if (variables != null) {
+                    String[] valueArray = variables.get(inputName);
+                    String stringValue = getStringForFillingUserInputValues(valueArray);
+                    if (stringValue != null) {
+                        // handle input (type='text, password')
+                        if (hasValue(STD_INPUT_NAMES, typeName, true)) {
+                            node.setAttribute(VALUE_ATTR, stringValue);
+                        } else if ("checkbox".equalsIgnoreCase(typeName)) {
+                            String checkBoxValue = node.getAttribute(VALUE_ATTR);
+                            if (hasValue(valueArray, checkBoxValue, false)) {
+                                node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
+                            } else {
+                                // reset values for default ones
+                                node.removeAttribute(CHECKED_ATTR);
+                            }
+                        } else if ("radio".equalsIgnoreCase(typeName)) {
+                            String radioValue = node.getAttribute(VALUE_ATTR);
+                            if (stringValue.equals(radioValue)) {
+                                node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
+                            } else {
+                                // reset values for default ones
+                                node.removeAttribute(CHECKED_ATTR);
+                            }
+                        } else if ("file".equalsIgnoreCase(typeName)) {
+                            log.debug("file is not supported, ");
                         } else {
-                            // reset values for default ones
-                            node.removeAttribute(CHECKED_ATTR);
+                            log.error("- Strange input type: " + typeName);
                         }
-                    } else if ("radio".equalsIgnoreCase(typeName)) {
-                        String radioValue = node.getAttribute(VALUE_ATTR);
-                        if (stringValue.equals(radioValue)) {
-                            node.setAttribute(CHECKED_ATTR, CHECKED_ATTR);
-                        } else {
-                            // reset values for default ones
-                            node.removeAttribute(CHECKED_ATTR);
-                        }
-                    } else if ("file".equalsIgnoreCase(typeName)) {
-                        log.debug("file is not supported, ");
-                    } else {
-                        log.error("- Strange input type: " + typeName);
                     }
                 }
                 handleErrors(errors, inputName, pageContext, document, node);
@@ -225,17 +225,19 @@ public class HTMLFormConverter {
                 Element node = (Element) textareaElements.item(i);
                 String inputName = node.getAttribute(NAME_ATTR);
                 if (!Strings.isNullOrEmpty(inputName)) {
-                    String[] valueArray = variables.get(inputName);
-                    String stringValue = getStringForFillingUserInputValues(valueArray);
-                    if (stringValue == null) {
-                        continue;
-                    }
-                    stringValue = stringValue.replaceAll("\r\n", "\n");
-                    if (node.getFirstChild() != null) {
-                        node.getFirstChild().setNodeValue(stringValue);
-                    } else {
-                        Text text = document.createTextNode(stringValue);
-                        node.appendChild(text);
+                    if (variables != null) {
+                        String[] valueArray = variables.get(inputName);
+                        String stringValue = getStringForFillingUserInputValues(valueArray);
+                        if (stringValue == null) {
+                            continue;
+                        }
+                        stringValue = stringValue.replaceAll("\r\n", "\n");
+                        if (node.getFirstChild() != null) {
+                            node.getFirstChild().setNodeValue(stringValue);
+                        } else {
+                            Text text = document.createTextNode(stringValue);
+                            node.appendChild(text);
+                        }
                     }
                     handleErrors(errors, inputName, pageContext, document, node);
                 }
@@ -244,16 +246,18 @@ public class HTMLFormConverter {
             for (int i = 0; i < selectElements.getLength(); i++) {
                 Element node = (Element) selectElements.item(i);
                 String inputName = node.getAttribute(NAME_ATTR);
-                String[] valueArray = variables.get(inputName);
-                NodeList options = node.getChildNodes();
-                for (int j = 0; j < options.getLength(); j++) {
-                    if (options.item(j) instanceof HTMLOptionElement) {
-                        HTMLOptionElement option = (HTMLOptionElement) options.item(j);
-                        String optionValue = option.getValue();
-                        if (hasValue(valueArray, optionValue, false)) {
-                            option.setAttribute(SELECTED_ATTR, SELECTED_ATTR);
-                        } else {
-                            option.removeAttribute(SELECTED_ATTR);
+                if (variables != null) {
+                    String[] valueArray = variables.get(inputName);
+                    NodeList options = node.getChildNodes();
+                    for (int j = 0; j < options.getLength(); j++) {
+                        if (options.item(j) instanceof HTMLOptionElement) {
+                            HTMLOptionElement option = (HTMLOptionElement) options.item(j);
+                            String optionValue = option.getValue();
+                            if (hasValue(valueArray, optionValue, false)) {
+                                option.setAttribute(SELECTED_ATTR, SELECTED_ATTR);
+                            } else {
+                                option.removeAttribute(SELECTED_ATTR);
+                            }
                         }
                     }
                 }
