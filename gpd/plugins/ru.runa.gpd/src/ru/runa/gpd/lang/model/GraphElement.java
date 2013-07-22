@@ -121,7 +121,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
             } else if (!HandlerRegistry.getInstance().isArtifactRegistered(d.getDelegationType(), delegationClassName)) {
                 addWarning("delegationClassName.classNotFound");
             } else if (!provider.validateValue(d)) {
-                addError("decision.invalidConfiguration");
+                addError("delegable.invalidConfiguration");
             }
         }
     }

@@ -29,11 +29,12 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
 
     @Override
     public boolean validateValue(Delegable delegable) {
+        String configuration = delegable.getDelegationConfiguration();
         try {
-            OrgFunctionsRegistry.getInstance().getArtifact(delegable.getDelegationConfiguration());
+            OrgFunctionsRegistry.getInstance().getArtifact(configuration);
             return true;
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("EscalationActionHandler; invalid configuration", e);
+            PluginLogger.logErrorWithoutDialog("EscalationActionHandler invalid configuration: " + configuration, e);
             return false;
         }
     }

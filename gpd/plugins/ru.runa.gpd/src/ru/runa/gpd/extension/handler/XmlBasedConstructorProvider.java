@@ -77,11 +77,12 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
 
     @Override
     public boolean validateValue(Delegable delegable) {
+        String configuration = delegable.getDelegationConfiguration();
         try {
-            fromXml(delegable.getDelegationConfiguration());
+            fromXml(configuration);
             return true;
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog(getClass() + ": invalid configuration", e);
+            PluginLogger.logErrorWithoutDialog(getClass() + ": invalid configuration: " + configuration, e);
             return false;
         }
     }

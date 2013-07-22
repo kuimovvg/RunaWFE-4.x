@@ -1335,6 +1335,16 @@
             enabled="true"
             label="%ru.runa.wfe.extension.handler.user.GetExecutorByRelationHandler">
       </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.user.GetExecutorsByRelationHandler"
+            decisionHandler="false"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.user.GetExecutorsByRelationHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
@@ -1636,6 +1646,12 @@
                 name="maxLength"
                 type="java.lang.Number">
           </param>
+       </validator>
+       <validator
+             applicable="java.util.List,java.util.Map"
+             description="%validator.containerElementsRequired.desc"
+             label="%validator.containerElementsRequired.name"
+             name="containerElementsRequired">
        </validator>
     </extension>
     <extension
