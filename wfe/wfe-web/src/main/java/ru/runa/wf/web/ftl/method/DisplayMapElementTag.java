@@ -5,7 +5,6 @@ import java.util.Map;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 import freemarker.template.TemplateModelException;
 
 public class DisplayMapElementTag extends FreemarkerTag {
@@ -18,7 +17,7 @@ public class DisplayMapElementTag extends FreemarkerTag {
         Map<?, ?> map = (Map<?, ?>) variable.getValue();
         Object key = getParameterAs(Object.class, 1);
         Object object = map.get(key);
-        String valueFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(1);
+        String valueFormatClassName = ViewUtil.getElementFormatClassName(variable, 1);
         if (object instanceof FileVariable) {
             return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, 0, key);
         } else {

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -26,10 +25,10 @@ public class EditListTag extends AjaxFreemarkerTag {
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String elementFormatClassName = ((VariableFormatContainer) variable.getFormatNotNull()).getComponentClassName(0);
+        String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
-        String inputTag = ViewUtil.getComponentInput(user, variableName, elementFormatClassName, null, false);
+        String inputTag = ViewUtil.getComponentInput(user, variableName, elementFormatClassName, null);
         inputTag = inputTag.replaceAll("\"", "'");
         substitutions.put("COMPONENT_INPUT", inputTag);
         substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(elementFormatClassName));
@@ -48,7 +47,7 @@ public class EditListTag extends AjaxFreemarkerTag {
             String value = object.toString();
             String divId = "div" + variableName + (i + 1);
             html.append("<div id=\"").append(divId).append("\" style=\"margin-bottom:4px;\" class=\"cloned").append(variableName).append("\">");
-            html.append(ViewUtil.getComponentInput(user, variableName, elementFormatClassName, value, true));
+            html.append(ViewUtil.getComponentInput(user, variableName, elementFormatClassName, value));
             html.append("<input type='button' value=' - ' onclick=\"$('#").append(divId).append("').remove();\" />");
             html.append("</div>");
         }
