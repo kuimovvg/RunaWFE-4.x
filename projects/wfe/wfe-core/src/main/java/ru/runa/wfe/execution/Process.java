@@ -295,7 +295,7 @@ public class Process extends IdentifiableBase {
         ApplicationContextFactory.getTaskDAO().flushPendingChanges();
         boolean activeSuperProcessExists = parentNodeProcess != null && !parentNodeProcess.getProcess().hasEnded();
         List<Task> taskToDelete = Lists.newArrayList();
-        for (Task task : tasks) {
+        for (Task task : getTasks()) {
             Node node = executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
             if (node instanceof Synchronizable) {
                 Synchronizable synchronizable = (Synchronizable) node;

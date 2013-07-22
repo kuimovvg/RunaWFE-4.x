@@ -9,6 +9,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import ru.runa.wfe.office.excel.utils.ExcelHelper;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 
 public class ListColumnExcelStorable extends ExcelStorable<ColumnConstraints, List<?>> {
 
@@ -31,9 +34,11 @@ public class ListColumnExcelStorable extends ExcelStorable<ColumnConstraints, Li
     protected void storeIn(Workbook workbook) {
         List<?> list = data;
         int rowIndex = constraints.getRowStartIndex();
+        String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);
+        VariableFormat<Object> elementFormat = FormatCommons.create(elementFormatClassName);
         for (Object object : list) {
             Cell cell = getCell(workbook, rowIndex, true);
-            ExcelHelper.setCellValue(cell, object);
+            ExcelHelper.setCellValue(cell, elementFormat.format(object));
             rowIndex++;
         }
     }

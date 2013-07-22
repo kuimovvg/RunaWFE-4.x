@@ -39,6 +39,7 @@ import ru.runa.common.web.html.TRRowBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
+import ru.runa.wf.web.ftl.method.ViewUtil;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
@@ -53,7 +54,6 @@ import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.var.format.FileFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -198,7 +198,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                 result[i] = new A(url, processId.toString()).setClass(Resources.CLASS_LINK).toString();
             } else if (arguments[i] instanceof FileValue) {
                 FileValue fileValue = (FileValue) arguments[i];
-                result[i] = FileFormat.getHtml(fileValue.getFileName(), new StrutsWebHelper(pageContext), fileValue.getLogId());
+                result[i] = ViewUtil.getFileLogOutput(new StrutsWebHelper(pageContext), fileValue.getLogId(), fileValue.getFileName());
             } else if (arguments[i] instanceof String) {
                 result[i] = StringEscapeUtils.escapeHtml((String) arguments[i]);
             } else {

@@ -11,4 +11,9 @@ public interface VariableFormatContainer {
      * Sets component formats.
      */
     public void setComponentClassNames(String[] componentClassNames);
+
+    /**
+     * Gets component format by index.
+     */
+    public String getComponentClassName(int index);
 }

@@ -3,19 +3,25 @@ package ru.runa.wf.web.ftl.method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.ActorFormat;
 import ru.runa.wfe.var.format.BigDecimalFormat;
@@ -26,14 +32,17 @@ import ru.runa.wfe.var.format.DoubleFormat;
 import ru.runa.wfe.var.format.ExecutorFormat;
 import ru.runa.wfe.var.format.FileFormat;
 import ru.runa.wfe.var.format.GroupFormat;
+import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.LongFormat;
 import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.TextFormat;
 import ru.runa.wfe.var.format.TimeFormat;
 import ru.runa.wfe.var.format.VariableDisplaySupport;
 import ru.runa.wfe.var.format.VariableFormat;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 public class ViewUtil {
     private static final Log log = LogFactory.getLog(ViewUtil.class);
@@ -97,7 +106,7 @@ public class ViewUtil {
                 html += value;
             }
             if (!enabled) {
-                html += "disabled=\"true\" ";
+                html += "readonly=\"true\" ";
             }
             html += "</textarea>";
         }
@@ -179,13 +188,54 @@ public class ViewUtil {
         return "";
     }
 
-    public static String getVariableValueHtml(User user, WebHelper webHelper, Long processId, WfVariable variable) {
+    public static String getOutput(User user, WebHelper webHelper, Long processId, String variableName, String formatClassName, Object value) {
+        VariableDefinition definition = new VariableDefinition(true, variableName, formatClassName, variableName);
+        WfVariable variable = new WfVariable(definition, value);
+        return getOutput(user, webHelper, processId, variable);
+    }
+
+    public static String getOutput(User user, WebHelper webHelper, Long processId, WfVariable variable) {
         try {
-            VariableFormat<Object> format = variable.getFormatNotNull();
-            if (format instanceof VariableDisplaySupport) {
-                if (webHelper == null || processId == null || variable.getValue() == null) {
-                    return "";
+            if (variable.getValue() == null) {
+                return "";
+            }
+            VariableFormat format = variable.getFormatNotNull();
+            if (format instanceof FileFormat) {
+                return getFileOutput(webHelper, processId, variable.getDefinition().getName(), (FileVariable) variable.getValue());
+            }
+            if (format instanceof ActorFormat || format instanceof ExecutorFormat || format instanceof GroupFormat) {
+                Executor executor = (Executor) variable.getValue();
+                if (ApplicationContextFactory.getPermissionDAO().isAllowed(user, Permission.READ, executor)) {
+                    HashMap<String, Object> params = Maps.newHashMap();
+                    params.put("id", executor.getId());
+                    String href = webHelper.getActionUrl("/manage_executor", params);
+                    return "<a href=\"" + href + "\">" + executor.getLabel() + "</a>";
+                } else {
+                    return executor.getLabel();
                 }
+            }
+            if (format instanceof ListFormat) {
+                List<Object> list = (List<Object>) variable.getValue();
+                String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);
+                StringBuffer html = new StringBuffer();
+                html.append("[");
+                for (int i = 0; i < list.size(); i++) {
+                    if (i != 0) {
+                        html.append(", ");
+                    }
+                    Object o = list.get(i);
+                    String value;
+                    if (FileFormat.class.getName().equals(elementFormatClassName)) {
+                        value = ViewUtil.getFileOutput(webHelper, processId, variable.getDefinition().getName(), (FileVariable) o, i, null);
+                    } else {
+                        value = ViewUtil.getOutput(user, webHelper, processId, variable.getDefinition().getName(), elementFormatClassName, o);
+                    }
+                    html.append(value);
+                }
+                html.append("]");
+                return html.toString();
+            }
+            if (format instanceof VariableDisplaySupport) {
                 VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
                 return displaySupport.getHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
             } else {
@@ -204,4 +254,33 @@ public class ViewUtil {
             }
         }
     }
+
+    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value) {
+        return getFileOutput(webHelper, processId, variableName, value, 0, null);
+    }
+
+    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value, int listIndex, Object mapKey) {
+        HashMap<String, Object> params = Maps.newHashMap();
+        params.put("id", processId);
+        params.put("variableName", variableName);
+        if (listIndex != 0) {
+            params.put("listIndex", String.valueOf(listIndex));
+        }
+        if (mapKey != null) {
+            params.put("mapKey", String.valueOf(mapKey));
+        }
+        return getFileOutput(webHelper, params, value.getName());
+    }
+
+    public static String getFileLogOutput(WebHelper webHelper, Long logId, String fileName) {
+        HashMap<String, Object> params = Maps.newHashMap();
+        params.put("logId", logId);
+        return getFileOutput(webHelper, params, fileName);
+    }
+
+    private static String getFileOutput(WebHelper webHelper, Map<String, Object> params, String fileName) {
+        String href = webHelper.getActionUrl("/variableDownloader", params);
+        return "<a href=\"" + href + "\">" + fileName + "</>";
+    }
+
 }
