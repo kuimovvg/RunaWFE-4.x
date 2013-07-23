@@ -17,7 +17,7 @@ public class ExecutorFormat implements VariableFormat<Executor> {
 
     @Override
     public String format(Executor object) {
-        return object.getFullName();
+        return object.getLabel();
     }
 
 }
