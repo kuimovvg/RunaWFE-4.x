@@ -47,6 +47,7 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.client.FileVariableProxy;
 import ru.runa.wfe.service.decl.ExecutionServiceLocal;
 import ru.runa.wfe.service.decl.ExecutionServiceRemote;
+import ru.runa.wfe.service.decl.ExecutionServiceRemoteWS;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.service.interceptors.PerformanceObserver;
@@ -70,7 +71,7 @@ import com.google.common.collect.Maps;
 @Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "ExecutionAPI", serviceName = "ExecutionWebService")
 @SOAPBinding
-public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionServiceRemote {
+public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionServiceRemote, ExecutionServiceRemoteWS {
     private static final Log log = LogFactory.getLog(ExecutionServiceBean.class);
     @Autowired
     private ExecutionLogic executionLogic;
@@ -290,6 +291,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     // WebService API methods
 
+    @Override
     public List<ru.runa.wfe.var.jaxb.WfVariable> getVariablesWS(User user, Long processId) {
         List<WfVariable> list = getVariables(user, processId);
         List<ru.runa.wfe.var.jaxb.WfVariable> result = Lists.newArrayListWithExpectedSize(list.size());
@@ -300,42 +302,45 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return result;
     }
 
-    public Long startProcessWS(User user, String definitionName, List<WfVariable> variables) {
+    public Long startProcessWS(User user, String definitionName, List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
         return startProcess(user, definitionName, toVariablesMap(variables));
     }
 
-    public void completeTaskWS(User user, Long taskId, List<WfVariable> variables, Long swimlaneActorId) {
+    public void completeTaskWS(User user, Long taskId, List<ru.runa.wfe.var.jaxb.WfVariable> variables, Long swimlaneActorId) {
         completeTask(user, taskId, toVariablesMap(variables), swimlaneActorId);
     }
 
-    public void updateVariablesWS(User user, Long processId, List<WfVariable> variables) {
+    @Override
+    public void updateVariablesWS(User user, Long processId, List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
         updateVariables(user, processId, toVariablesMap(variables));
     }
 
-    private Map<String, Object> toVariablesMap(List<WfVariable> variables) {
+    private Map<String, Object> toVariablesMap(List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
         Map<String, Object> map = Maps.newHashMap();
         if (variables != null) {
-            for (WfVariable variable : variables) {
-                Preconditions.checkNotNull(variable.getDefinition(), "variable.definition");
-                Object value = variable.getValue();
+            for (ru.runa.wfe.var.jaxb.WfVariable wsVariable : variables) {
+                VariableAdapter adapter = new VariableAdapter();
+                WfVariable wfVariable = adapter.unmarshal(wsVariable);
+                Preconditions.checkNotNull(wfVariable.getDefinition(), "variable.definition");
+                Object value = wfVariable.getValue();
                 if (value instanceof byte[]) {
-                    log.debug("Variable '" + variable.getDefinition().getName() + "': reverting from bytes");
+                    log.debug("Variable '" + wfVariable.getDefinition().getName() + "': reverting from bytes");
                     value = new SerializableToByteArrayConverter().revert(value);
                 }
-                if (variable.getDefinition().getFormatClassName() != null) {
+                if (wfVariable.getDefinition().getFormatClassName() != null) {
                     try {
                         if (value == null) {
-                            log.debug("Variable '" + variable.getDefinition().getName() + "' value is null");
+                            log.debug("Variable '" + wfVariable.getDefinition().getName() + "' value is null");
                         } else {
-                            log.debug("Variable '" + variable.getDefinition().getName() + "' value is type of "
+                            log.debug("Variable '" + wfVariable.getDefinition().getName() + "' value is type of "
                                     + (value != null ? value.getClass() : "null"));
-                            value = variable.getFormatNotNull().parse(new String[] { value.toString() });
+                            value = wfVariable.getFormatNotNull().parse(new String[] { value.toString() });
                         }
                     } catch (Exception e) {
                         throw Throwables.propagate(e);
                     }
                 }
-                map.put(variable.getDefinition().getName(), value);
+                map.put(wfVariable.getDefinition().getName(), value);
             }
         }
         return map;
