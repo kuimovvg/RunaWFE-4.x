@@ -26,6 +26,8 @@ import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 
+import com.google.common.base.Objects;
+
 public class Join extends Node {
     private static final long serialVersionUID = 1L;
 
@@ -37,30 +39,27 @@ public class Join extends Node {
     @Override
     public void execute(ExecutionContext executionContext) {
         Token token = executionContext.getToken();
-        // if this token is not able to reactivate the parent,
-        // we don't need to check anything
         if (token.isAbleToReactivateParent()) {
-            // the token arrived in the join and can only reactivate
-            // the parent once
             token.setAbleToReactivateParent(false);
             Token parentToken = token.getParent();
             boolean reactivateParent = true;
-            for (Token childToken : parentToken.getActiveChildren()) {
+            for (Token childToken : parentToken.getChildren()) {
                 if (childToken.isAbleToReactivateParent()) {
                     reactivateParent = false;
+                    log.debug("There are exists at least 1 active token that can reactivate parent: " + childToken);
+                    break;
+                }
+                if (!Objects.equal(childToken.getNodeId(), getNodeId())) {
+                    reactivateParent = false;
+                    log.debug(childToken + " is in state (" + childToken.getNodeId() + ") instead of this join (" + getNodeId() + ")");
                     break;
                 }
             }
             if (reactivateParent) {
-                // write to all child tokens that the parent is already
-                // reactivated
-                for (Token childToken : parentToken.getActiveChildren()) {
-                    childToken.setAbleToReactivateParent(false);
-                }
-                // write to all child tokens that the parent is already
-                // reactivated
                 leave(new ExecutionContext(executionContext.getProcessDefinition(), parentToken));
             }
+        } else {
+            log.debug(token + " unable to activate the parent");
         }
         token.end(executionContext, null);
     }
