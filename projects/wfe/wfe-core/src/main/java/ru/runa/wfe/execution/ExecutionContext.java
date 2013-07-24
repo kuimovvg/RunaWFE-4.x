@@ -115,31 +115,23 @@ public class ExecutionContext {
         return getProcess().getTask(getToken().getNodeId());
     }
 
-    public Process getParentProcess(Process subProcess) {
-        NodeProcess nodeProcess = nodeProcessDAO.getNodeProcessByChild(subProcess.getId());
-        if (nodeProcess != null) {
-            return nodeProcess.getProcess();
-        }
-        return null;
-    }
-
     public NodeProcess getParentNodeProcess() {
         return nodeProcessDAO.getNodeProcessByChild(getProcess().getId());
     }
 
-    public List<Process> getChildProcesses() {
+    public List<Process> getSubprocesses() {
         String nodeId = getToken().getNodeId();
         List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(getProcess().getId());
         List<Process> result = Lists.newArrayListWithExpectedSize(nodeProcesses.size());
         for (NodeProcess nodeProcess : nodeProcesses) {
-            if (Objects.equal(nodeId, nodeProcess.getNodeId())) {
+            if (Objects.equal(nodeId, nodeProcess.getNodeId()) && Objects.equal(getToken(), nodeProcess.getParentToken())) {
                 result.add(nodeProcess.getSubProcess());
             }
         }
         return result;
     }
 
-    public List<Process> getAllSubprocessesRecursively() {
+    public List<Process> getSubprocessesRecursively() {
         return nodeProcessDAO.getSubprocessesRecursive(getProcess());
     }
 

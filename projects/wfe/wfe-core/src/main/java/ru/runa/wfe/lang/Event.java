@@ -39,7 +39,9 @@ public class Event implements Serializable {
     public static final String EVENTTYPE_NODE_LEAVE = "node-leave";
     public static final String EVENTTYPE_SUPERSTATE_ENTER = "superstate-enter";
     public static final String EVENTTYPE_SUPERSTATE_LEAVE = "superstate-leave";
-    public static final String EVENTTYPE_SUBPROCESS_CREATED = "subprocess-created";
+    // public static final String EVENTTYPE_SUBPROCESS_CREATED =
+    // "subprocess-created";
+    public static final String EVENTTYPE_SUBPROCESS_START = "subprocess-start";
     public static final String EVENTTYPE_SUBPROCESS_END = "subprocess-end";
     public static final String EVENTTYPE_TASK_CREATE = "task-create";
     public static final String EVENTTYPE_TASK_ASSIGN = "task-assign";

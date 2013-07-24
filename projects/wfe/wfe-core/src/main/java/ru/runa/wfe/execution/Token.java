@@ -296,7 +296,7 @@ public class Token implements Serializable {
                 child.end(new ExecutionContext(executionContext.getProcessDefinition(), child), canceller);
             }
         }
-        for (Process subProcess : executionContext.getChildProcesses()) {
+        for (Process subProcess : executionContext.getSubprocesses()) {
             ProcessDefinition subProcessDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(subProcess);
             subProcess.end(new ExecutionContext(subProcessDefinition, subProcess), canceller);
         }
