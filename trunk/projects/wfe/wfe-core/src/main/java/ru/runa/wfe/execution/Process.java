@@ -316,9 +316,9 @@ public class Process extends IdentifiableBase {
         tasks.removeAll(taskToDelete);
         if (parentNodeProcess == null) {
             log.debug("Removing async tasks ON_MAIN_PROCESS_END");
-            for (Process subProcess : executionContext.getAllSubprocessesRecursively()) {
+            for (Process subProcess : executionContext.getSubprocessesRecursively()) {
                 if (subProcess.getTasks().size() > 0) {
-                    log.info("Removing active tasks: " + subProcess.getTasks());
+                    log.info("Removing active subprocess tasks: " + subProcess.getTasks());
                     subProcess.getTasks().clear();
                 }
             }

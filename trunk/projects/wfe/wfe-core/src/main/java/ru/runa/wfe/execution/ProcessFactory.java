@@ -97,7 +97,7 @@ public class ProcessFactory {
         }
     }
 
-    public Process startSubprocess(ExecutionContext parentExecutionContext, ProcessDefinition processDefinition, Map<String, Object> variables) {
+    public Process createSubprocess(ExecutionContext parentExecutionContext, ProcessDefinition processDefinition, Map<String, Object> variables) {
         Process parentProcess = parentExecutionContext.getProcess();
         Node subProcessNode = parentExecutionContext.getNode();
         Map<String, Object> defaultValues = processDefinition.getDefaultVariableValues();
@@ -108,12 +108,14 @@ public class ProcessFactory {
         }
         Process subProcess = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchySubProcess());
         nodeProcessDAO.create(new NodeProcess(parentExecutionContext.getToken(), subProcess, subProcessNode));
-        ExecutionContext executionContext = new ExecutionContext(processDefinition, subProcess);
-        subProcessNode.fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_CREATED);
-        parentExecutionContext.addLog(new SubprocessStartLog(subProcessNode, subProcess));
-        grantSubprocessPermissions(processDefinition, subProcess, parentProcess);
-        startProcessInternal(processDefinition, subProcess, null);
         return subProcess;
+    }
+
+    public void startSubprocess(ExecutionContext parentExecutionContext, ExecutionContext executionContext) {
+        parentExecutionContext.getNode().fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_START);
+        parentExecutionContext.addLog(new SubprocessStartLog(parentExecutionContext.getNode(), executionContext.getProcess()));
+        grantSubprocessPermissions(executionContext.getProcessDefinition(), executionContext.getProcess(), parentExecutionContext.getProcess());
+        startProcessInternal(executionContext.getProcessDefinition(), executionContext.getProcess(), null);
     }
 
     private void grantSubprocessPermissions(ProcessDefinition processDefinition, Process subProcess, Process parentProcess) {
