@@ -125,13 +125,10 @@ public class MultiProcessState extends SubProcessState {
                 throw new RuntimeException("discriminatorValue == null");
             }
         }
-        int forkProcessesCount = TypeConversionUtil.getArraySize(discriminatorValue);
-        if (forkProcessesCount == 0) {
-            leave(executionContext);
-            log.warn("Leaving multiinstance due to 0 fork count");
-        }
-        int endedProcessesCount = 0;
-        for (int idx = 0; idx < forkProcessesCount; idx++) {
+        int subprocessesCount = TypeConversionUtil.getArraySize(discriminatorValue);
+        List<Process> subProcesses = Lists.newArrayList();
+        ProcessDefinition subProcessDefinition = getSubProcessDefinition(executionContext);
+        for (int idx = 0; idx < subprocessesCount; idx++) {
             Map<String, Object> variables = Maps.newHashMap();
             for (VariableMapping variableMapping : variableMappings) {
                 // if this variable access is readable
@@ -158,15 +155,12 @@ public class MultiProcessState extends SubProcessState {
                 log.debug("setting discriminator var '" + miVarName + "' to sub process var '" + miVarSubName + "': " + value);
                 variables.put(miVarSubName, value);
             }
-
-            Process subProcess = processFactory.startSubprocess(executionContext, getSubProcessDefinition(executionContext), variables);
-            if (subProcess.hasEnded()) {
-                endedProcessesCount++;
-            }
+            Process subProcess = processFactory.createSubprocess(executionContext, subProcessDefinition, variables);
+            subProcesses.add(subProcess);
         }
-        if (endedProcessesCount == forkProcessesCount) {
-            log.debug("Immediately leaving state");
-            leave(executionContext);
+        for (Process subprocess : subProcesses) {
+            ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
+            processFactory.startSubprocess(executionContext, subExecutionContext);
         }
     }
 
@@ -189,17 +183,18 @@ public class MultiProcessState extends SubProcessState {
 
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
-        for (Process subprocess : executionContext.getChildProcesses()) {
+        for (Process subprocess : executionContext.getSubprocesses()) {
             if (!subprocess.hasEnded()) {
                 return;
             }
         }
+        log.debug("Leaving multiinstance due to 0 active subprocesses");
         super.leave(executionContext, transition);
     }
 
     @Override
     protected void performLeave(ExecutionContext executionContext) {
-        List<Process> subprocesses = executionContext.getChildProcesses();
+        List<Process> subprocesses = executionContext.getSubprocesses();
         if (!subprocesses.isEmpty()) {
             ProcessDefinition subProcessDefinition = getSubProcessDefinition(executionContext);
             for (VariableMapping variableMapping : variableMappings) {

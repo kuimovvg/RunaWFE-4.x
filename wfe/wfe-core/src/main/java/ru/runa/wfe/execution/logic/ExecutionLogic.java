@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.execution.logic;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -140,14 +139,9 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public List<WfProcess> getSubprocessesRecursive(User user, Long id) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(id);
-        List<Process> subprocessList = new ArrayList<Process>();
-        for (Process subprocess : nodeProcessDAO.getSubprocessesRecursive(process)) {
-            if (!subprocessList.contains(subprocess)) {
-                subprocessList.add(subprocess);
-            }
-        }
-        subprocessList = filterIdentifiable(user, subprocessList, ProcessPermission.READ);
-        return getProcesses(subprocessList);
+        List<Process> subprocesses = nodeProcessDAO.getSubprocessesRecursive(process);
+        subprocesses = filterIdentifiable(user, subprocesses, ProcessPermission.READ);
+        return getProcesses(subprocesses);
     }
 
     private List<WfProcess> getProcesses(List<Process> processes) {

@@ -45,10 +45,10 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
 
     @Override
     public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
-        for (NodeProcess subprocess : nodeProcesses) {
-            if (subprocess.getNodeId().equals(element.getNodeId())) {
-                element.addSubprocessId(subprocess.getSubProcess().getId());
-                if (checkPermission(subprocess.getSubProcess())) {
+        for (NodeProcess nodeProcess : nodeProcesses) {
+            if (nodeProcess.getNodeId().equals(element.getNodeId())) {
+                element.addSubprocessId(nodeProcess.getSubProcess().getId());
+                if (checkPermission(nodeProcess.getSubProcess())) {
                     element.setReadPermission(true);
                 }
             }
@@ -57,10 +57,10 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
 
     @Override
     public void onSubprocess(SubprocessGraphElementPresentation element) {
-        for (NodeProcess subprocess : nodeProcesses) {
-            if (Objects.equal(subprocess.getNodeId(), element.getNodeId())) {
-                element.setSubprocessId(subprocess.getSubProcess().getId());
-                if (checkPermission(subprocess.getSubProcess())) {
+        for (NodeProcess nodeProcess : nodeProcesses) {
+            if (Objects.equal(nodeProcess.getNodeId(), element.getNodeId())) {
+                element.setSubprocessId(nodeProcess.getSubProcess().getId());
+                if (checkPermission(nodeProcess.getSubProcess())) {
                     element.setReadPermission(true);
                 }
             }
