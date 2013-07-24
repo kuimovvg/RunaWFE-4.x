@@ -104,6 +104,20 @@
                variableTypeFilter="java.lang.Object"
                variableAccess="READ">
          </param>
+         <param
+               multiple="false"
+               name="%Param.DisplayFormat"
+               type="combo"
+               variableAccess="NONE">
+            <paramValue
+                  name="%Format.Variable.Output"
+                  value="false">
+            </paramValue>
+            <paramValue
+                  name="%Format.Variable.Component"
+                  value="true">
+            </paramValue>
+         </param>
       </tag>
       <tag
             enabled="false"
