@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
 
 public class SubProcessState extends VariableContainerNode {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_SUBPROCESS_CREATED, Event.EVENTTYPE_SUBPROCESS_END,
+    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_SUBPROCESS_START, Event.EVENTTYPE_SUBPROCESS_END,
             Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_BEFORE_SIGNAL, Event.EVENTTYPE_AFTER_SIGNAL };
 
     private String subProcessName;
@@ -57,7 +57,6 @@ public class SubProcessState extends VariableContainerNode {
 
     @Override
     public void execute(ExecutionContext executionContext) {
-        ProcessDefinition subProcessDefinition = getSubProcessDefinition(executionContext);
         // create the subprocess
         Map<String, Object> variables = Maps.newHashMap();
         for (VariableMapping variableMapping : variableMappings) {
@@ -74,13 +73,9 @@ public class SubProcessState extends VariableContainerNode {
                 }
             }
         }
-        processFactory.startSubprocess(executionContext, subProcessDefinition, variables);
-        // Process subProcess = processFactory.startSubprocess(executionContext,
-        // subProcessDefinition, variables);
-        // if (subProcess.hasEnded()) {
-        // log.debug("Immediately leaving state");
-        // leave(executionContext);
-        // }
+        ProcessDefinition subProcessDefinition = getSubProcessDefinition(executionContext);
+        Process subProcess = processFactory.createSubprocess(executionContext, subProcessDefinition, variables);
+        processFactory.startSubprocess(executionContext, new ExecutionContext(subProcessDefinition, subProcess));
     }
 
     @Override
@@ -90,11 +85,11 @@ public class SubProcessState extends VariableContainerNode {
     }
 
     protected void performLeave(ExecutionContext executionContext) {
-        List<Process> childProcesses = executionContext.getChildProcesses();
-        if (childProcesses.size() != 1) {
-            throw new InternalApplicationException("ProcessState has " + childProcesses + " (instead of 1 instance) at leave stage!");
+        List<Process> subprocesses = executionContext.getSubprocesses();
+        if (subprocesses.size() != 1) {
+            throw new InternalApplicationException("SubProcessState has " + subprocesses + " (instead of 1 instance) at leave stage!");
         }
-        Process subProcess = childProcesses.get(0);
+        Process subProcess = subprocesses.get(0);
         ExecutionContext subExecutionContext = new ExecutionContext(getSubProcessDefinition(executionContext), subProcess);
         for (VariableMapping variableMapping : variableMappings) {
             // if this variable access is writable
