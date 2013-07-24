@@ -2,16 +2,13 @@ package ru.runa.wfe.lang.bpmn2;
 
 import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-
-import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public class Join extends Node {
@@ -25,22 +22,19 @@ public class Join extends Node {
     @Override
     public void execute(ExecutionContext executionContext) {
         Token token = executionContext.getToken();
-
-        Session session = ApplicationContextFactory.getCurrentSession();
-        Query query = session.createQuery("from Token where process=? and nodeId=? and ableToReactivateParent=true");
-        query.setParameter(0, token.getProcess());
-        query.setParameter(1, getNodeId());
-        List<Token> arrivedTokens = query.list();
-        arrivedTokens.add(token);
-
-        List<Token> tokenSet = Lists.newArrayList();
+        List<Token> arrivedTokens = Lists.newArrayList();
+        fillArrivedInThisNodeTokensWhichCanActivateParent(executionContext.getProcess().getRootToken(), arrivedTokens);
+        if (!arrivedTokens.contains(token)) {
+            arrivedTokens.add(token);
+        }
+        List<Token> tokensToPop = Lists.newArrayList();
         boolean allArrivedTransitionArePassed = true;
         for (Transition arrivingTransition : getArrivingTransitions()) {
             boolean transitionIsPassedByToken = false;
             for (Token arrivedToken : arrivedTokens) {
                 if (arrivingTransition.getNodeId().equals(arrivedToken.getTransitionId())) {
                     transitionIsPassedByToken = true;
-                    tokenSet.add(arrivedToken);
+                    tokensToPop.add(arrivedToken);
                     break;
                 }
             }
@@ -51,7 +45,7 @@ public class Join extends Node {
         }
 
         if (allArrivedTransitionArePassed) {
-            for (Token arrivedToken : tokenSet) {
+            for (Token arrivedToken : tokensToPop) {
                 arrivedToken.setAbleToReactivateParent(false);
             }
             Token parentToken = token.getParent(); // got first parent
@@ -61,4 +55,12 @@ public class Join extends Node {
         token.end(executionContext, null);
     }
 
+    private void fillArrivedInThisNodeTokensWhichCanActivateParent(Token parent, List<Token> tokens) {
+        if (parent.isAbleToReactivateParent() && Objects.equal(parent.getNodeId(), getNodeId())) {
+            tokens.add(parent);
+        }
+        for (Token childToken : parent.getChildren()) {
+            fillArrivedInThisNodeTokensWhichCanActivateParent(childToken, tokens);
+        }
+    }
 }
