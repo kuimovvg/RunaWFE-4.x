@@ -51,7 +51,7 @@ public class ProcessDefinitionDescriptionFormTag extends ProcessDefinitionBaseFo
     @Override
     protected boolean isVisible() {
         DefinitionService definitionService = Delegates.getDefinitionService();
-        return definitionService.getFile(getUser(), getIdentifiableId(), ProcessDefinitionDescriptionAction.DESCRIPTION_FILE_NAME) != null;
+        return definitionService.getProcessDefinitionFile(getUser(), getIdentifiableId(), ProcessDefinitionDescriptionAction.DESCRIPTION_FILE_NAME) != null;
     }
 
     @Override

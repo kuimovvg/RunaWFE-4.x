@@ -19,7 +19,7 @@ public class InputVariableTag extends FreemarkerTag {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String formatClassName = variable.getFormatClassNameNotNull();
-        Object value = variable.getValue();
+        Object value = variableProvider.getValue(variableName);
         String html;
         if (ListFormat.class.getName().equals(formatClassName)) {
             EditListTag tag = new EditListTag();

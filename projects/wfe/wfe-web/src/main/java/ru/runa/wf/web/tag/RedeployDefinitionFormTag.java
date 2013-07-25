@@ -22,19 +22,21 @@ import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
 
+import org.apache.ecs.Entities;
 import org.apache.ecs.html.Form;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 import org.apache.ecs.html.TD;
-import org.apache.ecs.xhtml.br;
+import org.apache.ecs.html.Table;
 
 import ru.runa.common.web.ConfirmationPopupHelper;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.form.FileForm;
 import ru.runa.wf.web.ProcessTypesIterator;
 import ru.runa.wf.web.action.RedeployProcessDefinitionAction;
-import ru.runa.wf.web.html.DefinitionFileOperationsFormBuilder;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
@@ -47,22 +49,18 @@ import ru.runa.wfe.user.User;
  * @jsp.tag name = "redeployDefinitionForm" body-content = "empty"
  */
 public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
-
     private static final long serialVersionUID = 5106903896165128752L;
+    private static final String TYPE_DEFAULT = "_default_type_";
 
-    private static Select getTypeSelectElement(String[] definitionType, User user, PageContext pageContext) {
+    private static Select getTypeSelectElement(String selectedValue, String[] definitionTypes, User user, PageContext pageContext) {
         ProcessTypesIterator iter = new ProcessTypesIterator(user);
-        String selectedIdx = definitionType == null ? "_default_type_" : null;
-        Map<String, String> attr = (Map<String, String>) pageContext.getRequest().getAttribute("TypeAttributes");
-        if (attr != null) {
-            selectedIdx = attr.get("typeSel");
-        }
         Select select = new Select("typeSel");
+        select.setID("processDefinitionTypeSelect");
         {
             Option option = new Option();
             option.addElement(Messages.getMessage("batch_presentation.process.no_type", pageContext));
-            option.setValue("_default_type_");
-            if ("_default_type_".equals(selectedIdx)) {
+            option.setValue(TYPE_DEFAULT);
+            if (TYPE_DEFAULT.equals(selectedValue)) {
                 option.setSelected(true);
             }
             select.addElement(option);
@@ -73,13 +71,13 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
             StringBuilder typeBuild = new StringBuilder();
             for (int i = 1; i < type.length; ++i) {
-                typeBuild.append("&nbsp;&nbsp;&nbsp;");
+                typeBuild.append(Entities.NBSP).append(Entities.NBSP).append(Entities.NBSP);
             }
             typeBuild.append(type[type.length - 1]);
             Option option = new Option();
             option.setValue(Integer.toString(idx));
             option.addElement(typeBuild.toString());
-            if ((selectedIdx == null && Arrays.equals(type, definitionType)) || Integer.toString(idx).equals(selectedIdx)) {
+            if ((selectedValue == null && Arrays.equals(type, definitionTypes)) || Integer.toString(idx).equals(selectedValue)) {
                 option.setSelected(true);
             }
             select.addElement(option);
@@ -88,24 +86,35 @@ public class RedeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         return select;
     }
 
-    public static void fillTD(TD tdFormElement, Form form, String[] definitionType, User user, PageContext pageContext) {
-        DefinitionFileOperationsFormBuilder.displayTable(form, tdFormElement);
+    public static void fillTD(TD tdFormElement, Form form, String[] definitionTypes, User user, PageContext pageContext) {
+        form.setEncType(Form.ENC_UPLOAD);
 
-        tdFormElement.addElement(new br());
-        tdFormElement.addElement(Messages.getMessage("batch_presentation.process_definition.process_type", pageContext) + ": ");
-
-        Select select = getTypeSelectElement(definitionType, user, pageContext);
-        tdFormElement.addElement(select);
-
+        String selectedValue = definitionTypes == null ? TYPE_DEFAULT : null;
+        String newTypeName = "";
         Map<String, String> attr = (Map<String, String>) pageContext.getRequest().getAttribute("TypeAttributes");
-        String newType = "";
         if (attr != null) {
-            newType = attr.get("type");
+            selectedValue = attr.get("typeSel");
+            newTypeName = attr.get("type");
         }
-        tdFormElement.addElement("  " + Messages.getMessage("batch_presentation.process.create_new_process_type", pageContext) + ": ");
-        Input inputType = new Input(Input.TEXT, "type", newType);
-        inputType.setClass(Resources.CLASS_REQUIRED);
-        tdFormElement.addElement(inputType);
+
+        Table table = new Table();
+        table.setClass(Resources.CLASS_LIST_TABLE);
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage("process_definition.archive", pageContext), FileForm.FILE_INPUT_NAME, "", true,
+                true, Input.FILE));
+        TD td = new TD();
+        Select select = getTypeSelectElement(selectedValue, definitionTypes, user, pageContext);
+        td.addElement(select);
+        td.addElement(Entities.NBSP);
+        Input typeInput = new Input(Input.TEXT, "type", String.valueOf(newTypeName));
+        typeInput.setID("processDefinitionTypeName");
+        typeInput.setStyle("width: 300px;");
+        if (!TYPE_DEFAULT.equals(selectedValue)) {
+            typeInput.setDisabled(true);
+        }
+        typeInput.setClass(Resources.CLASS_REQUIRED);
+        td.addElement(typeInput);
+        table.addElement(HTMLUtils.createRow(Messages.getMessage("batch_presentation.process_definition.process_type", pageContext), td));
+        tdFormElement.addElement(table);
     }
 
     @Override

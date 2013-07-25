@@ -72,7 +72,7 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
     }
 
     public void testGetFileTestByAuthorizedSubject() throws Exception {
-        byte[] fileBytes = definitionService.getFile(helper.getAuthorizedPerformerUser(), definitionId, VALID_FILE_NAME);
+        byte[] fileBytes = definitionService.getProcessDefinitionFile(helper.getAuthorizedPerformerUser(), definitionId, VALID_FILE_NAME);
         assertNotNull("file bytes is null", fileBytes);
     }
 
@@ -87,7 +87,7 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
 
     public void testGetFileTestByNullUser() throws Exception {
         try {
-            definitionService.getFile(null, definitionId, VALID_FILE_NAME);
+            definitionService.getProcessDefinitionFile(null, definitionId, VALID_FILE_NAME);
             assertTrue("testGetFormTestByNullSubject , no IllegalArgumentException", false);
         } catch (IllegalArgumentException e) {
         }
@@ -95,7 +95,7 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
 
     public void testGetFileTestByFakeSubject() throws Exception {
         try {
-            definitionService.getFile(helper.getFakeUser(), definitionId, VALID_FILE_NAME);
+            definitionService.getProcessDefinitionFile(helper.getFakeUser(), definitionId, VALID_FILE_NAME);
             assertTrue("testGetFileTestByFakeSubject , no AuthenticationException", false);
         } catch (AuthenticationException e) {
         }
@@ -103,7 +103,7 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
 
     public void testGetFileTestByAuthorizedSubjectWithInvalidDefinitionId() throws Exception {
         try {
-            definitionService.getFile(helper.getAuthorizedPerformerUser(), -1L, VALID_FILE_NAME);
+            definitionService.getProcessDefinitionFile(helper.getAuthorizedPerformerUser(), -1L, VALID_FILE_NAME);
             fail("testGetFileTestByAuthorizedSubjectWithInvalidDefinitionId, no DefinitionDoesNotExistException");
         } catch (DefinitionDoesNotExistException e) {
             // expected
@@ -112,7 +112,7 @@ public class DefinitionServiceDelegateGetFileTest extends ServletTestCase {
 
     public void testGetFileTestByAuthorizedSubjectWithInvalidFileName() throws Exception {
         try {
-            definitionService.getFile(helper.getAuthorizedPerformerUser(), definitionId, INVALID_FILE_NAME);
+            definitionService.getProcessDefinitionFile(helper.getAuthorizedPerformerUser(), definitionId, INVALID_FILE_NAME);
             // TODO
             // fail("testGetFileTestByAuthorizedSubjectWithInvalidFileName, no ProcessDefinitionFileNotFoundException");
         } catch (DefinitionFileDoesNotExistException e) {

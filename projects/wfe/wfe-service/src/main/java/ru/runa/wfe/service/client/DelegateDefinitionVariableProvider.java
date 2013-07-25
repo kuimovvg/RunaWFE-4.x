@@ -32,13 +32,13 @@ public class DelegateDefinitionVariableProvider extends AbstractVariableProvider
 
     @Override
     public WfVariable getVariable(String variableName) {
-        List<VariableDefinition> variableDefinitions = Delegates.getDefinitionService().getVariables(user, definitionId);
+        List<VariableDefinition> variableDefinitions = Delegates.getDefinitionService().getVariableDefinitions(user, definitionId);
         for (VariableDefinition variableDefinition : variableDefinitions) {
             if (Objects.equal(variableName, variableDefinition.getName())) {
                 return new WfVariable(variableDefinition, null);
             }
         }
-        List<SwimlaneDefinition> swimlaneDefinitions = Delegates.getDefinitionService().getSwimlanes(user, definitionId);
+        List<SwimlaneDefinition> swimlaneDefinitions = Delegates.getDefinitionService().getSwimlaneDefinitions(user, definitionId);
         for (SwimlaneDefinition swimlaneDefinition : swimlaneDefinitions) {
             if (Objects.equal(variableName, swimlaneDefinition.getName())) {
                 return new WfVariable(swimlaneDefinition.toVariableDefinition(), null);

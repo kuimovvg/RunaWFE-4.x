@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -55,26 +56,25 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     private AuditLogic auditLogic;
 
     @Override
-    public void login(User user) {
+    public void login(@WebParam(name = "user") User user) {
         Preconditions.checkArgument(user != null);
         auditLogic.login(user, ASystem.INSTANCE);
     }
 
     @Override
-    public List<Localization> getLocalizations(User user) {
+    public List<Localization> getLocalizations(@WebParam(name = "user") User user) {
         Preconditions.checkArgument(user != null);
         return auditLogic.getLocalizations(user);
     }
 
     @Override
-    public String getLocalized(User user, String name) {
-        // Preconditions.checkArgument(user != null);
+    public String getLocalized(@WebParam(name = "user") User user, @WebParam(name = "name") String name) {
         Preconditions.checkArgument(name != null);
         return auditLogic.getLocalized(user, name);
     }
 
     @Override
-    public void saveLocalizations(User user, List<Localization> localizations) {
+    public void saveLocalizations(@WebParam(name = "user") User user, @WebParam(name = "localizations") List<Localization> localizations) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(localizations);
         auditLogic.saveLocalizations(user, localizations);

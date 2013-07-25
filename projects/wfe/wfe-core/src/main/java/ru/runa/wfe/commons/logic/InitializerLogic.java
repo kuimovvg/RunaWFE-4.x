@@ -173,7 +173,7 @@ public class InitializerLogic {
         String administratorDescription = "Default System Administrator";
         Actor admin = new Actor(SystemProperties.getAdministratorName(), administratorDescription, administratorDescription);
         admin = executorDAO.create(admin);
-        executorDAO.setPassword(admin, "wf");
+        executorDAO.setPassword(admin, SystemProperties.getAdministratorDefaultPassword());
         Group adminGroup = executorDAO.create(new Group(SystemProperties.getAdministratorsGroupName(), "Default Group For System Administrators"));
         executorDAO.create(new Group(SystemProperties.getBotsGroupName(), SystemProperties.getBotsGroupName()));
         List<? extends Executor> adminWithGroupExecutors = Lists.newArrayList(adminGroup, admin);
