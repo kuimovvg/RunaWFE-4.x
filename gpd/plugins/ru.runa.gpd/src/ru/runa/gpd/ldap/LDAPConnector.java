@@ -1,4 +1,4 @@
-package ru.runa.gpd.wfe;
+package ru.runa.gpd.ldap;
 
 import java.util.Hashtable;
 
@@ -13,6 +13,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
+import ru.runa.gpd.wfe.IConnector;
 
 public class LDAPConnector implements IConnector, PrefConstants {
     private DirContext dirContext;

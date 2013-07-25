@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: ru.runa.gpd.connector.wfe.ws;singleton:=true
+Bundle-Version: 4.0.5
+Bundle-Activator: ru.runa.gpd.connector.wfe.ws.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ru.runa.gpd
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ClassPath: lib/wfe-core.jar,
+ lib/wfe-webservice-client-4.0.jar,
+ .,
+ lib/jboss-jaxws-ext.jar,
+ lib/ejb3-persistence.jar,
+ lib/hibernate-annotations.jar
