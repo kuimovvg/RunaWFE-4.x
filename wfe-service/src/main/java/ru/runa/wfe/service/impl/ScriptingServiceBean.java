@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -50,14 +51,15 @@ public class ScriptingServiceBean implements ScriptingService {
     private AdminScriptRunner runner;
 
     @Override
-    public void executeAdminScript(User user, byte[] configData, byte[][] processDefinitionsBytes) {
+    public void executeAdminScript(@WebParam(name = "user") User user, @WebParam(name = "configData") byte[] configData,
+            @WebParam(name = "processDefinitionsBytes") byte[][] processDefinitionsBytes) {
         runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
         runner.runScript(configData);
     }
 
     @Override
-    public void executeGroovyScript(User user, String script) {
+    public void executeGroovyScript(@WebParam(name = "user") User user, @WebParam(name = "script") String script) {
         boolean enabled = SystemProperties.getResources().getBooleanProperty("scripting.groovy.enabled", false);
         if (!enabled) {
             throw new InternalApplicationException(

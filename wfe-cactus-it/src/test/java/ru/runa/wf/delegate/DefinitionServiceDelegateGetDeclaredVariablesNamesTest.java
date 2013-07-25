@@ -90,7 +90,7 @@ public class DefinitionServiceDelegateGetDeclaredVariablesNamesTest extends Serv
     private void testImpl(User user, long definitionId, List<String> expected, Class<? extends Exception> exception) {
         List<VariableDefinition> actual;
         try {
-            actual = definitionService.getVariables(user, definitionId);
+            actual = definitionService.getVariableDefinitions(user, definitionId);
         } catch (Exception e) {
             assertEquals(exception, e.getClass());
             return;

@@ -21,6 +21,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -49,13 +50,14 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     private ProfileLogic profileLogic;
 
     @Override
-    public Profile getProfile(User user) {
+    public Profile getProfile(@WebParam(name = "user") User user) {
         Preconditions.checkArgument(user != null);
         return profileLogic.getProfile(user, user.getActor().getId());
     }
 
     @Override
-    public Profile setActiveBatchPresentation(User user, String batchPresentationId, String newActiveBatchName) {
+    public Profile setActiveBatchPresentation(@WebParam(name = "user") User user, @WebParam(name = "batchPresentationId") String batchPresentationId,
+            @WebParam(name = "newActiveBatchName") String newActiveBatchName) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(batchPresentationId != null);
         Preconditions.checkArgument(newActiveBatchName != null);
@@ -63,21 +65,23 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     }
 
     @Override
-    public Profile deleteBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile deleteBatchPresentation(@WebParam(name = "user") User user,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(batchPresentation != null);
         return profileLogic.deleteBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public Profile createBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile createBatchPresentation(@WebParam(name = "user") User user,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(batchPresentation != null);
         return profileLogic.createBatchPresentation(user, batchPresentation);
     }
 
     @Override
-    public Profile saveBatchPresentation(User user, BatchPresentation batchPresentation) {
+    public Profile saveBatchPresentation(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(batchPresentation != null);
         return profileLogic.saveBatchPresentation(user, batchPresentation);

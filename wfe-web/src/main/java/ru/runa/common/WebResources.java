@@ -104,10 +104,6 @@ public class WebResources {
         return RESOURCES.getStringPropertyNotNull("ntlm.domain");
     }
 
-    public static String getVersion() {
-        return RESOURCES.getStringProperty("version", "UNDEFINED");
-    }
-
     public static boolean isVersionDisplay() {
         return RESOURCES.getBooleanProperty("version.display", true);
     }

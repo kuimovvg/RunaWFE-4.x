@@ -33,6 +33,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wf.web.FormUtils;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 
@@ -49,12 +50,13 @@ public abstract class WFFormTag extends TitledFormTag {
         try {
             Interaction interaction = getInteraction();
             String wfFormContent = buildForm(interaction);
-            // TODO test user filling without this code
-            // Map<String, String[]> userDefinedVariables =
-            // FormUtils.getUserFormInput(pageContext.getRequest());
+            Map<String, String[]> userDefinedVariables = null;
+            if (SystemProperties.isV3CompatibilityMode()) {
+                userDefinedVariables = FormUtils.getUserFormInput(pageContext.getRequest());
+            }
             Map<String, String> userErrors = FormUtils.getUserFormValidationErrors(pageContext.getRequest());
-            if (userErrors != null) {
-                wfFormContent = HTMLFormConverter.fillForm(pageContext, wfFormContent, null, userErrors);
+            if (userDefinedVariables != null || userErrors != null) {
+                wfFormContent = HTMLFormConverter.fillForm(pageContext, wfFormContent, userDefinedVariables, userErrors);
             }
             if (interaction.getCssData() != null) {
                 StringBuffer styles = new StringBuffer("<style>");

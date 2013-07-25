@@ -92,18 +92,18 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public byte[] getFile(User user, Long definitionId, String fileName) {
-        return getDefinitionService().getFile(user, definitionId, fileName);
+    public byte[] getProcessDefinitionFile(User user, Long definitionId, String fileName) {
+        return getDefinitionService().getProcessDefinitionFile(user, definitionId, fileName);
     }
 
     @Override
-    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) {
-        return getDefinitionService().getSwimlanes(user, definitionId);
+    public List<SwimlaneDefinition> getSwimlaneDefinitions(User user, Long definitionId) {
+        return getDefinitionService().getSwimlaneDefinitions(user, definitionId);
     }
 
     @Override
-    public List<VariableDefinition> getVariables(User user, Long definitionId) {
-        return getDefinitionService().getVariables(user, definitionId);
+    public List<VariableDefinition> getVariableDefinitions(User user, Long definitionId) {
+        return getDefinitionService().getVariableDefinitions(user, definitionId);
     }
 
     @Override

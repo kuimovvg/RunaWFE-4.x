@@ -41,7 +41,7 @@ public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
         DefinitionService definitionService = Delegates.getDefinitionService();
         List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(user, BatchPresentationFactory.DEFINITIONS.createDefault());
         for (WfDefinition definition : definitions) {
-            List<SwimlaneDefinition> swimlanes = definitionService.getSwimlanes(user, definition.getId());
+            List<SwimlaneDefinition> swimlanes = definitionService.getSwimlaneDefinitions(user, definition.getId());
             for (SwimlaneDefinition swimlaneDefinition : swimlanes) {
                 String swimlaneName = definition.getName() + "." + swimlaneDefinition.getName();
                 result.add(new String[] { swimlaneName, swimlaneName });

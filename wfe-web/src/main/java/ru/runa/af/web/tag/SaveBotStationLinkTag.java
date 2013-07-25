@@ -21,7 +21,6 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
-import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -34,8 +33,7 @@ public class SaveBotStationLinkTag extends LinkTag {
     @Override
     protected boolean isLinkEnabled() {
         try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getUser(), BotStationPermission.READ, BotStation.INSTANCE);
+            return Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.READ, BotStation.INSTANCE);
         } catch (Exception e) {
             return false;
         }

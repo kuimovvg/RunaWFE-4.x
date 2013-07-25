@@ -14,6 +14,14 @@ $(document).ready(function() {
 	$.confirmDialog = $("<div></div>").dialog({
 		minWidth: 400, minHeight: 200, modal: true, autoOpen: false
 	});
+	$("#processDefinitionTypeSelect").change(function(){
+		if ($(this).val() == "_default_type_") {
+			$("#processDefinitionTypeName").removeAttr("disabled");
+			$("#processDefinitionTypeName").focus();
+		} else {
+			$("#processDefinitionTypeName").attr("disabled", "true");
+		}
+	});
 });
 
 // add timestamp to ajax queries

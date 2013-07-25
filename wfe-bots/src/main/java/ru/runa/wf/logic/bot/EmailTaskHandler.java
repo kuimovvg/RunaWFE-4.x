@@ -63,7 +63,7 @@ public class EmailTaskHandler extends TaskHandlerBase {
                 @Override
                 public byte[] getFileData(String fileName) {
                     try {
-                        return Delegates.getDefinitionService().getFile(user, task.getDefinitionId(), fileName);
+                        return Delegates.getDefinitionService().getProcessDefinitionFile(user, task.getDefinitionId(), fileName);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
