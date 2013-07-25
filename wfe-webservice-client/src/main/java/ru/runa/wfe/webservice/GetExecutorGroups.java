@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://impl.service.wfe.runa.ru/}batchPresentation" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="executor" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
+ *         &lt;element name="batchPresentation" type="{http://impl.service.wfe.runa.ru/}batchPresentation" minOccurs="0"/>
+ *         &lt;element name="excluded" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,104 +30,104 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getExecutorGroups", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3"
+    "user",
+    "executor",
+    "batchPresentation",
+    "excluded"
 })
 public class GetExecutorGroups {
 
-    protected User arg0;
-    protected WfExecutor arg1;
-    protected BatchPresentation arg2;
-    protected boolean arg3;
+    protected User user;
+    protected WfExecutor executor;
+    protected BatchPresentation batchPresentation;
+    protected boolean excluded;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the executor property.
      * 
      * @return
      *     possible object is
      *     {@link WfExecutor }
      *     
      */
-    public WfExecutor getArg1() {
-        return arg1;
+    public WfExecutor getExecutor() {
+        return executor;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the executor property.
      * 
      * @param value
      *     allowed object is
      *     {@link WfExecutor }
      *     
      */
-    public void setArg1(WfExecutor value) {
-        this.arg1 = value;
+    public void setExecutor(WfExecutor value) {
+        this.executor = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the batchPresentation property.
      * 
      * @return
      *     possible object is
      *     {@link BatchPresentation }
      *     
      */
-    public BatchPresentation getArg2() {
-        return arg2;
+    public BatchPresentation getBatchPresentation() {
+        return batchPresentation;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the batchPresentation property.
      * 
      * @param value
      *     allowed object is
      *     {@link BatchPresentation }
      *     
      */
-    public void setArg2(BatchPresentation value) {
-        this.arg2 = value;
+    public void setBatchPresentation(BatchPresentation value) {
+        this.batchPresentation = value;
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the excluded property.
      * 
      */
-    public boolean isArg3() {
-        return arg3;
+    public boolean isExcluded() {
+        return excluded;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the excluded property.
      * 
      */
-    public void setArg3(boolean value) {
-        this.arg3 = value;
+    public void setExcluded(boolean value) {
+        this.excluded = value;
     }
 
 }

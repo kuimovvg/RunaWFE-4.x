@@ -18,10 +18,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://impl.service.wfe.runa.ru/}permission" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="executorId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="permissions" type="{http://impl.service.wfe.runa.ru/}permission" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="identifiable" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,79 +32,79 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "setPermissions", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3"
+    "user",
+    "executorId",
+    "permissions",
+    "identifiable"
 })
 public class SetPermissions {
 
-    protected User arg0;
-    protected Long arg1;
-    protected List<Permission> arg2;
-    protected Identifiable arg3;
+    protected User user;
+    protected Long executorId;
+    protected List<Permission> permissions;
+    protected Identifiable identifiable;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the executorId property.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getArg1() {
-        return arg1;
+    public Long getExecutorId() {
+        return executorId;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the executorId property.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setArg1(Long value) {
-        this.arg1 = value;
+    public void setExecutorId(Long value) {
+        this.executorId = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the permissions property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the arg2 property.
+     * This is why there is not a <CODE>set</CODE> method for the permissions property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getArg2().add(newItem);
+     *    getPermissions().add(newItem);
      * </pre>
      * 
      * 
@@ -114,35 +114,35 @@ public class SetPermissions {
      * 
      * 
      */
-    public List<Permission> getArg2() {
-        if (arg2 == null) {
-            arg2 = new ArrayList<Permission>();
+    public List<Permission> getPermissions() {
+        if (permissions == null) {
+            permissions = new ArrayList<Permission>();
         }
-        return this.arg2;
+        return this.permissions;
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the identifiable property.
      * 
      * @return
      *     possible object is
      *     {@link Identifiable }
      *     
      */
-    public Identifiable getArg3() {
-        return arg3;
+    public Identifiable getIdentifiable() {
+        return identifiable;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the identifiable property.
      * 
      * @param value
      *     allowed object is
      *     {@link Identifiable }
      *     
      */
-    public void setArg3(Identifiable value) {
-        this.arg3 = value;
+    public void setIdentifiable(Identifiable value) {
+        this.identifiable = value;
     }
 
 }

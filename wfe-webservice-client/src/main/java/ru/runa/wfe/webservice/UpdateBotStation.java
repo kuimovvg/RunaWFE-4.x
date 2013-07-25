@@ -16,8 +16,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}botStation" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="botStation" type="{http://impl.service.wfe.runa.ru/}botStation" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,60 +28,60 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "updateBotStation", propOrder = {
-    "arg0",
-    "arg1"
+    "user",
+    "botStation"
 })
 public class UpdateBotStation {
 
-    protected User arg0;
-    protected BotStation arg1;
+    protected User user;
+    protected BotStation botStation;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the botStation property.
      * 
      * @return
      *     possible object is
      *     {@link BotStation }
      *     
      */
-    public BotStation getArg1() {
-        return arg1;
+    public BotStation getBotStation() {
+        return botStation;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the botStation property.
      * 
      * @param value
      *     allowed object is
      *     {@link BotStation }
      *     
      */
-    public void setArg1(BotStation value) {
-        this.arg1 = value;
+    public void setBotStation(BotStation value) {
+        this.botStation = value;
     }
 
 }

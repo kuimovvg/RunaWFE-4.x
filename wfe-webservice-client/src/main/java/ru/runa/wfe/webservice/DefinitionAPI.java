@@ -26,9 +26,9 @@ public interface DefinitionAPI {
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param processTypes
+     * @param processArchive
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.WfDefinition
      */
@@ -37,37 +37,17 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "deployProcessDefinition", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeployProcessDefinition")
     @ResponseWrapper(localName = "deployProcessDefinitionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeployProcessDefinitionResponse")
     public WfDefinition deployProcessDefinition(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        byte[] arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        List<String> arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "processArchive", targetNamespace = "")
+        byte[] processArchive,
+        @WebParam(name = "processTypes", targetNamespace = "")
+        List<String> processTypes);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
-     * @return
-     *     returns byte[]
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getFile", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetFile")
-    @ResponseWrapper(localName = "getFileResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetFileResponse")
-    public byte[] getFile(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2);
-
-    /**
-     * 
-     * @param arg1
-     * @param arg0
+     * @param definitionName
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.WfDefinition
      */
@@ -76,15 +56,15 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getLatestProcessDefinition", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLatestProcessDefinition")
     @ResponseWrapper(localName = "getLatestProcessDefinitionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLatestProcessDefinitionResponse")
     public WfDefinition getLatestProcessDefinition(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionName", targetNamespace = "")
+        String definitionName);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.WfDefinition>
      */
@@ -93,17 +73,17 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getLatestProcessDefinitions", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLatestProcessDefinitions")
     @ResponseWrapper(localName = "getLatestProcessDefinitionsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLatestProcessDefinitionsResponse")
     public List<WfDefinition> getLatestProcessDefinitions(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BatchPresentation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param taskId
+     * @param withTimerTransitions
+     * @param user
+     * @param definitionId
      * @return
      *     returns java.util.List<java.lang.String>
      */
@@ -112,19 +92,19 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getOutputTransitionNames", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetOutputTransitionNames")
     @ResponseWrapper(localName = "getOutputTransitionNamesResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetOutputTransitionNamesResponse")
     public List<String> getOutputTransitionNames(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        Long arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        boolean arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionId", targetNamespace = "")
+        Long definitionId,
+        @WebParam(name = "taskId", targetNamespace = "")
+        Long taskId,
+        @WebParam(name = "withTimerTransitions", targetNamespace = "")
+        boolean withTimerTransitions);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param user
+     * @param definitionId
      * @return
      *     returns ru.runa.wfe.webservice.WfDefinition
      */
@@ -133,15 +113,35 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getProcessDefinition", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinition")
     @ResponseWrapper(localName = "getProcessDefinitionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionResponse")
     public WfDefinition getProcessDefinition(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionId", targetNamespace = "")
+        Long definitionId);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param fileName
+     * @param user
+     * @param definitionId
+     * @return
+     *     returns byte[]
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getProcessDefinitionFile", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionFile")
+    @ResponseWrapper(localName = "getProcessDefinitionFileResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionFileResponse")
+    public byte[] getProcessDefinitionFile(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionId", targetNamespace = "")
+        Long definitionId,
+        @WebParam(name = "fileName", targetNamespace = "")
+        String fileName);
+
+    /**
+     * 
+     * @param user
+     * @param definitionId
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.GraphElementPresentation>
      */
@@ -150,15 +150,15 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getProcessDefinitionGraphElements", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionGraphElements")
     @ResponseWrapper(localName = "getProcessDefinitionGraphElementsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionGraphElementsResponse")
     public List<GraphElementPresentation> getProcessDefinitionGraphElements(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionId", targetNamespace = "")
+        Long definitionId);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.WfDefinition>
      */
@@ -167,15 +167,15 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getProcessDefinitionHistory", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionHistory")
     @ResponseWrapper(localName = "getProcessDefinitionHistoryResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDefinitionHistoryResponse")
     public List<WfDefinition> getProcessDefinitionHistory(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "name", targetNamespace = "")
+        String name);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param user
+     * @param definitionId
      * @return
      *     returns ru.runa.wfe.webservice.Interaction
      */
@@ -184,32 +184,32 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getStartInteraction", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetStartInteraction")
     @ResponseWrapper(localName = "getStartInteractionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetStartInteractionResponse")
     public Interaction getStartInteraction(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionId", targetNamespace = "")
+        Long definitionId);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param user
+     * @param definitionId
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.SwimlaneDefinition>
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSwimlanes", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSwimlanes")
-    @ResponseWrapper(localName = "getSwimlanesResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSwimlanesResponse")
-    public List<SwimlaneDefinition> getSwimlanes(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+    @RequestWrapper(localName = "getSwimlaneDefinitions", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSwimlaneDefinitions")
+    @ResponseWrapper(localName = "getSwimlaneDefinitionsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSwimlaneDefinitionsResponse")
+    public List<SwimlaneDefinition> getSwimlaneDefinitions(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionId", targetNamespace = "")
+        Long definitionId);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param taskId
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Interaction
      */
@@ -218,34 +218,34 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "getTaskInteraction", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetTaskInteraction")
     @ResponseWrapper(localName = "getTaskInteractionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetTaskInteractionResponse")
     public Interaction getTaskInteraction(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "taskId", targetNamespace = "")
+        Long taskId);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param user
+     * @param definitionId
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.VariableDefinition>
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getVariables", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariables")
-    @ResponseWrapper(localName = "getVariablesResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariablesResponse")
-    public List<VariableDefinition> getVariables(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+    @RequestWrapper(localName = "getVariableDefinitions", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariableDefinitions")
+    @ResponseWrapper(localName = "getVariableDefinitionsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariableDefinitionsResponse")
+    public List<VariableDefinition> getVariableDefinitions(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionId", targetNamespace = "")
+        Long definitionId);
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param processTypes
+     * @param processId
+     * @param processArchive
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.WfDefinition
      */
@@ -254,44 +254,44 @@ public interface DefinitionAPI {
     @RequestWrapper(localName = "redeployProcessDefinition", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RedeployProcessDefinition")
     @ResponseWrapper(localName = "redeployProcessDefinitionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RedeployProcessDefinitionResponse")
     public WfDefinition redeployProcessDefinition(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        byte[] arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        List<String> arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "processId", targetNamespace = "")
+        Long processId,
+        @WebParam(name = "processArchive", targetNamespace = "")
+        byte[] processArchive,
+        @WebParam(name = "processTypes", targetNamespace = "")
+        List<String> processTypes);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param definitionName
+     * @param user
+     * @param version
      */
     @WebMethod
     @RequestWrapper(localName = "removeProcessDefinition", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveProcessDefinition")
     @ResponseWrapper(localName = "removeProcessDefinitionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveProcessDefinitionResponse")
     public void removeProcessDefinition(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        int arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "definitionName", targetNamespace = "")
+        String definitionName,
+        @WebParam(name = "version", targetNamespace = "")
+        int version);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param processName
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "undeployProcessDefinition", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UndeployProcessDefinition")
     @ResponseWrapper(localName = "undeployProcessDefinitionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UndeployProcessDefinitionResponse")
     public void undeployProcessDefinition(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "processName", targetNamespace = "")
+        String processName);
 
 }

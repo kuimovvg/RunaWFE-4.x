@@ -26,7 +26,7 @@ public interface SystemAPI {
 
     /**
      * 
-     * @param arg0
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.Localization>
      */
@@ -35,13 +35,13 @@ public interface SystemAPI {
     @RequestWrapper(localName = "getLocalizations", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLocalizations")
     @ResponseWrapper(localName = "getLocalizationsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLocalizationsResponse")
     public List<Localization> getLocalizations(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0);
+        @WebParam(name = "user", targetNamespace = "")
+        User user);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param user
      * @return
      *     returns java.lang.String
      */
@@ -50,34 +50,34 @@ public interface SystemAPI {
     @RequestWrapper(localName = "getLocalized", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLocalized")
     @ResponseWrapper(localName = "getLocalizedResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetLocalizedResponse")
     public String getLocalized(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "name", targetNamespace = "")
+        String name);
 
     /**
      * 
-     * @param arg0
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "login", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.Login")
     @ResponseWrapper(localName = "loginResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.LoginResponse")
     public void login(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0);
+        @WebParam(name = "user", targetNamespace = "")
+        User user);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param user
+     * @param localizations
      */
     @WebMethod
     @RequestWrapper(localName = "saveLocalizations", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SaveLocalizations")
     @ResponseWrapper(localName = "saveLocalizationsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SaveLocalizationsResponse")
     public void saveLocalizations(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        List<Localization> arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "localizations", targetNamespace = "")
+        List<Localization> localizations);
 
 }

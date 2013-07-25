@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="performer" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
+ *         &lt;element name="identifiable" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,86 +29,86 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getIssuedPermissions", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "performer",
+    "identifiable"
 })
 public class GetIssuedPermissions {
 
-    protected User arg0;
-    protected WfExecutor arg1;
-    protected Identifiable arg2;
+    protected User user;
+    protected WfExecutor performer;
+    protected Identifiable identifiable;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the performer property.
      * 
      * @return
      *     possible object is
      *     {@link WfExecutor }
      *     
      */
-    public WfExecutor getArg1() {
-        return arg1;
+    public WfExecutor getPerformer() {
+        return performer;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the performer property.
      * 
      * @param value
      *     allowed object is
      *     {@link WfExecutor }
      *     
      */
-    public void setArg1(WfExecutor value) {
-        this.arg1 = value;
+    public void setPerformer(WfExecutor value) {
+        this.performer = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the identifiable property.
      * 
      * @return
      *     possible object is
      *     {@link Identifiable }
      *     
      */
-    public Identifiable getArg2() {
-        return arg2;
+    public Identifiable getIdentifiable() {
+        return identifiable;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the identifiable property.
      * 
      * @param value
      *     allowed object is
      *     {@link Identifiable }
      *     
      */
-    public void setArg2(Identifiable value) {
-        this.arg2 = value;
+    public void setIdentifiable(Identifiable value) {
+        this.identifiable = value;
     }
 
 }

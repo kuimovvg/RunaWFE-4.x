@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="taskId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="previousOwner" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
+ *         &lt;element name="newExecutor" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,112 +30,112 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "assignTask", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3"
+    "user",
+    "taskId",
+    "previousOwner",
+    "newExecutor"
 })
 public class AssignTask {
 
-    protected User arg0;
-    protected Long arg1;
-    protected WfExecutor arg2;
-    protected WfExecutor arg3;
+    protected User user;
+    protected Long taskId;
+    protected WfExecutor previousOwner;
+    protected WfExecutor newExecutor;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the taskId property.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getArg1() {
-        return arg1;
+    public Long getTaskId() {
+        return taskId;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the taskId property.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setArg1(Long value) {
-        this.arg1 = value;
+    public void setTaskId(Long value) {
+        this.taskId = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the previousOwner property.
      * 
      * @return
      *     possible object is
      *     {@link WfExecutor }
      *     
      */
-    public WfExecutor getArg2() {
-        return arg2;
+    public WfExecutor getPreviousOwner() {
+        return previousOwner;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the previousOwner property.
      * 
      * @param value
      *     allowed object is
      *     {@link WfExecutor }
      *     
      */
-    public void setArg2(WfExecutor value) {
-        this.arg2 = value;
+    public void setPreviousOwner(WfExecutor value) {
+        this.previousOwner = value;
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the newExecutor property.
      * 
      * @return
      *     possible object is
      *     {@link WfExecutor }
      *     
      */
-    public WfExecutor getArg3() {
-        return arg3;
+    public WfExecutor getNewExecutor() {
+        return newExecutor;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the newExecutor property.
      * 
      * @param value
      *     allowed object is
      *     {@link WfExecutor }
      *     
      */
-    public void setArg3(WfExecutor value) {
-        this.arg3 = value;
+    public void setNewExecutor(WfExecutor value) {
+        this.newExecutor = value;
     }
 
 }
