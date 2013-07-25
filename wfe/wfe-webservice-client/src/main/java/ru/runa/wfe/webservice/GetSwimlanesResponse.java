@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://impl.service.wfe.runa.ru/}swimlaneDefinition" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://impl.service.wfe.runa.ru/}wfSwimlane" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetSwimlanesResponse {
 
     @XmlElement(name = "return")
-    protected List<SwimlaneDefinition> _return;
+    protected List<WfSwimlane> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetSwimlanesResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link SwimlaneDefinition }
+     * {@link WfSwimlane }
      * 
      * 
      */
-    public List<SwimlaneDefinition> getReturn() {
+    public List<WfSwimlane> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<SwimlaneDefinition>();
+            _return = new ArrayList<WfSwimlane>();
         }
         return this._return;
     }

@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="batchPresentationId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="newActiveBatchName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,86 +29,86 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "setActiveBatchPresentation", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "batchPresentationId",
+    "newActiveBatchName"
 })
 public class SetActiveBatchPresentation {
 
-    protected User arg0;
-    protected String arg1;
-    protected String arg2;
+    protected User user;
+    protected String batchPresentationId;
+    protected String newActiveBatchName;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the batchPresentationId property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getArg1() {
-        return arg1;
+    public String getBatchPresentationId() {
+        return batchPresentationId;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the batchPresentationId property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setArg1(String value) {
-        this.arg1 = value;
+    public void setBatchPresentationId(String value) {
+        this.batchPresentationId = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the newActiveBatchName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getArg2() {
-        return arg2;
+    public String getNewActiveBatchName() {
+        return newActiveBatchName;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the newActiveBatchName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setArg2(String value) {
-        this.arg2 = value;
+    public void setNewActiveBatchName(String value) {
+        this.newActiveBatchName = value;
     }
 
 }

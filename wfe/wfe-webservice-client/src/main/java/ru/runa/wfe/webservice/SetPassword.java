@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}actor" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="actor" type="{http://impl.service.wfe.runa.ru/}actor" minOccurs="0"/>
+ *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,86 +29,86 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "setPassword", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "actor",
+    "password"
 })
 public class SetPassword {
 
-    protected User arg0;
-    protected Actor arg1;
-    protected String arg2;
+    protected User user;
+    protected Actor actor;
+    protected String password;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the actor property.
      * 
      * @return
      *     possible object is
      *     {@link Actor }
      *     
      */
-    public Actor getArg1() {
-        return arg1;
+    public Actor getActor() {
+        return actor;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the actor property.
      * 
      * @param value
      *     allowed object is
      *     {@link Actor }
      *     
      */
-    public void setArg1(Actor value) {
-        this.arg1 = value;
+    public void setActor(Actor value) {
+        this.actor = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the password property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getArg2() {
-        return arg2;
+    public String getPassword() {
+        return password;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the password property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setArg2(String value) {
-        this.arg2 = value;
+    public void setPassword(String value) {
+        this.password = value;
     }
 
 }

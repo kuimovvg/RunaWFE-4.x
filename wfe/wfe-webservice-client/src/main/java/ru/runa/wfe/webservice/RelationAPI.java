@@ -26,10 +26,10 @@ public interface RelationAPI {
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param to
+     * @param from
+     * @param user
+     * @param relationId
      * @return
      *     returns ru.runa.wfe.webservice.RelationPair
      */
@@ -38,20 +38,19 @@ public interface RelationAPI {
     @RequestWrapper(localName = "addRelationPair", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AddRelationPair")
     @ResponseWrapper(localName = "addRelationPairResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AddRelationPairResponse")
     public RelationPair addRelationPair(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        WfExecutor arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        WfExecutor arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "relationId", targetNamespace = "")
+        Long relationId,
+        @WebParam(name = "from", targetNamespace = "")
+        WfExecutor from,
+        @WebParam(name = "to", targetNamespace = "")
+        WfExecutor to);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param relation
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Relation
      */
@@ -60,18 +59,16 @@ public interface RelationAPI {
     @RequestWrapper(localName = "createRelation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateRelation")
     @ResponseWrapper(localName = "createRelationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateRelationResponse")
     public Relation createRelation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "relation", targetNamespace = "")
+        Relation relation);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param left
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.RelationPair>
      */
@@ -80,18 +77,18 @@ public interface RelationAPI {
     @RequestWrapper(localName = "getExecutorsRelationPairsLeft", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsRelationPairsLeft")
     @ResponseWrapper(localName = "getExecutorsRelationPairsLeftResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsRelationPairsLeftResponse")
     public List<RelationPair> getExecutorsRelationPairsLeft(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        List<WfExecutor> arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "left", targetNamespace = "")
+        List<WfExecutor> left);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param right
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.RelationPair>
      */
@@ -100,17 +97,17 @@ public interface RelationAPI {
     @RequestWrapper(localName = "getExecutorsRelationPairsRight", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsRelationPairsRight")
     @ResponseWrapper(localName = "getExecutorsRelationPairsRightResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsRelationPairsRightResponse")
     public List<RelationPair> getExecutorsRelationPairsRight(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        List<WfExecutor> arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "right", targetNamespace = "")
+        List<WfExecutor> right);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Relation
      */
@@ -119,15 +116,15 @@ public interface RelationAPI {
     @RequestWrapper(localName = "getRelation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelation")
     @ResponseWrapper(localName = "getRelationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelationResponse")
     public Relation getRelation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Relation
      */
@@ -136,16 +133,16 @@ public interface RelationAPI {
     @RequestWrapper(localName = "getRelationByName", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelationByName")
     @ResponseWrapper(localName = "getRelationByNameResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelationByNameResponse")
     public Relation getRelationByName(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "name", targetNamespace = "")
+        String name);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.RelationPair>
      */
@@ -154,17 +151,17 @@ public interface RelationAPI {
     @RequestWrapper(localName = "getRelationPairs", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelationPairs")
     @ResponseWrapper(localName = "getRelationPairsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelationPairsResponse")
     public List<RelationPair> getRelationPairs(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        BatchPresentation arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.Relation>
      */
@@ -173,37 +170,74 @@ public interface RelationAPI {
     @RequestWrapper(localName = "getRelations", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelations")
     @ResponseWrapper(localName = "getRelationsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetRelationsResponse")
     public List<Relation> getRelations(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BatchPresentation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "removeRelation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveRelation")
     @ResponseWrapper(localName = "removeRelationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveRelationResponse")
     public void removeRelation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
+     * @throws RelationPairDoesNotExistException_Exception
      */
     @WebMethod
     @RequestWrapper(localName = "removeRelationPair", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveRelationPair")
     @ResponseWrapper(localName = "removeRelationPairResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveRelationPairResponse")
     public void removeRelationPair(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id)
+        throws RelationPairDoesNotExistException_Exception
+    ;
+
+    /**
+     * 
+     * @param ids
+     * @param user
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removeRelationPairs", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveRelationPairs")
+    @ResponseWrapper(localName = "removeRelationPairsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveRelationPairsResponse")
+    public void removeRelationPairs(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "ids", targetNamespace = "")
+        List<Long> ids);
+
+    /**
+     * 
+     * @param relation
+     * @param user
+     * @return
+     *     returns ru.runa.wfe.webservice.Relation
+     * @throws RelationDoesNotExistException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "updateRelation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateRelation")
+    @ResponseWrapper(localName = "updateRelationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateRelationResponse")
+    public Relation updateRelation(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "relation", targetNamespace = "")
+        Relation relation)
+        throws RelationDoesNotExistException_Exception
+    ;
 
 }

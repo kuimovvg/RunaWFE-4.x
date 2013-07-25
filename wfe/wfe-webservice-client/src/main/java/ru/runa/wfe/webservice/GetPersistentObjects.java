@@ -18,12 +18,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}batchPresentation" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://impl.service.wfe.runa.ru/}permission" minOccurs="0"/>
- *         &lt;element name="arg4" type="{http://impl.service.wfe.runa.ru/}securedObjectType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="arg5" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="batchPresentation" type="{http://impl.service.wfe.runa.ru/}batchPresentation" minOccurs="0"/>
+ *         &lt;element name="persistentClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="permission" type="{http://impl.service.wfe.runa.ru/}permission" minOccurs="0"/>
+ *         &lt;element name="securedObjectTypes" type="{http://impl.service.wfe.runa.ru/}securedObjectType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="enablePaging" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,131 +34,131 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getPersistentObjects", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3",
-    "arg4",
-    "arg5"
+    "user",
+    "batchPresentation",
+    "persistentClass",
+    "permission",
+    "securedObjectTypes",
+    "enablePaging"
 })
 public class GetPersistentObjects {
 
-    protected User arg0;
-    protected BatchPresentation arg1;
-    protected String arg2;
-    protected Permission arg3;
-    protected List<SecuredObjectType> arg4;
-    protected boolean arg5;
+    protected User user;
+    protected BatchPresentation batchPresentation;
+    protected String persistentClass;
+    protected Permission permission;
+    protected List<SecuredObjectType> securedObjectTypes;
+    protected boolean enablePaging;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the batchPresentation property.
      * 
      * @return
      *     possible object is
      *     {@link BatchPresentation }
      *     
      */
-    public BatchPresentation getArg1() {
-        return arg1;
+    public BatchPresentation getBatchPresentation() {
+        return batchPresentation;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the batchPresentation property.
      * 
      * @param value
      *     allowed object is
      *     {@link BatchPresentation }
      *     
      */
-    public void setArg1(BatchPresentation value) {
-        this.arg1 = value;
+    public void setBatchPresentation(BatchPresentation value) {
+        this.batchPresentation = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the persistentClass property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getArg2() {
-        return arg2;
+    public String getPersistentClass() {
+        return persistentClass;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the persistentClass property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setArg2(String value) {
-        this.arg2 = value;
+    public void setPersistentClass(String value) {
+        this.persistentClass = value;
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the permission property.
      * 
      * @return
      *     possible object is
      *     {@link Permission }
      *     
      */
-    public Permission getArg3() {
-        return arg3;
+    public Permission getPermission() {
+        return permission;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the permission property.
      * 
      * @param value
      *     allowed object is
      *     {@link Permission }
      *     
      */
-    public void setArg3(Permission value) {
-        this.arg3 = value;
+    public void setPermission(Permission value) {
+        this.permission = value;
     }
 
     /**
-     * Gets the value of the arg4 property.
+     * Gets the value of the securedObjectTypes property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the arg4 property.
+     * This is why there is not a <CODE>set</CODE> method for the securedObjectTypes property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getArg4().add(newItem);
+     *    getSecuredObjectTypes().add(newItem);
      * </pre>
      * 
      * 
@@ -168,27 +168,27 @@ public class GetPersistentObjects {
      * 
      * 
      */
-    public List<SecuredObjectType> getArg4() {
-        if (arg4 == null) {
-            arg4 = new ArrayList<SecuredObjectType>();
+    public List<SecuredObjectType> getSecuredObjectTypes() {
+        if (securedObjectTypes == null) {
+            securedObjectTypes = new ArrayList<SecuredObjectType>();
         }
-        return this.arg4;
+        return this.securedObjectTypes;
     }
 
     /**
-     * Gets the value of the arg5 property.
+     * Gets the value of the enablePaging property.
      * 
      */
-    public boolean isArg5() {
-        return arg5;
+    public boolean isEnablePaging() {
+        return enablePaging;
     }
 
     /**
-     * Sets the value of the arg5 property.
+     * Sets the value of the enablePaging property.
      * 
      */
-    public void setArg5(boolean value) {
-        this.arg5 = value;
+    public void setEnablePaging(boolean value) {
+        this.enablePaging = value;
     }
 
 }

@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="archive" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="replace" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,76 +29,76 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "importBotStation", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "archive",
+    "replace"
 })
 public class ImportBotStation {
 
-    protected User arg0;
-    protected byte[] arg1;
-    protected boolean arg2;
+    protected User user;
+    protected byte[] archive;
+    protected boolean replace;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the archive property.
      * 
      * @return
      *     possible object is
      *     byte[]
      */
-    public byte[] getArg1() {
-        return arg1;
+    public byte[] getArchive() {
+        return archive;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the archive property.
      * 
      * @param value
      *     allowed object is
      *     byte[]
      */
-    public void setArg1(byte[] value) {
-        this.arg1 = ((byte[]) value);
+    public void setArchive(byte[] value) {
+        this.archive = ((byte[]) value);
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the replace property.
      * 
      */
-    public boolean isArg2() {
-        return arg2;
+    public boolean isReplace() {
+        return replace;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the replace property.
      * 
      */
-    public void setArg2(boolean value) {
-        this.arg2 = value;
+    public void setReplace(boolean value) {
+        this.replace = value;
     }
 
 }

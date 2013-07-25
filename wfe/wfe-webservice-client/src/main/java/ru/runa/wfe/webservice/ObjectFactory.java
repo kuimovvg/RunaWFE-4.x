@@ -59,62 +59,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetCriteriaByNameResponse }
-     * 
-     */
-    public GetCriteriaByNameResponse createGetCriteriaByNameResponse() {
-        return new GetCriteriaByNameResponse();
-    }
-
-    /**
-     * Create an instance of {@link DeleteSubstitutionsResponse }
-     * 
-     */
-    public DeleteSubstitutionsResponse createDeleteSubstitutionsResponse() {
-        return new DeleteSubstitutionsResponse();
-    }
-
-    /**
-     * Create an instance of {@link Substitution }
-     * 
-     */
-    public Substitution createSubstitution() {
-        return new Substitution();
-    }
-
-    /**
-     * Create an instance of {@link DeleteCriteria }
-     * 
-     */
-    public DeleteCriteria createDeleteCriteria() {
-        return new DeleteCriteria();
-    }
-
-    /**
-     * Create an instance of {@link DeleteSubstitutions }
-     * 
-     */
-    public DeleteSubstitutions createDeleteSubstitutions() {
-        return new DeleteSubstitutions();
-    }
-
-    /**
-     * Create an instance of {@link GetSubstitutionResponse }
-     * 
-     */
-    public GetSubstitutionResponse createGetSubstitutionResponse() {
-        return new GetSubstitutionResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetSubstitutions }
-     * 
-     */
-    public GetSubstitutions createGetSubstitutions() {
-        return new GetSubstitutions();
-    }
-
-    /**
      * Create an instance of {@link CreateSubstitutionResponse }
      * 
      */
@@ -123,51 +67,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetCriteriaResponse }
+     * Create an instance of {@link GetSubstitutionsResponse }
      * 
      */
-    public GetCriteriaResponse createGetCriteriaResponse() {
-        return new GetCriteriaResponse();
+    public GetSubstitutionsResponse createGetSubstitutionsResponse() {
+        return new GetSubstitutionsResponse();
     }
 
     /**
-     * Create an instance of {@link UpdateCriteriaResponse }
+     * Create an instance of {@link GetSubstitutionsByCriteria }
      * 
      */
-    public UpdateCriteriaResponse createUpdateCriteriaResponse() {
-        return new UpdateCriteriaResponse();
-    }
-
-    /**
-     * Create an instance of {@link User }
-     * 
-     */
-    public User createUser() {
-        return new User();
-    }
-
-    /**
-     * Create an instance of {@link CreateCriteriaResponse }
-     * 
-     */
-    public CreateCriteriaResponse createCreateCriteriaResponse() {
-        return new CreateCriteriaResponse();
-    }
-
-    /**
-     * Create an instance of {@link DeleteCriteriasResponse }
-     * 
-     */
-    public DeleteCriteriasResponse createDeleteCriteriasResponse() {
-        return new DeleteCriteriasResponse();
-    }
-
-    /**
-     * Create an instance of {@link DeleteCriterias }
-     * 
-     */
-    public DeleteCriterias createDeleteCriterias() {
-        return new DeleteCriterias();
+    public GetSubstitutionsByCriteria createGetSubstitutionsByCriteria() {
+        return new GetSubstitutionsByCriteria();
     }
 
     /**
@@ -176,86 +88,6 @@ public class ObjectFactory {
      */
     public GetAllCriterias createGetAllCriterias() {
         return new GetAllCriterias();
-    }
-
-    /**
-     * Create an instance of {@link UpdateSubstitutionResponse }
-     * 
-     */
-    public UpdateSubstitutionResponse createUpdateSubstitutionResponse() {
-        return new UpdateSubstitutionResponse();
-    }
-
-    /**
-     * Create an instance of {@link DeleteCriteriaResponse }
-     * 
-     */
-    public DeleteCriteriaResponse createDeleteCriteriaResponse() {
-        return new DeleteCriteriaResponse();
-    }
-
-    /**
-     * Create an instance of {@link GetCriteriaByName }
-     * 
-     */
-    public GetCriteriaByName createGetCriteriaByName() {
-        return new GetCriteriaByName();
-    }
-
-    /**
-     * Create an instance of {@link GetSubstitutionsByCriteriaResponse }
-     * 
-     */
-    public GetSubstitutionsByCriteriaResponse createGetSubstitutionsByCriteriaResponse() {
-        return new GetSubstitutionsByCriteriaResponse();
-    }
-
-    /**
-     * Create an instance of {@link UpdateCriteria }
-     * 
-     */
-    public UpdateCriteria createUpdateCriteria() {
-        return new UpdateCriteria();
-    }
-
-    /**
-     * Create an instance of {@link CreateSubstitution }
-     * 
-     */
-    public CreateSubstitution createCreateSubstitution() {
-        return new CreateSubstitution();
-    }
-
-    /**
-     * Create an instance of {@link Actor }
-     * 
-     */
-    public Actor createActor() {
-        return new Actor();
-    }
-
-    /**
-     * Create an instance of {@link SubstitutionCriteria }
-     * 
-     */
-    public SubstitutionCriteria createSubstitutionCriteria() {
-        return new SubstitutionCriteria();
-    }
-
-    /**
-     * Create an instance of {@link GetCriteria }
-     * 
-     */
-    public GetCriteria createGetCriteria() {
-        return new GetCriteria();
-    }
-
-    /**
-     * Create an instance of {@link GetAllCriteriasResponse }
-     * 
-     */
-    public GetAllCriteriasResponse createGetAllCriteriasResponse() {
-        return new GetAllCriteriasResponse();
     }
 
     /**
@@ -275,11 +107,67 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSubstitutionsByCriteria }
+     * Create an instance of {@link GetAllCriteriasResponse }
      * 
      */
-    public GetSubstitutionsByCriteria createGetSubstitutionsByCriteria() {
-        return new GetSubstitutionsByCriteria();
+    public GetAllCriteriasResponse createGetAllCriteriasResponse() {
+        return new GetAllCriteriasResponse();
+    }
+
+    /**
+     * Create an instance of {@link DeleteCriteriaResponse }
+     * 
+     */
+    public DeleteCriteriaResponse createDeleteCriteriaResponse() {
+        return new DeleteCriteriaResponse();
+    }
+
+    /**
+     * Create an instance of {@link DeleteSubstitutions }
+     * 
+     */
+    public DeleteSubstitutions createDeleteSubstitutions() {
+        return new DeleteSubstitutions();
+    }
+
+    /**
+     * Create an instance of {@link DeleteCriterias }
+     * 
+     */
+    public DeleteCriterias createDeleteCriterias() {
+        return new DeleteCriterias();
+    }
+
+    /**
+     * Create an instance of {@link UpdateSubstitutionResponse }
+     * 
+     */
+    public UpdateSubstitutionResponse createUpdateSubstitutionResponse() {
+        return new UpdateSubstitutionResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetCriteria }
+     * 
+     */
+    public GetCriteria createGetCriteria() {
+        return new GetCriteria();
+    }
+
+    /**
+     * Create an instance of {@link DeleteCriteriasResponse }
+     * 
+     */
+    public DeleteCriteriasResponse createDeleteCriteriasResponse() {
+        return new DeleteCriteriasResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSubstitutionsByCriteriaResponse }
+     * 
+     */
+    public GetSubstitutionsByCriteriaResponse createGetSubstitutionsByCriteriaResponse() {
+        return new GetSubstitutionsByCriteriaResponse();
     }
 
     /**
@@ -291,11 +179,123 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetSubstitutionsResponse }
+     * Create an instance of {@link Actor }
      * 
      */
-    public GetSubstitutionsResponse createGetSubstitutionsResponse() {
-        return new GetSubstitutionsResponse();
+    public Actor createActor() {
+        return new Actor();
+    }
+
+    /**
+     * Create an instance of {@link SubstitutionCriteria }
+     * 
+     */
+    public SubstitutionCriteria createSubstitutionCriteria() {
+        return new SubstitutionCriteria();
+    }
+
+    /**
+     * Create an instance of {@link GetCriteriaResponse }
+     * 
+     */
+    public GetCriteriaResponse createGetCriteriaResponse() {
+        return new GetCriteriaResponse();
+    }
+
+    /**
+     * Create an instance of {@link CreateSubstitution }
+     * 
+     */
+    public CreateSubstitution createCreateSubstitution() {
+        return new CreateSubstitution();
+    }
+
+    /**
+     * Create an instance of {@link Substitution }
+     * 
+     */
+    public Substitution createSubstitution() {
+        return new Substitution();
+    }
+
+    /**
+     * Create an instance of {@link GetCriteriaByNameResponse }
+     * 
+     */
+    public GetCriteriaByNameResponse createGetCriteriaByNameResponse() {
+        return new GetCriteriaByNameResponse();
+    }
+
+    /**
+     * Create an instance of {@link DeleteSubstitutionsResponse }
+     * 
+     */
+    public DeleteSubstitutionsResponse createDeleteSubstitutionsResponse() {
+        return new DeleteSubstitutionsResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSubstitutions }
+     * 
+     */
+    public GetSubstitutions createGetSubstitutions() {
+        return new GetSubstitutions();
+    }
+
+    /**
+     * Create an instance of {@link UpdateCriteriaResponse }
+     * 
+     */
+    public UpdateCriteriaResponse createUpdateCriteriaResponse() {
+        return new UpdateCriteriaResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetCriteriaByName }
+     * 
+     */
+    public GetCriteriaByName createGetCriteriaByName() {
+        return new GetCriteriaByName();
+    }
+
+    /**
+     * Create an instance of {@link User }
+     * 
+     */
+    public User createUser() {
+        return new User();
+    }
+
+    /**
+     * Create an instance of {@link DeleteCriteria }
+     * 
+     */
+    public DeleteCriteria createDeleteCriteria() {
+        return new DeleteCriteria();
+    }
+
+    /**
+     * Create an instance of {@link UpdateCriteria }
+     * 
+     */
+    public UpdateCriteria createUpdateCriteria() {
+        return new UpdateCriteria();
+    }
+
+    /**
+     * Create an instance of {@link GetSubstitutionResponse }
+     * 
+     */
+    public GetSubstitutionResponse createGetSubstitutionResponse() {
+        return new GetSubstitutionResponse();
+    }
+
+    /**
+     * Create an instance of {@link CreateCriteriaResponse }
+     * 
+     */
+    public CreateCriteriaResponse createCreateCriteriaResponse() {
+        return new CreateCriteriaResponse();
     }
 
     /**

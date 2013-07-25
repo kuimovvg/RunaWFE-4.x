@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}base64Binary" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="configData" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="processDefinitionsBytes" type="{http://www.w3.org/2001/XMLSchema}base64Binary" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,75 +31,75 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "executeAdminScript", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "configData",
+    "processDefinitionsBytes"
 })
 public class ExecuteAdminScript {
 
-    protected User arg0;
-    protected byte[] arg1;
-    protected List<byte[]> arg2;
+    protected User user;
+    protected byte[] configData;
+    protected List<byte[]> processDefinitionsBytes;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the configData property.
      * 
      * @return
      *     possible object is
      *     byte[]
      */
-    public byte[] getArg1() {
-        return arg1;
+    public byte[] getConfigData() {
+        return configData;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the configData property.
      * 
      * @param value
      *     allowed object is
      *     byte[]
      */
-    public void setArg1(byte[] value) {
-        this.arg1 = ((byte[]) value);
+    public void setConfigData(byte[] value) {
+        this.configData = ((byte[]) value);
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the processDefinitionsBytes property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the arg2 property.
+     * This is why there is not a <CODE>set</CODE> method for the processDefinitionsBytes property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getArg2().add(newItem);
+     *    getProcessDefinitionsBytes().add(newItem);
      * </pre>
      * 
      * 
@@ -108,11 +108,11 @@ public class ExecuteAdminScript {
      * byte[]
      * 
      */
-    public List<byte[]> getArg2() {
-        if (arg2 == null) {
-            arg2 = new ArrayList<byte[]>();
+    public List<byte[]> getProcessDefinitionsBytes() {
+        if (processDefinitionsBytes == null) {
+            processDefinitionsBytes = new ArrayList<byte[]>();
         }
-        return this.arg2;
+        return this.processDefinitionsBytes;
     }
 
 }

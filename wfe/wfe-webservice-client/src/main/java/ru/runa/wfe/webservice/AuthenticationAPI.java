@@ -36,7 +36,7 @@ public interface AuthenticationAPI {
 
     /**
      * 
-     * @param arg0
+     * @param token
      * @return
      *     returns ru.runa.wfe.webservice.User
      */
@@ -45,13 +45,13 @@ public interface AuthenticationAPI {
     @RequestWrapper(localName = "authenticateByKerberos", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByKerberos")
     @ResponseWrapper(localName = "authenticateByKerberosResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByKerberosResponse")
     public User authenticateByKerberos(
-        @WebParam(name = "arg0", targetNamespace = "")
-        byte[] arg0);
+        @WebParam(name = "token", targetNamespace = "")
+        byte[] token);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param password
      * @return
      *     returns ru.runa.wfe.webservice.User
      */
@@ -60,9 +60,9 @@ public interface AuthenticationAPI {
     @RequestWrapper(localName = "authenticateByLoginPassword", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByLoginPassword")
     @ResponseWrapper(localName = "authenticateByLoginPasswordResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByLoginPasswordResponse")
     public User authenticateByLoginPassword(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "password", targetNamespace = "")
+        String password);
 
 }

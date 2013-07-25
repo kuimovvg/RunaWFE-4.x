@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="processId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="taskId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="childProcessId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,112 +30,112 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getProcessDiagram", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3"
+    "user",
+    "processId",
+    "taskId",
+    "childProcessId"
 })
 public class GetProcessDiagram {
 
-    protected User arg0;
-    protected Long arg1;
-    protected Long arg2;
-    protected Long arg3;
+    protected User user;
+    protected Long processId;
+    protected Long taskId;
+    protected Long childProcessId;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the processId property.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getArg1() {
-        return arg1;
+    public Long getProcessId() {
+        return processId;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the processId property.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setArg1(Long value) {
-        this.arg1 = value;
+    public void setProcessId(Long value) {
+        this.processId = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the taskId property.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getArg2() {
-        return arg2;
+    public Long getTaskId() {
+        return taskId;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the taskId property.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setArg2(Long value) {
-        this.arg2 = value;
+    public void setTaskId(Long value) {
+        this.taskId = value;
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the childProcessId property.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getArg3() {
-        return arg3;
+    public Long getChildProcessId() {
+        return childProcessId;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the childProcessId property.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setArg3(Long value) {
-        this.arg3 = value;
+    public void setChildProcessId(Long value) {
+        this.childProcessId = value;
     }
 
 }

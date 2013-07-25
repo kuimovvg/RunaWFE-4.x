@@ -25,33 +25,33 @@ public interface ScriptingAPI {
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param configData
+     * @param processDefinitionsBytes
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "executeAdminScript", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExecuteAdminScript")
     @ResponseWrapper(localName = "executeAdminScriptResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExecuteAdminScriptResponse")
     public void executeAdminScript(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        byte[] arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        List<byte[]> arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "configData", targetNamespace = "")
+        byte[] configData,
+        @WebParam(name = "processDefinitionsBytes", targetNamespace = "")
+        List<byte[]> processDefinitionsBytes);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param script
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "executeGroovyScript", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExecuteGroovyScript")
     @ResponseWrapper(localName = "executeGroovyScriptResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExecuteGroovyScriptResponse")
     public void executeGroovyScript(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "script", targetNamespace = "")
+        String script);
 
 }
