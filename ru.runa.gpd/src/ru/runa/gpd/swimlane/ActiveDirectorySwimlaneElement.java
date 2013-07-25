@@ -13,10 +13,11 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.settings.LDAPConnectionPreferencePage;
+import ru.runa.gpd.ldap.LDAPConnectionPreferencePage;
+import ru.runa.gpd.ldap.LDAPExecutorsImporter;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
-import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
 
 public class ActiveDirectorySwimlaneElement extends OrgFunctionSwimlaneElement {

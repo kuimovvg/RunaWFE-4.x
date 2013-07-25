@@ -11,16 +11,16 @@ import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
 import ru.runa.wfe.bot.Bot;
-import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
-import ru.runa.wfe.service.BotService;
 
 public class WFEServerBotElementImporter extends DataImporter {
     private final Map<Bot, List<BotTask>> bots = new HashMap<Bot, List<BotTask>>();
     private static WFEServerBotElementImporter instance;
 
-    private WFEServerBotElementImporter() {
-        super(WFEServerConnector.getInstance());
+    @Override
+    protected WFEServerConnector getConnector() {
+        return WFEServerConnector.getInstance();
     }
 
     public static synchronized WFEServerBotElementImporter getInstance() {
@@ -47,13 +47,7 @@ public class WFEServerBotElementImporter extends DataImporter {
 
     @Override
     protected void loadRemoteData(IProgressMonitor monitor) throws Exception {
-        List<BotStation> botStations = getBotService().getBotStations();
-        for (BotStation botStation : botStations) {
-            for (Bot bot : getBotService().getBots(WFEServerConnector.getInstance().getUser(), botStation.getId())) {
-                List<BotTask> result = getBotService().getBotTasks(WFEServerConnector.getInstance().getUser(), bot.getId());
-                bots.put(bot, result);
-            }
-        }
+        bots.putAll(getConnector().getBots());
     }
 
     @Override
@@ -81,25 +75,19 @@ public class WFEServerBotElementImporter extends DataImporter {
     }
 
     public byte[] getBotFile(Bot bot) throws Exception {
-        return getBotService().exportBot(WFEServerConnector.getInstance().getUser(), bot);
+        return getConnector().getBotFile(bot);
     }
 
     public byte[] getBotTaskFile(Bot bot, String botTask) throws Exception {
-        return getBotService().exportBotTask(WFEServerConnector.getInstance().getUser(), bot, botTask);
+        return getConnector().getBotTaskFile(bot, botTask);
     }
 
     public void deployBot(String botStationName, byte[] archive) {
-        WFEServerConnector.getInstance().connect();
-        BotStation botStation = getBotService().getBotStationByName(botStationName);
-        if (botStation == null) {
+        try {
+            getConnector().deployBot(botStationName, archive);
+        } catch (BotStationDoesNotExistException e) {
             MessageDialog.openError(Display.getCurrent().getActiveShell(), Localization.getString("ExportBotWizardPage.page.title"),
                     Localization.getString("ExportBotWizardPage.page.notExistWarning"));
-            return;
         }
-        getBotService().importBot(WFEServerConnector.getInstance().getUser(), botStation, archive, true);
-    }
-
-    private BotService getBotService() {
-        return WFEServerConnector.getInstance().getService("BotServiceBean");
     }
 }

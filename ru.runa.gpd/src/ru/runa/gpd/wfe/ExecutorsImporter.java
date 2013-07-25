@@ -15,10 +15,6 @@ import ru.runa.gpd.util.XmlUtil;
 public abstract class ExecutorsImporter extends DataImporter {
     protected Map<String, Boolean> executors = new TreeMap<String, Boolean>();
 
-    public ExecutorsImporter(IConnector connector) {
-        super(connector);
-    }
-
     @Override
     protected void clearInMemoryCache() {
         executors.clear();

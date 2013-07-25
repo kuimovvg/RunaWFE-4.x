@@ -1,4 +1,4 @@
-package ru.runa.gpd.swimlane;
+package ru.runa.gpd.ldap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,19 +15,17 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.wfe.ExecutorsImporter;
-import ru.runa.gpd.wfe.LDAPConnector;
 
 public class LDAPExecutorsImporter extends ExecutorsImporter implements PrefConstants {
-
     private static final String OBJECT_CLASS_ATTR_NAME = "objectClass";
     private static final String OBJECT_CLASS_ATTR_USER_VALUE = "user";
     private static final String OBJECT_CLASS_ATTR_GROUP_VALUE = "group";
     private static final String SAM_ACCOUNT_NAME = "SamAccountName";
-
     private static LDAPExecutorsImporter instance;
 
-    private LDAPExecutorsImporter() {
-        super(LDAPConnector.getInstance());
+    @Override
+    protected LDAPConnector getConnector() {
+        return LDAPConnector.getInstance();
     }
 
     public static synchronized LDAPExecutorsImporter getInstance() {
@@ -55,11 +53,10 @@ public class LDAPExecutorsImporter extends ExecutorsImporter implements PrefCons
         Attributes attrs = new BasicAttributes();
         attrs.put(OBJECT_CLASS_ATTR_NAME, OBJECT_CLASS_ATTR_USER_VALUE);
         for (String ou : ouNames) {
-            NamingEnumeration<SearchResult> list = LDAPConnector.getInstance().getDirContext().search(ou, attrs);
+            NamingEnumeration<SearchResult> list = getConnector().getDirContext().search(ou, attrs);
             while (list.hasMore()) {
                 NameClassPair nc = list.next();
-                String name = LDAPConnector.getInstance().getDirContext().getAttributes(nc.getName() + "," + ou).get(SAM_ACCOUNT_NAME).get()
-                        .toString();
+                String name = getConnector().getDirContext().getAttributes(nc.getName() + "," + ou).get(SAM_ACCOUNT_NAME).get().toString();
                 actors.add(name);
             }
         }
@@ -72,15 +69,13 @@ public class LDAPExecutorsImporter extends ExecutorsImporter implements PrefCons
         Attributes attrs = new BasicAttributes();
         attrs.put(OBJECT_CLASS_ATTR_NAME, OBJECT_CLASS_ATTR_GROUP_VALUE);
         for (String ou : ouNames) {
-            NamingEnumeration<SearchResult> list = LDAPConnector.getInstance().getDirContext().search(ou, attrs);
+            NamingEnumeration<SearchResult> list = getConnector().getDirContext().search(ou, attrs);
             while (list.hasMore()) {
                 NameClassPair nc = list.next();
-                String name = LDAPConnector.getInstance().getDirContext().getAttributes(nc.getName() + "," + ou).get(SAM_ACCOUNT_NAME).get()
-                        .toString();
+                String name = getConnector().getDirContext().getAttributes(nc.getName() + "," + ou).get(SAM_ACCOUNT_NAME).get().toString();
                 groups.add(name);
             }
         }
         return groups;
     }
-
 }

@@ -6,14 +6,14 @@ import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ru.runa.wfe.bot.BotStation;
-import ru.runa.wfe.service.BotService;
 
 public class WFEServerBotStationElementImporter extends DataImporter {
     private final List<BotStation> botStations = new ArrayList<BotStation>();
     private static WFEServerBotStationElementImporter instance;
 
-    private WFEServerBotStationElementImporter() {
-        super(WFEServerConnector.getInstance());
+    @Override
+    protected WFEServerConnector getConnector() {
+        return WFEServerConnector.getInstance();
     }
 
     public static synchronized WFEServerBotStationElementImporter getInstance() {
@@ -40,7 +40,7 @@ public class WFEServerBotStationElementImporter extends DataImporter {
 
     @Override
     protected void loadRemoteData(IProgressMonitor monitor) throws Exception {
-        botStations.addAll(getBotService().getBotStations());
+        botStations.addAll(WFEServerConnector.getInstance().getBotStations());
     }
 
     @Override
@@ -52,15 +52,10 @@ public class WFEServerBotStationElementImporter extends DataImporter {
     }
 
     public byte[] getBotStationFile(BotStation botStation) throws Exception {
-        return getBotService().exportBotStation(WFEServerConnector.getInstance().getUser(), botStation);
+        return getConnector().getBotStationFile(botStation);
     }
 
     public void deployBotStation(byte[] archive) {
-        WFEServerConnector.getInstance().connect();
-        getBotService().importBotStation(WFEServerConnector.getInstance().getUser(), archive, true);
-    }
-
-    private BotService getBotService() {
-        return WFEServerConnector.getInstance().getService("BotServiceBean");
+        getConnector().deployBotStation(archive);
     }
 }
