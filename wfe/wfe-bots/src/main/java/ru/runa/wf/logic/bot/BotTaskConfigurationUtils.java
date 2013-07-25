@@ -56,7 +56,7 @@ public class BotTaskConfigurationUtils {
     }
 
     private static Element getBotTaskElement(User user, WfTask task) {
-        byte[] xml = Delegates.getDefinitionService().getFile(user, task.getDefinitionId(), IFileDataProvider.BOTS_XML_FILE);
+        byte[] xml = Delegates.getDefinitionService().getProcessDefinitionFile(user, task.getDefinitionId(), IFileDataProvider.BOTS_XML_FILE);
         if (xml == null) {
             // this is the case of simple bot task
             return null;

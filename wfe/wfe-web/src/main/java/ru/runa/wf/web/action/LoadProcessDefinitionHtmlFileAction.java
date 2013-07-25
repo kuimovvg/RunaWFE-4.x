@@ -56,7 +56,7 @@ public class LoadProcessDefinitionHtmlFileAction extends ActionBase {
         ActionForward successForward = null;
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
-            byte[] bytes = definitionService.getFile(getLoggedUser(request), id, fileName);
+            byte[] bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), id, fileName);
 
             if (fileName.endsWith(".html")) {
                 request.setAttribute("htmlBytes", bytes);

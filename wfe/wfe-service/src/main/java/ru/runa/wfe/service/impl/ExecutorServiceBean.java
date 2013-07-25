@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -58,14 +59,15 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     private ExecutorLogic executorLogic;
 
     @Override
-    public void update(User user, Executor executor) {
+    public void update(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
         executorLogic.update(user, executor);
     }
 
     @Override
-    public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation) {
+    public List<? extends Executor> getExecutors(@WebParam(name = "user") User user,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
@@ -74,7 +76,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public int getExecutorsCount(User user, BatchPresentation batchPresentation) {
+    public int getExecutorsCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
@@ -83,41 +85,43 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public Actor getActorCaseInsensitive(String login) {
+    public Actor getActorCaseInsensitive(@WebParam(name = "login") String login) {
         Preconditions.checkArgument(login != null);
         return executorLogic.getActorCaseInsensitive(login);
     }
 
     @Override
-    public Executor getExecutorByName(User user, String name) {
+    public Executor getExecutorByName(@WebParam(name = "user") User user, @WebParam(name = "name") String name) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(name != null);
         return executorLogic.getExecutor(user, name);
     }
 
     @Override
-    public void remove(User user, List<Long> ids) {
+    public void remove(@WebParam(name = "user") User user, @WebParam(name = "ids") List<Long> ids) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(ids != null);
         executorLogic.remove(user, ids);
     }
 
     @Override
-    public <T extends Executor> T create(User user, T executor) {
+    public <T extends Executor> T create(@WebParam(name = "user") User user, @WebParam(name = "executor") T executor) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
         return executorLogic.create(user, executor);
     }
 
     @Override
-    public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) {
+    public void addExecutorsToGroup(@WebParam(name = "user") User user, @WebParam(name = "executorIds") List<Long> executorIds,
+            @WebParam(name = "groupId") Long groupId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executorIds != null);
         executorLogic.addExecutorsToGroup(user, executorIds, groupId);
     }
 
     @Override
-    public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) {
+    public void addExecutorToGroups(@WebParam(name = "user") User user, @WebParam(name = "executorId") Long executorId,
+            @WebParam(name = "groupIds") List<Long> groupIds) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executorId != null);
         Preconditions.checkArgument(groupIds != null);
@@ -125,41 +129,45 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
+    public List<Executor> getGroupChildren(@WebParam(name = "user") User user, @WebParam(name = "group") Group group,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
-        return executorLogic.getGroupChildren(user, group, batchPresentation, isExclude);
+        return executorLogic.getGroupChildren(user, group, batchPresentation, excluded);
     }
 
     @Override
-    public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
+    public int getGroupChildrenCount(@WebParam(name = "user") User user, @WebParam(name = "group") Group group,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
         }
-        return executorLogic.getGroupChildrenCount(user, group, batchPresentation, isExclude);
+        return executorLogic.getGroupChildrenCount(user, group, batchPresentation, excluded);
     }
 
     @Override
-    public List<Actor> getGroupActors(User user, Group group) {
+    public List<Actor> getGroupActors(@WebParam(name = "user") User user, @WebParam(name = "group") Group group) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
         return executorLogic.getGroupActors(user, group);
     }
 
     @Override
-    public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) {
+    public void removeExecutorsFromGroup(@WebParam(name = "user") User user, @WebParam(name = "executorIds") List<Long> executorIds,
+            @WebParam(name = "groupId") Long groupId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executorIds != null);
         executorLogic.removeExecutorsFromGroup(user, executorIds, groupId);
     }
 
     @Override
-    public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) {
+    public void removeExecutorFromGroups(@WebParam(name = "user") User user, @WebParam(name = "executorId") Long executorId,
+            @WebParam(name = "groupIds") List<Long> groupIds) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executorId != null);
         Preconditions.checkArgument(groupIds != null);
@@ -167,7 +175,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public void setPassword(User user, Actor actor, String password) {
+    public void setPassword(@WebParam(name = "user") User user, @WebParam(name = "actor") Actor actor, @WebParam(name = "password") String password) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(actor != null);
         Preconditions.checkArgument(password != null);
@@ -175,40 +183,43 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public void setStatus(User user, Actor actor, boolean isActive) {
+    public void setStatus(@WebParam(name = "user") User user, @WebParam(name = "actor") Actor actor, @WebParam(name = "active") boolean active) {
         Preconditions.checkArgument(user != null);
-        executorLogic.setStatus(user, actor, isActive, true);
+        executorLogic.setStatus(user, actor, active, true);
     }
 
     @Override
-    public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
-        Preconditions.checkArgument(user != null);
-        Preconditions.checkArgument(executor != null);
-        if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
-        }
-        return executorLogic.getExecutorGroups(user, executor, batchPresentation, isExclude);
-    }
-
-    @Override
-    public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
+    public List<Group> getExecutorGroups(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
         }
-        return executorLogic.getExecutorGroupsCount(user, executor, batchPresentation, isExclude);
+        return executorLogic.getExecutorGroups(user, executor, batchPresentation, excluded);
     }
 
     @Override
-    public List<Executor> getAllExecutorsFromGroup(User user, Group group) {
+    public int getExecutorGroupsCount(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(executor != null);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
+        }
+        return executorLogic.getExecutorGroupsCount(user, executor, batchPresentation, excluded);
+    }
+
+    @Override
+    public List<Executor> getAllExecutorsFromGroup(@WebParam(name = "user") User user, @WebParam(name = "group") Group group) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
         return executorLogic.getAllExecutorsFromGroup(user, group);
     }
 
     @Override
-    public boolean isExecutorInGroup(User user, Executor executor, Group group) {
+    public boolean isExecutorInGroup(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor,
+            @WebParam(name = "group") Group group) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
         Preconditions.checkArgument(group != null);
@@ -216,20 +227,20 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
-    public boolean isExecutorExist(User user, String executorName) {
+    public boolean isExecutorExist(@WebParam(name = "user") User user, @WebParam(name = "executorName") String executorName) {
         Preconditions.checkArgument(user != null);
         return executorLogic.isExecutorExist(user, executorName);
     }
 
     @Override
-    public Executor getExecutor(User user, Long id) {
+    public Executor getExecutor(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(id != null);
         return executorLogic.getExecutor(user, id);
     }
 
     @Override
-    public Actor getActorByCode(User user, Long code) {
+    public Actor getActorByCode(@WebParam(name = "user") User user, @WebParam(name = "code") Long code) {
         Preconditions.checkArgument(user != null);
         return executorLogic.getActorByCode(user, code);
     }

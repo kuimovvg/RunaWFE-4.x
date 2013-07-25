@@ -48,7 +48,7 @@ public class LoadProcessDefinitionArchiveAction extends ActionBase {
             IdForm idForm = (IdForm) form;
             DefinitionService definitionService = Delegates.getDefinitionService();
             String parFileName = definitionService.getProcessDefinition(getLoggedUser(request), idForm.getId()).getName() + ".par";
-            byte[] bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.PAR_FILE);
+            byte[] bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.PAR_FILE);
             response.setContentType("application/zip");
             String encodedFileName = HTMLUtils.encodeFileName(parFileName, request.getHeader("User-Agent"));
             response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");

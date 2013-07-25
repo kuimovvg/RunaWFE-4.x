@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -61,7 +62,8 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     private RelationLogic relationLogic;
 
     @Override
-    public RelationPair addRelationPair(User user, Long relationId, Executor from, Executor to) {
+    public RelationPair addRelationPair(@WebParam(name = "user") User user, @WebParam(name = "relationId") Long relationId,
+            @WebParam(name = "from") Executor from, @WebParam(name = "to") Executor to) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(from);
         Preconditions.checkNotNull(to);
@@ -69,20 +71,21 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public Relation createRelation(User user, Relation relation) {
+    public Relation createRelation(@WebParam(name = "user") User user, @WebParam(name = "relation") Relation relation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(relation);
         return relationLogic.createRelation(user, relation);
     }
 
     @Override
-    public Relation updateRelation(User user, Relation relation) throws RelationDoesNotExistException {
+    public Relation updateRelation(@WebParam(name = "user") User user, @WebParam(name = "relation") Relation relation)
+            throws RelationDoesNotExistException {
         Preconditions.checkNotNull(user);
         return relationLogic.updateRelation(user, relation);
     }
 
     @Override
-    public List<Relation> getRelations(User user, BatchPresentation batchPresentation) {
+    public List<Relation> getRelations(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
@@ -91,33 +94,36 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public Relation getRelationByName(User user, String name) {
+    public Relation getRelationByName(@WebParam(name = "user") User user, @WebParam(name = "name") String name) {
         Preconditions.checkNotNull(user);
         return relationLogic.getRelation(user, name);
     }
 
     @Override
-    public Relation getRelation(User user, Long id) {
+    public Relation getRelation(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         return relationLogic.getRelation(user, id);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsRight(User user, String name, List<? extends Executor> right) {
+    public List<RelationPair> getExecutorsRelationPairsRight(@WebParam(name = "user") User user, @WebParam(name = "name") String name,
+            @WebParam(name = "right") List<? extends Executor> right) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(right);
         return relationLogic.getExecutorRelationPairsRight(user, name, right);
     }
 
     @Override
-    public List<RelationPair> getExecutorsRelationPairsLeft(User user, String name, List<? extends Executor> left) {
+    public List<RelationPair> getExecutorsRelationPairsLeft(@WebParam(name = "user") User user, @WebParam(name = "name") String name,
+            @WebParam(name = "left") List<? extends Executor> left) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(left);
         return relationLogic.getExecutorRelationPairsLeft(user, name, left);
     }
 
     @Override
-    public List<RelationPair> getRelationPairs(User user, String name, BatchPresentation batchPresentation) {
+    public List<RelationPair> getRelationPairs(@WebParam(name = "user") User user, @WebParam(name = "name") String name,
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createDefault();
@@ -126,13 +132,13 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public void removeRelationPair(User user, Long id) throws RelationPairDoesNotExistException {
+    public void removeRelationPair(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) throws RelationPairDoesNotExistException {
         Preconditions.checkNotNull(user);
         relationLogic.removeRelationPair(user, id);
     }
 
     @Override
-    public void removeRelationPairs(User user, List<Long> ids) {
+    public void removeRelationPairs(@WebParam(name = "user") User user, @WebParam(name = "ids") List<Long> ids) {
         Preconditions.checkNotNull(user);
         for (Long id : ids) {
             relationLogic.removeRelationPair(user, id);
@@ -140,7 +146,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public void removeRelation(User user, Long id) {
+    public void removeRelation(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         relationLogic.removeRelation(user, id);
     }

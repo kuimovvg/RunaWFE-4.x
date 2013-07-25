@@ -151,7 +151,7 @@ public interface DefinitionService {
      * @return file data or <code>null</code> if file does not exist
      * @throws DefinitionDoesNotExistException
      */
-    public byte[] getFile(User user, Long definitionId, String fileName) throws DefinitionDoesNotExistException;
+    public byte[] getProcessDefinitionFile(User user, Long definitionId, String fileName) throws DefinitionDoesNotExistException;
 
     /**
      * Gets available output transition names. Process definition id or task id
@@ -203,7 +203,7 @@ public interface DefinitionService {
      * @return not <code>null</code>
      * @throws DefinitionDoesNotExistException
      */
-    public List<SwimlaneDefinition> getSwimlanes(User user, Long definitionId) throws DefinitionDoesNotExistException;
+    public List<SwimlaneDefinition> getSwimlaneDefinitions(User user, Long definitionId) throws DefinitionDoesNotExistException;
 
     /**
      * Gets all variable definitions for process definition by id.
@@ -215,7 +215,7 @@ public interface DefinitionService {
      * @return not <code>null</code>
      * @throws DefinitionDoesNotExistException
      */
-    public List<VariableDefinition> getVariables(User user, Long definitionId) throws DefinitionDoesNotExistException;
+    public List<VariableDefinition> getVariableDefinitions(User user, Long definitionId) throws DefinitionDoesNotExistException;
 
     /**
      * Gets all graph elements for process definition by id.
