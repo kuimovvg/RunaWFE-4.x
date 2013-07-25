@@ -1,4 +1,4 @@
-package ru.runa.gpd.settings;
+package ru.runa.gpd.ldap;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -19,8 +19,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
-import ru.runa.gpd.wfe.LDAPConnector;
 
 public class LDAPConnectionPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, PrefConstants {
 

@@ -1,4 +1,4 @@
-package ru.runa.gpd.wfe;
+package ru.runa.gpd.ui.custom;
 
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -16,6 +16,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
+import ru.runa.gpd.wfe.DataImporter;
 
 public class SyncUIHelper {
 

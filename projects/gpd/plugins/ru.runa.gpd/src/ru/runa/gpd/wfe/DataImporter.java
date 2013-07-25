@@ -9,24 +9,19 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 
 public abstract class DataImporter {
-
-    private final IConnector connector;
-
-    protected DataImporter(IConnector connector) {
-        this.connector = connector;
-    }
+    protected abstract IConnector getConnector();
 
     public boolean isConfigured() {
-        return connector.isConfigured();
+        return getConnector().isConfigured();
     }
 
     public void connect() throws Exception {
-        connector.connect();
+        getConnector().connect();
     }
 
     protected File getCacheFile() {
@@ -51,39 +46,12 @@ public abstract class DataImporter {
         }
     }
 
-    // TODO move to Connector
-    // public final void connectWithRunnable() {
-    // final ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-    // monitorDialog.setCancelable(true);
-    // final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-    //
-    // public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-    // try {
-    // monitor.beginTask(Messages.getString("task.Connect"), 1);
-    // connect();
-    // } catch (Exception e) {
-    // DesignerLogger.logErrorWithoutDialog("error.Connect", e);
-    // throw new InvocationTargetException(e);
-    // } finally {
-    // monitor.done();
-    // }
-    // }
-    // };
-    // try {
-    // monitorDialog.run(true, false, runnable);
-    // } catch (InvocationTargetException ex) {
-    // throw new RuntimeException(ex.getTargetException());
-    // } catch (InterruptedException ex) {
-    // //
-    // }
-    // }
-
     public final void synchronize() {
         Shell shell = Display.getCurrent() != null ? Display.getCurrent().getActiveShell() : null;
         final ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(shell);
         monitorDialog.setCancelable(true);
         final IRunnableWithProgress runnable = new IRunnableWithProgress() {
-
+            @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                 try {
                     monitor.beginTask(Localization.getString("task.SynchronizeData"), 120);
@@ -113,5 +81,4 @@ public abstract class DataImporter {
             // 
         }
     }
-
 }

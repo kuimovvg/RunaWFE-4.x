@@ -9,6 +9,7 @@
    <extension-point id="formats" name="Variable formats" schema="schema/formats.exsd"/>
    <extension-point id="swimlaneElements" name="Swimlane elements" schema="schema/swimlaneElements.exsd"/>
    <extension-point id="validators" name="Variable validators" schema="schema/validators.exsd"/>
+   <extension-point id="wfeConnectors" name="wfeConnectors" schema="schema/wfeConnectors.exsd"/>
 
   <extension point = "org.eclipse.ui.editors">
     <editor
@@ -1696,7 +1697,7 @@
        </page>
        <page
              category="gpd.pref.connection"
-             class="ru.runa.gpd.settings.LDAPConnectionPreferencePage"
+             class="ru.runa.gpd.ldap.LDAPConnectionPreferencePage"
              id="gpd.pref.connection.ldap"
              name="%pref.connection.ldap">
        </page>
