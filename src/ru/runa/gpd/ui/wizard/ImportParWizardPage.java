@@ -34,9 +34,9 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
+import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ProjectFinder;
-import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 import ru.runa.wfe.definition.dto.WfDefinition;
 
@@ -220,7 +220,7 @@ public class ImportParWizardPage extends ImportWizardPage {
         public Object[] getChildren(Object parentElement) {
             if (parentElement instanceof HistoryRoot) {
                 HistoryRoot historyRoot = (HistoryRoot) parentElement;
-                List<WfDefinition> history = WFEServerProcessDefinitionImporter.getInstance().loadCachedData().get(historyRoot.stub);
+                List<WfDefinition> history = WFEServerProcessDefinitionImporter.getInstance().loadCachedData().get(historyRoot.definition);
                 List<WfDefinition> result = Lists.newArrayList(history);
                 result.remove(0);
                 return result.toArray();
@@ -266,10 +266,10 @@ public class ImportParWizardPage extends ImportWizardPage {
     }
 
     public static class HistoryRoot {
-        private final WfDefinition stub;
+        private final WfDefinition definition;
 
         public HistoryRoot(WfDefinition stub) {
-            this.stub = stub;
+            this.definition = stub;
         }
     }
 
@@ -277,11 +277,11 @@ public class ImportParWizardPage extends ImportWizardPage {
         @Override
         public String getText(Object element) {
             if (element instanceof WfDefinition) {
-                WfDefinition stub = (WfDefinition) element;
-                if (WFEServerProcessDefinitionImporter.getInstance().loadCachedData().containsKey(stub)) {
-                    return stub.getName();
+                WfDefinition definition = (WfDefinition) element;
+                if (WFEServerProcessDefinitionImporter.getInstance().loadCachedData().containsKey(definition)) {
+                    return definition.getName();
                 }
-                return String.valueOf(stub.getVersion());
+                return String.valueOf(definition.getVersion());
             }
             if (element instanceof HistoryRoot) {
                 return Localization.getString("ImportParWizardPage.page.oldDefinitionVersions");

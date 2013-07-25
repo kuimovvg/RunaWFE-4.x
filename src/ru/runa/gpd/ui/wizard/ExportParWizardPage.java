@@ -48,9 +48,9 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
+import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.ProjectFinder;
-import ru.runa.gpd.wfe.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 
 import com.google.common.base.Strings;

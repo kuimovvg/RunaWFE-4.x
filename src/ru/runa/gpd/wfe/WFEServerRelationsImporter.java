@@ -11,18 +11,14 @@ import org.dom4j.Element;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ru.runa.gpd.util.XmlUtil;
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationConsts;
-import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.relation.Relation;
-import ru.runa.wfe.service.RelationService;
 
 public class WFEServerRelationsImporter extends DataImporter {
     private final List<String> relations = new ArrayList<String>();
     private static WFEServerRelationsImporter instance;
 
-    private WFEServerRelationsImporter() {
-        super(WFEServerConnector.getInstance());
+    @Override
+    protected WFEServerConnector getConnector() {
+        return WFEServerConnector.getInstance();
     }
 
     public static synchronized WFEServerRelationsImporter getInstance() {
@@ -64,12 +60,7 @@ public class WFEServerRelationsImporter extends DataImporter {
 
     @Override
     protected void loadRemoteData(IProgressMonitor monitor) throws Exception {
-        RelationService executorService = WFEServerConnector.getInstance().getService("RelationServiceBean");
-        BatchPresentation batchPresentation = BatchPresentationFactory.RELATIONS.createNonPaged();
-        List<Relation> loaded = executorService.getRelations(WFEServerConnector.getInstance().getUser(), batchPresentation);
-        for (Relation relation : loaded) {
-            relations.add(relation.getName());
-        }
+        relations.addAll(getConnector().getRelationNames());
         monitor.worked(100);
     }
 }
