@@ -47,9 +47,9 @@ public class ProcessDefinitionGraphImageAction extends ActionBase {
         IdForm idForm = (IdForm) form;
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
-            byte[] bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
+            byte[] bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
             if (bytes == null) {
-                bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
+                bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
             }
             if (bytes == null) {
                 throw new NullPointerException("No graph stream found.");

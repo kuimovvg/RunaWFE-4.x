@@ -48,7 +48,7 @@ abstract class LoadProcessDefinitionFileAction extends ActionBase {
         try {
             DefinitionService definitionService = Delegates.getDefinitionService();
             fileName = getFileName(request);
-            byte[] bytes = definitionService.getFile(getLoggedUser(request), idForm.getId(), fileName);
+            byte[] bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), fileName);
             String contentType = getContentType();
             if (contentType != null) {
                 response.setContentType(contentType);

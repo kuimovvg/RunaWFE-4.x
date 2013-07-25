@@ -26,8 +26,19 @@ public class SystemProperties {
         return v3CompatibilityMode;
     }
 
+    /**
+     * System version
+     */
+    public static String getVersion() {
+        return RESOURCES.getStringProperty("version");
+    }
+
     public static String getAdministratorName() {
         return RESOURCES.getStringPropertyNotNull("default.administrator.name");
+    }
+
+    public static String getAdministratorDefaultPassword() {
+        return RESOURCES.getStringPropertyNotNull("default.administrator.password");
     }
 
     public static String getAdministratorsGroupName() {

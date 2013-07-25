@@ -145,4 +145,13 @@ public class HTMLUtils {
         return tr;
     }
 
+    public static TR createRow(String label, TD element) {
+        TR tr = new TR();
+        TD labelTd = new TD(label);
+        labelTd.setClass(Resources.CLASS_LIST_TABLE_TD);
+        tr.addElement(labelTd);
+        tr.addElement(element.setClass(Resources.CLASS_LIST_TABLE_TD));
+        return tr;
+    }
+
 }
