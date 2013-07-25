@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="syntetic" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="formatClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="format" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="publicAccess" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="defaultValue" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="scriptingName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "variableDefinition", propOrder = {
     "syntetic",
     "name",
-    "formatClassName",
+    "format",
     "publicAccess",
     "defaultValue",
     "scriptingName",
@@ -45,7 +45,7 @@ public class VariableDefinition {
 
     protected boolean syntetic;
     protected String name;
-    protected String formatClassName;
+    protected String format;
     protected boolean publicAccess;
     protected String defaultValue;
     protected String scriptingName;
@@ -92,27 +92,27 @@ public class VariableDefinition {
     }
 
     /**
-     * Gets the value of the formatClassName property.
+     * Gets the value of the format property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getFormatClassName() {
-        return formatClassName;
+    public String getFormat() {
+        return format;
     }
 
     /**
-     * Sets the value of the formatClassName property.
+     * Sets the value of the format property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setFormatClassName(String value) {
-        this.formatClassName = value;
+    public void setFormat(String value) {
+        this.format = value;
     }
 
     /**

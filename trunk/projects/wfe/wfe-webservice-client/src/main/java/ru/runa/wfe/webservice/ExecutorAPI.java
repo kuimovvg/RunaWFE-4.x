@@ -26,42 +26,42 @@ public interface ExecutorAPI {
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param executorId
+     * @param groupIds
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "addExecutorToGroups", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AddExecutorToGroups")
     @ResponseWrapper(localName = "addExecutorToGroupsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AddExecutorToGroupsResponse")
     public void addExecutorToGroups(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        List<Long> arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executorId", targetNamespace = "")
+        Long executorId,
+        @WebParam(name = "groupIds", targetNamespace = "")
+        List<Long> groupIds);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param groupId
+     * @param user
+     * @param executorIds
      */
     @WebMethod
     @RequestWrapper(localName = "addExecutorsToGroup", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AddExecutorsToGroup")
     @ResponseWrapper(localName = "addExecutorsToGroupResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AddExecutorsToGroupResponse")
     public void addExecutorsToGroup(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        List<Long> arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        Long arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executorIds", targetNamespace = "")
+        List<Long> executorIds,
+        @WebParam(name = "groupId", targetNamespace = "")
+        Long groupId);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param executor
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.WfExecutor
      */
@@ -70,15 +70,15 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "create", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.Create")
     @ResponseWrapper(localName = "createResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateResponse")
     public WfExecutor create(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        WfExecutor arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executor", targetNamespace = "")
+        WfExecutor executor);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param code
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Actor
      */
@@ -87,14 +87,14 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getActorByCode", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetActorByCode")
     @ResponseWrapper(localName = "getActorByCodeResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetActorByCodeResponse")
     public Actor getActorByCode(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "code", targetNamespace = "")
+        Long code);
 
     /**
      * 
-     * @param arg0
+     * @param login
      * @return
      *     returns ru.runa.wfe.webservice.Actor
      */
@@ -103,13 +103,13 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getActorCaseInsensitive", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetActorCaseInsensitive")
     @ResponseWrapper(localName = "getActorCaseInsensitiveResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetActorCaseInsensitiveResponse")
     public Actor getActorCaseInsensitive(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0);
+        @WebParam(name = "login", targetNamespace = "")
+        String login);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param group
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.WfExecutor>
      */
@@ -118,15 +118,15 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getAllExecutorsFromGroup", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetAllExecutorsFromGroup")
     @ResponseWrapper(localName = "getAllExecutorsFromGroupResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetAllExecutorsFromGroupResponse")
     public List<WfExecutor> getAllExecutorsFromGroup(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Group arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "group", targetNamespace = "")
+        Group group);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.WfExecutor
      */
@@ -135,15 +135,15 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getExecutor", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutor")
     @ResponseWrapper(localName = "getExecutorResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorResponse")
     public WfExecutor getExecutor(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param name
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.WfExecutor
      */
@@ -152,17 +152,17 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getExecutorByName", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorByName")
     @ResponseWrapper(localName = "getExecutorByNameResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorByNameResponse")
     public WfExecutor getExecutorByName(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "name", targetNamespace = "")
+        String name);
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param excluded
+     * @param executor
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.Group>
      */
@@ -171,21 +171,21 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getExecutorGroups", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorGroups")
     @ResponseWrapper(localName = "getExecutorGroupsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorGroupsResponse")
     public List<Group> getExecutorGroups(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        WfExecutor arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        BatchPresentation arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        boolean arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executor", targetNamespace = "")
+        WfExecutor executor,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation,
+        @WebParam(name = "excluded", targetNamespace = "")
+        boolean excluded);
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param excluded
+     * @param executor
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns int
      */
@@ -194,19 +194,19 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getExecutorGroupsCount", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorGroupsCount")
     @ResponseWrapper(localName = "getExecutorGroupsCountResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorGroupsCountResponse")
     public int getExecutorGroupsCount(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        WfExecutor arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        BatchPresentation arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        boolean arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executor", targetNamespace = "")
+        WfExecutor executor,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation,
+        @WebParam(name = "excluded", targetNamespace = "")
+        boolean excluded);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.WfExecutor>
      */
@@ -215,15 +215,15 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getExecutors", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutors")
     @ResponseWrapper(localName = "getExecutorsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsResponse")
     public List<WfExecutor> getExecutors(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BatchPresentation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns int
      */
@@ -232,15 +232,15 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getExecutorsCount", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsCount")
     @ResponseWrapper(localName = "getExecutorsCountResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsCountResponse")
     public int getExecutorsCount(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BatchPresentation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param group
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.Actor>
      */
@@ -249,17 +249,17 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getGroupActors", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetGroupActors")
     @ResponseWrapper(localName = "getGroupActorsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetGroupActorsResponse")
     public List<Actor> getGroupActors(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Group arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "group", targetNamespace = "")
+        Group group);
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param excluded
+     * @param batchPresentation
+     * @param group
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.WfExecutor>
      */
@@ -268,21 +268,21 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getGroupChildren", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetGroupChildren")
     @ResponseWrapper(localName = "getGroupChildrenResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetGroupChildrenResponse")
     public List<WfExecutor> getGroupChildren(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Group arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        BatchPresentation arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        boolean arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "group", targetNamespace = "")
+        Group group,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation,
+        @WebParam(name = "excluded", targetNamespace = "")
+        boolean excluded);
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param excluded
+     * @param batchPresentation
+     * @param group
+     * @param user
      * @return
      *     returns int
      */
@@ -291,19 +291,19 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "getGroupChildrenCount", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetGroupChildrenCount")
     @ResponseWrapper(localName = "getGroupChildrenCountResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetGroupChildrenCountResponse")
     public int getGroupChildrenCount(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Group arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        BatchPresentation arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        boolean arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "group", targetNamespace = "")
+        Group group,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation,
+        @WebParam(name = "excluded", targetNamespace = "")
+        boolean excluded);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param user
+     * @param executorName
      * @return
      *     returns boolean
      */
@@ -312,16 +312,16 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "isExecutorExist", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsExecutorExist")
     @ResponseWrapper(localName = "isExecutorExistResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsExecutorExistResponse")
     public boolean isExecutorExist(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executorName", targetNamespace = "")
+        String executorName);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param executor
+     * @param group
+     * @param user
      * @return
      *     returns boolean
      */
@@ -330,107 +330,107 @@ public interface ExecutorAPI {
     @RequestWrapper(localName = "isExecutorInGroup", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsExecutorInGroup")
     @ResponseWrapper(localName = "isExecutorInGroupResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsExecutorInGroupResponse")
     public boolean isExecutorInGroup(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        WfExecutor arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        Group arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executor", targetNamespace = "")
+        WfExecutor executor,
+        @WebParam(name = "group", targetNamespace = "")
+        Group group);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param ids
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "remove", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.Remove")
     @ResponseWrapper(localName = "removeResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveResponse")
     public void remove(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        List<Long> arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "ids", targetNamespace = "")
+        List<Long> ids);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param executorId
+     * @param groupIds
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "removeExecutorFromGroups", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveExecutorFromGroups")
     @ResponseWrapper(localName = "removeExecutorFromGroupsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveExecutorFromGroupsResponse")
     public void removeExecutorFromGroups(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        List<Long> arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executorId", targetNamespace = "")
+        Long executorId,
+        @WebParam(name = "groupIds", targetNamespace = "")
+        List<Long> groupIds);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param groupId
+     * @param user
+     * @param executorIds
      */
     @WebMethod
     @RequestWrapper(localName = "removeExecutorsFromGroup", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveExecutorsFromGroup")
     @ResponseWrapper(localName = "removeExecutorsFromGroupResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveExecutorsFromGroupResponse")
     public void removeExecutorsFromGroup(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        List<Long> arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        Long arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executorIds", targetNamespace = "")
+        List<Long> executorIds,
+        @WebParam(name = "groupId", targetNamespace = "")
+        Long groupId);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param actor
+     * @param password
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "setPassword", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SetPassword")
     @ResponseWrapper(localName = "setPasswordResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SetPasswordResponse")
     public void setPassword(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Actor arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "actor", targetNamespace = "")
+        Actor actor,
+        @WebParam(name = "password", targetNamespace = "")
+        String password);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param active
+     * @param actor
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "setStatus", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SetStatus")
     @ResponseWrapper(localName = "setStatusResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SetStatusResponse")
     public void setStatus(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Actor arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        boolean arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "actor", targetNamespace = "")
+        Actor actor,
+        @WebParam(name = "active", targetNamespace = "")
+        boolean active);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param executor
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "update", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.Update")
     @ResponseWrapper(localName = "updateResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateResponse")
     public void update(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        WfExecutor arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "executor", targetNamespace = "")
+        WfExecutor executor);
 
 }

@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="token" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,32 +27,32 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "authenticateByKerberos", propOrder = {
-    "arg0"
+    "token"
 })
 public class AuthenticateByKerberos {
 
-    protected byte[] arg0;
+    protected byte[] token;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the token property.
      * 
      * @return
      *     possible object is
      *     byte[]
      */
-    public byte[] getArg0() {
-        return arg0;
+    public byte[] getToken() {
+        return token;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the token property.
      * 
      * @param value
      *     allowed object is
      *     byte[]
      */
-    public void setArg0(byte[] value) {
-        this.arg0 = ((byte[]) value);
+    public void setToken(byte[] value) {
+        this.token = ((byte[]) value);
     }
 
 }

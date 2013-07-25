@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://impl.service.wfe.runa.ru/}group" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="executor" type="{http://impl.service.wfe.runa.ru/}wfExecutor" minOccurs="0"/>
+ *         &lt;element name="group" type="{http://impl.service.wfe.runa.ru/}group" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,86 +29,86 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "isExecutorInGroup", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "executor",
+    "group"
 })
 public class IsExecutorInGroup {
 
-    protected User arg0;
-    protected WfExecutor arg1;
-    protected Group arg2;
+    protected User user;
+    protected WfExecutor executor;
+    protected Group group;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the executor property.
      * 
      * @return
      *     possible object is
      *     {@link WfExecutor }
      *     
      */
-    public WfExecutor getArg1() {
-        return arg1;
+    public WfExecutor getExecutor() {
+        return executor;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the executor property.
      * 
      * @param value
      *     allowed object is
      *     {@link WfExecutor }
      *     
      */
-    public void setArg1(WfExecutor value) {
-        this.arg1 = value;
+    public void setExecutor(WfExecutor value) {
+        this.executor = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the group property.
      * 
      * @return
      *     possible object is
      *     {@link Group }
      *     
      */
-    public Group getArg2() {
-        return arg2;
+    public Group getGroup() {
+        return group;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the group property.
      * 
      * @param value
      *     allowed object is
      *     {@link Group }
      *     
      */
-    public void setArg2(Group value) {
-        this.arg2 = value;
+    public void setGroup(Group value) {
+        this.group = value;
     }
 
 }

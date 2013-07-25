@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://impl.service.wfe.runa.ru/}batchPresentation" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="identifiable" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
+ *         &lt;element name="batchPresentation" type="{http://impl.service.wfe.runa.ru/}batchPresentation" minOccurs="0"/>
+ *         &lt;element name="withPermission" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,104 +30,104 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getExecutorsWithPermissionCount", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3"
+    "user",
+    "identifiable",
+    "batchPresentation",
+    "withPermission"
 })
 public class GetExecutorsWithPermissionCount {
 
-    protected User arg0;
-    protected Identifiable arg1;
-    protected BatchPresentation arg2;
-    protected boolean arg3;
+    protected User user;
+    protected Identifiable identifiable;
+    protected BatchPresentation batchPresentation;
+    protected boolean withPermission;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the identifiable property.
      * 
      * @return
      *     possible object is
      *     {@link Identifiable }
      *     
      */
-    public Identifiable getArg1() {
-        return arg1;
+    public Identifiable getIdentifiable() {
+        return identifiable;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the identifiable property.
      * 
      * @param value
      *     allowed object is
      *     {@link Identifiable }
      *     
      */
-    public void setArg1(Identifiable value) {
-        this.arg1 = value;
+    public void setIdentifiable(Identifiable value) {
+        this.identifiable = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the batchPresentation property.
      * 
      * @return
      *     possible object is
      *     {@link BatchPresentation }
      *     
      */
-    public BatchPresentation getArg2() {
-        return arg2;
+    public BatchPresentation getBatchPresentation() {
+        return batchPresentation;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the batchPresentation property.
      * 
      * @param value
      *     allowed object is
      *     {@link BatchPresentation }
      *     
      */
-    public void setArg2(BatchPresentation value) {
-        this.arg2 = value;
+    public void setBatchPresentation(BatchPresentation value) {
+        this.batchPresentation = value;
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the withPermission property.
      * 
      */
-    public boolean isArg3() {
-        return arg3;
+    public boolean isWithPermission() {
+        return withPermission;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the withPermission property.
      * 
      */
-    public void setArg3(boolean value) {
-        this.arg3 = value;
+    public void setWithPermission(boolean value) {
+        this.withPermission = value;
     }
 
 }

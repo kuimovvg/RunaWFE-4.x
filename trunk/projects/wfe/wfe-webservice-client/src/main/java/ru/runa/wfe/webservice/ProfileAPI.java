@@ -25,8 +25,8 @@ public interface ProfileAPI {
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Profile
      */
@@ -35,15 +35,15 @@ public interface ProfileAPI {
     @RequestWrapper(localName = "createBatchPresentation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBatchPresentation")
     @ResponseWrapper(localName = "createBatchPresentationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBatchPresentationResponse")
     public Profile createBatchPresentation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BatchPresentation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Profile
      */
@@ -52,14 +52,14 @@ public interface ProfileAPI {
     @RequestWrapper(localName = "deleteBatchPresentation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteBatchPresentation")
     @ResponseWrapper(localName = "deleteBatchPresentationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteBatchPresentationResponse")
     public Profile deleteBatchPresentation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BatchPresentation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg0
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Profile
      */
@@ -68,13 +68,13 @@ public interface ProfileAPI {
     @RequestWrapper(localName = "getProfile", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProfile")
     @ResponseWrapper(localName = "getProfileResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProfileResponse")
     public Profile getProfile(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0);
+        @WebParam(name = "user", targetNamespace = "")
+        User user);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param batchPresentation
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Profile
      */
@@ -83,16 +83,16 @@ public interface ProfileAPI {
     @RequestWrapper(localName = "saveBatchPresentation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SaveBatchPresentation")
     @ResponseWrapper(localName = "saveBatchPresentationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SaveBatchPresentationResponse")
     public Profile saveBatchPresentation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BatchPresentation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentation", targetNamespace = "")
+        BatchPresentation batchPresentation);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param batchPresentationId
+     * @param newActiveBatchName
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Profile
      */
@@ -101,11 +101,11 @@ public interface ProfileAPI {
     @RequestWrapper(localName = "setActiveBatchPresentation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SetActiveBatchPresentation")
     @ResponseWrapper(localName = "setActiveBatchPresentationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.SetActiveBatchPresentationResponse")
     public Profile setActiveBatchPresentation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        String arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "batchPresentationId", targetNamespace = "")
+        String batchPresentationId,
+        @WebParam(name = "newActiveBatchName", targetNamespace = "")
+        String newActiveBatchName);
 
 }

@@ -16,10 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}botStation" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
- *         &lt;element name="arg3" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="botStation" type="{http://impl.service.wfe.runa.ru/}botStation" minOccurs="0"/>
+ *         &lt;element name="archive" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="replace" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,102 +30,102 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "importBot", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2",
-    "arg3"
+    "user",
+    "botStation",
+    "archive",
+    "replace"
 })
 public class ImportBot {
 
-    protected User arg0;
-    protected BotStation arg1;
-    protected byte[] arg2;
-    protected boolean arg3;
+    protected User user;
+    protected BotStation botStation;
+    protected byte[] archive;
+    protected boolean replace;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the botStation property.
      * 
      * @return
      *     possible object is
      *     {@link BotStation }
      *     
      */
-    public BotStation getArg1() {
-        return arg1;
+    public BotStation getBotStation() {
+        return botStation;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the botStation property.
      * 
      * @param value
      *     allowed object is
      *     {@link BotStation }
      *     
      */
-    public void setArg1(BotStation value) {
-        this.arg1 = value;
+    public void setBotStation(BotStation value) {
+        this.botStation = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the archive property.
      * 
      * @return
      *     possible object is
      *     byte[]
      */
-    public byte[] getArg2() {
-        return arg2;
+    public byte[] getArchive() {
+        return archive;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the archive property.
      * 
      * @param value
      *     allowed object is
      *     byte[]
      */
-    public void setArg2(byte[] value) {
-        this.arg2 = ((byte[]) value);
+    public void setArchive(byte[] value) {
+        this.archive = ((byte[]) value);
     }
 
     /**
-     * Gets the value of the arg3 property.
+     * Gets the value of the replace property.
      * 
      */
-    public boolean isArg3() {
-        return arg3;
+    public boolean isReplace() {
+        return replace;
     }
 
     /**
-     * Sets the value of the arg3 property.
+     * Sets the value of the replace property.
      * 
      */
-    public void setArg3(boolean value) {
-        this.arg3 = value;
+    public void setReplace(boolean value) {
+        this.replace = value;
     }
 
 }
