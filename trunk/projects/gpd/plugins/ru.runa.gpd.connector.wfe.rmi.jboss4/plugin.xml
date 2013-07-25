@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="ru.runa.gpd.wfeConnectors">
+      <connector
+            class="ru.runa.gpd.connector.wfe.rmi.jboss4.WFEJboss423RMIConnector"
+            description="%jboss4.rmi.connector.description"
+            id="jboss4.rmi"
+            name="%jboss4.rmi.connector.name">
+      </connector>
+   </extension>
+
+</plugin>

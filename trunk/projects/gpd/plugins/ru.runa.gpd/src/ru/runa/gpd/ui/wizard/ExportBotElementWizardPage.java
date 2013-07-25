@@ -26,7 +26,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardArchiveFileResourceExp
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
-import ru.runa.gpd.wfe.SyncUIHelper;
+import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.wfe.WFEServerBotElementImporter;
 
 import com.google.common.base.Throwables;

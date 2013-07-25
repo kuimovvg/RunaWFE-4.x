@@ -2,6 +2,7 @@ package ru.runa.gpd.settings;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -21,9 +22,9 @@ import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.wfe.WFEServerConnector;
+import ru.runa.gpd.wfe.WFEServerConnectorRegistry;
 
 public class WFEConnectionPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, PrefConstants {
-
     private StringFieldEditor loginEditor;
     private StringFieldEditor passwordEditor;
     private Button testButton;
@@ -40,7 +41,11 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
 
     @Override
     public void createFieldEditors() {
-        addField(new StringFieldEditor(P_WFE_CONNECTION_PROVIDER_URL, Localization.getString("pref.connection.wfe.server"), getFieldEditorParent()));
+        addField(new ComboFieldEditor(P_WFE_CONNECTION_TYPE, Localization.getString("pref.connection.wfe.type"), WFEServerConnectorRegistry.getEntriesArray(),
+                getFieldEditorParent()));
+        addField(new StringFieldEditor(P_WFE_CONNECTION_HOST, Localization.getString("pref.connection.wfe.host"), getFieldEditorParent()));
+        addField(new StringFieldEditor(P_WFE_CONNECTION_PORT, Localization.getString("pref.connection.wfe.port"), getFieldEditorParent()));
+        addField(new StringFieldEditor(P_WFE_CONNECTION_VERSION, Localization.getString("pref.connection.wfe.version"), getFieldEditorParent()));
         addField(new RadioGroupFieldEditor(P_WFE_CONNECTION_LOGIN_MODE, Localization.getString("pref.connection.loginMode"), 2, new String[][] {
                 { Localization.getString("pref.connection.loginMode.byLogin"), LOGIN_MODE_LOGIN_PASSWORD },
                 { Localization.getString("pref.connection.loginMode.byKerberos"), LOGIN_MODE_KERBEROS } }, getFieldEditorParent()));
@@ -64,6 +69,10 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
                 loginEditor.setEnabled(enabled, getFieldEditorParent());
                 passwordEditor.setEnabled(enabled, getFieldEditorParent());
             }
+            if (P_WFE_CONNECTION_TYPE.equals(fieldEditor.getPreferenceName())) {
+                WFEServerConnector.destroy();
+                setMessage(WFEServerConnectorRegistry.getEntryNotNull((String) event.getNewValue()).description);
+            }
         }
     }
 
@@ -76,7 +85,6 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
         GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
         testButton.setLayoutData(data);
         testButton.addSelectionListener(new SelectionAdapter() {
-
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
@@ -97,5 +105,4 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
         super.updateApplyButton();
         testButton.setEnabled(isValid());
     }
-
 }

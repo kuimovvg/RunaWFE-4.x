@@ -1,20 +1,13 @@
 package ru.runa.gpd.wfe;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.service.ExecutorService;
-import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.Group;
 
 public class WFEServerExecutorsImporter extends ExecutorsImporter {
     private static WFEServerExecutorsImporter instance;
 
-    private WFEServerExecutorsImporter() {
-        super(WFEServerConnector.getInstance());
+    @Override
+    protected WFEServerConnector getConnector() {
+        return WFEServerConnector.getInstance();
     }
 
     public static synchronized WFEServerExecutorsImporter getInstance() {
@@ -26,12 +19,7 @@ public class WFEServerExecutorsImporter extends ExecutorsImporter {
 
     @Override
     protected void loadRemoteData(IProgressMonitor monitor) throws Exception {
-        ExecutorService executorService = WFEServerConnector.getInstance().getService("ExecutorServiceBean");
-        BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        List<Executor> loaded = (List<Executor>) executorService.getExecutors(WFEServerConnector.getInstance().getUser(), batchPresentation);
-        for (Executor executor : loaded) {
-            executors.put(executor.getName(), executor instanceof Group);
-        }
+        executors.putAll(WFEServerConnector.getInstance().getExecutors());
         monitor.worked(100);
     }
 }
