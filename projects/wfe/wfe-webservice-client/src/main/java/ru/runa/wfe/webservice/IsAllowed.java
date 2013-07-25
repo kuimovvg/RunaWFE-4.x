@@ -16,9 +16,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://impl.service.wfe.runa.ru/}permission" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="permission" type="{http://impl.service.wfe.runa.ru/}permission" minOccurs="0"/>
+ *         &lt;element name="identifiable" type="{http://impl.service.wfe.runa.ru/}identifiable" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,86 +29,86 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "isAllowed", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "permission",
+    "identifiable"
 })
 public class IsAllowed {
 
-    protected User arg0;
-    protected Permission arg1;
-    protected Identifiable arg2;
+    protected User user;
+    protected Permission permission;
+    protected Identifiable identifiable;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the permission property.
      * 
      * @return
      *     possible object is
      *     {@link Permission }
      *     
      */
-    public Permission getArg1() {
-        return arg1;
+    public Permission getPermission() {
+        return permission;
     }
 
     /**
-     * Sets the value of the arg1 property.
+     * Sets the value of the permission property.
      * 
      * @param value
      *     allowed object is
      *     {@link Permission }
      *     
      */
-    public void setArg1(Permission value) {
-        this.arg1 = value;
+    public void setPermission(Permission value) {
+        this.permission = value;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the identifiable property.
      * 
      * @return
      *     possible object is
      *     {@link Identifiable }
      *     
      */
-    public Identifiable getArg2() {
-        return arg2;
+    public Identifiable getIdentifiable() {
+        return identifiable;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the identifiable property.
      * 
      * @param value
      *     allowed object is
      *     {@link Identifiable }
      *     
      */
-    public void setArg2(Identifiable value) {
-        this.arg2 = value;
+    public void setIdentifiable(Identifiable value) {
+        this.identifiable = value;
     }
 
 }

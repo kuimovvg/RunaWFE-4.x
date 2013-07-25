@@ -26,8 +26,8 @@ public interface BotAPI {
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param bot
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Bot
      */
@@ -36,15 +36,15 @@ public interface BotAPI {
     @RequestWrapper(localName = "createBot", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBot")
     @ResponseWrapper(localName = "createBotResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBotResponse")
     public Bot createBot(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Bot arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "bot", targetNamespace = "")
+        Bot bot);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param botStation
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.BotStation
      */
@@ -53,15 +53,15 @@ public interface BotAPI {
     @RequestWrapper(localName = "createBotStation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBotStation")
     @ResponseWrapper(localName = "createBotStationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBotStationResponse")
     public BotStation createBotStation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BotStation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "botStation", targetNamespace = "")
+        BotStation botStation);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param botTask
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.BotTask
      */
@@ -70,15 +70,15 @@ public interface BotAPI {
     @RequestWrapper(localName = "createBotTask", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBotTask")
     @ResponseWrapper(localName = "createBotTaskResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateBotTaskResponse")
     public BotTask createBotTask(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BotTask arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "botTask", targetNamespace = "")
+        BotTask botTask);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param bot
+     * @param user
      * @return
      *     returns byte[]
      */
@@ -87,15 +87,15 @@ public interface BotAPI {
     @RequestWrapper(localName = "exportBot", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExportBot")
     @ResponseWrapper(localName = "exportBotResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExportBotResponse")
     public byte[] exportBot(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Bot arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "bot", targetNamespace = "")
+        Bot bot);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param botStation
+     * @param user
      * @return
      *     returns byte[]
      */
@@ -104,16 +104,16 @@ public interface BotAPI {
     @RequestWrapper(localName = "exportBotStation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExportBotStation")
     @ResponseWrapper(localName = "exportBotStationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExportBotStationResponse")
     public byte[] exportBotStation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BotStation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "botStation", targetNamespace = "")
+        BotStation botStation);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param bot
+     * @param botTaskName
+     * @param user
      * @return
      *     returns byte[]
      */
@@ -122,17 +122,17 @@ public interface BotAPI {
     @RequestWrapper(localName = "exportBotTask", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExportBotTask")
     @ResponseWrapper(localName = "exportBotTaskResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ExportBotTaskResponse")
     public byte[] exportBotTask(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Bot arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "bot", targetNamespace = "")
+        Bot bot,
+        @WebParam(name = "botTaskName", targetNamespace = "")
+        String botTaskName);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Bot
      */
@@ -141,14 +141,14 @@ public interface BotAPI {
     @RequestWrapper(localName = "getBot", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBot")
     @ResponseWrapper(localName = "getBotResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotResponse")
     public Bot getBot(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg0
+     * @param id
      * @return
      *     returns ru.runa.wfe.webservice.BotStation
      */
@@ -157,12 +157,12 @@ public interface BotAPI {
     @RequestWrapper(localName = "getBotStation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotStation")
     @ResponseWrapper(localName = "getBotStationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotStationResponse")
     public BotStation getBotStation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        Long arg0);
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg0
+     * @param name
      * @return
      *     returns ru.runa.wfe.webservice.BotStation
      */
@@ -171,8 +171,8 @@ public interface BotAPI {
     @RequestWrapper(localName = "getBotStationByName", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotStationByName")
     @ResponseWrapper(localName = "getBotStationByNameResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotStationByNameResponse")
     public BotStation getBotStationByName(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0);
+        @WebParam(name = "name", targetNamespace = "")
+        String name);
 
     /**
      * 
@@ -187,8 +187,8 @@ public interface BotAPI {
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      * @return
      *     returns ru.runa.wfe.webservice.BotTask
      */
@@ -197,15 +197,15 @@ public interface BotAPI {
     @RequestWrapper(localName = "getBotTask", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotTask")
     @ResponseWrapper(localName = "getBotTaskResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotTaskResponse")
     public BotTask getBotTask(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.BotTask>
      */
@@ -214,15 +214,15 @@ public interface BotAPI {
     @RequestWrapper(localName = "getBotTasks", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotTasks")
     @ResponseWrapper(localName = "getBotTasksResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotTasksResponse")
     public List<BotTask> getBotTasks(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param botStationId
+     * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.Bot>
      */
@@ -231,130 +231,130 @@ public interface BotAPI {
     @RequestWrapper(localName = "getBots", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBots")
     @ResponseWrapper(localName = "getBotsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetBotsResponse")
     public List<Bot> getBots(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "botStationId", targetNamespace = "")
+        Long botStationId);
 
     /**
      * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param replace
+     * @param botStation
+     * @param archive
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "importBot", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ImportBot")
     @ResponseWrapper(localName = "importBotResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ImportBotResponse")
     public void importBot(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BotStation arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        byte[] arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        boolean arg3);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "botStation", targetNamespace = "")
+        BotStation botStation,
+        @WebParam(name = "archive", targetNamespace = "")
+        byte[] archive,
+        @WebParam(name = "replace", targetNamespace = "")
+        boolean replace);
 
     /**
      * 
-     * @param arg2
-     * @param arg1
-     * @param arg0
+     * @param replace
+     * @param archive
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "importBotStation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ImportBotStation")
     @ResponseWrapper(localName = "importBotStationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.ImportBotStationResponse")
     public void importBotStation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        byte[] arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        boolean arg2);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "archive", targetNamespace = "")
+        byte[] archive,
+        @WebParam(name = "replace", targetNamespace = "")
+        boolean replace);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "removeBot", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveBot")
     @ResponseWrapper(localName = "removeBotResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveBotResponse")
     public void removeBot(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "removeBotStation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveBotStation")
     @ResponseWrapper(localName = "removeBotStationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveBotStationResponse")
     public void removeBotStation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param id
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "removeBotTask", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveBotTask")
     @ResponseWrapper(localName = "removeBotTaskResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveBotTaskResponse")
     public void removeBotTask(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Long arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "id", targetNamespace = "")
+        Long id);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param bot
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "updateBot", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateBot")
     @ResponseWrapper(localName = "updateBotResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateBotResponse")
     public void updateBot(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        Bot arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "bot", targetNamespace = "")
+        Bot bot);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param botStation
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "updateBotStation", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateBotStation")
     @ResponseWrapper(localName = "updateBotStationResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateBotStationResponse")
     public void updateBotStation(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BotStation arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "botStation", targetNamespace = "")
+        BotStation botStation);
 
     /**
      * 
-     * @param arg1
-     * @param arg0
+     * @param botTask
+     * @param user
      */
     @WebMethod
     @RequestWrapper(localName = "updateBotTask", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateBotTask")
     @ResponseWrapper(localName = "updateBotTaskResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateBotTaskResponse")
     public void updateBotTask(
-        @WebParam(name = "arg0", targetNamespace = "")
-        User arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        BotTask arg1);
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "botTask", targetNamespace = "")
+        BotTask botTask);
 
 }

@@ -19,9 +19,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="arg2" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="executorIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="groupId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,54 +32,54 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "addExecutorsToGroup", propOrder = {
-    "arg0",
-    "arg1",
-    "arg2"
+    "user",
+    "executorIds",
+    "groupId"
 })
 public class AddExecutorsToGroup {
 
-    protected User arg0;
+    protected User user;
     @XmlElement(type = Long.class)
-    protected List<Long> arg1;
-    protected Long arg2;
+    protected List<Long> executorIds;
+    protected Long groupId;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the executorIds property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the arg1 property.
+     * This is why there is not a <CODE>set</CODE> method for the executorIds property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getArg1().add(newItem);
+     *    getExecutorIds().add(newItem);
      * </pre>
      * 
      * 
@@ -89,35 +89,35 @@ public class AddExecutorsToGroup {
      * 
      * 
      */
-    public List<Long> getArg1() {
-        if (arg1 == null) {
-            arg1 = new ArrayList<Long>();
+    public List<Long> getExecutorIds() {
+        if (executorIds == null) {
+            executorIds = new ArrayList<Long>();
         }
-        return this.arg1;
+        return this.executorIds;
     }
 
     /**
-     * Gets the value of the arg2 property.
+     * Gets the value of the groupId property.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getArg2() {
-        return arg2;
+    public Long getGroupId() {
+        return groupId;
     }
 
     /**
-     * Sets the value of the arg2 property.
+     * Sets the value of the groupId property.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setArg2(Long value) {
-        this.arg2 = value;
+    public void setGroupId(Long value) {
+        this.groupId = value;
     }
 
 }

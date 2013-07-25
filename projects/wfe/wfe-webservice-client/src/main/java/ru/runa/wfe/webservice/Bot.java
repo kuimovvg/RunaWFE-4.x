@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="botStation" type="{http://impl.service.wfe.runa.ru/}botStation" minOccurs="0"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="startTimeout" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *       &lt;/sequence>
@@ -35,7 +34,6 @@ import javax.xml.bind.annotation.XmlType;
     "botStation",
     "id",
     "password",
-    "startTimeout",
     "username",
     "version"
 })
@@ -44,7 +42,6 @@ public class Bot {
     protected BotStation botStation;
     protected Long id;
     protected String password;
-    protected long startTimeout;
     protected String username;
     protected Long version;
 
@@ -118,22 +115,6 @@ public class Bot {
      */
     public void setPassword(String value) {
         this.password = value;
-    }
-
-    /**
-     * Gets the value of the startTimeout property.
-     * 
-     */
-    public long getStartTimeout() {
-        return startTimeout;
-    }
-
-    /**
-     * Sets the value of the startTimeout property.
-     * 
-     */
-    public void setStartTimeout(long value) {
-        this.startTimeout = value;
     }
 
     /**
