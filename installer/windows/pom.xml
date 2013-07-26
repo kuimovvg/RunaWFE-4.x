@@ -42,11 +42,26 @@
                   </fileset>
                 </copy>
 
-                <ant dir="../../gpd">
-                </ant>
+                <exec executable="cmd" dir="../../gpd">
+                  <arg line="/C ant"/>
+                </exec>
                 <copy toDir="target/artifacts/gpd/32">
                   <fileset dir="../../gpd/build">
                     <include name="*.win32.x86.zip"/>
+                  </fileset>
+                </copy>
+                <copy toDir="target/artifacts/gpd/64">
+                  <fileset dir="../../gpd/build">
+                    <include name="*.win32.x86_64.zip"/>
+                  </fileset>
+                </copy>
+
+                <exec executable="cmd" dir="../../rtn">
+                  <arg line="/C ant"/>
+                </exec>
+                <copy toDir="target/artifacts/rtn">
+                  <fileset dir="../../rtn/deploy">
+                    <include name="*"/>
                   </fileset>
                 </copy>
 
