@@ -65,6 +65,11 @@
                   </fileset>
                 </copy>
 
+                <exec executable="cmd" dir=".">
+                  <arg value="/C"/>
+                  <arg value="ant -f antbuild.xml makeInstaller"/>
+                </exec>
+
               </target>
             </configuration>
             <goals>
