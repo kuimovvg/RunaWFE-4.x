@@ -32,34 +32,30 @@ public class ContainerElementsRequiredValidator extends FieldValidator {
             // use a required validator for these
             return;
         }
-        boolean nullValueExists = false;
         if (container instanceof Collection) {
+            int index = 0;
             for (Object object : (Collection<?>) container) {
                 if (isNullValue(object)) {
-                    nullValueExists = true;
-                    break;
+                    getValidatorContext().addFieldError(getFieldName() + "[" + index + "]", getMessage());
                 }
+                index++;
             }
         } else if (container.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(container); i++) {
                 if (isNullValue(Array.get(container, i))) {
-                    nullValueExists = true;
-                    break;
+                    getValidatorContext().addFieldError(getFieldName() + "[" + i + "]", getMessage());
                 }
             }
         } else if (container instanceof Map<?, ?>) {
             for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) container).entrySet()) {
                 if (isNullValue(entry.getKey()) || isNullValue(entry.getValue())) {
-                    nullValueExists = true;
-                    break;
+                    addError();
+                    return;
                 }
             }
         } else {
-            addError();
+            addError("Unexpected variable type: " + container.getClass());
             return;
-        }
-        if (nullValueExists) {
-            addError();
         }
     }
 

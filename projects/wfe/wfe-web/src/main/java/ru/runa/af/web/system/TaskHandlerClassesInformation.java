@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wf.logic.bot.BotStationResources;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.extension.TaskHandler;
 
 /**
@@ -52,7 +53,7 @@ public class TaskHandlerClassesInformation {
 
     private static void init() {
         // TODO jboss 4 specific
-        String deployeDirPath = System.getProperty("jboss.home.dir") + "/server/" + System.getProperty("jboss.server.name") + "/deploy";
+        String deployeDirPath = IOCommons.getInstallationDirPath() + "/server/" + System.getProperty("jboss.server.name") + "/deploy";
         String earFilePath = deployeDirPath + "/runawfe.ear";
         try {
             ZipInputStream earStream = new ZipInputStream(new FileInputStream(earFilePath));

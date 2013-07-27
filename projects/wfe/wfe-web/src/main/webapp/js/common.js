@@ -1,4 +1,8 @@
 
+if (!window.console) {
+	console = {log: function() {}};
+};
+
 $(document).ready(function() {
 	// http://jqueryui.com/tooltip/	
 	$(document).tooltip({ 

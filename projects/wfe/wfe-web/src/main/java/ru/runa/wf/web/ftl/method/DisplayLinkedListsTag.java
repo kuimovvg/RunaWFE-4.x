@@ -42,29 +42,28 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
             i++;
         }
         if (variableNames.size() > 0) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("<table class=\"displayLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
+            StringBuffer html = new StringBuffer();
+            html.append("<table class=\"displayLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
             StringBuffer header = new StringBuffer();
             header.append("<tr class=\"header\">");
-            boolean headerValueNotNull = false;
+            boolean headerVisible = false;
             for (String variableName : variableNames) {
                 String headerVariableName = variableName + "_header";
-                WfVariable headerVariable = variableProvider.getVariableNotNull(headerVariableName);
-                String value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), headerVariable);
-                if (headerVariable.getValue() != null) {
-                    headerValueNotNull = true;
+                Object value = variableProvider.getValue(headerVariableName);
+                if (value != null) {
+                    headerVisible = true;
                 }
-                header.append("<td><b>").append(value).append("</b></td>");
+                header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
             }
             header.append("</tr>");
-            if (headerValueNotNull) {
-                buffer.append(header);
+            if (headerVisible) {
+                html.append(header);
             }
             for (int row = 0; row < rowsCount; row++) {
-                renderRow(buffer, variableNames, lists, componentFormatClassNames, row);
+                renderRow(html, variableNames, lists, componentFormatClassNames, row);
             }
-            buffer.append("</table>");
-            return buffer.toString();
+            html.append("</table>");
+            return html.toString();
         }
         return "-";
     }
@@ -79,7 +78,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
             if (FileFormat.class.getName().equals(componentClassName)) {
                 value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, row, null);
             } else {
-                value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);
+                value = ViewUtil.getComponentOutput(user, variableName, componentClassName, o);
             }
             buffer.append("<td column=\"").append(column).append("\">").append(value).append("</td>");
         }
