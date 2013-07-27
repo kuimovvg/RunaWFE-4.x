@@ -67,6 +67,18 @@ public class ViewLogsAction extends ActionBase {
                     b.append(lines);
                     b.append("</td></tr></table>");
                     logFileContent = b.toString();
+                } else if (form.getMode() == ViewLogForm.MODE_ERRORS_AND_WARNS) {
+                    List<Integer> lineNumbers = new ArrayList<Integer>();
+                    String lines = searchErrorsAndWarns(file, lineNumbers);
+                    StringBuffer b = new StringBuffer(lines.length() + 200);
+                    b.append("<table class=\"log\"><tr><td class=\"lineNumbers\">");
+                    for (Integer num : lineNumbers) {
+                        b.append(num).append("<br>");
+                    }
+                    b.append("</td><td class=\"content\">");
+                    b.append(lines);
+                    b.append("</td></tr></table>");
+                    logFileContent = b.toString();
                 } else {
                     String lines = readLines(file, form);
                     StringBuffer b = new StringBuffer(lines.length() + 200);
@@ -207,4 +219,37 @@ public class ViewLogsAction extends ActionBase {
         }
     }
 
+    private String searchErrorsAndWarns(File file, List<Integer> lineNumbers) throws IOException {
+        InputStream is = null;
+        try {
+            StringBuffer b = new StringBuffer(1000);
+            is = new FileInputStream(file);
+            LineNumberReader lnReader = new LineNumberReader(new InputStreamReader(is));
+            String line = lnReader.readLine();
+            String regularLinePrefix = line.substring(0, line.indexOf(" "));
+            int i = 1;
+            boolean found = false;
+            while (line != null) {
+                if (found && !line.startsWith(regularLinePrefix)) {
+                    line = StringEscapeUtils.escapeHtml(line);
+                    line = line.replaceAll("\\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+                    b.append(line).append("<br>");
+                    lineNumbers.add(i);
+                } else {
+                    found = StringUtils.contains(line, " ERROR ") || StringUtils.contains(line, " WARN ");
+                    if (found) {
+                        line = StringEscapeUtils.escapeHtml(line);
+                        line = line.replaceAll("\\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+                        b.append(line).append("<br>");
+                        lineNumbers.add(i);
+                    }
+                }
+                line = lnReader.readLine();
+                i++;
+            }
+            return b.toString();
+        } finally {
+            Closeables.closeQuietly(is);
+        }
+    }
 }
