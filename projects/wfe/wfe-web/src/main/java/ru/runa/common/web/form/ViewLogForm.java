@@ -16,6 +16,7 @@ public class ViewLogForm extends ActionForm {
     public static final int MODE_PAGING = 1;
     public static final int MODE_SEARCH = 2;
     public static final int MODE_END_LINES = 3;
+    public static final int MODE_ERRORS_AND_WARNS = 4;
 
     private String fileName;
     private int allLinesCount;
@@ -50,14 +51,14 @@ public class ViewLogForm extends ActionForm {
     public void setAllLinesCount(int allLinesCount) {
         this.allLinesCount = allLinesCount;
         if (mode == ViewLogForm.MODE_END_LINES) {
-            this.startLine = allLinesCount - endLines;
-            this.endLine = allLinesCount;
+            startLine = allLinesCount - endLines;
+            endLine = allLinesCount;
         } else if (mode == ViewLogForm.MODE_PAGING) {
-            if (this.endLine == 0) {
-                this.endLine = allLinesCount;
+            if (endLine == 0) {
+                endLine = allLinesCount;
             }
-            if (this.endLine > allLinesCount) {
-                this.endLine = allLinesCount;
+            if (endLine > allLinesCount) {
+                endLine = allLinesCount;
             }
         }
     }

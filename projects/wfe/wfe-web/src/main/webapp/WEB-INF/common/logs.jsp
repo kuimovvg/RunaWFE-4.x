@@ -102,6 +102,9 @@ function reloadLogFile() {
 					<bean:message key="label.logs.showLast"/> <html:text property="endLines" size="5" /> <bean:message key="label.logs.lines"/>
 					<br />
 			</td><td>
+				<html:radio property="mode" value="4" styleId="searchErrorsMode" />
+				<bean:message key="label.logs.searchErrors"/>
+				<br />
 				<html:checkbox property="autoReload" value="true" /><bean:message key="label.logs.autoReload"/> <%= autoReloadTimeoutSec %> <bean:message key="label.logs.seconds"/>
 				<br />
 				<html:submit><bean:message key="button.form"/></html:submit>
