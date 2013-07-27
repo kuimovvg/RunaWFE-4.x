@@ -7,7 +7,10 @@ public class RkDemoRegisterInOutsTag extends EditLinkedListsTag {
 
     @Override
     protected String getComponentInput(User user, String variableName, String formatClassName, Object value, boolean enabled) {
-        if (value != null || (!"время реального входа".equals(variableName) && !"время реального выхода".equals(variableName))) {
+        if (value != null) {
+            enabled = false;
+        }
+        if (!variableName.startsWith("время реального входа") && !variableName.startsWith("время реального выхода")) {
             enabled = false;
         }
         return super.getComponentInput(user, variableName, formatClassName, value, enabled);

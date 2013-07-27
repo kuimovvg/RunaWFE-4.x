@@ -19,7 +19,7 @@ public class DisplayMapElementTag extends FreemarkerTag {
         Object object = map.get(key);
         String valueFormatClassName = ViewUtil.getElementFormatClassName(variable, 1);
         if (object instanceof FileVariable) {
-            return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, 0, key);
+            return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, null, key);
         } else {
             return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, valueFormatClassName, object);
         }

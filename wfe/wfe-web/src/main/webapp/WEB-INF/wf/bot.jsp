@@ -16,17 +16,19 @@
 	String parameterName = "botId";
 	long id = Long.parseLong(request.getParameter(parameterName));
 	String returnAction="/bot.do?" + parameterName+ "=" +id;
+	String saveActionUrl = "save_bot.do?id=" + id;
+	String createActionUrl = "create_bot_task.do?id=" + id;
 %>
         <wf:botTag botId="<%= id %>"/>
         	<table width="100%">
                 <tr>
-                    <td align="left"><wf:saveBotLink href="<%="save_bot.do?id=" + id %>"/></td>
+                    <td align="left"><wf:saveBotLink href="<%= saveActionUrl %>"/></td>
                 </tr>
             </table>
         <wf:botTaskListTag botId="<%= id %>">
 			<table width="100%">
                 <tr>
-                    <td align="left"><wf:addBotTaskLink href="<%="create_bot_task.do?id=" + id %>"/></td>
+                    <td align="left"><wf:addBotTaskLink href="<%= createActionUrl %>"/></td>
                 </tr>
             </table>
         </wf:botTaskListTag>
