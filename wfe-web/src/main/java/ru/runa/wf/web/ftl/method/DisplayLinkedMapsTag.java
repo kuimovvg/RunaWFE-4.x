@@ -47,13 +47,11 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                 boolean headerValueNotNull = false;
                 for (i = 0; i < maps.size(); i++) {
                     String headerVariableName = getParameterAs(String.class, i) + "_header";
-                    Object o = variableProvider.getValue(headerVariableName);
-                    WfVariable headerVariable = variableProvider.getVariableNotNull(headerVariableName);
-                    String value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), headerVariable);
-                    if (headerVariable.getValue() != null) {
+                    Object value = variableProvider.getValue(headerVariableName);
+                    if (value != null) {
                         headerValueNotNull = true;
                     }
-                    header.append("<td>").append(value).append("</td>");
+                    header.append("<td>").append(value != null ? value : "&nbsp;").append("</td>");
                 }
                 header.append("</tr>");
                 if (headerValueNotNull) {
@@ -68,7 +66,7 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                         String componentClassName = componentFormatClassNames.get(column);
                         String value;
                         if (FileFormat.class.getName().equals(componentClassName)) {
-                            value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, 0,
+                            value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, null,
                                     entry.getKey());
                         } else {
                             value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);

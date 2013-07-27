@@ -28,7 +28,7 @@ public class EditListTag extends AjaxFreemarkerTag {
         String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
-        String inputTag = ViewUtil.getComponentInput(user, variableName, elementFormatClassName, null);
+        String inputTag = ViewUtil.getComponentInput(user, variableName + "[]", elementFormatClassName, null);
         inputTag = inputTag.replaceAll("\"", "'");
         substitutions.put("COMPONENT_INPUT", inputTag);
         substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(elementFormatClassName));
@@ -38,17 +38,16 @@ public class EditListTag extends AjaxFreemarkerTag {
         if (list == null) {
             list = new ArrayList<Object>();
         }
-        if (list.size() == 0) {
-            list.add("");
-        }
+        // if (list.size() == 0) {
+        // list.add("");
+        // }
         html.append("<span class=\"editList\">");
-        for (int i = 0; i < list.size(); i++) {
-            Object object = list.get(i);
-            String value = object.toString();
-            String divId = "div" + variableName + (i + 1);
-            html.append("<div id=\"").append(divId).append("\" style=\"margin-bottom:4px;\" class=\"cloned").append(variableName).append("\">");
-            html.append(ViewUtil.getComponentInput(user, variableName, elementFormatClassName, value));
-            html.append("<input type='button' value=' - ' onclick=\"$('#").append(divId).append("').remove();\" />");
+        html.append(ViewUtil.getHiddenInput(variableName + ".size", list.size()));
+        for (int row = 0; row < list.size(); row++) {
+            Object value = list.get(row);
+            html.append("<div row=\"").append(row).append("\" style=\"margin-bottom:4px;\" class=\"edit").append(variableName).append("\">");
+            html.append(ViewUtil.getComponentInput(user, variableName + "[" + row + "]", elementFormatClassName, value));
+            html.append("<input type='button' value=' - ' onclick=\"remove").append(variableName).append("(this);\" />");
             html.append("</div>");
         }
         html.append("<div><input type=\"button\" id=\"btnAdd").append(variableName).append("\" value=\" + \" /></div>");
