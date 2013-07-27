@@ -1,6 +1,7 @@
 package ru.runa.wf.web;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
@@ -14,6 +15,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
 
+import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.var.FileVariable;
@@ -102,46 +105,29 @@ public class FormUtils {
         try {
             HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
-                Object value = userInput.get(variableDefinition.getName());
                 VariableFormat<?> format = FormatCommons.create(variableDefinition);
-                // in case from contains not optional check box with boolean
-                // format we must add boolean value as variable manually since
-                // HTTP FORM doesn't pass unchecked variables.
-                if (BooleanFormat.class == format.getClass()) {
-                    if (value == null) {
-                        value = new String[] { Boolean.FALSE.toString() };
-                    }
-                }
-                if (value == null) {
-                    // we put this validation in logic
-                    continue;
-                }
                 Object variableValue = null;
-                if (value instanceof FormFile) {
-                    FormFile formFile = (FormFile) value;
-                    if (formFile.getFileSize() > 0) {
-                        String contentType = formFile.getContentType();
-                        if (contentType == null) {
-                            contentType = "application/octet-stream";
-                        }
-                        FileVariable fileVariable = new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
-                        if (ListFormat.class == format.getClass()) {
-                            variableValue = Lists.newArrayList(fileVariable);
-                        } else {
-                            variableValue = fileVariable;
-                        }
+                if (format instanceof ListFormat) {
+                    String sizeInputName = variableDefinition.getName() + ".size";
+                    String[] strings = (String[]) userInput.get(sizeInputName);
+                    if (strings == null || strings.length != 1) {
+                        log.warn("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
+                        continue;
                     }
+                    int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
+                    ListFormat listFormat = (ListFormat) format;
+                    VariableFormat<?> componentFormat = FormatCommons.create(listFormat.getComponentClassName(0));
+                    List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
+                    for (int i = 0; i < listSize; i++) {
+                        String inputName = variableDefinition.getName() + "[" + i + "]";
+                        Object componentValue = userInput.get(inputName);
+                        list.add(convertComponent(inputName, componentFormat, componentValue, formatErrorsForFields));
+                    }
+                    // variableValue = listFormat.parse(listItems);
+                    variableValue = list;
                 } else {
-                    String[] valuesToFormat = (String[]) value;
-                    try {
-                        variableValue = format.parse(valuesToFormat);
-                    } catch (Exception e) {
-                        log.error(e);
-                        if (valuesToFormat[0].length() > 0) {
-                            // in other case we put validation in logic
-                            formatErrorsForFields.add(variableDefinition.getName());
-                        }
-                    }
+                    Object value = userInput.get(variableDefinition.getName());
+                    variableValue = convertComponent(variableDefinition.getName(), format, value, formatErrorsForFields);
                 }
                 if (variableValue != null) {
                     FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
@@ -158,4 +144,41 @@ public class FormUtils {
         }
     }
 
+    private static Object convertComponent(String inputName, VariableFormat<?> format, Object value, List<String> formatErrorsForFields) {
+        try {
+            if (format instanceof BooleanFormat) {
+                if (value == null) {
+                    // HTTP FORM doesn't pass unchecked checkbox value
+                    value = new String[] { Boolean.FALSE.toString() };
+                }
+            }
+            if (value instanceof FormFile) {
+                FormFile formFile = (FormFile) value;
+                if (formFile.getFileSize() > 0) {
+                    String contentType = formFile.getContentType();
+                    if (contentType == null) {
+                        contentType = "application/octet-stream";
+                    }
+                    return new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
+                }
+            } else if (value instanceof String[]) {
+                String[] valuesToFormat = (String[]) value;
+                try {
+                    return format.parse(valuesToFormat);
+                } catch (Exception e) {
+                    log.warn(e);
+                    if (valuesToFormat[0].length() > 0) {
+                        // in other case we put validation in logic
+                        formatErrorsForFields.add(inputName);
+                    }
+                }
+            } else if (value == null) {
+            } else {
+                throw new InternalApplicationException("Unexpected class: " + value.getClass());
+            }
+            return null;
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
 }

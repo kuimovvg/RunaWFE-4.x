@@ -34,7 +34,8 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         List<String> componentFormatClassNames = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
         StringBuffer rowTemplate = new StringBuffer();
-        String jsHandlers = "";
+        StringBuffer jsHandlers = new StringBuffer();
+        StringBuffer jsVariableNamesArray = new StringBuffer();
         int i = 3;
         int rowsCount = 0;
         while (true) {
@@ -48,12 +49,16 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             if (list == null) {
                 list = new ArrayList<Object>();
             }
+            if (variableNames.size() != 0) {
+                jsVariableNamesArray.append(", ");
+            }
+            jsVariableNamesArray.append("\"").append(variableName).append("\"");
             variableNames.add(variableName);
             componentFormatClassNames.add(elementFormatClassName);
             lists.add(list);
-            jsHandlers += ViewUtil.getComponentJSFunction(elementFormatClassName);
+            jsHandlers.append(ViewUtil.getComponentJSFunction(elementFormatClassName));
             rowTemplate.append("<td>");
-            String inputTag = getComponentInput(user, variableName, elementFormatClassName, null, true);
+            String inputTag = getComponentInput(user, variableName + "[]", elementFormatClassName, null, true);
             inputTag = inputTag.replaceAll("\"", "'");
             rowTemplate.append(inputTag);
             rowTemplate.append("</td>");
@@ -66,35 +71,44 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             StringBuffer html = new StringBuffer();
             Map<String, String> substitutions = new HashMap<String, String>();
             substitutions.put("ROW_TEMPLATE", rowTemplate.toString());
-            substitutions.put("JS_HANDLERS", jsHandlers);
+            substitutions.put("JS_HANDLERS", jsHandlers.toString());
+            substitutions.put("VARIABLE_NAMES", jsVariableNamesArray.toString());
             html.append(exportScript("scripts/EditLinkedListsTag.js", substitutions, true));
-            html.append("<table id=\"editLinkedLists\" class=\"editLinkedLists\">");
-            html.append("<tr class=\"header\">");
+            html.append("<table id=\"editLinkedLists\" class=\"editLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
+            StringBuffer header = new StringBuffer();
+            header.append("<tr class=\"header\">");
+            boolean headerVisible = false;
             for (String variableName : variableNames) {
                 String headerVariableName = variableName + "_header";
-                WfVariable headerVariable = variableProvider.getVariableNotNull(headerVariableName);
-                String value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), headerVariable);
-                html.append("<td><b>").append(value).append("</b></td>");
+                Object value = variableProvider.getValue(headerVariableName);
+                if (value != null) {
+                    headerVisible = true;
+                }
+                header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
+                html.append(ViewUtil.getHiddenInput(variableName + ".size", rowsCount));
             }
-            html.append("<td>");
+            header.append("<td>");
             if (allowToAddElements) {
-                html.append("<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />");
+                headerVisible = true;
+                header.append("<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />");
             }
-            html.append("</td>");
-            html.append("</tr>");
+            header.append("</td>");
+            header.append("</tr>");
+            if (headerVisible) {
+                html.append(header);
+            }
             for (int row = 0; row < rowsCount; row++) {
-                String trId = "editLinkedLists" + (row + 1);
-                html.append("<tr id=\"").append(trId).append("\" class=\"cloned\">");
+                html.append("<tr row=\"").append(row).append("\">");
                 for (int column = 0; column < variableNames.size(); column++) {
                     Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
-                    String variableName = variableNames.get(column);
-                    html.append("<td>");
-                    html.append(getComponentInput(user, variableName, componentFormatClassNames.get(column), o, allowToChangeElements));
+                    String inputName = variableNames.get(column) + "[" + row + "]";
+                    html.append("<td column=\"").append(column).append("\">");
+                    html.append(getComponentInput(user, inputName, componentFormatClassNames.get(column), o, allowToChangeElements));
                     html.append("</td>");
                 }
                 html.append("<td>");
                 if (allowToDeleteElements) {
-                    html.append("<input type='button' value=' - ' onclick=\"$('#").append(trId).append("').remove();\" />");
+                    html.append("<input type='button' value=' - ' onclick=\"removeRow(this);\" />");
                 }
                 html.append("</td>");
                 html.append("</tr>");
@@ -109,7 +123,9 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         if (enabled) {
             return ViewUtil.getComponentInput(user, variableName, formatClassName, value);
         }
-        return ViewUtil.getComponentOutput(user, variableName, formatClassName, value);
+        String html = ViewUtil.getComponentOutput(user, variableName, formatClassName, value);
+        html += ViewUtil.getHiddenInput(variableName, value);
+        return html;
     }
 
     @Override

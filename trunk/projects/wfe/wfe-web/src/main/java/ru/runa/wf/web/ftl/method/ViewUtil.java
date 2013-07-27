@@ -51,7 +51,7 @@ public class ViewUtil {
         return createExecutorSelect(user, variable.getDefinition().getName(), variable.getFormatClassNameNotNull(), variable.getValue(), true);
     }
 
-    public static String createExecutorSelect(User user, String variableName, String formatClassName, Object value, boolean enabled) {
+    private static String createExecutorSelect(User user, String variableName, String formatClassName, Object value, boolean enabled) {
         BatchPresentation batchPresentation;
         int sortColumn = 0;
         boolean javaSort = false;
@@ -86,6 +86,13 @@ public class ViewUtil {
         }
         html += "</select>";
         return html;
+    }
+
+    public static String getHiddenInput(String variableName, Object value) {
+        if (value != null) {
+            return "<input type=\"hidden\" name=\"" + variableName + "\" value=\"" + value + "\" />";
+        }
+        return "";
     }
 
     public static String getComponentInput(User user, String variableName, String formatClassName, Object value) {
@@ -298,14 +305,17 @@ public class ViewUtil {
     }
 
     public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value) {
-        return getFileOutput(webHelper, processId, variableName, value, 0, null);
+        return getFileOutput(webHelper, processId, variableName, value, null, null);
     }
 
-    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value, int listIndex, Object mapKey) {
+    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value, Integer listIndex, Object mapKey) {
+        if (value == null) {
+            return "&nbsp;";
+        }
         HashMap<String, Object> params = Maps.newHashMap();
         params.put("id", processId);
         params.put("variableName", variableName);
-        if (listIndex != 0) {
+        if (listIndex != null) {
             params.put("listIndex", String.valueOf(listIndex));
         }
         if (mapKey != null) {
