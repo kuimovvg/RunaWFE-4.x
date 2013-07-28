@@ -18,7 +18,9 @@
 package ru.runa.wf.web.servlet;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,55 +29,79 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.dom4j.Document;
+import org.dom4j.Element;
 
 import ru.runa.common.web.Commons;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.extension.orgfunction.ParamRenderer;
+import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.web.AjaxCommand;
+import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.user.User;
 
-import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
 
 public class AjaxCommandServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(AjaxCommandServlet.class);
+    private static final String CONFIG = "ajax.commands.xml";
+    private static final String COMMAND_ELEMENT = "command";
+    private static final String NAME_ATTR = "name";
+    private static final String CLASS_ATTR = "class";
+    private static final Map<String, Class<? extends AjaxCommand>> commands = Maps.newHashMap();
+
+    static {
+        parseTags(CONFIG, true);
+        parseTags(SystemProperties.RESOURCE_EXTENSION_PREFIX + CONFIG, false);
+    }
+
+    private static void parseTags(String fileName, boolean required) {
+        InputStream is;
+        if (required) {
+            is = ClassLoaderUtil.getAsStreamNotNull(fileName, AjaxCommandServlet.class);
+        } else {
+            is = ClassLoaderUtil.getAsStream(fileName, AjaxCommandServlet.class);
+        }
+        if (is != null) {
+            log.info("Using " + is);
+            Document document = XmlUtils.parseWithoutValidation(is);
+            Element root = document.getRootElement();
+            List<Element> tagElements = root.elements(COMMAND_ELEMENT);
+            for (Element tagElement : tagElements) {
+                String name = tagElement.attributeValue(NAME_ATTR).toLowerCase();
+                try {
+                    String className = tagElement.attributeValue(CLASS_ATTR);
+                    Class<? extends AjaxCommand> commandClass = (Class<? extends AjaxCommand>) ClassLoaderUtil.loadClass(className);
+                    // test creation
+                    ApplicationContextFactory.createAutowiredBean(commandClass);
+                    commands.put(name, commandClass);
+                    log.debug("Registered command '" + name + "' as " + commandClass);
+                } catch (Throwable e) {
+                    log.warn("Unable to create command " + name, e);
+                }
+            }
+        }
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Got ajax request: " + request.getQueryString());
         try {
-            String command = request.getParameter("command");
+            String command = request.getParameter("command").toLowerCase();
             User user = Commons.getUser(request.getSession());
-            StringBuffer result = new StringBuffer();
-            if ("getParamDialogData".equals(command)) {
-                result.append("[");
-
-                String rendererClassName = request.getParameter("renderer");
-                ParamRenderer renderer = ClassLoaderUtil.instantiate(rendererClassName);
-                List<String[]> data = renderer.loadJSEditorData(user);
-
-                for (int i = 0; i < data.size(); i++) {
-                    if (i != 0) {
-                        result.append(", ");
-                    }
-                    String[] strings = data.get(i);
-                    result.append("{\"value\":\"").append(normalize(strings[0])).append("\", \"text\": \"").append(normalize(strings[1]))
-                            .append("\"}");
-                }
-                result.append("]");
-            } else {
-                log.warn("Request not handled, unknown command '" + command + "'");
+            Class<? extends AjaxCommand> ajaxCommandClass = commands.get(command);
+            if (ajaxCommandClass == null) {
+                log.error("Request not handled, unknown command '" + command + "'");
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                return;
             }
-            response.getOutputStream().write(result.toString().getBytes(Charsets.UTF_8));
+            AjaxCommand ajaxCommand = ApplicationContextFactory.createAutowiredBean(ajaxCommandClass);
+            ajaxCommand.execute(user, request, response);
         } catch (Exception e) {
             log.error("command", e);
             throw new ServletException(e);
         }
     }
 
-    private String normalize(String data) {
-        if (data.contains("\"")) {
-            return data.replaceAll("\"", "'");
-        }
-        return data;
-    }
 }

@@ -32,7 +32,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wf.web.FormUtils;
+import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Profile;
@@ -77,12 +77,12 @@ public abstract class BaseProcessFormAction extends ActionBase {
             addError(request, e);
             forward = getErrorForward(mapping, form);
         }
-        FormUtils.saveUserFormInput(request, form, userInputErrors);
+        FormSubmissionUtils.saveUserFormInput(request, form, userInputErrors);
         return forward;
     }
 
     protected Map<String, Object> getFormVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
-        return FormUtils.extractVariables(request, actionForm, interaction);
+        return FormSubmissionUtils.extractVariables(request, actionForm, interaction);
     }
 
     protected abstract ActionMessage getMessage();

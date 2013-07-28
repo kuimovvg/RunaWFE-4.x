@@ -7,6 +7,8 @@
 	<ftltag name="ViewFile" class="ru.runa.wf.web.ftl.method.FileTag" />
 	<ftltag name="InputDateTime" class="ru.runa.wf.web.ftl.method.DateTimeInputTag" />
 	<ftltag name="ChooseActorByRelation" class="ru.runa.wf.web.ftl.method.ChooseActorByRelationTag" />
+	<ftltag name="ChooseExecutorByRelation" class="ru.runa.wf.web.ftl.method.ChooseExecutorByRelationTag" />
+	<ftltag name="ChooseExecutorFromRelation" class="ru.runa.wf.web.ftl.method.ChooseExecutorFromRelationTag" />
 	<ftltag name="DownloadFile" class="ru.runa.wf.web.ftl.method.DownloadFileTag" />
 	<ftltag name="MultipleSelect" class="ru.runa.wf.web.ftl.method.OptionsMultipleSelectTag" />
 	<ftltag name="DisplayLinkedListsInTable" class="ru.runa.wf.web.ftl.method.DisplayLinkedListsTag" />

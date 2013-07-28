@@ -120,11 +120,6 @@
 		<url-pattern>/ajaxcmd</url-pattern>
 	</servlet-mapping>
 
-	<mime-mapping>
-		<extension>dll</extension>
-		<mime-type>application/x-msdownload</mime-type>
-	</mime-mapping>
-
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
@@ -178,20 +173,5 @@
 		<exception-type>java.lang.RuntimeException</exception-type>
 		<location>/error.do</location>
 	</error-page>
-
-	<!-- To add taglibs by xml, create a file called taglibs.xml and place it 
-		in your merge dir. -->
-
-	<!-- To set up security settings for your web app, create a file named web-security.xml, 
-		put it in your project's mergedir. Organize web-security.xml following this 
-		DTD slice: <!ELEMENT security-constraint (display-name?, web-resource-collection+, 
-		auth-constraint?, user-data-constraint?)> <!ELEMENT web-resource-collection 
-		(web-resource-name, description?, url-pattern*, http-method*)> <!ELEMENT 
-		web-resource-name (#PCDATA)> <!ELEMENT url-pattern (#PCDATA)> <!ELEMENT http-method 
-		(#PCDATA)> <!ELEMENT user-data-constraint (description?, transport-guarantee)> 
-		<!ELEMENT transport-guarantee (#PCDATA)> <!ELEMENT login-config (auth-method?, 
-		realm-name?, form-login-config?)> <!ELEMENT auth-method (#PCDATA)> <!ELEMENT 
-		realm-name (#PCDATA)> <!ELEMENT form-login-config (form-login-page, form-error-page)> 
-		<!ELEMENT form-login-page (#PCDATA)> <!ELEMENT form-error-page (#PCDATA)> -->
 
 </web-app>
