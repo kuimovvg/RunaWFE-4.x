@@ -22,6 +22,7 @@ import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
+import ru.runa.wf.web.FormPresentationUtils;
 import ru.runa.wfe.definition.DefinitionClassPresentation;
 
 import com.google.common.base.Charsets;
@@ -38,7 +39,7 @@ public class HtmlFilterTag extends TitledFormTag {
         byte[] htmlBytes = (byte[]) pageContext.getRequest().getAttribute("htmlBytes");
         Long processDefinitionId = (Long) pageContext.getRequest().getAttribute("processDefinitionId");
         String pageHref = (String) pageContext.getRequest().getAttribute("pageHref");
-        byte[] filteredBytes = HTMLFormConverter.changeUrls(pageContext, processDefinitionId, pageHref, htmlBytes);
+        byte[] filteredBytes = FormPresentationUtils.adjustUrls(pageContext, processDefinitionId, pageHref, htmlBytes);
         tdFormElement.addElement(new String(filteredBytes, Charsets.UTF_8));
     }
 

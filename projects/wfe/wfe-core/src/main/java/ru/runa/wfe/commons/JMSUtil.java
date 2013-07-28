@@ -83,8 +83,7 @@ public class JMSUtil {
             }
             sender.send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, ttl);
             sender.close();
-            log.info("message sent: " + message);
-            log.debug(JMSUtil.toString(message, false));
+            log.info("message sent: " + JMSUtil.toString(message, false));
             return message;
         } catch (Exception e) {
             throw Throwables.propagate(e);
@@ -114,23 +113,26 @@ public class JMSUtil {
     public static String toString(ObjectMessage message, boolean html) {
         try {
             StringBuffer buffer = new StringBuffer();
+            buffer.append(message.toString());
+            buffer.append(html ? "<br>" : "\n");
             if (message.getJMSExpiration() != 0) {
-                buffer.append("{JMSExpiration=").append(new Date(message.getJMSExpiration())).append("}");
+                buffer.append("{JMSExpiration=").append(CalendarUtil.formatDateTime(new Date(message.getJMSExpiration()))).append("}");
                 buffer.append(html ? "<br>" : "\n");
             }
             Enumeration<String> propertyNames = message.getPropertyNames();
-            Map<String, String> propertyMap = new HashMap<String, String>();
+            Map<String, String> properties = new HashMap<String, String>();
             while (propertyNames.hasMoreElements()) {
                 String propertyName = propertyNames.nextElement();
-                Object propertyValue = message.getObjectProperty(propertyName);
-                if (propertyValue == null) {
-                    propertyValue = "(null)";
-                }
-                propertyMap.put(propertyName, propertyValue.toString());
+                String propertyValue = message.getStringProperty(propertyName);
+                properties.put(propertyName, propertyValue);
             }
-            buffer.append(propertyMap);
+            buffer.append(properties);
             buffer.append(html ? "<br>" : "\n");
-            buffer.append(message.getObject());
+            if (message.getObject() instanceof Map) {
+                buffer.append(TypeConversionUtil.toStringMap((Map<? extends Object, ? extends Object>) message.getObject()));
+            } else {
+                buffer.append(message.getObject());
+            }
             return buffer.toString();
         } catch (JMSException e) {
             throw Throwables.propagate(e);

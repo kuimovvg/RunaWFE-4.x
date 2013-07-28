@@ -4,13 +4,12 @@ import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
-import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.exception.LockAcquisitionException;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.auth.UserHolder;
@@ -49,24 +48,10 @@ public class EjbTransactionSupport {
             UserHolder.reset();
             return result;
         } catch (Throwable th) {
-            rollbackTransaction(transaction);
+            Utils.rollbackTransaction(transaction);
             throw Throwables.propagate(th);
         } finally {
             CachingLogic.onTransactionComplete();
-        }
-    }
-
-    private void rollbackTransaction(UserTransaction transaction) {
-        int status = -1;
-        try {
-            if (transaction != null) {
-                status = transaction.getStatus();
-                if (status != Status.STATUS_NO_TRANSACTION) {
-                    transaction.rollback();
-                }
-            }
-        } catch (Exception e) {
-            throw new InternalApplicationException("Unable to rollback, status: " + status, e);
         }
     }
 

@@ -92,6 +92,12 @@ public class IOCommons {
         return System.getProperty("jboss.home.dir");
     }
 
+    public static String getDeploymentDirPath() {
+        String serverDirName = System.getProperty("jboss.server.base.dir");
+        boolean jboss7 = System.getProperty("jboss.modules.dir") != null;
+        return jboss7 ? serverDirName + "/deployments" : serverDirName + "/deploy";
+    }
+
     public static String getAdminkitScriptsDirPath() {
         if (adminkitScriptsDirPath == null) {
             adminkitScriptsDirPath = getInstallationDirPath() + "/adminkit/scripts/";
