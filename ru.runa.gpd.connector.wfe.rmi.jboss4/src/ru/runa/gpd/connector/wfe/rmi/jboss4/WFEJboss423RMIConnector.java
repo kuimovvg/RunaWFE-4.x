@@ -21,6 +21,7 @@ import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
+import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.service.AuthenticationService;
 import ru.runa.wfe.service.BotService;
 import ru.runa.wfe.service.DefinitionService;
@@ -41,6 +42,12 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
     private User getUser() {
         if (user == null) {
             connect();
+        } else {
+            try {
+                getExecutorService().getExecutor(user, user.getActor().getId());
+            } catch (AuthenticationException e) {
+                connect();
+            }
         }
         return user;
     }
@@ -85,14 +92,17 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
         }
     }
 
+    private ExecutorService getExecutorService() {
+        return getService("ExecutorServiceBean");
+    }
+
     /**
      * @return Map<Executor name, Is group>
      */
     @Override
     public Map<String, Boolean> getExecutors() {
-        ExecutorService executorService = getService("ExecutorServiceBean");
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
-        List<? extends Executor> executors = executorService.getExecutors(getUser(), batchPresentation);
+        List<? extends Executor> executors = getExecutorService().getExecutors(getUser(), batchPresentation);
         Map<String, Boolean> result = Maps.newHashMapWithExpectedSize(executors.size());
         for (Executor executor : executors) {
             result.put(executor.getName(), executor instanceof Group);
@@ -140,7 +150,6 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
 
     @Override
     public byte[] getProcessDefinitionArchive(WfDefinition definition) {
-        //connect();
         return getDefinitionService().getProcessDefinitionFile(getUser(), definition.getId(), "par");
     }
 
@@ -182,7 +191,6 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
 
     @Override
     public void deployBot(String botStationName, byte[] archive) {
-        //WFEServerConnector.getInstance().connect();
         BotStation botStation = getBotService().getBotStationByName(botStationName);
         if (botStation == null) {
             throw new BotStationDoesNotExistException(botStationName);
@@ -197,7 +205,6 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
 
     @Override
     public void deployBotStation(byte[] archive) {
-        //WFEServerConnector.getInstance().connect();
         getBotService().importBotStation(getUser(), archive, true);
     }
 
