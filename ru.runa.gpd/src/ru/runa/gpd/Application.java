@@ -9,8 +9,9 @@ import org.eclipse.ui.PlatformUI;
  * This class controls all aspects of the application's execution
  */
 public class Application implements IApplication {
-
+    @Override
     public Object start(IApplicationContext context) throws Exception {
+        //org.eclipse.ui.internal.misc.Policy.DEBUG_SWT_GRAPHICS = true;
         Display display = PlatformUI.createDisplay();
         try {
             int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
@@ -23,6 +24,7 @@ public class Application implements IApplication {
         }
     }
 
+    @Override
     public void stop() {
     }
 }
