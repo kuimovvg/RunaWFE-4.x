@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.ws.soap.SOAPFaultException;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 
 import ru.runa.gpd.Activator;
@@ -23,12 +25,13 @@ import ru.runa.wfe.webservice.DefinitionWebService;
 import ru.runa.wfe.webservice.Executor;
 import ru.runa.wfe.webservice.ExecutorAPI;
 import ru.runa.wfe.webservice.ExecutorWebService;
-import ru.runa.wfe.webservice.Group;
 import ru.runa.wfe.webservice.Relation;
 import ru.runa.wfe.webservice.RelationAPI;
 import ru.runa.wfe.webservice.RelationWebService;
 import ru.runa.wfe.webservice.User;
+import ru.runa.wfe.webservice.WfExecutor;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -60,17 +63,31 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
     private User getUser() {
         if (user == null) {
             connect();
+        } else {
+            try {
+                // check user is up to date
+                getExecutorService().getExecutor(user, user.getActor().getId());
+            } catch (SOAPFaultException e) {
+                if (!"Error in subject decryption".equals(e.getMessage())) {
+                    Throwables.propagate(e);
+                }
+                connect();
+            }
         }
         return user;
     }
 
+    private ExecutorAPI getExecutorService() {
+        return new ExecutorWebService(getUrl("Executor")).getExecutorAPIPort();
+    }
+
     @Override
     public Map<String, Boolean> getExecutors() {
-        ExecutorAPI api = new ExecutorWebService(getUrl("Executor")).getExecutorAPIPort();
-        List<? extends Executor> executors = api.getExecutors(getUser(), null);
+        List<WfExecutor> executors = getExecutorService().getExecutors(getUser(), null);
         Map<String, Boolean> result = Maps.newHashMapWithExpectedSize(executors.size());
         for (Executor executor : executors) {
-            result.put(executor.getName(), executor instanceof Group);
+            // group sign
+            result.put(executor.getName(), executor.getFullName() == null);
         }
         return result;
     }
