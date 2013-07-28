@@ -22,8 +22,6 @@ import java.util.List;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 
@@ -39,7 +37,6 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  */
 public abstract class AbstractActorComboBoxVarTag implements VarTag {
-    private static final Log log = LogFactory.getLog(AbstractActorComboBoxVarTag.class);
 
     protected Select createSelect(String selectName, List<Actor> actors, Actor defaultSelectedActor) throws Exception {
         Select select = new Select();

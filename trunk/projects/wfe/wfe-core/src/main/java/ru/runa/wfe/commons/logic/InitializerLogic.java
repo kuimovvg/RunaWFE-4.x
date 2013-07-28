@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 
-import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
@@ -29,11 +28,11 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.dao.ConstantDAO;
 import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
@@ -102,15 +101,18 @@ public class InitializerLogic {
     };
 
     @Autowired
-    private ConstantDAO constantDAO;
+    protected ConstantDAO constantDAO;
     @Autowired
-    private ExecutorDAO executorDAO;
+    protected ExecutorDAO executorDAO;
     @Autowired
-    private PermissionDAO permissionDAO;
+    protected PermissionDAO permissionDAO;
     @Autowired
-    private LocalizationDAO localizationDAO;
+    protected LocalizationDAO localizationDAO;
 
-    private boolean isAlreadyIntialized() {
+    /**
+     * Tests whether database already initialized
+     */
+    protected boolean isAlreadyIntialized() {
         String version = constantDAO.getValue(IS_DATABASE_INITIALIZED_VARIABLE_NAME);
         return "true".equalsIgnoreCase(version);
     }
@@ -152,7 +154,7 @@ public class InitializerLogic {
      * @param daoHolder
      *            Helper object for getting DAO's.
      */
-    private void initializeDatabase(UserTransaction transaction) {
+    protected void initializeDatabase(UserTransaction transaction) {
         log.info("database is not initialized. initializing...");
         SchemaExport schemaExport = new SchemaExport(ApplicationContextFactory.getConfiguration());
         schemaExport.create(true, true);
@@ -163,12 +165,15 @@ public class InitializerLogic {
             constantDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbPatches.size()));
             transaction.commit();
         } catch (Throwable th) {
-            rollbackTransaction(transaction);
+            Utils.rollbackTransaction(transaction);
             throw Throwables.propagate(th);
         }
     }
 
-    private void insertInitialData() {
+    /**
+     * Inserts initial data on database creation stage
+     */
+    protected void insertInitialData() {
         // create privileged Executors
         String administratorDescription = "Default System Administrator";
         Actor admin = new Actor(SystemProperties.getAdministratorName(), administratorDescription, administratorDescription);
@@ -195,7 +200,7 @@ public class InitializerLogic {
     /**
      * Apply patches to initialized database.
      */
-    private void applyPatches(UserTransaction transaction) {
+    protected void applyPatches(UserTransaction transaction) {
         String versionString = constantDAO.getValue(DATABASE_VERSION_VARIABLE_NAME);
         int dbVersion = Strings.isNullOrEmpty(versionString) ? 0 : Integer.parseInt(versionString);
         DBType dbType = ApplicationContextFactory.getDBType();
@@ -234,24 +239,9 @@ public class InitializerLogic {
                 log.info("Patch " + patch.getClass().getName() + "(" + dbVersion + ") is applied to database successfuly.");
             } catch (Throwable th) {
                 log.error("Can't apply patch " + patch.getClass().getName() + "(" + dbVersion + ").", th);
-                rollbackTransaction(transaction);
+                Utils.rollbackTransaction(transaction);
                 break;
             }
-        }
-    }
-
-    // TODO to helper
-    private void rollbackTransaction(UserTransaction transaction) {
-        int status = -1;
-        try {
-            status = transaction.getStatus();
-            if (status != Status.STATUS_NO_TRANSACTION && status != Status.STATUS_ROLLEDBACK) {
-                transaction.rollback();
-            } else {
-                log.warn("Unable to rollback, status: " + status);
-            }
-        } catch (Exception e) {
-            throw new InternalApplicationException("Unable to rollback, status: " + status, e);
         }
     }
 

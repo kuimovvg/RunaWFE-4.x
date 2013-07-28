@@ -222,15 +222,16 @@ public class ViewLogsAction extends ActionBase {
     private String searchErrorsAndWarns(File file, List<Integer> lineNumbers) throws IOException {
         InputStream is = null;
         try {
+            // TODO may be use more structured parsing
+            // http://logging.apache.org/log4j/companions/receivers/apidocs/org/apache/log4j/varia/LogFilePatternReceiver.html
             StringBuffer b = new StringBuffer(1000);
             is = new FileInputStream(file);
             LineNumberReader lnReader = new LineNumberReader(new InputStreamReader(is));
             String line = lnReader.readLine();
-            String regularLinePrefix = line.substring(0, line.indexOf(" "));
             int i = 1;
             boolean found = false;
             while (line != null) {
-                if (found && !line.startsWith(regularLinePrefix)) {
+                if (found && line.length() > 0 && (Character.isWhitespace(line.charAt(0)) || Character.isLetter(line.charAt(0)))) {
                     line = StringEscapeUtils.escapeHtml(line);
                     line = line.replaceAll("\\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
                     b.append(line).append("<br>");

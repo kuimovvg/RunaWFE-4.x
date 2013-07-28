@@ -87,7 +87,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                 header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
                 html.append(ViewUtil.getHiddenInput(variableName + ".size", rowsCount));
             }
-            header.append("<td>");
+            header.append("<td style=\"width: 30px;\">");
             if (allowToAddElements) {
                 headerVisible = true;
                 header.append("<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />");

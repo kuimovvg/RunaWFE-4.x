@@ -14,8 +14,7 @@ END SNIPPET: supported-validators
 <script type="text/javascript">
     function validateForm_${parameters.id}() {
         form = document.getElementById("${parameters.id}");
-        clearErrorMessages(form);
-
+        clearFieldErrorMessages(form);
         var errors = false;
     <#list parameters.tagNames as tagName>
         <#list tag.getValidators("${tagName}") as validator>
@@ -26,12 +25,12 @@ END SNIPPET: supported-validators
             var error = "${validator.getMessage()}";
             <#if validator.config.type = "required">
             if (field.value == "") {
-                addError(field, error);
+                addFieldErrorMessage(field, error);
                 errors = true;
             }
             <#elseif validator.config.type = "requiredstring">
             if (field.value != null && (field.value == "" || field.value.replace(/^\s+|\s+$/g,"").length == 0)) {
-                addError(field, error);
+                addFieldErrorMessage(field, error);
                 errors = true;
             }
             <#elseif validator.config.type = "stringlength">
@@ -48,26 +47,26 @@ END SNIPPET: supported-validators
                         (${validator.minLength} > -1 && value.length < ${validator.minLength}) ||
                         (${validator.maxLength} > -1 && value.length > ${validator.maxLength})
                     )) {
-                    addError(field, error);
+                    addFieldErrorMessage(field, error);
                     errors = true;
                 }
             } 
             <#elseif validator.config.type = "regex">
             if (field.value != null && !field.value.match("${validator.expression?js_string}")) {
-                addError(field, error);
+                addFieldErrorMessage(field, error);
                 errors = true;
             }
             <#elseif validator.config.type = "number">
             if ((field.value != null) && (field.value != "")) {
             	if (isNaN(parseInt(field.value))) {
-            		addError(field, error);
+            		addFieldErrorMessage(field, error);
 	                errors = true;
             	}
                 if (<#if validator.minComparatorValue?exists>parseInt(field.value) <
                      ${validator.minComparatorValue}<#else>false</#if> ||
                         <#if validator.maxComparatorValue?exists>parseInt(field.value) >
                            ${validator.maxComparatorValue}<#else>false</#if>) {
-                    addError(field, error);
+                    addFieldErrorMessage(field, error);
                     errors = true;
                 }
             }
@@ -78,5 +77,19 @@ END SNIPPET: supported-validators
 
         return !errors;
     }
+    
+	function clearFieldErrorMessages(form) {
+		$("img[errorFor]").each(function() {
+			$(this).remove();
+		});
+	}
+	
+	function addFieldErrorMessage(field, errorText) {
+	    var errorImg = document.createElement("img");
+	    errorImg.setAttribute("title", errorText);
+	    errorImg.setAttribute("src", "/wfe/images/error.gif");
+	    errorImg.setAttribute("errorFor", "yes");
+	    field.parentNode.insertBefore(errorImg, field.nextSibling);
+	}
 </script>
 </#if>

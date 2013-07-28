@@ -68,6 +68,10 @@ public class ViewUtil {
         }
         batchPresentation.setFieldsToSort(new int[] { sortColumn }, new boolean[] { true });
         List<Executor> executors = (List<Executor>) Delegates.getExecutorService().getExecutors(user, batchPresentation);
+        return createExecutorSelect(variableName, executors, value, javaSort, enabled);
+    }
+
+    public static String createExecutorSelect(String variableName, List<? extends Executor> executors, Object value, boolean javaSort, boolean enabled) {
         String html = "<select name=\"" + variableName + "\"";
         if (!enabled) {
             html += " disabled=\"true\"";
