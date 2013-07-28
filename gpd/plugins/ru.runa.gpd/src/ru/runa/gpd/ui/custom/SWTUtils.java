@@ -25,4 +25,10 @@ public class SWTUtils {
         strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         return strokeComposite;
     }
+
+    public static Label createLabel(Composite parent, String text) {
+        Label label = new Label(parent, SWT.BOLD);
+        label.setText(text);
+        return label;
+    }
 }
