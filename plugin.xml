@@ -899,6 +899,10 @@
             id="ru.runa.gpd.validationErrors"
             name="%label.view.errors"/>
       <view
+            class="ru.runa.gpd.ui.view.SleakView"
+            id="ru.runa.gpd.sleak"
+            name="%label.view.sleak"/>
+      <view
             class="ru.runa.gpd.ui.view.PropertiesView"
             icon="icons/properties_view.gif"
             id="ru.runa.gpd.propertiesView"
@@ -1982,6 +1986,13 @@
                icon="icons/validation_error.gif"
                id="openValidationErrorsView"
                label="%label.menu.view.validationErrors"
+               menubarPath="window/additions"
+               style="push">
+         </action>
+         <action
+               class="ru.runa.gpd.ui.action.OpenSleakView"
+               id="openSleakView"
+               label="%label.view.sleak"
                menubarPath="window/additions"
                style="push">
          </action>
