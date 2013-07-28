@@ -251,7 +251,7 @@ div.required::after {
 	font-weight: bold;
 }
 
-input:invalid {
+.invalid {
 	border: 1px solid red;
 }
 

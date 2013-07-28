@@ -74,6 +74,10 @@ public class WebResources {
         return RESOURCES.getBooleanProperty("task.form.highlightRequiredFields", false);
     }
 
+    public static boolean useImagesForValidationErrors() {
+        return RESOURCES.getBooleanProperty("task.form.useImagesForValidationErrors", true);
+    }
+
     /**
      * Used from JSP page
      */

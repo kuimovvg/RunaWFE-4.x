@@ -52,9 +52,8 @@ public class TaskHandlerClassesInformation {
     }
 
     private static void init() {
-        // TODO jboss 4 specific
-        String deployeDirPath = IOCommons.getInstallationDirPath() + "/server/" + System.getProperty("jboss.server.name") + "/deploy";
-        String earFilePath = deployeDirPath + "/runawfe.ear";
+        String deploymentDirPath = IOCommons.getDeploymentDirPath();
+        String earFilePath = deploymentDirPath + "/runawfe.ear";
         try {
             ZipInputStream earStream = new ZipInputStream(new FileInputStream(earFilePath));
             ZipEntry entry;
@@ -63,7 +62,7 @@ public class TaskHandlerClassesInformation {
                     searchInJar(entry.getName(), earStream);
                 }
             }
-            File deployDir = new File(deployeDirPath);
+            File deployDir = new File(deploymentDirPath);
             for (File file : deployDir.listFiles()) {
                 if (file.getName().endsWith(".jar")) {
                     searchInJar(file.getName(), earStream);

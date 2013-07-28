@@ -42,20 +42,6 @@ function escapeQuotesForHtmlContext(s) {
 	return s;
 }
 
-function clearErrorMessages(form) {
-	$("img[errorFor]").each(function() {
-		$(this).remove();
-	});
-}
-
-function addError(field, errorText) {
-    var errorImg = document.createElement("img");
-    errorImg.setAttribute("title", errorText);
-    errorImg.setAttribute("src", "/wfe/images/error.gif");
-    errorImg.setAttribute("errorFor", "yes");
-    field.parentNode.insertBefore(errorImg, field.nextSibling);
-}
-
 function openConfirmPopup(element, cookieName, message, confirmMessage, cancelButton, okButton) {
 	if($.cookie(cookieName) == "true") {
 		if(element.href == null) {

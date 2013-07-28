@@ -9,7 +9,7 @@ import javax.servlet.jsp.PageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wf.web.tag.HTMLFormConverter;
+import ru.runa.wf.web.FormPresentationUtils;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.form.Interaction;
@@ -52,11 +52,10 @@ public class FormParser {
         requiredVariableNames = interaction.getRequiredVariableNames();
     }
 
-    public byte[] getParsedFormBytes() {
+    public String getParsedFormBytes() {
         StringBuilder sb = new StringBuilder(new String(formBytes, Charsets.UTF_8));
         applyTags(sb);
-        byte[] formBytes = HTMLFormConverter.changeUrls(pageContext, definitionId, "form.html", sb.toString().getBytes(Charsets.UTF_8));
-        return HTMLFormConverter.setInputValues(formBytes, variableProvider, requiredVariableNames);
+        return FormPresentationUtils.adjustForm(pageContext, definitionId, sb.toString(), variableProvider, requiredVariableNames);
     }
 
     private void applyTags(StringBuilder sb) {

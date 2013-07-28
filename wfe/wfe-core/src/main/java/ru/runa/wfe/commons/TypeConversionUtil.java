@@ -23,7 +23,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.user.Actor;
@@ -237,5 +239,13 @@ public class TypeConversionUtil {
             String executorIdentity = object.toString();
             return (T) executorLoader.getExecutor(executorIdentity);
         }
+    }
+
+    public static Map<String, String> toStringMap(Map<? extends Object, ? extends Object> map) {
+        Map<String, String> result = new HashMap<String, String>();
+        for (Map.Entry<? extends Object, ? extends Object> entry : map.entrySet()) {
+            result.put(convertTo(String.class, entry.getKey()), convertTo(String.class, entry.getValue()));
+        }
+        return result;
     }
 }

@@ -31,8 +31,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
-public class FormUtils {
-    private static final Log log = LogFactory.getLog(FormUtils.class);
+public class FormSubmissionUtils {
+    private static final Log log = LogFactory.getLog(FormSubmissionUtils.class);
     public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
     public static final String USER_ERRORS = "UserErrors";
 

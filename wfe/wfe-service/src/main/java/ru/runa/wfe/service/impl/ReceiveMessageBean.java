@@ -68,11 +68,9 @@ public class ReceiveMessageBean implements MessageListener {
     @SuppressWarnings("unchecked")
     @Override
     public void onMessage(Message message) {
-        log.info("Got message: " + message);
         ObjectMessage objectMessage = (ObjectMessage) message;
         try {
-            log.debug(JMSUtil.toString(objectMessage, false));
-            String loggedMessage = JMSUtil.toString(objectMessage, false);
+            log.info(message);
             boolean handled = false;
             List<Token> tokens = tokenDAO.findActiveTokens(NodeType.RECEIVE_MESSAGE);
             for (Token token : tokens) {
@@ -98,6 +96,8 @@ public class ReceiveMessageBean implements MessageListener {
                             expectedValue = TypeConversionUtil.convertTo(String.class, value);
                         }
                         if (!Objects.equal(expectedValue, selectorValue)) {
+                            log.debug("Rejected in " + token + " due to diff in " + variableMapping.getName() + "(" + expectedValue + "!="
+                                    + selectorValue + ")");
                             suitable = false;
                             break;
                         }
@@ -111,13 +111,13 @@ public class ReceiveMessageBean implements MessageListener {
                             executionContext.setVariable(variableMapping.getName(), value);
                         }
                     }
-                    executionContext.addLog(new ReceiveMessageLog(receiveMessage, loggedMessage));
+                    executionContext.addLog(new ReceiveMessageLog(receiveMessage, JMSUtil.toString(objectMessage, true)));
                     receiveMessage.leave(executionContext);
                     handled = true;
                 }
             }
             if (!handled) {
-                throw new MessagePostponedException(loggedMessage);
+                throw new MessagePostponedException(JMSUtil.toString(objectMessage, false));
             }
         } catch (JMSException e) {
             log.error("", e);

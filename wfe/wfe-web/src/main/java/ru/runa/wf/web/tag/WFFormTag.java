@@ -17,8 +17,6 @@
  */
 package ru.runa.wf.web.tag;
 
-import java.util.Map;
-
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.Form;
 import org.apache.ecs.html.Input;
@@ -32,8 +30,6 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.wf.web.FormUtils;
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 
@@ -49,15 +45,7 @@ public abstract class WFFormTag extends TitledFormTag {
     protected void fillFormElement(TD tdFormElement) {
         try {
             Interaction interaction = getInteraction();
-            String wfFormContent = buildForm(interaction);
-            Map<String, String[]> userDefinedVariables = null;
-            if (SystemProperties.isV3CompatibilityMode()) {
-                userDefinedVariables = FormUtils.getUserFormInput(pageContext.getRequest());
-            }
-            Map<String, String> userErrors = FormUtils.getUserFormValidationErrors(pageContext.getRequest());
-            if (userDefinedVariables != null || userErrors != null) {
-                wfFormContent = HTMLFormConverter.fillForm(pageContext, wfFormContent, userDefinedVariables, userErrors);
-            }
+            String form = buildForm(interaction);
             if (interaction.getCssData() != null) {
                 StringBuffer styles = new StringBuffer("<style>");
                 styles.append(new String(interaction.getCssData(), Charsets.UTF_8));
@@ -78,7 +66,7 @@ public abstract class WFFormTag extends TitledFormTag {
                 tdFormElement.addElement(script);
             }
             tdFormElement.setClass(Resources.CLASS_BOX_BODY + " taskform");
-            tdFormElement.addElement(new StringElement(wfFormContent));
+            tdFormElement.addElement(new StringElement(form));
             formButtonVisible = true;
         } catch (TaskDoesNotExistException e) {
             log.warn(e.getMessage());
