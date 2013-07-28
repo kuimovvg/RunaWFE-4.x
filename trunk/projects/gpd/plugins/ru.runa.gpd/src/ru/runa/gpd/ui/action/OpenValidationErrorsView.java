@@ -1,8 +1,10 @@
 package ru.runa.gpd.ui.action;
 
+import ru.runa.gpd.ui.view.ValidationErrorsView;
+
 public class OpenValidationErrorsView extends OpenViewBaseAction {
     @Override
     protected String getViewId() {
-        return "ru.runa.gpd.validationErrors";
+        return ValidationErrorsView.ID;
     }
 }
