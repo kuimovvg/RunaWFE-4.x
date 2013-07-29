@@ -18,6 +18,7 @@
 package ru.runa.wfe.graph.image.figure.uml;
 
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
@@ -29,6 +30,12 @@ import java.text.AttributedString;
 import ru.runa.wfe.graph.image.util.DrawProperties;
 
 public class WaitStateFigure extends TaskNodeFigure {
+
+    @Override
+    public Point getTransitionPoint(double x, double y, String transitionName) {
+        // time-out-transition treated as from timer in super class
+        return super.getTransitionPoint(x, y, null);
+    }
 
     @Override
     public void draw(Graphics2D graphics, boolean cleanMode) {
