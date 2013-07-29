@@ -141,22 +141,22 @@ public class EmailUtils {
     public static void sendTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider,
             IFileDataProvider fileDataProvider) throws Exception {
         config.applySubstitutions(variableProvider);
-        byte[] formBytes;
+        String formTemplate;
         if (config.isUseMessageFromTaskForm()) {
             if (interaction.hasForm()) {
-                formBytes = interaction.getFormData();
+                formTemplate = new String(interaction.getFormData(), Charsets.UTF_8);
             } else {
                 if (SystemProperties.isV3CompatibilityMode()) {
-                    formBytes = " ".getBytes();
+                    formTemplate = " ";
                 } else {
                     throw new Exception("Set property 'UseMessageFromTaskForm' but form does not exist");
                 }
             }
         } else {
-            formBytes = config.getMessage().getBytes(Charsets.UTF_8);
+            formTemplate = config.getMessage();
         }
         FormHashModel model = new FormHashModel(user, variableProvider, null);
-        String formMessage = FreemarkerProcessor.process(formBytes, model);
+        String formMessage = FreemarkerProcessor.process(formTemplate, model);
 
         Map<String, String> replacements = new HashMap<String, String>();
 

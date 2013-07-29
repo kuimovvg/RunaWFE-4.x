@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
-import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.StringFormat;
 
 import com.google.common.collect.Lists;
 
@@ -58,7 +58,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             lists.add(list);
             jsHandlers.append(ViewUtil.getComponentJSFunction(elementFormatClassName));
             rowTemplate.append("<td>");
-            String inputTag = getComponentInput(user, variableName + "[]", elementFormatClassName, null, true);
+            String inputTag = getComponentInput(variableName + "[]", elementFormatClassName, null, true);
             inputTag = inputTag.replaceAll("\"", "'");
             rowTemplate.append(inputTag);
             rowTemplate.append("</td>");
@@ -78,6 +78,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             StringBuffer header = new StringBuffer();
             header.append("<tr class=\"header\">");
             boolean headerVisible = false;
+            boolean operationsColumnVisible = allowToAddElements || allowToDeleteElements;
             for (String variableName : variableNames) {
                 String headerVariableName = variableName + "_header";
                 Object value = variableProvider.getValue(headerVariableName);
@@ -85,33 +86,24 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                     headerVisible = true;
                 }
                 header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
-                html.append(ViewUtil.getHiddenInput(variableName + ".size", rowsCount));
+                html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class.getName(), rowsCount));
             }
-            header.append("<td style=\"width: 30px;\">");
+            if (operationsColumnVisible) {
+                header.append("<td style=\"width: 30px;\">");
+            }
             if (allowToAddElements) {
                 headerVisible = true;
                 header.append("<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />");
             }
-            header.append("</td>");
+            if (operationsColumnVisible) {
+                header.append("</td>");
+            }
             header.append("</tr>");
             if (headerVisible) {
                 html.append(header);
             }
             for (int row = 0; row < rowsCount; row++) {
-                html.append("<tr row=\"").append(row).append("\">");
-                for (int column = 0; column < variableNames.size(); column++) {
-                    Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
-                    String inputName = variableNames.get(column) + "[" + row + "]";
-                    html.append("<td column=\"").append(column).append("\">");
-                    html.append(getComponentInput(user, inputName, componentFormatClassNames.get(column), o, allowToChangeElements));
-                    html.append("</td>");
-                }
-                html.append("<td>");
-                if (allowToDeleteElements) {
-                    html.append("<input type='button' value=' - ' onclick=\"removeRow(this);\" />");
-                }
-                html.append("</td>");
-                html.append("</tr>");
+                renderRow(html, variableNames, lists, componentFormatClassNames, row, allowToChangeElements, allowToDeleteElements);
             }
             html.append("</table>");
             return html.toString();
@@ -119,12 +111,33 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         return "-";
     }
 
-    protected String getComponentInput(User user, String variableName, String formatClassName, Object value, boolean enabled) {
-        if (enabled) {
-            return ViewUtil.getComponentInput(user, variableName, formatClassName, value);
+    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames, int row,
+            boolean allowToChangeElements, boolean allowToDeleteElements) {
+        html.append("<tr row=\"").append(row).append("\">");
+        for (int column = 0; column < variableNames.size(); column++) {
+            Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
+            String componentFormatClassName = componentFormatClassNames.get(column);
+            renderColumn(html, variableNames.get(column), componentFormatClassName, o, row, column, allowToChangeElements);
         }
-        String html = ViewUtil.getComponentOutput(user, variableName, formatClassName, value);
-        html += ViewUtil.getHiddenInput(variableName, value);
+        if (allowToDeleteElements) {
+            html.append("<td><input type='button' value=' - ' onclick=\"removeRow(this);\" /></td>");
+        }
+        html.append("</tr>");
+    }
+
+    protected void renderColumn(StringBuffer html, String variableName, String format, Object value, int row, int column, boolean enabled) {
+        String inputName = variableName + "[" + row + "]";
+        html.append("<td column=\"").append(column).append("\">");
+        html.append(getComponentInput(inputName, format, value, enabled));
+        html.append("</td>");
+    }
+
+    protected String getComponentInput(String inputName, String componentFormatClassName, Object value, boolean enabled) {
+        if (enabled) {
+            return ViewUtil.getComponentInput(user, inputName, componentFormatClassName, value);
+        }
+        String html = ViewUtil.getComponentOutput(user, inputName, componentFormatClassName, value);
+        html += ViewUtil.getHiddenInput(inputName, componentFormatClassName, value);
         return html;
     }
 

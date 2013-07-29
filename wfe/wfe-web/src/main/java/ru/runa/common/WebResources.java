@@ -58,6 +58,10 @@ public class WebResources {
     public static final String HIDDEN_ONE_TASK_INDICATOR = "one_task_hidden_field";
     public static final String HIDDEN_TASK_PREVIOUS_OWNER_ID = "taskOwnerId_hidden_field";
 
+    public static PropertyResources getResources() {
+        return RESOURCES;
+    }
+
     public static boolean getBooleanProperty(String name, boolean defaultValue) {
         return RESOURCES.getBooleanProperty(name, defaultValue);
     }
