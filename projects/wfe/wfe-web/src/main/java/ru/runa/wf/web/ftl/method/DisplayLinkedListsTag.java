@@ -68,21 +68,29 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         return "-";
     }
 
-    protected void renderRow(StringBuffer buffer, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames, int row) {
-        buffer.append("<tr row=\"").append(row).append("\">");
+    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames, int row) {
+        html.append("<tr row=\"").append(row).append("\">");
         for (int column = 0; column < variableNames.size(); column++) {
             Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
-            String variableName = variableNames.get(column);
             String componentClassName = componentFormatClassNames.get(column);
-            String value;
-            if (FileFormat.class.getName().equals(componentClassName)) {
-                value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, row, null);
-            } else {
-                value = ViewUtil.getComponentOutput(user, variableName, componentClassName, o);
-            }
-            buffer.append("<td column=\"").append(column).append("\">").append(value).append("</td>");
+            renderColumn(html, variableNames.get(column), componentClassName, o, row, column);
         }
-        buffer.append("</tr>");
+        html.append("</tr>");
+    }
+
+    protected void renderColumn(StringBuffer html, String variableName, String componentClassName, Object value, int row, int column) {
+        String inputName = variableName + "[" + row + "]";
+        html.append("<td column=\"").append(column).append("\">");
+        html.append(getComponentOutput(inputName, componentClassName, value, row));
+        html.append("</td>");
+    }
+
+    protected String getComponentOutput(String variableName, String componentClassName, Object value, int row) {
+        if (FileFormat.class.getName().equals(componentClassName)) {
+            return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) value, row, null);
+        } else {
+            return ViewUtil.getComponentOutput(user, variableName, componentClassName, value);
+        }
     }
 
 }

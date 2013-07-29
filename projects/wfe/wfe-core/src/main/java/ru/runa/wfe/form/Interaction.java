@@ -37,6 +37,8 @@ import com.google.common.collect.Maps;
 public class Interaction implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private String name;
+    private String description;
     private String type;
     private byte[] formData;
     private byte[] validationData;
@@ -50,13 +52,24 @@ public class Interaction implements Serializable {
     protected Interaction() {
     }
 
-    public Interaction(String type, byte[] formData, byte[] validationData, boolean useJSValidation, byte[] scriptData, byte[] cssData) {
+    public Interaction(String name, String description, String type, byte[] formData, byte[] validationData, boolean useJSValidation,
+            byte[] scriptData, byte[] cssData) {
+        this.name = name;
+        this.description = description != null ? description : "";
         this.type = type;
         this.formData = formData;
         this.validationData = validationData;
         this.useJSValidation = useJSValidation;
         this.scriptData = scriptData;
         this.cssData = cssData;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public byte[] getFormData() {

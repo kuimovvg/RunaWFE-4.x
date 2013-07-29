@@ -18,7 +18,6 @@
 
 package ru.runa.wf.web;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -201,6 +200,7 @@ public class FormPresentationUtils {
                 if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
                     addRequiredClassAttribute(node);
                 }
+                handleErrors(userErrors, inputName, pageContext, document, node);
                 String stringValue = getStringValue(inputName, variableProvider, userInput);
                 if (stringValue == null) {
                     continue;
@@ -234,7 +234,6 @@ public class FormPresentationUtils {
                 } else {
                     log.error("Strange input " + inputName + "[type='" + typeName + "']");
                 }
-                handleErrors(userErrors, inputName, pageContext, document, node);
             }
             NodeList textareaElements = document.getElementsByTagName("textarea");
             for (int i = 0; i < textareaElements.getLength(); i++) {
@@ -243,6 +242,7 @@ public class FormPresentationUtils {
                 if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
                     addRequiredClassAttribute(node);
                 }
+                handleErrors(userErrors, inputName, pageContext, document, node);
                 String stringValue = getStringValue(inputName, variableProvider, userInput);
                 if (stringValue == null || Strings.isNullOrEmpty(inputName)) {
                     continue;
@@ -256,7 +256,6 @@ public class FormPresentationUtils {
                     log.debug("Adding " + inputName + " text");
                     node.appendChild(document.createTextNode(stringValue));
                 }
-                handleErrors(userErrors, inputName, pageContext, document, node);
             }
             NodeList selectElements = document.getElementsByTagName("select");
             for (int i = 0; i < selectElements.getLength(); i++) {
@@ -266,6 +265,7 @@ public class FormPresentationUtils {
                     Element div = wrapSelectToDiv(document, node, inputName);
                     addRequiredClassAttribute(div);
                 }
+                handleErrors(userErrors, inputName, pageContext, document, node);
                 String stringValue = getStringValue(inputName, variableProvider, userInput);
                 if (stringValue == null) {
                     continue;
@@ -283,7 +283,6 @@ public class FormPresentationUtils {
                         }
                     }
                 }
-                handleErrors(userErrors, inputName, pageContext, document, node);
             }
             if (userErrors != null && !userErrors.isEmpty()) {
                 Set<String> messages = Sets.newHashSet();
@@ -330,17 +329,9 @@ public class FormPresentationUtils {
         if (userInput != null && userInput.get(name) != null && userInput.get(name).length == 1 && userInput.get(name)[0].length() < 1000) {
             return userInput.get(name)[0];
         }
-        Object value = variableProvider.getValue(name);
-        if (value instanceof Date) {
-            // we don't know user format of date
-            return null;
-        }
-        if (value instanceof List<?> || (value != null && value.getClass().isArray())) {
-            // we don't handle them
-            return null;
-        }
-        if (value != null) {
-            return value.toString();
+        Object value = variableProvider.getVariable(name);
+        if (value instanceof String) {
+            return (String) value;
         }
         return null;
     }

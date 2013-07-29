@@ -95,7 +95,7 @@ public class IOCommons {
     public static String getDeploymentDirPath() {
         String serverDirName = System.getProperty("jboss.server.base.dir");
         boolean jboss7 = System.getProperty("jboss.modules.dir") != null;
-        return jboss7 ? serverDirName + "/deployments" : serverDirName + "/deploy";
+        return jboss7 ? serverDirName + "/deployments" : serverDirName + "/" + System.getProperty("jboss.server.name") + "/deploy";
     }
 
     public static String getAdminkitScriptsDirPath() {

@@ -114,7 +114,7 @@ public class Relation extends IdentifiableBase {
      * 
      * @return Description of relation.
      */
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 1024)
     public String getDescription() {
         return description;
     }
