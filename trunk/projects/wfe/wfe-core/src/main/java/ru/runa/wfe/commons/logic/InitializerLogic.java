@@ -39,6 +39,7 @@ import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
+import ru.runa.wfe.commons.dbpatch.impl.ExpandDescriptionsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
 import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
 import ru.runa.wfe.commons.dbpatch.impl.PerformancePatch401;
@@ -98,6 +99,7 @@ public class InitializerLogic {
         dbPatches.add(TaskEndDateRemovalPatch.class);
         dbPatches.add(PermissionMappingPatch403.class);
         dbPatches.add(NodeTypeChangePatch.class);
+        dbPatches.add(ExpandDescriptionsPatch.class);
     };
 
     @Autowired

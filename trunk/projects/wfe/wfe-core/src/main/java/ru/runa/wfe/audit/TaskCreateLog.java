@@ -45,15 +45,9 @@ public class TaskCreateLog extends TaskLog {
 
     public TaskCreateLog(Task task) {
         super(task);
-        addAttribute(ATTR_NODE_ID, task.getNodeId());
         if (task.getDeadlineDate() != null) {
             addAttribute(ATTR_DUE_DATE, CalendarUtil.formatDateTime(task.getDeadlineDate()));
         }
-    }
-
-    @Transient
-    public String getNodeId() {
-        return getAttribute(ATTR_NODE_ID);
     }
 
     @Transient

@@ -92,11 +92,42 @@ public class ViewUtil {
         return html;
     }
 
-    public static String getHiddenInput(String variableName, Object value) {
+    public static String getHiddenInput(String variableName, String formatClassName, Object value) {
         if (value != null) {
-            return "<input type=\"hidden\" name=\"" + variableName + "\" value=\"" + value + "\" />";
+            String stringValue = getStringValue(variableName, formatClassName, value);
+            if (stringValue != null) {
+                return "<input type=\"hidden\" name=\"" + variableName + "\" value=\"" + stringValue + "\" />";
+            }
         }
         return "";
+    }
+
+    public static String getStringValue(String variableName, String formatClassName, Object value) {
+        if (value != null) {
+            String stringValue = "";
+            if (DateFormat.class.getName().equals(formatClassName)) {
+                if (value instanceof Date) {
+                    stringValue = CalendarUtil.formatDate((Date) value);
+                }
+            } else if (TimeFormat.class.getName().equals(formatClassName)) {
+                if (value instanceof Date) {
+                    stringValue = CalendarUtil.formatTime((Date) value);
+                }
+            } else if (DateTimeFormat.class.getName().equals(formatClassName)) {
+                if (value instanceof Date) {
+                    stringValue = CalendarUtil.formatDateTime((Date) value);
+                }
+            } else if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
+                    || GroupFormat.class.getName().equals(formatClassName)) {
+                if (value instanceof Executor) {
+                    stringValue = "ID" + ((Executor) value).getId();
+                }
+            } else {
+                stringValue = value.toString();
+            }
+            return stringValue;
+        }
+        return null;
     }
 
     public static String getComponentInput(User user, String variableName, String formatClassName, Object value) {

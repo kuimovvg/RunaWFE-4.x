@@ -132,7 +132,7 @@ public class Task implements Assignable {
         this.name = name;
     }
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "DESCRIPTION", length = 1024)
     public String getDescription() {
         return description;
     }

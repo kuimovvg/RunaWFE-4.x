@@ -118,23 +118,37 @@ public class ProcessLogs implements Serializable {
     }
 
     public Map<TaskCreateLog, TaskEndLog> getTaskLogs() {
-        Map<String, TaskCreateLog> tmp = Maps.newHashMap();
+        Map<String, TaskCreateLog> tmpByTaskName = Maps.newHashMap();
+        Map<String, TaskCreateLog> tmpByNodeId = Maps.newHashMap();
         Map<TaskCreateLog, TaskEndLog> result = Maps.newHashMap();
+        boolean compatibilityMode = false;
         for (ProcessLog log : logs) {
             if (log instanceof TaskCreateLog) {
-                String key = log.getProcessId() + ((TaskLog) log).getTaskName();
-                tmp.put(key, (TaskCreateLog) log);
+                TaskCreateLog taskCreateLog = (TaskCreateLog) log;
+                String key = log.getProcessId() + taskCreateLog.getTaskName();
+                tmpByTaskName.put(key, taskCreateLog);
+                key = log.getProcessId() + taskCreateLog.getNodeId();
+                tmpByNodeId.put(key, taskCreateLog);
             }
             if (log instanceof TaskEndLog) {
-                String key = log.getProcessId() + ((TaskLog) log).getTaskName();
-                TaskCreateLog taskCreateLog = tmp.remove(key);
+                TaskEndLog taskEndLog = (TaskEndLog) log;
+                TaskCreateLog taskCreateLog;
+                if (taskEndLog.getNodeId() != null) {
+                    String key = log.getProcessId() + taskEndLog.getNodeId();
+                    taskCreateLog = tmpByNodeId.remove(key);
+                    tmpByTaskName.remove(log.getProcessId() + taskCreateLog.getTaskName());
+                } else {
+                    String key = log.getProcessId() + taskEndLog.getTaskName();
+                    taskCreateLog = tmpByTaskName.remove(key);
+                    compatibilityMode = true;
+                }
                 if (taskCreateLog == null) {
                     if (SystemProperties.isV3CompatibilityMode()) {
                         continue;
                     }
                     throw new InternalApplicationException("No TaskCreateLog for " + log);
                 }
-                result.put(taskCreateLog, (TaskEndLog) log);
+                result.put(taskCreateLog, taskEndLog);
             }
             if (log instanceof NodeLeaveLog) {
                 NodeLeaveLog nodeLeaveLog = (NodeLeaveLog) log;
@@ -163,7 +177,7 @@ public class ProcessLogs implements Serializable {
             }
         }
         // unfinished tasks
-        for (TaskCreateLog taskCreateLog : tmp.values()) {
+        for (TaskCreateLog taskCreateLog : compatibilityMode ? tmpByTaskName.values() : tmpByNodeId.values()) {
             result.put(taskCreateLog, null);
         }
         return result;

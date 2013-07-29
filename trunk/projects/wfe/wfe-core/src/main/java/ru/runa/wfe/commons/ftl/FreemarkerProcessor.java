@@ -1,8 +1,7 @@
 package ru.runa.wfe.commons.ftl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
@@ -25,10 +24,9 @@ public class FreemarkerProcessor {
         cfg.setTemplateExceptionHandler(new CustomExceptionHandler());
     }
 
-    public static String process(byte[] ftlBytes, FormHashModel model) {
+    public static String process(String ftlTemplate, FormHashModel model) {
         try {
-            Template template = new Template("", new InputStreamReader(new ByteArrayInputStream(ftlBytes), Charsets.UTF_8), cfg,
-                    Charsets.UTF_8.name());
+            Template template = new Template("", new StringReader(ftlTemplate), cfg, Charsets.UTF_8.name());
             StringWriter out = new StringWriter();
             template.process(model, out);
             out.flush();
