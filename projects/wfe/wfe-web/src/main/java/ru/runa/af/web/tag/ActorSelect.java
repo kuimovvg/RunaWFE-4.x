@@ -54,7 +54,11 @@ public class ActorSelect extends Select {
             }
             Option option = new Option();
             option.setValue(executor.getName());
-            option.addElement(executor.getName() + (executor instanceof Actor ? (" (" + executor.getLabel() + ")") : ""));
+            String label = executor.getName();
+            if (executor instanceof Actor && !Strings.isNullOrEmpty(((Actor) executor).getLabel())) {
+                label += " (" + executor.getLabel() + ")";
+            }
+            option.addElement(label);
             if (executor.getName().equals(current)) {
                 option.setSelected(true);
                 exist = true;
