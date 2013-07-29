@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.StringFormat;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -42,7 +43,7 @@ public class EditListTag extends AjaxFreemarkerTag {
         // list.add("");
         // }
         html.append("<span class=\"editList\">");
-        html.append(ViewUtil.getHiddenInput(variableName + ".size", list.size()));
+        html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class.getName(), list.size()));
         for (int row = 0; row < list.size(); row++) {
             Object value = list.get(row);
             html.append("<div row=\"").append(row).append("\" style=\"margin-bottom:4px;\" class=\"edit").append(variableName).append("\">");

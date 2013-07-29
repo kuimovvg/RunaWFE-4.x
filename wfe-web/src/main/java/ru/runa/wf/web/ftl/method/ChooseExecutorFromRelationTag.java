@@ -55,7 +55,7 @@ public class ChooseExecutorFromRelationTag extends FreemarkerTag {
                     // http://sourceforge.net/tracker/?func=detail&aid=3478716&group_id=125156&atid=701698
                 }
             }
-            return ViewUtil.createExecutorSelect(variableName, Lists.newArrayList(executors), null, true, true);
+            return ViewUtil.createExecutorSelect(variableName, Lists.newArrayList(executors), variableProvider.getValue(variableName), true, true);
         } catch (Exception e) {
             throw new TemplateModelException(e);
         }

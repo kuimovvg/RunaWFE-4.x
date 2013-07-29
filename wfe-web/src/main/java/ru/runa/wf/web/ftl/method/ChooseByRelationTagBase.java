@@ -31,7 +31,7 @@ public abstract class ChooseByRelationTagBase extends FreemarkerTag {
             }
             boolean inversed = getParameterAs(boolean.class, 3);
             List<Executor> executors = getExecutors(relationName, relationParam, inversed);
-            return ViewUtil.createExecutorSelect(variableName, executors, null, true, true);
+            return ViewUtil.createExecutorSelect(variableName, executors, variableProvider.getValue(variableName), true, true);
         } catch (Exception e) {
             throw new TemplateModelException(e);
         }

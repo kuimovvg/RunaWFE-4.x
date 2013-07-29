@@ -12,6 +12,7 @@ $(document).ready(function() {
         $('#btnAddVARIABLE').before(e);
         updateSizeVARIABLE(1);
         COMPONENT_JS_HANDLER
+        $("#editLinkedLists").trigger("onRowAdded", [rowIndex]);
     });
 });
 
@@ -29,6 +30,7 @@ function removeVARIABLE(button) {
 		updateRowIndexesVARIABLE(i + 1, i);
 	}
 	updateSizeVARIABLE(-1);
+    $("#editLinkedLists").trigger("onRowRemoved", [rowIndex]);
 }
 
 function updateRowIndexesVARIABLE(oldIndex, newIndex) {

@@ -26,6 +26,7 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.VariableDefinition;
@@ -54,6 +55,7 @@ public class InteractionsParser implements ProcessArchiveParser {
             List<Element> formElements = document.getRootElement().elements(FORM_ELEMENT_NAME);
             for (Element formElement : formElements) {
                 String stateId = formElement.attributeValue(STATE_ATTRIBUTE_NAME);
+                InteractionNode node = (InteractionNode) processDefinition.getNodeNotNull(stateId);
                 String fileName = formElement.attributeValue(FILE_ATTRIBUTE_NAME);
                 String typeName = formElement.attributeValue(TYPE_ATTRIBUTE_NAME);
                 String validationFileName = formElement.attributeValue(VALIDATION_FILE_ATTRIBUTE_NAME);
@@ -73,7 +75,8 @@ public class InteractionsParser implements ProcessArchiveParser {
                     scriptJs = archive.getFileDataNotNull(scriptFileName);
                 }
                 byte[] css = archive.getFileData(IFileDataProvider.FORM_CSS_FILE_NAME);
-                Interaction interaction = new Interaction(typeName, formCode, validationXml, jsValidationEnabled, scriptJs, css);
+                Interaction interaction = new Interaction(node.getName(), node.getDescription(), typeName, formCode, validationXml,
+                        jsValidationEnabled, scriptJs, css);
                 if (validationXml != null) {
                     List<String> variableNames = ValidationXmlParser.readVariableNames(processDefinition, validationFileName, validationXml);
                     List<String> requiredVarNames = ValidationXmlParser.readRequiredVariableNames(processDefinition, validationXml);

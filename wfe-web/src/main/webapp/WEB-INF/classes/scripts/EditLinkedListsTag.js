@@ -13,6 +13,7 @@ $(document).ready(function() {
         $('#editLinkedLists').append(e);
         updateSize(1);
         JS_HANDLERS
+        $("#editLinkedLists").trigger("onRowAdded", [rowIndex]);
     });
 });
 
@@ -30,6 +31,7 @@ function removeRow(button) {
 		updateRowIndexes(i + 1, i);
 	}
 	updateSize(-1);
+    $("#editLinkedLists").trigger("onRowRemoved", [rowIndex]);
 }
 
 function updateRowIndexes(oldIndex, newIndex) {
