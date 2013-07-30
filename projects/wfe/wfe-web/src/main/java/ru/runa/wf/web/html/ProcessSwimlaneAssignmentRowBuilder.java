@@ -22,23 +22,21 @@ import java.util.List;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 
-import ru.runa.af.web.ExecutorNameConverter;
-import ru.runa.common.WebResources;
-import ru.runa.common.web.Commons;
-import ru.runa.common.web.form.IdForm;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.html.RowBuilder;
-import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 
 public class ProcessSwimlaneAssignmentRowBuilder implements RowBuilder {
+    private final User user;
     private final Iterator<WfTask> iterator;
     private final PageContext pageContext;
 
-    public ProcessSwimlaneAssignmentRowBuilder(List<WfTask> activeTasks, PageContext pageContext) {
+    public ProcessSwimlaneAssignmentRowBuilder(User user, List<WfTask> activeTasks, PageContext pageContext) {
+        this.user = user;
         this.pageContext = pageContext;
         iterator = activeTasks.iterator();
     }
@@ -52,19 +50,13 @@ public class ProcessSwimlaneAssignmentRowBuilder implements RowBuilder {
     public TR buildNext() {
         TR tr = new TR();
         WfTask task = iterator.next();
-
         TD stateTd = new TD(task.getName());
         tr.addElement(stateTd);
         stateTd.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-
         TD executorsTd = new TD();
         tr.addElement(executorsTd);
         executorsTd.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        if (task.getOwner() != null) {
-            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, task.getOwner().getId(),
-                    pageContext, PortletUrlType.Render);
-            executorsTd.addElement(new A(url, ExecutorNameConverter.getName(task.getOwner(), pageContext)));
-        }
+        executorsTd.addElement(HTMLUtils.createExecutorElement(user, pageContext, task.getOwner()));
         return tr;
     }
 

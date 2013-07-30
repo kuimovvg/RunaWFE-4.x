@@ -22,23 +22,17 @@ import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.ecs.ConcreteElement;
-import org.apache.ecs.html.A;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
-import ru.runa.af.web.ExecutorNameConverter;
 import ru.runa.af.web.form.UpdatePermissionsOnIdentifiableForm;
-import ru.runa.common.WebResources;
-import ru.runa.common.web.Commons;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
-import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.IdsForm;
-import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Identifiable;
@@ -107,10 +101,7 @@ public class PermissionTableBuilder {
         Input input = new Input(Input.CHECKBOX, IdsForm.IDS_INPUT_NAME, String.valueOf(executor.getId()));
         input.setChecked(true);
         tr.addElement(new TD(input).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, executor.getId(), pageContext,
-                PortletUrlType.Render);
-        ConcreteElement tdElement = new A(url, ExecutorNameConverter.getName(executor, pageContext));
-        tr.addElement(new TD(tdElement).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
+        tr.addElement(new TD(HTMLUtils.createExecutorElement(pageContext, executor)).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
         List<Permission> ownPermissions = Delegates.getAuthorizationService().getIssuedPermissions(user, executor, identifiable);
         boolean executorIsPrivileged = ownPermissions.isEmpty() && !additionalExecutor;
         for (Permission permission : permissions) {
