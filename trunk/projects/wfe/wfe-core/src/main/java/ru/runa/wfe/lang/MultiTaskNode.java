@@ -78,6 +78,10 @@ public class MultiTaskNode extends BaseTaskNode {
         // TODO temporary set, introduce unique property in GPD
         for (Object executorIdentity : new HashSet<Object>(executors)) {
             Executor executor = TypeConversionUtil.convertTo(Executor.class, executorIdentity);
+            if (executor == null) {
+                log.debug("Executor is null for identity " + executorIdentity);
+                continue;
+            }
             Task task = taskFactory.create(executionContext, taskDefinition);
             task.assignExecutor(executionContext, executor, false);
             taskFactory.notify(executionContext, task);

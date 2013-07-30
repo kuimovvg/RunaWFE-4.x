@@ -23,12 +23,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import javax.mail.internet.MimeUtility;
+import javax.servlet.jsp.PageContext;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.ecs.ConcreteElement;
+import org.apache.ecs.StringElement;
+import org.apache.ecs.html.A;
 import org.apache.ecs.html.Div;
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.Option;
@@ -39,7 +43,21 @@ import org.cyberneko.html.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import ru.runa.common.WebResources;
+import ru.runa.common.web.form.IdForm;
+import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.EscalationGroup;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.SystemExecutors;
+import ru.runa.wfe.user.TemporaryGroup;
+import ru.runa.wfe.user.User;
+
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 
 public class HTMLUtils {
@@ -152,6 +170,43 @@ public class HTMLUtils {
         tr.addElement(labelTd);
         tr.addElement(element.setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
+    }
+
+    public static String getExecutorName(Executor executor, PageContext pageContext) {
+        String result;
+        if (executor == null) {
+            result = "";
+        } else if (Actor.UNAUTHORIZED_ACTOR.getName().equals(executor.getName())) {
+            result = Messages.getMessage(ru.runa.common.WebResources.UNAUTHORIZED_EXECUTOR_NAME, pageContext);
+        } else if (executor instanceof EscalationGroup) {
+            result = Messages.getMessage(Messages.ESCALATION_GROUP_NAME, pageContext);
+        } else if (executor instanceof TemporaryGroup) {
+            result = Messages.getMessage(Messages.DYNAMIC_GROUP_NAME, pageContext);
+        } else if (executor.getName().equals(SystemExecutors.PROCESS_STARTER_NAME)) {
+            result = Messages.getMessage(Messages.PROCESS_STARTER_NAME, pageContext);
+        } else if (SystemProperties.isV3CompatibilityMode() && executor.getName().startsWith("__TmpGroup")) {
+            result = Messages.getMessage(Messages.ESCALATION_GROUP_NAME, pageContext);
+        } else {
+            result = executor.getName();
+        }
+        return result;
+    }
+
+    public static ConcreteElement createExecutorElement(User user, PageContext pageContext, Executor executor) {
+        if (executor == null || !Delegates.getAuthorizationService().isAllowed(user, Permission.READ, executor)) {
+            return new StringElement(getExecutorName(executor, pageContext));
+        }
+        return createExecutorElement(pageContext, executor);
+    }
+
+    public static ConcreteElement createExecutorElement(PageContext pageContext, Executor executor) {
+        String executorName = getExecutorName(executor, pageContext);
+        if (Strings.isNullOrEmpty(executorName)) {
+            return new StringElement(executorName);
+        }
+        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, executor.getId(), pageContext,
+                PortletUrlType.Render);
+        return new A(url, executorName);
     }
 
 }

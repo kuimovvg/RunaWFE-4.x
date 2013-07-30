@@ -3,6 +3,8 @@ package ru.runa.wfe.commons.ftl;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
@@ -34,15 +36,20 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
     @Override
     @SuppressWarnings("rawtypes")
     public final Object exec(List arguments) throws TemplateModelException {
-        this.arguments = arguments;
-        return executeTag();
+        try {
+            this.arguments = arguments;
+            return executeTag();
+        } catch (Throwable th) {
+            LogFactory.getLog(getClass()).error(arguments.toString(), th);
+            return "<div style=\"background-color: #ffb0b0; border: 1px solid red; padding: 3px;\">" + th.getMessage() + "</div>";
+        }
     }
 
     protected void registerVariableHandler(String variableName) {
         webHelper.getSession().setAttribute(FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableName, this);
     }
 
-    protected abstract Object executeTag() throws TemplateModelException;
+    protected abstract Object executeTag() throws Exception;
 
     protected <T> T getParameterAs(Class<T> clazz, int i) throws TemplateModelException {
         Object paramValue = null;

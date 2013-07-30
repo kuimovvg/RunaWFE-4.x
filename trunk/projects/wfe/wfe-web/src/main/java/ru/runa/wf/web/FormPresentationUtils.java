@@ -284,7 +284,7 @@ public class FormPresentationUtils {
                     }
                 }
             }
-            if (userErrors != null && !userErrors.isEmpty()) {
+            if (!userErrors.isEmpty()) {
                 Set<String> messages = Sets.newHashSet();
                 for (String variableName : userErrors.keySet()) {
                     messages.add(getErrorText(pageContext, userErrors, variableName));
@@ -329,7 +329,7 @@ public class FormPresentationUtils {
         if (userInput != null && userInput.get(name) != null && userInput.get(name).length == 1 && userInput.get(name)[0].length() < 1000) {
             return userInput.get(name)[0];
         }
-        Object value = variableProvider.getVariable(name);
+        Object value = variableProvider.getValue(name);
         if (value instanceof String) {
             return (String) value;
         }
@@ -345,7 +345,7 @@ public class FormPresentationUtils {
     }
 
     private static void handleErrors(Map<String, String> errors, String inputName, PageContext pageContext, Document document, Element node) {
-        if (errors != null && errors.containsKey(inputName)) {
+        if (errors.containsKey(inputName)) {
             String errorText = getErrorText(pageContext, errors, inputName);
             if (WebResources.useImagesForValidationErrors()) {
                 Element errorImg = document.createElement("img");

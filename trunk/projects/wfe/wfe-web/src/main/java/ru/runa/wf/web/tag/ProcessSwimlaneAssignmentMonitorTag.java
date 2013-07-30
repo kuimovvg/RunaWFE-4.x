@@ -31,7 +31,6 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.wf.web.html.ProcessSwimlaneAssignmentRowBuilder;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
@@ -73,8 +72,7 @@ public class ProcessSwimlaneAssignmentMonitorTag extends ProcessBaseFormTag {
     @Override
     protected void fillFormData(TD tdFormElement) {
         try {
-            ExecutionService executionService = Delegates.getExecutionService();
-            List<WfTask> activeTasks = executionService.getProcessTasks(getUser(), getIdentifiableId());
+            List<WfTask> activeTasks = Delegates.getExecutionService().getProcessTasks(getUser(), getIdentifiableId());
             List<WfTask> filteredTasks = Lists.newArrayList();
             for (WfTask task : activeTasks) {
                 if (Objects.equal(swimlaneName, task.getSwimlaneName())) {
@@ -83,14 +81,13 @@ public class ProcessSwimlaneAssignmentMonitorTag extends ProcessBaseFormTag {
             }
             HeaderBuilder headerBuilder = new StringsHeaderBuilder(new String[] { Messages.getMessage(Messages.LABEL_STATE_NAME, pageContext),
                     Messages.getMessage(Messages.LABEL_EXECUTOR_NAME, pageContext) });
-            RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(filteredTasks, pageContext);
+            RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(getUser(), filteredTasks, pageContext);
             tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
         } catch (ExecutorDoesNotExistException e) {
             // i was against this crap, but was urged to
             Span span = new Span();
             span.setClass(ru.runa.common.web.Resources.CLASS_ERROR);
-            span.addElement(Commons.getMessage(Messages.EXCEPTION_EXECUTOR_DOES_NOT_EXISTS, pageContext,
-                    new Object[] { e.getExecutorName() }));
+            span.addElement(Commons.getMessage(Messages.EXCEPTION_EXECUTOR_DOES_NOT_EXISTS, pageContext, new Object[] { e.getExecutorName() }));
             tdFormElement.addElement(span);
         }
     }

@@ -54,7 +54,7 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
     }
 
     @Override
-    protected final Object executeTag() throws TemplateModelException {
+    protected final Object executeTag() throws Exception {
         return renderRequest();
     }
 
@@ -76,7 +76,7 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
         return TypeConversionUtil.convertTo(clazz, o);
     }
 
-    protected abstract String renderRequest() throws TemplateModelException;
+    protected abstract String renderRequest() throws Exception;
 
     public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
     }
