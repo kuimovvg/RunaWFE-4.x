@@ -45,60 +45,56 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
-        try {
-            String groupVarName = getParameterAs(String.class, 0);
-            String userVarName = getParameterAs(String.class, 1);
-            Map<String, String> substitutions = new HashMap<String, String>();
-            substitutions.put("groupSelectorId", groupVarName);
-            substitutions.put("userSelectorId", userVarName);
-            StringBuffer html = new StringBuffer();
-            html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions, true));
-            html.append("<span class=\"ajaxGroupMembers\" id=\"ajaxGroupMembers_").append(groupVarName).append("\">");
-            html.append("<select id=\"").append(groupVarName).append("\" name=\"").append(groupVarName).append("\">");
-            List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());
-            Group defaultGroup = getSavedValue(Group.class, groupVarName);
-            if (defaultGroup == null && groups.size() > 0) {
-                defaultGroup = groups.get(0);
+        String groupVarName = getParameterAs(String.class, 0);
+        String userVarName = getParameterAs(String.class, 1);
+        Map<String, String> substitutions = new HashMap<String, String>();
+        substitutions.put("groupSelectorId", groupVarName);
+        substitutions.put("userSelectorId", userVarName);
+        StringBuffer html = new StringBuffer();
+        html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions, true));
+        html.append("<span class=\"ajaxGroupMembers\" id=\"ajaxGroupMembers_").append(groupVarName).append("\">");
+        html.append("<select id=\"").append(groupVarName).append("\" name=\"").append(groupVarName).append("\">");
+        List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());
+        Group defaultGroup = getSavedValue(Group.class, groupVarName);
+        if (defaultGroup == null && groups.size() > 0) {
+            defaultGroup = groups.get(0);
+        }
+        if (groups.size() == 0) {
+            html.append("<option value=\"\">No groups</option>");
+        }
+        for (Group group : groups) {
+            html.append("<option value=\"ID").append(group.getId()).append("\"");
+            if (Objects.equal(defaultGroup, group)) {
+                html.append(" selected");
             }
-            if (groups.size() == 0) {
-                html.append("<option value=\"\">No groups</option>");
+            html.append(">").append(group.getName()).append("</option>");
+        }
+        html.append("</select>");
+        html.append("<select id=\"").append(userVarName).append("\" name=\"").append(userVarName).append("\">");
+        if (defaultGroup != null) {
+            List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, defaultGroup);
+            Actor defaultActor = getSavedValue(Actor.class, userVarName);
+            if (defaultActor == null && actors.size() > 0) {
+                defaultActor = actors.get(0);
             }
-            for (Group group : groups) {
-                html.append("<option value=\"ID").append(group.getId()).append("\"");
-                if (Objects.equal(defaultGroup, group)) {
+            if (actors.size() == 0) {
+                html.append("<option value=\"\">No users in this group</option>");
+            } else {
+                html.append("<option value=\"\">None</option>");
+            }
+            for (Actor actor : actors) {
+                html.append("<option value=\"ID").append(actor.getId()).append("\"");
+                if (Objects.equal(defaultActor, actor)) {
                     html.append(" selected");
                 }
-                html.append(">").append(group.getName()).append("</option>");
+                html.append(">").append(actor.getFullName()).append("</option>");
             }
-            html.append("</select>");
-            html.append("<select id=\"").append(userVarName).append("\" name=\"").append(userVarName).append("\">");
-            if (defaultGroup != null) {
-                List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, defaultGroup);
-                Actor defaultActor = getSavedValue(Actor.class, userVarName);
-                if (defaultActor == null && actors.size() > 0) {
-                    defaultActor = actors.get(0);
-                }
-                if (actors.size() == 0) {
-                    html.append("<option value=\"\">No users in this group</option>");
-                } else {
-                    html.append("<option value=\"\">None</option>");
-                }
-                for (Actor actor : actors) {
-                    html.append("<option value=\"ID").append(actor.getId()).append("\"");
-                    if (Objects.equal(defaultActor, actor)) {
-                        html.append(" selected");
-                    }
-                    html.append(">").append(actor.getFullName()).append("</option>");
-                }
-            } else {
-                html.append("<option value=\"\"></option>");
-            }
-            html.append("</select>");
-            html.append("</span>");
-            return html.toString();
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
+        } else {
+            html.append("<option value=\"\"></option>");
         }
+        html.append("</select>");
+        html.append("</span>");
+        return html.toString();
     }
 
     @Override

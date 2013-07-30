@@ -1,5 +1,7 @@
 package ru.runa.wfe.task;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -10,6 +12,7 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -31,9 +34,13 @@ public class TaskFactory {
         this.defaultTaskDeadline = defaultTaskDeadline;
     }
 
-    public String getDeadlineDuration(TaskDefinition taskDefinition) {
+    private String getDeadlineDuration(TaskDefinition taskDefinition) {
         if (taskDefinition.getDeadlineDuration() != null) {
             return taskDefinition.getDeadlineDuration();
+        }
+        List<CreateTimerAction> timerActions = taskDefinition.getNode().getTimerActions();
+        if (timerActions.size() > 0) {
+            return timerActions.get(0).getDueDate();
         }
         return defaultTaskDeadline;
     }
@@ -65,22 +72,14 @@ public class TaskFactory {
         if (taskDefinition.getNode() instanceof StartState) {
             swimlane = process.getSwimlane(swimlaneDefinition.getName());
             if (swimlane == null) {
-                // swimlane.setExecutor(executionContext,
-                // SubjectPrincipalHolder.actors.get(), true);
                 throw new UnsupportedOperationException("use ru.runa.wfe.execution.TaskFactory.createStart(ExecutionContext, Actor)");
             }
         } else {
-            try {
-                swimlane = process.getInitializedSwimlaneNotNull(executionContext, swimlaneDefinition, taskDefinition.isReassignSwimlane());
-            } catch (Exception e) {
-                log.error("Unable to assign in process id = " + executionContext.getProcess().getId(), e);
-            }
+            swimlane = process.getInitializedSwimlaneNotNull(executionContext, swimlaneDefinition, taskDefinition.isReassignSwimlane());
         }
-        if (swimlane != null) {
-            // copy the swimlane assignment into the task
-            task.setSwimlane(swimlane);
-            task.assignExecutor(executionContext, swimlane.getExecutor(), false);
-        }
+        // copy the swimlane assignment into the task
+        task.setSwimlane(swimlane);
+        task.assignExecutor(executionContext, swimlane.getExecutor(), false);
     }
 
     /**

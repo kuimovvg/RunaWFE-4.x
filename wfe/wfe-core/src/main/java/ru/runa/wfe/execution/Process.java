@@ -48,7 +48,6 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessCancelLog;
 import ru.runa.wfe.audit.ProcessEndLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
@@ -224,7 +223,7 @@ public class Process extends IdentifiableBase {
                 AssignmentHandler assignmentHandler = swimlaneDefinition.getDelegation().getInstance();
                 assignmentHandler.assign(executionContext, swimlane);
             } catch (Exception e) {
-                throw new InternalApplicationException(swimlaneDefinition.toString(), e);
+                log.error("Unable to assign in " + this, e);
             }
         }
         return swimlane;

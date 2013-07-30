@@ -26,16 +26,15 @@ import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 
-import ru.runa.af.web.ExecutorNameConverter;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.wf.web.form.SwimlaneForm;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.dto.WfSwimlane;
-import ru.runa.wfe.user.Actor;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -72,14 +71,7 @@ public class ProcessSwimlaneRowBuilder implements RowBuilder {
         TD assignedToActorTD = new TD();
         tr.addElement(assignedToActorTD);
         assignedToActorTD.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        if (swimlane.getExecutor() == null) {
-        } else if (Actor.UNAUTHORIZED_ACTOR.getName().equals(swimlane.getExecutor().getName())) {
-            assignedToActorTD.addElement(Messages.getMessage(ru.runa.common.WebResources.UNAUTHORIZED_EXECUTOR_NAME, pageContext));
-        } else {
-            String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, swimlane.getExecutor().getId(),
-                    pageContext, PortletUrlType.Render);
-            assignedToActorTD.addElement(new A(url, ExecutorNameConverter.getName(swimlane.getExecutor(), pageContext)));
-        }
+        assignedToActorTD.addElement(HTMLUtils.createExecutorElement(pageContext, swimlane.getExecutor()));
 
         TD organizationFunctionTD = new TD();
         tr.addElement(organizationFunctionTD);

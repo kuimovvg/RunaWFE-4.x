@@ -28,20 +28,16 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
-        try {
-            String variableName = getParameterAs(String.class, 0);
-            Map<String, String> substitutions = new HashMap<String, String>();
-            substitutions.put("VARIABLE", variableName);
-            StringBuffer html = new StringBuffer();
-            html.append(exportScript("scripts/LegacyActorsMultiSelectTag.js", substitutions, true));
+        String variableName = getParameterAs(String.class, 0);
+        Map<String, String> substitutions = new HashMap<String, String>();
+        substitutions.put("VARIABLE", variableName);
+        StringBuffer html = new StringBuffer();
+        html.append(exportScript("scripts/LegacyActorsMultiSelectTag.js", substitutions, true));
 
-            html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
-                    .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
-                    .append("\">[ + ]</a></div></div>");
-            return html.toString();
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
-        }
+        html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
+                .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
+                .append("\">[ + ]</a></div></div>");
+        return html.toString();
     }
 
     @Override
