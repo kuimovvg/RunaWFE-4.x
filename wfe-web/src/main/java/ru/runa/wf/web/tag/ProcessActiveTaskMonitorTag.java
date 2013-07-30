@@ -29,7 +29,6 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.wf.web.html.ProcessSwimlaneAssignmentRowBuilder;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 
@@ -44,11 +43,10 @@ public class ProcessActiveTaskMonitorTag extends ProcessBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        ExecutionService executionService = Delegates.getExecutionService();
-        List<WfTask> activeTasks = executionService.getProcessTasks(getUser(), getIdentifiableId());
+        List<WfTask> activeTasks = Delegates.getExecutionService().getProcessTasks(getUser(), getIdentifiableId());
         HeaderBuilder headerBuilder = new StringsHeaderBuilder(new String[] { Messages.getMessage(Messages.LABEL_STATE_NAME, pageContext),
                 Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext) });
-        RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(activeTasks, pageContext);
+        RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(getUser(), activeTasks, pageContext);
         tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }
 

@@ -21,20 +21,16 @@ public abstract class ChooseByRelationTagBase extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        try {
-            String variableName = getParameterAs(String.class, 0);
-            String relationName = getParameterAs(String.class, 1);
-            Executor relationParam = getParameterAs(Executor.class, 2);
-            if (relationParam == null) {
-                // TODO right way?
-                relationParam = user.getActor();
-            }
-            boolean inversed = getParameterAs(boolean.class, 3);
-            List<Executor> executors = getExecutors(relationName, relationParam, inversed);
-            return ViewUtil.createExecutorSelect(variableName, executors, variableProvider.getValue(variableName), true, true);
-        } catch (Exception e) {
-            throw new TemplateModelException(e);
+        String variableName = getParameterAs(String.class, 0);
+        String relationName = getParameterAs(String.class, 1);
+        Executor relationParam = getParameterAs(Executor.class, 2);
+        if (relationParam == null) {
+            // TODO right way?
+            relationParam = user.getActor();
         }
+        boolean inversed = getParameterAs(boolean.class, 3);
+        List<Executor> executors = getExecutors(relationName, relationParam, inversed);
+        return ViewUtil.createExecutorSelect(variableName, executors, variableProvider.getValue(variableName), true, true);
     }
 
     private List<Executor> getExecutors(String relationName, Executor relationParam, boolean inversed) throws TemplateModelException {

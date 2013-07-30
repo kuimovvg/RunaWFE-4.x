@@ -22,9 +22,9 @@ import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.ExecutorNameConverter;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.BaseTDBuilder;
 import ru.runa.wfe.commons.web.PortletUrlType;
@@ -64,6 +64,6 @@ public class SystemLogActorTDBuilder extends BaseTDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        return ExecutorNameConverter.getName((Executor) getExtractor().getIdentifiable(object, env), env.getPageContext());
+        return HTMLUtils.getExecutorName((Executor) getExtractor().getIdentifiable(object, env), env.getPageContext());
     }
 }

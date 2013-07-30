@@ -17,15 +17,10 @@
  */
 package ru.runa.wf.web.html;
 
-import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 
-import ru.runa.af.web.ExecutorNameConverter;
-import ru.runa.common.WebResources;
-import ru.runa.common.web.Commons;
-import ru.runa.common.web.form.IdForm;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.html.TDBuilder;
-import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 
@@ -50,20 +45,14 @@ public class TaskOwnerTDBuilder implements TDBuilder {
 
     @Override
     public TD build(Object object, Env env) {
-        Executor owner = getOwner(object);
-        String actorName = ExecutorNameConverter.getName(owner, env.getPageContext());
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, owner.getId(), env.getPageContext(),
-                PortletUrlType.Render);
-        A link = new A(url, actorName);
-        TD td = new TD(link);
+        TD td = new TD(HTMLUtils.createExecutorElement(env.getPageContext(), getOwner(object)));
         td.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
         return td;
     }
 
     @Override
     public String getValue(Object object, Env env) {
-        Executor owner = getOwner(object);
-        return ExecutorNameConverter.getName(owner, env.getPageContext());
+        return HTMLUtils.getExecutorName(getOwner(object), env.getPageContext());
     }
 
     @Override

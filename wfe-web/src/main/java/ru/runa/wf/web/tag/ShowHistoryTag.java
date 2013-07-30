@@ -26,9 +26,8 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 
-import ru.runa.af.web.ExecutorNameConverter;
-import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.StrutsWebHelper;
@@ -162,9 +161,9 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                 }
                 try {
                     Executor executor = Delegates.getExecutorService().getExecutorByName(getUser(), name);
-                    result[i] = createExecutorLink(executor);
+                    result[i] = HTMLUtils.createExecutorElement(pageContext, executor);
                 } catch (Exception e) {
-                    log.error("could not get executor '" + name + "': " + e.getMessage());
+                    log.debug("could not get executor '" + name + "': " + e.getMessage());
                     result[i] = name;
                 }
             } else if (arguments[i] instanceof ExecutorIdsValue) {
@@ -177,10 +176,10 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
                 for (Long id : ids) {
                     try {
                         Executor executor = Delegates.getExecutorService().getExecutor(getUser(), id);
-                        executors += createExecutorLink(executor);
+                        executors += HTMLUtils.createExecutorElement(pageContext, executor);
                         executors += "&nbsp;";
                     } catch (Exception e) {
-                        log.error("could not get executor by " + id + ": " + e.getMessage());
+                        log.debug("could not get executor by " + id + ": " + e.getMessage());
                         executors += id + "&nbsp;";
                     }
                 }
@@ -206,13 +205,6 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
             }
         }
         return result;
-    }
-
-    private String createExecutorLink(Executor executor) {
-        Map<String, Object> params = Maps.newHashMap();
-        params.put(IdForm.ID_INPUT_NAME, executor.getId());
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, params, pageContext, PortletUrlType.Render);
-        return new A(url, ExecutorNameConverter.getName(executor, pageContext)).setClass(Resources.CLASS_LINK).toString();
     }
 
     @Override

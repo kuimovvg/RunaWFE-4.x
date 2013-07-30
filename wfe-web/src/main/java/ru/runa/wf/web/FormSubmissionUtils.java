@@ -70,7 +70,11 @@ public class FormSubmissionUtils {
     }
 
     public static Map<String, String> getUserFormValidationErrors(ServletRequest request) {
-        return (Map<String, String>) request.getAttribute(USER_ERRORS);
+        Map<String, String> map = (Map<String, String>) request.getAttribute(USER_ERRORS);
+        if (map == null) {
+            map = Maps.newHashMap();
+        }
+        return map;
     }
 
     private static Map<String, String[]> extractAllAvailableVariables(ActionForm actionForm) {
