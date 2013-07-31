@@ -33,9 +33,7 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
-import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.relation.RelationPair;
-import ru.runa.wfe.relation.RelationPairDoesNotExistException;
 import ru.runa.wfe.relation.logic.RelationLogic;
 import ru.runa.wfe.service.decl.RelationServiceLocal;
 import ru.runa.wfe.service.decl.RelationServiceRemote;
@@ -79,7 +77,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
 
     @Override
     public Relation updateRelation(@WebParam(name = "user") User user, @WebParam(name = "relation") Relation relation)
-            throws RelationDoesNotExistException {
+             {
         Preconditions.checkNotNull(user);
         return relationLogic.updateRelation(user, relation);
     }
@@ -132,7 +130,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public void removeRelationPair(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) throws RelationPairDoesNotExistException {
+    public void removeRelationPair(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         relationLogic.removeRelationPair(user, id);
     }
