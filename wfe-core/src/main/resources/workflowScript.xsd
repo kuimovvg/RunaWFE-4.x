@@ -568,6 +568,7 @@
 	<xs:element name="deleteBot">
 		<xs:complexType>
 			<xs:attribute name="name" type="xs:string" use="required"/>
+			<xs:attribute name="botStation" type="xs:string" use="required"/>
 		</xs:complexType>
 	</xs:element>
 	
