@@ -62,7 +62,7 @@ public class VariableDefinition implements Serializable {
     }
 
     public String getFormatClassName() {
-        if (format.contains(FORMAT_COMPONENT_TYPE_START)) {
+        if (format!=null && format.contains(FORMAT_COMPONENT_TYPE_START)) {
             int index = format.indexOf(FORMAT_COMPONENT_TYPE_START);
             return format.substring(0, index);
         }
@@ -70,7 +70,7 @@ public class VariableDefinition implements Serializable {
     }
 
     public String[] getFormatComponentClassNames() {
-        if (format.contains(FORMAT_COMPONENT_TYPE_START)) {
+        if (format!=null && format.contains(FORMAT_COMPONENT_TYPE_START)) {
             int index = format.indexOf(FORMAT_COMPONENT_TYPE_START);
             String raw = format.substring(index + 1, format.length() - 1);
             return raw.split(FORMAT_COMPONENT_TYPE_CONCAT, -1);
