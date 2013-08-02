@@ -111,7 +111,7 @@
              class="ru.runa.gpd.lang.action.BotTaskActionsDelegate"
              id="botTaskActions"
              label="%label.bottask.action"
-             menubarPath="features/sp1"
+             menubarPath="additions"
              style="pulldown"
              />
     </objectContribution>
