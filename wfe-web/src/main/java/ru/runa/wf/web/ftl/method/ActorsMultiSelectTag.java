@@ -1,6 +1,5 @@
 package ru.runa.wf.web.ftl.method;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -13,16 +12,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
-import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.filter.StringFilterCriteria;
-import ru.runa.wfe.service.client.DelegateExecutorLoader;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
 
@@ -32,44 +29,44 @@ import freemarker.template.TemplateModelException;
 public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
+    // TODO not working now: add variableName.size input...
     @Override
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
+        WfVariable variable = variableProvider.getVariableNotNull(variableName);
+        String scriptingVariableName = variable.getDefinition().getScriptingName();
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
+        substitutions.put("UNIQUENAME", scriptingVariableName);
         StringBuffer html = new StringBuffer();
-
-        List<String> previouslySubmittedValues = variableProvider.getValue(List.class, variableName);
-        if (previouslySubmittedValues == null) {
-            previouslySubmittedValues = new ArrayList<String>();
+        List<Actor> actors = variableProvider.getValue(List.class, variableName);
+        if (actors == null) {
+            actors = Lists.newArrayList();
         }
-        substitutions.put("START_COUNTER", String.valueOf(previouslySubmittedValues.size()));
-
+        substitutions.put("START_COUNTER", String.valueOf(actors.size()));
         html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, false));
-
-        html.append("<div id=\"actorsMultiSelect_").append(variableName).append("\">");
-        html.append("<div id=\"actorsMultiSelectCnt_").append(variableName).append("\">");
-        for (int i = 0; i < previouslySubmittedValues.size(); i++) {
-            String divId = "div_" + variableName + i;
+        html.append("<div id=\"actorsMultiSelect_").append(scriptingVariableName).append("\">");
+        html.append("<div id=\"actorsMultiSelectCnt_").append(scriptingVariableName).append("\">");
+        for (int i = 0; i < actors.size(); i++) {
+            String divId = "div_" + scriptingVariableName + i;
             String e = "<div id='" + divId + "'>";
-            String code = previouslySubmittedValues.get(i);
-            e += "<input type='hidden' name='" + variableName + "' value='" + code + "' /> " + getDisplayName(code);
+            Actor actor = actors.get(i);
+            e += "<input type='hidden' name='" + variableName + "' value='ID" + actor.getId() + "' /> " + getDisplayName(actor);
             e += " <a href='javascript:{}' onclick='$(\"#" + divId + "\").remove();'>[ X ]</a>";
             e += "</div>";
             html.append(e);
         }
         html.append("</div>");
-        html.append("<div id=\"actorsMultiSelectAddButton_").append(variableName).append("\">");
-        html.append("<a href=\"javascript:{}\" id=\"btnAdd_").append(variableName).append("\">[ + ]</a>");
+        html.append("<div id=\"actorsMultiSelectAddButton_").append(scriptingVariableName).append("\">");
+        html.append("<a href=\"javascript:{}\" id=\"btnAdd_").append(scriptingVariableName).append("\">[ + ]</a>");
         html.append("</div>");
         html.append("</div>");
         return html.toString();
     }
 
-    private String getDisplayName(String code) throws TemplateModelException {
-        Executor executor = TypeConversionUtil.convertToExecutor(code, new DelegateExecutorLoader(user));
+    private String getDisplayName(Actor actor) throws TemplateModelException {
         String displayFormat = getParameterAs(String.class, 1);
-        return "login".equals(displayFormat) ? executor.getName() : executor.getFullName();
+        return "login".equals(displayFormat) ? actor.getName() : actor.getFullName();
     }
 
     @Override

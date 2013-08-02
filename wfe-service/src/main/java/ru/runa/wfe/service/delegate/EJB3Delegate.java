@@ -3,6 +3,7 @@ package ru.runa.wfe.service.delegate;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.ejb.EJBException;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -126,4 +127,10 @@ public abstract class EJB3Delegate {
         return initialContexts.get(providerUrl);
     }
 
+    protected RuntimeException handleException(Exception e) {
+        if (e instanceof EJBException) {
+            return Throwables.propagate(e.getCause());
+        }
+        return Throwables.propagate(e);
+    }
 }

@@ -19,6 +19,7 @@ import freemarker.template.TemplateModelException;
  * @author dofs
  * @since 4.0.5
  */
+@SuppressWarnings("unchecked")
 public class EditListTag extends AjaxFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
@@ -26,32 +27,31 @@ public class EditListTag extends AjaxFreemarkerTag {
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
+        String scriptingVariableName = variable.getDefinition().getScriptingName();
         String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
+        substitutions.put("UNIQUENAME", scriptingVariableName);
         String inputTag = ViewUtil.getComponentInput(user, variableName + "[]", elementFormatClassName, null);
         inputTag = inputTag.replaceAll("\"", "'");
         substitutions.put("COMPONENT_INPUT", inputTag);
         substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(elementFormatClassName));
         StringBuffer html = new StringBuffer();
         html.append(exportScript("scripts/EditListTag.js", substitutions, false));
-        List<Object> list = (List<Object>) variable.getValue();
+        List<Object> list = variableProvider.getValue(List.class, variableName);
         if (list == null) {
             list = new ArrayList<Object>();
         }
-        // if (list.size() == 0) {
-        // list.add("");
-        // }
-        html.append("<span class=\"editList\">");
+        html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
         html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class.getName(), list.size()));
         for (int row = 0; row < list.size(); row++) {
             Object value = list.get(row);
-            html.append("<div row=\"").append(row).append("\" style=\"margin-bottom:4px;\" class=\"edit").append(variableName).append("\">");
+            html.append("<div row=\"").append(row).append("\">");
             html.append(ViewUtil.getComponentInput(user, variableName + "[" + row + "]", elementFormatClassName, value));
-            html.append("<input type='button' value=' - ' onclick=\"remove").append(variableName).append("(this);\" />");
+            html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName).append("(this);\" />");
             html.append("</div>");
         }
-        html.append("<div><input type=\"button\" id=\"btnAdd").append(variableName).append("\" value=\" + \" /></div>");
+        html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName).append("\" value=\" + \" /></div>");
         html.append("</span>");
         return html.toString();
     }

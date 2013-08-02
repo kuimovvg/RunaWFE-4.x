@@ -41,13 +41,8 @@ public class SynchronizeExecutorsLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            Group administratorsGroup = Delegates.getExecutorService().getExecutorByName(getUser(), SystemProperties.getAdministratorsGroupName());
-            return Delegates.getExecutorService().isExecutorInGroup(getUser(), getUser().getActor(), administratorsGroup);
-        } catch (Exception e) {
-            log.error(e);
-            return false;
-        }
+        Group administratorsGroup = Delegates.getExecutorService().getExecutorByName(getUser(), SystemProperties.getAdministratorsGroupName());
+        return Delegates.getExecutorService().isExecutorInGroup(getUser(), getUser().getActor(), administratorsGroup);
     }
 
     @Override

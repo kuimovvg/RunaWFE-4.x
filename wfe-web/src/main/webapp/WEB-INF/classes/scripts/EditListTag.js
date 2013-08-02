@@ -1,52 +1,52 @@
 
-var componentInputVARIABLE = "COMPONENT_INPUT";
+var componentInputUNIQUENAME = "COMPONENT_INPUT";
 
 $(document).ready(function() {
-    $('#btnAddVARIABLE').click(function() {
-        var rowIndex = getSizeVARIABLE();
+    $("#btnAddUNIQUENAME").click(function() {
+        var rowIndex = getSizeUNIQUENAME();
 		console.log("Adding row " + rowIndex);
         var e = "<div row='" + rowIndex + "' style='margin-bottom:4px;'>";
-        e += componentInputVARIABLE.replace(/\[\]/g, "[" + rowIndex + "]");
-        e += "<input type='button' value=' - ' onclick='removeVARIABLE(this);' />";
+        e += componentInputUNIQUENAME.replace(/\[\]/g, "[" + rowIndex + "]");
+        e += "<input type='button' value=' - ' onclick='removeUNIQUENAME(this);' />";
         e += "</div>";
-        $('#btnAddVARIABLE').before(e);
-        updateSizeVARIABLE(1);
+        $("#btnAddUNIQUENAME").before(e);
+        updateSizeUNIQUENAME(1);
         COMPONENT_JS_HANDLER
-        $("#editLinkedLists").trigger("onRowAdded", [rowIndex]);
+        $("#UNIQUENAME").trigger("onRowAdded", [rowIndex]);
     });
 });
 
-function getSizeVARIABLE() {
+function getSizeUNIQUENAME() {
 	return parseInt($("input[name='VARIABLE.size']").val());
 }
 
-function removeVARIABLE(button) {
+function removeUNIQUENAME(button) {
 	var div = $(button).closest("div");
 	var rowIndex = parseInt(div.attr("row"));
-	var size = getSizeVARIABLE();
+	var size = getSizeUNIQUENAME();
 	console.log("Removing row ", rowIndex);
 	div.remove();
 	for (var i = rowIndex; i < size - 1; i++) {
-		updateRowIndexesVARIABLE(i + 1, i);
+		updateRowIndexesUNIQUENAME(i + 1, i);
 	}
-	updateSizeVARIABLE(-1);
-    $("#editLinkedLists").trigger("onRowRemoved", [rowIndex]);
+	updateSizeUNIQUENAME(-1);
+    $("#UNIQUENAME").trigger("onRowRemoved", [rowIndex]);
 }
 
-function updateRowIndexesVARIABLE(oldIndex, newIndex) {
+function updateRowIndexesUNIQUENAME(oldIndex, newIndex) {
 	$("div[row='"+oldIndex+"'] input").each(function() {
-		updateIndexedNameVARIABLE($(this), oldIndex, newIndex);
+		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
 	});
 	$("div[row='"+oldIndex+"'] select").each(function() {
-		updateIndexedNameVARIABLE($(this), oldIndex, newIndex);
+		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
 	});
 	$("div[row='"+oldIndex+"'] textarea").each(function() {
-		updateIndexedNameVARIABLE($(this), oldIndex, newIndex);
+		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
 	});
 	$("div[row='"+oldIndex+"']").attr("row", newIndex);
 }
 
-function updateIndexedNameVARIABLE(element, oldIndex, newIndex) {
+function updateIndexedNameUNIQUENAME(element, oldIndex, newIndex) {
 	var name = element.attr("name");
 	if (name == null) {
 		console.log("name is null in ", element);
@@ -56,9 +56,9 @@ function updateIndexedNameVARIABLE(element, oldIndex, newIndex) {
 	element.attr("name", name);
 }
 
-function updateSizeVARIABLE(delta) {
+function updateSizeUNIQUENAME(delta) {
 	var sizeInput = $("input[name='VARIABLE.size']");
 	sizeInput.val(parseInt(sizeInput.val()) + delta);
-	console.log("List size = " + getSizeVARIABLE());
+	console.log("List size = " + getSizeUNIQUENAME());
 }
 

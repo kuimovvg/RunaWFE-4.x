@@ -34,7 +34,11 @@ public class InitializerServiceDelegate extends EJB3Delegate implements Initiali
 
     @Override
     public void onSystemStartup() {
-        getInitializerService().onSystemStartup();
+        try {
+            getInitializerService().onSystemStartup();
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
 }

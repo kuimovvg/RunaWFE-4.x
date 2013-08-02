@@ -24,7 +24,6 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionsOnIdentifiableAction;
-import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -36,7 +35,7 @@ public class GrantPermissionsOnRelationGroupAction extends GrantPermisionsOnIden
 
     public static final String ACTION_PATH = "/grantPermissionsOnRelationGroup";
 
-    private static List<Permission> PERMISSIONS = Lists.newArrayList(RelationPermission.READ);
+    private static List<Permission> PERMISSIONS = Lists.newArrayList(Permission.READ);
 
     @Override
     protected List<Permission> getIdentifiablePermissions() {

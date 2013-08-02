@@ -21,7 +21,6 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -32,12 +31,7 @@ public class GrantBotStationPermissionLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, BotStation.INSTANCE);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, BotStation.INSTANCE);
     }
 
     @Override

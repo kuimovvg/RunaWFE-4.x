@@ -58,11 +58,19 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
         return renderRequest();
     }
 
+    /**
+     * @deprecated use variableProvider.getValue(varName)
+     */
+    @Deprecated
     protected String getSavedValue(String varName) {
         return getSavedValue(String.class, varName);
     }
 
+    /**
+     * @deprecated use variableProvider.getValue(Class<T> clazz, String varName)
+     */
     @SuppressWarnings("unchecked")
+    @Deprecated
     protected <T extends Object> T getSavedValue(Class<T> clazz, String varName) {
         Map<String, String[]> map = (Map<String, String[]>) webHelper.getRequest().getAttribute("UserDefinedVariables");
         Object o = null;

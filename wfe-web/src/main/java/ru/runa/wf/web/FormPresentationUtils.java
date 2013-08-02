@@ -287,7 +287,7 @@ public class FormPresentationUtils {
             if (!userErrors.isEmpty()) {
                 Set<String> messages = Sets.newHashSet();
                 for (String variableName : userErrors.keySet()) {
-                    messages.add(getErrorText(pageContext, userErrors, variableName));
+                    messages.add(variableName + ": " + getErrorText(pageContext, userErrors, variableName));
                 }
                 log.debug("Not for all errors inputs found, appending errors to the end of the form: " + messages);
                 document.getLastChild().appendChild(document.createElement("hr"));

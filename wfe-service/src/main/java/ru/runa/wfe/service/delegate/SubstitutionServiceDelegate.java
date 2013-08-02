@@ -40,66 +40,118 @@ public class SubstitutionServiceDelegate extends EJB3Delegate implements Substit
 
     @Override
     public Substitution createSubstitution(User user, Substitution substitution) {
-        return getSubstitutionService().createSubstitution(user, substitution);
+        try {
+            return getSubstitutionService().createSubstitution(user, substitution);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<Substitution> getSubstitutions(User user, Long actorId) {
-        return getSubstitutionService().getSubstitutions(user, actorId);
+        try {
+            return getSubstitutionService().getSubstitutions(user, actorId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void deleteSubstitutions(User user, List<Long> substitutionIds) {
-        getSubstitutionService().deleteSubstitutions(user, substitutionIds);
+        try {
+            getSubstitutionService().deleteSubstitutions(user, substitutionIds);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Substitution getSubstitution(User user, Long substitutionId) {
-        return getSubstitutionService().getSubstitution(user, substitutionId);
+        try {
+            return getSubstitutionService().getSubstitution(user, substitutionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void updateSubstitution(User user, Substitution substitution) {
-        getSubstitutionService().updateSubstitution(user, substitution);
+        try {
+            getSubstitutionService().updateSubstitution(user, substitution);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public <T extends SubstitutionCriteria> void createCriteria(User user, T substitutionCriteria) {
-        getSubstitutionService().createCriteria(user, substitutionCriteria);
+        try {
+            getSubstitutionService().createCriteria(user, substitutionCriteria);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public SubstitutionCriteria getCriteria(User user, Long criteriaId) {
-        return getSubstitutionService().getCriteria(user, criteriaId);
+        try {
+            return getSubstitutionService().getCriteria(user, criteriaId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public SubstitutionCriteria getCriteriaByName(User user, String name) {
-        return getSubstitutionService().getCriteriaByName(user, name);
+        try {
+            return getSubstitutionService().getCriteriaByName(user, name);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<SubstitutionCriteria> getAllCriterias(User user) {
-        return getSubstitutionService().getAllCriterias(user);
+        try {
+            return getSubstitutionService().getAllCriterias(user);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void updateCriteria(User user, SubstitutionCriteria substitutionCriteria) {
-        getSubstitutionService().updateCriteria(user, substitutionCriteria);
+        try {
+            getSubstitutionService().updateCriteria(user, substitutionCriteria);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void deleteCriterias(User user, List<SubstitutionCriteria> criterias) {
-        getSubstitutionService().deleteCriterias(user, criterias);
+        try {
+            getSubstitutionService().deleteCriterias(user, criterias);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void deleteCriteria(User user, SubstitutionCriteria substitutionCriteria) {
-        getSubstitutionService().deleteCriteria(user, substitutionCriteria);
+        try {
+            getSubstitutionService().deleteCriteria(user, substitutionCriteria);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<Substitution> getSubstitutionsByCriteria(User user, SubstitutionCriteria substitutionCriteria) {
-        return getSubstitutionService().getSubstitutionsByCriteria(user, substitutionCriteria);
+        try {
+            return getSubstitutionService().getSubstitutionsByCriteria(user, substitutionCriteria);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 }

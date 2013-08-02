@@ -22,7 +22,6 @@ import java.util.Map;
 
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.html.TDBuilder.Env;
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
@@ -42,17 +41,18 @@ public abstract class EnvBaseImpl implements Env {
     }
 
     @Override
-    public boolean hasProcessDefinitionPermission(Permission permission, Long processDefinitionId) throws DefinitionDoesNotExistException {
+    public boolean hasProcessDefinitionPermission(Permission permission, Long processDefinitionId) {
         try {
             Boolean result = processDefPermissionCache.get(processDefinitionId);
             if (result != null) {
                 return result;
             }
-            WfDefinition processDef = Delegates.getDefinitionService().getProcessDefinition(getUser(), processDefinitionId);
-            result = Delegates.getAuthorizationService().isAllowed(getUser(), permission, processDef);
+            WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(getUser(), processDefinitionId);
+            result = Delegates.getAuthorizationService().isAllowed(getUser(), permission, definition);
             processDefPermissionCache.put(processDefinitionId, result);
             return result;
         } catch (AuthorizationException e) {
+            processDefPermissionCache.put(processDefinitionId, false);
             return false;
         }
     }

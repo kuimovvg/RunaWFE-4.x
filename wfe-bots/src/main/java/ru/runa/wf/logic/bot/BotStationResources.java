@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.PropertyResources;
 
@@ -33,7 +32,7 @@ import ru.runa.wfe.commons.PropertyResources;
  * @since 4.0
  */
 public class BotStationResources {
-    private static final Log log = LogFactory.getLog(BotInvokerFactory.class);
+    private static final Log log = LogFactory.getLog(BotStationResources.class);
     private static final PropertyResources RESOURCES = new PropertyResources("botstation.properties");
 
     public static BotLogger createBotLogger() {
