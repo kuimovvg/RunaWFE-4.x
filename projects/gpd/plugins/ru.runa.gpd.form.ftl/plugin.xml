@@ -636,7 +636,7 @@
          </param>
       </tag>
       <tag
-            enabled="true"
+            enabled="false"
             id="ActorsMultiSelect"
             name="%Method.ActorsMultiSelect">
          <param
