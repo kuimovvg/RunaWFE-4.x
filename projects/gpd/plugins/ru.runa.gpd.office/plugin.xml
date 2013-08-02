@@ -40,7 +40,7 @@
             botTaskHandler="true"
             decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.office.word.MSWordTaskHandlerConfigurator"
-            className="ru.runa.wfe.logic.bot.MSWordReportTaskHandler"
+            className="ru.runa.wf.logic.bot.MSWordReportTaskHandler"
             label="%ActionHandler.MSWordHandler"
             enabled="true">
       </handler>
