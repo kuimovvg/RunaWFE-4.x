@@ -167,6 +167,7 @@ public abstract class NodeFigure<T extends GraphElement> extends Figure implemen
         if (swimlaneLabel != null && model instanceof SwimlanedNode) {
             swimlaneLabel.setText(((SwimlanedNode) model).getSwimlaneLabel());
         }
+        repaint();
         // update tooltip
         String tooltipMessage = getTooltipMessage();
         if (tooltipMessage == null || tooltipMessage.length() == 0) {
@@ -179,7 +180,6 @@ public abstract class NodeFigure<T extends GraphElement> extends Figure implemen
             setToolTip(tooltip);
         }
         ((Label) getToolTip()).setText(tooltipMessage);
-        repaint();
     }
 
     @Override
