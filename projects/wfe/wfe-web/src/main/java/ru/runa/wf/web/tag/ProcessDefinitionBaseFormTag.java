@@ -20,7 +20,6 @@ package ru.runa.wf.web.tag;
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -37,7 +36,6 @@ public abstract class ProcessDefinitionBaseFormTag extends IdentifiableFormTag {
     }
 
     protected WfDefinition getDefinition() {
-        DefinitionService definitionService = Delegates.getDefinitionService();
-        return definitionService.getProcessDefinition(getUser(), getIdentifiableId());
+        return Delegates.getDefinitionService().getProcessDefinition(getUser(), getIdentifiableId());
     }
 }

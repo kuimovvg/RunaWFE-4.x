@@ -105,8 +105,7 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.EXCEPTION_EXECUTOR_ALREADY_EXISTS, exception.getExecutorName());
         } else if (e instanceof ExecutorParticipatesInProcessesException) {
             ExecutorParticipatesInProcessesException exception = (ExecutorParticipatesInProcessesException) e;
-            actionMessage = new ActionMessage(Messages.EXCEPTION_EXECUTOR_PARTICIPATES_IN_PROCESSES, exception.getMessage(),
-                    exception.getIdsInfo());
+            actionMessage = new ActionMessage(Messages.EXCEPTION_EXECUTOR_PARTICIPATES_IN_PROCESSES, exception.getMessage(), exception.getIdsInfo());
         } else if (e instanceof ProcessDoesNotExistException) {
             actionMessage = new ActionMessage(Messages.ERROR_PROCESS_DOES_NOT_EXIST, e.getMessage());
         } else if (e instanceof DefinitionAlreadyExistException) {
@@ -142,7 +141,7 @@ public class ActionExceptionHelper {
             ParentProcessExistsException exc = (ParentProcessExistsException) e;
             actionMessage = new ActionMessage(Messages.PROCESS_HAS_SUPER_PROCESS, exc.getDefinitionName(), exc.getParentDefinitionName());
         } else if (e instanceof RelationDoesNotExistException) {
-            actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_DOESNOT_EXISTS);
+            actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_DOESNOT_EXISTS, e.getMessage());
         } else if (e instanceof RelationAlreadyExistException) {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_EXISTS, e.getMessage());
         } else if (e instanceof VariablesFormatException) {

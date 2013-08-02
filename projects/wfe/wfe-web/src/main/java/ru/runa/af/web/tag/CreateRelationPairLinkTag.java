@@ -23,8 +23,8 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPermission;
+import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.service.delegate.Delegates;
 
 public class CreateRelationPairLinkTag extends LinkTag {
@@ -51,11 +51,6 @@ public class CreateRelationPairLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            Relation relation = Delegates.getRelationService().getRelation(getUser(), getRelationId());
-            return Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, relation);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE, SecuredObjectType.RELATION, getRelationId());
     }
 }

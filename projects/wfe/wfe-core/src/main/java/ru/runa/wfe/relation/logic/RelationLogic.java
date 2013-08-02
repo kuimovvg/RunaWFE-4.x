@@ -240,7 +240,7 @@ public class RelationLogic extends CommonLogic {
         RelationPair relationPair = relationPairDAO.getNotNull(relationPairId);
         checkPermissionAllowed(user, relationPair.getRelation(), RelationPermission.UPDATE);
         permissionDAO.deleteAllPermissions(relationPair);
-        relationDAO.delete(relationPairId);
+        relationPairDAO.delete(relationPair);
     }
 
     /**

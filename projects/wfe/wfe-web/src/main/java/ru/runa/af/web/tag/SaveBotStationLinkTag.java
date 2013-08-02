@@ -32,11 +32,7 @@ public class SaveBotStationLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            return Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.READ, BotStation.INSTANCE);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), BotStationPermission.READ, BotStation.INSTANCE);
     }
 
     @Override

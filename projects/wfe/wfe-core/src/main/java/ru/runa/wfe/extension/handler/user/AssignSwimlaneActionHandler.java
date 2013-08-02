@@ -19,8 +19,6 @@ package ru.runa.wfe.extension.handler.user;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,7 +34,6 @@ import ru.runa.wfe.user.Executor;
 import com.google.common.base.Preconditions;
 
 public class AssignSwimlaneActionHandler implements ActionHandler {
-    private static final Log log = LogFactory.getLog(AssignSwimlaneActionHandler.class);
     private static final String SWIMLANE_INITITALIZER = "swimlaneInititalizer";
     private static final String SWIMLANE = "swimlaneName";
 
@@ -53,7 +50,7 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
             swimlaneName = root.elementTextTrim(SWIMLANE);
             Preconditions.checkNotNull(swimlaneName, SWIMLANE);
         }
-        String swimlaneInitializer = root.attributeValue(SWIMLANE_INITITALIZER);
+        swimlaneInitializer = root.attributeValue(SWIMLANE_INITITALIZER);
         if (swimlaneInitializer == null) {
             swimlaneInitializer = root.elementTextTrim(SWIMLANE_INITITALIZER);
             Preconditions.checkNotNull(swimlaneInitializer, SWIMLANE_INITITALIZER);

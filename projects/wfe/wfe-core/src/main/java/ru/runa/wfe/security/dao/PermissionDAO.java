@@ -130,9 +130,13 @@ public class PermissionDAO extends CommonDAO {
      *         otherwise.
      */
     public boolean isAllowed(final User user, final Permission permission, final Identifiable identifiable) {
+        return isAllowed(user, permission, identifiable.getSecuredObjectType(), identifiable.getIdentifiableId());
+    }
+
+    public boolean isAllowed(final User user, final Permission permission, final SecuredObjectType securedObjectType, final Long identifiableId) {
         final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(user.getActor());
-        for (Executor executor2 : executorWithGroups) {
-            if (getPrivilegedExecutors(identifiable).contains(executor2)) {
+        for (Executor executor : executorWithGroups) {
+            if (getPrivilegedExecutors(securedObjectType).contains(executor)) {
                 return true;
             }
         }
@@ -141,8 +145,8 @@ public class PermissionDAO extends CommonDAO {
             @Override
             public List<PermissionMapping> doInHibernate(Session session) {
                 Query query = session.createQuery("from PermissionMapping where identifiableId=? and type=? and mask=? and executor in (:executors)");
-                query.setParameter(0, identifiable.getIdentifiableId());
-                query.setParameter(1, identifiable.getSecuredObjectType());
+                query.setParameter(0, identifiableId);
+                query.setParameter(1, securedObjectType);
                 query.setParameter(2, permission.getMask());
                 query.setParameterList("executors", executorWithGroups);
                 return query.list();
@@ -258,7 +262,8 @@ public class PermissionDAO extends CommonDAO {
     /**
      * Deletes all permissions for executor.
      * 
-     * @param executor executor
+     * @param executor
+     *            executor
      */
     public void deleteOwnPermissions(Executor executor) {
         getHibernateTemplate().bulkUpdate("delete from PermissionMapping where executor=?", executor);
@@ -267,7 +272,8 @@ public class PermissionDAO extends CommonDAO {
     /**
      * Deletes all permissions for identifiable.
      * 
-     * @param identifiable identifiable
+     * @param identifiable
+     *            identifiable
      */
     public void deleteAllPermissions(Identifiable identifiable) {
         getHibernateTemplate().bulkUpdate("delete from PermissionMapping where type=? and identifiableId=?", identifiable.getSecuredObjectType(),
@@ -304,7 +310,11 @@ public class PermissionDAO extends CommonDAO {
      * @return Privileged {@linkplain Executor}'s array.
      */
     public List<Executor> getPrivilegedExecutors(Identifiable identifiable) {
-        return privelegedExecutors.get(identifiable.getSecuredObjectType());
+        return getPrivilegedExecutors(identifiable.getSecuredObjectType());
+    }
+
+    public List<Executor> getPrivilegedExecutors(SecuredObjectType securedObjectType) {
+        return privelegedExecutors.get(securedObjectType);
     }
 
     /**
@@ -377,7 +387,8 @@ public class PermissionDAO extends CommonDAO {
      *            {@linkplain Permission}, which executors must has on
      *            {@linkplain Identifiable}.
      * @param securedObjectTypes
-     *            {@linkplain SecuredObjectType} types, used to check permissions.
+     *            {@linkplain SecuredObjectType} types, used to check
+     *            permissions.
      * @param enablePaging
      *            Flag, equals true, if paging must be enabled and false
      *            otherwise.
@@ -413,7 +424,8 @@ public class PermissionDAO extends CommonDAO {
      *            {@linkplain Permission}, which executors must has on
      *            {@linkplain Identifiable}.
      * @param securedObjectTypes
-     *            {@linkplain SecuredObjectType} types, used to check permissions.
+     *            {@linkplain SecuredObjectType} types, used to check
+     *            permissions.
      * @return Count of {@link Identifiable}'s for which executors have
      *         permission on.
      */

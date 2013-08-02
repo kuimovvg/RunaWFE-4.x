@@ -47,8 +47,8 @@ public class Messages {
     public static final String TITLE_RELATION_DETAILS = "title.relation.details";
     public static final String TITLE_CREATE_RELATION_PAIR = "title.create_relation_pair";
 
-    public static final String MESSAGE_RELATION_GROUP_EXISTS = "label.relation_group.exists";
-    public static final String MESSAGE_RELATION_GROUP_DOESNOT_EXISTS = "label.relation_group.not_exists";
+    public static final String MESSAGE_RELATION_GROUP_EXISTS = "label.relation.exists";
+    public static final String MESSAGE_RELATION_GROUP_DOESNOT_EXISTS = "label.relation.not_exists";
 
     public static final String TITLE_EXECUTORS = "title.executors";
     public static final String TITLE_PERMISSION_OWNERS = "title.permission_owners";

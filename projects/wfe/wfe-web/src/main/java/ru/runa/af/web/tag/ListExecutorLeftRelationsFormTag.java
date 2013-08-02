@@ -44,7 +44,6 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.presentation.FieldDescriptor;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;
-import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -97,7 +96,7 @@ public class ListExecutorLeftRelationsFormTag extends IdentifiableFormTag {
 
     @Override
     protected Permission getPermission() {
-        return RelationPermission.READ;
+        return Permission.READ;
     }
 
     protected String[] getNames() {

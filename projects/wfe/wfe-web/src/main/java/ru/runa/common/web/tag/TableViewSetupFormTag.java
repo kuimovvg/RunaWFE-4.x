@@ -174,13 +174,12 @@ public class TableViewSetupFormTag extends AbstractReturningTag implements Batch
         }
     }
 
-    protected Table buildBatchTable(BatchPresentation batchPresentation) {
+    private Table buildBatchTable(BatchPresentation batchPresentation) {
         Table table = new Table();
         table.setClass(Resources.CLASS_VIEW_SETUP_TABLE);
-        table.addElement(getHeaderRow());
-
-        {
+        try {
             FieldDescriptor[] displayedFields = batchPresentation.getDisplayFields();
+            table.addElement(getHeaderRow());
             for (int i = 0; i < displayedFields.length; ++i) {
                 if (displayedFields[i].displayName.startsWith(ClassPresentation.filterable_prefix)) {
                     continue;
@@ -190,8 +189,6 @@ public class TableViewSetupFormTag extends AbstractReturningTag implements Batch
                     table.addElement(buildViewRow(batchPresentation, displayedFields[i].fieldIdx, i));
                 }
             }
-        }
-        {
             FieldDescriptor[] hiddenFields = batchPresentation.getHiddenFields();
             for (int i = 0; i < hiddenFields.length; ++i) {
                 if (hiddenFields[i].displayName.startsWith(ClassPresentation.filterable_prefix)) {
@@ -201,8 +198,6 @@ public class TableViewSetupFormTag extends AbstractReturningTag implements Batch
                     table.addElement(buildViewRow(batchPresentation, hiddenFields[i].fieldIdx, -1));
                 }
             }
-        }
-        {
             FieldDescriptor[] allFields = batchPresentation.getAllFields();
             for (int i = 0; i < allFields.length; ++i) {
                 if ((allFields[i].displayName.startsWith(ClassPresentation.editable_prefix) && allFields[i].fieldState == FieldState.ENABLED)
@@ -210,8 +205,9 @@ public class TableViewSetupFormTag extends AbstractReturningTag implements Batch
                     table.addElement(buildViewRow(batchPresentation, allFields[i].fieldIdx, -1));
                 }
             }
+        } catch (Exception e) {
+            table.addElement(e.toString());
         }
-
         return table;
     }
 
@@ -345,7 +341,7 @@ public class TableViewSetupFormTag extends AbstractReturningTag implements Batch
         return sortingModesOptions;
     }
 
-    protected TR getHeaderRow() {
+    private TR getHeaderRow() {
         TR tr = new TR();
         String[] headerNames = {
                 Messages.getMessage(Messages.LABEL_FIELD_NAMES, pageContext),

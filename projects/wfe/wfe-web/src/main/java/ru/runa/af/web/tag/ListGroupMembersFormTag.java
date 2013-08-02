@@ -23,7 +23,7 @@ import ru.runa.af.web.action.RemoveExecutorsFromGroupAction;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
+import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
@@ -52,12 +52,7 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
 
     @Override
     protected boolean isVisible() {
-        try {
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return getExecutor() instanceof Group && authorizationService.isAllowed(getUser(), GroupPermission.LIST_GROUP, getExecutor());
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), GroupPermission.LIST_GROUP, SecuredObjectType.GROUP, getIdentifiableId());
     }
 
     @Override

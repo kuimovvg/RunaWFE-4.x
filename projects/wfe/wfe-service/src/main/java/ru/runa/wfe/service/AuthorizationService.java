@@ -40,6 +40,11 @@ public interface AuthorizationService {
     public boolean isAllowed(User user, Permission permission, Identifiable identifiable);
 
     /**
+     * Checks whether user has permission on object.
+     */
+    public boolean isAllowed(User user, Permission permission, SecuredObjectType securedObjectType, Long identifiableId);
+
+    /**
      * Checks whether user has permission on identifiables.
      * 
      * @param user

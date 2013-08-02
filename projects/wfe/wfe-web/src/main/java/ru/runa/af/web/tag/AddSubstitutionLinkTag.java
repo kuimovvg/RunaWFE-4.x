@@ -19,10 +19,8 @@ package ru.runa.af.web.tag;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.ExecutorService;
+import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ActorPermission;
 
 /**
@@ -47,10 +45,7 @@ public class AddSubstitutionLinkTag extends IdLinkBaseTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        ExecutorService executorService = Delegates.getExecutorService();
-        Actor actor = executorService.getExecutor(getUser(), getIdentifiableId());
-        AuthorizationService authorizationService = Delegates.getAuthorizationService();
-        return authorizationService.isAllowed(getUser(), ActorPermission.UPDATE, actor);
+        return Delegates.getAuthorizationService().isAllowed(getUser(), ActorPermission.UPDATE, SecuredObjectType.ACTOR, getIdentifiableId());
     }
 
     @Override

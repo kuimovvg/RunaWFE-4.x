@@ -42,6 +42,7 @@ public class BoxTag extends TagSupport {
     private String valign;
     private String width;
 
+    @Override
     public int doStartTag() throws JspException {
         JspWriter jspOut = pageContext.getOut();
 
@@ -83,6 +84,7 @@ public class BoxTag extends TagSupport {
         return EVAL_BODY_INCLUDE;
     }
 
+    @Override
     public int doEndTag() throws JspException {
         JspWriter jspOut = pageContext.getOut();
         try {
@@ -90,7 +92,6 @@ public class BoxTag extends TagSupport {
             jspOut.println(new TR().createEndTag());
             jspOut.println(new Table().createEndTag());
             jspOut.write(new Div().createEndTag());
-
         } catch (IOException e) {
             throw new JspException(e);
         }

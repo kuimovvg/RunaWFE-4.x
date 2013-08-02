@@ -44,11 +44,15 @@ public class LinkTag extends VisibleTag {
     @Override
     protected ConcreteElement getEndElement() {
         ConcreteElement concreteElement;
-        if (isLinkEnabled()) {
-            A link = new A(getHref(), getLinkText());
-            link.setClass(Resources.CLASS_LINK);
-            concreteElement = link;
-        } else {
+        try {
+            if (isLinkEnabled()) {
+                concreteElement = new A(getHref(), getLinkText());
+                concreteElement.setClass(Resources.CLASS_LINK);
+            } else {
+                concreteElement = new StringElement();
+            }
+        } catch (Exception e) {
+            log.debug("link.isEnabled", e);
             concreteElement = new StringElement();
         }
         concreteElement.setClass(Resources.CLASS_LINK);

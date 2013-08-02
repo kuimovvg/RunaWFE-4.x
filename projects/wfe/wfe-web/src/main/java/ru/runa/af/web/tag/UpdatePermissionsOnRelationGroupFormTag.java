@@ -23,7 +23,6 @@ import ru.runa.af.web.action.UpdatePermissionsOnRelationGroup;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.PermissionTableBuilder;
 import ru.runa.common.web.tag.IdentifiableFormTag;
-import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -44,7 +43,7 @@ public class UpdatePermissionsOnRelationGroupFormTag extends IdentifiableFormTag
 
     @Override
     protected Permission getPermission() {
-        return RelationPermission.READ;
+        return Permission.READ;
     }
 
     @Override

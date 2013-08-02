@@ -19,10 +19,8 @@ package ru.runa.wf.web.tag;
 
 import java.util.List;
 
-import org.apache.ecs.html.Span;
 import org.apache.ecs.html.TD;
 
-import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
@@ -33,7 +31,6 @@ import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -71,25 +68,17 @@ public class ProcessSwimlaneAssignmentMonitorTag extends ProcessBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        try {
-            List<WfTask> activeTasks = Delegates.getExecutionService().getProcessTasks(getUser(), getIdentifiableId());
-            List<WfTask> filteredTasks = Lists.newArrayList();
-            for (WfTask task : activeTasks) {
-                if (Objects.equal(swimlaneName, task.getSwimlaneName())) {
-                    filteredTasks.add(task);
-                }
+        List<WfTask> activeTasks = Delegates.getExecutionService().getProcessTasks(getUser(), getIdentifiableId());
+        List<WfTask> filteredTasks = Lists.newArrayList();
+        for (WfTask task : activeTasks) {
+            if (Objects.equal(swimlaneName, task.getSwimlaneName())) {
+                filteredTasks.add(task);
             }
-            HeaderBuilder headerBuilder = new StringsHeaderBuilder(new String[] { Messages.getMessage(Messages.LABEL_STATE_NAME, pageContext),
-                    Messages.getMessage(Messages.LABEL_EXECUTOR_NAME, pageContext) });
-            RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(getUser(), filteredTasks, pageContext);
-            tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
-        } catch (ExecutorDoesNotExistException e) {
-            // i was against this crap, but was urged to
-            Span span = new Span();
-            span.setClass(ru.runa.common.web.Resources.CLASS_ERROR);
-            span.addElement(Commons.getMessage(Messages.EXCEPTION_EXECUTOR_DOES_NOT_EXISTS, pageContext, new Object[] { e.getExecutorName() }));
-            tdFormElement.addElement(span);
         }
+        HeaderBuilder headerBuilder = new StringsHeaderBuilder(new String[] { Messages.getMessage(Messages.LABEL_STATE_NAME, pageContext),
+                Messages.getMessage(Messages.LABEL_EXECUTOR_NAME, pageContext) });
+        RowBuilder rowBuilder = new ProcessSwimlaneAssignmentRowBuilder(getUser(), filteredTasks, pageContext);
+        tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }
 
 }

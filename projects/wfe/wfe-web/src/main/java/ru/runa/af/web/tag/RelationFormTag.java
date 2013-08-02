@@ -30,6 +30,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPermission;
+import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.service.delegate.Delegates;
 
 public class RelationFormTag extends TitledFormTag {
@@ -63,9 +64,7 @@ public class RelationFormTag extends TitledFormTag {
     @Override
     protected boolean isFormButtonEnabled() {
         if (relationId != null) {
-            Relation relation = Delegates.getRelationService().getRelation(getUser(), relationId);
-            enabled = Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE, relation);
-
+            enabled = Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE, SecuredObjectType.RELATION, relationId);
         }
         return enabled;
     }
