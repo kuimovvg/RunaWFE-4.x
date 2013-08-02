@@ -40,7 +40,6 @@
       </library>
    </runtime>
    <requires>
-      <import plugin="tk.eclipse.plugin.htmleditor" export="false"/>
       <import plugin="org.eclipse.ui"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.jface.text"/>
@@ -49,6 +48,7 @@
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="ru.runa.gpd"/>
+      <import plugin="tk.eclipse.plugin.htmleditor"/>
    </requires>
    <extension-point id="tags" name="Freemarker methods" schema="metadata/tags.exsd"/>
    <extension-point id="formats" name="Freemarker output formats for variables" schema="metadata/formats.exsd"/>
