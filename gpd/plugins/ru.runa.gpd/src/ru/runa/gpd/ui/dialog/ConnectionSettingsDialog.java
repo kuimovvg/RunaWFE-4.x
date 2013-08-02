@@ -1,6 +1,6 @@
 package ru.runa.gpd.ui.dialog;
 
-import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
@@ -11,8 +11,8 @@ public class ConnectionSettingsDialog extends CompactWizardDialog {
     private Button testButton;
     private Button syncButton;
 
-    public ConnectionSettingsDialog(IWizard newWizard) {
-        super(newWizard);
+    public ConnectionSettingsDialog(Wizard wizard) {
+        super(wizard);
     }
 
     public Button getTestButton() {

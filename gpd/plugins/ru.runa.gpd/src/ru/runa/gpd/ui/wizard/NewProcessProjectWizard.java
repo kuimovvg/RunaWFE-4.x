@@ -45,7 +45,6 @@ public class NewProcessProjectWizard extends Wizard implements INewWizard {
 
     @Override
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        setNeedsProgressMonitor(true);
         setWindowTitle(Localization.getString("NewProcessProjectWizard.wizard.title"));
     }
 

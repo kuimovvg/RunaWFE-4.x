@@ -43,7 +43,6 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
     public void init(IWorkbench w, IStructuredSelection currentSelection) {
         this.workbench = w;
         this.selection = currentSelection;
-        setNeedsProgressMonitor(true);
     }
 
     @Override

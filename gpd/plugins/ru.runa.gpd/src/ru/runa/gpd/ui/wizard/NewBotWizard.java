@@ -25,6 +25,11 @@ public class NewBotWizard extends Wizard implements INewWizard {
     }
 
     @Override
+    public void init(IWorkbench workbench, IStructuredSelection selection) {
+        this.selection = selection;
+    }
+
+    @Override
     public boolean performFinish() {
         try {
             getContainer().run(false, false, new IRunnableWithProgress() {
@@ -49,9 +54,4 @@ public class NewBotWizard extends Wizard implements INewWizard {
         return true;
     }
 
-    @Override
-    public void init(IWorkbench workbench, IStructuredSelection selection) {
-        this.selection = selection;
-        setNeedsProgressMonitor(true);
-    }
 }
