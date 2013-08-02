@@ -15,6 +15,7 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.webservice.AuthenticationAPI;
 import ru.runa.wfe.webservice.AuthenticationWebService;
@@ -68,7 +69,7 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
                 // check user is up to date
                 getExecutorService().getExecutor(user, user.getActor().getId());
             } catch (SOAPFaultException e) {
-                if (!"Error in subject decryption".equals(e.getMessage())) {
+                if (e.getMessage() == null || !e.getMessage().contains("Error in subject decryption")) {
                     Throwables.propagate(e);
                 }
                 connect();
@@ -140,7 +141,14 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
 
     @Override
     public WfDefinition redeployProcessDefinitionArchive(Long definitionId, byte[] par, List<String> types) {
-        return WfDefinitionAdapter.toDTO(getDefinitionService().redeployProcessDefinition(getUser(), definitionId, par, types));
+        try {
+            return WfDefinitionAdapter.toDTO(getDefinitionService().redeployProcessDefinition(getUser(), definitionId, par, types));
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("Definition "+definitionId+" does not exists")) {
+                throw new DefinitionDoesNotExistException(String.valueOf(definitionId));
+            }
+            throw Throwables.propagate(e);
+        }
     }
 
     private BotAPI getBotService() {
