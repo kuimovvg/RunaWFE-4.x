@@ -49,141 +49,253 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
 
     @Override
     public Long startProcess(User user, String definitionName, Map<String, Object> variablesMap) {
-        return getExecutionService().startProcess(user, definitionName, variablesMap);
+        try {
+            return getExecutionService().startProcess(user, definitionName, variablesMap);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void cancelProcess(User user, Long processId) {
-        getExecutionService().cancelProcess(user, processId);
+        try {
+            getExecutionService().cancelProcess(user, processId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public int getAllProcessesCount(User user, BatchPresentation batchPresentation) {
-        return getExecutionService().getAllProcessesCount(user, batchPresentation);
+        try {
+            return getExecutionService().getAllProcessesCount(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
-        return getExecutionService().getProcesses(user, batchPresentation);
+        try {
+            return getExecutionService().getProcesses(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public WfProcess getProcess(User user, Long id) {
-        return getExecutionService().getProcess(user, id);
+        try {
+            return getExecutionService().getProcess(user, id);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public WfProcess getParentProcess(User user, Long id) {
-        return getExecutionService().getParentProcess(user, id);
+        try {
+            return getExecutionService().getParentProcess(user, id);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfProcess> getSubprocessesRecursive(User user, Long id) {
-        return getExecutionService().getSubprocessesRecursive(user, id);
+        try {
+            return getExecutionService().getSubprocessesRecursive(user, id);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
-        return getExecutionService().getTasks(user, batchPresentation);
+        try {
+            return getExecutionService().getTasks(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public WfTask getTask(User user, Long taskId) {
-        return getExecutionService().getTask(user, taskId);
+        try {
+            return getExecutionService().getTask(user, taskId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfVariable> getVariables(User user, Long processId) {
-        return getExecutionService().getVariables(user, processId);
+        try {
+            return getExecutionService().getVariables(user, processId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public WfVariable getVariable(User user, Long processId, String variableName) {
-        return getExecutionService().getVariable(user, processId, variableName);
+        try {
+            return getExecutionService().getVariable(user, processId, variableName);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
-        return getExecutionService().getVariablesFromProcesses(user, processIds, variableName);
+        try {
+            return getExecutionService().getVariablesFromProcesses(user, processIds, variableName);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
-        getExecutionService().updateVariables(user, processId, variables);
+        try {
+            getExecutionService().updateVariables(user, processId, variables);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) {
-        getExecutionService().completeTask(user, taskId, variables, swimlaneActorId);
+        try {
+            getExecutionService().completeTask(user, taskId, variables, swimlaneActorId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfSwimlane> getSwimlanes(User user, Long processId) {
-        return getExecutionService().getSwimlanes(user, processId);
+        try {
+            return getExecutionService().getSwimlanes(user, processId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfTask> getProcessTasks(User user, Long processId) {
-        return getExecutionService().getProcessTasks(user, processId);
+        try {
+            return getExecutionService().getProcessTasks(user, processId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) {
-        return getExecutionService().getProcessDiagram(user, processId, taskId, childProcessId);
+        try {
+            return getExecutionService().getProcessDiagram(user, processId, taskId, childProcessId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) {
-        return getExecutionService().getProcessHistoryDiagram(user, processId, taskId);
+        try {
+            return getExecutionService().getProcessHistoryDiagram(user, processId, taskId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) {
-        return getExecutionService().getProcessUIHistoryData(user, processId, taskId);
+        try {
+            return getExecutionService().getProcessUIHistoryData(user, processId, taskId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) {
-        return getExecutionService().getProcessGraphElements(user, processId);
+        try {
+            return getExecutionService().getProcessGraphElements(user, processId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void assignSwimlane(User user, Long processId, String swimlaneName, Executor executor) {
-        getExecutionService().assignSwimlane(user, processId, swimlaneName, executor);
+        try {
+            getExecutionService().assignSwimlane(user, processId, swimlaneName, executor);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void assignTask(User user, Long taskId, Executor previousOwner, Executor newExecutor) {
-        getExecutionService().assignTask(user, taskId, previousOwner, newExecutor);
+        try {
+            getExecutionService().assignTask(user, taskId, previousOwner, newExecutor);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
-        return getExecutionService().getProcessLogs(user, filter);
+        try {
+            return getExecutionService().getProcessLogs(user, filter);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void markTaskOpened(User user, Long taskId) {
-        getExecutionService().markTaskOpened(user, taskId);
+        try {
+            getExecutionService().markTaskOpened(user, taskId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void removeProcesses(User user, ProcessFilter filter) {
-        getExecutionService().removeProcesses(user, filter);
+        try {
+            getExecutionService().removeProcesses(user, filter);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) {
-        return getExecutionService().getSystemLogs(user, batchPresentation);
+        try {
+            return getExecutionService().getSystemLogs(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public int getSystemLogsCount(User user, BatchPresentation batchPresentation) {
-        return getExecutionService().getSystemLogsCount(user, batchPresentation);
+        try {
+            return getExecutionService().getSystemLogsCount(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Object getProcessLogValue(User user, Long logId) {
-        return getExecutionService().getProcessLogValue(user, logId);
+        try {
+            return getExecutionService().getProcessLogValue(user, logId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 }

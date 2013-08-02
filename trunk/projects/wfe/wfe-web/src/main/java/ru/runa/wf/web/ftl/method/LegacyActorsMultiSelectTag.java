@@ -2,7 +2,6 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +16,11 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import freemarker.template.TemplateModelException;
 
@@ -29,11 +30,14 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
     @Override
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
-        Map<String, String> substitutions = new HashMap<String, String>();
+        WfVariable variable = variableProvider.getVariableNotNull(variableName);
+        String scriptingVariableName = variable.getDefinition().getScriptingName();
+        Map<String, String> substitutions = Maps.newHashMap();
         substitutions.put("VARIABLE", variableName);
+        substitutions.put("UNIQUENAME", scriptingVariableName);
+        substitutions.put("START_COUNTER", "0");
         StringBuffer html = new StringBuffer();
-        html.append(exportScript("scripts/LegacyActorsMultiSelectTag.js", substitutions, true));
-
+        html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, true));
         html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
                 .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
                 .append("\">[ + ]</a></div></div>");
@@ -104,9 +108,6 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
                 int filterIndex = byLogin ? 0 : 1;
                 batchPresentation.getFilteredFields().put(filterIndex, new StringFilterCriteria(hint + StringFilterCriteria.ANY_SYMBOLS));
             }
-            // thid method used instead of getActors due to lack paging in
-            // that
-            // method
             actors.addAll((Collection<? extends Actor>) Delegates.getExecutorService().getExecutors(user, batchPresentation));
         }
         return actors;

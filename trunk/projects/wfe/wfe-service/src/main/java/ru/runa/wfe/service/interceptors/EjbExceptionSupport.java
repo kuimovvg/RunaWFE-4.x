@@ -50,11 +50,6 @@ public class EjbExceptionSupport {
             } else {
                 log.error("ejb call error: " + DebugUtils.getDebugString(ic, true), th);
             }
-            if (th instanceof EJBException) {
-                Throwable cause = ((EJBException) th).getCause();
-                Throwables.propagateIfInstanceOf(cause, Exception.class);
-                throw Throwables.propagate(cause);
-            }
             Throwables.propagateIfInstanceOf(th, Exception.class);
             throw Throwables.propagate(th);
         }

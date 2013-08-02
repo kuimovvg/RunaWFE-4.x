@@ -17,19 +17,13 @@
  */
 package ru.runa.wfe.security;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
-
 import ru.runa.wfe.InternalApplicationException;
 
 /**
- * Signals that authorization failed during any
- * {@link javax.security.auth.Subject}involved operation.
- * <p>
- * Created on 27.07.2004
- * </p>
+ * Signals that authorization failed (no access rights to execute requested
+ * operation).
  * 
+ * @since 2.0
  */
 public class AuthorizationException extends InternalApplicationException {
     private static final long serialVersionUID = 939145271255203099L;

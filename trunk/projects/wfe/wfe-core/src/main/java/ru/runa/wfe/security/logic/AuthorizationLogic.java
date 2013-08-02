@@ -26,6 +26,7 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.hibernate.BatchPresentationHibernateCompiler;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
@@ -36,8 +37,8 @@ import com.google.common.base.Preconditions;
  * 
  */
 public class AuthorizationLogic extends CommonLogic {
-    public boolean isAllowed(User user, Permission permission, Identifiable identifiable) {
-        return permissionDAO.isAllowed(user, permission, identifiable);
+    public boolean isAllowed(User user, Permission permission, SecuredObjectType securedObjectType, Long identifiableId) {
+        return permissionDAO.isAllowed(user, permission, securedObjectType, identifiableId);
     }
 
     public boolean isPrivelegedExecutor(User user, Executor executor, Identifiable identifiable) {
@@ -110,8 +111,7 @@ public class AuthorizationLogic extends CommonLogic {
         if (hasPermission) {
             List<Executor> executors = compiler.getBatch();
             for (Executor privelegedExecutor : permissionDAO.getPrivilegedExecutors(identifiable)) {
-                if (batchPresentation.getClassPresentation().getPresentationClass().isInstance(privelegedExecutor)
-                        && isAllowed(user, Permission.READ, privelegedExecutor)) {
+                if (batchPresentation.getClassPresentation().getPresentationClass().isInstance(privelegedExecutor)) {
                     executors.add(0, privelegedExecutor);
                 }
             }

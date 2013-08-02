@@ -19,7 +19,6 @@ package ru.runa.af.web.tag;
 
 import ru.runa.common.web.tag.IdentifiableFormTag;
 import ru.runa.wfe.security.Identifiable;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 
@@ -37,7 +36,6 @@ public abstract class UpdateExecutorBaseFormTag extends IdentifiableFormTag {
     }
 
     protected Executor getExecutor() {
-        ExecutorService executorService = Delegates.getExecutorService();
-        return executorService.getExecutor(getUser(), getIdentifiableId());
+        return Delegates.getExecutorService().getExecutor(getUser(), getIdentifiableId());
     }
 }

@@ -43,76 +43,136 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
 
     @Override
     public WfDefinition deployProcessDefinition(User user, byte[] process, List<String> processType) {
-        return getDefinitionService().deployProcessDefinition(user, process, processType);
+        try {
+            return getDefinitionService().deployProcessDefinition(user, process, processType);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public WfDefinition redeployProcessDefinition(User user, Long processId, byte[] processArchive, List<String> processType) {
-        return getDefinitionService().redeployProcessDefinition(user, processId, processArchive, processType);
+        try {
+            return getDefinitionService().redeployProcessDefinition(user, processId, processArchive, processType);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
-        return getDefinitionService().getLatestProcessDefinitions(user, batchPresentation);
+        try {
+            return getDefinitionService().getLatestProcessDefinitions(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public WfDefinition getLatestProcessDefinition(User user, String definitionName) {
-        return getDefinitionService().getLatestProcessDefinition(user, definitionName);
+        try {
+            return getDefinitionService().getLatestProcessDefinition(user, definitionName);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public WfDefinition getProcessDefinition(User user, Long definitionId) {
-        return getDefinitionService().getProcessDefinition(user, definitionId);
+        try {
+            return getDefinitionService().getProcessDefinition(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void undeployProcessDefinition(User user, String processName) {
-        getDefinitionService().undeployProcessDefinition(user, processName);
+        try {
+            getDefinitionService().undeployProcessDefinition(user, processName);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void removeProcessDefinition(User user, String definitionName, int version) {
-        getDefinitionService().removeProcessDefinition(user, definitionName, version);
+        try {
+            getDefinitionService().removeProcessDefinition(user, definitionName, version);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId, boolean withTimerTransitions) {
-        return getDefinitionService().getOutputTransitionNames(user, definitionId, taskId, withTimerTransitions);
+        try {
+            return getDefinitionService().getOutputTransitionNames(user, definitionId, taskId, withTimerTransitions);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Interaction getTaskInteraction(User user, Long taskId) {
-        return getDefinitionService().getTaskInteraction(user, taskId);
+        try {
+            return getDefinitionService().getTaskInteraction(user, taskId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Interaction getStartInteraction(User user, Long definitionId) {
-        return getDefinitionService().getStartInteraction(user, definitionId);
+        try {
+            return getDefinitionService().getStartInteraction(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public byte[] getProcessDefinitionFile(User user, Long definitionId, String fileName) {
-        return getDefinitionService().getProcessDefinitionFile(user, definitionId, fileName);
+        try {
+            return getDefinitionService().getProcessDefinitionFile(user, definitionId, fileName);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<SwimlaneDefinition> getSwimlaneDefinitions(User user, Long definitionId) {
-        return getDefinitionService().getSwimlaneDefinitions(user, definitionId);
+        try {
+            return getDefinitionService().getSwimlaneDefinitions(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<VariableDefinition> getVariableDefinitions(User user, Long definitionId) {
-        return getDefinitionService().getVariableDefinitions(user, definitionId);
+        try {
+            return getDefinitionService().getVariableDefinitions(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) {
-        return getDefinitionService().getProcessDefinitionGraphElements(user, definitionId);
+        try {
+            return getDefinitionService().getProcessDefinitionGraphElements(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
-        return getDefinitionService().getProcessDefinitionHistory(user, name);
+        try {
+            return getDefinitionService().getProcessDefinitionHistory(user, name);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 }

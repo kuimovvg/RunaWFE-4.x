@@ -27,6 +27,9 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Preconditions;
@@ -36,6 +39,7 @@ import com.google.common.base.Throwables;
  * Utils.
  */
 public class ClassLoaderUtil {
+    private static final Log log = LogFactory.getLog(ClassLoaderUtil.class);
 
     public static Class<?> loadClass(String className, Class<?> callingClass) throws ClassNotFoundException {
         try {
@@ -96,6 +100,8 @@ public class ClassLoaderUtil {
         } catch (IOException e) {
             throw new InternalApplicationException("couldn't load properties file '" + resource + "'", e);
         }
+        log.debug("Read properties " + resource);
+        log.debug(properties);
         return properties;
     }
 

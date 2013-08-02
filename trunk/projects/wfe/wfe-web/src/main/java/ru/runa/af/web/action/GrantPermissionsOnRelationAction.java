@@ -28,7 +28,6 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.GrantPermisionsOnIdentifiableAction;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -39,7 +38,7 @@ import com.google.common.collect.Lists;
 public class GrantPermissionsOnRelationAction extends GrantPermisionsOnIdentifiableAction {
     public static final String ACTION_PATH = "/grantPermissionsOnRelation";
 
-    private static List<Permission> PERMISSIONS = Lists.newArrayList(RelationPermission.READ);
+    private static List<Permission> PERMISSIONS = Lists.newArrayList(Permission.READ);
 
     @Override
     protected List<Permission> getIdentifiablePermissions() {

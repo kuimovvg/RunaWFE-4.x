@@ -34,10 +34,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.logic.AuditLogic;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
@@ -175,6 +177,11 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         Preconditions.checkArgument(user != null);
+        boolean enabled = SystemProperties.getResources().getBooleanProperty("executionServiceAPI.updateVariables.enabled", false);
+        if (!enabled) {
+            throw new InternalApplicationException(
+                    "In order to enable script execution set property 'executionServiceAPI.updateVariables.enabled' to 'true' in system.properties or wfe.custom.system.properties");
+        }
         variableLogic.updateVariables(user, processId, variables);
     }
 

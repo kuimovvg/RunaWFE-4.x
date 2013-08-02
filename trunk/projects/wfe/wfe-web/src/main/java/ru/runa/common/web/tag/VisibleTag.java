@@ -66,20 +66,23 @@ public abstract class VisibleTag extends TagSupport {
 
     @Override
     public int doStartTag() {
-        isVisible = isVisible();
-        if (isVisible) {
-            JspWriter writer = pageContext.getOut();
-            try {
+        JspWriter writer = null;
+        try {
+            isVisible = isVisible();
+            if (isVisible) {
+                writer = pageContext.getOut();
                 ConcreteElement element = getStartElement();
                 element.output(writer);
-            } catch (Throwable th) {
-                // DEBUG category set due to logging in EJB layer; stack trace
-                // is logged only for Web layer errors.
-                log.debug("", th);
-                try {
+            }
+        } catch (Throwable th) {
+            // DEBUG category set due to logging in EJB layer; stack trace
+            // is logged only for Web layer errors.
+            log.debug("", th);
+            try {
+                if (writer != null) {
                     writer.write("<span class=\"error\">" + ActionExceptionHelper.getErrorMessage(th, pageContext) + "</span>");
-                } catch (IOException e1) {
                 }
+            } catch (IOException e1) {
             }
         }
         return doStartTagReturnedValue();

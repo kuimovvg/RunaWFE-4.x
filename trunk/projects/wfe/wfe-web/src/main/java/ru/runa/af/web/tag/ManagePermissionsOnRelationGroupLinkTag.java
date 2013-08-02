@@ -21,8 +21,8 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.wfe.commons.web.PortletUrlType;
-import ru.runa.wfe.relation.RelationPermission;
 import ru.runa.wfe.relation.RelationsGroupSecure;
+import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 
 public class ManagePermissionsOnRelationGroupLinkTag extends LinkTag {
@@ -31,11 +31,7 @@ public class ManagePermissionsOnRelationGroupLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            return Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE_PERMISSIONS, RelationsGroupSecure.INSTANCE);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, RelationsGroupSecure.INSTANCE);
     }
 
     @Override

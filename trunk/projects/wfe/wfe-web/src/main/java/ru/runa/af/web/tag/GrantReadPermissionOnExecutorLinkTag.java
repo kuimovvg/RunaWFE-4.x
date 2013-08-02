@@ -20,8 +20,6 @@ package ru.runa.af.web.tag;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 
@@ -36,14 +34,8 @@ public class GrantReadPermissionOnExecutorLinkTag extends IdLinkBaseTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            ExecutorService executorService = Delegates.getExecutorService();
-            Executor executor = executorService.getExecutor(getUser(), getIdentifiableId());
-            AuthorizationService authorizationService = Delegates.getAuthorizationService();
-            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, executor);
-        } catch (Exception e) {
-            return false;
-        }
+        Executor executor = Delegates.getExecutorService().getExecutor(getUser(), getIdentifiableId());
+        return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, executor);
     }
 
     @Override

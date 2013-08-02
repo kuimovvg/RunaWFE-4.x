@@ -11,7 +11,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -289,7 +288,7 @@ public class ViewUtil {
             }
             if (format instanceof ActorFormat || format instanceof ExecutorFormat || format instanceof GroupFormat) {
                 Executor executor = (Executor) variable.getValue();
-                if (ApplicationContextFactory.getPermissionDAO().isAllowed(user, Permission.READ, executor)) {
+                if (Delegates.getAuthorizationService().isAllowed(user, Permission.READ, executor)) {
                     HashMap<String, Object> params = Maps.newHashMap();
                     params.put("id", executor.getId());
                     String href = webHelper.getActionUrl("/manage_executor", params);

@@ -44,15 +44,11 @@ public class ProfileHttpSessionHelper {
     }
 
     public static Profile getProfile(HttpSession session) {
-        try {
-            Profile profile = (Profile) Commons.getSessionAttribute(session, PROFILE_ATTRIBUTE_NAME);
-            if (profile == null) {
-                throw new InvalidSessionException("Session does not contain profile.");
-            }
-            return profile;
-        } catch (IllegalStateException e) {
+        Profile profile = (Profile) Commons.getSessionAttribute(session, PROFILE_ATTRIBUTE_NAME);
+        if (profile == null) {
             throw new InvalidSessionException("Session does not contain profile.");
         }
+        return profile;
     }
 
     public static void reloadProfile(HttpSession session) {
