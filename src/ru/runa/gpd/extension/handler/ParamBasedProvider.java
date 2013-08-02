@@ -80,7 +80,6 @@ public abstract class ParamBasedProvider extends DelegableProvider {
 
         public ConfigurationWizard(ConfigurationWizardPage wizardPage) {
             this.wizardPage = wizardPage;
-            setNeedsProgressMonitor(true);
             setWindowTitle(Localization.getString("property.delegation.configuration"));
         }
 

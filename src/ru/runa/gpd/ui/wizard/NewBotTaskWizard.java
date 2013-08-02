@@ -77,7 +77,6 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
     public void init(IWorkbench workbench, IStructuredSelection selection) {
         this.selection = selection;
         this.workbench = workbench;
-        setNeedsProgressMonitor(true);
     }
 
     private IWorkbenchPage getActivePage() {

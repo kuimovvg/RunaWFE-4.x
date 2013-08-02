@@ -30,7 +30,6 @@ public class CopyBotTaskWizard extends Wizard implements INewWizard {
     @Override
     public void init(IWorkbench w, IStructuredSelection currentSelection) {
         this.selection = currentSelection;
-        setNeedsProgressMonitor(true);
     }
 
     @Override
