@@ -188,6 +188,9 @@ public class ParamDefConfig {
             for (ParamDefGroup group : groups) {
                 for (ParamDef paramDef : group.getParameters()) {
                     String value = props.get(paramDef.getName());
+                    if (paramDef.isOptional() && !isValid(value)) {
+                        continue;
+                    }
                     if (!paramDef.isOptional() && !isValid(value)) {
                         graphElement.addError("parambased.requiredParamIsNotSet", paramDef.getLabel());
                     } else if (paramDef.isUseVariable() && paramDef.getPresentation() == Presentation.combo) {
