@@ -1,6 +1,6 @@
 package ru.runa.gpd.validation;
 
-import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
@@ -11,8 +11,8 @@ public class ValidatorDialog extends CompactWizardDialog {
 
     private Button resetToDefaultsButton;
 
-    public ValidatorDialog(IWizard newWizard) {
-        super(newWizard);
+    public ValidatorDialog(Wizard wizard) {
+        super(wizard);
     }
 
     public Button getResetToDefaultsButton() {

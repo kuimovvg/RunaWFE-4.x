@@ -112,7 +112,6 @@ public class SendEmailActionHandlerProvider extends DelegableProvider {
 
         public ConfigurationWizard(EmailConfigWizardPage wizardPage) {
             this.wizardPage = wizardPage;
-            setNeedsProgressMonitor(true);
             setWindowTitle(Localization.getString("property.delegation.configuration"));
         }
 
