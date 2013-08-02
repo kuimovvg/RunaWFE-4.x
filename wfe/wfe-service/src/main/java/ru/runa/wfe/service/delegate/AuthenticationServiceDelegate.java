@@ -32,16 +32,28 @@ public class AuthenticationServiceDelegate extends EJB3Delegate implements Authe
 
     @Override
     public User authenticateByCallerPrincipal() {
-        return getAuthenticationService().authenticateByCallerPrincipal();
+        try {
+            return getAuthenticationService().authenticateByCallerPrincipal();
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public User authenticateByLoginPassword(String name, String password) {
-        return getAuthenticationService().authenticateByLoginPassword(name, password);
+        try {
+            return getAuthenticationService().authenticateByLoginPassword(name, password);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public User authenticateByKerberos(byte[] token) {
-        return getAuthenticationService().authenticateByKerberos(token);
+        try {
+            return getAuthenticationService().authenticateByKerberos(token);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 }

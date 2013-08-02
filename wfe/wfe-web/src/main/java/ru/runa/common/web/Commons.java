@@ -217,19 +217,22 @@ public class Commons {
 
     public static Object getSessionAttribute(HttpSession session, String attributeName) {
         Object retVal = null;
-        retVal = session.getAttribute(attributeName);
-        if (retVal == null) {
-            retVal = session.getAttribute("?" + attributeName);
-        }
-        if (retVal == null) {
-            Enumeration<String> attributes = session.getAttributeNames();
-            while (attributes.hasMoreElements()) {
-                String attribute = attributes.nextElement();
-                if (attribute.endsWith(attributeName)) {
-                    retVal = session.getAttribute(attribute);
-                    break;
+        try {
+            retVal = session.getAttribute(attributeName);
+            if (retVal == null) {
+                retVal = session.getAttribute("?" + attributeName);
+            }
+            if (retVal == null) {
+                Enumeration<String> attributes = session.getAttributeNames();
+                while (attributes.hasMoreElements()) {
+                    String attribute = attributes.nextElement();
+                    if (attribute.endsWith(attributeName)) {
+                        retVal = session.getAttribute(attribute);
+                        break;
+                    }
                 }
             }
+        } catch (IllegalStateException e) {
         }
         return retVal;
     }

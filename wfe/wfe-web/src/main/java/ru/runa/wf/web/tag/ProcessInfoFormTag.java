@@ -41,9 +41,7 @@ import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.ProcessClassPresentation;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -99,12 +97,11 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
 
         Element processDefinitionHref;
         try {
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            WfDefinition definition = definitionService.getProcessDefinition(getUser(), process.getDefinitionId());
+            WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(getUser(), process.getDefinitionId());
             String url = Commons.getActionUrl(ru.runa.common.WebResources.ACTION_MAPPING_MANAGE_DEFINITION, IdForm.ID_INPUT_NAME, definition.getId(),
                     pageContext, PortletUrlType.Render);
             processDefinitionHref = new A(url, process.getName());
-        } catch (AuthorizationException e1) {
+        } catch (Exception e) {
             processDefinitionHref = new StringElement(process.getName());
         }
         nameTR.addElement(new TD(processDefinitionHref).setClass(Resources.CLASS_LIST_TABLE_TD));

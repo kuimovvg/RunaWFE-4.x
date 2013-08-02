@@ -19,10 +19,8 @@ package ru.runa.wf.web.tag;
 
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.IdLinkBaseTag;
-import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.AuthorizationService;
-import ru.runa.wfe.service.ExecutionService;
+import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -34,14 +32,8 @@ public class GrantReadPermissionOnProcessLinkTag extends IdLinkBaseTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            AuthorizationService authorizationService = ru.runa.wfe.service.delegate.Delegates.getAuthorizationService();
-            ExecutionService executionService = Delegates.getExecutionService();
-            WfProcess process = executionService.getProcess(getUser(), getIdentifiableId());
-            return authorizationService.isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, process);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService()
+                .isAllowed(getUser(), Permission.UPDATE_PERMISSIONS, SecuredObjectType.PROCESS, getIdentifiableId());
     }
 
     @Override

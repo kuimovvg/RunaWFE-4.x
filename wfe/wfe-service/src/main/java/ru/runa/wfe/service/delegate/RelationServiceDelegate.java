@@ -44,61 +44,109 @@ public class RelationServiceDelegate extends EJB3Delegate implements RelationSer
 
     @Override
     public RelationPair addRelationPair(User user, Long relationId, Executor from, Executor to) {
-        return getRelationService().addRelationPair(user, relationId, from, to);
+        try {
+            return getRelationService().addRelationPair(user, relationId, from, to);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<Relation> getRelations(User user, BatchPresentation batchPresentation) {
-        return getRelationService().getRelations(user, batchPresentation);
+        try {
+            return getRelationService().getRelations(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Relation getRelationByName(User user, String name) {
-        return getRelationService().getRelationByName(user, name);
+        try {
+            return getRelationService().getRelationByName(user, name);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Relation getRelation(User user, Long id) {
-        return getRelationService().getRelation(user, id);
+        try {
+            return getRelationService().getRelation(user, id);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Relation createRelation(User user, Relation relation) {
-        return getRelationService().createRelation(user, relation);
+        try {
+            return getRelationService().createRelation(user, relation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Relation updateRelation(User user, Relation relation) throws RelationDoesNotExistException {
-        return getRelationService().updateRelation(user, relation);
+        try {
+            return getRelationService().updateRelation(user, relation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<RelationPair> getExecutorsRelationPairsRight(User user, String name, List<? extends Executor> right) {
-        return getRelationService().getExecutorsRelationPairsRight(user, name, right);
+        try {
+            return getRelationService().getExecutorsRelationPairsRight(user, name, right);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<RelationPair> getExecutorsRelationPairsLeft(User user, String name, List<? extends Executor> left) {
-        return getRelationService().getExecutorsRelationPairsLeft(user, name, left);
+        try {
+            return getRelationService().getExecutorsRelationPairsLeft(user, name, left);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<RelationPair> getRelationPairs(User user, String name, BatchPresentation batchPresentation) {
-        return getRelationService().getRelationPairs(user, name, batchPresentation);
+        try {
+            return getRelationService().getRelationPairs(user, name, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void removeRelationPair(User user, Long id) {
-        getRelationService().removeRelationPair(user, id);
+        try {
+            getRelationService().removeRelationPair(user, id);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void removeRelationPairs(User user, List<Long> ids) {
-        getRelationService().removeRelationPairs(user, ids);
+        try {
+            getRelationService().removeRelationPairs(user, ids);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void removeRelation(User user, Long name) {
-        getRelationService().removeRelation(user, name);
+        try {
+            getRelationService().removeRelation(user, name);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 }

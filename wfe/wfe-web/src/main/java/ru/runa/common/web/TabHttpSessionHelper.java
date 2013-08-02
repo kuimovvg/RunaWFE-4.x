@@ -41,14 +41,10 @@ public class TabHttpSessionHelper {
     }
 
     public static String getTabForwardName(HttpSession session) {
-        try {
-            String tabForwardName = (String) Commons.getSessionAttribute(session, TAG_ATTRIBUTE_NAME);
-            if (tabForwardName == null) {
-                throw new InvalidSessionException("Session does not contain tab forward name.");
-            }
-            return tabForwardName;
-        } catch (IllegalStateException e) {
-            throw new InvalidSessionException("Session does not contain profile.");
+        String tabForwardName = (String) Commons.getSessionAttribute(session, TAG_ATTRIBUTE_NAME);
+        if (tabForwardName == null) {
+            throw new InvalidSessionException("Session does not contain tab forward name.");
         }
+        return tabForwardName;
     }
 }

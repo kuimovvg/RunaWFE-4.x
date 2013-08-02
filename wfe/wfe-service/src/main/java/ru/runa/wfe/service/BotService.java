@@ -58,7 +58,7 @@ public interface BotService {
      * @throws BotStationAlreadyExistsException
      *             if name collision occurs
      */
-    public void updateBotStation(User user, BotStation bs) throws BotStationAlreadyExistsException;
+    public void updateBotStation(User user, BotStation botStation) throws BotStationAlreadyExistsException;
 
     /**
      * Removes bot station with all bots and bot tasks by id.

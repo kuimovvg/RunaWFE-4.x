@@ -73,7 +73,7 @@ public class ListRelationPairsFormTag extends BatchReturningTitledFormTag {
                 getReturnAction(), IdForm.ID_INPUT_NAME, builders);
         HeaderBuilder headerBuilder = new SortingHeaderBuilder(batchPresentation, 1, 0, getReturnAction(), pageContext);
         tdFormElement.addElement(tableBuilder.build(headerBuilder, rowBuilder));
-        tdFormElement.addElement(new Input(Input.HIDDEN, RelationForm.RELATION_ID, relationId));
+        tdFormElement.addElement(new Input(Input.HIDDEN, RelationForm.RELATION_ID, relationId.toString()));
     }
 
     @Override

@@ -32,12 +32,20 @@ public class ScriptingServiceDelegate extends EJB3Delegate implements ScriptingS
 
     @Override
     public void executeAdminScript(User user, byte[] configData, byte[][] processFiles) {
-        getScriptingService().executeAdminScript(user, configData, processFiles);
+        try {
+            getScriptingService().executeAdminScript(user, configData, processFiles);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void executeGroovyScript(User user, String script) {
-        getScriptingService().executeGroovyScript(user, script);
+        try {
+            getScriptingService().executeGroovyScript(user, script);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
 }

@@ -41,10 +41,6 @@ public class CreateRelationLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        try {
-            return Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE, RelationsGroupSecure.INSTANCE);
-        } catch (Exception e) {
-            return false;
-        }
+        return Delegates.getAuthorizationService().isAllowed(getUser(), RelationPermission.UPDATE, RelationsGroupSecure.INSTANCE);
     }
 }

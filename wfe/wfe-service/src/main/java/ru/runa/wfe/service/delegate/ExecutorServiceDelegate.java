@@ -41,117 +41,209 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
 
     @Override
     public <T extends Executor> T create(User user, T executor) {
-        return getExecutorService().create(user, executor);
+        try {
+            return getExecutorService().create(user, executor);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void remove(User user, List<Long> ids) {
-        getExecutorService().remove(user, ids);
+        try {
+            getExecutorService().remove(user, ids);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void update(User user, Executor executor) {
-        getExecutorService().update(user, executor);
+        try {
+            getExecutorService().update(user, executor);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<? extends Executor> getExecutors(User user, BatchPresentation batchPresentation) {
-        return getExecutorService().getExecutors(user, batchPresentation);
+        try {
+            return getExecutorService().getExecutors(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public int getExecutorsCount(User user, BatchPresentation batchPresentation) {
-        return getExecutorService().getExecutorsCount(user, batchPresentation);
+        try {
+            return getExecutorService().getExecutorsCount(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Actor getActorCaseInsensitive(String login) {
-        return getExecutorService().getActorCaseInsensitive(login);
+        try {
+            return getExecutorService().getActorCaseInsensitive(login);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public <T extends Executor> T getExecutorByName(User user, String name) {
-        return (T) getExecutorService().getExecutorByName(user, name);
+        try {
+            return (T) getExecutorService().getExecutorByName(user, name);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void addExecutorsToGroup(User user, List<Long> executorIds, Long groupId) {
-        getExecutorService().addExecutorsToGroup(user, executorIds, groupId);
+        try {
+            getExecutorService().addExecutorsToGroup(user, executorIds, groupId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void addExecutorToGroups(User user, Long executorId, List<Long> groupIds) {
-        getExecutorService().addExecutorToGroups(user, executorId, groupIds);
+        try {
+            getExecutorService().addExecutorToGroups(user, executorId, groupIds);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void removeExecutorsFromGroup(User user, List<Long> executorIds, Long groupId) {
-        getExecutorService().removeExecutorsFromGroup(user, executorIds, groupId);
+        try {
+            getExecutorService().removeExecutorsFromGroup(user, executorIds, groupId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void removeExecutorFromGroups(User user, Long executorId, List<Long> groupIds) {
-        getExecutorService().removeExecutorFromGroups(user, executorId, groupIds);
+        try {
+            getExecutorService().removeExecutorFromGroups(user, executorId, groupIds);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
-        return getExecutorService().getGroupChildren(user, group, batchPresentation, isExclude);
+        try {
+            return getExecutorService().getGroupChildren(user, group, batchPresentation, isExclude);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude) {
-        return getExecutorService().getGroupChildrenCount(user, group, batchPresentation, isExclude);
+        try {
+            return getExecutorService().getGroupChildrenCount(user, group, batchPresentation, isExclude);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<Actor> getGroupActors(User user, Group group) {
-        return getExecutorService().getGroupActors(user, group);
+        try {
+            return getExecutorService().getGroupActors(user, group);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
-        return getExecutorService().getExecutorGroups(user, executor, batchPresentation, isExclude);
+        try {
+            return getExecutorService().getExecutorGroups(user, executor, batchPresentation, isExclude);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude) {
-        return getExecutorService().getExecutorGroupsCount(user, executor, batchPresentation, isExclude);
+        try {
+            return getExecutorService().getExecutorGroupsCount(user, executor, batchPresentation, isExclude);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void setPassword(User user, Actor actor, String password) {
-        getExecutorService().setPassword(user, actor, password);
+        try {
+            getExecutorService().setPassword(user, actor, password);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public void setStatus(User user, Actor actor, boolean isActive) {
-        getExecutorService().setStatus(user, actor, isActive);
+        try {
+            getExecutorService().setStatus(user, actor, isActive);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public <T extends Executor> T getExecutor(User user, Long id) {
-        return (T) getExecutorService().getExecutor(user, id);
+        try {
+            return (T) getExecutorService().getExecutor(user, id);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public Actor getActorByCode(User user, Long code) {
-        return getExecutorService().getActorByCode(user, code);
+        try {
+            return getExecutorService().getActorByCode(user, code);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public boolean isExecutorInGroup(User user, Executor executor, Group group) {
-        return getExecutorService().isExecutorInGroup(user, executor, group);
+        try {
+            return getExecutorService().isExecutorInGroup(user, executor, group);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public boolean isExecutorExist(User user, String executorName) {
-        return getExecutorService().isExecutorExist(user, executorName);
+        try {
+            return getExecutorService().isExecutorExist(user, executorName);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
     public List<Executor> getAllExecutorsFromGroup(User user, Group group) {
-        return getExecutorService().getAllExecutorsFromGroup(user, group);
+        try {
+            return getExecutorService().getAllExecutorsFromGroup(user, group);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
 }
