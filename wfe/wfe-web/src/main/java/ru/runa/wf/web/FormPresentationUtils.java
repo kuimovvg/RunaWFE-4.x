@@ -341,6 +341,9 @@ public class FormPresentationUtils {
         if (errorText == null) {
             errorText = Commons.getMessage(Messages.MESSAGE_VARIABLE_FORMAT_ERROR, pageContext, new Object[] { inputName });
         }
+        if (errorText.trim().length() == 0) {
+            errorText = Commons.getMessage(Messages.MESSAGE_VALIDATION_ERROR, pageContext);
+        }
         return errorText;
     }
 
