@@ -38,6 +38,8 @@ import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.validation.ValidationException;
 
+import com.google.common.base.Strings;
+
 /**
  * Created on 15.12.2005
  * 
@@ -65,9 +67,13 @@ public abstract class BaseProcessFormAction extends ActionBase {
         } catch (ValidationException e) {
             userInputErrors = e.getConcatenatedFieldErrors();
             if (e.getGlobalErrors().size() > 0) {
-                for (String msg : e.getGlobalErrors()) {
-                    // we already have localized string
-                    addError(request, new ActionMessage(msg, false));
+                for (String message : e.getGlobalErrors()) {
+                    if (Strings.isNullOrEmpty(message)) {
+                        addError(request, new ActionMessage(Messages.MESSAGE_VALIDATION_ERROR));
+                    } else {
+                        // we are working with localized string
+                        addError(request, new ActionMessage(message, false));
+                    }
                 }
             } else {
                 addError(request, new ActionMessage(Messages.MESSAGE_VALIDATION_ERROR));
