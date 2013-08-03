@@ -69,10 +69,10 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
         return authorizationLogic.isPermissionAllowed(user, identifiable, permission);
     }
 
-    @WebMethod(operationName = "isAllowedById")
+    @WebMethod(exclude = true)
     @Override
     public boolean isAllowed(@WebParam(name = "user") User user, @WebParam(name = "permission") Permission permission,
-            @WebParam(name = "user") SecuredObjectType securedObjectType, @WebParam(name = "user") Long identifiableId) {
+            @WebParam(name = "securedObjectType") SecuredObjectType securedObjectType, @WebParam(name = "identifiableId") Long identifiableId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(permission != null);
         Preconditions.checkArgument(securedObjectType != null);
