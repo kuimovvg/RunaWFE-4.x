@@ -136,12 +136,8 @@ public class Duration {
             delayValue = delay.replaceAll(" ", "");
         }
         if (!"+ 0".equals(delayValue)) {
-            PhraseDecliner decliner = PhraseDecliner.getDecliner();
-            if (decliner != null) {
-                duration += " " + decliner.declineDuration(delayValue, unit.label);
-            } else {
-                duration += " " + delayValue + " " + unit.label;
-            }
+            PhraseDecliner decliner = PhraseDeclinerFactory.getDecliner();
+            duration += " " + decliner.declineDuration(delayValue, unit.label);
         }
         return duration;
     }
