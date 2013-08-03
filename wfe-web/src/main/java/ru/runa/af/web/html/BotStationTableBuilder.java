@@ -66,17 +66,15 @@ public class BotStationTableBuilder {
         input.setChecked(false);
         String path = Commons.getActionUrl("bot_station.do", "botStationId", new Long(botStation.getId()), pageContext, PortletUrlType.Render);
         tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(new A(path, new Long(botStation.getId()).toString())).setWidth("10%").setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(new A(path, botStation.getName())).setWidth("40%").setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(new A(path, botStation.getAddress())).setWidth("50%").setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new A(path, botStation.getName())).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new A(path, botStation.getAddress())).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
 
     private TR createTableHeaderTR() {
         TR tr = new TR();
         tr.setClass(Resources.CLASS_LIST_TABLE_TH);
-        tr.addElement(new TH("").setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TH("id").setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TH("").setWidth("20").setClass(Resources.CLASS_LIST_TABLE_TD));
         tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_STATION_NAME, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
         tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_STATION_ADDRESS, pageContext)).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
