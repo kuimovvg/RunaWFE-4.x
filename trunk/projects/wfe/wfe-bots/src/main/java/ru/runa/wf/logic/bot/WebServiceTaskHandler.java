@@ -112,6 +112,15 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
     }
 
     /**
+     * WFE XSLT tag support: process id for current task.
+     * 
+     * @return Process id.
+     */
+    public static Long getProcessId() {
+        return xsltHelper.get().getProcessId();
+    }
+
+    /**
      * WFE XSLT tag support: variable with specified name for current task.
      * 
      * @param name
