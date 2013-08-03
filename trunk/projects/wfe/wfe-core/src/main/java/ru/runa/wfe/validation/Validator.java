@@ -31,7 +31,6 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Strings;
 
 public abstract class Validator {
     protected final Log log = LogFactory.getLog(getClass());
@@ -101,9 +100,6 @@ public abstract class Validator {
     }
 
     protected void addError(String userMessage) {
-        if (Strings.isNullOrEmpty(userMessage)) {
-            userMessage = "no validation message";
-        }
         validatorContext.addGlobalError(userMessage);
     }
 
