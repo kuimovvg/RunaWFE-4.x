@@ -193,7 +193,6 @@ public interface RelationAPI {
      * 
      * @param id
      * @param user
-     * @throws RelationPairDoesNotExistException_Exception
      */
     @WebMethod
     @RequestWrapper(localName = "removeRelationPair", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.RemoveRelationPair")
@@ -202,9 +201,7 @@ public interface RelationAPI {
         @WebParam(name = "user", targetNamespace = "")
         User user,
         @WebParam(name = "id", targetNamespace = "")
-        Long id)
-        throws RelationPairDoesNotExistException_Exception
-    ;
+        Long id);
 
     /**
      * 
@@ -226,7 +223,6 @@ public interface RelationAPI {
      * @param user
      * @return
      *     returns ru.runa.wfe.webservice.Relation
-     * @throws RelationDoesNotExistException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
@@ -236,8 +232,6 @@ public interface RelationAPI {
         @WebParam(name = "user", targetNamespace = "")
         User user,
         @WebParam(name = "relation", targetNamespace = "")
-        Relation relation)
-        throws RelationDoesNotExistException_Exception
-    ;
+        Relation relation);
 
 }
