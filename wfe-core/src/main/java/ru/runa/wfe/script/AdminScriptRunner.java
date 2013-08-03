@@ -996,7 +996,12 @@ public class AdminScriptRunner {
             if (Strings.isNullOrEmpty(config)) {
                 String configContent = taskElement.attributeValue(CONFIGURATION_CONTENT_ATTRIBUTE_NAME);
                 if (configContent == null) {
-                    configContent = taskElement.getTextTrim();
+                	List<Element> children = taskElement.elements();
+                	if (children.size()!=0){
+                		configContent=XmlUtils.toString(children.get(0));
+                	} else {
+                		configContent = taskElement.getTextTrim();
+                	}
                 }
                 if (configContent != null) {
                     configuration = configContent.trim().getBytes(Charsets.UTF_8);
