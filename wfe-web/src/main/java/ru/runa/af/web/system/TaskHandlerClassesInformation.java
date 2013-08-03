@@ -37,6 +37,8 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.extension.TaskHandler;
 
+import com.google.common.io.Closeables;
+
 /**
  * User: stan79
  * 
@@ -54,19 +56,29 @@ public class TaskHandlerClassesInformation {
         String deploymentDirPath = IOCommons.getDeploymentDirPath();
         String earFilePath = deploymentDirPath + "/runawfe.ear";
         try {
-            // TODO check stream is closed
-            ZipInputStream earStream = new ZipInputStream(new FileInputStream(earFilePath));
-            ZipEntry entry;
-            while ((entry = earStream.getNextEntry()) != null) {
-                if (entry.getName().endsWith(".jar")) {
-                    searchInJar(entry.getName(), new JarInputStream(earStream));
+            ZipInputStream earInputStream = null;
+            try {
+                earInputStream = new ZipInputStream(new FileInputStream(earFilePath));
+                ZipEntry entry;
+                while ((entry = earInputStream.getNextEntry()) != null) {
+                    if (entry.getName().endsWith(".jar")) {
+                        searchInJar(entry.getName(), new JarInputStream(earInputStream));
+                    }
                 }
+            } finally {
+                Closeables.closeQuietly(earInputStream);
             }
             // TODO jboss7 extension dir
             File deployDir = new File(deploymentDirPath);
             for (File file : deployDir.listFiles()) {
                 if (file.getName().endsWith(".jar")) {
-                    searchInJar(file.getName(), new JarInputStream(new FileInputStream(file)));
+                    JarInputStream jarInputStream = null;
+                    try {
+                        jarInputStream = new JarInputStream(new FileInputStream(file));
+                        searchInJar(file.getName(), jarInputStream);
+                    } finally {
+                        Closeables.closeQuietly(jarInputStream);
+                    }
                 }
             }
         } catch (Throwable e) {
