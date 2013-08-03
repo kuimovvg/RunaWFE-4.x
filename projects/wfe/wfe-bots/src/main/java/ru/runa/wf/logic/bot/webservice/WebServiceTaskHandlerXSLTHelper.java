@@ -63,6 +63,10 @@ public class WebServiceTaskHandlerXSLTHelper {
         variables = new HashMap<String, Object>();
     }
 
+    public Long getProcessId() {
+        return task.getProcessId();
+    }
+
     /**
      * Read variable from current task instance.
      * 
