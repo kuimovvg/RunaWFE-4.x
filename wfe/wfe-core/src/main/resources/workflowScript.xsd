@@ -460,16 +460,15 @@
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="botConfiguration" minOccurs="1" maxOccurs="unbounded">
-					<xs:complexType>
-						<xs:simpleContent>
-							<xs:extension base="xs:string">
-								<xs:attribute name="name" type="xs:string" use="required"/>
-								<xs:attribute name="handler" type="xs:string" use="optional"/>
-								<xs:attribute name="configuration" type="xs:string"/>
-								<xs:attribute name="configurationContent" type="xs:string"/>
-							</xs:extension>
-						</xs:simpleContent>
-					</xs:complexType>
+  					<xs:complexType>
+    					<xs:sequence>
+      						<xs:any minOccurs="0" processContents="lax" />
+    					</xs:sequence>
+						<xs:attribute name="name" type="xs:string" use="required"/>
+						<xs:attribute name="handler" type="xs:string" use="optional"/>
+						<xs:attribute name="configuration" type="xs:string"/>
+						<xs:attribute name="configurationContent" type="xs:string"/>
+  					</xs:complexType>					
 				</xs:element>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string" use="required"/>
