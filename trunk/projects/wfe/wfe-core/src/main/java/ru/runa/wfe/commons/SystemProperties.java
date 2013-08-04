@@ -58,7 +58,7 @@ public class SystemProperties {
     }
 
     public static String getLocalFileStoragePath() {
-        return RESOURCES.getStringProperty("file.variable.local.storage.path", IOCommons.getInstallationDirPath() + "/filedata");
+        return RESOURCES.getStringProperty("file.variable.local.storage.path", IOCommons.getAppServerDirPath() + "/wfe.filedata");
     }
 
     public static int getLocalFileStorageFileLimit() {
@@ -91,5 +91,9 @@ public class SystemProperties {
 
     public static boolean isLDAPSynchronizationEnabled() {
         return RESOURCES.getBooleanProperty("ldap.synchronizer.enabled", false);
+    }
+
+    public static String getEARFileName() {
+        return RESOURCES.getStringProperty("ear.filename", "runawfe.ear");
     }
 }
