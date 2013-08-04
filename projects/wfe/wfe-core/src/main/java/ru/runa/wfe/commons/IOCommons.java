@@ -26,6 +26,7 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
 import com.google.common.io.ByteStreams;
+import com.google.common.io.PatternFilenameFilter;
 
 /**
  * Created on 01.12.2005
@@ -88,16 +89,6 @@ public class IOCommons {
 
     private static String adminkitScriptsDirPath;
 
-    public static String getInstallationDirPath() {
-        return System.getProperty("jboss.home.dir");
-    }
-
-    public static String getDeploymentDirPath() {
-        String serverDirName = System.getProperty("jboss.server.base.dir");
-        boolean jboss7 = System.getProperty("jboss.modules.dir") != null;
-        return jboss7 ? serverDirName + "/deployments" : serverDirName + "/" + System.getProperty("jboss.server.name") + "/deploy";
-    }
-
     public static String getAdminkitScriptsDirPath() {
         if (adminkitScriptsDirPath == null) {
             adminkitScriptsDirPath = getInstallationDirPath() + "/adminkit/scripts/";
@@ -108,4 +99,36 @@ public class IOCommons {
         return adminkitScriptsDirPath;
     }
 
+    public static String getInstallationDirPath() {
+        return System.getProperty("jboss.home.dir");
+    }
+
+    public static String getAppServerDirPath() {
+        String serverBaseDir = System.getProperty("jboss.server.base.dir");
+        if (AppServer.JBOSS7 == getAppServer()) {
+            return serverBaseDir;
+        }
+        return serverBaseDir + "/" + System.getProperty("jboss.server.name");
+    }
+
+    public static AppServer getAppServer() {
+        boolean jboss7 = System.getProperty("jboss.modules.dir") != null;
+        return jboss7 ? AppServer.JBOSS7 : AppServer.JBOSS4;
+    }
+
+    public static String getDeploymentDirPath() {
+        if (AppServer.JBOSS7 == getAppServer()) {
+            return getAppServerDirPath() + "/deployments";
+        } else {
+            return getAppServerDirPath() + "/deploy";
+        }
+    }
+
+    public static String getExtensionDirPath() {
+        return IOCommons.getAppServerDirPath() + "/wfe.custom";
+    }
+
+    public static File[] getJarFiles(File directory) {
+        return directory.listFiles(new PatternFilenameFilter(".*\\.jar"));
+    }
 }

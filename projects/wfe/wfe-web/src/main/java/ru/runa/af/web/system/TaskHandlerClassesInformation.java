@@ -33,11 +33,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wf.logic.bot.BotStationResources;
+import ru.runa.wfe.commons.AppServer;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.IOCommons;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.extension.TaskHandler;
 
-import com.google.common.io.Closeables;
+import com.google.common.io.Closer;
 
 /**
  * User: stan79
@@ -54,39 +56,46 @@ public class TaskHandlerClassesInformation {
 
     private static void init() {
         String deploymentDirPath = IOCommons.getDeploymentDirPath();
-        String earFilePath = deploymentDirPath + "/runawfe.ear";
+        String earFilePath = deploymentDirPath + "/" + SystemProperties.getEARFileName();
+        Closer closer = Closer.create();
         try {
-            ZipInputStream earInputStream = null;
-            try {
-                earInputStream = new ZipInputStream(new FileInputStream(earFilePath));
-                ZipEntry entry;
-                while ((entry = earInputStream.getNextEntry()) != null) {
-                    if (entry.getName().endsWith(".jar")) {
-                        searchInJar(entry.getName(), new JarInputStream(earInputStream));
-                    }
+            ZipInputStream earInputStream = closer.register(new ZipInputStream(new FileInputStream(earFilePath)));
+            ZipEntry entry;
+            while ((entry = earInputStream.getNextEntry()) != null) {
+                if (entry.getName().endsWith(".jar")) {
+                    searchInJar(entry.getName(), new JarInputStream(earInputStream));
                 }
-            } finally {
-                Closeables.closeQuietly(earInputStream);
             }
-            // TODO jboss7 extension dir
-            File deployDir = new File(deploymentDirPath);
-            for (File file : deployDir.listFiles()) {
-                if (file.getName().endsWith(".jar")) {
-                    JarInputStream jarInputStream = null;
-                    try {
-                        jarInputStream = new JarInputStream(new FileInputStream(file));
-                        searchInJar(file.getName(), jarInputStream);
-                    } finally {
-                        Closeables.closeQuietly(jarInputStream);
-                    }
+            if (IOCommons.getAppServer() == AppServer.JBOSS4) {
+                File deploymentDirectory = new File(deploymentDirPath);
+                log.debug("Searching in deployment directory: " + deploymentDirectory);
+                for (File file : IOCommons.getJarFiles(deploymentDirectory)) {
+                    JarInputStream jarInputStream = closer.register(new JarInputStream(new FileInputStream(file)));
+                    searchInJar(file.getName(), jarInputStream);
                 }
+            }
+            File extensionDirectory = new File(IOCommons.getExtensionDirPath());
+            if (extensionDirectory.exists() && extensionDirectory.isDirectory()) {
+                log.debug("Searching in extension directory: " + extensionDirectory);
+                for (File file : IOCommons.getJarFiles(extensionDirectory)) {
+                    JarInputStream jarInputStream = closer.register(new JarInputStream(new FileInputStream(file)));
+                    searchInJar(file.getName(), jarInputStream);
+                }
+            } else {
+                log.debug("No extension directory found: " + extensionDirectory);
             }
         } catch (Throwable e) {
             log.error(e.getMessage(), e);
+        } finally {
+            try {
+                closer.close();
+            } catch (IOException e) {
+                log.warn(e);
+            }
         }
     }
 
-    private static void searchInJar(String jarName, JarInputStream jarStream) throws IOException {
+    private static void searchInJar(String jarName, JarInputStream jarInputStream) throws IOException {
         boolean matches = false;
         for (String patternFileName : BotStationResources.getTaskHandlerJarNames()) {
             if (FilenameUtils.wildcardMatch(jarName, patternFileName)) {
@@ -100,7 +109,7 @@ public class TaskHandlerClassesInformation {
         }
         log.info("Searching in " + jarName);
         ZipEntry entry;
-        while ((entry = jarStream.getNextEntry()) != null) {
+        while ((entry = jarInputStream.getNextEntry()) != null) {
             if (entry.getName().endsWith(".class")) {
                 try {
                     String className = entry.getName();

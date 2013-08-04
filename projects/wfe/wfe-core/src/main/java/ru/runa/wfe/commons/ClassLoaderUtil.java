@@ -21,10 +21,14 @@
  */
 package ru.runa.wfe.commons;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -34,12 +38,33 @@ import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 /**
  * Utils.
  */
 public class ClassLoaderUtil {
     private static final Log log = LogFactory.getLog(ClassLoaderUtil.class);
+    private static final ClassLoader extensionClassLoader;
+    static {
+        File extensionDirectory = new File(IOCommons.getExtensionDirPath());
+        if (extensionDirectory.exists() && extensionDirectory.isDirectory()) {
+            List<URL> urls = Lists.newArrayList();
+            try {
+                urls.add(extensionDirectory.toURI().toURL());
+                for (File file : IOCommons.getJarFiles(extensionDirectory)) {
+                    urls.add(file.toURI().toURL());
+                }
+            } catch (MalformedURLException e) {
+                log.error("", e);
+            }
+            log.info("Creating extension class loader with " + urls);
+            extensionClassLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoaderUtil.class.getClassLoader());
+        } else {
+            log.info("No extension directory found: " + extensionDirectory + ", using default class loader");
+            extensionClassLoader = ClassLoaderUtil.class.getClassLoader();
+        }
+    }
 
     public static Class<?> loadClass(String className, Class<?> callingClass) throws ClassNotFoundException {
         try {
@@ -50,7 +75,7 @@ public class ClassLoaderUtil {
                 return Class.forName(className);
             } catch (ClassNotFoundException ex) {
                 try {
-                    return ClassLoaderUtil.class.getClassLoader().loadClass(className);
+                    return extensionClassLoader.loadClass(className);
                 } catch (ClassNotFoundException exc) {
                     return callingClass.getClassLoader().loadClass(className);
                 }
@@ -114,7 +139,7 @@ public class ClassLoaderUtil {
             loader = loader.getParent();
         }
         if (url == null) {
-            loader = ClassLoaderUtil.class.getClassLoader();
+            loader = extensionClassLoader;
             url = loader.getResource(resourceName);
         }
         if (url == null) {
