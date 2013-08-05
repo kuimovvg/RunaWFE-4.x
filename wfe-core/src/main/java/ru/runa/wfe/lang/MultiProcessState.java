@@ -98,7 +98,7 @@ public class MultiProcessState extends SubProcessState {
             } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
                 Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
                 Group group = TypeConversionUtil.convertTo(Group.class, miVar);
-                discriminatorValue = executorDAO.getGroupActors(group);
+                discriminatorValue = Lists.newArrayList(executorDAO.getGroupActors(group));
             } else if ("relation".equals(miDiscriminatorType) && miVarName != null && miRelationDiscriminatorTypeParam != null) {
                 String relationName = (String) ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
                 Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(),
@@ -162,9 +162,12 @@ public class MultiProcessState extends SubProcessState {
             ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
             processFactory.startSubprocess(executionContext, subExecutionContext);
         }
+        if (subProcesses.size() == 0) {
+            leave(executionContext);
+        }
     }
 
-    private Set<Actor> getActorsByRelation(String relationName, Executor paramExecutor) {
+    private List<Actor> getActorsByRelation(String relationName, Executor paramExecutor) {
         // TODO add reversed option in GPD
         List<Executor> executors = Lists.newArrayList(paramExecutor);
         Relation relation = relationDAO.getNotNull(relationName);
@@ -178,7 +181,7 @@ public class MultiProcessState extends SubProcessState {
                 actors.addAll(executorDAO.getGroupActors((Group) executor));
             }
         }
-        return actors;
+        return Lists.newArrayList(actors);
     }
 
     @Override

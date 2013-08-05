@@ -26,7 +26,7 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.lang.InteractionNode;
+import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.VariableDefinition;
@@ -50,12 +50,15 @@ public class InteractionsParser implements ProcessArchiveParser {
     @Override
     public void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition) {
         try {
-            byte[] formsXml = archive.getFileDataNotNull(IFileDataProvider.FORMS_XML_FILE_NAME);
+            byte[] formsXml = archive.getFileData(IFileDataProvider.FORMS_XML_FILE_NAME);
+            if (formsXml == null) {
+                return;
+            }
             Document document = XmlUtils.parseWithoutValidation(formsXml);
             List<Element> formElements = document.getRootElement().elements(FORM_ELEMENT_NAME);
             for (Element formElement : formElements) {
                 String stateId = formElement.attributeValue(STATE_ATTRIBUTE_NAME);
-                InteractionNode node = (InteractionNode) processDefinition.getNodeNotNull(stateId);
+                Node node = processDefinition.getNodeNotNull(stateId);
                 String fileName = formElement.attributeValue(FILE_ATTRIBUTE_NAME);
                 String typeName = formElement.attributeValue(TYPE_ATTRIBUTE_NAME);
                 String validationFileName = formElement.attributeValue(VALIDATION_FILE_ATTRIBUTE_NAME);
