@@ -1,6 +1,5 @@
 package ru.runa.wf.delegate;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,9 +44,9 @@ public class MultiInstanceTest extends ServletTestCase {
         actor3 = th.createActorIfNotExist("actor3", MultiInstanceTest.class.getName());
         th.addExecutorToGroup(actor3, group1);
         actor4 = th.createActorIfNotExist("relationparam1", MultiInstanceTest.class.getName());
-        th.addRelationPair(relation1.getId(), actor1, actor4);
-        th.addRelationPair(relation1.getId(), actor2, actor4);
-        th.addRelationPair(relation1.getId(), actor3, actor4);
+        th.addRelationPair(relation1.getId(), actor4, actor1);
+        th.addRelationPair(relation1.getId(), actor4, actor2);
+        th.addRelationPair(relation1.getId(), actor4, actor3);
         th.deployValidProcessDefinition("multiinstance superprocess.par");
         th.deployValidProcessDefinition("multiinstance subprocess.par");
         th.deployValidProcessDefinition("MultiInstance - MainProcess.par");
@@ -154,21 +153,37 @@ public class MultiInstanceTest extends ServletTestCase {
                         .next().getValue());
     }
 
-    public void testNullDiscriminator2() throws Exception {
+    public void testEmptyDiscriminator() throws Exception {
         User user = th.getAdminUser();
         Map<String, Object> variables = new HashMap<String, Object>();
-        /*
-         * TODO isV3CompatibilityMode long processId =
-         * executionService.startProcess(user, "multiinstance superprocess",
-         * variables); assertTrue(executionService.getProcess(user,
-         * processId).isEnded());
-         */
-
         variables.put("discriminator", new String[] {});
         variables.put("discriminator_r", new String[] {});
-        long processId = executionService.startProcess(user, "multiinstance superprocess", variables);
+        Long processId = executionService.startProcess(user, "multiinstance superprocess", variables);
+        System.out.println("multiinstancesubprocesses=" + executionService.getSubprocessesRecursive(user, processId));
         assertTrue(executionService.getProcess(user, processId).isEnded());
     }
+
+    // public void testNullDiscriminator2() throws Exception {
+    // User user = th.getAdminUser();
+    // Map<String, Object> variables = new HashMap<String, Object>();
+    // variables.put("discriminator", new String[] {});
+    // variables.put("discriminator_r", new String[] {});
+    // if (SystemProperties.isV3CompatibilityMode()) {
+    // Long processId = executionService.startProcess(user,
+    // "multiinstance superprocess", variables);
+    // System.out.println("multiinstancesubprocesses=" +
+    // executionService.getSubprocessesRecursive(user, processId));
+    // assertTrue(executionService.getProcess(user, processId).isEnded());
+    // } else {
+    // try {
+    // executionService.startProcess(user, "multiinstance superprocess",
+    // variables);
+    // fail("No exception on null discriminator");
+    // } catch (RuntimeException e) {
+    // Assert.assertEquals("discriminatorValue == null", e.getMessage());
+    // }
+    // }
+    // }
 
     public void testManySubprocessInToken() throws Exception {
         User user = th.getAdminUser();
@@ -255,15 +270,12 @@ public class MultiInstanceTest extends ServletTestCase {
             ++idx;
         }
 
-        ArrayList<String> actorList = new ArrayList<String>();
-        actorList.add(String.valueOf(actor1.getCode()));
-        actorList.add(String.valueOf(actor2.getCode()));
-        actorList.add(String.valueOf(actor3.getCode()));
+        List<Actor> actorList = Lists.newArrayList(actor1, actor2, actor3);
         tasks = executionService.getTasks(user, BatchPresentationFactory.TASKS.createDefault());
         assertEquals(3, tasks.size());
         idx = 1;
         for (WfTask task : tasks) {
-            String discriminatorValue = (String) executionService.getVariable(user, task.getProcessId(), "Variable1").getValue();
+            Actor discriminatorValue = (Actor) executionService.getVariable(user, task.getProcessId(), "Variable1").getValue();
             assertTrue(actorList.contains(discriminatorValue));
             actorList.remove(actorList.indexOf(discriminatorValue));
             executionService.completeTask(user, task.getId(), new HashMap<String, Object>(), null);
@@ -271,14 +283,14 @@ public class MultiInstanceTest extends ServletTestCase {
         }
         assertTrue(actorList.isEmpty());
 
-        actorList.add(String.valueOf(actor1.getCode()));
-        actorList.add(String.valueOf(actor2.getCode()));
-        actorList.add(String.valueOf(actor3.getCode()));
+        actorList.add(actor1);
+        actorList.add(actor2);
+        actorList.add(actor3);
         tasks = executionService.getTasks(user, BatchPresentationFactory.TASKS.createDefault());
         assertEquals(3, tasks.size());
         idx = 1;
         for (WfTask task : tasks) {
-            String discriminatorValue = (String) executionService.getVariable(user, task.getProcessId(), "Variable1").getValue();
+            Actor discriminatorValue = (Actor) executionService.getVariable(user, task.getProcessId(), "Variable1").getValue();
             assertTrue(actorList.contains(discriminatorValue));
             actorList.remove(actorList.indexOf(discriminatorValue));
             executionService.completeTask(user, task.getId(), new HashMap<String, Object>(), null);
