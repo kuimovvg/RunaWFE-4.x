@@ -130,7 +130,7 @@ public class ClassLoaderUtil {
         return properties;
     }
 
-    private static URL getAsURL(String resourceName, Class<?> callingClass) {
+    public static URL getAsURL(String resourceName, Class<?> callingClass) {
         Preconditions.checkNotNull(resourceName, "resourceName");
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = null;
@@ -151,7 +151,7 @@ public class ClassLoaderUtil {
         if (url == null) {
             url = callingClass.getResource(resourceName);
         }
-        if ((url == null) && (resourceName != null) && (resourceName.charAt(0) != '/')) {
+        if (url == null && resourceName.length() > 0 && resourceName.charAt(0) != '/') {
             return getAsURL('/' + resourceName, callingClass);
         }
         return url;

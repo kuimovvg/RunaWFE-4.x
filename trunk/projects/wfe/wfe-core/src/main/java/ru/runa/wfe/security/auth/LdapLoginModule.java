@@ -40,7 +40,7 @@ import com.google.common.collect.Maps;
 /**
  * MS Active Directory based login module. Created on 17.06.2005
  */
-public class ADPasswordLoginModule extends LoginModuleBase {
+public class LdapLoginModule extends LoginModuleBase {
     private Hashtable<String, String> env = new Hashtable<String, String>();
     @Value(value = "${authentication.domain.name}")
     private String domainName;

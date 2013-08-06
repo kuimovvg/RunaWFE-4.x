@@ -35,7 +35,7 @@ import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 
 @Stateless
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ SpringBeanAutowiringInterceptor.class, CacheNotifier.class, EjbExceptionSupport.class })
+@Interceptors({ CacheNotifier.class, EjbExceptionSupport.class, SpringBeanAutowiringInterceptor.class })
 public class InitializerServiceBean implements InitializerService {
     @Autowired
     private InitializerLogic initializerLogic;

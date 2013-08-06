@@ -300,7 +300,7 @@
 		<property name="loginModuleClassNames">
 			<list>
 				<value>ru.runa.wfe.security.auth.InternalDBPasswordLoginModule</value>
-				<!-- value>ru.runa.wfe.security.auth.ADPasswordLoginModule</value -->
+				<!-- value>ru.runa.wfe.security.auth.LdapLoginModule</value -->
 				<value>ru.runa.wfe.security.auth.KerberosLoginModule</value>
 				<value>ru.runa.wfe.security.auth.PrincipalLoginModule</value>
 			</list>
