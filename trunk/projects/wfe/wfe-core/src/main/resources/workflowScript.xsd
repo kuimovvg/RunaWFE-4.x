@@ -375,6 +375,7 @@
 										<xs:enumeration value="permission.change_self_password"/>
 										<xs:enumeration value="permission.create_executor"/>
 										<xs:enumeration value="permission.deploy_definition"/>
+										<xs:enumeration value="permission.view_logs"/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:attribute>
