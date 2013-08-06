@@ -11,7 +11,7 @@
 
     <properties>
         <!-- Zip file with Jboss AS. Used to build wfe application server and so on. -->
-        <jboss.zip.file>E:/tmp/RunaWFE_Server.4.0.2.zip</jboss.zip.file>
+        <jboss.zip.file>E:/Dofs/eclipse.wfe4/workspace/RunaWFE_Server.cactus.zip</jboss.zip.file>
         <!-- Jboss AS folder name in zip file. -->
         <jboss.zip.folder>runawfe.4.0.2</jboss.zip.folder>
         <jboss.home>${project.build.directory}/${jboss.zip.folder}</jboss.home>
@@ -129,7 +129,7 @@
                             <systemProperties>
                                 <property>
                                     <name>cactus.contextURL</name>
-                                    <value>http://localhost:8080/cactus</value>
+                                    <value>http://localhost:8888/cactus</value>
                                 </property>
                             </systemProperties>
                         </configuration>
@@ -167,10 +167,11 @@
                         <type>existing</type>
                         <home>${jboss.home}/server/default</home>
                         <properties>
+                        	<cargo.servlet.port>8888</cargo.servlet.port>
                             <cargo.jboss.configuration>default</cargo.jboss.configuration>
                             <cargo.rmi.port>10099</cargo.rmi.port>
                             <cargo.logging>high</cargo.logging>
-                            <cargo.jvmargs>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</cargo.jvmargs>
+                            <cargo.jvmargs>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Duser.language=en -Duser.country=US</cargo.jvmargs>
                         </properties>
                     </configuration>
                     <deployables>
