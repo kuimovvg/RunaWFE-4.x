@@ -122,6 +122,7 @@ public class ProcessLogs implements Serializable {
         Map<String, TaskCreateLog> tmpByNodeId = Maps.newHashMap();
         Map<TaskCreateLog, TaskEndLog> result = Maps.newHashMap();
         boolean compatibilityMode = false;
+        // TODO cycle execution will cause incorrect algorithm execution
         for (ProcessLog log : logs) {
             if (log instanceof TaskCreateLog) {
                 TaskCreateLog taskCreateLog = (TaskCreateLog) log;
@@ -136,7 +137,9 @@ public class ProcessLogs implements Serializable {
                 if (taskEndLog.getNodeId() != null) {
                     String key = log.getProcessId() + taskEndLog.getNodeId();
                     taskCreateLog = tmpByNodeId.remove(key);
-                    tmpByTaskName.remove(log.getProcessId() + taskCreateLog.getTaskName());
+                    if (taskCreateLog != null) {
+                        tmpByTaskName.remove(log.getProcessId() + taskCreateLog.getTaskName());
+                    }
                 } else {
                     String key = log.getProcessId() + taskEndLog.getTaskName();
                     taskCreateLog = tmpByTaskName.remove(key);

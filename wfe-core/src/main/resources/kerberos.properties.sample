@@ -8,16 +8,16 @@ appName=com.sun.security.jgss.accept
 moduleClassName=com.sun.security.auth.module.Krb5LoginModule
 storeKey=true
 useKeyTab=true
-keyTab=C:\\krb5.keytab
+keyTab=C:/krb5.keytab
 doNotPrompt=true
 debug=true
 
-principal=HTTP/WFServer@RUNA.RU
-serverPrincipal=HTTP/WFServer
+principal=HTTP/wfserver.test.com@TEST.COM
+serverPrincipal=HTTP/wfserver.test.com
 
 # for web authentication only
 jcifs.http.enableNegotiate=true
 sun.security.krb5.debug=true
-jcifs.spnego.servicePrincipal=HTTP/WFServer@RUNA.RU
+jcifs.spnego.servicePrincipal=HTTP/wfserver.test.com@TEST.COM
 http.auth.preference=Kerberos
 
