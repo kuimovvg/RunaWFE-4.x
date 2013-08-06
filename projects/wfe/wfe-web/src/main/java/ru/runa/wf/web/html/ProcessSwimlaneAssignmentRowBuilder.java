@@ -26,6 +26,7 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 
 import ru.runa.common.web.HTMLUtils;
+import ru.runa.common.web.Resources;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
@@ -48,15 +49,11 @@ public class ProcessSwimlaneAssignmentRowBuilder implements RowBuilder {
 
     @Override
     public TR buildNext() {
-        TR tr = new TR();
         WfTask task = iterator.next();
-        TD stateTd = new TD(task.getName());
-        tr.addElement(stateTd);
-        stateTd.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        TD executorsTd = new TD();
-        tr.addElement(executorsTd);
-        executorsTd.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        executorsTd.addElement(HTMLUtils.createExecutorElement(user, pageContext, task.getOwner()));
+        TR tr = new TR();
+        tr.addElement(new TD(task.getName()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(task.getSwimlaneName()).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(HTMLUtils.createExecutorElement(user, pageContext, task.getOwner())).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
 
