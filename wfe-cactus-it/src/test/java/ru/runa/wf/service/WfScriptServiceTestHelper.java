@@ -1,7 +1,8 @@
 package ru.runa.wf.service;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.util.Collection;
+
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.DBType;
@@ -12,14 +13,13 @@ import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ScriptingService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
-import java.io.IOException;
-import java.util.Collection;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class WfScriptServiceTestHelper extends WfServiceTestHelper {
 
@@ -47,8 +47,13 @@ public class WfScriptServiceTestHelper extends WfServiceTestHelper {
             if (!e1.getName().equals(e2.getName())) {
                 return false;
             }
-            if (!e1.getDescription().trim().equals(e2.getDescription().trim())) {
-                return false;
+            if (!Objects.equal(e1.getDescription(), e2.getDescription())) {
+                if (e1.getDescription() == null || e2.getDescription() == null) {
+                    return false;
+                }
+                if (!Objects.equal(e1.getDescription().trim(), e2.getDescription().trim())) {
+                    return false;
+                }
             }
             if ((e1 instanceof Actor) && (e2 instanceof Actor)) {
                 Actor a1 = (Actor) e1;
@@ -80,13 +85,11 @@ public class WfScriptServiceTestHelper extends WfServiceTestHelper {
 
     }
 
-    public void executeScript(String resourceName) throws IOException, ExecutorDoesNotExistException, AuthenticationException,
-            AuthorizationException {
+    public void executeScript(String resourceName) throws IOException, ExecutorDoesNotExistException, AuthenticationException, AuthorizationException {
         Delegates.getScriptingService().executeAdminScript(adminUser, readBytesFromFile(resourceName), new byte[0][]);
     }
 
-    public WfProcess startProcessInstance(String processDefinitionName, Executor performer) throws
-            InternalApplicationException {
+    public WfProcess startProcessInstance(String processDefinitionName, Executor performer) throws InternalApplicationException {
         Collection<Permission> validPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ,
                 DefinitionPermission.READ_STARTED_PROCESS);
         getAuthorizationService().setPermissions(adminUser, performer.getId(), validPermissions,
