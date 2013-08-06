@@ -57,7 +57,7 @@ public class ProcessSwimlaneMonitorTag extends ProcessBaseFormTag {
         headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_ASSIGNMENT, pageContext));
         headerNames.add(Messages.getMessage(Messages.LABEL_SWIMLANE_ORGFUNCTION, pageContext));
         HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
-        RowBuilder rowBuilder = new ProcessSwimlaneRowBuilder(getIdentifiableId(), swimlanes, pageContext);
+        RowBuilder rowBuilder = new ProcessSwimlaneRowBuilder(swimlanes, pageContext);
         tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }
 
