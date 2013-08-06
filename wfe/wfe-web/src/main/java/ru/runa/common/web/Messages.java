@@ -128,6 +128,7 @@ public class Messages {
     public static final String LABEL_PAGING_PREV_PAGE = "label.paging_prev_page";
     public static final String LABEL_PAGING_PREV_RANGE = "label.paging_prev_range";
 
+    public static final String LABEL_SWIMLANE = "label.swimlane";
     public static final String LABEL_SWIMLANE_NAME = "label.swimlane_name";
     public static final String LABEL_SWIMLANE_ASSIGNMENT = "label.swimlane_assigned_to";
     public static final String LABEL_SWIMLANE_ORGFUNCTION = "label.swimlane_organization_function";

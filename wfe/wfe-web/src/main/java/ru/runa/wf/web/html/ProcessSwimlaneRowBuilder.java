@@ -18,38 +18,25 @@
 package ru.runa.wf.web.html;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.jsp.PageContext;
 
-import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 
-import ru.runa.common.WebResources;
-import ru.runa.common.web.Commons;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
-import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.html.RowBuilder;
-import ru.runa.wf.web.form.SwimlaneForm;
-import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 public class ProcessSwimlaneRowBuilder implements RowBuilder {
     private final PageContext pageContext;
-
     private final List<WfSwimlane> swimlanes;
-
     private int currentIndex = 0;
 
-    private final Long processId;
-
-    public ProcessSwimlaneRowBuilder(Long processId, List<WfSwimlane> swimlanes, PageContext pageContext) {
-        this.processId = processId;
+    public ProcessSwimlaneRowBuilder(List<WfSwimlane> swimlanes, PageContext pageContext) {
         this.swimlanes = swimlanes;
         this.pageContext = pageContext;
     }
@@ -76,15 +63,11 @@ public class ProcessSwimlaneRowBuilder implements RowBuilder {
         TD organizationFunctionTD = new TD();
         tr.addElement(organizationFunctionTD);
         organizationFunctionTD.setClass(ru.runa.common.web.Resources.CLASS_LIST_TABLE_TD);
-        Map<String, Object> params = Maps.newHashMap();
-        params.put(IdForm.ID_INPUT_NAME, processId);
-        params.put(SwimlaneForm.SWIMLANE_NAME_INPUT_NAME, swimlane.getDefinition().getName());
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_DISPLAY_SWIMLANE, params, pageContext, PortletUrlType.Action);
         String swimlaneInitializer = swimlane.getDefinition().getOrgFunctionLabel();
         if (Strings.isNullOrEmpty(swimlaneInitializer)) {
             swimlaneInitializer = Messages.getMessage("label.unset_empty.value", pageContext);
         }
-        organizationFunctionTD.addElement(new A(url, swimlaneInitializer));
+        organizationFunctionTD.addElement(swimlaneInitializer);
         return tr;
     }
 
