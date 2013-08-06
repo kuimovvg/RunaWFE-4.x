@@ -9,13 +9,12 @@
          
     <context:annotation-config />
      
-    <bean id="ejb3.application.context" class="org.springframework.context.support.ClassPathXmlApplicationContext">
+    <bean id="ejb3.application.context" class="ru.runa.wfe.commons.SystemContext">
         <constructor-arg>
             <list>
                 <value>classpath:system.context.xml</value>
                 <value>classpath*:wfe.custom.system.context.xml</value>
             </list>
-		    </constructor-arg>
-	  </bean>  
-     
+		</constructor-arg>
+	</bean>  
 </beans>

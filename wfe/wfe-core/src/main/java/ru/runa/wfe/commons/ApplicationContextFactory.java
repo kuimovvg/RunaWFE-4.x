@@ -38,8 +38,8 @@ public class ApplicationContextFactory {
 
     public static ApplicationContext getContext() {
         if (!isContextInitialized()) {
-            BeanFactoryReference ref = ContextSingletonBeanFactoryLocator.getInstance().useBeanFactory(null);
-            applicationContext = (ApplicationContext) ref.getFactory();
+            BeanFactoryReference reference = ContextSingletonBeanFactoryLocator.getInstance().useBeanFactory(null);
+            applicationContext = (ApplicationContext) reference.getFactory();
             if (applicationContext == null) {
                 throw new RuntimeException("Context is not initialized");
             }
