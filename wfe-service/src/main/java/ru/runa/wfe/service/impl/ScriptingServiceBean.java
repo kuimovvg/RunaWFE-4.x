@@ -60,7 +60,7 @@ public class ScriptingServiceBean implements ScriptingService {
 
     @Override
     public void executeGroovyScript(@WebParam(name = "user") User user, @WebParam(name = "script") String script) {
-        boolean enabled = SystemProperties.getResources().getBooleanProperty("scripting.groovy.enabled", false);
+        boolean enabled = SystemProperties.getResources().getBooleanProperty("scriptingServiceAPI.executeGroovyScript.enabled", false);
         if (!enabled) {
             throw new InternalApplicationException(
                     "In order to enable script execution set property 'scripting.groovy.enabled' to 'true' in system.properties or wfe.custom.system.properties");
