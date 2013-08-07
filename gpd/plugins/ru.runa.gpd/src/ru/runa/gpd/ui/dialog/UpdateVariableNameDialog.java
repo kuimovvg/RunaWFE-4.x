@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.VariableNameChecker;
 import ru.runa.gpd.util.VariableUtils;
 
 public class UpdateVariableNameDialog extends Dialog {
@@ -54,6 +55,7 @@ public class UpdateVariableNameDialog extends Dialog {
         GridData nameTextData = new GridData(GridData.FILL_HORIZONTAL);
         nameTextData.minimumWidth = 200;
         nameField.setText(name);
+        nameField.addKeyListener(new VariableNameChecker());
         nameField.setLayoutData(nameTextData);
         // nameField.addKeyListener(new VariableNameChecker(nameField));
         nameField.addModifyListener(new ModifyListener() {
@@ -81,7 +83,7 @@ public class UpdateVariableNameDialog extends Dialog {
     }
 
     private void updateButtons() {
-        boolean allowCreation = !definition.getVariableNames(true).contains(name);
+        boolean allowCreation = !definition.getVariableNames(true).contains(name) && VariableNameChecker.isValid(name);
         getButton(IDialogConstants.OK_ID).setEnabled(allowCreation);
     }
 
