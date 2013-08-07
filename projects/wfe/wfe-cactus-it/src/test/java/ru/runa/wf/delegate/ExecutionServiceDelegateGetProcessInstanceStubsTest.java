@@ -26,17 +26,14 @@ import org.apache.cactus.ServletTestCase;
 import ru.runa.junit.ArrayAssert;
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
+import ru.runa.wfe.execution.ProcessClassPresentation;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.presentation.ClassPresentation;
-import ru.runa.wfe.presentation.filter.AnywhereStringFilterCriteria;
-import ru.runa.wfe.presentation.filter.FilterCriteria;
+import ru.runa.wfe.presentation.filter.StringFilterCriteria;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.var.Variable;
-import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
 
@@ -86,26 +83,13 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
         Map<String, Object> variablesMap = WfServiceTestHelper.createVariablesMap(name, value);
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME, variablesMap);
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME, variablesMap);
+        variablesMap.put(name, "anothervalue");
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME, variablesMap);
-        for (int i = 0; i < batchPresentation.getAllFields().length; ++i) {
-            if (batchPresentation.getAllFields()[i].dbSources[0].equals(Variable.class)
-                    && batchPresentation.getAllFields()[i].displayName.startsWith(ClassPresentation.editable_prefix)) {
-                batchPresentation.addDynamicField(i, name);
-            }
-        }
-        Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
-        filters.put(0, new AnywhereStringFilterCriteria(value));
+        int index = batchPresentation.getClassPresentation().getFieldIndex(ProcessClassPresentation.PROCESS_VARIABLE);
+        batchPresentation.addDynamicField(index, name);
+        batchPresentation.getFilteredFields().put(0, new StringFilterCriteria(value));
         List<WfProcess> processes = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
-        for (WfProcess processInstanceStub : processes) {
-            List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(), processInstanceStub.getId());
-            int instancesFound = 0;
-            for (WfVariable WfVariable : instanceVariablesMap) {
-                if (name.equals(WfVariable.getDefinition().getName()) && value.equals(WfVariable.getValue())) {
-                    instancesFound++;
-                }
-            }
-            assertEquals(instancesFound, 3);
-        }
+        assertEquals(2, processes.size());
     }
 
     public void testGetProcessInstanceStubsByVariableFilterWithWrongMatcherByAuthorizedSubject() throws Exception {
@@ -115,25 +99,11 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME, variablesMap);
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME, variablesMap);
         executionService.startProcess(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.SWIMLANE_PROCESS_NAME, variablesMap);
-        for (int i = 0; i < batchPresentation.getAllFields().length; ++i) {
-            if (batchPresentation.getAllFields()[i].dbSources[0].equals(Variable.class)
-                    && batchPresentation.getAllFields()[i].displayName.startsWith(ClassPresentation.editable_prefix)) {
-                batchPresentation.addDynamicField(i, name);
-            }
-        }
-        Map<Integer, FilterCriteria> filters = batchPresentation.getFilteredFields();
-        filters.put(0, new AnywhereStringFilterCriteria("bad matcher"));
+        int index = batchPresentation.getClassPresentation().getFieldIndex(ProcessClassPresentation.PROCESS_VARIABLE);
+        batchPresentation.addDynamicField(index, name);
+        batchPresentation.getFilteredFields().put(0, new StringFilterCriteria("bad matcher"));
         List<WfProcess> processes = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
-        for (WfProcess processInstanceStub : processes) {
-            List<WfVariable> instanceVariablesMap = executionService.getVariables(helper.getAuthorizedPerformerUser(), processInstanceStub.getId());
-            int instancesFound = 0;
-            for (WfVariable WfVariable : instanceVariablesMap) {
-                if (name.equals(WfVariable.getDefinition().getName()) && value.equals(WfVariable.getValue())) {
-                    instancesFound++;
-                }
-            }
-            assertEquals(instancesFound, 0);
-        }
+        assertEquals(0, processes.size());
     }
 
     public void testGetProcessInstanceStubsByAuthorizedSubject() throws Exception {
