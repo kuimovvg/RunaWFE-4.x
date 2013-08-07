@@ -81,14 +81,15 @@ public class GraphImage {
         }
         for (AbstractFigure nodeFigure : nodes.keySet()) {
             RenderHits hits = nodes.get(nodeFigure);
-            Stroke stroke;
-            if (diagramModel.isUmlNotation()) {
-                stroke = new BasicStroke(hits.isActive() ? DrawProperties.FIGURE_SELECTED_BORDER_WIDTH : DrawProperties.FIGURE_BORDER_WIDTH);
-            } else {
-                stroke = new BasicStroke(DrawProperties.FIGURE_SELECTED_BORDER_WIDTH);
+            int lineWidth = 1;
+            if (hits.isActive()) {
+                lineWidth *= 2;
+            }
+            if (!diagramModel.isUmlNotation()) {
+                lineWidth *= 2;
             }
             nodeFigure.setRenderHits(hits);
-            drawAbstractFigure(graphics, nodeFigure, hits, stroke);
+            drawAbstractFigure(graphics, nodeFigure, hits, new BasicStroke(lineWidth));
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
