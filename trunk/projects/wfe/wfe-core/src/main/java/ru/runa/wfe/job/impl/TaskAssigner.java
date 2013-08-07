@@ -64,7 +64,7 @@ public class TaskAssigner {
             try {
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
                 if (task.getSwimlane() != null) {
-                    Delegation delegation = task.getSwimlane().getDefinition(processDefinition).getDelegation();
+                    Delegation delegation = processDefinition.getSwimlaneNotNull(task.getSwimlane().getName()).getDelegation();
                     AssignmentHandler handler = delegation.getInstance();
                     handler.assign(new ExecutionContext(processDefinition, task), task);
                 }

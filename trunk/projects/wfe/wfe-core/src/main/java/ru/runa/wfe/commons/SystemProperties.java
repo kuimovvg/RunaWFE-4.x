@@ -96,4 +96,17 @@ public class SystemProperties {
     public static String getEARFileName() {
         return RESOURCES.getStringProperty("ear.filename", "runawfe.ear");
     }
+
+    public static boolean isAllowedNotDefinedVariables() {
+        return RESOURCES.getBooleanProperty("undefined.variables.allowed", false);
+    }
+
+    public static boolean isStrongVariableFormatEnabled() {
+        return RESOURCES.getBooleanProperty("strong.variables.format.enabled", true);
+    }
+
+    public static boolean isVariableAutoCastingEnabled() {
+        return RESOURCES.getBooleanProperty("variables.autocast.enabled", false);
+    }
+
 }

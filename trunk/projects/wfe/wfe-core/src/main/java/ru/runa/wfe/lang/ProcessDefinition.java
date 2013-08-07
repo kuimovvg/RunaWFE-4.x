@@ -119,12 +119,27 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         variables.add(variableDefinition);
     }
 
-    public VariableDefinition getVariable(String name) {
-        return variablesMap.get(name);
+    public VariableDefinition getVariable(String name, boolean searchInSwimlanes) {
+        VariableDefinition variableDefinition = variablesMap.get(name);
+        if (variableDefinition == null) {
+            SwimlaneDefinition swimlaneDefinition = getSwimlane(name);
+            if (swimlaneDefinition != null) {
+                variableDefinition = swimlaneDefinition.toVariableDefinition();
+            }
+        }
+        return variableDefinition;
+    }
+
+    public VariableDefinition getVariableNotNull(String name, boolean searchInSwimlanes) {
+        VariableDefinition variableDefinition = getVariable(name, searchInSwimlanes);
+        if (variableDefinition == null) {
+            throw new InternalApplicationException("variable '" + name + "' not found in " + this);
+        }
+        return variableDefinition;
     }
 
     public boolean isVariablePublic(String name) {
-        VariableDefinition variableDefinition = getVariable(name);
+        VariableDefinition variableDefinition = getVariable(name, false);
         if (variableDefinition == null) {
             return false;
         }
