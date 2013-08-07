@@ -34,7 +34,6 @@ import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.SystemExecutors;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
@@ -54,8 +53,7 @@ public class CommonLogic {
     @Autowired
     protected ProcessDAO processDAO;
 
-    protected <T extends Executor> T checkPermissionsOnExecutor(User user, T executor, Permission permission) throws AuthorizationException,
-            ExecutorDoesNotExistException {
+    protected <T extends Executor> T checkPermissionsOnExecutor(User user, T executor, Permission permission) {
         if (executor.getName().equals(SystemExecutors.PROCESS_STARTER_NAME) && permission.equals(Permission.READ)) {
             return executor;
         }
@@ -63,14 +61,9 @@ public class CommonLogic {
         return executor;
     }
 
-    protected <T extends Executor> List<T> checkPermissionsOnExecutors(User user, List<T> executors, Permission permission)
-            throws AuthorizationException, ExecutorDoesNotExistException {
-        boolean[] allowed = permissionDAO.isAllowed(user, permission, executors);
-        for (int i = 0; i < allowed.length; i++) {
-            Executor executor = executors.get(i);
-            if (!allowed[i] && !SystemExecutors.PROCESS_STARTER_NAME.equals(executor.getName())) {
-                throw new AuthorizationException(user + " does not have " + permission + " to " + executor);
-            }
+    protected <T extends Executor> List<T> checkPermissionsOnExecutors(User user, List<T> executors, Permission permission) {
+        for (Executor executor : executors) {
+            checkPermissionsOnExecutor(user, executor, permission);
         }
         return executors;
     }
