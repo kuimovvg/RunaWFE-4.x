@@ -140,13 +140,13 @@ public class SwimlaneEditorPage extends EditorPartBase {
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        String type = evt.getPropertyName();
+    public void propertyChange(PropertyChangeEvent event) {
+        String type = event.getPropertyName();
         if (PropertyNames.NODE_CHILDS_CHANGED.equals(type)) {
             fillViewer();
-        } else if (evt.getSource() instanceof Swimlane) {
+        } else if (event.getSource() instanceof Swimlane) {
             if (PropertyNames.PROPERTY_NAME.equals(type) || PropertyNames.PROPERTY_CONFIGURATION.equals(type)) {
-                tableViewer.refresh(evt.getSource());
+                tableViewer.refresh(event.getSource());
             }
         }
     }
@@ -154,16 +154,16 @@ public class SwimlaneEditorPage extends EditorPartBase {
     private void fillViewer() {
         List<Swimlane> swimlanes = getDefinition().getSwimlanes();
         tableViewer.setInput(swimlanes);
-        for (Swimlane var : swimlanes) {
-            var.addPropertyChangeListener(this);
+        for (Swimlane swimlane : swimlanes) {
+            swimlane.addPropertyChangeListener(this);
         }
         updateButtons();
     }
 
     @Override
     public void dispose() {
-        for (Swimlane var : getDefinition().getSwimlanes()) {
-            var.removePropertyChangeListener(this);
+        for (Swimlane swimlane : getDefinition().getSwimlanes()) {
+            swimlane.removePropertyChangeListener(this);
         }
         super.dispose();
     }
