@@ -7,11 +7,14 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -123,9 +126,15 @@ public abstract class ParamBasedProvider extends DelegableProvider {
 
         @Override
         public void createControl(Composite parent) {
-            paramDefComposite = new ParamDefComposite(parent, config, properties, variables);
-            setControl(paramDefComposite);
+            ScrolledComposite scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
+            scrolledComposite.setExpandHorizontal(true);
+            scrolledComposite.setExpandVertical(true);
+            scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+            paramDefComposite = new ParamDefComposite(scrolledComposite, config, properties, variables);
             paramDefComposite.createUI();
+            scrolledComposite.setMinSize(paramDefComposite.computeSize(paramDefComposite.getSize().x, SWT.DEFAULT));
+            scrolledComposite.setContent(paramDefComposite);
+            setControl(scrolledComposite);
         }
 
         public String getConfiguration() {
