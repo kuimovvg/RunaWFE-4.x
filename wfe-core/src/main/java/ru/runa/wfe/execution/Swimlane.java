@@ -44,8 +44,6 @@ import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.SwimlaneAssignLog;
 import ru.runa.wfe.extension.Assignable;
-import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
 
@@ -126,10 +124,6 @@ public class Swimlane implements Serializable, Assignable {
 
     public void setProcess(Process process) {
         this.process = process;
-    }
-
-    public SwimlaneDefinition getDefinition(ProcessDefinition processDefinition) {
-        return processDefinition.getSwimlaneNotNull(name);
     }
 
     @Override
