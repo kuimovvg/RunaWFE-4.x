@@ -12,6 +12,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.ContentWizardPage;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
+import ru.runa.gpd.ui.custom.VariableNameChecker;
 import ru.runa.gpd.util.VariableUtils;
 
 public class VariableNamePage extends ContentWizardPage {
@@ -36,6 +37,7 @@ public class VariableNamePage extends ContentWizardPage {
         final Text nameField = new Text(composite, SWT.BORDER);
         nameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         nameField.setText(variableName);
+        nameField.addKeyListener(new VariableNameChecker());
         nameField.addModifyListener(new LoggingModifyTextAdapter() {
             @Override
             protected void onTextChanged(ModifyEvent e) throws Exception {
@@ -71,6 +73,8 @@ public class VariableNamePage extends ContentWizardPage {
             setErrorMessage(Localization.getString("VariableNamePage.error.empty"));
         } else if (definition.getVariableNames(true).contains(variableName)) {
             setErrorMessage(Localization.getString("VariableNamePage.error.duplicated"));
+        } else if (!VariableNameChecker.isValid(variableName)) {
+            setErrorMessage(Localization.getString("VariableNamePage.error.forbiddenCharacters"));
         } else {
             setErrorMessage(null);
         }
