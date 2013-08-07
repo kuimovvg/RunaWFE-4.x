@@ -28,7 +28,6 @@ import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.base.Strings;
@@ -87,14 +86,10 @@ public class InteractionsParser implements ProcessArchiveParser {
                         interaction.getRequiredVariableNames().add(varName);
                     }
                     for (String name : variableNames) {
-                        VariableDefinition variableDefinition = processDefinition.getVariable(name);
+                        VariableDefinition variableDefinition = processDefinition.getVariable(name, true);
                         if (variableDefinition == null) {
-                            SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlane(name);
-                            if (swimlaneDefinition == null) {
-                                throw new InvalidDefinitionException(processDefinition.getName(), "Variable '" + name + "' is defined in '"
-                                        + validationFileName + "' but not defined in " + processDefinition);
-                            }
-                            variableDefinition = swimlaneDefinition.toVariableDefinition();
+                            throw new InvalidDefinitionException(processDefinition.getName(), "Variable '" + name + "' is defined in '"
+                                    + validationFileName + "' but not defined in " + processDefinition);
                         }
                         interaction.getVariables().put(name, variableDefinition);
                     }
