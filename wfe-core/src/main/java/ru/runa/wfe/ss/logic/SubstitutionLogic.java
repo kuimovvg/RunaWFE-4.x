@@ -200,7 +200,7 @@ public class SubstitutionLogic extends CommonLogic {
     public void delete(User user, Substitution substitution) {
         log.info("Deleting " + substitution);
         Actor actor = executorDAO.getActor(substitution.getActorId());
-        checkPermissionsOnExecutors(user, Lists.newArrayList(actor), ExecutorPermission.UPDATE);
+        checkPermissionsOnExecutor(user, actor, ExecutorPermission.UPDATE);
         substitutionDAO.delete(substitution);
         fixPositionsForDeletedSubstitution(substitution.getActorId());
     }

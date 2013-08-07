@@ -45,12 +45,8 @@ public interface AuthorizationService {
     public boolean isAllowed(User user, Permission permission, SecuredObjectType securedObjectType, Long identifiableId);
 
     /**
-     * Checks whether user has permission on identifiables.
-     * 
-     * @param user
-     * @param permission
-     * @param identifiables
-     * @return
+     * Checks whether user has permission on identifiables of the same secured
+     * object type.
      */
     public <T extends Identifiable> boolean[] isAllowed(User user, Permission permission, List<T> identifiables);
 
