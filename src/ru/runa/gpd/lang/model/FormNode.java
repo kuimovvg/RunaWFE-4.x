@@ -126,22 +126,18 @@ public abstract class FormNode extends SwimlanedNode {
     @Override
     protected void validate() {
         super.validate();
-        if (!hasForm()) {
-            // We do not have a form, don't check validation file
-            return;
+        if (hasFormValidation()) {
+            IFile validationFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.validationFileName);
+            if (!validationFile.exists()) {
+                addError("formNode.validationFileNotFound", this.validationFileName);
+                return;
+            }
         }
-        if (!hasFormValidation()) {
-            addError("formNode.validationFileNotExist");
-            return;
+        if (hasForm()) {
+            FormType formType = FormTypeProvider.getFormType(this.formType);
+            IFile formFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.formFileName);
+            formType.validate(formFile, this);
         }
-        IFile validationFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.validationFileName);
-        if (!validationFile.exists()) {
-            addError("formNode.validationFileNotFound");
-            return;
-        }
-        FormType formType = FormTypeProvider.getFormType(this.formType);
-        IFile formFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.formFileName);
-        formType.validate(formFile, this);
     }
 
     public Set<String> getValidationVariables(IFolder processFolder) throws Exception {
