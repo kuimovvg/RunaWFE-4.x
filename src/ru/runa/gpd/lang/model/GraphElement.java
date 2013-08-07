@@ -310,12 +310,14 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         }
     }
 
-    public void addPropertyChangeListener(PropertyChangeListener pcl) {
-        listeners.addPropertyChangeListener(pcl);
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        // duplicates
+        removePropertyChangeListener(listener);
+        listeners.addPropertyChangeListener(listener);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener pcl) {
-        listeners.removePropertyChangeListener(pcl);
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        listeners.removePropertyChangeListener(listener);
     }
 
     protected void removeAllPropertyChangeListeners() {

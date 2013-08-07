@@ -31,12 +31,17 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
+import com.google.common.base.Objects;
+
 import ru.runa.gpd.editor.GraphicalEditorContributor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.graphiti.add.AddTransitionFeature;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Transition;
 
 public class DiagramEditorPage extends DiagramEditor implements PropertyChangeListener {
@@ -57,11 +62,22 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        PictogramElement pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(evt.getSource());
+    public void propertyChange(PropertyChangeEvent event) {
+        PictogramElement pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(event.getSource());
         if (pe != null) {
-            BOUpdateContext context = new BOUpdateContext(pe, evt.getSource());
+            BOUpdateContext context = new BOUpdateContext(pe, event.getSource());
             getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
+        } else if (event.getSource() instanceof Swimlane && PropertyNames.PROPERTY_NAME.equals(event.getPropertyName())) {
+            // TODO unify event propagation to interested parties
+            for (SwimlanedNode swimlanedNode : editor.getDefinition().getChildren(SwimlanedNode.class)) {
+                if (Objects.equal(swimlanedNode.getSwimlane(), event.getSource())) {
+                    pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(swimlanedNode);
+                    if (pe != null) {
+                        BOUpdateContext context = new BOUpdateContext(pe, swimlanedNode);
+                        getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
+                    }
+                }
+            }
         }
     }
 
