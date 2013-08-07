@@ -36,9 +36,6 @@ public final class DrawProperties {
     public static final int TRANSITION_CLEAN_WIDTH = 10;
     public static final int FIGURE_CLEAN_WIDTH = 5;
 
-    public static final int FIGURE_BORDER_WIDTH = 1;
-    public static final int FIGURE_SELECTED_BORDER_WIDTH = 2;
-
     private static boolean useEdgingMode = resources.getBooleanProperty("edgingOnly", true);
 
     public static Color getBackgroundColor() {
