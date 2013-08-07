@@ -118,7 +118,6 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     }
                 }
                 ((ScrolledComposite) getParent()).setMinSize(computeSize(getSize().x, SWT.DEFAULT));
-                ((ScrolledComposite) getParent()).setMinHeight(2000);
                 this.layout(true, true);
                 this.redraw();
             } catch (Throwable e) {
