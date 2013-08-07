@@ -29,10 +29,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.VariableDeleteLog;
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.dao.NodeProcessDAO;
 import ru.runa.wfe.lang.Node;
@@ -43,7 +45,9 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.VariableCreator;
+import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dao.VariableDAO;
+import ru.runa.wfe.var.format.FormatCommons;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -152,19 +156,35 @@ public class ExecutionContext {
 
     public void setVariable(String name, Object value) {
         Preconditions.checkNotNull(name, "name is null");
-        // backwardCompatibilityVariablesMode
         SwimlaneDefinition swimlaneDefinition = getProcessDefinition().getSwimlane(name);
         if (swimlaneDefinition != null) {
+            log.debug("Assigning swimlane '" + name + "' value '" + value + "'");
             Swimlane swimlane = getProcess().getSwimlaneNotNull(swimlaneDefinition);
             swimlane.assignExecutor(this, TypeConversionUtil.convertTo(Executor.class, value), true);
             return;
         }
+        if (!SystemProperties.isV3CompatibilityMode()) {
+            VariableDefinition variableDefinition = getProcessDefinition().getVariable(name, false);
+            if (variableDefinition == null && !SystemProperties.isAllowedNotDefinedVariables()) {
+                throw new InternalApplicationException("Variable '" + name
+                        + "' is not defined in process definition and setting 'undefined.variables.allowed'=false");
+            }
+            if (value != null && variableDefinition != null && SystemProperties.isStrongVariableFormatEnabled()) {
+                Class<?> definedClass = FormatCommons.create(variableDefinition).getJavaClass();
+                if (!definedClass.isAssignableFrom(value.getClass())) {
+                    if (SystemProperties.isVariableAutoCastingEnabled()) {
+                        value = TypeConversionUtil.convertTo(definedClass, value);
+                    } else {
+                        throw new InternalApplicationException("Variable '" + name + "' defined as '" + definedClass + "' but value is instance of '"
+                                + value.getClass() + "'");
+                    }
+                }
+            }
+        }
         Variable<?> variable = variableDAO.get(getProcess(), name);
-        // if there is already a variable and it doesn't support the current
-        // type
+        // if there is exist variable and it doesn't support the current type
         if (variable != null && !variable.supports(value)) {
-            // delete the old variable
-            log.debug("variable type change. deleting '" + name + "' from '" + this + "'");
+            log.debug("Variable type is changing: deleting old variable '" + name + "' from '" + this + "'");
             variableDAO.delete(variable);
             addLog(new VariableDeleteLog(variable));
             variable = null;
@@ -178,7 +198,7 @@ public class ExecutionContext {
             if (Objects.equal(variable.getValue(), value)) {
                 return;
             }
-            log.debug("update variable '" + name + "' in '" + this + "' to value '" + value + "'");
+            log.debug("Updating variable '" + name + "' in '" + this + "' to value '" + value + "'");
             variable.setValue(this, value);
         }
     }
