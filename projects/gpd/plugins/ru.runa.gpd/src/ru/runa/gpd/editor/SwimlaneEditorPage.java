@@ -34,10 +34,12 @@ import org.eclipse.ui.ide.IDE;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
 import ru.runa.gpd.lang.NodeRegistry;
+import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
@@ -197,7 +199,20 @@ public class SwimlaneEditorPage extends EditorPartBase {
         } else {
             message.append(Localization.getString("Swimlane.NotUsed"));
         }
+        message.append("\n");
+        List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), swimlane);
+        message.append(Localization.getString("Variable.ExistInForms")).append("\n");
+        if (nodesWithVar.size() > 0) {
+            for (FormNode node : nodesWithVar) {
+                message.append(" - ").append(node.getName()).append("\n");
+            }
+            message.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
+        } else {
+            message.append(Localization.getString("Variable.NoFormsUsed"));
+        }
         if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), message.toString())) {
+            // remove variable from form validations
+            ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane);
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
             command.setProcessDefinition(getDefinition());
             command.setSwimlane(swimlane);
