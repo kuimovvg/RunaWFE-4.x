@@ -29,6 +29,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.PagingCommons;
 import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.commons.dao.CommonDAO;
@@ -181,6 +182,7 @@ public class PermissionDAO extends CommonDAO {
                 return result;
             }
         }
+        final SecuredObjectType securedObjectType = identifiables.get(0).getSecuredObjectType();
         List<PermissionMapping> permissions = new ArrayList<PermissionMapping>();
         // 2000 parameters is the maximum for MSSQL
         int window = 2000 - executorWithGroups.size() - 2;
@@ -190,7 +192,11 @@ public class PermissionDAO extends CommonDAO {
             final int end = (i + 1) * window > identifiables.size() ? identifiables.size() : (i + 1) * window;
             final List<Long> identifiableIds = new ArrayList<Long>(end - start);
             for (int j = start; j < end; j++) {
-                identifiableIds.add(identifiables.get(j).getIdentifiableId());
+                Identifiable identifiable = identifiables.get(j);
+                identifiableIds.add(identifiable.getIdentifiableId());
+                if (securedObjectType != identifiable.getSecuredObjectType()) {
+                    throw new InternalApplicationException("Identifiables should be of the same secured object type (" + securedObjectType + ")");
+                }
             }
             if (identifiableIds.isEmpty()) {
                 break;
@@ -202,7 +208,7 @@ public class PermissionDAO extends CommonDAO {
                     Query query = session
                             .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
                     query.setParameterList("identifiableIds", identifiableIds);
-                    query.setParameter("type", identifiables.get(0).getSecuredObjectType());
+                    query.setParameter("type", securedObjectType);
                     query.setParameter("mask", permission.getMask());
                     query.setParameterList("executors", executorWithGroups);
                     return query.list();
