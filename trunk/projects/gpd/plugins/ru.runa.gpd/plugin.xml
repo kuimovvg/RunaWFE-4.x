@@ -1039,10 +1039,35 @@
             botTaskHandler="false"
             decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.GroovyActionHandlerProvider"
+            className="ru.runa.wfe.extension.handler.GroovyActionHandler"
+            label="%ru.runa.wfe.extension.handler.GroovyActionHandler"
+            enabled="true" />
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
+            cellEditorProvider="ru.runa.gpd.extension.handler.GroovyActionHandlerProvider"
             className="ru.runa.wfe.extension.handler.BSHActionHandler"
-            enabled="true"
+            enabled="false"
             label="%ru.runa.wfe.extension.handler.BSHActionHandler">
       </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
+            className="ru.runa.wfe.extension.handler.JavaScriptActionHandler"
+            label="%ru.runa.wfe.extension.handler.JavaScriptActionHandler"
+            enabled="true" />
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            decisionHandler="false"
+            className="ru.runa.wfe.extension.handler.RhinoJSActionHandler"
+            label="%ru.runa.wfe.extension.handler.RhinoJSActionHandler"
+            enabled="true" />
       <handler
             actionHandler="true"
             assignmentHandler="false"
@@ -1110,15 +1135,6 @@
             decisionHandler="false"
             className="ru.runa.wfe.service.handler.BotInvokerActionHandler"
             label="%ru.runa.wfe.service.handler.BotInvokerActionHandler"
-            enabled="true" />
-      <handler
-            actionHandler="true"
-            assignmentHandler="false"
-            botTaskHandler="false"
-            decisionHandler="false"
-            cellEditorProvider="ru.runa.gpd.extension.handler.GroovyActionHandlerProvider"
-            className="ru.runa.wfe.extension.handler.GroovyActionHandler"
-            label="%ru.runa.wfe.extension.handler.GroovyActionHandler"
             enabled="true" />
       <handler
             actionHandler="true"
