@@ -42,6 +42,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
+import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 
 public class DiagramEditorPage extends DiagramEditor implements PropertyChangeListener {
@@ -64,11 +65,11 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         PictogramElement pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(event.getSource());
+        // TODO unify event propagation to interested parties
         if (pe != null) {
             BOUpdateContext context = new BOUpdateContext(pe, event.getSource());
             getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
         } else if (event.getSource() instanceof Swimlane && PropertyNames.PROPERTY_NAME.equals(event.getPropertyName())) {
-            // TODO unify event propagation to interested parties
             for (SwimlanedNode swimlanedNode : editor.getDefinition().getChildren(SwimlanedNode.class)) {
                 if (Objects.equal(swimlanedNode.getSwimlane(), event.getSource())) {
                     pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(swimlanedNode);
@@ -76,6 +77,16 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
                         BOUpdateContext context = new BOUpdateContext(pe, swimlanedNode);
                         getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
                     }
+                }
+            }
+        }
+        if (event.getSource() instanceof Timer && PropertyNames.PROPERTY_TIMER_DELAY.equals(event.getPropertyName())) {
+            Timer timer = (Timer) event.getSource();
+            for (Transition transition : timer.getLeavingTransitions()) {
+                pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(transition);
+                if (pe != null) {
+                    BOUpdateContext context = new BOUpdateContext(pe, transition);
+                    getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
                 }
             }
         }
