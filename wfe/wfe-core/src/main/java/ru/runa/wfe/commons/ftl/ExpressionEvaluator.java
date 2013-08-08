@@ -11,7 +11,9 @@ import ru.runa.wfe.commons.CalendarInterval;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.calendar.BusinessCalendar;
 import ru.runa.wfe.commons.calendar.impl.Duration;
+import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Preconditions;
@@ -107,6 +109,11 @@ public class ExpressionEvaluator {
         }
         matcher.appendTail(buffer);
         return buffer.toString();
+    }
+
+    public static String process(User user, String template, IVariableProvider variableProvider, WebHelper webHelper) {
+        FormHashModel model = new FormHashModel(user, variableProvider, webHelper);
+        return FreemarkerProcessor.process(template, model);
     }
 
 }
