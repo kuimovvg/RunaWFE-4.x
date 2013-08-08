@@ -3,6 +3,7 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -10,23 +11,37 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class Transition extends NamedGraphElement implements Active {
     private Node target;
-    private List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
+    private List<Point> bendpoints = Lists.newArrayList();
     private boolean exclusiveFlow;
     private boolean defaultFlow;
+    private Point labelLocation;
 
-    public List<Bendpoint> getBendpoints() {
+    public Point getLabelLocation() {
+        return labelLocation;
+    }
+    
+    public void setLabelLocation(Point labelLocation) {
+        if (!Objects.equal(this.labelLocation, labelLocation)) {
+            Point old = this.labelLocation;
+            this.labelLocation = labelLocation;
+            firePropertyChange(TRANSITION_LABEL_LOCATION_CHANGED, old, labelLocation);
+        }
+    }
+    
+    public List<Point> getBendpoints() {
         return bendpoints;
     }
 
-    public void setBendpoints(List<Bendpoint> bendpoints) {
+    public void setBendpoints(List<Point> bendpoints) {
         this.bendpoints = bendpoints;
         firePropertyChange(TRANSITION_BENDPOINTS_CHANGED, null, 1);
     }
 
-    public void addBendpoint(int index, Bendpoint bendpoint) {
+    public void addBendpoint(int index, Point bendpoint) {
         getBendpoints().add(index, bendpoint);
         firePropertyChange(TRANSITION_BENDPOINTS_CHANGED, null, index);
     }
@@ -36,7 +51,7 @@ public class Transition extends NamedGraphElement implements Active {
         firePropertyChange(TRANSITION_BENDPOINTS_CHANGED, null, index);
     }
 
-    public void setBendpoint(int index, Bendpoint bendpoint) {
+    public void setBendpoint(int index, Point bendpoint) {
         getBendpoints().set(index, bendpoint);
         firePropertyChange(TRANSITION_BENDPOINTS_CHANGED, null, index);
     }

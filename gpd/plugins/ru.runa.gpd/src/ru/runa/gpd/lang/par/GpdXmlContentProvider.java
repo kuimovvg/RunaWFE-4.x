@@ -1,21 +1,22 @@
 package ru.runa.gpd.lang.par;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.draw2d.geometry.Dimension;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 
 import ru.runa.gpd.lang.Language;
-import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.util.XmlUtil;
+
+import com.google.common.collect.Lists;
 
 /**
  * Information saved in absolute coordinates for all elements.
@@ -38,6 +39,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     private static final String NODE_ELEMENT_NAME = "node";
     private static final String TRANSITION_ELEMENT_NAME = "transition";
     private static final String BENDPOINT_ELEMENT_NAME = "bendpoint";
+    private static final String LABEL_ELEMENT_NAME = "label";
 
     @Override
     public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
@@ -74,12 +76,12 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             if (graphElement instanceof Node) {
                 Node node = (Node) graphElement;
                 for (Transition transition : node.getLeavingTransitions()) {
-                    for (Bendpoint bendpoint : transition.getBendpoints()) {
-                        if (bendpoint.getX() - canvasShift < xOffset) {
-                            xOffset = bendpoint.getX() - canvasShift;
+                    for (Point bendpoint : transition.getBendpoints()) {
+                        if (bendpoint.x - canvasShift < xOffset) {
+                            xOffset = bendpoint.x - canvasShift;
                         }
-                        if (bendpoint.getY() - canvasShift < yOffset) {
-                            yOffset = bendpoint.getY() - canvasShift;
+                        if (bendpoint.y - canvasShift < yOffset) {
+                            yOffset = bendpoint.y - canvasShift;
                         }
                     }
                 }
@@ -117,14 +119,15 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                     if (name != null) {
                         addAttribute(transitionElement, NAME_ATTRIBUTE_NAME, name);
                     }
-                    for (Bendpoint bendpoint : transition.getBendpoints()) {
+                    if (transition.getLabelLocation() != null) {
+                        Element labelElement = transitionElement.addElement(LABEL_ELEMENT_NAME);
+                        addAttribute(labelElement, X_ATTRIBUTE_NAME, String.valueOf(transition.getLabelLocation().x));
+                        addAttribute(labelElement, Y_ATTRIBUTE_NAME, String.valueOf(transition.getLabelLocation().y));
+                    }
+                    for (Point bendpoint : transition.getBendpoints()) {
                         Element bendpointElement = transitionElement.addElement(BENDPOINT_ELEMENT_NAME);
-                        int x = bendpoint.getX() - xOffset;
-                        int y = bendpoint.getY() - yOffset;
-                        //                        if (parentConstraint != null) {
-                        //                            x += parentConstraint.x;
-                        //                            y += parentConstraint.y;
-                        //                        }
+                        int x = bendpoint.x - xOffset;
+                        int y = bendpoint.y - yOffset;
                         addAttribute(bendpointElement, X_ATTRIBUTE_NAME, String.valueOf(x));
                         addAttribute(bendpointElement, Y_ATTRIBUTE_NAME, String.valueOf(y));
                     }
@@ -160,12 +163,18 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                     String transitionName = transitionElement.attributeValue(NAME_ATTRIBUTE_NAME);
                     for (Transition transition : leavingTransitions) {
                         if (transition.getName().equals(transitionName)) {
-                            List<Bendpoint> bendpoints = new ArrayList<Bendpoint>();
+                            List<Point> bendpoints = Lists.newArrayList();
+                            Element labelElement = transitionElement.element(LABEL_ELEMENT_NAME);
+                            if (labelElement != null) {
+                                int x = getIntAttribute(labelElement, X_ATTRIBUTE_NAME, 0);
+                                int y = getIntAttribute(labelElement, Y_ATTRIBUTE_NAME, 0);
+                                transition.setLabelLocation(new Point(x, y));
+                            }
                             List<Element> bendpointInfoList = transitionElement.elements(BENDPOINT_ELEMENT_NAME);
                             for (Element bendpointElement : bendpointInfoList) {
                                 int x = getIntAttribute(bendpointElement, X_ATTRIBUTE_NAME, 0);
                                 int y = getIntAttribute(bendpointElement, Y_ATTRIBUTE_NAME, 0);
-                                bendpoints.add(new Bendpoint(x, y));
+                                bendpoints.add(new Point(x, y));
                             }
                             transition.setBendpoints(bendpoints);
                             break;

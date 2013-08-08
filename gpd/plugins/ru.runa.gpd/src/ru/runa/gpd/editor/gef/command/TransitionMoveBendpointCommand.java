@@ -1,10 +1,10 @@
 package ru.runa.gpd.editor.gef.command;
 
-import ru.runa.gpd.lang.model.Bendpoint;
+import org.eclipse.draw2d.geometry.Point;
 
 public class TransitionMoveBendpointCommand extends TransitionAbstractBendpointCommand {
 
-    private Bendpoint oldBendpoint;
+    private Point oldBendpoint;
 
     @Override
     public void execute() {
