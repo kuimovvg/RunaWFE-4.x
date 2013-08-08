@@ -29,9 +29,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.email.EmailConfig.Attachment;
-import ru.runa.wfe.commons.ftl.FormHashModel;
-import ru.runa.wfe.commons.ftl.FreemarkerProcessor;
-import ru.runa.wfe.definition.IFileDataProvider;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
@@ -138,8 +136,7 @@ public class EmailUtils {
         }
     }
 
-    public static void sendTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider,
-            IFileDataProvider fileDataProvider) throws Exception {
+    public static void sendTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider) throws Exception {
         config.applySubstitutions(variableProvider);
         String formTemplate;
         if (config.isUseMessageFromTaskForm()) {
@@ -155,11 +152,8 @@ public class EmailUtils {
         } else {
             formTemplate = config.getMessage();
         }
-        FormHashModel model = new FormHashModel(user, variableProvider, null);
-        String formMessage = FreemarkerProcessor.process(formTemplate, model);
-
+        String formMessage = ExpressionEvaluator.process(user, formTemplate, variableProvider, null);
         Map<String, String> replacements = new HashMap<String, String>();
-
         List<Attachment> attachments = new ArrayList<Attachment>();
         // List<String> images = HTMLUtils.findImages(formBytes);
         // for (String image : images) {
