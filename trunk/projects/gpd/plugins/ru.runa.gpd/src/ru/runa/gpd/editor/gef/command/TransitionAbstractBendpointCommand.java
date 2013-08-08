@@ -1,8 +1,8 @@
 package ru.runa.gpd.editor.gef.command;
 
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.commands.Command;
 
-import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Transition;
 
 public abstract class TransitionAbstractBendpointCommand extends Command {
@@ -11,7 +11,7 @@ public abstract class TransitionAbstractBendpointCommand extends Command {
 
     protected int index;
 
-    protected Bendpoint bendpoint;
+    protected Point bendpoint;
 
     public void setTransitionDecorator(Transition transition) {
         this.transition = transition;
@@ -22,7 +22,7 @@ public abstract class TransitionAbstractBendpointCommand extends Command {
     }
 
     public void setLocation(int x, int y) {
-        bendpoint = new Bendpoint(x, y);
+        bendpoint = new Point(x, y);
     }
 
 }
