@@ -1,8 +1,5 @@
 package ru.runa.gpd.editor.graphiti.add;
 
-import java.util.List;
-
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.context.IAddConnectionContext;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -25,17 +22,14 @@ import org.eclipse.graphiti.services.IPeCreateService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.graphiti.util.IColorConstant;
 
-import com.google.common.base.Strings;
-
 import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.StyleUtil;
-import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Transition;
 
+import com.google.common.base.Strings;
+
 public class AddTransitionFeature extends AbstractAddFeature {
-    public static final String BENDPOINTS_PROPERTY = "bendpoints";
-    public static final String LABEL_LOCATION_PROPERTY = "labelLocation";
     private DiagramFeatureProvider featureProvider;
 
     public AddTransitionFeature() {
@@ -72,14 +66,11 @@ public class AddTransitionFeature extends AbstractAddFeature {
         connection.setEnd(targetAnchor);
         sourceAnchor.getOutgoingConnections().add(connection);
         targetAnchor.getIncomingConnections().add(connection);
-        List<Bendpoint> bendpoints = (List<Bendpoint>) addConnectionContext.getProperty(BENDPOINTS_PROPERTY);
-        if (bendpoints != null) {
-            for (Bendpoint bendpoint : bendpoints) {
-                Point point = StylesFactory.eINSTANCE.createPoint();
-                point.setX(bendpoint.getX());
-                point.setY(bendpoint.getY());
-                connection.getBendpoints().add(point);
-            }
+        for (org.eclipse.draw2d.geometry.Point bendpoint : transition.getBendpoints()) {
+            Point point = StylesFactory.eINSTANCE.createPoint();
+            point.setX(bendpoint.x);
+            point.setY(bendpoint.y);
+            connection.getBendpoints().add(point);
         }
         IGaService gaService = Graphiti.getGaService();
         Polyline polyline = gaService.createPolyline(connection);
@@ -89,7 +80,7 @@ public class AddTransitionFeature extends AbstractAddFeature {
         link(connection, transition);
         // add dynamic text decorator for the reference name
         boolean nameLabelVisible = !Strings.isNullOrEmpty(transition.getLabel());
-        createLabel(connection, transition.getLabel(), (Rectangle) addConnectionContext.getProperty(LABEL_LOCATION_PROPERTY), nameLabelVisible);
+        createLabel(connection, transition.getLabel(), transition.getLabelLocation(), nameLabelVisible);
         // add static graphical decorators (composition and navigable)
         createArrow(connection);
         boolean exclusive = transition.getSource().isExclusive() && transition.getSource().getLeavingTransitions().size() > 1;
@@ -98,7 +89,7 @@ public class AddTransitionFeature extends AbstractAddFeature {
         return connection;
     }
 
-    private void createLabel(Connection connection, String transitionName, Rectangle location, boolean visible) {
+    private void createLabel(Connection connection, String transitionName, org.eclipse.draw2d.geometry.Point location, boolean visible) {
         ConnectionDecorator connectionDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, true, 0.5, true);
         Text text = Graphiti.getGaService().createDefaultText(getDiagram(), connectionDecorator);
         text.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
@@ -133,13 +124,13 @@ public class AddTransitionFeature extends AbstractAddFeature {
         connectionDecorator.setVisible(visible);
     }
 
-    private void createDefaultFlow(Connection connection) {
-        ConnectionDecorator connectionDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 0.03, true);
-        int xy[] = new int[] { -12, -4, -20, -4 };
-        int beforeAfter[] = new int[] { 0, 0, 0, 0 };
-        Polygon polyline = Graphiti.getGaCreateService().createPolygon(connectionDecorator, xy, beforeAfter);
-        polyline.setStyle(StyleUtil.getStyleForPolygonDiamond(getDiagram()));
-        connectionDecorator.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.DEFAULT_FLOW));
-        connectionDecorator.setVisible(false);
-    }
+//    private void createDefaultFlow(Connection connection) {
+//        ConnectionDecorator connectionDecorator = Graphiti.getPeCreateService().createConnectionDecorator(connection, false, 0.03, true);
+//        int xy[] = new int[] { -12, -4, -20, -4 };
+//        int beforeAfter[] = new int[] { 0, 0, 0, 0 };
+//        Polygon polyline = Graphiti.getGaCreateService().createPolygon(connectionDecorator, xy, beforeAfter);
+//        polyline.setStyle(StyleUtil.getStyleForPolygonDiamond(getDiagram()));
+//        connectionDecorator.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.DEFAULT_FLOW));
+//        connectionDecorator.setVisible(false);
+//    }
 }

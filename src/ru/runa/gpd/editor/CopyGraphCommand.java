@@ -10,6 +10,7 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -22,8 +23,6 @@ import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.Active;
-import ru.runa.gpd.lang.model.Bendpoint;
-import ru.runa.gpd.lang.model.Conjunction;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.FormNode;
@@ -32,7 +31,6 @@ import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
-import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
@@ -173,8 +171,8 @@ public class CopyGraphCommand extends Command {
                         Transition tr = definition.createElement(source);
                         tr.setName(transition.getName());
                         tr.setTarget(target);
-                        for (Bendpoint bp : transition.getBendpoints()) {
-                            tr.getBendpoints().add(new Bendpoint(bp.getX(), bp.getY()));
+                        for (Point bp : transition.getBendpoints()) {
+                            tr.getBendpoints().add(bp.getCopy());
                         }
                         source.addLeavingTransition(tr);
                         for (ru.runa.gpd.lang.model.Action action : transition.getActions()) {

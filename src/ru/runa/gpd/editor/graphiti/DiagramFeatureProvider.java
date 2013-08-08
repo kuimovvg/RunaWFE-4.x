@@ -11,6 +11,7 @@ import org.eclipse.graphiti.features.IDeleteFeature;
 import org.eclipse.graphiti.features.IDirectEditingFeature;
 import org.eclipse.graphiti.features.ILayoutFeature;
 import org.eclipse.graphiti.features.IMoveBendpointFeature;
+import org.eclipse.graphiti.features.IMoveConnectionDecoratorFeature;
 import org.eclipse.graphiti.features.IMoveShapeFeature;
 import org.eclipse.graphiti.features.IReconnectionFeature;
 import org.eclipse.graphiti.features.IRemoveBendpointFeature;
@@ -22,6 +23,7 @@ import org.eclipse.graphiti.features.context.IDeleteContext;
 import org.eclipse.graphiti.features.context.IDirectEditingContext;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.context.IMoveBendpointContext;
+import org.eclipse.graphiti.features.context.IMoveConnectionDecoratorContext;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.context.IReconnectionContext;
 import org.eclipse.graphiti.features.context.IRemoveBendpointContext;
@@ -38,6 +40,7 @@ import ru.runa.gpd.editor.graphiti.update.DirectEditDescriptionFeature;
 import ru.runa.gpd.editor.graphiti.update.DirectEditNodeNameFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveElementFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveTransitionBendpointFeature;
+import ru.runa.gpd.editor.graphiti.update.MoveTransitionLabelFeature;
 import ru.runa.gpd.editor.graphiti.update.ReconnectSequenceFlowFeature;
 import ru.runa.gpd.editor.graphiti.update.RemoveTransitionBendpointFeature;
 import ru.runa.gpd.lang.NodeRegistry;
@@ -142,6 +145,11 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
         return new AddTransitionBendpointFeature(this);
     }
 
+    @Override
+    public IMoveConnectionDecoratorFeature getMoveConnectionDecoratorFeature(IMoveConnectionDecoratorContext context) {
+        return new MoveTransitionLabelFeature(this);
+    }
+    
     @Override
     public IMoveBendpointFeature getMoveBendpointFeature(IMoveBendpointContext context) {
         return new MoveTransitionBendpointFeature(this);
