@@ -9,6 +9,7 @@ import org.eclipse.draw2d.AbsoluteBendpoint;
 import org.eclipse.draw2d.Connection;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.draw2d.RoutingListener;
+import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
 
@@ -20,7 +21,6 @@ import ru.runa.gpd.editor.gef.policy.TransitionConnectionEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionEndpointsEditPolicy;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.decision.IDecisionProvider;
-import ru.runa.gpd.lang.model.Bendpoint;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.PropertyNames;
@@ -75,10 +75,10 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
     }
 
     private List<AbsoluteBendpoint> constructFigureBendpointList() {
-        List<Bendpoint> modelBendpoints = getModel().getBendpoints();
+        List<Point> modelBendpoints = getModel().getBendpoints();
         List<AbsoluteBendpoint> result = new ArrayList<AbsoluteBendpoint>(modelBendpoints.size());
-        for (Bendpoint bendpoint : modelBendpoints) {
-            result.add(new AbsoluteBendpoint(bendpoint.getX(), bendpoint.getY()));
+        for (Point bendpoint : modelBendpoints) {
+            result.add(new AbsoluteBendpoint(bendpoint));
         }
         return result;
     }

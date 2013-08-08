@@ -31,11 +31,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
-import com.google.common.base.Objects;
-
 import ru.runa.gpd.editor.GraphicalEditorContributor;
 import ru.runa.gpd.editor.ProcessEditorBase;
-import ru.runa.gpd.editor.graphiti.add.AddTransitionFeature;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -44,6 +41,8 @@ import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
+
+import com.google.common.base.Objects;
 
 public class DiagramEditorPage extends DiagramEditor implements PropertyChangeListener {
     private final ProcessEditorBase editor;
@@ -220,7 +219,6 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
                 }
             }
             AddConnectionContext addContext = new AddConnectionContext(sourceAnchor, targetAnchor);
-            addContext.putProperty(AddTransitionFeature.BENDPOINTS_PROPERTY, transition.getBendpoints());
             addContext.setNewObject(transition);
             getDiagramTypeProvider().getFeatureProvider().addIfPossible(addContext);
         }
