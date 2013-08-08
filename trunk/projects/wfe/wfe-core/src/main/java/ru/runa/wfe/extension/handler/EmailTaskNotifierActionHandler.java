@@ -38,6 +38,7 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -64,15 +65,14 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
         List<Actor> actors = executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
         for (Actor actor : actors) {
             String email = actor.getEmail();
-            if (email != null && email.length() > 0) {
+            if (!Strings.isNullOrEmpty(email)) {
                 List<Task> taskList = taskDAO.findTasks(actor);
                 for (Task task : taskList) {
                     if (!Objects.equal(task.getId(), executionContext.getTask().getId())) {
                         EmailConfig config = EmailConfigParser.parse(configBytes);
                         config.getHeaderProperties().put("To", email);
                         Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
-                        EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider(),
-                                executionContext.getProcessDefinition());
+                        EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider());
                     }
                 }
             }

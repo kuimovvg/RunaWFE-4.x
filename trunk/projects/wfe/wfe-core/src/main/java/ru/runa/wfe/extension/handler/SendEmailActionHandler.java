@@ -59,8 +59,7 @@ public class SendEmailActionHandler implements ActionHandler {
                 }
                 interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
             }
-            EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider(),
-                    executionContext.getProcessDefinition());
+            EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider());
         } catch (Exception e) {
             if (config.isThrowErrorOnFailure()) {
                 throw e;

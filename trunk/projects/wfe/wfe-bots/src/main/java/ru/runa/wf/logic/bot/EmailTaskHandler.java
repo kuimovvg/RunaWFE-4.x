@@ -26,7 +26,6 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
-import ru.runa.wfe.definition.par.FileDataProvider;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -58,18 +57,20 @@ public class EmailTaskHandler extends TaskHandlerBase {
             if (config.isUseMessageFromTaskForm()) {
                 interaction = Delegates.getDefinitionService().getTaskInteraction(user, task.getId());
             }
-            FileDataProvider fileDataProvider = new FileDataProvider() {
-
-                @Override
-                public byte[] getFileData(String fileName) {
-                    try {
-                        return Delegates.getDefinitionService().getProcessDefinitionFile(user, task.getDefinitionId(), fileName);
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            };
-            EmailUtils.sendTaskMessage(user, config, interaction, variableProvider, fileDataProvider);
+            // FileDataProvider fileDataProvider = new FileDataProvider() {
+            //
+            // @Override
+            // public byte[] getFileData(String fileName) {
+            // try {
+            // return
+            // Delegates.getDefinitionService().getProcessDefinitionFile(user,
+            // task.getDefinitionId(), fileName);
+            // } catch (Exception e) {
+            // throw new RuntimeException(e);
+            // }
+            // }
+            // };
+            EmailUtils.sendTaskMessage(user, config, interaction, variableProvider);
         } catch (Exception e) {
             if (config.isThrowErrorOnFailure()) {
                 throw e;
