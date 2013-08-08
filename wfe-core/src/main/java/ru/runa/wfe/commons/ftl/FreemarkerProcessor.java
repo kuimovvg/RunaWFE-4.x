@@ -26,6 +26,9 @@ public class FreemarkerProcessor {
 
     public static String process(String ftlTemplate, FormHashModel model) {
         try {
+            if (ftlTemplate == null) {
+                return null;
+            }
             Template template = new Template("", new StringReader(ftlTemplate), cfg, Charsets.UTF_8.name());
             StringWriter out = new StringWriter();
             template.process(model, out);

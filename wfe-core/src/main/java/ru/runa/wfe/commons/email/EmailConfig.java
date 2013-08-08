@@ -95,7 +95,7 @@ public class EmailConfig {
         headerProperties.clear();
         for (String propName : tmpConnectionProperties.keySet()) {
             String propValue = tmpConnectionProperties.get(propName);
-            String substitutedValue = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, propValue).toString();
+            String substitutedValue = ExpressionEvaluator.process(null, propValue, variableProvider, null);
             if (!substitutedValue.equals(propValue)) {
                 log.debug("Substituted " + propName + ": " + propValue + " -> " + substitutedValue);
             }
@@ -103,7 +103,7 @@ public class EmailConfig {
         }
         for (Map.Entry<String, String> propEntry : tmpHeaderProperties.entrySet()) {
             String propValue = propEntry.getValue();
-            String substitutedValue = ExpressionEvaluator.evaluateVariableNotNull(variableProvider, propValue).toString();
+            String substitutedValue = ExpressionEvaluator.process(null, propValue, variableProvider, null);
             if (!substitutedValue.equals(propValue)) {
                 log.debug("Substituted " + propEntry.getKey() + ": " + propValue + " -> " + substitutedValue);
             }
