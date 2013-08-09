@@ -18,10 +18,10 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
@@ -31,7 +31,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.ExecutorPermission;
 
-import java.util.List;
+import com.google.common.collect.Lists;
 
 public class ExecutorServiceDelegateRemoveManyExecutorsTest extends ServletTestCase {
     private ServiceTestHelper th;
@@ -44,6 +44,7 @@ public class ExecutorServiceDelegateRemoveManyExecutorsTest extends ServletTestC
 
     private final List<Permission> readUpdatePermissions = Lists.newArrayList(Permission.READ, ExecutorPermission.UPDATE);
 
+    @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -52,16 +53,10 @@ public class ExecutorServiceDelegateRemoveManyExecutorsTest extends ServletTestC
     }
 
     public void testRemoveExecutorsByAuthorizedPerformer() throws Exception {
-        try {
-            executorService.remove(th.getAuthorizedPerformerUser(), th.toIds(additionalActorsGroupsMixed));
-        } catch (AuthorizationException e) {
-            // TODO
-            return;
-        }
-        fail("TODO trap");
+        executorService.remove(th.getAuthorizedPerformerUser(), th.toIds(additionalActorsGroupsMixed));
         for (Executor executor : additionalActorsGroupsMixed) {
             assertFalse("Executor was not deleted.", th.isExecutorExist(executor));
-            //th.removeCreatedExecutor(executor);
+            // th.removeCreatedExecutor(executor);
         }
     }
 
@@ -83,7 +78,7 @@ public class ExecutorServiceDelegateRemoveManyExecutorsTest extends ServletTestC
             executorService.remove(th.getAuthorizedPerformerUser(), ids);
             fail("IllegalArgumentException was not thrown on RemoveNullExecutors.");
         } catch (IllegalArgumentException e) {
-            //that's what we expect to see
+            // that's what we expect to see
         }
     }
 
@@ -96,11 +91,12 @@ public class ExecutorServiceDelegateRemoveManyExecutorsTest extends ServletTestC
         } catch (IllegalArgumentException e) {
             // TODO
         } catch (ExecutorDoesNotExistException e) {
-            //that's what we expect to see
-            fail ("TODO trap");
+            // that's what we expect to see
+            fail("TODO trap");
         }
     }
 
+    @Override
     protected void tearDown() throws Exception {
         th.releaseResources();
         executorService = null;

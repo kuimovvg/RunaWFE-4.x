@@ -238,7 +238,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     @Transient
-    private Fields getFields() {
+    public Fields getFields() {
         if (fields == null) {
             try {
                 fields = FieldsSerializer.fromData(fieldsData);
@@ -702,5 +702,10 @@ public final class BatchPresentation implements Cloneable, Serializable {
                     && Arrays.equals(sortModes, f.sortModes) && Arrays.equals(displayIds, f.displayIds);
         }
 
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this).add("displayIds", displayIds).add("sortIds", sortIds).add("sortModes", sortModes)
+                    .add("groupIds", groupIds).add("filters", filters).add("dynamics", dynamics).toString();
+        }
     }
 }
