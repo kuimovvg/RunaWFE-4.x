@@ -1,6 +1,10 @@
 package ru.runa.gpd.lang.model;
 
+import java.util.List;
+
 import ru.runa.gpd.extension.HandlerArtifact;
+
+import com.google.common.collect.Lists;
 
 /**
  * Provides mapping with formal parameters between {@link TaskState} and {@link BotTask}.
@@ -14,6 +18,7 @@ public class BotTaskLink implements Delegable {
     private String botTaskName;
     private String delegationClassName;
     private String delegationConfiguration = "";
+    private TaskState taskState;
 
     /**
      * linked {@link BotTask} name
@@ -52,5 +57,21 @@ public class BotTaskLink implements Delegable {
     @Override
     public void setDelegationConfiguration(String delegationConfiguration) {
         this.delegationConfiguration = delegationConfiguration;
+    }
+
+    public TaskState getTaskState() {
+        return taskState;
+    }
+
+    public void setTaskState(TaskState taskState) {
+        this.taskState = taskState;
+    }
+
+    @Override
+    public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
+        if (taskState != null) {
+            return taskState.getProcessDefinition().getVariableNames(includeSwimlanes, typeClassNameFilters);
+        }
+        return Lists.newArrayList();
     }
 }

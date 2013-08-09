@@ -1,13 +1,10 @@
 package ru.runa.gpd.extension.handler;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -22,9 +19,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.ParamDef.Presentation;
-import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
@@ -35,17 +31,17 @@ public class ParamDefComposite extends Composite {
     protected final ParamDefConfig config;
     private final Map<String, List<String>> comboItems = new HashMap<String, List<String>>();
     private final Map<String, String> properties;
-    private final List<Variable> variables;
+    private final Delegable delegable;
     private MessageDisplay messageDisplay;
     private boolean helpInlined = false;
     private boolean menuForSettingVariable = false;
     private String[] booleanValues = { Localization.getString("yes"), Localization.getString("no") };
 
-    public ParamDefComposite(Composite parent, ParamDefConfig config, Map<String, String> properties, List<Variable> variables) {
+    public ParamDefComposite(Composite parent, Delegable delegable, ParamDefConfig config, Map<String, String> properties) {
         super(parent, SWT.NONE);
         this.config = config;
         this.properties = properties != null ? properties : new HashMap<String, String>();
-        this.variables = variables;
+        this.delegable = delegable;
         GridLayout layout = new GridLayout(2, false);
         setLayout(layout);
     }
@@ -90,25 +86,6 @@ public class ParamDefComposite extends Composite {
         this.menuForSettingVariable = menuForSettingVariable;
     }
 
-    private List<String> getVariableNames(Collection<String> typeFilters) {
-        List<String> result = new ArrayList<String>();
-        for (Variable variable : variables) {
-            boolean applicable = typeFilters.size() == 0;
-            if (!applicable) {
-                for (String typeFilter : typeFilters) {
-                    if (VariableFormatRegistry.isApplicable(variable, typeFilter)) {
-                        applicable = true;
-                        break;
-                    }
-                }
-            }
-            if (applicable) {
-                result.add(variable.getName());
-            }
-        }
-        return result;
-    }
-
     private Text addTextField(final ParamDef paramDef) {
         Label label = new Label(this, SWT.NONE);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -134,9 +111,7 @@ public class ParamDefComposite extends Composite {
         }
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
-            Set<String> formatFilters = new HashSet<String>();
-            formatFilters.add(String.class.getName());
-            new InsertVariableTextMenuDetectListener(textInput, getVariableNames(formatFilters));
+            new InsertVariableTextMenuDetectListener(textInput, delegable.getVariableNames(true, String.class.getName()));
         }
         return textInput;
     }
@@ -148,7 +123,7 @@ public class ParamDefComposite extends Composite {
         }
         List<String> variableNames = new ArrayList<String>();
         if (paramDef.isUseVariable()) {
-            variableNames.addAll(getVariableNames(paramDef.getFormatFilters()));
+            variableNames.addAll(delegable.getVariableNames(true, paramDef.getFormatFiltersAsArray()));
         }
         boolean localizeTextValue = false;
         for (String option : paramDef.getComboItems()) {

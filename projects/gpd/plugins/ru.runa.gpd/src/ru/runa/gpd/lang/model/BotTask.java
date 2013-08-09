@@ -1,11 +1,18 @@
 package ru.runa.gpd.lang.model;
 
+import java.util.List;
+
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.VariableFormatRegistry;
+import ru.runa.gpd.extension.handler.ParamDef;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
+import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
+
+import com.google.common.collect.Lists;
 
 public class BotTask implements Delegable, Comparable<BotTask> {
     public static final String SWIMLANE_DEFINITION_NAME = ExecutorByNameFunction.class.getName();
@@ -84,6 +91,30 @@ public class BotTask implements Delegable, Comparable<BotTask> {
      */
     public void setParamDefConfig(ParamDefConfig paramDefConfig) {
         this.paramDefConfig = paramDefConfig;
+    }
+
+    @Override
+    public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
+        List<String> result = Lists.newArrayList();
+        if (paramDefConfig != null) {
+            for (ParamDefGroup group : paramDefConfig.getGroups()) {
+                for (ParamDef paramDef : group.getParameters()) {
+                    boolean applicable = typeClassNameFilters == null || typeClassNameFilters.length == 0;
+                    if (!applicable && paramDef.getFormatFilters().size() > 0) {
+                        for (String typeClassNameFilter : typeClassNameFilters) {
+                            if (VariableFormatRegistry.isAssignableFrom(typeClassNameFilter, paramDef.getFormatFilters().get(0))) {
+                                applicable = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (applicable) {
+                        result.add("param:" + paramDef.getName());
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     @Override

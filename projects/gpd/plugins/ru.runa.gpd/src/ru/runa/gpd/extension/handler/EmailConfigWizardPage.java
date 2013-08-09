@@ -39,8 +39,6 @@ import ru.runa.gpd.extension.handler.ParamDefComposite.MessageDisplay;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
@@ -65,9 +63,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
     private final ParamDefConfig connectionConfig;
     private final ParamDefConfig messageConfig;
     private final ParamDefConfig contentConfig;
-    private final List<Variable> variables;
-    private final List<String> ftlVariableNames;
-    private final List<String> fileVariableNames;
+    private final Delegable delegable;
     private String result;
 
     private ParamDefConfig getParamConfig(Bundle bundle, String path) {
@@ -84,10 +80,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
     public EmailConfigWizardPage(Bundle bundle, Delegable delegable) {
         super("email", Localization.getString("EmailDialog.title"), SharedImages.getImageDescriptor("/icons/send_email.png"));
         this.initValue = delegable.getDelegationConfiguration();
-        ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        this.variables = definition.getVariables(true);
-        this.ftlVariableNames = VariableUtils.getValidVariableNames(definition.getVariableNames(true));
-        this.fileVariableNames = VariableUtils.getValidVariableNames(definition.getVariableNames(true, FileVariable.class.getName()));
+        this.delegable = delegable;
         GraphElement parent = ((GraphElement) delegable).getParent();
         this.bodyInlinedEnabled = (parent instanceof FormNode) && ((FormNode) parent).hasForm();
         this.commonConfig = getParamConfig(bundle, "/conf/email.common.xml");
@@ -106,19 +99,19 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
         ScrolledComposite scrolledComposite;
         scrolledComposite = createScrolledTab(Localization.getString("EmailDialog.title.common"));
-        commonComposite = new ParamDefComposite(scrolledComposite, commonConfig, commonConfig.parseConfiguration(initValue), variables);
+        commonComposite = new ParamDefComposite(scrolledComposite, delegable, commonConfig, commonConfig.parseConfiguration(initValue));
         commonComposite.setHelpInlined(true);
         commonComposite.createUI();
         scrolledComposite.setContent(commonComposite);
         scrolledComposite = createScrolledTab(Localization.getString("EmailDialog.title.connection"));
-        connectionComposite = new ParamDefDynaComposite(scrolledComposite, connectionConfig, connectionConfig.parseConfiguration(initValue), variables, connectionConfig
+        connectionComposite = new ParamDefDynaComposite(scrolledComposite, delegable, connectionConfig, connectionConfig.parseConfiguration(initValue), connectionConfig
                 .getGroups().get(0), Localization.getString("EmailDialog.connection.descDynaParams"));
         connectionComposite.setMenuForSettingVariable(true);
         connectionComposite.createUI();
         connectionComposite.setMessageDisplay(this);
         scrolledComposite.setContent(connectionComposite);
         scrolledComposite = createScrolledTab(Localization.getString("EmailDialog.title.message"));
-        messageComposite = new ParamDefDynaComposite(scrolledComposite, messageConfig, messageConfig.parseConfiguration(initValue), variables, messageConfig.getGroups().get(0),
+        messageComposite = new ParamDefDynaComposite(scrolledComposite, delegable, messageConfig, messageConfig.parseConfiguration(initValue), messageConfig.getGroups().get(0),
                 Localization.getString("EmailDialog.message.descDynaParams"));
         messageComposite.setMenuForSettingVariable(true);
         messageComposite.createUI();
@@ -206,6 +199,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             hl3.addHyperlinkListener(new LoggingHyperlinkAdapter() {
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
+                    List<String> ftlVariableNames = VariableUtils.getValidVariableNames(delegable.getVariableNames(true));
                     ChooseVariableDialog dialog = new ChooseVariableDialog(ftlVariableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
@@ -287,6 +281,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         private class AddSelectionAdapter extends LoggingSelectionAdapter {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
+                List<String> fileVariableNames = VariableUtils.getValidVariableNames(delegable.getVariableNames(true, FileVariable.class.getName()));
                 ChooseVariableDialog dialog = new ChooseVariableDialog(fileVariableNames);
                 String variableName = dialog.openDialog();
                 if (variableName != null) {
@@ -321,7 +316,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         summaryProperties.putAll(messageComposite.readUserInput());
         summaryProperties.put("bodyInlined", String.valueOf(contentComposite.isUseFormFromTaskForm()));
         summaryProperties.put("body", contentComposite.getMessage());
-        Document document = summaryConfig.toConfigurationXml(variables, summaryProperties);
+        Document document = summaryConfig.toConfigurationXml(delegable.getVariableNames(true), summaryProperties);
         EmailAttachmentsConfig.addAttachments(document, contentComposite.getAttachments());
         String c = XmlUtil.toString(document);
         styledText.setText(c);

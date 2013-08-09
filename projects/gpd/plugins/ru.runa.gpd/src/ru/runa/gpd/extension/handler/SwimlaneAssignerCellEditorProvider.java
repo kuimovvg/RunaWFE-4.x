@@ -23,6 +23,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -36,6 +37,9 @@ public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
 
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
+        if (!HandlerArtifact.ACTION.equals(delegable.getDelegationType())) {
+            throw new IllegalArgumentException("For action handler only");
+        }
         definition = ((GraphElement) delegable).getProcessDefinition();
         return new SwimlaneAssignerConfigurationDialog(delegable.getDelegationConfiguration(), definition.getSwimlaneNames());
     }
