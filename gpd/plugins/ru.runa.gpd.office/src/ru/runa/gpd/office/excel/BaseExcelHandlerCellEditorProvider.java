@@ -27,8 +27,8 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
+import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;
@@ -37,8 +37,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
     protected abstract FilesSupplierMode getMode();
 
     @Override
-    protected Composite createConstructorView(Composite parent) {
-        return new ConstructorView(parent);
+    protected Composite createConstructorView(Composite parent, Delegable delegable) {
+        return new ConstructorView(parent, delegable);
     }
 
     @Override
@@ -53,9 +53,11 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
 
     private class ConstructorView extends Composite implements Observer {
         private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
+        private final Delegable delegable;
 
-        public ConstructorView(Composite parent) {
-            super(parent, SWT.None);
+        public ConstructorView(Composite parent, Delegable delegable) {
+            super(parent, SWT.NONE);
+            this.delegable = delegable;
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -103,7 +105,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     }
                 });
                 hyperlinkGroup.add(addColumnLink);
-                new InputOutputComposite(this, model.getInOutModel(), variables, getMode());
+                new InputOutputComposite(this, delegable, model.getInOutModel(), getMode());
                 for (ConstraintsModel c : model.constraintses) {
                     switch (c.type) {
                     case ConstraintsModel.CELL:
@@ -141,20 +143,15 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 Label l = new Label(group, SWT.NONE);
                 l.setText(Messages.getString("label.variable"));
                 final Combo combo = new Combo(group, SWT.READ_ONLY);
-                for (String varName : variables.keySet()) {
-                    if (isImportant(variables.get(varName))) {
-                        combo.add(varName);
-                    }
+                for (String variableName : delegable.getVariableNames(true, getTypeFilters())) {
+                    combo.add(variableName);
                 }
-                try {
-                    combo.setText(cmodel.variable);
-                } catch (Exception e) {
-                }
+                combo.setText(cmodel.variableName);
                 combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
                 combo.addSelectionListener(new SelectionAdapter() {
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        cmodel.variable = combo.getText();
+                        cmodel.variableName = combo.getText();
                     }
                 });
                 Hyperlink hl1 = new Hyperlink(group, SWT.NONE);
@@ -256,8 +253,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 }
             }
 
-            protected boolean isImportant(String javaType) {
-                return VariableFormatRegistry.isAssignableFrom(List.class, javaType);
+            protected String[] getTypeFilters() {
+                return new String[] { List.class.getName() };
             }
 
             public abstract String getTitle();
@@ -277,8 +274,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
             }
 
             @Override
-            public boolean isImportant(String javaType) {
-                return !VariableFormatRegistry.isAssignableFrom(List.class, javaType);
+            protected String[] getTypeFilters() {
+                return null;
             }
 
             @Override

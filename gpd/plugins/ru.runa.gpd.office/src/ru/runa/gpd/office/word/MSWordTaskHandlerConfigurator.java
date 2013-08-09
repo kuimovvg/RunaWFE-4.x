@@ -1,6 +1,5 @@
 package ru.runa.gpd.office.word;
 
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -25,10 +24,11 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
+import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.office.resource.Messages;
 import ru.runa.gpd.ui.custom.SWTUtils;
+import ru.runa.wfe.var.FileVariable;
 
 public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<MSWordConfig> {
     @Override
@@ -42,8 +42,8 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
     }
 
     @Override
-    protected Composite createConstructorView(Composite parent) {
-        return new ConstructorView(parent, SWT.NONE);
+    protected Composite createConstructorView(Composite parent, Delegable delegable) {
+        return new ConstructorView(parent, delegable);
     }
 
     @Override
@@ -53,9 +53,11 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
 
     private class ConstructorView extends Composite implements Observer {
         private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
+        private final Delegable delegable;
 
-        public ConstructorView(Composite parent, int style) {
-            super(parent, style);
+        public ConstructorView(Composite parent, Delegable delegable) {
+            super(parent, SWT.NONE);
+            this.delegable = delegable;
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -115,10 +117,8 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 Label label = new Label(this, SWT.NONE);
                 label.setText(Messages.getString("MSWordConfig.label.resultVariableName"));
                 final Combo combo = new Combo(this, SWT.READ_ONLY);
-                for (Map.Entry<String, String> entry : variables.entrySet()) {
-                    if (VariableFormatRegistry.isAssignableFrom("ru.runa.wfe.var.FileVariable", entry.getValue())) {
-                        combo.add(entry.getKey());
-                    }
+                for (String variableName : delegable.getVariableNames(true, FileVariable.class.getName())) {
+                    combo.add(variableName);
                 }
                 combo.setLayoutData(get2GridData());
                 combo.setText(model.getResultVariableName());
@@ -160,7 +160,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
 
         private void addParamSection(Composite parent, final MSWordVariableMapping mapping, final int index) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
-            for (String variableName : variables.keySet()) {
+            for (String variableName : delegable.getVariableNames(true)) {
                 combo.add(variableName);
             }
             combo.setText(mapping.getVariableName());
@@ -169,7 +169,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     String variableName = combo.getText();
-                    mapping.setVariableName(variableName, variables.get(variableName));
+                    mapping.setVariableName(variableName);
                 }
             });
             final Text text = new Text(parent, SWT.BORDER);
