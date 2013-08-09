@@ -14,6 +14,7 @@ public interface IAttributes {
     static final String ATTR_OLD_VALUE = "oldValue";
     static final String ATTR_NEW_VALUE = "newValue";
     static final String ATTR_VARIABLE_NAME = "varName";
+    static final String ATTR_TASK_ID = "taskId";
     static final String ATTR_TASK_NAME = "taskName";
     static final String ATTR_IS_FILE_VALUE = "fileValue";
     static final String ATTR_DUE_DATE = "dueDate";
