@@ -1,7 +1,5 @@
 package ru.runa.gpd.extension.handler;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -27,48 +25,15 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Swimlane;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 public abstract class XmlBasedConstructorProvider<T extends Observable> extends DelegableProvider {
     protected T model;
-    protected boolean formalVariable = false;
-    // TODO another way?
-    protected Map<String, String> variables = Maps.newHashMap();
-    protected List<String> swimlaneNames = Lists.newArrayList();
 
     @Override
     public String showConfigurationDialog(Delegable delegable) {
-        this.variables.clear();
-        this.swimlaneNames.clear();
-        ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        for (Variable variable : definition.getVariables(false)) {
-            variables.put(variable.getName(), variable.getJavaClassName());
-        }
-        for (Swimlane swimlane : definition.getSwimlanes()) {
-            swimlaneNames.add(swimlane.getName());
-        }
-        XmlBasedConstructorDialog dialog = new XmlBasedConstructorDialog(delegable.getDelegationConfiguration());
-        if (dialog.open() == Window.OK) {
-            return dialog.getResult();
-        }
-        return null;
-    }
-
-    @Override
-    public String showConfigurationDialog(String delegationConfiguration, Map<String, String> variables) {
-        XmlBasedConstructorDialog dialog = new XmlBasedConstructorDialog(delegationConfiguration);
-        formalVariable = true;
-        this.variables.clear();
-        this.swimlaneNames.clear();
-        this.variables.putAll(variables);
+        XmlBasedConstructorDialog dialog = new XmlBasedConstructorDialog(delegable);
         if (dialog.open() == Window.OK) {
             return dialog.getResult();
         }
@@ -89,7 +54,7 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
 
     protected abstract String getTitle();
 
-    protected abstract Composite createConstructorView(Composite parent);
+    protected abstract Composite createConstructorView(Composite parent, Delegable delegable);
 
     protected abstract T createDefault();
 
@@ -105,11 +70,13 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         private Composite constructorView;
         private final String initialValue;
         private String result;
+        protected final Delegable delegable;
 
-        public XmlBasedConstructorDialog(String initialValue) {
+        public XmlBasedConstructorDialog(Delegable delegable) {
             super(Display.getCurrent().getActiveShell());
             setShellStyle(getShellStyle() | SWT.RESIZE);
-            this.initialValue = initialValue;
+            this.delegable = delegable;
+            this.initialValue = delegable.getDelegationConfiguration();
         }
 
         @Override
@@ -141,7 +108,7 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
                 PluginLogger.logError(Localization.getString("config.error.parse"), ex);
                 model = createDefault();
             }
-            constructorView = createConstructorView(scrolledComposite);
+            constructorView = createConstructorView(scrolledComposite, delegable);
             constructorView.setLayoutData(new GridData(GridData.FILL_BOTH));
             if (constructorView instanceof Observer) {
                 model.addObserver((Observer) constructorView);
