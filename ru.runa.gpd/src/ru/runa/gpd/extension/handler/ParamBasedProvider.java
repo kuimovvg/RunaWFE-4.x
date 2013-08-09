@@ -1,6 +1,5 @@
 package ru.runa.gpd.extension.handler;
 
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -24,9 +23,6 @@ import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 
 public abstract class ParamBasedProvider extends DelegableProvider {
@@ -38,18 +34,12 @@ public abstract class ParamBasedProvider extends DelegableProvider {
 
     @Override
     public String showConfigurationDialog(Delegable delegable) {
-        ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         ParamDefConfig config = getParamConfig(delegable);
-        return showConfigurationDialog(definition, delegable, config, getLogo());
+        return showConfigurationDialog(delegable, config, getLogo());
     }
 
-    public String showConfigurationDialog(ProcessDefinition definition, Delegable delegable) {
-        ParamDefConfig config = getParamConfig(delegable);
-        return showConfigurationDialog(definition, delegable, config, getLogo());
-    }
-
-    public static String showConfigurationDialog(ProcessDefinition definition, Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
-        ConfigurationWizardPage page = new ConfigurationWizardPage(definition, delegable, config, logo);
+    public static String showConfigurationDialog(Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
+        ConfigurationWizardPage page = new ConfigurationWizardPage(delegable, config, logo);
         final ConfigurationWizard wizard = new ConfigurationWizard(page);
         CompactWizardDialog dialog = new CompactWizardDialog(wizard) {
             @Override
@@ -109,19 +99,14 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     public static class ConfigurationWizardPage extends WizardPage {
         private ParamDefComposite paramDefComposite;
         private final ParamDefConfig config;
-        private final List<Variable> variables;
+        private final Delegable delegable;
         private final Map<String, String> properties;
 
-        protected ConfigurationWizardPage(List<Variable> variables, Map<String, String> properties, ParamDefConfig config, String headerText, ImageDescriptor logo) {
-            super("config", headerText, logo);
-            this.variables = variables;
-            this.properties = properties;
+        protected ConfigurationWizardPage(Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
+            super("config", LocalizationRegistry.getLabel(delegable.getDelegationClassName()), logo);
+            this.delegable = delegable;
+            this.properties = config.parseConfiguration(delegable.getDelegationConfiguration());
             this.config = config;
-        }
-
-        protected ConfigurationWizardPage(ProcessDefinition definition, Delegable delegable, ParamDefConfig config, ImageDescriptor logo) {
-            this(definition.getVariables(true), config.parseConfiguration(delegable.getDelegationConfiguration()), config, LocalizationRegistry.getLabel(delegable
-                    .getDelegationClassName()), logo);
         }
 
         @Override
@@ -130,7 +115,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
             scrolledComposite.setExpandHorizontal(true);
             scrolledComposite.setExpandVertical(true);
             scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-            paramDefComposite = new ParamDefComposite(scrolledComposite, config, properties, variables);
+            paramDefComposite = new ParamDefComposite(scrolledComposite, delegable, config, properties);
             paramDefComposite.createUI();
             scrolledComposite.setMinSize(paramDefComposite.computeSize(paramDefComposite.getSize().x, SWT.DEFAULT));
             scrolledComposite.setContent(paramDefComposite);
@@ -139,7 +124,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
 
         public String getConfiguration() {
             Map<String, String> properties = paramDefComposite.readUserInput();
-            return config.toConfiguration(variables, properties);
+            return config.toConfiguration(delegable.getVariableNames(true), properties);
         }
     }
 }

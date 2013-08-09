@@ -1030,7 +1030,7 @@
             decisionHandler="false"
             cellEditorProvider="ru.runa.gpd.extension.handler.ActorNameEditorProvider"
             className="ru.runa.wfe.extension.handler.user.ActorNameActionHandler"
-            enabled="true"
+            enabled="false"
             label="%ru.runa.wfe.extension.handler.user.ActorNameActionHandler">
       </handler>
       <handler

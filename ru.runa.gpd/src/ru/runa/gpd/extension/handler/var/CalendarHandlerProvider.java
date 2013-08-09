@@ -1,9 +1,7 @@
 package ru.runa.gpd.extension.handler.var;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,18 +27,14 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
+import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.var.format.LongFormat;
 
 public class CalendarHandlerProvider extends XmlBasedConstructorProvider<CalendarConfig> {
-    private static List<String> dateFormats = new ArrayList<String>();
-    private static List<String> setFormats = new ArrayList<String>();
-    static {
-        dateFormats.add(Date.class.getName());
-        setFormats.addAll(dateFormats);
-        setFormats.add(LongFormat.class.getName());
-    }
+    private static String[] dateFormats = new String[] { Date.class.getName() };
+    private static String[] setFormats = new String[] { Date.class.getName(), LongFormat.class.getName() };
 
     @Override
     protected CalendarConfig createDefault() {
@@ -53,8 +47,8 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
     }
 
     @Override
-    protected Composite createConstructorView(Composite parent) {
-        return new ConstructorView(parent, SWT.NONE);
+    protected Composite createConstructorView(Composite parent, Delegable delegable) {
+        return new ConstructorView(parent, delegable);
     }
 
     @Override
@@ -64,9 +58,11 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
 
     private class ConstructorView extends Composite implements Observer {
         private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
+        private final Delegable delegable;
 
-        public ConstructorView(Composite parent, int style) {
-            super(parent, style);
+        public ConstructorView(Composite parent, Delegable delegable) {
+            super(parent, SWT.NONE);
+            this.delegable = delegable;
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -101,10 +97,8 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
                 label.setText(Localization.getString("property.duration.baseDate"));
                 final Combo combo = new Combo(this, SWT.READ_ONLY);
                 combo.add(Duration.CURRENT_DATE_MESSAGE);
-                for (Map.Entry<String, String> entry : variables.entrySet()) {
-                    if (dateFormats.contains(entry.getValue())) {
-                        combo.add(entry.getKey());
-                    }
+                for (String variableName : delegable.getVariableNames(false, dateFormats)) {
+                    combo.add(variableName);
                 }
                 combo.setLayoutData(get2GridData());
                 if (model.getBaseVariableName() != null) {
@@ -126,10 +120,8 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
                 Label label = new Label(this, SWT.NONE);
                 label.setText(Localization.getString("ParamBasedProvider.result"));
                 final Combo combo = new Combo(this, SWT.READ_ONLY);
-                for (Map.Entry<String, String> entry : variables.entrySet()) {
-                    if (dateFormats.contains(entry.getValue())) {
-                        combo.add(entry.getKey());
-                    }
+                for (String variableName : delegable.getVariableNames(false, dateFormats)) {
+                    combo.add(variableName);
                 }
                 combo.setLayoutData(get2GridData());
                 combo.setText(model.getOutVariableName());
@@ -215,12 +207,7 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
                         operation.setExpression(text.getText());
                     }
                 });
-                List<String> variableNames = new ArrayList<String>();
-                for (Map.Entry<String, String> entry : variables.entrySet()) {
-                    if (setFormats.contains(entry.getValue())) {
-                        variableNames.add(entry.getKey());
-                    }
-                }
+                List<String> variableNames = delegable.getVariableNames(false, setFormats);
                 new InsertVariableTextMenuDetectListener(text, variableNames);
             }
             Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);

@@ -88,6 +88,10 @@ public class ParamDef {
         return formatFilters;
     }
 
+    public String[] getFormatFiltersAsArray() {
+        return formatFilters.toArray(new String[formatFilters.size()]);
+    }
+
     public String getHelp() {
         return help;
     }

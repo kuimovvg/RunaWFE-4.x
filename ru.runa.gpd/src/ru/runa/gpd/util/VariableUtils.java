@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class VariableUtils {
+    // unused
     public static boolean isVariableExists(List<Variable> variables, String variableName) {
         for (Variable variable : variables) {
             if (Objects.equal(variableName, variable.getName())) {
