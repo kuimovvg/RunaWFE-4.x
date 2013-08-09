@@ -14,7 +14,7 @@ public class MSWordVariableMapping extends Observable {
         return variableName;
     }
 
-    public void setVariableName(String variableName, String format) {
+    public void setVariableName(String variableName) {
         this.variableName = variableName;
     }
 
