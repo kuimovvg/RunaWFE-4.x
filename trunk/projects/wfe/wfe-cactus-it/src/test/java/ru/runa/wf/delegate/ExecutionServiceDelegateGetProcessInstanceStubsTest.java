@@ -58,7 +58,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
         helper.deployValidProcessDefinition();
 
         helper.deployValidProcessDefinition(WfServiceTestHelper.SWIMLANE_PROCESS_FILE_NAME);
-        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS);
+        Collection<Permission> permissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);
         helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(permissions, WfServiceTestHelper.SWIMLANE_PROCESS_NAME);
 
         Collection<Permission> startPermissions = Lists.newArrayList(DefinitionPermission.START_PROCESS, DefinitionPermission.READ_STARTED_PROCESS);

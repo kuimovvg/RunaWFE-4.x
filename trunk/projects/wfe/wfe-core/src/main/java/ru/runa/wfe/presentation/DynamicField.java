@@ -73,4 +73,8 @@ class DynamicField implements Serializable {
         return Objects.equal(fieldIdx, other.fieldIdx) && Objects.equal(fieldValue, other.fieldValue);
     }
 
+    @Override
+    public String toString() {
+        return fieldIdx + "=" + fieldValue;
+    }
 }

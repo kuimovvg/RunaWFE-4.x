@@ -83,19 +83,10 @@ public class AuthorizationServiceDelegateSetMultiExecutorsPermissionsTest extend
     }
 
     public void testSetPermissions() throws Exception {
-        try {
-            authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, testPermission, additionalActor);
-        } catch (AuthorizationException e) {
-            // TODO PermissionDAO.isAllowed doesn't support mixed lists of
-            // Actors and Executors
-            return;
-        }
-        fail("TODO trap");
-
+        authorizationService.setPermissions(th.getAuthorizedPerformerUser(), executorIDs, testPermission, additionalActor);
         for (int i = 0; i < executorIDs.size(); i++) {
             additionalActorGroupsMixed.set(i, Delegates.getExecutorService().getExecutor(th.getAuthorizedPerformerUser(), executorIDs.get(i)));
         }
-
         for (int i = 0; i < executorIDs.size(); i++) {
             Collection<Permission> expected = authorizationService.getIssuedPermissions(th.getAuthorizedPerformerUser(),
                     additionalActorGroupsMixed.get(i), additionalActor);
