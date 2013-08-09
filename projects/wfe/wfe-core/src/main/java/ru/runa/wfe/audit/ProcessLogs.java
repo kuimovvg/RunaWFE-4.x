@@ -119,7 +119,7 @@ public class ProcessLogs implements Serializable {
 
     public Map<TaskCreateLog, TaskEndLog> getTaskLogs() {
         Map<String, TaskCreateLog> tmpByTaskName = Maps.newHashMap();
-        Map<String, TaskCreateLog> tmpByNodeId = Maps.newHashMap();
+        Map<Long, TaskCreateLog> tmpByTaskId = Maps.newHashMap();
         Map<TaskCreateLog, TaskEndLog> result = Maps.newHashMap();
         boolean compatibilityMode = false;
         for (ProcessLog log : logs) {
@@ -127,28 +127,21 @@ public class ProcessLogs implements Serializable {
                 TaskCreateLog taskCreateLog = (TaskCreateLog) log;
                 String key = log.getProcessId() + taskCreateLog.getTaskName();
                 tmpByTaskName.put(key, taskCreateLog);
-                key = log.getProcessId() + taskCreateLog.getNodeId();
-                tmpByNodeId.put(key, taskCreateLog);
+                tmpByTaskId.put(taskCreateLog.getTaskId(), taskCreateLog);
             }
             if (log instanceof TaskEndLog) {
                 TaskEndLog taskEndLog = (TaskEndLog) log;
                 TaskCreateLog taskCreateLog;
-                if (taskEndLog.getNodeId() != null) {
-                    String key = log.getProcessId() + taskEndLog.getNodeId();
-                    taskCreateLog = tmpByNodeId.remove(key);
-                    if (taskCreateLog != null) {
-                        tmpByTaskName.remove(log.getProcessId() + taskCreateLog.getTaskName());
-                    }
+                if (taskEndLog.getTaskId() != null && tmpByTaskId.containsKey(taskEndLog.getTaskId())) {
+                    taskCreateLog = tmpByTaskId.remove(taskEndLog.getTaskId());
+                    tmpByTaskName.remove(log.getProcessId() + taskCreateLog.getTaskName());
                 } else {
                     String key = log.getProcessId() + taskEndLog.getTaskName();
                     taskCreateLog = tmpByTaskName.remove(key);
                     compatibilityMode = true;
                 }
                 if (taskCreateLog == null) {
-                    // incorrect algorithm execution caused by:
-                    // TODO cycle execution
-                    // TODO multi tasks
-                    LogFactory.getLog(getClass()).error("No TaskCreateLog for " + log);
+                    LogFactory.getLog(getClass()).warn("No TaskCreateLog for " + log);
                     continue;
                 }
                 result.put(taskCreateLog, taskEndLog);
@@ -180,7 +173,7 @@ public class ProcessLogs implements Serializable {
             }
         }
         // unfinished tasks
-        for (TaskCreateLog taskCreateLog : compatibilityMode ? tmpByTaskName.values() : tmpByNodeId.values()) {
+        for (TaskCreateLog taskCreateLog : compatibilityMode ? tmpByTaskName.values() : tmpByTaskId.values()) {
             result.put(taskCreateLog, null);
         }
         return result;

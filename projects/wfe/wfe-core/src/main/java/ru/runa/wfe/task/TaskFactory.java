@@ -7,6 +7,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
 import ru.runa.wfe.audit.TaskCreateLog;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -54,10 +55,11 @@ public class TaskFactory {
         Token token = executionContext.getToken();
         task.setToken(token);
         task.setProcess(process);
-        executionContext.addLog(new TaskCreateLog(task));
         task.setDeadlineDate(ExpressionEvaluator.evaluateDueDate(executionContext, getDeadlineDuration(taskDefinition)));
-        taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_CREATE);
         process.getTasks().add(task);
+        ApplicationContextFactory.getTaskDAO().flushPendingChanges();
+        executionContext.addLog(new TaskCreateLog(task));
+        taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_CREATE);
         return task;
     }
 
