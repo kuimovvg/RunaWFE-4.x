@@ -78,6 +78,7 @@ public class FormPresentationUtils {
     private static final String CHECKED_ATTR = "checked";
     private static final String SELECTED_ATTR = "selected";
     private static final String CSS_CLASS_ATTR = "class";
+    private static final String ERROR_CONTAINER = "span";
 
     public static byte[] adjustUrls(PageContext pageContext, Long definitionId, String htmlHref, byte[] originalBytes) {
         Document document = HTMLUtils.readHtml(originalBytes);
@@ -262,7 +263,7 @@ public class FormPresentationUtils {
                 Element node = (Element) selectElements.item(i);
                 String inputName = node.getAttribute(NAME_ATTR);
                 if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
-                    Element div = wrapSelectToDiv(document, node, inputName);
+                    Element div = wrapSelectToErrorContainer(document, node, inputName);
                     addRequiredClassAttribute(div);
                 }
                 handleErrors(userErrors, inputName, pageContext, document, node);
@@ -359,12 +360,7 @@ public class FormPresentationUtils {
             } else {
                 node.setAttribute("title", errorText);
                 if ("select".equalsIgnoreCase(node.getTagName())) {
-                    Node parentNode = node.getParentNode();
-                    if (parentNode instanceof Element && "div".equalsIgnoreCase(((Element) node.getParentNode()).getNodeName())) {
-                        node = (Element) parentNode;
-                    } else {
-                        node = wrapSelectToDiv(document, node, inputName);
-                    }
+                    node = wrapSelectToErrorContainer(document, node, inputName);
                 }
                 addClassAttribute(node, Resources.CLASS_INVALID);
             }
@@ -388,13 +384,16 @@ public class FormPresentationUtils {
         element.setAttribute(CSS_CLASS_ATTR, cssClasses);
     }
 
-    private static Element wrapSelectToDiv(Document document, Node selectNode, String selectName) {
-        log.debug("Wrapping select[name='" + selectName + "'] to div");
-        Node parent = selectNode.getParentNode();
-        parent.removeChild(selectNode);
-        Element div = document.createElement("div");
+    private static Element wrapSelectToErrorContainer(Document document, Node selectNode, String selectName) {
+        Node parentNode = selectNode.getParentNode();
+        if (parentNode instanceof Element && ERROR_CONTAINER.equalsIgnoreCase(parentNode.getNodeName())) {
+            return (Element) parentNode;
+        }
+        log.debug("Wrapping select[name='" + selectName + "'] to " + ERROR_CONTAINER);
+        parentNode.removeChild(selectNode);
+        Element div = document.createElement(ERROR_CONTAINER);
         div.appendChild(selectNode);
-        parent.appendChild(div);
+        parentNode.appendChild(div);
         return div;
     }
 }
