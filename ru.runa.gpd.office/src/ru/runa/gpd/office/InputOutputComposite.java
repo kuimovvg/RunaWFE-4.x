@@ -1,7 +1,5 @@
 package ru.runa.gpd.office;
 
-import java.util.Map;
-
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.swt.SWT;
@@ -19,17 +17,18 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ru.runa.gpd.extension.VariableFormatRegistry;
+import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.office.resource.Messages;
+import ru.runa.wfe.var.FileVariable;
 
 public class InputOutputComposite extends Composite {
     public final InputOutputModel model;
-    private final Map<String, String> variables;
+    private final Delegable delegable;
 
-    public InputOutputComposite(Composite parent, final InputOutputModel model, Map<String, String> variables, FilesSupplierMode mode) {
+    public InputOutputComposite(Composite parent, Delegable delegable, final InputOutputModel model, FilesSupplierMode mode) {
         super(parent, SWT.NONE);
         this.model = model;
-        this.variables = variables;
+        this.delegable = delegable;
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 3;
         setLayoutData(data);
@@ -127,10 +126,8 @@ public class InputOutputComposite extends Composite {
             }
             final Combo combo = new Combo(composite, SWT.READ_ONLY);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            for (String varName : variables.keySet()) {
-                if (VariableFormatRegistry.isAssignableFrom("ru.runa.wfe.var.FileVariable", variables.get(varName))) {
-                    combo.add(varName);
-                }
+            for (String variableName : delegable.getVariableNames(false, FileVariable.class.getName())) {
+                combo.add(variableName);
             }
             if (variable != null) {
                 combo.setText(variable);

@@ -14,7 +14,7 @@ public class ConstraintsModel {
     public static final String COLUMN_CLASS = "ru.runa.wfe.office.excel.ColumnConstraints";
     public String sheetName = "";
     public int sheetIndex = 0;
-    public String variable;
+    public String variableName = "";
     public final int type;
     public int row = 0;
     public int column = 0;
@@ -35,12 +35,12 @@ public class ConstraintsModel {
         this.sheetIndex = sheetIndex;
     }
 
-    public String getVariable() {
-        return variable;
+    public String getVariableName() {
+        return variableName;
     }
 
-    public void setVariable(String variable) {
-        this.variable = variable;
+    public void setVariableName(String variable) {
+        this.variableName = variable;
     }
 
     public int getRow() {
@@ -80,7 +80,7 @@ public class ConstraintsModel {
         } else {
             throw new RuntimeException("Invaid class '" + className + "'");
         }
-        model.variable = element.attributeValue("variable");
+        model.variableName = element.attributeValue("variable");
         Element conf = element.element("config");
         model.sheetName = conf.attributeValue("sheetName");
         if (model.sheetName == null || model.sheetName.length() == 0) {
@@ -102,7 +102,7 @@ public class ConstraintsModel {
     public void serialize(Document document, Element root) {
         Element el = root.addElement("binding");
         Element conf = el.addElement("config");
-        el.addAttribute("variable", variable);
+        el.addAttribute("variable", variableName);
         switch (type) {
         case CELL:
             el.addAttribute("class", CELL_CLASS);
