@@ -202,6 +202,6 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("processId", processId).add("tokenId", tokenId)
-                .add("date", CalendarUtil.formatDateTime(date)).toString();
+                .add("date", CalendarUtil.formatDateTime(date)).add("attributes", attributes).toString();
     }
 }
