@@ -299,6 +299,10 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
             firePropertyChange(PROPERTY_CONFIGURATION, old, this.delegationConfiguration);
         }
     }
+    
+    public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
+        return getProcessDefinition().getVariableNames(includeSwimlanes, typeClassNameFilters);
+    }
 
     // IPropertySource
     protected void firePropertyChange(String propName, Object old, Object newValue) {

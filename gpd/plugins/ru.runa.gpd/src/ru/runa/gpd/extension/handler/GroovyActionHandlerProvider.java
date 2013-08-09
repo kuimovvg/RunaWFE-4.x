@@ -15,6 +15,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -27,6 +28,9 @@ import com.google.common.collect.Lists;
 public class GroovyActionHandlerProvider extends DelegableProvider {
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
+        if (!HandlerArtifact.ACTION.equals(delegable.getDelegationType())) {
+            throw new IllegalArgumentException("For action handler only");
+        }
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariables(true));
     }

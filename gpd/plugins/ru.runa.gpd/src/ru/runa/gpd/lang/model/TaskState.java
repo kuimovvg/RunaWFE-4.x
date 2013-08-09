@@ -83,6 +83,9 @@ public class TaskState extends State implements Synchronizable {
     public void setBotTaskLink(BotTaskLink botTaskLink) {
         if (!Objects.equal(this.botTaskLink, botTaskLink)) {
             this.botTaskLink = botTaskLink;
+            if (this.botTaskLink != null) {
+                this.botTaskLink.setTaskState(this);
+            }
             firePropertyChange(PROPERTY_BOT_TASK_NAME, null, "");
         }
     }

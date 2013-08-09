@@ -4,7 +4,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -67,8 +66,6 @@ import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
-
-import com.google.common.collect.Maps;
 
 public class BotTaskEditor extends EditorPart implements ISelectionListener, IResourceChangeListener, PropertyChangeListener {
     public static final String ID = "ru.runa.gpd.editor.BotTaskEditor";
@@ -244,18 +241,8 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         editConfigurationButton.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-                Map<String, String> variables = Maps.newHashMap();
-                if (botTask.getParamDefConfig() != null) {
-                    for (ParamDefGroup paramDefGroup : botTask.getParamDefConfig().getGroups()) {
-                        for (ParamDef paramDef : paramDefGroup.getParameters()) {
-                            if (paramDef.getFormatFilters().size() > 0) {
-                                variables.put(paramDef.getName(), paramDef.getFormatFilters().get(0));
-                            }
-                        }
-                    }
-                }
                 DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
-                String newConfiguration = provider.showConfigurationDialog(botTask.getDelegationConfiguration(), variables);
+                String newConfiguration = provider.showConfigurationDialog(botTask);
                 if (newConfiguration != null) {
                     configurationText.setText(newConfiguration);
                     botTask.setDelegationConfiguration(newConfiguration);

@@ -14,6 +14,7 @@ import org.eclipse.jface.window.Window;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -24,6 +25,9 @@ import ru.runa.gpd.lang.model.Variable;
 public class GroovyDecisionProvider extends DelegableProvider implements IDecisionProvider {
     @Override
     public String showConfigurationDialog(Delegable delegable) {
+        if (!HandlerArtifact.DECISION.equals(delegable.getDelegationType())) {
+            throw new IllegalArgumentException("For decision handler only");
+        }
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         List<Transition> transitions = ((Decision) delegable).getLeavingTransitions();
         List<String> transitionNames = new ArrayList<String>();

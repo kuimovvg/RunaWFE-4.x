@@ -23,7 +23,6 @@ import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskLink;
 import ru.runa.gpd.lang.model.BotTaskType;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.swimlane.OrgFunctionSwimlaneInitializer;
@@ -171,7 +170,6 @@ public class BotTaskUtils {
      * @param taskState task state with valid bot task link and swimlane
      */
     public static void editBotTaskLinkConfiguration(TaskState taskState) {
-        ProcessDefinition processDefinition = taskState.getProcessDefinition();
         BotTaskLink botTaskLink = taskState.getBotTaskLink();
         BotTask botTask = BotCache.getBotTaskNotNull(taskState.getSwimlaneBotName(), botTaskLink.getBotTaskName());
         botTaskLink.setDelegationClassName(botTask.getDelegationClassName());
@@ -180,11 +178,11 @@ public class BotTaskUtils {
         if (BotTaskUtils.isTaskHandlerParameterized(botTaskLink.getDelegationClassName())) {
             // this is the case of ru.runa.gpd.lang.model.BotTaskType.PARAMETERIZED
             ParamBasedProvider provider = (ParamBasedProvider) HandlerRegistry.getProvider(botTaskLink.getDelegationClassName());
-            newConfiguration = provider.showConfigurationDialog(processDefinition, botTaskLink);
+            newConfiguration = provider.showConfigurationDialog(botTaskLink);
         } else {
             // this is the case of ru.runa.gpd.lang.model.BotTaskType.EXTENDED
             ImageDescriptor logo = SharedImages.getImageDescriptor("/icons/bottasklink.png");
-            newConfiguration = ParamBasedProvider.showConfigurationDialog(processDefinition, botTaskLink, config, logo);
+            newConfiguration = ParamBasedProvider.showConfigurationDialog(botTaskLink, config, logo);
         }
         if (newConfiguration != null) {
             botTaskLink.setDelegationConfiguration(newConfiguration);
