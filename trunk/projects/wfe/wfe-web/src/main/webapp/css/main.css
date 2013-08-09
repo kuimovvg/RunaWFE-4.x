@@ -245,7 +245,7 @@ input.required, textarea.required, td.required {
 	background-position: top right;
 }
 
-div.required::after {
+div.required::after, span.required::after {
 	content: "*" !important;
 	color: #990000 !important;
 	font-weight: bold;
