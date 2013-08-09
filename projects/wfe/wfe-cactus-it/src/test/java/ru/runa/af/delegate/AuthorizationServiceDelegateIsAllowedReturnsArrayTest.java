@@ -155,10 +155,14 @@ public class AuthorizationServiceDelegateIsAllowedReturnsArrayTest extends Servl
         ArrayAssert.assertEqualArrays("AuthorizationDelegate.isAllowed() returns wrong info", expected, isAllowed);
     }
 
-    public void testIsAllowedExecutorUnauthorized() throws Exception {
-        boolean[] isAllowed = authorizationService.isAllowed(helper.getUnauthorizedPerformerUser(), Permission.READ,
-                Lists.newArrayList(helper.getAASystem(), helper.getBaseGroupActor(), helper.getBaseGroup()));
-        boolean[] expected = { false, false, false };
-        ArrayAssert.assertEqualArrays("AuthorizationDelegate.isAllowed() returns wrong info", expected, isAllowed);
+    public void testIsAllowedExecutorDifferentObjects() throws Exception {
+        try {
+            authorizationService.isAllowed(helper.getUnauthorizedPerformerUser(), Permission.READ,
+                    Lists.newArrayList(helper.getAASystem(), helper.getBaseGroupActor(), helper.getBaseGroup()));
+            fail("no error");
+        } catch (InternalApplicationException e) {
+            assertEquals("Identifiables should be of the same secured object type (SYSTEM)", e.getMessage());
+        }
     }
+
 }

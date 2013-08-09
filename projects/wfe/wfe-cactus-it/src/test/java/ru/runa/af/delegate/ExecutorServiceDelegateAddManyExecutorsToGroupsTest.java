@@ -18,10 +18,11 @@
 
 package ru.runa.af.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.AuthenticationException;
@@ -29,10 +30,13 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.*;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.GroupPermission;
 
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /*
  */
@@ -51,7 +55,8 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
 
     private List<Executor> additionalActorGroupsMixed;
 
-    private final Collection<Permission> addToGroupPermissions = Lists.newArrayList(Permission.READ, GroupPermission.LIST_GROUP, GroupPermission.ADD_TO_GROUP);
+    private final Collection<Permission> addToGroupPermissions = Lists.newArrayList(Permission.READ, GroupPermission.LIST_GROUP,
+            GroupPermission.ADD_TO_GROUP);
 
     private final Collection<Permission> readPermissions = Lists.newArrayList(Permission.READ);
 
@@ -94,6 +99,7 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
         return executorService.getExecutor(th.getAdminUser(), additionalActor.getId());
     }
 
+    @Override
     protected void setUp() throws Exception {
         executorService = Delegates.getExecutorService();
         th = new ServiceTestHelper(testPrefix);
@@ -157,16 +163,11 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
         } catch (AuthorizationException e) {
             // this is supposed result
         }
-
         th.setPermissionsToAuthorizedPerformer(addToGroupPermissions, additionalGroup);
-
         try {
             executorService.addExecutorsToGroup(th.getAuthorizedPerformerUser(), th.toIds(additionalActorGroupsMixed), getAdditionalGroup().getId());
-            fail("TODO: PermissionDAO.isAllowed doesn't support mixed lists of Executors");
         } catch (AuthorizationException e) {
-            return;
         }
-
         assertTrue("Executors not added to group ", th.isExecutorsInGroup(getAdditionalGroupsMixed(), getAdditionalGroup()));
     }
 
@@ -231,8 +232,8 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
         try {
             executorService.addExecutorsToGroup(th.getAuthorizedPerformerUser(), th.toIds(fakeExecutors), additionalGroup.getId());
             fail("Executors added to group");
-        } catch (IllegalArgumentException e){
-            //TODO
+        } catch (IllegalArgumentException e) {
+            // TODO
         } catch (ExecutorDoesNotExistException e) {
             // this is supposed result
         }
@@ -240,14 +241,11 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
 
     public void testAddFakeExecutorToGroups() throws Exception {
         th.setPermissionsToAuthorizedPerformerOnExecutors(addToGroupPermissions, additionalGroups);
-
         Executor fakeExecutor = th.getFakeActor();
         try {
             executorService.addExecutorToGroups(th.getAuthorizedPerformerUser(), fakeExecutor.getId(), th.toIds(additionalGroups));
             fail("Executor added to groups ");
         } catch (AuthorizationException e) {
-            // TODO: PermissionDAO.isAllowed doesn't support mixed lists of Executors
-        } catch (ExecutorDoesNotExistException e) {
             // this is supposed result
         }
     }
@@ -283,6 +281,7 @@ public class ExecutorServiceDelegateAddManyExecutorsToGroupsTest extends Servlet
         }
     }
 
+    @Override
     protected void tearDown() throws Exception {
 
         th.releaseResources();
