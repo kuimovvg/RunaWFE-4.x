@@ -28,16 +28,16 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
+import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;
 
 public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<DocxModel> {
     @Override
-    protected Composite createConstructorView(Composite parent) {
-        return new ConstructorView(parent);
+    protected Composite createConstructorView(Composite parent, Delegable delegable) {
+        return new ConstructorView(parent, delegable);
     }
 
     @Override
@@ -47,9 +47,11 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
 
     private class ConstructorView extends Composite implements Observer {
         private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
+        private final Delegable delegable;
 
-        public ConstructorView(Composite parent) {
-            super(parent, SWT.None);
+        public ConstructorView(Composite parent, Delegable delegable) {
+            super(parent, SWT.NONE);
+            this.delegable = delegable;
             setLayout(new GridLayout(2, false));
             buildFromModel();
         }
@@ -89,7 +91,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                     }
                 });
                 hyperlinkGroup.add(addTableLink);
-                new InputOutputComposite(this, model.getInOutModel(), variables, FilesSupplierMode.BOTH);
+                new InputOutputComposite(this, delegable, model.getInOutModel(), FilesSupplierMode.BOTH);
                 int i = 0;
                 for (DocxTableModel table : model.tables) {
                     addTableSection(table, i++);
@@ -198,15 +200,10 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
 
         private void addColumnSection(Composite parent, final DocxColumnModel columnModel, final int tableIndex, final int columnIndex) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
-            for (String varName : variables.keySet()) {
-                if (VariableFormatRegistry.isAssignableFrom(List.class, variables.get(varName))) {
-                    combo.add(varName);
-                }
+            for (String variableName : delegable.getVariableNames(true, List.class.getName())) {
+                combo.add(variableName);
             }
-            try {
-                combo.setText(columnModel.variable);
-            } catch (Exception e) {
-            }
+            combo.setText(columnModel.variable);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             combo.addSelectionListener(new SelectionAdapter() {
                 @Override
