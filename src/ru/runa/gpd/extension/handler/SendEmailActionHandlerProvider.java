@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Display;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.State;
@@ -31,6 +32,9 @@ import ru.runa.wfe.commons.email.EmailUtils;
 public class SendEmailActionHandlerProvider extends DelegableProvider {
     @Override
     public String showConfigurationDialog(Delegable delegable) {
+        if (!HandlerArtifact.ACTION.equals(delegable.getDelegationType())) {
+            throw new IllegalArgumentException("For action handler only");
+        }
         final EmailConfigWizardPage wizardPage = new EmailConfigWizardPage(bundle, delegable);
         final ConfigurationWizard wizard = new ConfigurationWizard(wizardPage);
         CompactWizardDialog wizardDialog = new CompactWizardDialog(wizard) {

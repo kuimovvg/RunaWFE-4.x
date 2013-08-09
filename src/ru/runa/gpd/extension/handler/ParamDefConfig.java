@@ -17,8 +17,6 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.ParamDef.Presentation;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Strings;
@@ -213,11 +211,11 @@ public class ParamDefConfig {
         return value != null && value.trim().length() > 0;
     }
 
-    public String toConfiguration(List<Variable> variables, Map<String, String> properties) {
-        return XmlUtil.toString(toConfigurationXml(variables, properties));
+    public String toConfiguration(List<String> variableNames, Map<String, String> properties) {
+        return XmlUtil.toString(toConfigurationXml(variableNames, properties));
     }
 
-    public Document toConfigurationXml(List<Variable> variables, Map<String, String> properties) {
+    public Document toConfigurationXml(List<String> variableNames, Map<String, String> properties) {
         Document doc = DocumentHelper.createDocument();
         doc.add(DocumentHelper.createElement(name));
         Element root = doc.getRootElement();
@@ -248,7 +246,7 @@ public class ParamDefConfig {
                 if (param.getXmlNodeType() == ParamDef.XML_TYPE_ATTR) {
                     paramElement = DocumentHelper.createElement("param");
                     paramElement.addAttribute("name", paramName);
-                    if (param.isUseVariable() && VariableUtils.isVariableExists(variables, value)) {
+                    if (param.isUseVariable() && variableNames.contains(value)) {
                         paramElement.addAttribute("variable", value);
                     } else {
                         paramElement.addAttribute("value", value);

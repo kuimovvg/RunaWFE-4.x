@@ -23,13 +23,11 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ui.custom.HighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
@@ -39,8 +37,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
 
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
-        ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariableNames(true));
+        return new ConfigurationDialog(delegable.getDelegationConfiguration(), delegable.getVariableNames(true));
     }
 
     private static class ConfigurationDialog extends DelegableConfigurationDialog {

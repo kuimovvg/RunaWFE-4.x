@@ -1,10 +1,7 @@
 package ru.runa.gpd.extension.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -31,14 +28,10 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.SQLTasksModel.SQLQueryModel;
 import ru.runa.gpd.extension.handler.SQLTasksModel.SQLQueryParameterModel;
 import ru.runa.gpd.extension.handler.SQLTasksModel.SQLTaskModel;
+import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.wfe.user.Executor;
 
 public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQLTasksModel> {
-    private static final List<String> PREDEFINED_VARIABLES = new ArrayList<String>();
-    static {
-        PREDEFINED_VARIABLES.add("instanceId");
-        PREDEFINED_VARIABLES.add("currentDate");
-    }
-
     @Override
     protected SQLTasksModel createDefault() {
         return SQLTasksModel.createDefault();
@@ -50,8 +43,8 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
     }
 
     @Override
-    protected Composite createConstructorView(Composite parent) {
-        return new ConstructorView(parent, SWT.NONE);
+    protected Composite createConstructorView(Composite parent, Delegable delegable) {
+        return new ConstructorView(parent, delegable);
     }
 
     @Override
@@ -66,9 +59,11 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
 
     private class ConstructorView extends Composite implements Observer {
         private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
+        private final Delegable delegable;
 
-        public ConstructorView(Composite parent, int style) {
-            super(parent, style);
+        public ConstructorView(Composite parent, Delegable delegable) {
+            super(parent, SWT.NONE);
+            this.delegable = delegable;
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -191,14 +186,8 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
 
         private void addParamSection(Composite parent, final SQLQueryParameterModel parameterModel, final int queryIndex, final int paramIndex, boolean input) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
-            Set<String> variableNames = variables.keySet();
-            for (String variableName : variableNames) {
+            for (String variableName : delegable.getVariableNames(true)) {
                 combo.add(variableName);
-            }
-            if (input && !formalVariable) {
-                for (String variableName : PREDEFINED_VARIABLES) {
-                    combo.add(variableName);
-                }
             }
             combo.setText(parameterModel.varName);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -206,7 +195,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     parameterModel.varName = combo.getText();
-                    parameterModel.swimlaneVar = swimlaneNames.contains(parameterModel.varName);
+                    parameterModel.swimlaneVar = delegable.getVariableNames(true, Executor.class.getName()).contains(parameterModel.varName);
                 }
             });
             if (paramIndex != 0) {

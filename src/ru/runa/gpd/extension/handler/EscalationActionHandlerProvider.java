@@ -3,7 +3,6 @@ package ru.runa.gpd.extension.handler;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -19,6 +18,7 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 
 public class EscalationActionHandlerProvider extends DelegableProvider {
@@ -72,9 +72,10 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
                 combo.add(definition.getLabel());
             }
             combo.setText(orgFunctionLabel);
-            combo.addSelectionListener(new SelectionAdapter() {
+            combo.addSelectionListener(new LoggingSelectionAdapter() {
+                
                 @Override
-                public void widgetSelected(SelectionEvent e) {
+                protected void onSelection(SelectionEvent e) throws Exception {
                     updateText();
                 }
             });
