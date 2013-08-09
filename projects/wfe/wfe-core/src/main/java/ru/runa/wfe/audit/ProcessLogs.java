@@ -9,9 +9,9 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import ru.runa.wfe.InternalApplicationException;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.SafeIndefiniteLoop;
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.lang.NodeType;
 
 import com.google.common.collect.Lists;
@@ -122,7 +122,6 @@ public class ProcessLogs implements Serializable {
         Map<String, TaskCreateLog> tmpByNodeId = Maps.newHashMap();
         Map<TaskCreateLog, TaskEndLog> result = Maps.newHashMap();
         boolean compatibilityMode = false;
-        // TODO cycle execution will cause incorrect algorithm execution
         for (ProcessLog log : logs) {
             if (log instanceof TaskCreateLog) {
                 TaskCreateLog taskCreateLog = (TaskCreateLog) log;
@@ -146,10 +145,11 @@ public class ProcessLogs implements Serializable {
                     compatibilityMode = true;
                 }
                 if (taskCreateLog == null) {
-                    if (SystemProperties.isV3CompatibilityMode()) {
-                        continue;
-                    }
-                    throw new InternalApplicationException("No TaskCreateLog for " + log);
+                    // incorrect algorithm execution caused by:
+                    // TODO cycle execution
+                    // TODO multi tasks
+                    LogFactory.getLog(getClass()).error("No TaskCreateLog for " + log);
+                    continue;
                 }
                 result.put(taskCreateLog, taskEndLog);
             }
