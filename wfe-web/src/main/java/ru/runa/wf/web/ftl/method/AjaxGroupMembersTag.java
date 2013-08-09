@@ -54,7 +54,8 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
         substitutions.put("userSelectorId", userScriptingVariableName);
         StringBuffer html = new StringBuffer();
         html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions, true));
-        html.append("<span class=\"ajaxGroupMembers\" id=\"ajaxGroupMembers_").append(groupScriptingVariableName).append("\">");
+        html.append("<span class=\"ajaxGroupMembers\">");
+        html.append("<span id=\"ajaxGroupMembers_").append(groupScriptingVariableName).append("\">");
         html.append("<select id=\"").append(groupScriptingVariableName).append("\" name=\"").append(groupVariableName).append("\">");
         List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());
         Group defaultGroup = variableProvider.getValue(Group.class, groupVariableName);
@@ -71,7 +72,8 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
             }
             html.append(">").append(group.getName()).append("</option>");
         }
-        html.append("</select>");
+        html.append("</select></span>");
+        html.append("<span id=\"ajaxGroupMembers_").append(userScriptingVariableName).append("\">");
         html.append("<select id=\"").append(userScriptingVariableName).append("\" name=\"").append(userVariableName).append("\">");
         if (defaultGroup != null) {
             List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, defaultGroup);
@@ -94,7 +96,7 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
         } else {
             html.append("<option value=\"\"></option>");
         }
-        html.append("</select>");
+        html.append("</select></span>");
         html.append("</span>");
         return html.toString();
     }
