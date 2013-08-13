@@ -39,6 +39,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -190,7 +192,7 @@ public class Task implements Assignable {
         this.swimlane = swimlane;
     }
 
-    @ManyToOne(targetEntity = Process.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Process.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "PROCESS_ID")
     @ForeignKey(name = "FK_TASK_PROCESS")
     @Index(name = "IX_TASK_PROCESS")
