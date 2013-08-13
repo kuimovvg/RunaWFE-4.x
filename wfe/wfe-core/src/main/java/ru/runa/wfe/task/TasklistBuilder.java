@@ -21,6 +21,7 @@ import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.task.cache.TaskCache;
 import ru.runa.wfe.task.cache.TaskCacheCtrl;
+import ru.runa.wfe.task.dao.TaskDAO;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Actor;
@@ -49,6 +50,8 @@ public class TasklistBuilder {
     private SubstitutionLogic substitutionLogic;
     @Autowired
     private ProcessDefinitionLoader processDefinitionLoader;
+    @Autowired
+    private TaskDAO taskDAO;
 
     public List<WfTask> getTasks(Actor actor, BatchPresentation batchPresentation) {
         List<WfTask> result = taskCache.getTasks(actor.getId(), batchPresentation);
@@ -67,7 +70,7 @@ public class TasklistBuilder {
         for (Task task : tasks) {
             try {
                 Executor taskExecutor = task.getExecutor();
-                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
+                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task.getProcess());
                 if (executorsToGetTasksByMembership.contains(taskExecutor)) {
                     log.debug(task + " is acquired by membership rules");
                     result.add(taskObjectFactory.create(task, actor, false));
@@ -94,6 +97,10 @@ public class TasklistBuilder {
                     }
                 }
             } catch (Exception e) {
+            	if (taskDAO.get(task.getId()) == null) {
+            		log.debug(task + " has been completed", e);
+            		continue;
+            	}
                 log.error("Unable to build " + task, e);
             }
         }

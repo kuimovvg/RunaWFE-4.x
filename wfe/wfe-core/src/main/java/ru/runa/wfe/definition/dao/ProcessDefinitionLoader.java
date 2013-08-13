@@ -8,7 +8,8 @@ import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.cache.ProcessDefCacheCtrl;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.task.Task;
+
+import com.google.common.base.Preconditions;
 
 public class ProcessDefinitionLoader implements IProcessDefinitionLoader {
     @Autowired
@@ -26,12 +27,8 @@ public class ProcessDefinitionLoader implements IProcessDefinitionLoader {
 
     @Override
     public ProcessDefinition getDefinition(Process process) {
+    	Preconditions.checkNotNull(process, "process");
         return getDefinition(process.getDeployment().getId());
-    }
-
-    @Override
-    public ProcessDefinition getDefinition(Task task) {
-        return getDefinition(task.getProcess());
     }
 
     @Override
