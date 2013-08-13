@@ -92,7 +92,7 @@ public class WFCommonLogic extends CommonLogic {
     }
 
     public ProcessDefinition getDefinition(Task task) {
-        return processDefinitionLoader.getDefinition(task);
+        return getDefinition(task.getProcess());
     }
 
     protected ProcessDefinition getLatestDefinition(String definitionName) {

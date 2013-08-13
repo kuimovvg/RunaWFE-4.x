@@ -62,7 +62,7 @@ public class TaskAssigner {
                 continue;
             }
             try {
-                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task);
+                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task.getProcess());
                 if (task.getSwimlane() != null) {
                     Delegation delegation = processDefinition.getSwimlaneNotNull(task.getSwimlane().getName()).getDelegation();
                     AssignmentHandler handler = delegation.getInstance();
