@@ -52,6 +52,7 @@
    </requires>
    <extension-point id="tags" name="Freemarker methods" schema="metadata/tags.exsd"/>
    <extension-point id="formats" name="Freemarker output formats for variables" schema="metadata/formats.exsd"/>
+   <extension-point id="parameter_type" name="Ftl component parameter type" schema="metadata/parameter_type.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">
@@ -378,8 +379,8 @@
                multiple="false"
                name="%Param.RelationInversed"
                type="combo"
-               variableAccess="NONE"
-               variableTypeFilter="java.lang.Boolean">
+               variableTypeFilter="java.lang.Boolean"
+               variableAccess="NONE">
             <paramValue
                   name="%Param.Value.No"
                   value="false">
@@ -418,8 +419,8 @@
                multiple="false"
                name="%Param.RelationInversed"
                type="combo"
-               variableAccess="NONE"
-               variableTypeFilter="java.lang.Boolean">
+               variableTypeFilter="java.lang.Boolean"
+               variableAccess="NONE">
             <paramValue
                   name="%Param.Value.No"
                   value="false">
@@ -452,8 +453,8 @@
                multiple="false"
                name="%Param.RelationInversed"
                type="combo"
-               variableAccess="NONE"
-               variableTypeFilter="java.lang.Boolean">
+               variableTypeFilter="java.lang.Boolean"
+               variableAccess="NONE">
             <paramValue
                   name="%Param.Value.No"
                   value="false">
@@ -572,8 +573,8 @@
                multiple="true"
                name="%Param.ListVariable"
                type="combo"
-               variableAccess="WRITE"
-               variableTypeFilter="java.util.List">
+               variableTypeFilter="java.util.List"
+               variableAccess="WRITE">
          </param>
       </tag>
       <tag
@@ -586,8 +587,8 @@
                multiple="true"
                name="%Param.ListVariable"
                type="combo"
-               variableAccess="READ"
-               variableTypeFilter="java.util.List">
+               variableTypeFilter="java.util.List"
+               variableAccess="READ">
          </param>
       </tag>
       <tag
@@ -609,8 +610,8 @@
                multiple="true"
                name="%Param.MapVariable"
                type="combo"
-               variableAccess="READ"
-               variableTypeFilter="java.util.Map">
+               variableTypeFilter="java.util.Map"
+               variableAccess="READ">
          </param>
       </tag>
       <tag
@@ -750,5 +751,19 @@
                variableAccess="READ">
          </param>
       </tag>
+   </extension>
+   <extension point="ru.runa.gpd.form.ftl.parameter_type">
+      <type
+            class="ru.runa.gpd.formeditor.ftl.bean.StringParameter"
+            id="string">
+      </type>
+      <type
+            class="ru.runa.gpd.formeditor.ftl.bean.ComboBoxParameter"
+            id="combo">
+      </type>
+      <type
+            class="ru.runa.gpd.formeditor.ftl.bean.VariableParameter"
+            id="varcombo">
+      </type>
    </extension>
 </plugin>

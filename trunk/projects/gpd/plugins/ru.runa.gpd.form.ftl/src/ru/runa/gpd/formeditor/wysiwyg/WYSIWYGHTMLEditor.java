@@ -2,11 +2,13 @@ package ru.runa.gpd.formeditor.wysiwyg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.BrowserFunction;
@@ -42,10 +47,14 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
+import ru.runa.gpd.formeditor.ftl.FtlComponentIdGenerator;
+import ru.runa.gpd.formeditor.ftl.MethodTag;
+import ru.runa.gpd.formeditor.ftl.bean.FtlComponent;
 import ru.runa.gpd.formeditor.vartag.VarTagUtil;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.view.SelectionProvider;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.ValidationUtil;
@@ -64,17 +73,30 @@ import tk.eclipse.plugin.htmleditor.editors.HTMLSourceEditor;
 public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceChangeListener {
     public static final int CLOSED = 197;
     public static final String ID = "tk.eclipse.plugin.wysiwyg.WYSIWYGHTMLEditor";
+    private static final Pattern HTML_CONTENT_PATTERN = Pattern.compile("^(.*?<(body|BODY).*?>)(.*?)(</(body|BODY)>.*?)$", Pattern.DOTALL);
+    private static final boolean DEBUG = "true".equals(System.getProperty("ru.runa.gpd.form.ftl.debug"));
+    
+    private static Map<Integer, FtlComponent> copiedFtlComponents = new ConcurrentHashMap<Integer, FtlComponent>();
+
     private HTMLSourceEditor sourceEditor;
+    private Display display;
     private Browser browser;
+    private ISelectionProvider selectionProvider;
+
     private boolean ftlFormat = true;
     private FormNode formNode;
+    private Map<Integer, FtlComponent> ftlComponents = new ConcurrentHashMap<Integer, FtlComponent>();
+
     private boolean dirty = false;
     private boolean browserLoaded = false;
-    private static final Pattern pattern = Pattern.compile("^(.*?<(body|BODY).*?>)(.*?)(</(body|BODY)>.*?)$", Pattern.DOTALL);
     private Timer updateSaveButtonTimer;
     private String savedHTML = "";
     private static WYSIWYGHTMLEditor lastInitializedInstance;
-    private static final boolean DEBUG = "true".equals(System.getProperty("ru.runa.gpd.form.ftl.debug"));
+    private Object editorLock = new Object();
+    private Date tabSwitchTime;
+
+    private int cachedForVariablesCount = -1;
+    private Map<String, Map<String, Variable>> cachedVariables = new HashMap<String, Map<String, Variable>>();
 
     protected synchronized boolean isBrowserLoaded() {
         return browserLoaded;
@@ -95,6 +117,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         ftlFormat = editorInput.getName().endsWith("ftl");
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
         lastInitializedInstance = this;
+
         IFile definitionFile = ProjectFinder.getProcessDefinitionFile((IFolder) formFile.getParent());
         ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
         for (FormNode formNode : processDefinition.getChildren(FormNode.class)) {
@@ -104,6 +127,10 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 break;
             }
         }
+
+        selectionProvider = new SelectionProvider();
+        getSite().setSelectionProvider(selectionProvider);
+
         addPropertyListener(new IPropertyListener() {
             @Override
             public void propertyChanged(Object source, int propId) {
@@ -126,8 +153,9 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         });
     }
 
-    private int cachedForVariablesCount = -1;
-    private Map<String, Map<String, Variable>> cachedVariables = new HashMap<String, Map<String, Variable>>();
+    public Map<String, Variable> getVariables(boolean filterVariablesWithSpaces) {
+        return getVariables(filterVariablesWithSpaces, null);
+    }
 
     public synchronized Map<String, Variable> getVariables(boolean filterVariablesWithSpaces, String typeClassNameFilter) {
         if (formNode == null) {
@@ -221,7 +249,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         }
         ConnectorServletHelper.setBaseDir(sourceEditor.getFile().getParent());
         try {
-            final Display display = Display.getCurrent();
+            display = Display.getCurrent();
             final ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(getSite().getShell());
             final IRunnableWithProgress runnable = new IRunnableWithProgress() {
                 @Override
@@ -342,18 +370,21 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
 
     @Override
     protected void pageChange(int newPageIndex) {
-        if (newPageIndex == 1) {
-            syncBrowser2Editor();
-        } else if (newPageIndex == 0) {
-            ConnectorServletHelper.sync();
-            syncEditor2Browser();
+        synchronized (editorLock) {
+            if (newPageIndex == 1) {
+                syncBrowser2Editor();
+            } else if (newPageIndex == 0) {
+                ConnectorServletHelper.sync();
+                syncEditor2Browser();
+            }
+            super.pageChange(newPageIndex);
+            tabSwitchTime = new Date();
         }
-        super.pageChange(newPageIndex);
     }
 
     private void syncBrowser2Editor() {
         if (browser != null) {
-            boolean result = browser.execute("getHTML(false)");
+            boolean result = browser.execute("getHTML(false, " + System.currentTimeMillis() + ")");
             if (DEBUG) {
                 PluginLogger.logInfo("syncBrowser2Editor: " + result);
             }
@@ -362,13 +393,14 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
 
     private void syncEditor2Browser() {
         String html = getSourceDocumentHTML();
-        Matcher matcher = pattern.matcher(html);
+        Matcher matcher = HTML_CONTENT_PATTERN.matcher(html);
         if (matcher.find()) {
             html = matcher.group(3);
         }
         if (isFtlFormat()) {
+            ftlComponents.clear();
             try {
-                html = FreemarkerUtil.transformToHtml(getVariables(false, null), html);
+                html = FreemarkerUtil.transformToHtml(this, html);
             } catch (Exception e) {
                 WYSIWYGPlugin.logError("ftl WYSIWYGHTMLEditor.syncEditor2Browser()", e);
             }
@@ -388,8 +420,8 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     private String getDesignDocumentHTML(String html) {
         if (isFtlFormat()) {
             try {
-                html = FreemarkerUtil.transformFromHtml(html, getVariables(false, null));
-                Matcher matcher = pattern.matcher(html);
+                html = FreemarkerUtil.transformFromHtml(html, getVariables(false), this);
+                Matcher matcher = HTML_CONTENT_PATTERN.matcher(html);
                 if (matcher.find()) {
                     html = matcher.group(3);
                 }
@@ -411,23 +443,82 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         return sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).get();
     }
 
+    public int createComponent(String tagName) {
+        int componentId = FtlComponentIdGenerator.generate();
+        FtlComponent ftlComponent = new FtlComponent(MethodTag.getTagNotNull(tagName));
+        ftlComponent.setProcessDefinition(formNode.getProcessDefinition());
+        ftlComponents.put(componentId, ftlComponent);
+        return componentId;
+    }
+
+    public FtlComponent getComponent(int componentId) {
+        FtlComponent component = ftlComponents.get(componentId);
+        if (component == null) {
+            component = copiedFtlComponents.get(componentId);
+        }
+        return component;
+    }
+
+    public void componentSelected(int componentId) {
+        final ISelection selection = new StructuredSelection(ftlComponents.get(componentId));
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                selectionProvider.setSelection(selection);
+            }
+        });
+    }
+
+    public void componentDeselected() {
+        Display.getDefault().asyncExec(new Runnable() {
+            public void run() {
+                selectionProvider.setSelection(StructuredSelection.EMPTY);
+            }
+        });
+    }
+
+    public void onEditorCopy(String text) {
+        copiedFtlComponents.clear();
+
+        List<Integer> componentIds;
+        try {
+            componentIds = FreemarkerUtil.findComponents(text);
+            for (Integer id : componentIds) {
+                copiedFtlComponents.put(id, ftlComponents.get(id));
+            }
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Can't extract components from copy buffer", e);
+        }
+    }
+
+    public void onEditorPaste() {
+        Display.getDefault().syncExec(new Runnable() {
+            public void run() {
+                syncBrowser2Editor();copiedFtlComponents.keySet();
+                ConnectorServletHelper.sync();
+                syncEditor2Browser();
+            }
+        });
+    }
+
     private class UpdateSaveButtonTimerTask extends TimerTask {
         @Override
         public void run() {
             try {
                 if (getActivePage() == 0 && browser != null) {
-                    Display.getDefault().asyncExec(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                browser.execute("getHTML(true)");
-                            } catch (Throwable e) {
-                                if (DEBUG) {
-                                    PluginLogger.logInfo(e.getMessage());
+                    synchronized (editorLock) {
+                        Display.getDefault().asyncExec(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    browser.execute("getHTML(true, " + System.currentTimeMillis() + ")");
+                                } catch (Throwable e) {
+                                    if (DEBUG) {
+                                        PluginLogger.logInfo(e.getMessage());
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             } catch (Throwable e) {
                 if (DEBUG) {
@@ -445,18 +536,18 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         @Override
         public Object function(Object[] arguments) {
             boolean sync = (Boolean) arguments[0];
-            String text = (String) arguments[1];
-            if (text.length() == 0) {
-                if (DEBUG) {
-                    PluginLogger.logInfo("empty text received in callback for sync=" + sync);
-                }
+            Long eventTime = ((Double) arguments[1]).longValue();
+            String text = (String) arguments[2];
+
+            if (eventTime <= tabSwitchTime.getTime())
+                return null;
+
+            String html = !text.isEmpty() ? getDesignDocumentHTML(text) : "";
+            if (html == null) {
                 return null;
             }
+
             if (sync) {
-                String html = getDesignDocumentHTML(text);
-                if (html == null) {
-                    return null;
-                }
                 String oldContent = getSourceDocumentHTML();
                 if (!oldContent.equals(html)) {
                     sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
@@ -465,10 +556,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                     PluginLogger.logInfo("Nothing to change: " + html);
                 }
             } else {
-                String html = getDesignDocumentHTML(text);
-                if (html == null) {
-                    return null;
-                }
                 String diff = StringUtils.difference(savedHTML, html);
                 boolean setDirty = (diff.length() != 0);
                 if (setDirty != isDirty()) {

@@ -210,6 +210,19 @@ public class FtlTagSupportServlet extends HttpServlet {
                     }
                     resultHtml.append(variable.getName());
                 }
+            } else if ("CreateComponent".equals(commandStr)) {
+                int componentId = WYSIWYGHTMLEditor.getCurrent().createComponent(tagName);
+                response.setContentType("application/json; charset=UTF-8");
+                resultHtml.append("{\"componentId\":").append(componentId).append("}");
+            } else if ("ComponentSelected".equals(commandStr)) {
+                int componentId = Integer.valueOf(request.getParameter("componentId"));
+                WYSIWYGHTMLEditor.getCurrent().componentSelected(componentId);
+            } else if ("ComponentDeselected".equals(commandStr)) {
+                WYSIWYGHTMLEditor.getCurrent().componentDeselected();
+            } else if ("onCopy".equals(commandStr)) {
+                WYSIWYGHTMLEditor.getCurrent().onEditorCopy(request.getParameter("text"));
+            } else if ("onPaste".equals(commandStr)) {
+                WYSIWYGHTMLEditor.getCurrent().onEditorPaste();
             } else {
                 WYSIWYGPlugin.logInfo("Unknown cmd: " + commandStr);
             }

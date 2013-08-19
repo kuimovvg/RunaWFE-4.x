@@ -27,6 +27,7 @@
 	<meta name="robots" content="noindex, nofollow">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="Cache-Control" content="public">
+    <script type="text/javascript" src="../jquery-1.8.0.min.js"></script>
 	<script type="text/javascript">
 
 // Save a reference to the default domain.
@@ -116,7 +117,11 @@ if ( FCKBrowserInfo.IsIE )
 // The first function to be called on selection change must the the styles
 // change checker, because the result of its processing may be used by another
 // functions listening to the same event.
-FCK.Events.AttachEvent( 'OnSelectionChange', function() { FCKStyles.CheckSelectionChanges() ; } ) ;
+FCK.Events.AttachEvent( 'OnSelectionChange', function() { 
+	FCKStyles.CheckSelectionChanges() ; 
+	
+	CheckIsComponentSelected();
+} ) ;
 
 // The config hidden field is processed immediately, because
 // CustomConfigurationsPath may be set in the page.
@@ -231,6 +236,14 @@ function WaitForActive( editorInstance, newStatus )
 		if ( typeof( window.parent.FCKeditor_OnComplete ) == 'function' )
 			window.parent.FCKeditor_OnComplete( FCK ) ;
 	}
+}
+
+function CheckIsComponentSelected() {
+	var selectedElement = FCKSelection.GetSelectedElement();
+	if (!selectedElement || selectedElement.className != 'ftl_component')
+		FreemarkerTags.ComponentDeselected();
+	else
+		FreemarkerTags.ComponentSelected(selectedElement.id);
 }
 
 // Gecko browsers doesn't calculate well the IFRAME size so we must

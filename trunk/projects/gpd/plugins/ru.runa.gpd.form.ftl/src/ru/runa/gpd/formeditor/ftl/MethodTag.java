@@ -56,29 +56,39 @@ public class MethodTag {
         private static final String TYPE_TEXT_OR_COMBO = "richcombo";
         private static final String TYPE_VAR_COMBO = "varcombo";
         // private static final String TYPE_TEXT = "text";
-        public final String typeName;
+        public final String typeId;
         public final VariableAccess variableAccess;
         public final String label;
         public final List<OptionalValue> optionalValues = new ArrayList<OptionalValue>();
         public final boolean multiple;
 
-        public Param(String typeName, VariableAccess variableAccess, String label, boolean multiple) {
-            this.typeName = typeName;
+        public Param(String typeId, VariableAccess variableAccess, String label, boolean multiple) {
+            this.typeId = typeId;
             this.variableAccess = variableAccess;
             this.label = label;
             this.multiple = multiple;
         }
 
         public boolean isCombo() {
-            return TYPE_COMBO.equals(typeName);
+            return TYPE_COMBO.equals(typeId);
         }
 
         public boolean isRichCombo() {
-            return TYPE_TEXT_OR_COMBO.equals(typeName);
+            return TYPE_TEXT_OR_COMBO.equals(typeId);
         }
 
         public boolean isVarCombo() {
-            return TYPE_VAR_COMBO.equals(typeName);
+            return TYPE_VAR_COMBO.equals(typeId);
+        }
+
+        public String getVariableTypeFilter() {
+            if (!isVarCombo())
+                return null;
+            for (OptionalValue optionalValue : optionalValues) {
+                if (optionalValue.filterType != null)
+                    return optionalValue.filterType;
+            }
+            return null;
         }
     }
 
