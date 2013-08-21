@@ -12,8 +12,6 @@ public class InputVariableTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(InputVariableTag.class);
 
-    // TODO css classes in FTL tags
-
     @Override
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
