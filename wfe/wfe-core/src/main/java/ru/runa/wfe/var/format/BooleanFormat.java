@@ -28,8 +28,8 @@ public class BooleanFormat implements VariableFormat<Boolean> {
     }
 
     @Override
-    public Boolean parse(String[] source) {
-        String value = source[0];
+    public Boolean parse(String source) {
+        String value = source;
         return "true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value);
 
     }

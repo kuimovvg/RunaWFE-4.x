@@ -33,10 +33,10 @@ public class LongFormat implements VariableFormat<Number> {
     }
 
     @Override
-    public Number parse(String[] source) throws ParseException {
+    public Number parse(String source) throws ParseException {
         Long result = null;
         if (source != null) {
-            result = new Long(decimalFormat.parse(source[0]).longValue());
+            result = new Long(decimalFormat.parse(source).longValue());
         }
         return result;
     }

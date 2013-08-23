@@ -16,8 +16,8 @@ public class BigDecimalFormat implements VariableFormat<BigDecimal> {
     }
 
     @Override
-    public BigDecimal parse(String[] source) throws Exception {
-        return new BigDecimal(source[0]);
+    public BigDecimal parse(String source) throws Exception {
+        return new BigDecimal(source);
     }
 
     @Override

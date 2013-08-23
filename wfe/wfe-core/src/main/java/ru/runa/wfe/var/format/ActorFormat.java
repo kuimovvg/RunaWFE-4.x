@@ -11,13 +11,13 @@ public class ActorFormat implements VariableFormat<Actor> {
     }
 
     @Override
-    public Actor parse(String[] source) throws Exception {
-        return TypeConversionUtil.convertTo(Actor.class, source[0]);
+    public Actor parse(String source) throws Exception {
+        return TypeConversionUtil.convertTo(Actor.class, source);
     }
 
     @Override
     public String format(Actor object) {
-        return object.getFullName();
+        return object.getName();
     }
 
 }
