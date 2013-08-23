@@ -225,9 +225,7 @@ public class WorkspaceOperations {
         ImportParWizard wizard = new ImportParWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
-        if (dialog.open() == IDialogConstants.OK_ID) {
-            BotCache.reload();
-        }
+        dialog.open();
     }
 
     public static void deleteBotResources(List<IResource> resources) {
