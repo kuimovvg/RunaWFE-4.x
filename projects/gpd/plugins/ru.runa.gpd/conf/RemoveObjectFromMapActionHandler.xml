@@ -4,6 +4,6 @@
     <param name="key" label.key="Param.Key" presentation="richcombo" />
   </input>
   <output>
-    <param name="result" formatFilter="map" label.key="Param.Result" />
+    <param name="result" formatFilter="java.util.Map" label.key="Param.Result" />
   </output>
 </config>
