@@ -35,8 +35,8 @@ public class FileFormat implements VariableFormat<FileVariable> {
     }
 
     @Override
-    public FileVariable parse(String[] strings) {
-        throw new UnsupportedOperationException("file variable cannot be representable as string");
+    public FileVariable parse(String strings) {
+        throw new UnsupportedOperationException("file variable cannot be deserializes from string");
     }
 
 }

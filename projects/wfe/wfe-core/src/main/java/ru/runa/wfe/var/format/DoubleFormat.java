@@ -30,10 +30,10 @@ public class DoubleFormat implements VariableFormat<Number> {
     }
 
     @Override
-    public Number parse(String[] source) throws ParseException {
+    public Number parse(String source) throws ParseException {
         Double result = null;
         if (source != null) {
-            result = new Double(decimalFormat.parse(source[0]).doubleValue());
+            result = new Double(decimalFormat.parse(source).doubleValue());
         }
         return result;
     }

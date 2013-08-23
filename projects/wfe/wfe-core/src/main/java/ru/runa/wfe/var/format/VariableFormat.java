@@ -16,11 +16,11 @@ public interface VariableFormat<T> {
      * conversation from html form.
      * 
      * @param source
-     *            array of strings.
+     *            serialized string.
      * @return object, can be <code>null</code>
      * @throws Exception
      */
-    public T parse(String[] source) throws Exception;
+    public T parse(String source) throws Exception;
 
     /**
      * Formats given variable object.

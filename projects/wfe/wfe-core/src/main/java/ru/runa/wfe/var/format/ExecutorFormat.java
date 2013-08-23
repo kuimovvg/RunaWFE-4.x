@@ -11,13 +11,13 @@ public class ExecutorFormat implements VariableFormat<Executor> {
     }
 
     @Override
-    public Executor parse(String[] source) throws Exception {
-        return TypeConversionUtil.convertTo(Executor.class, source[0]);
+    public Executor parse(String source) throws Exception {
+        return TypeConversionUtil.convertTo(Executor.class, source);
     }
 
     @Override
     public String format(Executor object) {
-        return object.getLabel();
+        return object.getName();
     }
 
 }

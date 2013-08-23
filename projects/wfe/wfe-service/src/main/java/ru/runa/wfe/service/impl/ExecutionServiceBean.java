@@ -352,7 +352,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
                         } else {
                             log.debug("Variable '" + wfVariable.getDefinition().getName() + "' value is type of "
                                     + (value != null ? value.getClass() : "null"));
-                            value = wfVariable.getFormatNotNull().parse(new String[] { value.toString() });
+                            value = wfVariable.getFormatNotNull().parse(value.toString());
                         }
                     } catch (Exception e) {
                         throw Throwables.propagate(e);
