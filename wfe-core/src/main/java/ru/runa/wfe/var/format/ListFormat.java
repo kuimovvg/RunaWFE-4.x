@@ -1,18 +1,19 @@
 package ru.runa.wfe.var.format;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
 
+import com.google.common.collect.Lists;
+
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ListFormat implements VariableFormat<List<?>>, VariableFormatContainer {
     private static final Log log = LogFactory.getLog(ListFormat.class);
-    private static final String LIST_DELIMITER = ", ";
-    private static final String LIST_END = "]";
-    private static final String LIST_START = "[";
     private String componentClassName;
 
     @Override
@@ -38,40 +39,32 @@ public class ListFormat implements VariableFormat<List<?>>, VariableFormatContai
     }
 
     @Override
-    public List<?> parse(String[] source) throws Exception {
-        if (source != null && source.length == 1 && source[0].startsWith(LIST_START) && source[0].endsWith(LIST_END)) {
-            String s = source[0].substring(LIST_START.length(), source[0].length() - LIST_END.length());
-            source = s.split(LIST_DELIMITER, -1);
-        }
-        ArrayList list = new ArrayList(source.length);
+    public List<?> parse(String json) throws Exception {
+        JSONParser parser = new JSONParser();
+        JSONArray array = (JSONArray) parser.parse(json);
+        List result = Lists.newArrayListWithExpectedSize(array.size());
         VariableFormat<?> componentFormat = FormatCommons.create(componentClassName);
-        for (String string : source) {
+        for (String string : (List<String>) array) {
             try {
-                list.add(componentFormat.parse(new String[] { string }));
+                result.add(componentFormat.parse(String.valueOf(string)));
             } catch (Exception e) {
                 log.warn(e);
-                list.add(null);
+                result.add(null);
             }
         }
-        return list;
+        return result;
     }
 
     @Override
     public String format(List<?> list) {
+        JSONArray array = new JSONArray();
         VariableFormat<Object> componentFormat = FormatCommons.create(componentClassName);
-        StringBuffer text = new StringBuffer();
-        text.append(LIST_START);
         for (int i = 0; i < list.size(); i++) {
-            if (i != 0) {
-                text.append(LIST_DELIMITER);
-            }
             Object object = list.get(i);
             object = TypeConversionUtil.convertTo(componentFormat.getJavaClass(), object);
             String value = componentFormat.format(object);
-            text.append(value);
+            array.add(value);
         }
-        text.append(LIST_END);
-        return text.toString();
+        return array.toJSONString();
     }
-
 }

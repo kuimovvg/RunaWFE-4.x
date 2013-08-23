@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Preconditions;
 
@@ -62,23 +63,25 @@ public class ExcelHelper {
         }
     }
 
-    public static String getCellValue(Cell cell) {
+    public static Object getCellValue(Cell cell, VariableFormat<Object> elementFormat) {
+        Object value;
         switch (cell.getCellType()) {
         case Cell.CELL_TYPE_STRING:
-            return cell.getRichStringCellValue().getString();
+            value = cell.getRichStringCellValue().getString();
         case Cell.CELL_TYPE_NUMERIC:
             if (DateUtil.isCellDateFormatted(cell)) {
-                return TypeConversionUtil.convertTo(String.class, cell.getDateCellValue());
+                value = cell.getDateCellValue();
             } else {
-                return TypeConversionUtil.convertTo(String.class, cell.getNumericCellValue());
+                value = cell.getNumericCellValue();
             }
         case Cell.CELL_TYPE_BOOLEAN:
-            return TypeConversionUtil.convertTo(String.class, cell.getBooleanCellValue());
+            value = cell.getBooleanCellValue();
         case Cell.CELL_TYPE_FORMULA:
-            return cell.getCellFormula();
+            value = cell.getCellFormula();
         default:
-            return cell.getStringCellValue();
+            value = cell.getStringCellValue();
         }
+        return TypeConversionUtil.convertTo(elementFormat.getJavaClass(), value);
     }
 
     public static boolean isCellEmptyOrNull(Cell cell) {

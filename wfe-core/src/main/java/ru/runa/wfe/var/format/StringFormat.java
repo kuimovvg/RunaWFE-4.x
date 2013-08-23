@@ -31,8 +31,8 @@ public class StringFormat implements VariableFormat<String> {
     }
 
     @Override
-    public String parse(String[] source) {
-        return source[0];
+    public String parse(String source) {
+        return source;
     }
 
     @Override

@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
-import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.office.excel.ExcelDataStore;
 import ru.runa.wfe.office.excel.ExcelStorable;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
@@ -28,9 +27,7 @@ public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
                 .loadWorkbook(config.getFileInputStream(variableProvider, true), config.isInputFileXLSX(variableProvider, false));
         for (ExcelBinding binding : config.getBindings()) {
             ExcelStorable storable = dataStore.load(workbook, binding.getConstraints());
-            String[] readValue = TypeConversionUtil.convertTo(String[].class, storable.getData());
-            Object outValue = variableProvider.getVariableNotNull(binding.getVariableName()).getFormatNotNull().parse(readValue);
-            result.put(binding.getVariableName(), outValue);
+            result.put(binding.getVariableName(), storable.getData());
         }
         return result;
     }

@@ -166,12 +166,12 @@ public class FormSubmissionUtils {
                     return new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
                 }
             } else if (value instanceof String[]) {
-                String[] valuesToFormat = (String[]) value;
+                String valueToFormat = ((String[]) value)[0];
                 try {
-                    return format.parse(valuesToFormat);
+                    return format.parse(valueToFormat);
                 } catch (Exception e) {
                     log.warn(e);
-                    if (valuesToFormat[0].length() > 0) {
+                    if (valueToFormat.length() > 0) {
                         // in other case we put validation in logic
                         formatErrorsForFields.add(inputName);
                     }

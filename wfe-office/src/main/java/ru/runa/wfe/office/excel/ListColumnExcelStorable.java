@@ -19,12 +19,14 @@ public class ListColumnExcelStorable extends ExcelStorable<ColumnConstraints, Li
     public void load(Workbook workbook) {
         List<Object> list = new ArrayList<Object>();
         int rowIndex = constraints.getRowStartIndex();
+        String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);
+        VariableFormat<Object> elementFormat = FormatCommons.create(elementFormatClassName);
         while (true) {
             Cell cell = getCell(workbook, rowIndex, false);
             if (ExcelHelper.isCellEmptyOrNull(cell)) {
                 break;
             }
-            list.add(ExcelHelper.getCellValue(cell));
+            list.add(ExcelHelper.getCellValue(cell, elementFormat));
             rowIndex++;
         }
         setData(list);

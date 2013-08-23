@@ -20,12 +20,14 @@ public class ListRowExcelStorable extends ExcelStorable<RowConstraints, List<?>>
         List<Object> list = new ArrayList<Object>();
         Row row = getRow(workbook);
         int columnIndex = constraints.getColumnStartIndex();
+        String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);
+        VariableFormat<Object> elementFormat = FormatCommons.create(elementFormatClassName);
         while (true) {
             Cell cell = ExcelHelper.getCell(row, columnIndex, false);
             if (ExcelHelper.isCellEmptyOrNull(cell)) {
                 break;
             }
-            list.add(ExcelHelper.getCellValue(cell));
+            list.add(ExcelHelper.getCellValue(cell, elementFormat));
             columnIndex++;
         }
         setData(list);
