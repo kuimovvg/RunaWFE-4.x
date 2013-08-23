@@ -25,7 +25,11 @@ import com.google.common.collect.Lists;
 
 import freemarker.template.TemplateModelException;
 
+/**
+ * @deprecated Use List<User> variable type + InputVariableTag.
+ */
 @SuppressWarnings("unchecked")
+@Deprecated
 public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
