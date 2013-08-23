@@ -77,7 +77,9 @@ public class ProcessCache {
         ProcessDefinition definition = CACHE_BY_FILE.remove(file);
         if (definition != null) {
             CACHE_BY_NAME.remove(definition.getName());
-            getProcessDefinition(file);
+            if (file.exists()) {
+                getProcessDefinition(file);
+            }
         }
     }
 

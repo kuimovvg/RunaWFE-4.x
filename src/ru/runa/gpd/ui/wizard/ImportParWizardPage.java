@@ -203,8 +203,9 @@ public class ImportParWizardPage extends ImportWizardPage {
                     IPath destination = project.getFolder(projectPath).getFullPath();
                     processFolder.move(destination, true, false, null);
                     processFolder = project.getFolder(projectPath);
-                    definitionFile = ProjectFinder.getProcessDefinitionFile(processFolder);
-                    ProcessCache.newProcessDefinitionWasCreated(definitionFile);
+                    IFile movedDefinitionFile = ProjectFinder.getProcessDefinitionFile(processFolder);
+                    ProcessCache.newProcessDefinitionWasCreated(movedDefinitionFile);
+                    ProcessCache.invalidateProcessDefinition(definitionFile);
                 }
             }
         } catch (Exception exception) {
