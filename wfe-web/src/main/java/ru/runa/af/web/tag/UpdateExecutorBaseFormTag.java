@@ -29,6 +29,7 @@ import ru.runa.wfe.user.Executor;
 public abstract class UpdateExecutorBaseFormTag extends IdentifiableFormTag {
 
     private static final long serialVersionUID = 1L;
+    private Executor cachedExecutor = null;
 
     @Override
     protected Identifiable getIdentifiable() {
@@ -36,6 +37,9 @@ public abstract class UpdateExecutorBaseFormTag extends IdentifiableFormTag {
     }
 
     protected Executor getExecutor() {
-        return Delegates.getExecutorService().getExecutor(getUser(), getIdentifiableId());
+        if (cachedExecutor == null) {
+            cachedExecutor = Delegates.getExecutorService().getExecutor(getUser(), getIdentifiableId());
+        }
+        return cachedExecutor;
     }
 }
