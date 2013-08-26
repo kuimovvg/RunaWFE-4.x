@@ -45,6 +45,7 @@ import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
 import ru.runa.wfe.commons.dbpatch.impl.PerformancePatch401;
 import ru.runa.wfe.commons.dbpatch.impl.PermissionMappingPatch403;
 import ru.runa.wfe.commons.dbpatch.impl.TaskEndDateRemovalPatch;
+import ru.runa.wfe.commons.dbpatch.impl.TaskOpenedByExecutorsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.TransitionLogPatch;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.dao.PermissionDAO;
@@ -100,6 +101,8 @@ public class InitializerLogic {
         dbPatches.add(PermissionMappingPatch403.class);
         dbPatches.add(NodeTypeChangePatch.class);
         dbPatches.add(ExpandDescriptionsPatch.class);
+        // 4.1.0
+        dbPatches.add(TaskOpenedByExecutorsPatch.class);
     };
 
     @Autowired
@@ -177,11 +180,12 @@ public class InitializerLogic {
      */
     protected void insertInitialData() {
         // create privileged Executors
-        String administratorDescription = "Default System Administrator";
-        Actor admin = new Actor(SystemProperties.getAdministratorName(), administratorDescription, administratorDescription);
+        String administratorName = SystemProperties.getAdministratorName();
+        Actor admin = new Actor(administratorName, administratorName, administratorName);
         admin = executorDAO.create(admin);
         executorDAO.setPassword(admin, SystemProperties.getAdministratorDefaultPassword());
-        Group adminGroup = executorDAO.create(new Group(SystemProperties.getAdministratorsGroupName(), "Default Group For System Administrators"));
+        String administratorsGroupName = SystemProperties.getAdministratorsGroupName();
+        Group adminGroup = executorDAO.create(new Group(administratorsGroupName, administratorsGroupName));
         executorDAO.create(new Group(SystemProperties.getBotsGroupName(), SystemProperties.getBotsGroupName()));
         List<? extends Executor> adminWithGroupExecutors = Lists.newArrayList(adminGroup, admin);
         executorDAO.addExecutorToGroup(admin, adminGroup);
