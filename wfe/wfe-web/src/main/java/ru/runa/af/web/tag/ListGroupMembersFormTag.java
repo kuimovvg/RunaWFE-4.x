@@ -52,7 +52,8 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
 
     @Override
     protected boolean isVisible() {
-        return Delegates.getAuthorizationService().isAllowed(getUser(), GroupPermission.LIST_GROUP, SecuredObjectType.GROUP, getIdentifiableId());
+        return getExecutor() instanceof Group
+                && Delegates.getAuthorizationService().isAllowed(getUser(), GroupPermission.LIST_GROUP, SecuredObjectType.GROUP, getIdentifiableId());
     }
 
     @Override
@@ -64,6 +65,12 @@ public class ListGroupMembersFormTag extends ListExecutorsBaseFormTag {
     @Override
     protected int getExecutorsCount() {
         ExecutorService executorService = Delegates.getExecutorService();
+        // java.lang.ClassCastException: ru.runa.wfe.user.Actor cannot be cast
+        // to ru.runa.wfe.user.Group
+        // at
+        // ru.runa.af.web.tag.ListGroupMembersFormTag.getExecutorsCount(ListGroupMembersFormTag.java:67)
+        // at
+        // ru.runa.af.web.tag.ListExecutorsBaseFormTag.fillFormData(ListExecutorsBaseFormTag.java:78)
         return executorService.getGroupChildrenCount(getUser(), (Group) getExecutor(), getBatchPresentation(), false);
     }
 
