@@ -80,7 +80,7 @@ public final class WfTask implements Serializable {
         this.targetActor = targetActor;
         this.escalated = escalated;
         this.acquiredBySubstitution = acquiredBySubstitution;
-        firstOpen = task.isFirstOpen();
+        firstOpen = !task.getOpenedByExecutorIds().contains(targetActor.getId());
     }
 
     public boolean isFirstOpen() {

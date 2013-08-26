@@ -123,7 +123,7 @@ public class TaskLogic extends WFCommonLogic {
 
     public void markTaskOpened(User user, Long taskId) {
         Task task = taskDAO.getNotNull(taskId);
-        task.setFirstOpen(false);
+        task.getOpenedByExecutorIds().add(user.getActor().getId());
     }
 
     public WfTask getTask(User user, Long taskId) {

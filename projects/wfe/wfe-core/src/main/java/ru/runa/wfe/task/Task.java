@@ -22,6 +22,7 @@
 package ru.runa.wfe.task;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -39,8 +41,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+import org.hibernate.annotations.CollectionOfElements;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
@@ -57,6 +60,7 @@ import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 
 /**
  * is one task that can be assigned to an actor (read: put in someones task
@@ -78,10 +82,10 @@ public class Task implements Assignable {
     private Executor executor;
     private Date createDate;
     private Date deadlineDate;
-    private boolean firstOpen;
     private Token token;
     private Swimlane swimlane;
     private Process process;
+    private Set<Long> openedByExecutorIds;
 
     public Task() {
     }
@@ -90,8 +94,8 @@ public class Task implements Assignable {
         setNodeId(taskDefinition.getNodeId());
         setName(taskDefinition.getName());
         setDescription(taskDefinition.getDescription());
-        setFirstOpen(true);
         setCreateDate(new Date());
+        openedByExecutorIds = Sets.newHashSet();
     }
 
     @Id
@@ -161,13 +165,17 @@ public class Task implements Assignable {
         this.deadlineDate = deadlineDate;
     }
 
-    @Column(name = "FIRST_OPEN")
-    public boolean isFirstOpen() {
-        return firstOpen;
+    @CollectionOfElements
+    @JoinTable(name = "BPM_TASK_OPENED", joinColumns = { @JoinColumn(name = "TASK_ID", nullable = false, updatable = false) })
+    @Cascade({ CascadeType.ALL, CascadeType.DELETE_ORPHAN })
+    @Column(name = "EXECUTOR_ID", updatable = false)
+    @ForeignKey(name = "FK_TASK_OPENED_TASK")
+    public Set<Long> getOpenedByExecutorIds() {
+        return openedByExecutorIds;
     }
 
-    public void setFirstOpen(boolean firstOpen) {
-        this.firstOpen = firstOpen;
+    public void setOpenedByExecutorIds(Set<Long> openedByExecutorIds) {
+        this.openedByExecutorIds = openedByExecutorIds;
     }
 
     @ManyToOne(targetEntity = Token.class, fetch = FetchType.LAZY)
