@@ -105,6 +105,7 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.wf.var.CreateCalendarActionHandler", CreateCalendarHandler.class.getName());
         bcc.put("ru.runa.wf.var.ConvertMapsToListsHandler", ConvertMapsToListsHandler.class.getName());
         bcc.put("ru.runa.wfe.extension.handler.DebugActionHandler", DebugHandler.class.getName());
+        bcc.put("ru.runa.bp.AlfSetContent", "ru.runa.bp.handler.AlfSetContent");
         // org functions renamed
         bcc.put("ru.runa.af.organizationfunction.DemoChiefFunction", DemoChiefFunction.class.getName());
         bcc.put("ru.runa.af.organizationfunction.ExecutorByCodeFunction", GetActorsByCodesFunction.class.getName());

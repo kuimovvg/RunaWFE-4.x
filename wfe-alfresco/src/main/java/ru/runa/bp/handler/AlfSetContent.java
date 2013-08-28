@@ -1,7 +1,9 @@
-package ru.runa.bp;
+package ru.runa.bp.handler;
 
 import ru.runa.alfresco.AlfObject;
 import ru.runa.alfresco.AlfSession;
+import ru.runa.bp.AlfHandler;
+import ru.runa.bp.AlfHandlerData;
 import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.base.Charsets;
@@ -29,7 +31,7 @@ public class AlfSetContent extends AlfHandler {
             mimetype = alfHandlerData.getInputParam("mimetype");
             content = data.toString().getBytes(Charsets.UTF_8);
         }
-        AlfObject object = session.loadObjectNotNull(alfHandlerData.getInputParam("uuid"));
+        AlfObject object = session.loadObjectNotNull(alfHandlerData.getInputParam(String.class, "uuid"));
         session.setContent(object, content, mimetype);
     }
 

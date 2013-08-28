@@ -38,7 +38,7 @@ public class JavaObjectAccessor {
         try {
             String fieldName = desc.getFieldName();
             if (desc.isNodeReference()) {
-                alfObject.refFields.put(fieldName, alfrescoValue);
+                alfObject.setReferencePropertyUuid(fieldName, alfrescoValue != null ? alfrescoValue.toString() : null);
                 return;
             }
             PropertyDescriptor propertyDescriptor = PropertyUtils.getPropertyDescriptor(alfObject, fieldName);
@@ -78,7 +78,8 @@ public class JavaObjectAccessor {
         try {
             String fieldName = desc.getFieldName();
             if (desc.isNodeReference()) {
-                return (NodeRef) alfObject.refFields.get(fieldName);
+                String uuidRef = alfObject.getReferencePropertyUuid(fieldName, true);
+                return uuidRef != null ? new NodeRef(uuidRef) : null;
             }
             Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
             if (desc.getDataType() != null) {

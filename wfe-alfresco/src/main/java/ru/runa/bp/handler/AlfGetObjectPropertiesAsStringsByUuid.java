@@ -6,8 +6,6 @@ import java.util.Map;
 
 import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.webservice.types.NamedValue;
-import org.alfresco.webservice.types.Predicate;
-import org.alfresco.webservice.types.Reference;
 
 import ru.runa.alfresco.AlfSerializerDesc;
 import ru.runa.alfresco.AlfSession;
@@ -25,8 +23,7 @@ public class AlfGetObjectPropertiesAsStringsByUuid extends AlfHandler {
         Map<String, ParamDef> outputParams = alfHandlerData.getOutputParams();
         String uuid = alfHandlerData.getInputParam(String.class, "uuid", null);
         if (uuid != null) {
-            Reference ref = session.getReference(uuid, null);
-            NamedValue[] props = session.loadObjectProperties(new Predicate(new Reference[] { ref }, ref.getStore(), null));
+            NamedValue[] props = session.loadObjectProperties(uuid);
             for (NamedValue namedValue : props) {
                 int index = namedValue.getName().lastIndexOf('}');
                 String keyName = namedValue.getName().substring(index + 1);

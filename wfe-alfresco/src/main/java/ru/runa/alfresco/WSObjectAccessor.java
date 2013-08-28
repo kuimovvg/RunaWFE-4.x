@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.webservice.types.NamedValue;
-import org.alfresco.webservice.types.Reference;
 import org.alfresco.webservice.util.Constants;
 import org.alfresco.webservice.util.Utils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -38,7 +37,7 @@ public class WSObjectAccessor {
     public void setProperty(AlfSerializerDesc desc, NamedValue prop) throws Exception {
         String fieldName = desc.getFieldName();
         if (desc.isNodeReference()) {
-            alfObject.refFields.put(fieldName, prop.getValue());
+            alfObject.setReferencePropertyUuid(fieldName, prop.getValue());
             return;
         }
         PropertyDescriptor propertyDescriptor = PropertyUtils.getPropertyDescriptor(alfObject, fieldName);
@@ -82,15 +81,8 @@ public class WSObjectAccessor {
     private NamedValue getProperty(AlfSerializerDesc desc) throws Exception {
         String fieldName = desc.getFieldName();
         if (desc.isNodeReference()) {
-            Object uuidObject = alfObject.refFields.get(fieldName);
-            String uuidString;
-            if (uuidObject instanceof Reference) {
-                Reference reference = (Reference) uuidObject;
-                uuidString = AlfSession.getUuidRef(reference);
-            } else {
-                uuidString = (String) uuidObject;
-            }
-            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), uuidString);
+            String uuidRef = alfObject.getReferencePropertyUuid(fieldName, true);
+            return Utils.createNamedValue(desc.getPropertyNameWithNamespace(), uuidRef);
         }
         Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
         if (javaValue != null && (javaValue.getClass().isArray() || javaValue instanceof Collection<?>)) {
