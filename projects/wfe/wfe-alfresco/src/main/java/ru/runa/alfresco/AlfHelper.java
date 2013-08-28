@@ -32,6 +32,7 @@ import ru.runa.alfresco.search.Search.Sorting;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 /**
@@ -53,15 +54,19 @@ public class AlfHelper implements AlfConn {
         return registry;
     }
 
+    private NodeRef getNodeRef(AlfObject object) {
+        return new NodeRef(object.getUuidRef());
+    }
+
     public void addAspect(AlfObject object, QName aspectTypeName) throws InternalApplicationException {
         AlfTypeDesc desc = Mappings.getMapping(aspectTypeName.toString());
         loadClassDefinitionIfNeeded(desc);
         Map<QName, Serializable> props = new JavaObjectAccessor(object).getAlfrescoProperties(desc, true, false);
-        registry.getNodeService().addAspect(object.getNodeRef(), aspectTypeName, props);
+        registry.getNodeService().addAspect(getNodeRef(object), aspectTypeName, props);
     }
 
     public boolean hasAspect(AlfObject object, QName aspectTypeName) {
-        return registry.getNodeService().getAspects(object.getNodeRef()).contains(aspectTypeName);
+        return registry.getNodeService().getAspects(getNodeRef(object)).contains(aspectTypeName);
     }
 
     public ResultSet find(Search search) throws InternalApplicationException {
@@ -112,7 +117,7 @@ public class AlfHelper implements AlfConn {
         if (objects.size() > 1) {
             List<NodeRef> noderefs = new ArrayList<NodeRef>(objects.size());
             for (T t : objects) {
-                noderefs.add(t.getNodeRef());
+                noderefs.add(getNodeRef(t));
             }
             throw new InternalApplicationException("Search " + search + " returns not unique result: " + noderefs);
         }
@@ -153,23 +158,23 @@ public class AlfHelper implements AlfConn {
     }
 
     @Override
-    public <T extends AlfObject> T loadObject(Object objectId) {
-        return (T) loadObject((NodeRef) objectId);
+    public <T extends AlfObject> T loadObject(String uuidRef) {
+        return (T) loadObject(new NodeRef(uuidRef));
     }
 
     @Override
-    public <T extends AlfObject> T loadObjectNotNull(Object objectId) {
-        T object = (T) loadObject(objectId);
+    public <T extends AlfObject> T loadObjectNotNull(String uuidRef) {
+        T object = (T) loadObject(uuidRef);
         if (object == null) {
-            throw new InternalApplicationException("Unable to load object by UUID=" + objectId);
+            throw new InternalApplicationException("Unable to load object by " + uuidRef);
         }
         return object;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void loadAssociation(Object ref, Collection collection, AlfSerializerDesc desc) throws InternalApplicationException {
-        NodeRef nodeRef = (NodeRef) ref;
+    public void loadAssociation(String uuidRef, Collection collection, AlfSerializerDesc desc) throws InternalApplicationException {
+        NodeRef nodeRef = new NodeRef(uuidRef);
         QName assocName = desc.getPropertyQName();
         if (desc.getAssoc().child()) {
             List<ChildAssociationRef> childAssocRefs;
@@ -201,35 +206,37 @@ public class AlfHelper implements AlfConn {
     @Override
     public boolean updateObjectAssociations(AlfObject object) throws InternalApplicationException {
         boolean updated = false;
-        Map<AlfSerializerDesc, List<Object>> assocToDelete = object.getAssocToDelete();
-        for (AlfSerializerDesc desc : assocToDelete.keySet()) {
-            List<Object> refs = assocToDelete.get(desc);
-            for (Object ref : refs) {
-                log.debug("Removing assoc " + ref + " from " + object.getNodeRef());
-                if (desc.getAssoc().child()) {
-                    registry.getNodeService().removeChild(object.getNodeRef(), (NodeRef) ref);
+        Map<AlfSerializerDesc, List<String>> assocToDelete = object.getAssocToDelete();
+        for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToDelete.entrySet()) {
+            for (String uuidRef : entry.getValue()) {
+                log.debug("Removing assoc " + uuidRef + " from " + object.getUuidRef());
+                if (entry.getKey().getAssoc().child()) {
+                    registry.getNodeService().removeChild(getNodeRef(object), new NodeRef(uuidRef));
                 } else {
-                    registry.getNodeService().removeAssociation(object.getNodeRef(), (NodeRef) ref, desc.getPropertyQName());
+                    registry.getNodeService().removeAssociation(getNodeRef(object), new NodeRef(uuidRef), entry.getKey().getPropertyQName());
                 }
             }
             updated = true;
         }
-        Map<AlfSerializerDesc, List<Object>> assocToCreate = object.getAssocToCreate();
-        for (AlfSerializerDesc desc : assocToCreate.keySet()) {
-            List<Object> refs = assocToCreate.get(desc);
-            for (Object ref : refs) {
-                log.debug("Adding assoc " + ref + " to " + object.getNodeRef());
-                if (desc.getAssoc().child()) {
-                    registry.getNodeService().addChild(object.getNodeRef(), (NodeRef) ref, desc.getPropertyQName(), desc.getPropertyQName());
+        Map<AlfSerializerDesc, List<String>> assocToCreate = object.getAssocToCreate();
+        for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToCreate.entrySet()) {
+            for (String uuidRef : entry.getValue()) {
+                log.debug("Adding assoc " + uuidRef + " to " + object.getUuidRef());
+                if (entry.getKey().getAssoc().child()) {
+                    addChildAssociation(object, uuidRef, entry.getKey().getPropertyQName());
                 } else {
-                    registry.getNodeService().createAssociation(object.getNodeRef(), (NodeRef) ref, desc.getPropertyQName());
+                    registry.getNodeService().createAssociation(getNodeRef(object), new NodeRef(uuidRef), entry.getKey().getPropertyQName());
                 }
             }
             updated = true;
         }
-        object.refCollections.clear();
-        object.clearCollections();
+        object.markCollectionsInitialState();
         return updated;
+    }
+
+    public void addChildAssociation(AlfObject object, String uuidRef, QName assocName) {
+        Preconditions.checkState(uuidRef != null, "Save object before adding to association.");
+        registry.getNodeService().addChild(getNodeRef(object), new NodeRef(uuidRef), assocName, assocName);
     }
 
     public <T extends AlfObject> T loadObject(NodeRef nodeRef) throws InternalApplicationException {
@@ -251,10 +258,9 @@ public class AlfHelper implements AlfConn {
         try {
             AlfTypeDesc typeDesc = Mappings.getMapping(type.toString());
             loadClassDefinitionIfNeeded(typeDesc);
-            Class<? extends AlfObject> clazz = (Class<? extends AlfObject>) Class.forName(typeDesc.getJavaClassName());
-            AlfObject object = clazz.newInstance();
-            object.setNodeRef(nodeRef);
+            AlfObject object = AlfObjectFactory.create(typeDesc.getJavaClassName());
             object.setLazyLoader(this);
+            object.setUuidRef(nodeRef.toString());
             JavaObjectAccessor accessor = new JavaObjectAccessor(object);
             for (QName propName : properties.keySet()) {
                 AlfSerializerDesc propertyDesc = typeDesc.getPropertyDescByTypeName(propName.toString());
@@ -262,7 +268,7 @@ public class AlfHelper implements AlfConn {
                     accessor.setProperty(propertyDesc, properties.get(propName));
                 }
             }
-            object.markInitialState(typeDesc);
+            object.markPropertiesInitialState(typeDesc);
             return object;
         } catch (Exception e) {
             throw Throwables.propagate(e);
@@ -285,8 +291,8 @@ public class AlfHelper implements AlfConn {
         ChildAssociationRef ref = registry.getNodeService().createNode(folderRef, ContentModel.ASSOC_CONTAINS,
                 QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), QName.createQName(typeDesc.getAlfrescoTypeNameWithNamespace()),
                 props);
-        object.setNodeRef(ref.getChildRef());
-        object.markInitialState(typeDesc);
+        object.setUuidRef(ref.getChildRef().toString());
+        object.markPropertiesInitialState(typeDesc);
         object.setLazyLoader(this);
         log.debug("Created object " + object);
     }
@@ -303,9 +309,9 @@ public class AlfHelper implements AlfConn {
         }
         log.debug("Updating " + object + " (" + props.size() + ") fields");
         for (QName name : props.keySet()) {
-            registry.getNodeService().setProperty(object.getNodeRef(), name, props.get(name));
+            registry.getNodeService().setProperty(getNodeRef(object), name, props.get(name));
         }
-        object.markInitialState(typeDesc);
+        object.markPropertiesInitialState(typeDesc);
         return true;
     }
 
@@ -315,14 +321,14 @@ public class AlfHelper implements AlfConn {
         if (updated) {
             Map<String, Serializable> versionDetails = new HashMap<String, Serializable>(1);
             versionDetails.put(Version.PROP_DESCRIPTION, comment);
-            registry.getVersionService().createVersion(object.getNodeRef(), versionDetails);
+            registry.getVersionService().createVersion(getNodeRef(object), versionDetails);
         }
         return updated;
     }
 
     @Override
     public void deleteObject(AlfObject object) throws InternalApplicationException {
-        deleteObject(object.getNodeRef());
+        deleteObject(getNodeRef(object));
     }
 
     private void deleteObject(NodeRef nodeRef) throws InternalApplicationException {
@@ -335,7 +341,7 @@ public class AlfHelper implements AlfConn {
 
     public void setContent(AlfObject object, String content, String mimetype) throws InternalApplicationException {
         log.info("Setting content to " + object);
-        ContentWriter writer = registry.getContentService().getWriter(object.getNodeRef(), ContentModel.PROP_CONTENT, true);
+        ContentWriter writer = registry.getContentService().getWriter(getNodeRef(object), ContentModel.PROP_CONTENT, true);
         writer.setEncoding(Charsets.UTF_8.name());
         writer.setMimetype(mimetype);
         writer.putContent(content);

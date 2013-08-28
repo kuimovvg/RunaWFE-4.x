@@ -4,24 +4,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.webservice.types.Predicate;
-import org.alfresco.webservice.types.Reference;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.LogFactory;
 
+import ru.runa.ClassUtils;
 import ru.runa.EqualsUtil;
 import ru.runa.alfresco.anno.Property;
 import ru.runa.alfresco.anno.Type;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.CalendarUtil;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Base class for all mappable objects.
@@ -34,56 +35,47 @@ public class AlfObject implements Serializable {
     private final static long serialVersionUID = 197L;
 
     protected transient AlfConn conn;
-    private Reference reference;
-    private NodeRef nodeRef;
-    private transient final Map<String, Object> initialFieldValues = new HashMap<String, Object>();
-    protected Map<String, Object> refFields = new HashMap<String, Object>();
-    protected Map<String, List<Object>> refCollections = new HashMap<String, List<Object>>();
+    private String uuidRef;
+    private transient final Map<String, Object> initialFieldValues = Maps.newHashMap();
+    private Map<String, String> referenceFieldUuids = Maps.newHashMap();
 
     @Property(name = "name")
     private String objectName;
     @Property(name = "modified", readOnly = true)
     private Calendar lastUpdated;
 
-    // protected boolean versionable;
-
     public void setLazyLoader(AlfConn lazyLoader) {
         conn = lazyLoader;
     }
 
-    public void markInitialState(AlfTypeDesc mapping) {
-        try {
-            initialFieldValues.clear();
-            for (AlfSerializerDesc desc : mapping.getAllDescs()) {
-                if (desc.getProperty() == null || desc.getProperty().readOnly()) {
-                    continue;
-                }
-                String fieldName = desc.getFieldName();
-                if (desc.isNodeReference()) {
-                    initialFieldValues.put(fieldName, refFields.get(fieldName));
+    protected void markPropertiesInitialState(AlfTypeDesc mapping) {
+        for (AlfSerializerDesc desc : mapping.getAllDescs()) {
+            if (desc.getProperty() == null || desc.getProperty().readOnly()) {
+                continue;
+            }
+            String fieldName = desc.getFieldName();
+            if (desc.isNodeReference()) {
+                initialFieldValues.put(fieldName, getReferencePropertyUuid(fieldName, true));
+            } else {
+                Object object = ClassUtils.getFieldValue(this, desc);
+                if (object == null) {
+                    initialFieldValues.put(fieldName, null);
+                } else if (object instanceof String) {
+                    initialFieldValues.put(fieldName, object);
+                } else if (Number.class.isAssignableFrom(object.getClass())) {
+                    initialFieldValues.put(fieldName, object);
+                } else if (object instanceof Boolean) {
+                    initialFieldValues.put(fieldName, object);
+                } else if (object instanceof Calendar) {
+                    initialFieldValues.put(fieldName, CalendarUtil.clone((Calendar) object));
+                } else if (object.getClass().isArray()) {
+                    // arrays are immutable
+                } else if (List.class.isAssignableFrom(object.getClass())) {
+                    initialFieldValues.put(fieldName, ((List) object).toArray());
                 } else {
-                    Object object = PropertyUtils.getProperty(this, fieldName);
-                    if (object == null) {
-                        initialFieldValues.put(fieldName, null);
-                    } else if (object instanceof String) {
-                        initialFieldValues.put(fieldName, object);
-                    } else if (Number.class.isAssignableFrom(object.getClass())) {
-                        initialFieldValues.put(fieldName, object);
-                    } else if (object instanceof Boolean) {
-                        initialFieldValues.put(fieldName, object);
-                    } else if (object instanceof Calendar) {
-                        initialFieldValues.put(fieldName, CalendarUtil.clone((Calendar) object));
-                    } else if (object.getClass().isArray()) {
-                        // arrays are immutable
-                    } else if (List.class.isAssignableFrom(object.getClass())) {
-                        initialFieldValues.put(fieldName, ((List) object).toArray());
-                    } else {
-                        System.err.println("No clone op supported for field " + fieldName);
-                    }
+                    throw new InternalApplicationException("Unable to mark field " + fieldName + ". Not supported type " + object.getClass());
                 }
             }
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
         }
     }
 
@@ -113,153 +105,163 @@ public class AlfObject implements Serializable {
     }
 
     public Set<String> getDirtyFieldNames(AlfTypeDesc mapping) {
-        try {
-            Set<String> dirtyFieldNames = new HashSet<String>();
-            for (String fieldName : initialFieldValues.keySet()) {
-                Object initialObject = initialFieldValues.get(fieldName);
-                Object currentObject;
-                if (mapping.getPropertyDescByFieldName(fieldName).isNodeReference()) {
-                    currentObject = refFields.get(fieldName);
-                } else {
-                    currentObject = PropertyUtils.getProperty(this, fieldName);
-                    if (currentObject instanceof List) {
-                        currentObject = ((List) currentObject).toArray();
-                    }
-                }
-                if (!EqualsUtil.equals(initialObject, currentObject)) {
-                    dirtyFieldNames.add(fieldName);
+        Set<String> dirtyFieldNames = new HashSet<String>();
+        for (AlfSerializerDesc desc : mapping.getAllDescs()) {
+            if (desc.getProperty() == null || desc.getProperty().readOnly()) {
+                continue;
+            }
+            Object initialObject = initialFieldValues.get(desc.getFieldName());
+            Object currentObject;
+            if (desc.isNodeReference()) {
+                currentObject = getReferencePropertyUuid(desc.getFieldName(), true);
+            } else {
+                currentObject = ClassUtils.getFieldValue(this, desc);
+                if (currentObject instanceof List) {
+                    currentObject = ((List) currentObject).toArray();
                 }
             }
-            return dirtyFieldNames;
+            if (!EqualsUtil.equals(initialObject, currentObject)) {
+                dirtyFieldNames.add(desc.getFieldName());
+            }
+        }
+        return dirtyFieldNames;
+    }
+
+    public String getReferencePropertiesDiff(AlfObject another) {
+        Set<String> refFieldNames = new HashSet<String>();
+        refFieldNames.addAll(referenceFieldUuids.keySet());
+        refFieldNames.addAll(another.referenceFieldUuids.keySet());
+        for (String refFieldName : refFieldNames) {
+            String thisReferenceUuid = this.getReferencePropertyUuid(refFieldName, true);
+            String anotherReferenceUuid = another.getReferencePropertyUuid(refFieldName, true);
+            if (!EqualsUtil.equals(thisReferenceUuid, anotherReferenceUuid)) {
+                try {
+                    Object thisPropertyValue = PropertyUtils.getProperty(this, refFieldName);
+                    Object anotherPropertyValue = PropertyUtils.getProperty(another, refFieldName);
+                    if (!EqualsUtil.equals(thisPropertyValue, anotherPropertyValue)) {
+                        return EqualsUtil.getDiff(refFieldName, thisPropertyValue, anotherPropertyValue);
+                    }
+                } catch (Exception e) {
+                    LogFactory.getLog(ClassUtils.getImplClass(getClass())).error(refFieldName, e);
+                    return EqualsUtil.getDiff(refFieldName, thisReferenceUuid, anotherReferenceUuid);
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getReferencePropertyUuid(String fieldName, boolean acquireProperty) {
+        try {
+            String referenceUuid = referenceFieldUuids.get(fieldName);
+            if (referenceUuid != null) {
+                return referenceUuid;
+            }
+            if (acquireProperty) {
+                AlfSerializerDesc desc = Mappings.getMapping(getClass()).getPropertyDescByFieldName(fieldName);
+                AlfObject reference = (AlfObject) ClassUtils.getFieldValue(this, desc);
+                if (reference != null) {
+                    return reference.getUuidRef() != null ? reference.getUuidRef() : null;
+                }
+            }
         } catch (Exception e) {
             throw Throwables.propagate(e);
+            // LogFactory.getLog(getClass()).error("Unable to get reference property uuid, check appropriate getter",
+            // e);
         }
+        return null;
+    }
+
+    protected void setReferencePropertyUuid(String propertyName, String uuidRef) {
+        referenceFieldUuids.put(propertyName, uuidRef);
     }
 
     public String getUuidRef() {
-        if (reference != null) {
-            return AlfSession.getUuidRef(reference);
-        }
-        if (nodeRef != null) {
-            return nodeRef.toString();
-        }
-        throw new InternalApplicationException("No uuid found in " + this);
+        return uuidRef;
     }
 
-    public Reference getReference() {
-        return reference;
+    public void setUuidRef(String uuidRef) {
+        this.uuidRef = uuidRef;
     }
 
-    private Object getRef() {
-        return nodeRef != null ? nodeRef : reference;
-    }
-
-    public NodeRef getNodeRef() {
-        return nodeRef;
-    }
-
-    public String getId() {
-        return nodeRef.getId();
-    }
-
-    public Predicate getPredicate() {
-        return new Predicate(new Reference[] { reference }, reference.getStore(), null);
-    }
-
-    public void setReference(Reference reference) {
-        this.reference = reference;
-    }
-
-    public void setNodeRef(NodeRef nodeRef) {
-        this.nodeRef = nodeRef;
-    }
-
-    protected void setObjectProperty(String fieldName, AlfObject alfObject) {
-        Object objectId = null;
-        if (alfObject != null) {
-            objectId = alfObject.getRef();
-        }
-        refFields.put(fieldName, objectId);
-    }
-
-    protected <T extends AlfObject> T lazyLoadObject(String fieldName) {
-        Object objectId = refFields.get(fieldName);
-        if (objectId == null) {
-            return null;
-        }
-        if (objectId.equals(getUuidRef()) || objectId.equals(nodeRef)) {
-            return (T) this;
-        }
-        return (T) conn.loadObjectNotNull(objectId);
-    }
-
-    protected void lazyLoadCollection(String fieldName, Collection<? extends AlfObject> collection) {
-        if (conn == null) {
-            return;
-        }
+    protected void markCollectionsInitialState() {
         AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
-        AlfSerializerDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
-        if (desc == null) {
-            throw new NullPointerException("No association defined for field " + fieldName);
+        for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
+            if (desc.getAssoc() != null) {
+                Collection<AlfObject> collection = (Collection<AlfObject>) ClassUtils.getFieldValue(this, desc);
+                markCollectionInitialState(desc, collection);
+            }
         }
-        conn.loadAssociation(getRef(), collection, desc);
-        List<Object> assocIds = new ArrayList<Object>();
-        for (AlfObject alfObject : collection) {
-            assocIds.add(alfObject.getRef());
-        }
-        refCollections.put(fieldName, assocIds);
     }
 
-    protected void clearCollections() {
+    private void markCollectionInitialState(AlfSerializerDesc desc, Collection<AlfObject> collection) {
+        List<String> assocIds = Lists.newArrayList();
+        for (AlfObject collObject : collection) {
+            assocIds.add(collObject.getUuidRef());
+        }
+        initialFieldValues.put(desc.getFieldName(), assocIds);
     }
 
-    public Map<AlfSerializerDesc, List<Object>> getAssocToCreate() {
-        try {
-            AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
-            Map<AlfSerializerDesc, List<Object>> result = new HashMap<AlfSerializerDesc, List<Object>>();
-            for (String fieldName : refCollections.keySet()) {
-                List<Object> assocResults = new ArrayList<Object>();
-                List<Object> assocIds = refCollections.get(fieldName);
-                Collection<AlfObject> objects = (Collection<AlfObject>) PropertyUtils.getProperty(this, fieldName);
-                for (AlfObject alfObject : objects) {
-                    if (alfObject.getRef() == null) {
-                        throw new RuntimeException("Save object before adding to association.");
-                    }
-                    if (!assocIds.contains(alfObject.getRef())) {
-                        assocResults.add(alfObject.getRef());
-                    }
-                }
-                if (assocResults.size() > 0) {
-                    result.put(typeDesc.getPropertyDescByFieldName(fieldName), assocResults);
+    protected void loadCollection(AlfSerializerDesc desc, Collection<AlfObject> collection) {
+        if (!initialFieldValues.containsKey(desc.getFieldName())) {
+            conn.loadAssociation(getUuidRef(), collection, desc);
+            markCollectionInitialState(desc, collection);
+        }
+    }
+
+    public Map<AlfSerializerDesc, List<String>> getAssocToCreate() {
+        AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
+        Map<AlfSerializerDesc, List<String>> result = Maps.newHashMap();
+        for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
+            if (desc.getAssoc() == null) {
+                continue;
+            }
+            Collection<AlfObject> collection = (Collection<AlfObject>) ClassUtils.getFieldValue(this, desc);
+            if (!initialFieldValues.containsKey(desc.getFieldName()) && collection != null && !collection.isEmpty()) {
+                loadCollection(desc, new ArrayList<AlfObject>());
+            }
+            List<String> initialUuids = (List<String>) initialFieldValues.get(desc.getFieldName());
+            if (initialUuids == null) {
+                continue;
+            }
+            List<String> assocResults = Lists.newArrayList();
+            for (AlfObject alfObject : collection) {
+                Preconditions.checkState(alfObject.getUuidRef() != null, "Save object before adding to association.");
+                if (!initialUuids.contains(alfObject.getUuidRef())) {
+                    assocResults.add(alfObject.getUuidRef());
                 }
             }
-            return result;
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
+            if (assocResults.size() > 0) {
+                result.put(desc, assocResults);
+            }
         }
+        return result;
     }
 
-    public Map<AlfSerializerDesc, List<Object>> getAssocToDelete() {
-        try {
-            AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
-            Map<AlfSerializerDesc, List<Object>> result = new HashMap<AlfSerializerDesc, List<Object>>();
-            for (String fieldName : refCollections.keySet()) {
-                List<Object> assocIds = new ArrayList<Object>(refCollections.get(fieldName));
-                Collection<AlfObject> objects = (Collection<AlfObject>) PropertyUtils.getProperty(this, fieldName);
-                for (AlfObject alfObject : objects) {
-                    if (alfObject.getRef() == null) {
-                        throw new RuntimeException("Save object before deleting from association.");
-                    }
-                    assocIds.remove(alfObject.getRef());
-                }
-                if (assocIds.size() > 0) {
-                    result.put(typeDesc.getPropertyDescByFieldName(fieldName), assocIds);
-                }
+    public Map<AlfSerializerDesc, List<String>> getAssocToDelete() {
+        AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
+        Map<AlfSerializerDesc, List<String>> result = Maps.newHashMap();
+        for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
+            if (desc.getAssoc() == null) {
+                continue;
             }
-            return result;
-        } catch (Exception e) {
-            throw Throwables.propagate(e);
+            Collection<AlfObject> collection = (Collection<AlfObject>) ClassUtils.getFieldValue(this, desc);
+            if (!initialFieldValues.containsKey(desc.getFieldName()) && collection != null && !collection.isEmpty()) {
+                loadCollection(desc, new ArrayList<AlfObject>());
+            }
+            List<String> initialUuids = (List<String>) initialFieldValues.get(desc.getFieldName());
+            if (initialUuids == null) {
+                continue;
+            }
+            List<String> assocResults = Lists.newArrayList(initialUuids);
+            for (AlfObject alfObject : collection) {
+                Preconditions.checkState(alfObject.getUuidRef() != null, "Save object before deleting from association.");
+                assocResults.remove(alfObject.getUuidRef());
+            }
+            if (assocResults.size() > 0) {
+                result.put(desc, assocResults);
+            }
         }
+        return result;
     }
 
     @Override
@@ -272,8 +274,8 @@ public class AlfObject implements Serializable {
 
     @Override
     public int hashCode() {
-        if (getRef() != null) {
-            return getUuidRef().hashCode();
+        if (uuidRef != null) {
+            return uuidRef.hashCode();
         }
         return super.hashCode();
     }

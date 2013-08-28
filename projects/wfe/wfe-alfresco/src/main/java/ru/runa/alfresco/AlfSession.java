@@ -50,11 +50,13 @@ import org.apache.axis.utils.XMLUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.ClassUtils;
 import ru.runa.alfresco.search.Search;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 /**
  * Connector implementation using Alfresco web services.
@@ -84,13 +86,44 @@ public class AlfSession implements AlfConn {
         return new Store(storeRef.getProtocol(), storeRef.getIdentifier());
     }
 
+    public Predicate getPredicate(AlfObject alfObject) {
+        return getPredicate(alfObject.getUuidRef());
+    }
+
+    private Predicate getPredicate(String uuidRef) {
+        Reference reference = getReference(uuidRef, null);
+        return new Predicate(new Reference[] { reference }, reference.getStore(), null);
+    }
+
+    private Reference getReference(AlfObject alfObject) {
+        return getReference(alfObject.getUuidRef(), null);
+    }
+
+    private Reference getReference(String uuid, Store store) {
+        String id;
+        int li = uuid.lastIndexOf("/");
+        if (li != -1) {
+            String storeString = uuid.substring(0, li);
+            id = uuid.substring(li + 1);
+            store = toStore(new StoreRef(storeString));
+        } else {
+            id = uuid;
+        }
+        if (store == null) {
+            store = getSpacesStore();
+            log.warn("UUID does not contains store identifier, " + uuid);
+            Thread.dumpStack();
+        }
+        return new Reference(store, id, null);
+    }
+
     public void addAspect(AlfObject object, String aspectTypeName) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
             AlfTypeDesc desc = Mappings.getMapping(aspectTypeName);
             loadClassDefinitionIfNeeded(desc);
             NamedValue[] props = new WSObjectAccessor(object).getAlfrescoProperties(desc, true, false);
-            CMLAddAspect addAspect = new CMLAddAspect(aspectTypeName, props, object.getPredicate(), null);
+            CMLAddAspect addAspect = new CMLAddAspect(aspectTypeName, props, getPredicate(object), null);
             CML cml = new CML();
             cml.setAddAspect(new CMLAddAspect[] { addAspect });
             WebServiceFactory.getRepositoryService().update(cml);
@@ -104,7 +137,7 @@ public class AlfSession implements AlfConn {
     public void removeAspect(AlfObject object, String aspectTypeName) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            CMLRemoveAspect removeAspect = new CMLRemoveAspect(aspectTypeName, object.getPredicate(), null);
+            CMLRemoveAspect removeAspect = new CMLRemoveAspect(aspectTypeName, getPredicate(object), null);
             CML cml = new CML();
             cml.setRemoveAspect(new CMLRemoveAspect[] { removeAspect });
             WebServiceFactory.getRepositoryService().update(cml);
@@ -154,11 +187,11 @@ public class AlfSession implements AlfConn {
             CML cml = new CML();
             cml.setCreate(new CMLCreate[] { createDoc });
             UpdateResult[] results = WebServiceFactory.getRepositoryService().update(cml);
-            object.markInitialState(typeDesc);
+            object.markPropertiesInitialState(typeDesc);
             Reference docRef = results[0].getDestination();
-            object.setReference(docRef);
+            object.setUuidRef(getUuidRef(docRef));
             log.info("Created object " + docRef.getUuid());
-            Cache cache = getCache(object.getClass().getName());
+            Cache cache = getCache(ClassUtils.getImplClass(object.getClass()).getName());
             if (cache != null) {
                 cache.put(new Element(object.getUuidRef(), object));
             }
@@ -176,9 +209,9 @@ public class AlfSession implements AlfConn {
             loadClassDefinitionIfNeeded(typeDesc);
             NamedValue[] comments = new NamedValue[1];
             comments[0] = new NamedValue("description", false, comment, null);
-            VersionResult result = WebServiceFactory.getAuthoringService().createVersion(object.getPredicate(), comments, false);
+            VersionResult result = WebServiceFactory.getAuthoringService().createVersion(getPredicate(object), comments, false);
             log.info("Version of " + object + " updated to " + result.getVersions()[0].getLabel());
-            object.markInitialState(typeDesc);
+            object.markPropertiesInitialState(typeDesc);
         } catch (Exception e) {
             throw propagate(e);
         } finally {
@@ -189,8 +222,7 @@ public class AlfSession implements AlfConn {
     public void addAssociation(AlfObject source, AlfObject target, String associationName) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            CMLCreateAssociation createAssociation = new CMLCreateAssociation(source.getPredicate(), null, target.getPredicate(), null,
-                    associationName);
+            CMLCreateAssociation createAssociation = new CMLCreateAssociation(getPredicate(source), null, getPredicate(target), null, associationName);
             CML cml = new CML();
             cml.setCreateAssociation(new CMLCreateAssociation[] { createAssociation });
             WebServiceFactory.getRepositoryService().update(cml);
@@ -205,12 +237,12 @@ public class AlfSession implements AlfConn {
     public void addChildAssociation(AlfObject source, AlfObject target, String associationName) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            ParentReference parentReference = new ParentReference(source.getReference().getStore(), source.getReference().getUuid(), null,
-                    associationName, associationName);
+            Reference reference = getReference(source);
+            ParentReference parentReference = new ParentReference(reference.getStore(), reference.getUuid(), null, associationName, associationName);
 
             CMLAddChild addChild = new CMLAddChild();
             addChild.setTo(parentReference);
-            addChild.setWhere(target.getPredicate());
+            addChild.setWhere(getPredicate(target));
 
             CML cml = new CML();
             cml.setAddChild(new CMLAddChild[] { addChild });
@@ -225,32 +257,25 @@ public class AlfSession implements AlfConn {
     }
 
     @Override
-    public <T extends AlfObject> T loadObject(Object objectId) throws InternalApplicationException {
-        if (objectId instanceof Version) {
-            Reference ref = ((Version) objectId).getId();
-            Predicate predicate = new Predicate(new Reference[] { ref }, ref.getStore(), null);
-            return (T) loadObject(predicate);
-
-        }
-        String uuidRef = (String) objectId;
+    public <T extends AlfObject> T loadObject(String uuidRef) throws InternalApplicationException {
         return (T) loadObject(uuidRef, null, false);
     }
 
     @Override
-    public <T extends AlfObject> T loadObjectNotNull(Object objectId) throws InternalApplicationException {
-        T object = (T) loadObject(objectId);
+    public <T extends AlfObject> T loadObjectNotNull(String uuidRef) throws InternalApplicationException {
+        T object = (T) loadObject(uuidRef);
         if (object == null) {
-            throw new InternalApplicationException("Unable to load object by UUID=" + objectId);
+            throw new InternalApplicationException("Unable to load object by " + uuidRef);
         }
         return object;
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void loadAssociation(Object ref, Collection collection, AlfSerializerDesc desc) throws InternalApplicationException {
+    public void loadAssociation(String uuidRef, Collection collection, AlfSerializerDesc desc) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            Reference reference = (Reference) ref;
+            Reference reference = getReference(uuidRef, null);
             QueryResult queryResult;
             boolean filter = true;
             if (desc.getAssoc().child()) {
@@ -280,7 +305,7 @@ public class AlfSession implements AlfConn {
                             AlfObject object = loadObject(reference.getStore(), row, true);
                             collection.add(object);
                         } catch (Exception e) {
-                            throw new RuntimeException(desc.getAssoc() + " in " + ref, e);
+                            throw new RuntimeException(desc.getAssoc() + " in " + uuidRef, e);
                         }
                     }
                 }
@@ -302,41 +327,39 @@ public class AlfSession implements AlfConn {
             List<CMLRemoveAssociation> removeAssociations = new ArrayList<CMLRemoveAssociation>();
             List<CMLAddChild> addChilds = new ArrayList<CMLAddChild>();
             List<CMLCreateAssociation> createAssociations = new ArrayList<CMLCreateAssociation>();
-            Map<AlfSerializerDesc, List<Object>> assocToDelete = object.getAssocToDelete();
-            for (AlfSerializerDesc desc : assocToDelete.keySet()) {
-                List<Object> refs = assocToDelete.get(desc);
-                for (Object ref : refs) {
-                    Reference reference = (Reference) ref;
-                    log.debug("Removing assoc " + reference.getUuid() + " from " + object);
-                    Predicate where = new Predicate(new Reference[] { reference }, reference.getStore(), null);
-                    if (desc.getAssoc().child()) {
-                        CMLRemoveChild removeChild = new CMLRemoveChild(object.getReference(), null, where, null);
+            Map<AlfSerializerDesc, List<String>> assocToDelete = object.getAssocToDelete();
+            for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToDelete.entrySet()) {
+                for (String uuidRef : entry.getValue()) {
+                    log.debug("Removing assoc " + uuidRef + " from " + object);
+                    Predicate where = getPredicate(uuidRef);
+                    if (entry.getKey().getAssoc().child()) {
+                        CMLRemoveChild removeChild = new CMLRemoveChild(getReference(object), null, where, null);
                         removeChilds.add(removeChild);
                     } else {
-                        CMLRemoveAssociation removeAssociation = new CMLRemoveAssociation(object.getPredicate(), null, where, null,
-                                desc.getPropertyNameWithNamespace());
+                        CMLRemoveAssociation removeAssociation = new CMLRemoveAssociation(getPredicate(object), null, where, null, entry.getKey()
+                                .getPropertyNameWithNamespace());
                         removeAssociations.add(removeAssociation);
                     }
                     updated = true;
                 }
             }
-            Map<AlfSerializerDesc, List<Object>> assocToCreate = object.getAssocToCreate();
-            for (AlfSerializerDesc desc : assocToCreate.keySet()) {
-                List<Object> refs = assocToCreate.get(desc);
-                for (Object ref : refs) {
-                    Reference reference = (Reference) ref;
+            Map<AlfSerializerDesc, List<String>> assocToCreate = object.getAssocToCreate();
+            for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToCreate.entrySet()) {
+                for (String uuidRef : entry.getValue()) {
+                    Reference reference = getReference(uuidRef, null);
                     AlfObject target = loadObject(reference, true);
-                    Predicate predicate = target.getPredicate();
+                    Predicate predicate = getPredicate(target);
                     log.debug("Adding assoc " + reference.getUuid() + " to " + object);
-                    if (desc.getAssoc().child()) {
-                        ParentReference parentReference = new ParentReference(object.getReference().getStore(), object.getReference().getUuid(),
-                                null, desc.getPropertyNameWithNamespace(), target.getObjectName());
-                        CMLAddChild addChild = new CMLAddChild(parentReference, null, desc.getPropertyNameWithNamespace(), target.getObjectName(),
-                                predicate, null);
+                    if (entry.getKey().getAssoc().child()) {
+                        Reference cref = getReference(object);
+                        ParentReference parentReference = new ParentReference(cref.getStore(), cref.getUuid(), null, entry.getKey()
+                                .getPropertyNameWithNamespace(), target.getObjectName());
+                        CMLAddChild addChild = new CMLAddChild(parentReference, null, entry.getKey().getPropertyNameWithNamespace(),
+                                target.getObjectName(), predicate, null);
                         addChilds.add(addChild);
                     } else {
-                        CMLCreateAssociation createAssociation = new CMLCreateAssociation(object.getPredicate(), null, predicate, null,
-                                desc.getPropertyNameWithNamespace());
+                        CMLCreateAssociation createAssociation = new CMLCreateAssociation(getPredicate(object), null, predicate, null, entry.getKey()
+                                .getPropertyNameWithNamespace());
                         createAssociations.add(createAssociation);
                     }
                     updated = true;
@@ -355,8 +378,7 @@ public class AlfSession implements AlfConn {
                 cml.setCreateAssociation(createAssociations.toArray(new CMLCreateAssociation[createAssociations.size()]));
             }
             WebServiceFactory.getRepositoryService().update(cml);
-            object.refCollections.clear();
-            object.clearCollections();
+            object.markCollectionsInitialState();
             return updated;
         } catch (Exception e) {
             throw propagate(e);
@@ -372,24 +394,6 @@ public class AlfSession implements AlfConn {
             return result;
         }
         return (T) loadObject(ref, throwError);
-    }
-
-    public Reference getReference(String uuid, Store store) throws InternalApplicationException {
-        String id;
-        int li = uuid.lastIndexOf("/");
-        if (li != -1) {
-            String storeString = uuid.substring(0, li);
-            id = uuid.substring(li + 1);
-            store = toStore(new StoreRef(storeString));
-        } else {
-            id = uuid;
-        }
-        if (store == null) {
-            store = getSpacesStore();
-            log.warn("UUID does not contains store identifier, " + uuid);
-            Thread.dumpStack();
-        }
-        return new Reference(store, id, null);
     }
 
     private <T extends AlfObject> T loadObject(Reference reference, boolean throwError) throws InternalApplicationException {
@@ -413,14 +417,15 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public NamedValue[] loadObjectProperties(Predicate where) throws InternalApplicationException {
+    public NamedValue[] loadObjectProperties(String uuidRef) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
+            Predicate where = getPredicate(uuidRef);
             Node node = WebServiceFactory.getRepositoryService().get(where)[0];
             return node.getProperties();
         } catch (Exception e) {
             Thread.dumpStack();
-            log.warn("Unable to load object properties " + where.getNodes(0).getUuid(), e);
+            log.warn("Unable to load object properties " + uuidRef, e);
             return null;
         } finally {
             AlfSessionWrapper.sessionEnd();
@@ -465,7 +470,7 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public static String getUuidRef(Reference reference) {
+    private String getUuidRef(Reference reference) {
         return reference.getStore().getScheme() + "://" + reference.getStore().getAddress() + "/" + reference.getUuid();
     }
 
@@ -481,10 +486,9 @@ public class AlfSession implements AlfConn {
                     return (T) element.getValue();
                 }
             }
-            Class<T> clazz = (Class<T>) Class.forName(typeDesc.getJavaClassName());
-            T object = clazz.newInstance();
-            object.setReference(reference);
+            T object = (T) AlfObjectFactory.create(typeDesc.getJavaClassName());
             object.setLazyLoader(this);
+            object.setUuidRef(getUuidRef(reference));
             WSObjectAccessor accessor = new WSObjectAccessor(object);
             for (NamedValue prop : props) {
                 AlfSerializerDesc propertyDesc = typeDesc.getPropertyDescByTypeName(prop.getName());
@@ -492,7 +496,7 @@ public class AlfSession implements AlfConn {
                     accessor.setProperty(propertyDesc, prop);
                 }
             }
-            object.markInitialState(typeDesc);
+            object.markPropertiesInitialState(typeDesc);
             if (cache != null) {
                 cache.put(new Element(object.getUuidRef(), object));
             }
@@ -503,11 +507,23 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    public Version[] getAllVersions(Predicate where) throws InternalApplicationException {
+    public <T extends AlfObject> List<T> getVersionedObjects(T object, int limit) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
+            Predicate where = getPredicate(object);
             VersionHistory history = WebServiceFactory.getAuthoringService().getVersionHistory(where.getNodes()[0]);
-            return history.getVersions();
+            Version[] versions = history.getVersions();
+            List<T> result = Lists.newArrayList();
+            // [0] element is current version
+            if (versions.length > 1) {
+                for (int i = 1; i < versions.length; i++) {
+                    if (i > limit) {
+                        break;
+                    }
+                    result.add((T) loadObject(versions[i].getId(), true));
+                }
+            }
+            return result;
         } catch (Exception e) {
             throw propagate(e);
         } finally {
@@ -528,11 +544,11 @@ public class AlfSession implements AlfConn {
                 return false;
             }
             log.info("Updating " + object + " (" + contentProps.length + ") fields");
-            CMLUpdate update = new CMLUpdate(contentProps, object.getPredicate(), null);
+            CMLUpdate update = new CMLUpdate(contentProps, getPredicate(object), null);
             CML cml = new CML();
             cml.setUpdate(new CMLUpdate[] { update });
             WebServiceFactory.getRepositoryService().update(cml);
-            Cache cache = getCache(object.getClass().getName());
+            Cache cache = getCache(ClassUtils.getImplClass(object.getClass()).getName());
             if (cache != null) {
                 Element old = cache.get(object.getUuidRef());
                 if (old != null) {
@@ -563,7 +579,7 @@ public class AlfSession implements AlfConn {
         try {
             AlfSessionWrapper.sessionStart();
             log.info("Setting content to " + object);
-            WebServiceFactory.getContentService().write(object.getReference(), Constants.PROP_CONTENT, content,
+            WebServiceFactory.getContentService().write(getReference(object), Constants.PROP_CONTENT, content,
                     new ContentFormat(mimetype, Charsets.UTF_8.name()));
         } catch (Exception e) {
             throw propagate(e);
@@ -575,8 +591,8 @@ public class AlfSession implements AlfConn {
     @Override
     public void deleteObject(AlfObject object) throws InternalApplicationException {
         if (object != null) {
-            deleteObject(object.getReference());
-            Cache cache = getCache(object.getClass().getName());
+            deleteObject(getReference(object));
+            Cache cache = getCache(ClassUtils.getImplClass(object.getClass()).getName());
             if (cache != null) {
                 cache.remove(object.getUuidRef());
             }

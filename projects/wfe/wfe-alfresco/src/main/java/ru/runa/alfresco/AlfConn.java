@@ -3,9 +3,6 @@ package ru.runa.alfresco;
 import java.util.Collection;
 import java.util.List;
 
-import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.webservice.types.Reference;
-
 import ru.runa.alfresco.search.Search;
 
 /**
@@ -18,36 +15,39 @@ public interface AlfConn {
     /**
      * Load object from Alfresco repository.
      * 
-     * @param objectId
-     *            Type depends on implementation and can be {@link NodeRef} or
-     *            {@link String}.
+     * @param uuidRef
+     *            UUID reference with space store
+     *            (workspace://SpacesStore/05b9ec4c
+     *            -74f7-4d52-9015-5697374a9b6a).
      * @return loaded object or <code>null</code>
      */
-    public <T extends AlfObject> T loadObject(Object objectId);
+    public <T extends AlfObject> T loadObject(String uuidRef);
 
     /**
      * Load object from Alfresco repository or throws exception.
      * 
-     * @param objectId
-     *            Type depends on implementation and can be {@link NodeRef} or
-     *            {@link String}.
+     * @param uuidRef
+     *            UUID reference with space store
+     *            (workspace://SpacesStore/05b9ec4c
+     *            -74f7-4d52-9015-5697374a9b6a).
      * @return loaded object
      */
-    public <T extends AlfObject> T loadObjectNotNull(Object objectId);
+    public <T extends AlfObject> T loadObjectNotNull(String uuidRef);
 
     /**
      * Loads association from Alfresco repository.
      * 
-     * @param ref
-     *            Type depends on implementation and can be {@link NodeRef} or
-     *            {@link Reference}.
+     * @param uuidRef
+     *            UUID reference with space store
+     *            (workspace://SpacesStore/05b9ec4c
+     *            -74f7-4d52-9015-5697374a9b6a).
      * @param collection
      *            container for association objects.
      * @param desc
      *            descriptor.
      */
     @SuppressWarnings("rawtypes")
-    public void loadAssociation(Object ref, Collection collection, AlfSerializerDesc desc);
+    public void loadAssociation(String uuidRef, Collection collection, AlfSerializerDesc desc);
 
     /**
      * Finds object in Alfresco repository.

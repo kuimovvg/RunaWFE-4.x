@@ -2,6 +2,8 @@ package ru.runa.bp.web;
 
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import ru.runa.alfresco.AlfObject;
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.WSConnectionSettings;
@@ -26,8 +28,8 @@ public class AlfDownloadContentTag extends AlfAjaxTag {
                 buf.append("<br>");
             }
             AlfObject alfObject = session.loadObjectNotNull(uuid);
-            String href = WSConnectionSettings.getInstance().getAlfBaseUrl() + "d/a/workspace/SpacesStore/" + alfObject.getReference().getUuid()
-                    + "/" + alfObject.getObjectName();
+            String href = WSConnectionSettings.getInstance().getAlfBaseUrl() + "d/a/workspace/SpacesStore/"
+                    + new NodeRef(alfObject.getUuidRef()).getId() + "/" + alfObject.getObjectName();
             buf.append("<a href=\"").append(href).append("\">").append(alfObject.getObjectName()).append("</a>");
         }
         return buf.toString();
