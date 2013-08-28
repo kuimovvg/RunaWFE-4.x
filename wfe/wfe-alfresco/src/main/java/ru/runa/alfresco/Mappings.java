@@ -8,6 +8,7 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.ClassUtils;
 import ru.runa.alfresco.anno.Assoc;
 import ru.runa.alfresco.anno.Property;
 import ru.runa.alfresco.anno.Type;
@@ -27,6 +28,7 @@ public class Mappings extends Settings {
     private static boolean mappingsLoaded = false;
 
     public static String getFolderUUID(Class<?> objectClass) {
+        objectClass = ClassUtils.getImplClass(objectClass);
         loadMappings();
         do {
             if (LOCATIONS.containsKey(objectClass)) {
@@ -163,6 +165,7 @@ public class Mappings extends Settings {
     }
 
     public static AlfTypeDesc getMapping(Class<?> clazz) {
+        clazz = ClassUtils.getImplClass(clazz);
         loadMappings();
         if (!MAPPINGS_BY_CLASS.containsKey(clazz)) {
             throw new RuntimeException("No mapping found for " + clazz);

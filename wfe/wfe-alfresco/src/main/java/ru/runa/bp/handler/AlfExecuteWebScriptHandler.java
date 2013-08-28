@@ -1,8 +1,7 @@
-package ru.runa.bp;
+package ru.runa.bp.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,9 +18,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import ru.runa.alfresco.AlfSession;
 import ru.runa.alfresco.WSConnectionSettings;
+import ru.runa.bp.AlfHandler;
+import ru.runa.bp.AlfHandlerData;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.FileVariable;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -34,7 +36,7 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
     @Override
     protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         byte[] response = getResponse(session, alfHandlerData);
-        log.debug(new String(response, "UTF-8"));
+        log.debug(new String(response, Charsets.UTF_8.name()));
         handleResponse(alfHandlerData, response);
     }
 
@@ -67,7 +69,7 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
         boolean first = true;
         for (String paramName : params.keySet()) {
             String paramValue = params.get(paramName);
-            paramValue = URLEncoder.encode(paramValue, "UTF-8");
+            paramValue = URLEncoder.encode(paramValue, Charsets.UTF_8.name());
             if (first) {
                 url.append("?");
             } else {
@@ -91,7 +93,7 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
 
         for (String paramName : params.keySet()) {
             String paramValue = params.get(paramName);
-            entity.addPart(paramName, new StringBody(paramValue, Charset.forName("UTF-8")));
+            entity.addPart(paramName, new StringBody(paramValue, Charsets.UTF_8));
         }
 
         for (String paramName : fileParams.keySet()) {
