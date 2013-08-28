@@ -53,7 +53,7 @@ public class CKEditorDialogCreatorHelper {
             prefix++;
             writePrefix(writer, prefix).append("id : ").append(id).append(",\n");
             writePrefix(writer, prefix).append("label : ").append(label).append(",\n");
-            writePrefix(writer, prefix).append("type : 'text',\n");
+            writePrefix(writer, prefix).append("type : 'text'\n");
             prefix--;
             writePrefix(writer, prefix).append("}");
         }
