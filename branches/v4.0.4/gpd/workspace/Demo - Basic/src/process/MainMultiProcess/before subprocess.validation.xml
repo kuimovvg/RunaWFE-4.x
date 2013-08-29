@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<validators>
-  <field name="actors">
-    <field-validator type="required">
-      <message><![CDATA[choose at least 1 actor]]></message>
-    </field-validator>
-  </field>
-</validators>

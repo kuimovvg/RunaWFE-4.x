@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml textreport.xsd">
-	<template fileName="/my_template.xml" fileEncoding="UTF8" />
-
-	<report fileName="report.txt" fileEncoding="UTF8" variableName="resultTextReport" contentType="plain/text" />
-
-	<replacements xmlFormat="false" applyToRegexp="false" />
-</config>

@@ -1,9 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Exec=ReplaceableDocOpen /usr/share/doc/runawfe
-Icon=/usr/share/pixmaps/RunaWFE-Main.gif
-Name=Documentation for RunaWFE
-Name[ru]=Документация для RunaWFE
-Terminal=false
-Type=Application
-ReplaceableCategories

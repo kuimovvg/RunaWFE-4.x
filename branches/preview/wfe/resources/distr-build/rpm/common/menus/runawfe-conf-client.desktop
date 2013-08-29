@@ -1,9 +1,0 @@
-[Desktop Entry]
-Encoding=UTF-8
-Exec=sh /usr/sbin/runawfe-configure.sh
-Icon=/usr/share/pixmaps/RunaWFE-Client.gif
-Name=RunaWFE client settings
-Name[ru]=Настройки для клиента RunaWFE
-Terminal=false
-Type=Application
-ReplaceableCategories

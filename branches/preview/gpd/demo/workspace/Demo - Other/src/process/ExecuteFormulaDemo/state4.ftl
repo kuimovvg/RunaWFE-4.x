@@ -1,3 +1,0 @@
-<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">date = 30.08.08</SPAN></SPAN></SPAN><SPAN style="font-size: medium"/></SPAN></P>
-<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">date = </SPAN></SPAN></SPAN></SPAN><SPAN style="color: #ff0000"><SPAN style="font-size: medium"/></SPAN><SPAN style="font-size: medium"><SPAN style="font-family: Arial">${date?date}</SPAN></SPAN></P>
-<P><SPAN style="font-size: medium"><SPAN style="font-family: Arial"/></SPAN></P>

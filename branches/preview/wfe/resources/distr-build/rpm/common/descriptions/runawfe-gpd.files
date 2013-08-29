@@ -1,4 +1,0 @@
-%{_libdir}/RunaGPD
-%_datadir/applications/runagpd.*
-%_datadir/pixmaps/RunaWFE-GPD.*
-%_sbindir/runagpd-start.sh

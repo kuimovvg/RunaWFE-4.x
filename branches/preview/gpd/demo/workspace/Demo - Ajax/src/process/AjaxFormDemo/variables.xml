@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<variables xmlns="http://runa.ru/xml"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml variables.xsd">
-  <variable format="ru.runa.wf.web.forms.format.LongFormat" name="group"/>
-  <variable format="ru.runa.wf.web.forms.format.StringFormat" name="user"/>
-  <variable format="ru.runa.wf.web.forms.format.StringFormat"
-    name="Swimlane" swimlane="true"/>
-</variables>

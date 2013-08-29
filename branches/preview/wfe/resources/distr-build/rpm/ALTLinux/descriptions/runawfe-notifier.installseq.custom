@@ -1,5 +1,0 @@
-if [ "%{_arch}" = "i586" ]; then
-    cp -Rf wfe/resources/distr-build/rpm/ALTLinux/lib/*  %buildroot%{_libdir}/RunaRTN/
-elif [ "%{_arch}" = "pentium3" ]; then
-    cp -Rf wfe/resources/distr-build/rpm/ALTLinux/lib/*  %buildroot%{_libdir}/RunaRTN/
-fi

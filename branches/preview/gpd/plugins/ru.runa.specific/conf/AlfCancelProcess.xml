@@ -1,6 +1,0 @@
-<config>
-  <input>
-    <param name="processId" formatFilter="long" label="ID отменяемого процесса" />
-    <param name="requester" formatFilter="string" label="Подавший заявку на отмену" />
-  </input>
-</config>

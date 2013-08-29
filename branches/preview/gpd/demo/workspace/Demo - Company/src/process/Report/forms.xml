@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<forms xmlns="http://runa.ru/xml"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
-  <form file="start.ftl" jsValidation="false" state="start" type="ftl" validationFile="start.validation.xml"/>
-  <form file="make report.ftl" jsValidation="false" state="make report"
-    type="ftl" validationFile="make report.validation.xml"/>
-  <form file="read report.ftl" jsValidation="false" state="read report"
-    type="ftl" validationFile="read report.validation.xml"/>
-</forms>

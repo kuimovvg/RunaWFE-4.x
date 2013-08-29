@@ -1,5 +1,0 @@
-%JBOSS_ROOT_TARGET/server/%jboss_cfg_server/conf/*
-%JBOSS_ROOT_TARGET/server/%jboss_cfg_server/deploy/*
-%JBOSS_ROOT_TARGET/server/%jboss_cfg_server/data/*
-%_sysconfdir_init_d/*
-%_sbindir/runawfe-start-%server_id.sh

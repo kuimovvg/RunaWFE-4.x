@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<forms>
-  <form state="Upload document" file="Upload document.ftl" type="ftl" validationFile="Upload document.validation.xml" jsValidation="false"/>
-  <form state="Approve document" file="Approve document.ftl" type="ftl" validationFile="Approve document.validation.xml" jsValidation="false"/>
-  <form state="Result" file="Result.ftl" type="ftl" validationFile="Result.validation.xml" jsValidation="false"/>
-</forms>

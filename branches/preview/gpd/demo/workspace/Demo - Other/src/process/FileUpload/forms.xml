@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<forms xmlns="http://runa.ru/xml"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
-  <form file="upload.ftl" jsValidation="false" state="upload" type="ftl" validationFile="upload.validation.xml"/>
-  <form file="download.ftl" jsValidation="false" state="download"
-    type="ftl" validationFile="download.validation.xml"/>
-</forms>

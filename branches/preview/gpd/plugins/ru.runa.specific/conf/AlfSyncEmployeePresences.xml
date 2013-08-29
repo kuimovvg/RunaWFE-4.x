@@ -1,6 +1,0 @@
-<config>
-  <input>
-    <param name="employee" formatFilter="string" label="Сотрудник" />
-    <param name="date" formatFilter="date" label="Дата" />
-  </input>
-</config>

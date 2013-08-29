@@ -1,8 +1,0 @@
-# Making documentation
-install -d %buildroot%_defaultdocdir/runawfe
-cp -Rf %DOC_ROOT %buildroot/%_defaultdocdir/runawfe
-
-# Install menu-entity's
-install -d %buildroot%_datadir/pixmaps
-cp wfe/resources/distr-build/icons/D_20x20_256.gif %buildroot/%_datadir/pixmaps/RunaWFE-Documentation.gif
-cp wfe/resources/distr-build/icons/wf_D_48x128.gif %buildroot/%_datadir/pixmaps/RunaWFE-Documentation_48.gif

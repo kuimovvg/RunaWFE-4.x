@@ -1,4 +1,0 @@
-install -d %buildroot/%_sysconfdir
-cat <<EOF >%buildroot/%_sysconfdir/runawfe-client.conf
-WFEServer_webaddress=localhost:%runawfe_web_port
-EOF

@@ -1,8 +1,0 @@
-RUNA WFE is a cross-platform end user solution for business process management. It provides rich web interface with tasklist, form player, graphical process designer, bots and more
-
-This package contains admin scripts for manage runawfe:
-script-runner.sh to deploy demo configuration (user's and processes)
-ldap-importer.sh to import from LDAP server
-bot-invoker.sh to invoke bots (localy on server or remote botstation)
-
-Must be used with runawfe-server or runawfe-simulation

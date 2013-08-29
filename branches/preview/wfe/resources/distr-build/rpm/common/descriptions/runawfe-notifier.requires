@@ -1,1 +1,0 @@
-runawfe-common = %version-%release runawfe-client-conf = %version-%release %requires_java %requires_mozilla %requires_swt

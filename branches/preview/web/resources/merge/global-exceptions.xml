@@ -1,3 +1,0 @@
-<global-exceptions>
-    <exception type="ru.runa.af.AuthenticationException" key="login.failed" path="/start.do"/>
-</global-exceptions>

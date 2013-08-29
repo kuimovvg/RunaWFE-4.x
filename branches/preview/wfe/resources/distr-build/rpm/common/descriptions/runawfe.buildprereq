@@ -1,1 +1,0 @@
-%requires_jboss %requires_java %requires_java_devel %requires_ant %requires_struts %requires_struts_test unzip %requires_perlcgi %requires_libgtk %requires_hibernate %requires_bsh %requires_apache_commons %requires_dom4j %requires_trove %requires_xjavadoc %requires_cactus %requires_cargo %requires_aspectj %requires_javamail

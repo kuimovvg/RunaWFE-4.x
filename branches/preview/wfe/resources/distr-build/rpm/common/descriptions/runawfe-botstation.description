@@ -1,4 +1,0 @@
-RunaWFE_Description RUNA WFE is a cross-platform end user solution for business process management. It provides rich web interface with tasklist, form player, graphical process designer, bots and more
-
-This package contains libs and configs for runawfe remote botstation.
-By default main runawfe server must be accessible on address main_wfe_server.

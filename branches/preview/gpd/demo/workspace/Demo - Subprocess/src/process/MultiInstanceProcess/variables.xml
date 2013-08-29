@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<variables>
-  <variable description=""
-    format="ru.runa.wf.web.forms.format.StringFormat" name="multNumber"/>
-  <variable description=""
-    format="ru.runa.wf.web.forms.format.StringArrayFormat" name="addressArray"/>
-  <variable description=""
-    format="ru.runa.wf.web.forms.format.StringFormat" name="operator" swimlane="true"/>
-</variables>

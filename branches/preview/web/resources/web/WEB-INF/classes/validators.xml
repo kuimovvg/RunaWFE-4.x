@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<validators>
-    <validator name="fileSize" class="ru.runa.wf.validators.FileSizeValidator"/>
-    <validator name="fileContentType" class="ru.runa.wf.validators.FileMimeTypeValidator"/>
-    <validator name="fileExtension" class="ru.runa.wf.validators.FileExtensionValidator"/>
-    <validator name="time" class="ru.runa.wf.validators.TimeRangeValidator"/>
-</validators>

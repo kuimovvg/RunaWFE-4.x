@@ -1,7 +1,0 @@
-<table cellspacing="0">
-  <tr>
-   <td nowrap="true">
-	Download file: <customtag var="file" delegation="ru.runa.wf.web.html.vartag.FileVariableValueDownloadVarTag" />
-    </td>
-  </tr>
-</table>

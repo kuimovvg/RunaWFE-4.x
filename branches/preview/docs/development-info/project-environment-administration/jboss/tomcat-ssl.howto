@@ -1,7 +1,0 @@
-1) using java keytool generate sertificate:
-	keytool -genkey -alias tomcat -keyalg RSA -keystore /path/to/my/keystore
-you can export existing sertificates see http://jakarta.apache.org/tomcat/tomcat-5.5-doc/ssl-howto.html for details
-2) in <jboss_home>/server/all/deploy/jbossweb-tomcat50.sar/server.xml uncomment SSL/TLS Connector
-3) set up port, ssl protocol keystore password and location of keystore file
-sslProtocol="TLS" seems does not work with IE, use sslProtocol="SSL"
-4) if you use both HTTP and SSL/TLS connectors set redirectPort in HTTP connector to port of SSL/TLS connector

@@ -1,5 +1,0 @@
-Ant build script require ant-1.6.2 now, since we use forkmode="once".
-To generate coverage report: 
-1. install emma (emma.jar) into your <jre dir>/lib/ext
-2. edit  /dist/build.properties and set emma.enabled = true
-3. run tests and coverage report generation `ant report.coverage` (required in separate step since coverage report can be generated only after server-side JVM shutdown, see http://sourceforge.net/forum/forum.php?thread_id=1110292&forum_id=373865 for details)

@@ -1,8 +1,0 @@
-<config>
-  <input>
-    <param name="file" formatFilter="file" label="File content for Alfresco" />
-  </input>
-  <output>
-    <param name="uuid" label="Alfresco object ID" />
-  </output>
-</config>

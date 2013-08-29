@@ -1,7 +1,0 @@
-%_datadir/pixmaps/RunaWFE-Simulation*.gif
-%_datadir/pixmaps/RunaWFE-SimClient*.gif
-%JBOSS_ROOT_TARGET/server/%jboss_cfg_simulation/conf/*
-%JBOSS_ROOT_TARGET/server/%jboss_cfg_simulation/deploy/*
-%JBOSS_ROOT_TARGET/server/%jboss_cfg_simulation/data/*
-%_datadir/applications/runawfe-simulator-*.desktop
-%_sbindir/runawfe-start-%simulation_id.sh

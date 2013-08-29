@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<bots xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml bots.xsd">
-	<bot login="TextReportBot" password="123" startTimeout="500">
-		<task name="stateTextReportGeneration" handler="ru.runa.wf.logic.bot.TextReportTaskHandler" configuration="/bot/handler/textreport.xml" />
-	</bot>
-</bots>

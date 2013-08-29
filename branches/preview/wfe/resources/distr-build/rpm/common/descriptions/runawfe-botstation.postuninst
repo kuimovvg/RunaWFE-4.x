@@ -1,7 +1,0 @@
-cd %JBOSS_ROOT_TARGET/server/%jboss_cfg_botstation
-rm -Rf log tmp work
-rm -Rf lib
-cd conf && rm -Rf `ls %JBOSS_ROOT_TARGET/server/default/conf`
-cd ../deploy && rm -Rf `ls %JBOSS_ROOT_TARGET/server/default/deploy`
-cd ..
-rm -f %_sbindir/runawfe-start.sh

@@ -1,2 +1,0 @@
-install -d %buildroot%_sysconfdir_init_d
-cp wfe/resources/distr-build/rpm/common/runawfe %buildroot/%_sysconfdir_init_d

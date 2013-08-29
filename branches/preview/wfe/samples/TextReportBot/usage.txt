@@ -1,6 +1,0 @@
-
- 1. Merge content of the 'bots.xml' with the content of the same file in your jboss config dir.
- 2. Copy file 'my_template.txt' to 'conf' dir of jboss.
- 3. In runa wfe create user 'TextReportBot' with password '123' and valid permissions in order to perform task.
- 4. Deploy process definition 'textReportTest.par' and start it.
- 5. Run bots.

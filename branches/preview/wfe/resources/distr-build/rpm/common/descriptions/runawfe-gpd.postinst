@@ -1,6 +1,0 @@
-mandriva=`uname -a | grep Mandriva`
-if [ "$mandriva" = "" ]; then
-	rm -Rf %{_libdir}/RunaGPD/plugins/org.eclipse.swt*.jar
-	ln -s -t %{_libdir}/RunaGPD/plugins %{_libdir}/eclipse/plugins/org.eclipse.swt*.jar
-fi
-%runawfe_update_menus

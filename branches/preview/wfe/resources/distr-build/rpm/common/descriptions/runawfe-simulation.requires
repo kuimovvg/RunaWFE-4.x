@@ -1,1 +1,0 @@
-%requires_jboss runawfe-adminkit = %version-%release %requires_java runawfe-commonlibs = %version-%release runawfe-common = %version-%release

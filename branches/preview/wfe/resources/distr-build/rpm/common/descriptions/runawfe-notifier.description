@@ -1,4 +1,0 @@
-RUNA WFE is a cross-platform end user solution for business process management. It provides rich web interface with tasklist, form player, graphical process designer, bots and more
-
-This package contains runawfe notifier client. It used for automatic check for new tasks.
-By default, runawfe web server must be accessible at adress main_wfe_server
