@@ -1,6 +1,6 @@
 package ru.runa.wfe.commons.bc;
 
-import org.testng.collections.Objects;
+import com.google.common.base.Objects;
 
 /**
  * Represents business duration.
