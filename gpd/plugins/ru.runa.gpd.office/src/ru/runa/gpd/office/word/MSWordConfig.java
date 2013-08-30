@@ -10,11 +10,25 @@ import org.dom4j.Element;
 import ru.runa.gpd.util.XmlUtil;
 
 public class MSWordConfig extends Observable {
+    private static final String REPORT = "report";
+    private static final String OUTPUT_VARIABLE_FILE_NAME = "output-variable-file-name";
+    private static final String OUTPUT_VARIABLE = "output-variable";
+    private static final String TEMPLATE_PATH = "template-path";
+    private static final String STRICT_MODE = "strict-mode";
+    private boolean strictMode = false;
     private String templatePath = "";
     private String resultVariableName = "";
     private String resultFileName = "";
     private final List<MSWordVariableMapping> mappings = new ArrayList<MSWordVariableMapping>();
 
+    public boolean isStrictMode() {
+        return strictMode;
+    }
+    
+    public void setStrictMode(boolean strictMode) {
+        this.strictMode = strictMode;
+    }
+    
     public String getTemplatePath() {
         return templatePath;
     }
@@ -63,10 +77,11 @@ public class MSWordConfig extends Observable {
     public String toString() {
         try {
             Document document = XmlUtil.createDocument("msword-report-task", XmlUtil.RUNA_NAMESPACE, "msword-report-task.xsd");
-            Element reportElement = document.getRootElement().addElement("report", XmlUtil.RUNA_NAMESPACE);
-            reportElement.addAttribute("template-path", templatePath);
-            reportElement.addAttribute("output-variable", resultVariableName);
-            reportElement.addAttribute("output-variable-file-name", resultFileName);
+            Element reportElement = document.getRootElement().addElement(REPORT, XmlUtil.RUNA_NAMESPACE);
+            reportElement.addAttribute(STRICT_MODE, String.valueOf(strictMode));
+            reportElement.addAttribute(TEMPLATE_PATH, templatePath);
+            reportElement.addAttribute(OUTPUT_VARIABLE, resultVariableName);
+            reportElement.addAttribute(OUTPUT_VARIABLE_FILE_NAME, resultFileName);
             for (MSWordVariableMapping mapping : mappings) {
                 mapping.serialize(reportElement);
             }
@@ -80,11 +95,12 @@ public class MSWordConfig extends Observable {
         MSWordConfig model = new MSWordConfig();
         Document document = XmlUtil.parseWithoutValidation(xml);
         Element root = document.getRootElement();
-        Element reportElement = root.element("report");
+        Element reportElement = root.element(REPORT);
         if (reportElement != null) {
-            model.templatePath = reportElement.attributeValue("template-path");
-            model.resultVariableName = reportElement.attributeValue("output-variable");
-            model.resultFileName = reportElement.attributeValue("output-variable-file-name");
+            model.setStrictMode(Boolean.parseBoolean(reportElement.attributeValue(STRICT_MODE, "false")));
+            model.templatePath = reportElement.attributeValue(TEMPLATE_PATH);
+            model.resultVariableName = reportElement.attributeValue(OUTPUT_VARIABLE);
+            model.resultFileName = reportElement.attributeValue(OUTPUT_VARIABLE_FILE_NAME);
             List<Element> mappingElements = reportElement.elements("mapping");
             for (Element mappingElement : mappingElements) {
                 MSWordVariableMapping mapping = MSWordVariableMapping.deserialize(mappingElement);
