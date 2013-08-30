@@ -18,7 +18,7 @@ public abstract class AbstractBusinessCalendar implements BusinessCalendar {
     protected abstract BusinessDay getBusinessDay(Calendar calendar);
 
     @Override
-    public Date add(Date date, String durationString) {
+    public Date apply(Date date, String durationString) {
         Duration duration = DurationParser.parse(durationString);
         if (duration.getAmount() == 0) {
             return date;

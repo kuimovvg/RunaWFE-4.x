@@ -26,7 +26,7 @@ public class RelativeToCurrentDateRangeFieldValidator extends AbstractRangeValid
         }
         Calendar current = Calendar.getInstance();
         if (useBusinessCalendar()) {
-            Date date = businessCalendar.add(new Date(), daysCount + " business days");
+            Date date = businessCalendar.apply(new Date(), daysCount + " business days");
             current.setTime(date);
         } else {
             current.add(Calendar.DAY_OF_MONTH, daysCount);
