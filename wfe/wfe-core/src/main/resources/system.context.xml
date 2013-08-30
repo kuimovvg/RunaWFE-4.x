@@ -393,6 +393,6 @@
 	</bean>
 
 
-	<bean id="businessCalendar" class="ru.runa.wfe.commons.bc.legacy.BusinessCalendarImpl" />
+	<bean id="businessCalendar" class="ru.runa.wfe.commons.bc.DefaultBusinessCalendar" />
 
 </beans>

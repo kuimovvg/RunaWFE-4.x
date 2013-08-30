@@ -49,7 +49,7 @@ import com.google.common.collect.Maps;
  * </ul>
  * </p>
  */
-public class Duration implements Serializable {
+public class JbpmDuration implements Serializable {
     private static final long serialVersionUID = 2L;
 
     public static final long SECOND = 1000;
@@ -66,7 +66,7 @@ public class Duration implements Serializable {
     public static final long BUSINESS_YEAR;
 
     static {
-        Properties businessCalendarProperties = BusinessCalendarImpl.getBusinessCalendarProperties();
+        Properties businessCalendarProperties = JbpmBusinessCalendar.getBusinessCalendarProperties();
         String businessDayText = businessCalendarProperties.getProperty("business.day.expressed.in.hours");
         String businessWeekText = businessCalendarProperties.getProperty("business.week.expressed.in.hours");
         String businessMonthText = businessCalendarProperties.getProperty("business.month.expressed.in.business.days");
@@ -159,10 +159,10 @@ public class Duration implements Serializable {
     private long amount;
     private boolean businessTime;
 
-    Duration() {
+    JbpmDuration() {
     }
 
-    public Duration(long milliseconds) {
+    public JbpmDuration(long milliseconds) {
         amount = milliseconds;
         field = Calendar.MILLISECOND;
     }
@@ -187,7 +187,7 @@ public class Duration implements Serializable {
      * <li>years</li>
      * </ul>
      */
-    public Duration(String duration) {
+    public JbpmDuration(String duration) {
         Preconditions.checkNotNull(duration, "duration is null");
         int index = indexOfNonWhite(duration, 0);
         char lead = duration.charAt(index);
@@ -279,7 +279,7 @@ public class Duration implements Serializable {
             return new Date(date.getTime() + amount);
         }
 
-        Calendar calendar = BusinessCalendarImpl.getCalendar();
+        Calendar calendar = JbpmBusinessCalendar.getCalendar();
         calendar.setTime(date);
         calendar.add(field, (int) amount);
         return calendar.getTime();
