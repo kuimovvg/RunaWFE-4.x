@@ -7,10 +7,7 @@ import java.util.Observer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -22,7 +19,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
@@ -33,6 +29,9 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 
 public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<DocxModel> {
     @Override
@@ -69,23 +68,20 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                 final Button strict = new Button(this, SWT.CHECK);
                 strict.setText(Messages.getString("label.strict"));
                 strict.setSelection(model.isStrict());
-                strict.addSelectionListener(new SelectionListener() {
+                strict.addSelectionListener(new LoggingSelectionAdapter() {
+                    
                     @Override
-                    public void widgetDefaultSelected(SelectionEvent arg0) {
-                        model.setStrict(strict.getSelection());
-                    }
-
-                    @Override
-                    public void widgetSelected(SelectionEvent arg0) {
+                    protected void onSelection(SelectionEvent e) throws Exception {
                         model.setStrict(strict.getSelection());
                     }
                 });
                 Hyperlink addTableLink = new Hyperlink(this, SWT.NONE);
                 addTableLink.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
                 addTableLink.setText(Messages.getString("label.AddTable"));
-                addTableLink.addHyperlinkListener(new HyperlinkAdapter() {
+                addTableLink.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                    
                     @Override
-                    public void linkActivated(HyperlinkEvent e) {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.addNewTable(DocxTableModel.createTable());
                         buildFromModel();
                     }
@@ -114,17 +110,19 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             final Text text = new Text(group, SWT.BORDER);
             text.setText(tableModel.name);
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            text.addModifyListener(new ModifyListener() {
+            text.addModifyListener(new LoggingModifyTextAdapter() {
+                
                 @Override
-                public void modifyText(ModifyEvent event) {
+                protected void onTextChanged(ModifyEvent e) throws Exception {
                     model.tables.get(tableIndex).name = text.getText();
                 }
             });
             Hyperlink hl1 = new Hyperlink(group, SWT.NONE);
             hl1.setText("[X]");
-            hl1.addHyperlinkListener(new HyperlinkAdapter() {
+            hl1.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.tables.remove(tableIndex);
                     buildFromModel();
                 }
@@ -140,23 +138,20 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             final Text styleText = new Text(pgroup, SWT.BORDER);
             styleText.setText(tableModel.getStyleName());
             styleText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            styleText.addModifyListener(new ModifyListener() {
+            styleText.addModifyListener(new LoggingModifyTextAdapter() {
+                
                 @Override
-                public void modifyText(ModifyEvent event) {
+                protected void onTextChanged(ModifyEvent e) throws Exception {
                     model.tables.get(tableIndex).styleName = styleText.getText();
                 }
             });
             final Button addBreak = new Button(pgroup, SWT.CHECK);
             addBreak.setText(Messages.getString("label.tableAddBreak"));
             addBreak.setSelection(model.tables.get(tableIndex).addBreak);
-            addBreak.addSelectionListener(new SelectionListener() {
+            addBreak.addSelectionListener(new LoggingSelectionAdapter() {
+                
                 @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    model.tables.get(tableIndex).addBreak = addBreak.getSelection();
-                }
-
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
+                protected void onSelection(SelectionEvent e) throws Exception {
                     model.tables.get(tableIndex).addBreak = addBreak.getSelection();
                 }
             });
@@ -187,9 +182,10 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             Hyperlink hl2 = new Hyperlink(strokeComposite, SWT.NONE);
             hl2.setText(Localization.getString("button.add"));
-            hl2.addHyperlinkListener(new HyperlinkAdapter() {
+            hl2.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.tables.get(tableIndex).addColumn();
                     buildFromModel();
                 }
@@ -205,18 +201,20 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             }
             combo.setText(columnModel.variable);
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            combo.addSelectionListener(new SelectionAdapter() {
+            combo.addSelectionListener(new LoggingSelectionAdapter() {
+                
                 @Override
-                public void widgetSelected(SelectionEvent e) {
+                protected void onSelection(SelectionEvent e) throws Exception {
                     columnModel.variable = combo.getText();
                 }
             });
             if (columnIndex != 0) {
                 Hyperlink hl0 = new Hyperlink(parent, SWT.NONE);
                 hl0.setText(Localization.getString("button.up"));
-                hl0.addHyperlinkListener(new HyperlinkAdapter() {
+                hl0.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                    
                     @Override
-                    public void linkActivated(HyperlinkEvent e) {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.tables.get(tableIndex).moveUpColumn(columnIndex);
                         buildFromModel();
                     }
@@ -227,9 +225,10 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             }
             Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);
             hl1.setText("[X]");
-            hl1.addHyperlinkListener(new HyperlinkAdapter() {
+            hl1.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.tables.get(tableIndex).columns.remove(columnIndex);
                     buildFromModel();
                 }
