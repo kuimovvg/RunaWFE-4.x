@@ -31,15 +31,15 @@ import ru.runa.wfe.commons.CalendarUtil;
  * 
  * modified on 06.03.2009 by gavrusev_sergei
  */
-public class DayPart {
+public class JbpmDayPart {
     int fromHour = -1;
     int fromMinute = -1;
     int toHour = -1;
     int toMinute = -1;
-    Day day = null;
+    JbpmDay day = null;
     int index = -1;
 
-    public DayPart(String dayPartText, Day day, int index) {
+    public JbpmDayPart(String dayPartText, JbpmDay day, int index) {
         this.day = day;
         this.index = index;
 
@@ -65,7 +65,7 @@ public class DayPart {
         toMinute = calendar.get(Calendar.MINUTE);
     }
 
-    public Date add(Date date, Duration duration) {
+    public Date add(Date date, JbpmDuration duration) {
         if (duration.getMilliseconds() >= 0) {
             return moveForvard(date, duration);
         } else {
@@ -99,44 +99,44 @@ public class DayPart {
         return calendar.getTime();
     }
 
-    private Date moveForvard(Date date, Duration duration) {
+    private Date moveForvard(Date date, JbpmDuration duration) {
         Calendar calendar = getCalendarWithDate(date);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
 
-        long millisInThisDayPart = (toHour - hour) * Duration.HOUR + (toMinute - minute) * Duration.MINUTE;
+        long millisInThisDayPart = (toHour - hour) * JbpmDuration.HOUR + (toMinute - minute) * JbpmDuration.MINUTE;
         long durationMillis = duration.getMilliseconds();
 
         if (durationMillis <= millisInThisDayPart) {
             return duration.addTo(date);
         } else {
-            Duration remainder = new Duration(durationMillis - millisInThisDayPart);
+            JbpmDuration remainder = new JbpmDuration(durationMillis - millisInThisDayPart);
             Date dayPartEndDate = new Date(date.getTime() + millisInThisDayPart);
-            DayPart nextDayPart = day.findNextDayPartStart(index + 1, dayPartEndDate);
+            JbpmDayPart nextDayPart = day.findNextDayPartStart(index + 1, dayPartEndDate);
             return nextDayPart.add(nextDayPart.getStartTime(dayPartEndDate), remainder);
         }
     }
 
-    private Date moveBack(Date date, Duration duration) {
+    private Date moveBack(Date date, JbpmDuration duration) {
         Calendar calendar = getCalendarWithDate(date);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
 
-        long millisInThisDayPart = (fromHour - hour) * Duration.HOUR + (fromMinute - minute) * Duration.MINUTE;
+        long millisInThisDayPart = (fromHour - hour) * JbpmDuration.HOUR + (fromMinute - minute) * JbpmDuration.MINUTE;
         long durationMillis = duration.getMilliseconds();
 
         if (durationMillis >= millisInThisDayPart) {
             return duration.addTo(date);
         } else {
-            Duration remainder = new Duration(durationMillis - millisInThisDayPart);
+            JbpmDuration remainder = new JbpmDuration(durationMillis - millisInThisDayPart);
             Date dayPartStartDate = new Date(date.getTime() + millisInThisDayPart);
-            DayPart nextDayPart = day.findPrevDayPartEnd(index - 1, dayPartStartDate);
+            JbpmDayPart nextDayPart = day.findPrevDayPartEnd(index - 1, dayPartStartDate);
             return nextDayPart.add(nextDayPart.getEndTime(dayPartStartDate), remainder);
         }
     }
 
     private Calendar getCalendarWithDate(Date date) {
-        Calendar calendar = BusinessCalendarImpl.getCalendar();
+        Calendar calendar = JbpmBusinessCalendar.getCalendar();
         calendar.setTime(date);
         return calendar;
     }

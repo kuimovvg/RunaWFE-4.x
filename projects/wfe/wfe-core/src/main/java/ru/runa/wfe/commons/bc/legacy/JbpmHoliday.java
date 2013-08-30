@@ -33,24 +33,24 @@ import ru.runa.wfe.commons.CalendarUtil;
 /**
  * identifies a continuous set of days.
  */
-public class Holiday implements Serializable {
+public class JbpmHoliday implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Date fromDay = null;
     private Date toDay = null;
 
-    public static List<Holiday> parseHolidays(Properties calendarProperties) {
-        List<Holiday> holidays = new ArrayList<Holiday>();
+    public static List<JbpmHoliday> parseHolidays(Properties calendarProperties) {
+        List<JbpmHoliday> holidays = new ArrayList<JbpmHoliday>();
         for (Object key : calendarProperties.keySet()) {
             if (key.toString().startsWith("holiday")) {
-                Holiday holiday = new Holiday(calendarProperties.getProperty(key.toString()));
+                JbpmHoliday holiday = new JbpmHoliday(calendarProperties.getProperty(key.toString()));
                 holidays.add(holiday);
             }
         }
         return holidays;
     }
 
-    public Holiday(String holidayText) {
+    public JbpmHoliday(String holidayText) {
         int separatorIndex = holidayText.indexOf('-');
         if (separatorIndex == -1) {
             fromDay = CalendarUtil.convertToDate(holidayText.trim(), CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
@@ -64,7 +64,7 @@ public class Holiday implements Serializable {
         // now we are going to set the toDay to the end of the day, rather
         // then the beginning.
         // we take the start of the next day as the end of the toDay.
-        Calendar calendar = BusinessCalendarImpl.getCalendar();
+        Calendar calendar = JbpmBusinessCalendar.getCalendar();
         calendar.setTime(toDay);
         calendar.add(Calendar.DATE, 1);
         toDay = calendar.getTime();

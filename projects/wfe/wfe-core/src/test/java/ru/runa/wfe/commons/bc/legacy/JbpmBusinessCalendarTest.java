@@ -7,8 +7,8 @@ import org.testng.annotations.Test;
 
 import ru.runa.wfe.commons.CalendarUtil;
 
-public class BusinessCalendarImplTest {
-    private BusinessCalendarImpl bc = new BusinessCalendarImpl();
+public class JbpmBusinessCalendarTest {
+    private JbpmBusinessCalendar bc = new JbpmBusinessCalendar();
 
     @DataProvider
     public Object[][] getDurations() {

@@ -37,23 +37,23 @@ import ru.runa.wfe.commons.bc.BusinessCalendar;
  * a calendar that knows about business hours. modified on 06.03.2009 by
  * gavrusev_sergei
  */
-public class BusinessCalendarImpl implements BusinessCalendar {
+public class JbpmBusinessCalendar implements BusinessCalendar {
     private static Properties businessCalendarProperties = ClassLoaderUtil.getProperties("business.calendar.properties", true);
-    private final Day[] weekDays;
-    private final List<Holiday> holidays;
+    private final JbpmDay[] weekDays;
+    private final List<JbpmHoliday> holidays;
     protected final Log log = LogFactory.getLog(getClass());
 
-    public BusinessCalendarImpl() {
+    public JbpmBusinessCalendar() {
         log.info("Using business calendar implementation: " + getClass());
-        weekDays = Day.parseWeekDays(businessCalendarProperties, this);
-        holidays = Holiday.parseHolidays(businessCalendarProperties);
+        weekDays = JbpmDay.parseWeekDays(businessCalendarProperties, this);
+        holidays = JbpmHoliday.parseHolidays(businessCalendarProperties);
     }
 
     public static Properties getBusinessCalendarProperties() {
         return businessCalendarProperties;
     }
 
-    public Date add(Date date, Duration duration) {
+    public Date add(Date date, JbpmDuration duration) {
         if (duration.getMilliseconds() >= 0) {
             return addForward(date, duration);
         } else {
@@ -95,7 +95,7 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return date;
     }
 
-    public Day findDay(Date date) {
+    public JbpmDay findDay(Date date) {
         Calendar calendar = getCalendar();
         calendar.setTime(date);
         return weekDays[calendar.get(Calendar.DAY_OF_WEEK)];
@@ -107,7 +107,7 @@ public class BusinessCalendarImpl implements BusinessCalendar {
     }
 
     private boolean isHoliday(Date date) {
-        for (Holiday holiday : holidays) {
+        for (JbpmHoliday holiday : holidays) {
             if (holiday.includes(date)) {
                 return true;
             }
@@ -115,12 +115,12 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return false;
     }
 
-    DayPart findDayPart(Date date) {
+    JbpmDayPart findDayPart(Date date) {
         if (isHoliday(date)) {
             return null;
         }
-        Day day = findDay(date);
-        for (DayPart dayPart : day.getDayParts()) {
+        JbpmDay day = findDay(date);
+        for (JbpmDayPart dayPart : day.getDayParts()) {
             if (dayPart.includes(date)) {
                 return dayPart;
             }
@@ -134,14 +134,14 @@ public class BusinessCalendarImpl implements BusinessCalendar {
 
     @Override
     public Date apply(Date date, String duration) {
-        return add(date, new Duration(duration));
+        return add(date, new JbpmDuration(duration));
     }
 
-    private Date addForward(Date date, Duration duration) {
+    private Date addForward(Date date, JbpmDuration duration) {
         if (!duration.isBusinessTime()) {
             return duration.addTo(date);
         }
-        DayPart dayPart = findDayPart(date);
+        JbpmDayPart dayPart = findDayPart(date);
         if (dayPart != null) {
             return dayPart.add(date, duration);
         }
@@ -150,12 +150,12 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return dayPart.add(date, duration);
     }
 
-    private Date addBack(Date date, Duration duration) {
+    private Date addBack(Date date, JbpmDuration duration) {
         Date end = null;
         if (duration.isBusinessTime()) {
-            DayPart dayPart = findDayPart(date);
+            JbpmDayPart dayPart = findDayPart(date);
             if (dayPart == null) {
-                Day day = findDay(date);
+                JbpmDay day = findDay(date);
                 dayPart = day.findPrevDayPartEnd(day.getDayParts().length - 1, date);
                 date = dayPart.getEndTime(date);
             }
