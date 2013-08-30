@@ -18,6 +18,7 @@ import org.alfresco.webservice.repository.Association;
 import org.alfresco.webservice.repository.QueryResult;
 import org.alfresco.webservice.repository.RepositoryFault;
 import org.alfresco.webservice.repository.UpdateResult;
+import org.alfresco.webservice.types.AssociationDefinition;
 import org.alfresco.webservice.types.CML;
 import org.alfresco.webservice.types.CMLAddAspect;
 import org.alfresco.webservice.types.CMLAddChild;
@@ -55,6 +56,7 @@ import ru.runa.alfresco.search.Search;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
@@ -278,15 +280,15 @@ public class AlfSession implements AlfConn {
             Reference reference = getReference(uuidRef, null);
             QueryResult queryResult;
             boolean filter = true;
-            if (desc.getAssoc().child()) {
-                if (desc.getAssoc().source()) {
+            if (desc.isChildAssociation()) {
+                if (desc.isSourceAssociation()) {
                     queryResult = WebServiceFactory.getRepositoryService().queryChildren(reference);
                 } else {
                     queryResult = WebServiceFactory.getRepositoryService().queryParents(reference);
                 }
             } else {
                 filter = false;
-                Association association = new Association(desc.getPropertyNameWithNamespace(), desc.getAssoc().source() ? "target" : "source");
+                Association association = new Association(desc.getPropertyNameWithNamespace(), desc.isSourceAssociation() ? "target" : "source");
                 queryResult = WebServiceFactory.getRepositoryService().queryAssociated(reference, association);
             }
             if (queryResult.getResultSet().getTotalRowCount() > 0) {
@@ -332,7 +334,7 @@ public class AlfSession implements AlfConn {
                 for (String uuidRef : entry.getValue()) {
                     log.debug("Removing assoc " + uuidRef + " from " + object);
                     Predicate where = getPredicate(uuidRef);
-                    if (entry.getKey().getAssoc().child()) {
+                    if (entry.getKey().isChildAssociation()) {
                         CMLRemoveChild removeChild = new CMLRemoveChild(getReference(object), null, where, null);
                         removeChilds.add(removeChild);
                     } else {
@@ -350,7 +352,7 @@ public class AlfSession implements AlfConn {
                     AlfObject target = loadObject(reference, true);
                     Predicate predicate = getPredicate(target);
                     log.debug("Adding assoc " + reference.getUuid() + " to " + object);
-                    if (entry.getKey().getAssoc().child()) {
+                    if (entry.getKey().isChildAssociation()) {
                         Reference cref = getReference(object);
                         ParentReference parentReference = new ParentReference(cref.getStore(), cref.getUuid(), null, entry.getKey()
                                 .getPropertyNameWithNamespace(), target.getObjectName());
@@ -723,6 +725,18 @@ public class AlfSession implements AlfConn {
                     desc.setDefaultValue(propertyDefinition.getDefaultValue());
                 } else {
                     log.debug("No property found in mapping for " + propertyDefinition.getName());
+                }
+            }
+            if (definition.getAssociations() != null) {
+                for (AssociationDefinition associationDefinition : definition.getAssociations()) {
+                    AlfSerializerDesc desc = typeDesc.getPropertyDescByTypeName(associationDefinition.getName());
+                    if (desc != null) {
+                        desc.setTitle(associationDefinition.getTitle());
+                        desc.setChildAssociation(associationDefinition.isIsChild());
+                        desc.setSourceAssociation(!Objects.equal(associationDefinition.getTargetClass(), definition.getName()));
+                    } else {
+                        log.debug("No property found in mapping for " + associationDefinition.getName());
+                    }
                 }
             }
             typeDesc.setClassDefinitionLoaded(true);

@@ -31,7 +31,7 @@ import com.google.common.collect.Maps;
  */
 @Type(name = "content", prefix = "cm")
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class AlfObject implements Serializable {
+public class AlfObject implements IAlfObject, Serializable {
     private final static long serialVersionUID = 197L;
 
     protected transient AlfConn conn;
