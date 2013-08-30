@@ -40,10 +40,14 @@ public abstract class MSWordReportBuilder {
 
     public abstract void build(String reportTemporaryFileName);
 
-    protected String getVariableValue(BookmarkVariableMapping mapping) throws MSWordReportException {
-        WfVariable variable = variableProvider.getVariable(mapping.getVariableName());
+    protected String getVariableValue(String variableName, boolean strictMode) throws MSWordReportException {
+        WfVariable variable = variableProvider.getVariable(variableName);
         if (variable == null || variable.getValue() == null) {
-            throw new MSWordReportException(MSWordReportException.VARIABLE_NOT_FOUND_IN_PROCESS, mapping.getVariableName());
+            if (strictMode) {
+                throw new MSWordReportException(MSWordReportException.VARIABLE_NOT_FOUND_IN_PROCESS, variableName);
+            }
+            log.warn("Seems like variable is missed: '" + variableName + "'");
+            return null;
         }
         try {
             return variable.getFormatNotNull().format(variable.getValue());

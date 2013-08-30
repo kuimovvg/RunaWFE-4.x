@@ -33,7 +33,6 @@ public class WordReportSettingsXmlParser {
     private static final String MAPPING_ELEMENT_NAME = "mapping";
     private static final String BOOKMARK_ATTRIBUTE_NAME = "bookmark";
     private static final String VARIABLE_ATTRIBUTE_NAME = "variable";
-    private static final String OPTIONAL_ATTRIBUTE_NAME = "optional";
 
     public static MSWordReportTaskSettings read(String configuration) {
         Document document = XmlUtils.parseWithXSDValidation(configuration, "msword-report-task.xsd");
@@ -47,8 +46,7 @@ public class WordReportSettingsXmlParser {
         for (Element mappingElement : mappingElements) {
             String bookmark = mappingElement.attributeValue(BOOKMARK_ATTRIBUTE_NAME);
             String variable = mappingElement.attributeValue(VARIABLE_ATTRIBUTE_NAME);
-            boolean optional = Boolean.parseBoolean(mappingElement.attributeValue(OPTIONAL_ATTRIBUTE_NAME, "false"));
-            wordReportSettings.getMappings().add(new BookmarkVariableMapping(bookmark, variable, optional));
+            wordReportSettings.getMappings().add(new BookmarkVariableMapping(bookmark, variable));
         }
         return wordReportSettings;
     }
