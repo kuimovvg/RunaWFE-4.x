@@ -71,29 +71,32 @@ public class JComMSWordReportBuilder extends MSWordReportBuilder {
     private void replaceBookmarksWithValues(IDispatch wordDocument) throws JComException {
         IDispatch bookmarks = (IDispatch) wordDocument.get("Bookmarks", null);
         for (BookmarkVariableMapping mapping : settings.getMappings()) {
-            try {
-                IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Object[] { mapping.getBookmarkName() });
-                String value = getVariableValue(mapping);
-                ((IDispatch) bookmark.get("Range")).put("Text", value);
-            } catch (MSWordReportException e) {
-                if (settings.isStrictMode()) {
-                    throw e;
-                }
-                log.warn("Seems like variable is missed: " + e.getLocalizedMessage(), e);
-            } catch (Exception e) {
-                if (mapping.isOptional() || !settings.isStrictMode()) {
+            String value = getVariableValue(mapping.getVariableName(), settings.isStrictMode());
+            if (value != null) {
+                try {
+                    IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Object[] { mapping.getBookmarkName() });
+                    ((IDispatch) bookmark.get("Range")).put("Text", value);
+                } catch (Exception e) {
+                    if (settings.isStrictMode()) {
+                        log.error("", e);
+                        throw new MSWordReportException(MSWordReportException.BOOKMARK_NOT_FOUND_IN_TEMPLATE, mapping.getBookmarkName());
+                    }
                     log.warn("No bookmark found in template document by name '" + mapping.getBookmarkName() + "'");
-                } else {
-                    log.error("", e);
-                    throw new MSWordReportException(MSWordReportException.BOOKMARK_NOT_FOUND_IN_TEMPLATE, mapping.getBookmarkName());
                 }
             }
         }
         int bookmarksCount = (Integer) bookmarks.get("Count", null);
+        int bookmarkIndex = 1;
         for (int i = 0; i < bookmarksCount; i++) {
-            IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Integer[] { new Integer(i + 1) });
+            IDispatch bookmark = (IDispatch) bookmarks.method("Item", new Integer[] { bookmarkIndex });
             String bookmarkName = (String) bookmark.get("Name");
             log.warn("Bookmark exists in result document: '" + bookmarkName + "'");
+            String value = getVariableValue(bookmarkName, settings.isStrictMode());
+            if (value != null) {
+                ((IDispatch) bookmark.get("Range")).put("Text", value);
+            } else {
+                bookmarkIndex++;
+            }
         }
     }
 }

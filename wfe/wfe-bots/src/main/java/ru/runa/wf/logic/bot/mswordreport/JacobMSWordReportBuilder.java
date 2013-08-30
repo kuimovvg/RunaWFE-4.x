@@ -70,30 +70,34 @@ public class JacobMSWordReportBuilder extends MSWordReportBuilder {
     private void replaceBookmarksWithValues(Dispatch wordDocument, IVariableProvider variableProvider, MSWordReportTaskSettings settings) {
         Dispatch bookmarks = Dispatch.get(wordDocument, "Bookmarks").toDispatch();
         for (BookmarkVariableMapping mapping : settings.getMappings()) {
-            try {
-                Dispatch bookmark = Dispatch.call(bookmarks, "Item", mapping.getBookmarkName()).toDispatch();
-                String value = getVariableValue(mapping);
-                Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
-                Dispatch.put(range, "Text", value);
-            } catch (MSWordReportException e) {
-                if (settings.isStrictMode()) {
-                    throw e;
-                }
-                log.warn("Seems like variable is missed: " + e.getLocalizedMessage(), e);
-            } catch (Exception e) {
-                if (mapping.isOptional() || !settings.isStrictMode()) {
+            String value = getVariableValue(mapping.getVariableName(), settings.isStrictMode());
+            if (value != null) {
+                try {
+                    Dispatch bookmark = Dispatch.call(bookmarks, "Item", mapping.getBookmarkName()).toDispatch();
+                    Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
+                    Dispatch.put(range, "Text", value);
+                } catch (Exception e) {
+                    if (settings.isStrictMode()) {
+                        log.error("", e);
+                        throw new MSWordReportException(MSWordReportException.BOOKMARK_NOT_FOUND_IN_TEMPLATE, mapping.getBookmarkName());
+                    }
                     log.warn("No bookmark found in template document by name '" + mapping.getBookmarkName() + "'");
-                } else {
-                    log.error("", e);
-                    throw new MSWordReportException(MSWordReportException.BOOKMARK_NOT_FOUND_IN_TEMPLATE, mapping.getBookmarkName());
                 }
             }
         }
         int bookmarksCount = Dispatch.get(bookmarks, "Count").toInt();
+        int bookmarkIndex = 1;
         for (int i = 0; i < bookmarksCount; i++) {
-            Dispatch bookmark = Dispatch.call(bookmarks, "Item", new Integer(i + 1)).toDispatch();
+            Dispatch bookmark = Dispatch.call(bookmarks, "Item", new Integer(bookmarkIndex)).toDispatch();
             String bookmarkName = Dispatch.get(bookmark, "Name").getString();
             log.warn("Bookmark exists in result document: '" + bookmarkName + "'");
+            String value = getVariableValue(bookmarkName, settings.isStrictMode());
+            if (value != null) {
+                Dispatch range = Dispatch.get(bookmark, "Range").toDispatch();
+                Dispatch.put(range, "Text", value);
+            } else {
+                bookmarkIndex++;
+            }
         }
     }
 }
