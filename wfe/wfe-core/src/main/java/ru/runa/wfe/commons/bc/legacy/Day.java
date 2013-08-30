@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package ru.runa.wfe.commons.calendar.impl;
+package ru.runa.wfe.commons.bc.legacy;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,16 +28,14 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-import ru.runa.wfe.commons.calendar.BusinessCalendar;
-
 /**
  * is a day on a business calendar.
  */
 public class Day {
     private DayPart[] dayParts;
-    private BusinessCalendar businessCalendar;
+    private BusinessCalendarImpl businessCalendar;
 
-    public static Day[] parseWeekDays(Properties calendarProperties, BusinessCalendar businessCalendar) {
+    public static Day[] parseWeekDays(Properties calendarProperties, BusinessCalendarImpl businessCalendar) {
         Day[] weekDays = new Day[8];
         weekDays[Calendar.MONDAY] = new Day(calendarProperties.getProperty("weekday.monday"), businessCalendar);
         weekDays[Calendar.TUESDAY] = new Day(calendarProperties.getProperty("weekday.tuesday"), businessCalendar);
@@ -49,7 +47,7 @@ public class Day {
         return weekDays;
     }
 
-    public Day(String dayPartsText, BusinessCalendar businessCalendar) {
+    public Day(String dayPartsText, BusinessCalendarImpl businessCalendar) {
         this.businessCalendar = businessCalendar;
         List<DayPart> dayPartsList = new ArrayList<DayPart>();
         StringTokenizer tokenizer = new StringTokenizer(dayPartsText, "&");
