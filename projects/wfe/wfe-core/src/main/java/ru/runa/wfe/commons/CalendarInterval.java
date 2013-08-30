@@ -189,6 +189,10 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
         return CalendarUtil.formatDate(from) + "-" + CalendarUtil.formatDate(to);
     }
 
+    public String toTimeRangeString() {
+        return CalendarUtil.formatTime(from) + "-" + CalendarUtil.formatTime(to);
+    }
+
     public boolean hasEqualDates(CalendarInterval o) {
         if (from != null && o.getFrom() != null) {
             if (!CalendarUtil.areCalendarsEqualIgnoringTime(from, o.from)) {

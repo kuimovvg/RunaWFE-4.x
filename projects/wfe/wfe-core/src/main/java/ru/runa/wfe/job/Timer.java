@@ -9,8 +9,9 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
-import ru.runa.wfe.commons.calendar.BusinessCalendar;
-import ru.runa.wfe.commons.calendar.impl.Duration;
+import ru.runa.wfe.commons.bc.BusinessCalendar;
+import ru.runa.wfe.commons.bc.Duration;
+import ru.runa.wfe.commons.bc.DurationParser;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
@@ -91,10 +92,10 @@ public class Timer extends Job {
                 ApplicationContextFactory.getJobDAO().deleteTimersByName(getName(), getToken());
             } else if (repeatDurationString != null) {
                 // restart timer
-                Duration repeatDuration = new Duration(repeatDurationString);
-                if (repeatDuration.getMilliseconds() > 0) {
+                Duration repeatDuration = DurationParser.parse(repeatDurationString);
+                if (repeatDuration.getAmount() > 0) {
                     BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
-                    setDueDate(businessCalendar.add(getDueDate(), repeatDuration));
+                    setDueDate(businessCalendar.add(getDueDate(), repeatDurationString));
                     log.info("Restarting " + this + " for repeat execution at " + CalendarUtil.formatDateTime(getDueDate()));
                 }
             } else {
