@@ -13,7 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.access.ContextSingletonBeanFactoryLocator;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 
-import ru.runa.wfe.commons.calendar.BusinessCalendar;
+import ru.runa.wfe.commons.bc.BusinessCalendar;
 import ru.runa.wfe.commons.hibernate.Converters;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;

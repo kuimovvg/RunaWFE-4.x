@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package ru.runa.wfe.commons.calendar.impl;
+package ru.runa.wfe.commons.bc.legacy;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -31,7 +31,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.calendar.BusinessCalendar;
+import ru.runa.wfe.commons.bc.BusinessCalendar;
 
 /**
  * a calendar that knows about business hours. modified on 06.03.2009 by
@@ -53,7 +53,6 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return businessCalendarProperties;
     }
 
-    @Override
     public Date add(Date date, Duration duration) {
         if (duration.getMilliseconds() >= 0) {
             return addForward(date, duration);
@@ -62,7 +61,6 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         }
     }
 
-    @Override
     public Date findStartOfNextDay(Date date) {
         Calendar calendar = getCalendar();
         calendar.setTime(date);
@@ -80,7 +78,6 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return date;
     }
 
-    @Override
     public Date findEndOfPrevDay(Date date) {
         Calendar calendar = getCalendar();
         calendar.setTime(date);
@@ -98,7 +95,6 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return date;
     }
 
-    @Override
     public Day findDay(Date date) {
         Calendar calendar = getCalendar();
         calendar.setTime(date);
@@ -106,7 +102,11 @@ public class BusinessCalendarImpl implements BusinessCalendar {
     }
 
     @Override
-    public boolean isHoliday(Date date) {
+    public boolean isHoliday(Calendar calendar) {
+        return isHoliday(calendar.getTime());
+    }
+
+    private boolean isHoliday(Date date) {
         for (Holiday holiday : holidays) {
             if (holiday.includes(date)) {
                 return true;
@@ -132,8 +132,9 @@ public class BusinessCalendarImpl implements BusinessCalendar {
         return new GregorianCalendar();
     }
 
+    @Override
     public Date add(Date date, String duration) {
-        throw new UnsupportedOperationException(BusinessCalendarImpl.class.getName());
+        return add(date, new Duration(duration));
     }
 
     private Date addForward(Date date, Duration duration) {

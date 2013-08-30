@@ -175,7 +175,8 @@ public class CalendarUtil {
      *            is a list of start - end pairs of calendar
      * @param two
      *            is a list of start - end pairs of calendar
-     * @return 0 if no intersection. Returns N milliseconds of total intersection time
+     * @return 0 if no intersection. Returns N milliseconds of total
+     *         intersection time
      */
     private static boolean isIntersectionStrong(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
         if (oneEnd.compareTo(twoStart) < 0 || twoEnd.compareTo(oneStart) < 0) {
@@ -305,7 +306,6 @@ public class CalendarUtil {
             return 1;
         } else if (time1.get(Calendar.HOUR_OF_DAY) < time2.get(Calendar.HOUR_OF_DAY)) {
             return -1;
-
         } else if (time1.get(Calendar.MINUTE) > time2.get(Calendar.MINUTE)) {
             return 1;
         } else if (time1.get(Calendar.MINUTE) < time2.get(Calendar.MINUTE)) {

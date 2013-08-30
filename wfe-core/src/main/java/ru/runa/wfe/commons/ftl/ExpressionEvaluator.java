@@ -9,8 +9,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarInterval;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.commons.calendar.BusinessCalendar;
-import ru.runa.wfe.commons.calendar.impl.Duration;
+import ru.runa.wfe.commons.bc.BusinessCalendar;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.user.User;
@@ -24,7 +23,7 @@ public class ExpressionEvaluator {
 
     public static Date evaluateDueDate(ExecutionContext executionContext, String expression) {
         Date baseDate;
-        String delayString = null;
+        String durationString = null;
         if (expression != null && expression.startsWith("#")) {
             String baseDateVariableName = expression.substring(2, expression.indexOf("}"));
             Object o = executionContext.getVariable(baseDateVariableName);
@@ -38,18 +37,17 @@ public class ExpressionEvaluator {
                 if (!(durationSeparator.equals("+") || durationSeparator.equals("-"))) {
                     throw new InternalApplicationException("Invalid duedate, + or - missing after EL");
                 }
-                delayString = expression.substring(endOfELIndex + 1).trim();
+                durationString = expression.substring(endOfELIndex + 1).trim();
             }
         } else {
-            delayString = expression;
+            durationString = expression;
             baseDate = new Date();
         }
-        if (Strings.isNullOrEmpty(delayString)) {
+        if (Strings.isNullOrEmpty(durationString)) {
             return baseDate;
         } else {
-            Duration duration = new Duration(delayString);
             BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
-            return businessCalendar.add(baseDate, duration);
+            return businessCalendar.add(baseDate, durationString);
         }
     }
 
