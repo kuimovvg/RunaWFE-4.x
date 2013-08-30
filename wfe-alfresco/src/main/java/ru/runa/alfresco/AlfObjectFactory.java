@@ -56,7 +56,7 @@ public class AlfObjectFactory {
                 if (desc == null) {
                     return 0;
                 }
-                if (desc.getProperty() != null && desc.getProperty().noderef()) {
+                if (desc.isNodeReference()) {
                     if (method.getName().startsWith("get")) {
                         return 1;
                     }

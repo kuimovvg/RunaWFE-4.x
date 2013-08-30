@@ -21,8 +21,11 @@ public class AlfSerializerDesc {
     protected String defaultValue;
     protected final Assoc assoc;
     protected final Property property;
+    private final boolean referencedProperty;
+    private boolean childAssociation;
+    private boolean sourceAssociation;
 
-    private AlfSerializerDesc(String namespace, String javaPropertyName, Assoc assoc, Property property) {
+    private AlfSerializerDesc(String namespace, String javaPropertyName, Assoc assoc, Property property, boolean referencedProperty) {
         this.namespace = namespace;
         fieldName = javaPropertyName;
         this.property = property;
@@ -33,14 +36,15 @@ public class AlfSerializerDesc {
         if (assoc != null) {
             propertyName = assoc.name();
         }
+        this.referencedProperty = referencedProperty;
     }
 
-    public static AlfSerializerDesc newProp(String namespace, String javaPropertyName, Property property) {
-        return new AlfSerializerDesc(namespace, javaPropertyName, null, property);
+    public static AlfSerializerDesc newProp(String namespace, String javaPropertyName, Property property, boolean referencedProperty) {
+        return new AlfSerializerDesc(namespace, javaPropertyName, null, property, referencedProperty);
     }
 
     public static AlfSerializerDesc newAssoc(String namespace, String javaPropertyName, Assoc assoc) {
-        return new AlfSerializerDesc(namespace, javaPropertyName, assoc, null);
+        return new AlfSerializerDesc(namespace, javaPropertyName, assoc, null, false);
     }
 
     public String getPropertyNameWithNamespace() {
@@ -61,6 +65,25 @@ public class AlfSerializerDesc {
         return assoc;
     }
 
+    public boolean isChildAssociation() {
+        return childAssociation;
+    }
+
+    public void setChildAssociation(boolean childAssociation) {
+        this.childAssociation = childAssociation;
+    }
+
+    /**
+     * is defined type belongs to source side of association (or target)?
+     */
+    public boolean isSourceAssociation() {
+        return sourceAssociation;
+    }
+
+    public void setSourceAssociation(boolean sourceAssociation) {
+        this.sourceAssociation = sourceAssociation;
+    }
+
     public Property getProperty() {
         return property;
     }
@@ -70,7 +93,7 @@ public class AlfSerializerDesc {
     }
 
     public boolean isNodeReference() {
-        return property != null && property.noderef();
+        return referencedProperty;
     }
 
     public String getTitle() {
