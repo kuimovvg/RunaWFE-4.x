@@ -31,38 +31,38 @@ import java.util.StringTokenizer;
 /**
  * is a day on a business calendar.
  */
-public class Day {
-    private DayPart[] dayParts;
-    private BusinessCalendarImpl businessCalendar;
+public class JbpmDay {
+    private JbpmDayPart[] dayParts;
+    private JbpmBusinessCalendar businessCalendar;
 
-    public static Day[] parseWeekDays(Properties calendarProperties, BusinessCalendarImpl businessCalendar) {
-        Day[] weekDays = new Day[8];
-        weekDays[Calendar.MONDAY] = new Day(calendarProperties.getProperty("weekday.monday"), businessCalendar);
-        weekDays[Calendar.TUESDAY] = new Day(calendarProperties.getProperty("weekday.tuesday"), businessCalendar);
-        weekDays[Calendar.WEDNESDAY] = new Day(calendarProperties.getProperty("weekday.wednesday"), businessCalendar);
-        weekDays[Calendar.THURSDAY] = new Day(calendarProperties.getProperty("weekday.thursday"), businessCalendar);
-        weekDays[Calendar.FRIDAY] = new Day(calendarProperties.getProperty("weekday.friday"), businessCalendar);
-        weekDays[Calendar.SATURDAY] = new Day(calendarProperties.getProperty("weekday.saturday"), businessCalendar);
-        weekDays[Calendar.SUNDAY] = new Day(calendarProperties.getProperty("weekday.sunday"), businessCalendar);
+    public static JbpmDay[] parseWeekDays(Properties calendarProperties, JbpmBusinessCalendar businessCalendar) {
+        JbpmDay[] weekDays = new JbpmDay[8];
+        weekDays[Calendar.MONDAY] = new JbpmDay(calendarProperties.getProperty("weekday.monday"), businessCalendar);
+        weekDays[Calendar.TUESDAY] = new JbpmDay(calendarProperties.getProperty("weekday.tuesday"), businessCalendar);
+        weekDays[Calendar.WEDNESDAY] = new JbpmDay(calendarProperties.getProperty("weekday.wednesday"), businessCalendar);
+        weekDays[Calendar.THURSDAY] = new JbpmDay(calendarProperties.getProperty("weekday.thursday"), businessCalendar);
+        weekDays[Calendar.FRIDAY] = new JbpmDay(calendarProperties.getProperty("weekday.friday"), businessCalendar);
+        weekDays[Calendar.SATURDAY] = new JbpmDay(calendarProperties.getProperty("weekday.saturday"), businessCalendar);
+        weekDays[Calendar.SUNDAY] = new JbpmDay(calendarProperties.getProperty("weekday.sunday"), businessCalendar);
         return weekDays;
     }
 
-    public Day(String dayPartsText, BusinessCalendarImpl businessCalendar) {
+    public JbpmDay(String dayPartsText, JbpmBusinessCalendar businessCalendar) {
         this.businessCalendar = businessCalendar;
-        List<DayPart> dayPartsList = new ArrayList<DayPart>();
+        List<JbpmDayPart> dayPartsList = new ArrayList<JbpmDayPart>();
         StringTokenizer tokenizer = new StringTokenizer(dayPartsText, "&");
         while (tokenizer.hasMoreTokens()) {
             String dayPartText = tokenizer.nextToken().trim();
-            dayPartsList.add(new DayPart(dayPartText, this, dayPartsList.size()));
+            dayPartsList.add(new JbpmDayPart(dayPartText, this, dayPartsList.size()));
         }
-        dayParts = dayPartsList.toArray(new DayPart[dayPartsList.size()]);
+        dayParts = dayPartsList.toArray(new JbpmDayPart[dayPartsList.size()]);
     }
 
-    public DayPart[] getDayParts() {
+    public JbpmDayPart[] getDayParts() {
         return dayParts;
     }
 
-    public DayPart findNextDayPartStart(int dayPartIndex, Date date) {
+    public JbpmDayPart findNextDayPartStart(int dayPartIndex, Date date) {
         // if there is a day part in this day that starts after the given date
         if (dayPartIndex < dayParts.length) {
             if (dayParts[dayPartIndex].isStartAfter(date)) {
@@ -73,12 +73,12 @@ public class Day {
         } else {
             // descend recursively
             date = businessCalendar.findStartOfNextDay(date);
-            Day nextDay = businessCalendar.findDay(date);
+            JbpmDay nextDay = businessCalendar.findDay(date);
             return nextDay.findNextDayPartStart(0, date);
         }
     }
 
-    public DayPart findPrevDayPartEnd(int dayPartIndex, Date date) {
+    public JbpmDayPart findPrevDayPartEnd(int dayPartIndex, Date date) {
         // if there is a day part in this day that ends before the given date
         if (dayPartIndex >= 0) {
             if (dayParts[dayPartIndex].isEndBefore(date)) {
@@ -89,7 +89,7 @@ public class Day {
         } else {
             // descend recursively
             date = businessCalendar.findEndOfPrevDay(date);
-            Day prevDay = businessCalendar.findDay(date);
+            JbpmDay prevDay = businessCalendar.findDay(date);
             return prevDay.findPrevDayPartEnd(prevDay.dayParts.length - 1, date);
         }
     }
