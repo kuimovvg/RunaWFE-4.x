@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -32,6 +33,7 @@ import ru.runa.alfresco.search.Search.Sorting;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
@@ -176,28 +178,28 @@ public class AlfHelper implements AlfConn {
     public void loadAssociation(String uuidRef, Collection collection, AlfSerializerDesc desc) throws InternalApplicationException {
         NodeRef nodeRef = new NodeRef(uuidRef);
         QName assocName = desc.getPropertyQName();
-        if (desc.getAssoc().child()) {
+        if (desc.isChildAssociation()) {
             List<ChildAssociationRef> childAssocRefs;
-            if (desc.getAssoc().source()) {
+            if (desc.isSourceAssociation()) {
                 childAssocRefs = registry.getNodeService().getChildAssocs(nodeRef);
             } else {
                 childAssocRefs = registry.getNodeService().getParentAssocs(nodeRef);
             }
             for (ChildAssociationRef assocRef : childAssocRefs) {
                 if (assocRef.getTypeQName().equals(assocName)) {
-                    collection.add(loadObject(desc.getAssoc().source() ? assocRef.getChildRef() : assocRef.getParentRef()));
+                    collection.add(loadObject(desc.isSourceAssociation() ? assocRef.getChildRef() : assocRef.getParentRef()));
                 }
             }
         } else {
             List<AssociationRef> assocRefs;
-            if (desc.getAssoc().source()) {
+            if (desc.isSourceAssociation()) {
                 assocRefs = registry.getNodeService().getTargetAssocs(nodeRef, assocName);
             } else {
                 assocRefs = registry.getNodeService().getSourceAssocs(nodeRef, assocName);
             }
             for (AssociationRef assocRef : assocRefs) {
                 if (assocRef.getTypeQName().equals(assocName)) {
-                    collection.add(loadObject(desc.getAssoc().source() ? assocRef.getTargetRef() : assocRef.getSourceRef()));
+                    collection.add(loadObject(desc.isSourceAssociation() ? assocRef.getTargetRef() : assocRef.getSourceRef()));
                 }
             }
         }
@@ -210,7 +212,7 @@ public class AlfHelper implements AlfConn {
         for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToDelete.entrySet()) {
             for (String uuidRef : entry.getValue()) {
                 log.debug("Removing assoc " + uuidRef + " from " + object.getUuidRef());
-                if (entry.getKey().getAssoc().child()) {
+                if (entry.getKey().isChildAssociation()) {
                     registry.getNodeService().removeChild(getNodeRef(object), new NodeRef(uuidRef));
                 } else {
                     registry.getNodeService().removeAssociation(getNodeRef(object), new NodeRef(uuidRef), entry.getKey().getPropertyQName());
@@ -222,7 +224,7 @@ public class AlfHelper implements AlfConn {
         for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToCreate.entrySet()) {
             for (String uuidRef : entry.getValue()) {
                 log.debug("Adding assoc " + uuidRef + " to " + object.getUuidRef());
-                if (entry.getKey().getAssoc().child()) {
+                if (entry.getKey().isChildAssociation()) {
                     addChildAssociation(object, uuidRef, entry.getKey().getPropertyQName());
                 } else {
                     registry.getNodeService().createAssociation(getNodeRef(object), new NodeRef(uuidRef), entry.getKey().getPropertyQName());
@@ -364,8 +366,11 @@ public class AlfHelper implements AlfConn {
         }
         typeDesc.setTitle(definition.getTitle());
         for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
-            PropertyDefinition propertyDefinition = registry.getDictionaryService().getProperty(desc.getPropertyQName());
-            if (propertyDefinition != null) {
+            if (desc.getProperty() != null) {
+                PropertyDefinition propertyDefinition = registry.getDictionaryService().getProperty(desc.getPropertyQName());
+                if (propertyDefinition == null) {
+                    throw new InternalApplicationException("No property found in Alfresco for " + desc + " of type " + typeDesc);
+                }
                 desc.setTitle(propertyDefinition.getTitle());
                 if (propertyDefinition.isMultiValued()) {
                     desc.setDataType(List.class.getName());
@@ -373,8 +378,15 @@ public class AlfHelper implements AlfConn {
                     desc.setDataType(propertyDefinition.getDataType().getJavaClassName());
                 }
                 desc.setDefaultValue(propertyDefinition.getDefaultValue());
-            } else if (desc.getProperty() != null) {
-                throw new InternalApplicationException("No property found in Alfresco for " + desc + " of type " + typeDesc);
+            }
+            if (desc.getAssoc() != null) {
+                AssociationDefinition associationDefinition = registry.getDictionaryService().getAssociation(desc.getPropertyQName());
+                if (associationDefinition == null) {
+                    throw new InternalApplicationException("No association found in Alfresco for " + desc + " of type " + typeDesc);
+                }
+                desc.setTitle(associationDefinition.getTitle());
+                desc.setChildAssociation(associationDefinition.isChild());
+                desc.setSourceAssociation(!Objects.equal(associationDefinition.getTargetClass().getName(), definition.getName()));
             }
         }
         typeDesc.setClassDefinitionLoaded(true);

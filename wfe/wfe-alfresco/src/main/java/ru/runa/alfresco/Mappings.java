@@ -129,7 +129,9 @@ public class Mappings extends Settings {
             AlfSerializerDesc serializer = null;
             Property propertyAnn = field.getAnnotation(Property.class);
             if (propertyAnn != null) {
-                serializer = AlfSerializerDesc.newProp(namespace, fieldName, propertyAnn);
+                // {http://www.alfresco.org/model/dictionary/1.0}noderef
+                boolean reference = IAlfObject.class.isAssignableFrom(field.getType());
+                serializer = AlfSerializerDesc.newProp(namespace, fieldName, propertyAnn, reference);
             }
             Assoc assocAnn = field.getAnnotation(Assoc.class);
             if (assocAnn != null) {
