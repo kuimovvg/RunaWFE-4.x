@@ -47,7 +47,7 @@ public class ExpressionEvaluator {
             return baseDate;
         } else {
             BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
-            return businessCalendar.add(baseDate, durationString);
+            return businessCalendar.apply(baseDate, durationString);
         }
     }
 

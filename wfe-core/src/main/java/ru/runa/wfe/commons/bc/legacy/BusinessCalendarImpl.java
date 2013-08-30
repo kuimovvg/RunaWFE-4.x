@@ -133,7 +133,7 @@ public class BusinessCalendarImpl implements BusinessCalendar {
     }
 
     @Override
-    public Date add(Date date, String duration) {
+    public Date apply(Date date, String duration) {
         return add(date, new Duration(duration));
     }
 

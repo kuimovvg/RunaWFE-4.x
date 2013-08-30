@@ -4,11 +4,25 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Refactored @since 4.1.0
+ * Business calendar is aware of working time.
+ * 
+ * @since 4.1.0 (refactored)
  */
 public interface BusinessCalendar {
 
-    public Date add(Date date, String durationString);
+    /**
+     * Applies specified duration to specified date.
+     * 
+     * @param date
+     *            base date
+     * @param durationString
+     *            Syntax: [+|-]&lt;quantity&gt; [business] &lt;unit&gt;
+     * @return calculated date
+     */
+    public Date apply(Date date, String durationString);
 
+    /**
+     * Checks whether specified day is working or not (holiday)
+     */
     public boolean isHoliday(Calendar calendar);
 }

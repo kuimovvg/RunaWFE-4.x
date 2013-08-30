@@ -20,14 +20,14 @@ public class DefaultBusinessCalendarTest {
     @Test(dataProvider = "getDurations")
     public void testBusinessTime(String durationString) {
         Date date = new Date();
-        Date date2 = businessCalendar.add(date, durationString);
+        Date date2 = businessCalendar.apply(date, durationString);
         System.out.println(durationString + ": " + CalendarUtil.formatDateTime(date) + " -> " + CalendarUtil.formatDateTime(date2));
     }
 
     @Test
     public void testBusinessTime2() {
         Date date = new Date();
-        Date date2 = businessCalendar.add(date, "1 business hours");
+        Date date2 = businessCalendar.apply(date, "1 business hours");
         System.out.println(CalendarUtil.formatDateTime(date) + " -> " + CalendarUtil.formatDateTime(date2));
     }
 }

@@ -95,7 +95,7 @@ public class Timer extends Job {
                 Duration repeatDuration = DurationParser.parse(repeatDurationString);
                 if (repeatDuration.getAmount() > 0) {
                     BusinessCalendar businessCalendar = ApplicationContextFactory.getBusinessCalendar();
-                    setDueDate(businessCalendar.add(getDueDate(), repeatDurationString));
+                    setDueDate(businessCalendar.apply(getDueDate(), repeatDurationString));
                     log.info("Restarting " + this + " for repeat execution at " + CalendarUtil.formatDateTime(getDueDate()));
                 }
             } else {
