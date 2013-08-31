@@ -25,12 +25,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.bc.BusinessCalendar;
 
 /**
@@ -38,19 +36,14 @@ import ru.runa.wfe.commons.bc.BusinessCalendar;
  * gavrusev_sergei
  */
 public class JbpmBusinessCalendar implements BusinessCalendar {
-    private static Properties businessCalendarProperties = ClassLoaderUtil.getProperties("business.calendar.properties", true);
     private final JbpmDay[] weekDays;
     private final List<JbpmHoliday> holidays;
     protected final Log log = LogFactory.getLog(getClass());
 
     public JbpmBusinessCalendar() {
         log.info("Using business calendar implementation: " + getClass());
-        weekDays = JbpmDay.parseWeekDays(businessCalendarProperties, this);
-        holidays = JbpmHoliday.parseHolidays(businessCalendarProperties);
-    }
-
-    public static Properties getBusinessCalendarProperties() {
-        return businessCalendarProperties;
+        weekDays = JbpmDay.parseWeekDays(this);
+        holidays = JbpmHoliday.parseHolidays();
     }
 
     public Date add(Date date, JbpmDuration duration) {

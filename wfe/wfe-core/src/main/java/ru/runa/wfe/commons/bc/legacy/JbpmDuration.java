@@ -23,13 +23,13 @@ package ru.runa.wfe.commons.bc.legacy;
 
 import java.io.Serializable;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.text.ParsePosition;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
+
+import ru.runa.wfe.commons.bc.BusinessCalendarProperties;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
@@ -66,25 +66,10 @@ public class JbpmDuration implements Serializable {
     public static final long BUSINESS_YEAR;
 
     static {
-        Properties businessCalendarProperties = JbpmBusinessCalendar.getBusinessCalendarProperties();
-        String businessDayText = businessCalendarProperties.getProperty("business.day.expressed.in.hours");
-        String businessWeekText = businessCalendarProperties.getProperty("business.week.expressed.in.hours");
-        String businessMonthText = businessCalendarProperties.getProperty("business.month.expressed.in.business.days");
-        String businessYearText = businessCalendarProperties.getProperty("business.year.expressed.in.business.days");
-
-        try {
-            NumberFormat format = NumberFormat.getNumberInstance(Locale.US);
-            BUSINESS_DAY = multiply(format.parse(businessDayText), HOUR);
-            BUSINESS_WEEK = multiply(format.parse(businessWeekText), HOUR);
-            BUSINESS_MONTH = multiply(format.parse(businessMonthText), BUSINESS_DAY);
-            BUSINESS_YEAR = multiply(format.parse(businessYearText), BUSINESS_DAY);
-        } catch (ParseException e) {
-            throw new NumberFormatException(e.getMessage());
-        }
-    }
-
-    private static long multiply(Number n1, long n2) {
-        return n1 instanceof Long ? n1.longValue() * n2 : (long) (n1.doubleValue() * n2);
+        BUSINESS_DAY = HOUR * BusinessCalendarProperties.getBusinessDayInHours();
+        BUSINESS_WEEK = HOUR * BusinessCalendarProperties.getBusinessWeekInHours();
+        BUSINESS_MONTH = BUSINESS_DAY * BusinessCalendarProperties.getBusinessMonthInDays();
+        BUSINESS_YEAR = BUSINESS_DAY * BusinessCalendarProperties.getBusinessYearInDays();
     }
 
     static Map<String, Integer> calendarFields = Maps.newHashMap();
@@ -212,7 +197,7 @@ public class JbpmDuration implements Serializable {
             }
 
             field = Calendar.MILLISECOND;
-            amount = multiply(quantity, unit.longValue());
+            amount = quantity.longValue() * unit.longValue();
             businessTime = true;
         } else {
             // parse unit
