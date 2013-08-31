@@ -105,6 +105,9 @@ public class IOCommons {
 
     public static String getAppServerDirPath() {
         String serverBaseDir = System.getProperty("jboss.server.base.dir");
+        if (serverBaseDir == null) {
+            return null;
+        }
         if (AppServer.JBOSS7 == getAppServer()) {
             return serverBaseDir;
         }
@@ -125,7 +128,13 @@ public class IOCommons {
     }
 
     public static String getExtensionDirPath() {
-        return IOCommons.getAppServerDirPath() + "/wfe.custom";
+        String path = IOCommons.getAppServerDirPath();
+        if (path != null) {
+            path += "/";
+        } else {
+            path = "";
+        }
+        return path + "wfe.custom";
     }
 
     public static File[] getJarFiles(File directory) {
