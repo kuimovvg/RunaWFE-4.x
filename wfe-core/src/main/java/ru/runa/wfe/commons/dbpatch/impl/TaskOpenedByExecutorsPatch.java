@@ -53,8 +53,8 @@ public class TaskOpenedByExecutorsPatch extends DBPatch {
         int processed = 0;
         while (scrollableResults.next()) {
             Long taskId = ((Number) scrollableResults.get(0)).longValue();
-            Long executorId = ((Number) scrollableResults.get(1)).longValue();
             try {
+                Long executorId = ((Number) scrollableResults.get(1)).longValue();
                 Executor executor = executorDAO.getExecutor(executorId);
                 if (executor instanceof Actor) {
                     q = "INSERT INTO BPM_TASK_OPENED VALUES (" + taskId + ", " + executorId + ")";
@@ -62,7 +62,7 @@ public class TaskOpenedByExecutorsPatch extends DBPatch {
                     processed++;
                 }
             } catch (Exception e) {
-                log.warn(e);
+                log.warn("For " + taskId + ": " + e);
             }
         }
         log.info("Reverted opened tasks result: " + processed);
