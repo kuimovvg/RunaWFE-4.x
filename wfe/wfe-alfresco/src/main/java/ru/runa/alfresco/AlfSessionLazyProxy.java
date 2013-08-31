@@ -5,14 +5,15 @@ import java.util.List;
 
 import ru.runa.alfresco.search.Search;
 
+@SuppressWarnings("unchecked")
 public class AlfSessionLazyProxy implements AlfConn {
 
     @Override
     public <T extends AlfObject> T loadObject(final String uuidRef) {
-        return new AlfSessionWrapper<T>() {
+        return (T) new AlfSessionWrapper<AlfObject>() {
 
             @Override
-            protected T code() throws Exception {
+            protected AlfObject code() throws Exception {
                 return session.loadObject(uuidRef);
             }
 
@@ -21,10 +22,10 @@ public class AlfSessionLazyProxy implements AlfConn {
 
     @Override
     public <T extends AlfObject> T loadObjectNotNull(final String uuidRef) {
-        return new AlfSessionWrapper<T>() {
+        return (T) new AlfSessionWrapper<AlfObject>() {
 
             @Override
-            protected T code() throws Exception {
+            protected AlfObject code() throws Exception {
                 return session.loadObjectNotNull(uuidRef);
             }
 
@@ -32,7 +33,7 @@ public class AlfSessionLazyProxy implements AlfConn {
     }
 
     @Override
-    public void loadAssociation(final String uuidRef, final Collection collection, final AlfSerializerDesc desc) {
+    public void loadAssociation(final String uuidRef, @SuppressWarnings("rawtypes") final Collection collection, final AlfSerializerDesc desc) {
         new AlfSessionWrapper<Object>() {
 
             @Override
@@ -46,10 +47,10 @@ public class AlfSessionLazyProxy implements AlfConn {
 
     @Override
     public <T extends AlfObject> T findObject(final Search search) {
-        return new AlfSessionWrapper<T>() {
+        return (T) new AlfSessionWrapper<AlfObject>() {
 
             @Override
-            protected T code() throws Exception {
+            protected AlfObject code() throws Exception {
                 return session.findObject(search);
             }
 
@@ -58,10 +59,10 @@ public class AlfSessionLazyProxy implements AlfConn {
 
     @Override
     public <T extends AlfObject> List<T> findObjects(final Search search) {
-        return new AlfSessionWrapper<List<T>>() {
+        return (List<T>) new AlfSessionWrapper<List<AlfObject>>() {
 
             @Override
-            protected List<T> code() throws Exception {
+            protected List<AlfObject> code() throws Exception {
                 return session.findObjects(search);
             }
 
