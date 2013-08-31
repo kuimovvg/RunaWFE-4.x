@@ -5,12 +5,12 @@ import com.google.common.base.Objects;
 /**
  * Represents business duration.
  */
-public class Duration {
+public class BusinessDuration {
     private final int calendarField;
     private final int amount;
     private final boolean businessTime;
 
-    public Duration(int calendarField, int amount, boolean businessTime) {
+    public BusinessDuration(int calendarField, int amount, boolean businessTime) {
         this.calendarField = calendarField;
         this.amount = amount;
         this.businessTime = businessTime;
@@ -26,6 +26,20 @@ public class Duration {
 
     public boolean isBusinessTime() {
         return businessTime;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof BusinessDuration)) {
+            return false;
+        }
+        BusinessDuration d = (BusinessDuration) obj;
+        return calendarField == d.calendarField && amount == d.amount && businessTime == d.businessTime;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(calendarField, amount, businessTime);
     }
 
     @Override
