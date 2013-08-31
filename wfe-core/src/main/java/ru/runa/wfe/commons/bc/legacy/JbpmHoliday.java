@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.bc.BusinessCalendarProperties;
 
 /**
  * identifies a continuous set of days.
@@ -39,11 +39,11 @@ public class JbpmHoliday implements Serializable {
     private Date fromDay = null;
     private Date toDay = null;
 
-    public static List<JbpmHoliday> parseHolidays(Properties calendarProperties) {
+    public static List<JbpmHoliday> parseHolidays() {
         List<JbpmHoliday> holidays = new ArrayList<JbpmHoliday>();
-        for (Object key : calendarProperties.keySet()) {
-            if (key.toString().startsWith("holiday")) {
-                JbpmHoliday holiday = new JbpmHoliday(calendarProperties.getProperty(key.toString()));
+        for (String key : BusinessCalendarProperties.getResources().getAllPropertyNames()) {
+            if (key.startsWith("holiday")) {
+                JbpmHoliday holiday = new JbpmHoliday(BusinessCalendarProperties.getResources().getStringProperty(key));
                 holidays.add(holiday);
             }
         }

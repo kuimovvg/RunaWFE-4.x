@@ -6,18 +6,10 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Map;
 
-import ru.runa.wfe.commons.PropertyResources;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-public class DurationParser {
-    private static final PropertyResources RESOURCES = new PropertyResources("business.calendar.properties");
-    private static final long BUSINESS_DAY_IN_HOURS = RESOURCES.getIntegerProperty("business.day.expressed.in.hours", 8);
-    private static final long BUSINESS_WEEK_IN_HOURS = RESOURCES.getIntegerProperty("business.week.expressed.in.hours", 40);
-    private static final long BUSINESS_MONTH_IN_DAYS = RESOURCES.getIntegerProperty("business.month.expressed.in.business.days", 21);
-    private static final long BUSINESS_YEAR_IN_DAYS = RESOURCES.getIntegerProperty("business.year.expressed.in.business.days", 220);
-
+public class BusinessDurationParser {
     private static final Map<String, Integer> calendarFields = Maps.newHashMap();
     static {
         calendarFields.put("seconds", Calendar.SECOND);
@@ -43,7 +35,7 @@ public class DurationParser {
      * <li>years</li>
      * </ul>
      */
-    public static Duration parse(String durationString) {
+    public static BusinessDuration parse(String durationString) {
         Preconditions.checkNotNull(durationString, "duration is null");
         durationString = durationString.trim();
         int index = indexOfNonWhite(durationString, 0);
@@ -65,7 +57,6 @@ public class DurationParser {
             businessTime = true;
             unitText = unitText.substring("business ".length());
         }
-        // parse unit
         Integer unit = calendarFields.get(unitText);
         if (unit == null) {
             throw new IllegalArgumentException("improper format of duration '" + durationString + "'");
@@ -77,27 +68,23 @@ public class DurationParser {
         }
         if (businessTime) {
             if (Calendar.YEAR == calendarField) {
-                amount *= BUSINESS_YEAR_IN_DAYS;
+                amount *= BusinessCalendarProperties.getBusinessYearInDays();
                 calendarField = Calendar.DAY_OF_YEAR;
             }
             if (Calendar.MONTH == calendarField) {
-                amount *= BUSINESS_MONTH_IN_DAYS;
+                amount *= BusinessCalendarProperties.getBusinessMonthInDays();
                 calendarField = Calendar.DAY_OF_YEAR;
             }
             if (Calendar.WEEK_OF_YEAR == calendarField) {
-                amount *= BUSINESS_WEEK_IN_HOURS;
-                calendarField = Calendar.HOUR;
-            }
-            if (Calendar.DAY_OF_YEAR == calendarField) {
-                amount *= BUSINESS_DAY_IN_HOURS;
-                calendarField = Calendar.HOUR;
+                amount *= BusinessCalendarProperties.getBusinessWeekInDays();
+                calendarField = Calendar.DAY_OF_YEAR;
             }
             if (Calendar.HOUR == calendarField) {
                 amount *= 60;
                 calendarField = Calendar.MINUTE;
             }
         }
-        return new Duration(calendarField, amount, businessTime);
+        return new BusinessDuration(calendarField, amount, businessTime);
     }
 
     private static int indexOfNonWhite(String str, int off) {

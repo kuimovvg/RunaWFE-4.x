@@ -8,26 +8,21 @@ import java.util.StringTokenizer;
 
 import ru.runa.wfe.commons.CalendarInterval;
 import ru.runa.wfe.commons.CalendarUtil;
-import ru.runa.wfe.commons.PropertyResources;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DefaultBusinessCalendar extends AbstractBusinessCalendar {
-    private static final PropertyResources RESOURCES = new PropertyResources("business.calendar.properties");
     private static final Map<Integer, BusinessDay> WEEK_DAYS = Maps.newHashMap();
     private static final List<Calendar> HOLIDAYS = Lists.newArrayList();
     static {
-        WEEK_DAYS.put(Calendar.MONDAY, parse(RESOURCES.getStringProperty("weekday.monday", "")));
-        WEEK_DAYS.put(Calendar.TUESDAY, parse(RESOURCES.getStringProperty("weekday.tuesday", "")));
-        WEEK_DAYS.put(Calendar.WEDNESDAY, parse(RESOURCES.getStringProperty("weekday.wednesday", "")));
-        WEEK_DAYS.put(Calendar.THURSDAY, parse(RESOURCES.getStringProperty("weekday.thursday", "")));
-        WEEK_DAYS.put(Calendar.FRIDAY, parse(RESOURCES.getStringProperty("weekday.friday", "")));
-        WEEK_DAYS.put(Calendar.SATURDAY, parse(RESOURCES.getStringProperty("weekday.saturday", "")));
-        WEEK_DAYS.put(Calendar.SUNDAY, parse(RESOURCES.getStringProperty("weekday.sunday", "")));
-        for (String propertyName : RESOURCES.getAllPropertyNames()) {
+        for (int weekDay = Calendar.SUNDAY; weekDay <= Calendar.SATURDAY; weekDay++) {
+            WEEK_DAYS.put(weekDay, parse(BusinessCalendarProperties.getWeekWorkingTime(weekDay)));
+        }
+        for (String propertyName : BusinessCalendarProperties.getResources().getAllPropertyNames()) {
             if (propertyName.startsWith("holiday")) {
-                Calendar calendar = CalendarUtil.convertToCalendar(RESOURCES.getStringProperty(propertyName), CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
+                String string = BusinessCalendarProperties.getResources().getStringProperty(propertyName);
+                Calendar calendar = CalendarUtil.convertToCalendar(string, CalendarUtil.DATE_WITHOUT_TIME_FORMAT);
                 CalendarUtil.setZeroTimeCalendar(calendar);
                 HOLIDAYS.add(calendar);
             }

@@ -25,8 +25,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.StringTokenizer;
+
+import ru.runa.wfe.commons.bc.BusinessCalendarProperties;
 
 /**
  * is a day on a business calendar.
@@ -35,15 +36,11 @@ public class JbpmDay {
     private JbpmDayPart[] dayParts;
     private JbpmBusinessCalendar businessCalendar;
 
-    public static JbpmDay[] parseWeekDays(Properties calendarProperties, JbpmBusinessCalendar businessCalendar) {
+    public static JbpmDay[] parseWeekDays(JbpmBusinessCalendar businessCalendar) {
         JbpmDay[] weekDays = new JbpmDay[8];
-        weekDays[Calendar.MONDAY] = new JbpmDay(calendarProperties.getProperty("weekday.monday"), businessCalendar);
-        weekDays[Calendar.TUESDAY] = new JbpmDay(calendarProperties.getProperty("weekday.tuesday"), businessCalendar);
-        weekDays[Calendar.WEDNESDAY] = new JbpmDay(calendarProperties.getProperty("weekday.wednesday"), businessCalendar);
-        weekDays[Calendar.THURSDAY] = new JbpmDay(calendarProperties.getProperty("weekday.thursday"), businessCalendar);
-        weekDays[Calendar.FRIDAY] = new JbpmDay(calendarProperties.getProperty("weekday.friday"), businessCalendar);
-        weekDays[Calendar.SATURDAY] = new JbpmDay(calendarProperties.getProperty("weekday.saturday"), businessCalendar);
-        weekDays[Calendar.SUNDAY] = new JbpmDay(calendarProperties.getProperty("weekday.sunday"), businessCalendar);
+        for (int weekDay = Calendar.SUNDAY; weekDay <= Calendar.SATURDAY; weekDay++) {
+            weekDays[weekDay] = new JbpmDay(BusinessCalendarProperties.getWeekWorkingTime(weekDay), businessCalendar);
+        }
         return weekDays;
     }
 
