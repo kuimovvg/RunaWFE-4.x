@@ -13,6 +13,15 @@ import ru.runa.alfresco.search.Search;
 public interface AlfConn {
 
     /**
+     * Initializes type definition if not initialized yet. Initialization means
+     * that some attributes about property and associations will be requested
+     * from Alfresco.
+     * 
+     * @param typeDesc
+     */
+    public void initializeTypeDefinition(AlfTypeDesc typeDesc);
+
+    /**
      * Load object from Alfresco repository.
      * 
      * @param uuidRef

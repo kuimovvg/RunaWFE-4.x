@@ -166,21 +166,25 @@ public class Mappings extends Settings {
         } while (clazz != null);
     }
 
-    public static AlfTypeDesc getMapping(Class<?> clazz) {
+    public static AlfTypeDesc getMapping(Class<?> clazz, AlfConn alfConn) {
         clazz = ClassUtils.getImplClass(clazz);
         loadMappings();
         if (!MAPPINGS_BY_CLASS.containsKey(clazz)) {
             throw new RuntimeException("No mapping found for " + clazz);
         }
-        return MAPPINGS_BY_CLASS.get(clazz);
+        AlfTypeDesc typeDesc = MAPPINGS_BY_CLASS.get(clazz);
+        alfConn.initializeTypeDefinition(typeDesc);
+        return typeDesc;
     }
 
-    public static AlfTypeDesc getMapping(String typeName) {
+    public static AlfTypeDesc getMapping(String typeName, AlfConn alfConn) {
         loadMappings();
         if (!MAPPINGS_BY_NAMESPACED_TYPE_NAME.containsKey(typeName)) {
             throw new RuntimeException("No mapping found for " + typeName);
         }
-        return MAPPINGS_BY_NAMESPACED_TYPE_NAME.get(typeName);
+        AlfTypeDesc typeDesc = MAPPINGS_BY_NAMESPACED_TYPE_NAME.get(typeName);
+        alfConn.initializeTypeDefinition(typeDesc);
+        return typeDesc;
     }
 
 }
