@@ -122,8 +122,7 @@ public class AlfSession implements AlfConn {
     public void addAspect(AlfObject object, String aspectTypeName) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            AlfTypeDesc desc = Mappings.getMapping(aspectTypeName);
-            loadClassDefinitionIfNeeded(desc);
+            AlfTypeDesc desc = Mappings.getMapping(aspectTypeName, this);
             NamedValue[] props = new WSObjectAccessor(object).getAlfrescoProperties(desc, true, false);
             CMLAddAspect addAspect = new CMLAddAspect(aspectTypeName, props, getPredicate(object), null);
             CML cml = new CML();
@@ -178,8 +177,7 @@ public class AlfSession implements AlfConn {
     public void createObject(String folderUUID, AlfObject object) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
-            loadClassDefinitionIfNeeded(typeDesc);
+            AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
             String typeName = typeDesc.getAlfrescoTypeNameWithNamespace();
             String name = object.getNewObjectName(typeDesc);
             log.info("Creating new object " + name);
@@ -207,8 +205,7 @@ public class AlfSession implements AlfConn {
     public void updateVersion(AlfObject object, String comment) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
-            loadClassDefinitionIfNeeded(typeDesc);
+            AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
             NamedValue[] comments = new NamedValue[1];
             comments[0] = new NamedValue("description", false, comment, null);
             VersionResult result = WebServiceFactory.getAuthoringService().createVersion(getPredicate(object), comments, false);
@@ -476,11 +473,9 @@ public class AlfSession implements AlfConn {
         return reference.getStore().getScheme() + "://" + reference.getStore().getAddress() + "/" + reference.getUuid();
     }
 
-    public <T extends AlfObject> T buildObject(String typeName, Reference reference, NamedValue[] props, String[] aspects)
-            throws InternalApplicationException {
+    public <T extends AlfObject> T buildObject(String typeName, Reference reference, NamedValue[] props, String[] aspects) {
         try {
-            AlfTypeDesc typeDesc = Mappings.getMapping(typeName);
-            loadClassDefinitionIfNeeded(typeDesc);
+            AlfTypeDesc typeDesc = Mappings.getMapping(typeName, this);
             Cache cache = getCache(typeDesc.getJavaClassName());
             if (cache != null) {
                 Element element = cache.get(getUuidRef(reference));
@@ -535,8 +530,7 @@ public class AlfSession implements AlfConn {
     public boolean updateObject(AlfObject object, boolean force) throws InternalApplicationException {
         try {
             AlfSessionWrapper.sessionStart();
-            AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
-            loadClassDefinitionIfNeeded(typeDesc);
+            AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
             WSObjectAccessor accessor = new WSObjectAccessor(object);
             NamedValue[] contentProps = accessor.getAlfrescoProperties(typeDesc, force, false);
             if (contentProps.length == 0) {
@@ -696,7 +690,8 @@ public class AlfSession implements AlfConn {
         }
     }
 
-    private void loadClassDefinitionIfNeeded(AlfTypeDesc typeDesc) throws InternalApplicationException {
+    @Override
+    public void initializeTypeDefinition(AlfTypeDesc typeDesc) {
         if (typeDesc.isClassDefinitionLoaded()) {
             return;
         }
