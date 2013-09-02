@@ -17,10 +17,9 @@
  */
 package ru.runa.wfe.graph.image;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,6 +40,7 @@ import ru.runa.wfe.audit.TaskCreateLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskLog;
 import ru.runa.wfe.audit.TransitionLog;
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
@@ -73,8 +73,6 @@ import com.google.common.collect.Maps;
  * Modified on 26.02.2009 by gavrusev_sergei
  */
 public class GraphHistoryBuilder {
-    private static final DateFormat transitionDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-    private static final DateFormat nodeDateFormat = new SimpleDateFormat("H:mm:ss");
     private static final int heightBetweenNode = 40;
     private static final int heightForkJoinNode = 4;
     private final List<Executor> executors;
@@ -185,7 +183,8 @@ public class GraphHistoryBuilder {
 
                                     TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
                                     transitionModel.getBendpoints().clear();
-                                    transitionModel.setName(transitionDateFormat.format(findNextTransitionLog(log, correctNodeId).getDate()));
+                                    Date transitionLeaveDate = findNextTransitionLog(log, correctNodeId).getDate();
+                                    transitionModel.setName(CalendarUtil.formatDateTime(transitionLeaveDate));
                                     if (diagramModel.isShowActions()) {
                                         transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
                                     }
@@ -824,7 +823,7 @@ public class GraphHistoryBuilder {
             result = (days == 1) ? "1 day " : (String.valueOf(days) + " days ");
         }
 
-        result = result + nodeDateFormat.format(periodCal.getTime());
+        result = result + CalendarUtil.formatTime(periodCal.getTime());
 
         return result;
     }
