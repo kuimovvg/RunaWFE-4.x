@@ -61,8 +61,7 @@ public class AlfHelper implements AlfConn {
     }
 
     public void addAspect(AlfObject object, QName aspectTypeName) throws InternalApplicationException {
-        AlfTypeDesc desc = Mappings.getMapping(aspectTypeName.toString());
-        loadClassDefinitionIfNeeded(desc);
+        AlfTypeDesc desc = Mappings.getMapping(aspectTypeName.toString(), this);
         Map<QName, Serializable> props = new JavaObjectAccessor(object).getAlfrescoProperties(desc, true, false);
         registry.getNodeService().addAspect(getNodeRef(object), aspectTypeName, props);
     }
@@ -258,8 +257,7 @@ public class AlfHelper implements AlfConn {
 
     public AlfObject buildObject(NodeRef nodeRef, QName type, Map<QName, Serializable> properties) throws InternalApplicationException {
         try {
-            AlfTypeDesc typeDesc = Mappings.getMapping(type.toString());
-            loadClassDefinitionIfNeeded(typeDesc);
+            AlfTypeDesc typeDesc = Mappings.getMapping(type.toString(), this);
             AlfObject object = AlfObjectFactory.create(typeDesc.getJavaClassName(), this, nodeRef.toString());
             JavaObjectAccessor accessor = new JavaObjectAccessor(object);
             for (QName propName : properties.keySet()) {
@@ -282,8 +280,7 @@ public class AlfHelper implements AlfConn {
     }
 
     public void createObject(AlfObject object, NodeRef folderRef) throws InternalApplicationException {
-        AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
-        loadClassDefinitionIfNeeded(typeDesc);
+        AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
         log.debug("Creating new object of type " + object.getClass().getName() + " in " + folderRef);
         String name = object.getNewObjectName(typeDesc);
         object.setObjectName(name);
@@ -299,8 +296,7 @@ public class AlfHelper implements AlfConn {
 
     @Override
     public boolean updateObject(AlfObject object, boolean forceAllProps) throws InternalApplicationException {
-        AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass());
-        loadClassDefinitionIfNeeded(typeDesc);
+        AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
         JavaObjectAccessor accessor = new JavaObjectAccessor(object);
         Map<QName, Serializable> props = accessor.getAlfrescoProperties(typeDesc, forceAllProps, false);
         if (props.size() == 0) {
@@ -339,7 +335,7 @@ public class AlfHelper implements AlfConn {
         registry.getNodeService().deleteNode(nodeRef);
     }
 
-    public void setContent(AlfObject object, String content, String mimetype) throws InternalApplicationException {
+    public void setContent(AlfObject object, String content, String mimetype) {
         log.info("Setting content to " + object);
         ContentWriter writer = registry.getContentService().getWriter(getNodeRef(object), ContentModel.PROP_CONTENT, true);
         writer.setEncoding(Charsets.UTF_8.name());
@@ -347,7 +343,8 @@ public class AlfHelper implements AlfConn {
         writer.putContent(content);
     }
 
-    private void loadClassDefinitionIfNeeded(AlfTypeDesc typeDesc) throws InternalApplicationException {
+    @Override
+    public void initializeTypeDefinition(AlfTypeDesc typeDesc) {
         if (typeDesc.isClassDefinitionLoaded()) {
             return;
         }

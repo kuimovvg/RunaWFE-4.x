@@ -32,7 +32,7 @@ public class AlfObjectFactory {
         if (!ENHANCERS.containsKey(clazz)) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(clazz);
-            enhancer.setCallbackFilter(new AlfObjectCallbackFilter(clazz));
+            enhancer.setCallbackFilter(new AlfObjectCallbackFilter(clazz, alfConn));
             enhancer.setCallbacks(new Callback[] { NoOp.INSTANCE, new GetAlfObjectInterceptor(), new SetAlfObjectInterceptor(),
                     new GetAlfObjectsCollectionInterceptor() });
             ENHANCERS.put(clazz, enhancer);
@@ -45,16 +45,18 @@ public class AlfObjectFactory {
 
     public static class AlfObjectCallbackFilter implements CallbackFilter {
         private final Class<? extends AlfObject> alfObjectClass;
+        private final AlfConn alfConn;
 
-        public AlfObjectCallbackFilter(Class<? extends AlfObject> alfObjectClass) {
+        public AlfObjectCallbackFilter(Class<? extends AlfObject> alfObjectClass, AlfConn alfConn) {
             this.alfObjectClass = alfObjectClass;
+            this.alfConn = alfConn;
         }
 
         @Override
         public int accept(Method method) {
             try {
                 String propertyName = getFieldName(method.getName());
-                AlfSerializerDesc desc = Mappings.getMapping(alfObjectClass).getPropertyDescByFieldName(propertyName);
+                AlfSerializerDesc desc = Mappings.getMapping(alfObjectClass, alfConn).getPropertyDescByFieldName(propertyName);
                 if (desc == null) {
                     return 0;
                 }
@@ -124,7 +126,7 @@ public class AlfObjectFactory {
             if (result.isEmpty()) {
                 AlfObject alfObject = (AlfObject) object;
                 String fieldName = getFieldName(method.getName());
-                AlfTypeDesc typeDesc = Mappings.getMapping(alfObject.getClass());
+                AlfTypeDesc typeDesc = Mappings.getMapping(alfObject.getClass(), alfObject.conn);
                 AlfSerializerDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
                 if (desc == null) {
                     throw new NullPointerException("No association defined for " + fieldName);

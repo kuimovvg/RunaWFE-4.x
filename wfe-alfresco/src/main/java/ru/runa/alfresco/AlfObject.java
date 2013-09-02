@@ -96,7 +96,7 @@ public class AlfObject implements IAlfObject, Serializable {
     }
 
     public void updateObjectName() {
-        AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
+        AlfTypeDesc typeDesc = Mappings.getMapping(getClass(), conn);
         setObjectName(getNewObjectName(typeDesc));
     }
 
@@ -157,7 +157,7 @@ public class AlfObject implements IAlfObject, Serializable {
                 return referenceUuid;
             }
             if (acquireProperty) {
-                AlfSerializerDesc desc = Mappings.getMapping(getClass()).getPropertyDescByFieldName(fieldName);
+                AlfSerializerDesc desc = Mappings.getMapping(getClass(), conn).getPropertyDescByFieldName(fieldName);
                 AlfObject reference = (AlfObject) ClassUtils.getFieldValue(this, desc);
                 if (reference != null) {
                     return reference.getUuidRef() != null ? reference.getUuidRef() : null;
@@ -184,7 +184,7 @@ public class AlfObject implements IAlfObject, Serializable {
     }
 
     protected void markCollectionsInitialState() {
-        AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
+        AlfTypeDesc typeDesc = Mappings.getMapping(getClass(), conn);
         for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
             if (desc.getAssoc() != null) {
                 Collection<AlfObject> collection = (Collection<AlfObject>) ClassUtils.getFieldValue(this, desc);
@@ -209,7 +209,7 @@ public class AlfObject implements IAlfObject, Serializable {
     }
 
     public Map<AlfSerializerDesc, List<String>> getAssocToCreate() {
-        AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
+        AlfTypeDesc typeDesc = Mappings.getMapping(getClass(), conn);
         Map<AlfSerializerDesc, List<String>> result = Maps.newHashMap();
         for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
             if (desc.getAssoc() == null) {
@@ -238,7 +238,7 @@ public class AlfObject implements IAlfObject, Serializable {
     }
 
     public Map<AlfSerializerDesc, List<String>> getAssocToDelete() {
-        AlfTypeDesc typeDesc = Mappings.getMapping(getClass());
+        AlfTypeDesc typeDesc = Mappings.getMapping(getClass(), conn);
         Map<AlfSerializerDesc, List<String>> result = Maps.newHashMap();
         for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
             if (desc.getAssoc() == null) {

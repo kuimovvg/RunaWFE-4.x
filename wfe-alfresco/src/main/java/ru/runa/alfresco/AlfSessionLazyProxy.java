@@ -9,6 +9,19 @@ import ru.runa.alfresco.search.Search;
 public class AlfSessionLazyProxy implements AlfConn {
 
     @Override
+    public void initializeTypeDefinition(final AlfTypeDesc typeDesc) {
+        new AlfSessionWrapper<Object>() {
+
+            @Override
+            protected Object code() throws Exception {
+                session.initializeTypeDefinition(typeDesc);
+                return null;
+            }
+
+        }.runInSession();
+    }
+
+    @Override
     public <T extends AlfObject> T loadObject(final String uuidRef) {
         return (T) new AlfSessionWrapper<AlfObject>() {
 
