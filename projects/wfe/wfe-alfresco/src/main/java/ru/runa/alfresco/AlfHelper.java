@@ -260,9 +260,7 @@ public class AlfHelper implements AlfConn {
         try {
             AlfTypeDesc typeDesc = Mappings.getMapping(type.toString());
             loadClassDefinitionIfNeeded(typeDesc);
-            AlfObject object = AlfObjectFactory.create(typeDesc.getJavaClassName());
-            object.setLazyLoader(this);
-            object.setUuidRef(nodeRef.toString());
+            AlfObject object = AlfObjectFactory.create(typeDesc.getJavaClassName(), this, nodeRef.toString());
             JavaObjectAccessor accessor = new JavaObjectAccessor(object);
             for (QName propName : properties.keySet()) {
                 AlfSerializerDesc propertyDesc = typeDesc.getPropertyDescByTypeName(propName.toString());
