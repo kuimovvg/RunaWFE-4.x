@@ -488,9 +488,7 @@ public class AlfSession implements AlfConn {
                     return (T) element.getValue();
                 }
             }
-            T object = (T) AlfObjectFactory.create(typeDesc.getJavaClassName());
-            object.setLazyLoader(this);
-            object.setUuidRef(getUuidRef(reference));
+            T object = (T) AlfObjectFactory.create(typeDesc.getJavaClassName(), this, getUuidRef(reference));
             WSObjectAccessor accessor = new WSObjectAccessor(object);
             for (NamedValue prop : props) {
                 AlfSerializerDesc propertyDesc = typeDesc.getPropertyDescByTypeName(prop.getName());

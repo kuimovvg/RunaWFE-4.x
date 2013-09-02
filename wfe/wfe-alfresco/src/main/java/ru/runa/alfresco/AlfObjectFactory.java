@@ -23,12 +23,12 @@ import com.google.common.collect.Maps;
 public class AlfObjectFactory {
     private static Map<Class<? extends AlfObject>, Enhancer> ENHANCERS = Maps.newHashMap();
 
-    public static synchronized AlfObject create(String javaClassName) {
+    public static synchronized AlfObject create(String javaClassName, AlfConn alfConn, String uuidRef) {
         Class<AlfObject> clazz = (Class<AlfObject>) ClassLoaderUtil.loadClass(javaClassName);
-        return create(clazz);
+        return create(clazz, alfConn, uuidRef);
     }
 
-    public static synchronized <T extends AlfObject> T create(Class<T> clazz) {
+    public static synchronized <T extends AlfObject> T create(Class<T> clazz, AlfConn alfConn, String uuidRef) {
         if (!ENHANCERS.containsKey(clazz)) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(clazz);
@@ -38,6 +38,8 @@ public class AlfObjectFactory {
             ENHANCERS.put(clazz, enhancer);
         }
         T alfObject = (T) ENHANCERS.get(clazz).create();
+        alfObject.setLazyLoader(alfConn);
+        alfObject.setUuidRef(uuidRef);
         return alfObject;
     }
 
