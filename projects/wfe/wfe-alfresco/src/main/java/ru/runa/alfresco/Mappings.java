@@ -171,7 +171,9 @@ public class Mappings extends Settings {
         if (typeDesc == null) {
             throw new InternalApplicationException("No mapping found by " + clazz);
         }
-        alfConn.initializeTypeDefinition(typeDesc);
+        if (alfConn != null) {
+            alfConn.initializeTypeDefinition(typeDesc);
+        }
         return typeDesc;
     }
 
@@ -181,7 +183,9 @@ public class Mappings extends Settings {
         if (typeDesc == null) {
             throw new InternalApplicationException("No mapping found by type name " + typeName);
         }
-        alfConn.initializeTypeDefinition(typeDesc);
+        if (alfConn != null) {
+            alfConn.initializeTypeDefinition(typeDesc);
+        }
         return typeDesc;
     }
 
