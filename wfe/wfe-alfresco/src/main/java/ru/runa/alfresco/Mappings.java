@@ -12,6 +12,7 @@ import ru.runa.ClassUtils;
 import ru.runa.alfresco.anno.Assoc;
 import ru.runa.alfresco.anno.Property;
 import ru.runa.alfresco.anno.Type;
+import ru.runa.wfe.InternalApplicationException;
 
 /**
  * Registered mappings between Java and Alfresco types and namespace prefixes.
@@ -88,11 +89,9 @@ public class Mappings extends Settings {
         try {
             Document document = getConfigDocument();
             Element root = document.getRootElement();
-
             Element mappingsElement = root.element("mappings");
             String defaultFolderUUID = mappingsElement.attributeValue("location");
             LOCATIONS.put(Object.class, defaultFolderUUID);
-
             List<Element> classElements = mappingsElement.elements("class");
             for (Element element : classElements) {
                 String className = element.getTextTrim();
@@ -123,7 +122,6 @@ public class Mappings extends Settings {
         String namespace = NAMESPACES.get(prefix);
         AlfTypeDesc typeDesc = new AlfTypeDesc(prefix, namespace, clazz.getName(), typeName);
         typeDesc.setAspect(typeAnn.aspect());
-
         for (Field field : clazz.getDeclaredFields()) {
             String fieldName = field.getName();
             AlfSerializerDesc serializer = null;
@@ -169,20 +167,20 @@ public class Mappings extends Settings {
     public static AlfTypeDesc getMapping(Class<?> clazz, AlfConn alfConn) {
         clazz = ClassUtils.getImplClass(clazz);
         loadMappings();
-        if (!MAPPINGS_BY_CLASS.containsKey(clazz)) {
-            throw new RuntimeException("No mapping found for " + clazz);
-        }
         AlfTypeDesc typeDesc = MAPPINGS_BY_CLASS.get(clazz);
+        if (typeDesc == null) {
+            throw new InternalApplicationException("No mapping found by " + clazz);
+        }
         alfConn.initializeTypeDefinition(typeDesc);
         return typeDesc;
     }
 
     public static AlfTypeDesc getMapping(String typeName, AlfConn alfConn) {
         loadMappings();
-        if (!MAPPINGS_BY_NAMESPACED_TYPE_NAME.containsKey(typeName)) {
-            throw new RuntimeException("No mapping found for " + typeName);
-        }
         AlfTypeDesc typeDesc = MAPPINGS_BY_NAMESPACED_TYPE_NAME.get(typeName);
+        if (typeDesc == null) {
+            throw new InternalApplicationException("No mapping found by type name " + typeName);
+        }
         alfConn.initializeTypeDefinition(typeDesc);
         return typeDesc;
     }
