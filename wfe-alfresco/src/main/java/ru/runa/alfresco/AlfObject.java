@@ -165,8 +165,6 @@ public class AlfObject implements IAlfObject, Serializable {
             }
         } catch (Exception e) {
             throw Throwables.propagate(e);
-            // LogFactory.getLog(getClass()).error("Unable to get reference property uuid, check appropriate getter",
-            // e);
         }
         return null;
     }
