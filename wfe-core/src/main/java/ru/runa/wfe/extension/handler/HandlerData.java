@@ -102,7 +102,8 @@ public class HandlerData {
             throw new InternalApplicationException(processId + ": Output parameter is not defined: '" + name + "'");
         }
         if (paramDef.getVariableName() == null) {
-            throw new NullPointerException("Variable not set for output parameter " + paramDef + " in configuration.");
+            log.warn("Variable not set for output parameter " + paramDef + " in configuration.");
+            return;
         }
         setOutputVariable(paramDef.getVariableName(), value);
     }
