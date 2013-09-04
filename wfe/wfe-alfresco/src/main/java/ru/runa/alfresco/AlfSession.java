@@ -406,7 +406,7 @@ public class AlfSession implements AlfConn {
             Node node = WebServiceFactory.getRepositoryService().get(where)[0];
             return (T) buildObject(node.getType(), node.getReference(), node.getProperties(), node.getAspects());
         } catch (Exception e) {
-            log.warn("Unable to load object " + where.getNodes(0).getUuid());
+            log.warn("Unable to load object " + where.getNodes(0).getUuid() + ": " + e);
             if (throwError) {
                 throw propagate(e);
             }
