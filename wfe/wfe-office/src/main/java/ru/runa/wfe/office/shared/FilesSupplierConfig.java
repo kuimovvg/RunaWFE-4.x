@@ -10,6 +10,7 @@ import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -53,7 +54,7 @@ public abstract class FilesSupplierConfig {
         return outputFileName;
     }
 
-    public InputStream getFileInputStream(IVariableProvider variableProvider, boolean required) {
+    public InputStream getFileInputStream(IVariableProvider variableProvider, IFileDataProvider fileDataProvider, boolean required) {
         if (inputFileVariableName != null) {
             Object value = variableProvider.getValue(inputFileVariableName);
             if (value instanceof FileVariable) {
@@ -66,6 +67,11 @@ public abstract class FilesSupplierConfig {
             throw new InternalApplicationException("Variable '" + inputFileVariableName + "' should contains a file");
         }
         if (inputFilePath != null) {
+            if (inputFilePath.startsWith(IFileDataProvider.PROCESS_FILE_PROTOCOL)) {
+                String fileName = inputFilePath.substring(IFileDataProvider.PROCESS_FILE_PROTOCOL.length());
+                byte[] data = fileDataProvider.getFileDataNotNull(fileName);
+                return new ByteArrayInputStream(data);
+            }
             File file = new File(inputFilePath);
             if (file.exists() && !file.isDirectory()) {
                 try {

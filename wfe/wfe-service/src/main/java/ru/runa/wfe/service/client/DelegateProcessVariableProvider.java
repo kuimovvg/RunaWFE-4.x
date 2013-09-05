@@ -18,7 +18,6 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
     private final Long processId;
 
     public DelegateProcessVariableProvider(User user, Long processId) {
-        super();
         this.user = user;
         this.processId = processId;
     }

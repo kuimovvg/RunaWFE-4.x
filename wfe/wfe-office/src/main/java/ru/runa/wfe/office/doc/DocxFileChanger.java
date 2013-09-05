@@ -16,6 +16,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.office.doc.DocxConfig.TableConfig;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -28,10 +29,10 @@ public class DocxFileChanger {
     private final IVariableProvider variableProvider;
     private final XWPFDocument document;
 
-    public DocxFileChanger(DocxConfig config, IVariableProvider variableProvider) throws IOException {
+    public DocxFileChanger(DocxConfig config, IVariableProvider variableProvider, IFileDataProvider fileDataProvider) throws IOException {
         this.config = config;
         this.variableProvider = variableProvider;
-        document = new XWPFDocument(config.getFileInputStream(variableProvider, true));
+        document = new XWPFDocument(config.getFileInputStream(variableProvider, fileDataProvider, true));
     }
 
     public XWPFDocument changeAll() throws Exception {
