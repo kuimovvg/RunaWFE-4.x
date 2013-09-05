@@ -1,11 +1,12 @@
 package ru.runa.gpd.office;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -18,17 +19,25 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.resource.Messages;
+import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.util.ProcessFileUtils;
 import ru.runa.wfe.var.FileVariable;
+
+import com.google.common.base.Strings;
 
 public class InputOutputComposite extends Composite {
     public final InputOutputModel model;
     private final Delegable delegable;
+    private final String fileExtension;
 
-    public InputOutputComposite(Composite parent, Delegable delegable, final InputOutputModel model, FilesSupplierMode mode) {
+    public InputOutputComposite(Composite parent, Delegable delegable, final InputOutputModel model, FilesSupplierMode mode, String fileExtension) {
         super(parent, SWT.NONE);
         this.model = model;
         this.delegable = delegable;
+        this.fileExtension = fileExtension;
         GridData data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 3;
         setLayoutData(data);
@@ -37,7 +46,7 @@ public class InputOutputComposite extends Composite {
             Group inputGroup = new Group(this, SWT.NONE);
             inputGroup.setText(Messages.getString("label.input"));
             inputGroup.setLayout(new GridLayout(2, false));
-            new ChooseStringOrFile(inputGroup, model.inputPath, model.inputVariable, Messages.getString("label.filePath")) {
+            new ChooseStringOrFile(inputGroup, model.inputPath, model.inputVariable, Messages.getString("label.filePath"), FilesSupplierMode.IN) {
                 @Override
                 public void setFileName(String fileName) {
                     model.inputPath = fileName;
@@ -62,13 +71,14 @@ public class InputOutputComposite extends Composite {
             if (model.outputFilename != null) {
                 fileNameText.setText(model.outputFilename);
             }
-            fileNameText.addModifyListener(new ModifyListener() {
+            fileNameText.addModifyListener(new LoggingModifyTextAdapter() {
+
                 @Override
-                public void modifyText(ModifyEvent arg0) {
+                protected void onTextChanged(ModifyEvent e) throws Exception {
                     model.outputFilename = fileNameText.getText();
                 }
             });
-            new ChooseStringOrFile(outputGroup, model.outputDir, model.outputVariable, Messages.getString("label.fileDir")) {
+            new ChooseStringOrFile(outputGroup, model.outputDir, model.outputVariable, Messages.getString("label.fileDir"), FilesSupplierMode.OUT) {
                 @Override
                 public void setFileName(String fileName) {
                     model.outputDir = fileName;
@@ -85,13 +95,46 @@ public class InputOutputComposite extends Composite {
         layout(true, true);
     }
 
-    private abstract class ChooseStringOrFile {
+    private abstract class ChooseStringOrFile implements PropertyChangeListener {
         public abstract void setFileName(String fileName);
 
         public abstract void setVariable(String variable);
 
         private Control control = null;
         private final Composite composite;
+
+        public ChooseStringOrFile(Composite composite, String fileName, String variableName, String stringLabel, FilesSupplierMode mode) {
+            this.composite = composite;
+            final Combo combo = new Combo(composite, SWT.READ_ONLY);
+            combo.add(stringLabel);
+            combo.add(Messages.getString("label.fileVariable"));
+            if (mode == FilesSupplierMode.IN) {
+                combo.add(Messages.getString("label.processDefinitionFile"));
+            }
+            if (!Strings.isNullOrEmpty(variableName)) {
+                combo.select(1);
+                showVariable(variableName);
+            } else if (ProcessFileUtils.isProcessFile(fileName)) {
+                combo.select(2);
+                showEmbeddedFile(fileName);
+            } else {
+                combo.select(0);
+                showFileName(fileName);
+            }
+            combo.addSelectionListener(new LoggingSelectionAdapter() {
+                
+                @Override
+                protected void onSelection(SelectionEvent e) throws Exception {
+                    if (combo.getSelectionIndex() == 0) {
+                        showFileName(null);
+                    } else if (combo.getSelectionIndex() == 2) {
+                        showEmbeddedFile(null);
+                    } else {
+                        showVariable(null);
+                    }
+                }
+            });
+        }
 
         private void showFileName(String filename) {
             if (control != null) {
@@ -106,9 +149,10 @@ public class InputOutputComposite extends Composite {
                 text.setText(filename);
             }
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            text.addModifyListener(new ModifyListener() {
+            text.addModifyListener(new LoggingModifyTextAdapter() {
+                
                 @Override
-                public void modifyText(ModifyEvent arg0) {
+                protected void onTextChanged(ModifyEvent e) throws Exception {
                     setFileName(text.getText());
                 }
             });
@@ -132,15 +176,17 @@ public class InputOutputComposite extends Composite {
             if (variable != null) {
                 combo.setText(variable);
             }
-            combo.addSelectionListener(new SelectionAdapter() {
+            combo.addSelectionListener(new LoggingSelectionAdapter() {
+                
                 @Override
-                public void widgetSelected(SelectionEvent arg0) {
+                protected void onSelection(SelectionEvent e) throws Exception {
                     setVariable(combo.getText());
                 }
             });
-            combo.addModifyListener(new ModifyListener() {
+            combo.addModifyListener(new LoggingModifyTextAdapter() {
+                
                 @Override
-                public void modifyText(ModifyEvent arg0) {
+                protected void onTextChanged(ModifyEvent e) throws Exception {
                     setVariable(combo.getText());
                 }
             });
@@ -148,29 +194,33 @@ public class InputOutputComposite extends Composite {
             composite.layout(true, true);
         }
 
-        public ChooseStringOrFile(Composite composite, String fileName, String variable, String stringLabel) {
-            this.composite = composite;
-            final Combo combo = new Combo(composite, SWT.READ_ONLY);
-            combo.add(stringLabel);
-            combo.add(Messages.getString("label.fileVariable"));
-            if (variable != null && variable.length() > 0) {
-                combo.select(1);
-                showVariable(variable);
-            } else {
-                combo.select(0);
-                showFileName(fileName);
-            }
-            combo.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    if (combo.getSelectionIndex() == 0) {
-                        showFileName(null);
-                    } else {
-                        showVariable(null);
-                    }
+        private void showEmbeddedFile(String path) {
+            if (control != null) {
+                if (TemplateFileComposite.class != control.getClass()) {
+                    control.dispose();
+                } else {
+                    return;
                 }
-            });
+            }
+            String fileName;
+            if (ProcessFileUtils.isProcessFile(path)) {
+                fileName = ProcessFileUtils.getProcessFileName(path);
+            } else {
+                // TODO test JPDL action handlers for id
+                GraphElement graphElement = (GraphElement) delegable;
+                String id = graphElement.getId();
+                fileName = id + ".template." + fileExtension;
+            }
+            control = new TemplateFileComposite(composite, fileName, fileExtension);
+            ((TemplateFileComposite) control).addPropertyChangeListener(this);
+            composite.layout(true, true);
         }
+        
+        @Override
+        public void propertyChange(PropertyChangeEvent event) {
+            setFileName(ProcessFileUtils.getProcessFilePath((String) event.getNewValue()));
+        }
+
     }
 
     public static class InputOutputModel {

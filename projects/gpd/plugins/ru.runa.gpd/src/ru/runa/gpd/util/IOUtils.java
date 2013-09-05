@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,7 @@ import ru.runa.gpd.lang.model.FormNode;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 public class IOUtils {
     private static final ByteArrayInputStream EMPTY_STREAM = new ByteArrayInputStream(new byte[0]);
@@ -66,6 +68,39 @@ public class IOUtils {
         destFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(destFile);
         copyStream(fis, fos);
+    }
+
+    public static void copyFile(String source, IFile destinationFile) {
+        try {
+            copyFile(new FileInputStream(source), destinationFile);
+        } catch (FileNotFoundException e) {
+            PluginLogger.logErrorWithoutDialog("Unable to copy " + source + " to file " + destinationFile, e);
+        }
+    }
+
+    public static void copyFile(InputStream source, IFile destinationFile) {
+        try {
+            if (destinationFile.exists()) {
+                destinationFile.setContents(source, true, false, null);
+            } else {
+                destinationFile.create(source, true, null);
+            }
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Unable to copy to file " + destinationFile, e);
+        } finally {
+            Closeables.closeQuietly(source);
+        }
+    }
+    
+    public static void copyFile(InputStream source, File destinationFile) {
+        try {
+            byte[] from = ByteStreams.toByteArray(source);
+            Files.write(from, destinationFile);
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Unable to copy to file " + destinationFile, e);
+        } finally {
+            Closeables.closeQuietly(source);
+        }
     }
 
     public static String readStream(InputStream in) throws IOException {
