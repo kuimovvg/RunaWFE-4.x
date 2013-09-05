@@ -4,9 +4,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.HyperlinkGroup;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
 public class SWTUtils {
+    private static HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
     /**
      * Create  something like that: -- label ---------------
      * @param layoutColumnsCount specify 3 to complete this composite. If you want add something else at right side specify more than 3 columns.
@@ -31,4 +35,13 @@ public class SWTUtils {
         label.setText(text);
         return label;
     }
+    
+    public static Hyperlink createLink(Composite parent, String msg, LoggingHyperlinkAdapter clickListener) {
+        Hyperlink link = new Hyperlink(parent, SWT.NONE);
+        link.setText(msg);
+        link.addHyperlinkListener(clickListener);
+        hyperlinkGroup.add(link);
+        return link;
+    }
+
 }
