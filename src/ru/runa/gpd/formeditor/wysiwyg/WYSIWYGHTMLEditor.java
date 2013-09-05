@@ -104,6 +104,10 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 break;
             }
         }
+        if (formNode == null) {
+            // user edit description
+            return;
+        }
         addPropertyListener(new IPropertyListener() {
             @Override
             public void propertyChanged(Object source, int propId) {
