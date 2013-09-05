@@ -26,7 +26,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
-import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
@@ -55,10 +54,9 @@ import ru.runa.wfe.user.User;
  *                        "true"
  */
 public class SubmitStartProcessFormAction extends BaseProcessFormAction {
-    protected Long processId;
 
     @Override
-    protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Profile profile) {
+    protected Long executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Profile profile) {
         User user = getLoggedUser(request);
         Long definitionId = ((CommonProcessForm) actionForm).getId();
         Interaction interaction = Delegates.getDefinitionService().getStartInteraction(user, definitionId);
@@ -66,16 +64,8 @@ public class SubmitStartProcessFormAction extends BaseProcessFormAction {
         String transitionName = ((CommonProcessForm) actionForm).getSubmitButton();
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, definitionId);
-        processId = Delegates.getExecutionService().startProcess(user, definition.getName(), variables);
-
-        if (WebResources.isAutoShowForm()) {
-            ActionForward forward = AutoShowFormHelper.getNextActionForward(user, mapping, profile, processId);
-            if (forward != null) {
-                return forward;
-            }
-        }
-
-        return mapping.findForward(Resources.FORWARD_SUCCESS);
+        log.debug(user + " submitted start form for definition " + definition.getName());
+        return Delegates.getExecutionService().startProcess(user, definition.getName(), variables);
     }
 
     @Override
@@ -85,7 +75,7 @@ public class SubmitStartProcessFormAction extends BaseProcessFormAction {
     }
 
     @Override
-    protected ActionMessage getMessage() {
+    protected ActionMessage getMessage(Long processId) {
         return new ActionMessage(Messages.PROCESS_STARTED, processId.toString());
     }
 
