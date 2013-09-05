@@ -69,7 +69,7 @@ public abstract class BaseProcessFormAction extends ActionBase {
                 addMessage(request, getMessage(processId));
             } else {
                 forward = new ActionForward("/manage_tasks.do", true);
-                log.debug(getLoggedUser(request) + " will be forwarded to tasklist due invalid token");
+                log.warn(getLoggedUser(request) + " will be forwarded to tasklist due invalid token");
             }
         } catch (TaskDoesNotExistException e) {
             // In this case we must go to success forwarding, because of this
