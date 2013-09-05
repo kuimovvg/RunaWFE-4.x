@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
+import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
 import ru.runa.wfe.office.shared.OfficeFilesSupplierHandler;
 import ru.runa.wfe.var.IVariableProvider;
@@ -18,9 +19,9 @@ public class DocxHandler extends OfficeFilesSupplierHandler<DocxConfig> {
     }
 
     @Override
-    protected Map<String, Object> executeAction(IVariableProvider variableProvider) throws Exception {
+    protected Map<String, Object> executeAction(IVariableProvider variableProvider, IFileDataProvider fileDataProvider) throws Exception {
         Map<String, Object> result = Maps.newHashMap();
-        DocxFileChanger fileChanger = new DocxFileChanger(config, variableProvider);
+        DocxFileChanger fileChanger = new DocxFileChanger(config, variableProvider, fileDataProvider);
         XWPFDocument document = fileChanger.changeAll();
         document.write(config.getFileOutputStream(result, true));
         return result;

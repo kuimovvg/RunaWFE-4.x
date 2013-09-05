@@ -1,10 +1,12 @@
 package ru.runa.wfe.office.excel.handler;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
+import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.office.excel.ExcelDataStore;
 import ru.runa.wfe.office.excel.ExcelStorable;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
@@ -20,11 +22,11 @@ public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
 
     @SuppressWarnings("rawtypes")
     @Override
-    protected Map<String, Object> executeAction(IVariableProvider variableProvider) throws Exception {
+    protected Map<String, Object> executeAction(IVariableProvider variableProvider, IFileDataProvider fileDataProvider) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
         ExcelDataStore dataStore = new ExcelDataStore();
-        Workbook workbook = dataStore
-                .loadWorkbook(config.getFileInputStream(variableProvider, true), config.isInputFileXLSX(variableProvider, false));
+        InputStream templateInputStream = config.getFileInputStream(variableProvider, fileDataProvider, true);
+        Workbook workbook = dataStore.loadWorkbook(templateInputStream, config.isInputFileXLSX(variableProvider, false));
         for (ExcelBinding binding : config.getBindings()) {
             ExcelStorable storable = dataStore.load(workbook, binding.getConstraints());
             result.put(binding.getVariableName(), storable.getData());

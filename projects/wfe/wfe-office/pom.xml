@@ -15,7 +15,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>ru.runa.wfe</groupId>
-			<artifactId>wfe-core</artifactId>
+			<artifactId>wfe-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
