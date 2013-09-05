@@ -174,7 +174,7 @@ public class ExecutionLogic extends WFCommonLogic {
             ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
             process.getSwimlaneNotNull(startTaskSwimlaneDefinition).assignExecutor(executionContext, predefinedProcessStarter, true);
         }
-        log.info("Process " + process + " was successfully started");
+        log.info("Process " + process + " was successfully started by " + user);
         return process.getId();
     }
 

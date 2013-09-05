@@ -35,6 +35,7 @@ import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.user.User;
 
 /**
  * Created on 20.04.2008
@@ -56,23 +57,22 @@ public class SubmitTaskDispatcherAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         String forwardName = LOCAL_FORWARD_SUBMIT_TASK;
         Map<String, Object> params = new HashMap<String, Object>();
-
         saveToken(request);
-
+        User user = getLoggedUser(request);
         String executeTask = request.getParameter(WebResources.ACTION_MAPPING_SUBMIT_TASK_DISPATCHER);
         if (executeTask != null) {
-            log.debug("User should be redirected to /submitTaskForm.do action.");
+            log.debug(user + " should be redirected to /submitTaskForm.do action.");
             params.put(ProcessForm.ID_INPUT_NAME, request.getParameter(ProcessForm.ID_INPUT_NAME));
             forwardName = LOCAL_FORWARD_EXECUTE_TASK;
         } else {
-            log.debug("User should be redirected to /submit_task.do action.");
+            log.debug(user + " should be redirected to /submit_task.do action.");
         }
 
         IdForm idForm = (IdForm) form;
         try {
-            WfTask currentTask = Delegates.getExecutionService().getTask(getLoggedUser(request), idForm.getId());
+            WfTask currentTask = Delegates.getExecutionService().getTask(user, idForm.getId());
             if (currentTask.isFirstOpen()) {
-                Delegates.getExecutionService().markTaskOpened(getLoggedUser(request), currentTask.getId());
+                Delegates.getExecutionService().markTaskOpened(user, currentTask.getId());
             }
         } catch (TaskAlreadyAcceptedException e) {
             // forward user to the tasks list screen cause current task was

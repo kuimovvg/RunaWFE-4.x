@@ -30,7 +30,6 @@ import org.apache.struts.action.ActionMessage;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
-import ru.runa.common.web.Resources;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.form.Interaction;
@@ -55,11 +54,11 @@ import ru.runa.wfe.user.User;
 public class SubmitTaskFormAction extends BaseProcessFormAction {
 
     @Override
-    protected ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Profile profile)
-            throws Exception {
+    protected Long executeProcessFromAction(HttpServletRequest request, ActionForm actionForm, ActionMapping mapping, Profile profile) {
         User user = getLoggedUser(request);
         ProcessForm form = (ProcessForm) actionForm;
         Long taskId = form.getId();
+        log.debug(user + " submitted task form for id " + taskId);
         Interaction interaction = Delegates.getDefinitionService().getTaskInteraction(user, taskId);
         Map<String, Object> variables = getFormVariables(request, actionForm, interaction);
         Long processId = null;
@@ -69,13 +68,7 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
         String transitionName = form.getSubmitButton();
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         Delegates.getExecutionService().completeTask(user, taskId, variables, form.getActorId());
-        if (WebResources.isAutoShowForm()) {
-            ActionForward forward = AutoShowFormHelper.getNextActionForward(user, mapping, profile, processId);
-            if (forward != null) {
-                return forward;
-            }
-        }
-        return mapping.findForward(Resources.FORWARD_SUCCESS);
+        return processId;
     }
 
     @Override
@@ -87,7 +80,7 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
     }
 
     @Override
-    protected ActionMessage getMessage() {
+    protected ActionMessage getMessage(Long processId) {
         return new ActionMessage(Messages.TASK_COMPLETED);
     }
 }
