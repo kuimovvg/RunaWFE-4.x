@@ -32,6 +32,7 @@ import ru.runa.gpd.office.resource.Messages;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.util.ProcessFileUtils;
 
 public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<DocxModel> {
     @Override
@@ -43,7 +44,28 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     protected String getTitle() {
         return Messages.getString("DocxActionHandlerConfig.title");
     }
+    
 
+    @Override
+    protected DocxModel createDefault() {
+        DocxModel model = new DocxModel();
+        return model;
+    }
+
+    @Override
+    protected DocxModel fromXml(String xml) throws Exception {
+        return DocxModel.fromXml(xml);
+    }
+    
+    @Override
+    public void onDelete(Delegable delegable) {
+        try {
+            DocxModel model = fromXml(delegable.getDelegationConfiguration());
+            ProcessFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
+        } catch (Exception e) {
+        }
+    }
+    
     private class ConstructorView extends Composite implements Observer {
         private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
         private final Delegable delegable;
@@ -87,7 +109,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                     }
                 });
                 hyperlinkGroup.add(addTableLink);
-                new InputOutputComposite(this, delegable, model.getInOutModel(), FilesSupplierMode.BOTH);
+                new InputOutputComposite(this, delegable, model.getInOutModel(), FilesSupplierMode.BOTH, "docx");
                 int i = 0;
                 for (DocxTableModel table : model.tables) {
                     addTableSection(table, i++);
@@ -237,14 +259,4 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         }
     }
 
-    @Override
-    protected DocxModel createDefault() {
-        DocxModel model = new DocxModel();
-        return model;
-    }
-
-    @Override
-    protected DocxModel fromXml(String xml) throws Exception {
-        return DocxModel.fromXml(xml);
-    }
 }

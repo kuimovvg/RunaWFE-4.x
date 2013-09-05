@@ -184,13 +184,10 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
             }
         }
         for (String selectedDefinitionName : selectedDefinitionNames) {
-            IFile definitionFile = definitionNameFileMap.get(selectedDefinitionName);
             try {
+                IFile definitionFile = definitionNameFileMap.get(selectedDefinitionName);
                 ProjectFinder.refreshProcessFolder(definitionFile);
-            } catch (CoreException e1) {
-            }
-            ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
-            try {
+                ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
                 int validationResult = definition.validateDefinition(definitionFile);
                 if (!exportToFile && validationResult != 0) {
                     Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ValidationErrorsView.ID);

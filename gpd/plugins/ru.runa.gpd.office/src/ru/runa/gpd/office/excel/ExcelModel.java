@@ -15,7 +15,7 @@ import ru.runa.gpd.util.XmlUtil;
 public class ExcelModel extends Observable {
     private final FilesSupplierMode mode;
     private final InputOutputModel inOutModel;
-    public final List<ConstraintsModel> constraintses = new ArrayList<ConstraintsModel>();
+    public final List<ConstraintsModel> constraints = new ArrayList<ConstraintsModel>();
 
     public ExcelModel(FilesSupplierMode mode) {
         this(mode, new InputOutputModel());
@@ -46,7 +46,7 @@ public class ExcelModel extends Observable {
         ExcelModel model = new ExcelModel(mode, inOutModel);
         List<Element> constraintsElements = document.getRootElement().elements("binding");
         for (Element constraintsElement : constraintsElements) {
-            model.constraintses.add(ConstraintsModel.deserialize(constraintsElement));
+            model.constraints.add(ConstraintsModel.deserialize(constraintsElement));
         }
         return model;
     }
@@ -56,7 +56,7 @@ public class ExcelModel extends Observable {
         Document document = XmlUtil.createDocument("config");
         Element root = document.getRootElement();
         inOutModel.serialize(document, root, mode);
-        for (ConstraintsModel model : constraintses) {
+        for (ConstraintsModel model : constraints) {
             model.serialize(document, root);
         }
         return XmlUtil.toString(document);

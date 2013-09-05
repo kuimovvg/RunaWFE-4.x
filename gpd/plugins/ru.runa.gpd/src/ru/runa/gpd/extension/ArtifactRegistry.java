@@ -118,7 +118,10 @@ public abstract class ArtifactRegistry<T extends Artifact> {
     }
 
     public void export(OutputStream os) throws Exception {
-        contentProvider.save(list, os);
-        os.close();
+        try {
+            contentProvider.save(list, os);
+        } finally {
+            os.close();
+        }
     }
 }
