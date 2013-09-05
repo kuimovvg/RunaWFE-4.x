@@ -28,6 +28,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.ActionMessage;
 
+import ru.runa.common.WebResources;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.ProfileHttpSessionHelper;
 import ru.runa.common.web.Resources;
@@ -36,6 +37,7 @@ import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.Profile;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.ValidationException;
 
 import com.google.common.base.Strings;
@@ -49,15 +51,25 @@ public abstract class BaseProcessFormAction extends ActionBase {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         Map<String, String> userInputErrors = null;
-        ActionForward forward;
+        ActionForward forward = null;
         try {
+            User user = getLoggedUser(request);
             Profile profile = ProfileHttpSessionHelper.getProfile(request.getSession());
+            // TODO fix bug when working from 2 browser tabs (token saved in
+            // user session!)
             if (request.getSession().getAttribute(Globals.TRANSACTION_TOKEN_KEY) == null || isTokenValid(request, true)) {
                 saveToken(request);
-                forward = executeProcessFromAction(request, form, mapping, profile);
-                addMessage(request, getMessage());
+                Long processId = executeProcessFromAction(request, form, mapping, profile);
+                if (WebResources.isAutoShowForm()) {
+                    forward = AutoShowFormHelper.getNextActionForward(user, mapping, profile, processId);
+                }
+                if (forward == null) {
+                    forward = mapping.findForward(Resources.FORWARD_SUCCESS);
+                }
+                addMessage(request, getMessage(processId));
             } else {
                 forward = new ActionForward("/manage_tasks.do", true);
+                log.debug(getLoggedUser(request) + " will be forwarded to tasklist due invalid token");
             }
         } catch (TaskDoesNotExistException e) {
             // In this case we must go to success forwarding, because of this
@@ -91,10 +103,9 @@ public abstract class BaseProcessFormAction extends ActionBase {
         return FormSubmissionUtils.extractVariables(request, actionForm, interaction);
     }
 
-    protected abstract ActionMessage getMessage();
+    protected abstract ActionMessage getMessage(Long processId);
 
-    protected abstract ActionForward executeProcessFromAction(HttpServletRequest request, ActionForm form, ActionMapping mapping, Profile profile)
-            throws Exception;
+    protected abstract Long executeProcessFromAction(HttpServletRequest request, ActionForm form, ActionMapping mapping, Profile profile);
 
     protected abstract ActionForward getErrorForward(ActionMapping mapping, ActionForm actionForm);
 }
