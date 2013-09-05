@@ -35,4 +35,12 @@ public class DelegableProvider {
     public boolean validateValue(Delegable delegable) {
         return true;
     }
+    
+    /**
+     * Callback is invoked when delegable is deleted from process definition.
+     * @param delegable
+     */
+    public void onDelete(Delegable delegable) {
+        
+    }
 }

@@ -147,12 +147,22 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     }
 
     public void removeChild(GraphElement child) {
+        if (child instanceof Delegable) {
+            DelegableProvider provider = HandlerRegistry.getProvider(child.getDelegationClassName());
+            provider.onDelete((Delegable) child);
+        }
         childs.remove(child);
         firePropertyChange(NODE_REMOVED, child, null);
         firePropertyChange(NODE_CHILDS_CHANGED, null, null);
         if (child.delegatedListener != null) {
             child.removePropertyChangeListener(child.delegatedListener);
         }
+    }
+
+    public int removeAction(Action action) {
+        int index = childs.indexOf(action);
+        removeChild(action);
+        return index;
     }
 
     public void addChild(GraphElement child) {
@@ -246,12 +256,6 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         } else {
             addChild(action, index);
         }
-    }
-
-    public int removeAction(Action action) {
-        int index = childs.indexOf(action);
-        removeChild(action);
-        return index;
     }
 
     public List<Action> getActions() {

@@ -1,11 +1,5 @@
 package ru.runa.gpd.property;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.DialogCellEditor;
@@ -54,20 +48,8 @@ public class StartImagePropertyDescriptor extends PropertyDescriptor {
             if (path == null) {
                 return null;
             }
-            try {
-                IFile imageFile = getImageFile();
-                InputStream is = new FileInputStream(new File(path));
-                if (imageFile.exists()) {
-                    imageFile.setContents(is, true, false, null);
-                } else {
-                    imageFile.create(is, true, null);
-                }
-                is.close();
-                return imageFile;
-            } catch (Exception e) {
-                PluginLogger.logError("Unable to copy file", e);
-                return null;
-            }
+            IOUtils.copyFile(path, getImageFile());
+            return getImageFile();
         }
 
         @Override
@@ -85,13 +67,11 @@ public class StartImagePropertyDescriptor extends PropertyDescriptor {
                 if (!imageFile.exists()) {
                     return;
                 }
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                // seems like image keeps file if the image created with direct file stream
-                IOUtils.copyStream(imageFile.getContents(), baos);
-                ImageData data = new ImageData(new ByteArrayInputStream(baos.toByteArray())).scaledTo(16, 16);
+                ImageData data = new ImageData(imageFile.getContents()).scaledTo(16, 16);
                 image = new Image(colorLabel.getDisplay(), data, data.getTransparencyMask());
                 colorLabel.setImage(image);
             } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("start image", e);
             }
         }
 

@@ -32,6 +32,7 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;
+import ru.runa.gpd.util.ProcessFileUtils;
 
 public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstructorProvider<ExcelModel> {
     protected abstract FilesSupplierMode getMode();
@@ -49,6 +50,15 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
     @Override
     protected ExcelModel fromXml(String xml) throws Exception {
         return ExcelModel.fromXml(xml, getMode());
+    }
+
+    @Override
+    public void onDelete(Delegable delegable) {
+        try {
+            ExcelModel model = fromXml(delegable.getDelegationConfiguration());
+            ProcessFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
+        } catch (Exception e) {
+        }
     }
 
     private class ConstructorView extends Composite implements Observer {
@@ -78,7 +88,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 addCellLink.addHyperlinkListener(new HyperlinkAdapter() {
                     @Override
                     public void linkActivated(HyperlinkEvent e) {
-                        model.constraintses.add(new ConstraintsModel(ConstraintsModel.CELL));
+                        model.constraints.add(new ConstraintsModel(ConstraintsModel.CELL));
                         buildFromModel();
                     }
                 });
@@ -89,7 +99,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 addRowLink.addHyperlinkListener(new HyperlinkAdapter() {
                     @Override
                     public void linkActivated(HyperlinkEvent e) {
-                        model.constraintses.add(new ConstraintsModel(ConstraintsModel.ROW));
+                        model.constraints.add(new ConstraintsModel(ConstraintsModel.ROW));
                         buildFromModel();
                     }
                 });
@@ -100,13 +110,13 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 addColumnLink.addHyperlinkListener(new HyperlinkAdapter() {
                     @Override
                     public void linkActivated(HyperlinkEvent e) {
-                        model.constraintses.add(new ConstraintsModel(ConstraintsModel.COLUMN));
+                        model.constraints.add(new ConstraintsModel(ConstraintsModel.COLUMN));
                         buildFromModel();
                     }
                 });
                 hyperlinkGroup.add(addColumnLink);
-                new InputOutputComposite(this, delegable, model.getInOutModel(), getMode());
-                for (ConstraintsModel c : model.constraintses) {
+                new InputOutputComposite(this, delegable, model.getInOutModel(), getMode(), "xlsx");
+                for (ConstraintsModel c : model.constraints) {
                     switch (c.type) {
                     case ConstraintsModel.CELL:
                         new CellComposite(c);
@@ -159,7 +169,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 hl1.addHyperlinkListener(new HyperlinkAdapter() {
                     @Override
                     public void linkActivated(HyperlinkEvent e) {
-                        model.constraintses.remove(cmodel);
+                        model.constraints.remove(cmodel);
                         buildFromModel();
                     }
                 });
