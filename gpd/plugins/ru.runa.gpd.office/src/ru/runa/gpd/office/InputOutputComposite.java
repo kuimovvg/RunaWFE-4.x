@@ -206,10 +206,12 @@ public class InputOutputComposite extends Composite {
             if (ProcessFileUtils.isProcessFile(path)) {
                 fileName = ProcessFileUtils.getProcessFileName(path);
             } else {
-                // TODO test JPDL action handlers for id
-                GraphElement graphElement = (GraphElement) delegable;
-                String id = graphElement.getId();
+                String id = ((GraphElement) delegable).getId();
                 fileName = id + ".template." + fileExtension;
+                while (ProcessFileUtils.getProcessFile(fileName).exists()) {
+                    id += "d";
+                    fileName = id + ".template." + fileExtension;
+                }
             }
             control = new TemplateFileComposite(composite, fileName, fileExtension);
             ((TemplateFileComposite) control).addPropertyChangeListener(this);
