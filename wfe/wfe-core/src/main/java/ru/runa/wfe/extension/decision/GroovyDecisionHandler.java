@@ -19,7 +19,9 @@ public class GroovyDecisionHandler implements DecisionHandler {
 
     @Override
     public String decide(ExecutionContext executionContext) throws Exception {
-        return getScriptExecutor().evaluateScript(executionContext.getProcessDefinition(), executionContext.getVariableProvider(), configuration);
+        Object result = getScriptExecutor().evaluateScript(executionContext.getProcessDefinition(), executionContext.getVariableProvider(),
+                configuration);
+        return String.valueOf(result);
     }
 
 }

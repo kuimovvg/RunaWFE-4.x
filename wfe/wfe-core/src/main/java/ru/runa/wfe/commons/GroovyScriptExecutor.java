@@ -41,11 +41,11 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     }
 
     @Override
-    public <T extends Object> T evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
+    public Object evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
             Binding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(binding);
-            return (T) shell.evaluate(script);
+            return shell.evaluate(script);
         } catch (Exception e) {
             log.error("Groovy evaluation failed, script=" + script, e);
             if (e instanceof GroovyExceptionInterface) {
