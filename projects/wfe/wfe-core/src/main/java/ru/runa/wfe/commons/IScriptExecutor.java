@@ -9,6 +9,6 @@ public interface IScriptExecutor {
 
     public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script);
 
-    public <T extends Object> T evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script);
+    public Object evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script);
 
 }

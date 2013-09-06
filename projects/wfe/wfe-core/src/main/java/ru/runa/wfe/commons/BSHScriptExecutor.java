@@ -29,9 +29,9 @@ public class BSHScriptExecutor extends GroovyScriptExecutor {
     }
 
     @Override
-    public <T extends Object> T evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
+    public Object evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
-            return (T) super.evaluateScript(processDefinition, variableProvider, adjustScript(script));
+            return super.evaluateScript(processDefinition, variableProvider, adjustScript(script));
         } catch (RuntimeException e) {
             log.error("BSH adjusted conf: " + script);
             throw e;
