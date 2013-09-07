@@ -53,6 +53,7 @@ import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Throwables;
@@ -151,6 +152,38 @@ public class ReflectionRowBuilder implements RowBuilder {
 
     }
 
+    /**
+     * TODO This is temporary workaround. Fix should be made in authorization
+     * subsystem by refactoring executor permissions. Only 1 SecuredObjectType
+     * should be introduced for identifiables hierarchy due to simplifying SQL
+     * quieries and non-crossing IDs.
+     * 
+     * @author dofs
+     * @since 4.0.6
+     */
+    class ExecutorTableEnvImpl extends EnvImpl {
+        private final Map<Executor, Boolean> allowedCache = Maps.newHashMap();
+
+        @Override
+        public boolean isAllowed(Permission permission, IdentifiableExtractor extractor) {
+            List<Executor> executors = (List<Executor>) getItems();
+            Executor executor = executors.get(currentState.getItemIndex());
+            if (!allowedCache.containsKey(executor)) {
+                List<Executor> acquiredExecutors = Lists.newArrayList();
+                for (Executor testExecutor : executors) {
+                    if (executor.getSecuredObjectType() == testExecutor.getSecuredObjectType()) {
+                        acquiredExecutors.add(testExecutor);
+                    }
+                }
+                boolean[] allowedArray = Delegates.getAuthorizationService().isAllowed(getUser(), permission, acquiredExecutors);
+                for (int i = 0; i < allowedArray.length; i++) {
+                    allowedCache.put(acquiredExecutors.get(i), allowedArray[i]);
+                }
+            }
+            return allowedCache.get(executor);
+        }
+    }
+
     protected final List<? extends Object> items;
 
     private final String basePartOfUrlToObject;
@@ -191,7 +224,11 @@ public class ReflectionRowBuilder implements RowBuilder {
         this.pageContext = pageContext;
         basePartOfUrlToObject = actionUrl;
         this.returnAction = returnAction;
-        env = new EnvImpl();
+        if (items.size() > 0 && items.get(0) instanceof Executor) {
+            env = new ExecutorTableEnvImpl();
+        } else {
+            env = new EnvImpl();
+        }
         currentState = GroupState.createStartState(items, batchPresentation, builders, env);
         additionalEmptyCells = GroupState.getMaxAdditionalCellsNum(batchPresentation, items, env);
         this.builders = builders;
