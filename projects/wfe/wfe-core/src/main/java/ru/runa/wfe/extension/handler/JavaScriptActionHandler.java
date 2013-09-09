@@ -27,13 +27,13 @@ public class JavaScriptActionHandler implements ActionHandler {
         for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
             Object value = executionContext.getVariable(definition.getName());
             if (value != null) {
-                engine.put(definition.getName(), value);
+                engine.put(definition.getScriptingName(), value);
             }
         }
         engine.eval(configuration);
         Bindings bindings = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
         for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
-            Object value = bindings.get(definition.getName());
+            Object value = bindings.get(definition.getScriptingName());
             Object currentValue = executionContext.getVariable(definition.getName());
             if (!Objects.equal(value, currentValue)) {
                 executionContext.setVariable(definition.getName(), value);

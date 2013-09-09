@@ -11,6 +11,7 @@ import org.mozilla.javascript.ScriptableObject;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
 import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.format.FormatCommons;
 
 public class RhinoJSActionHandler implements ActionHandler {
     private String configuration;
@@ -29,17 +30,15 @@ public class RhinoJSActionHandler implements ActionHandler {
                 Object value = executionContext.getVariable(definition.getName());
                 if (value != null) {
                     Object js = javaToJs(context, scope, value);
-                    ScriptableObject.putProperty(scope, definition.getName(), js);
+                    ScriptableObject.putProperty(scope, definition.getScriptingName(), js);
                 }
             }
             context.evaluateString(scope, configuration, "<cmd>", 1, null);
             for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
-                Object js = scope.get(definition.getName(), scope);
-                Object oldValue = executionContext.getVariable(definition.getName());
-                // TODO oldValue is need to determine variable class...
-                if (js != Scriptable.NOT_FOUND && oldValue != null) {
-                    Object newValue = Context.jsToJava(js, oldValue.getClass());
-                    if (newValue != null && !newValue.equals(oldValue)) {
+                Object js = scope.get(definition.getScriptingName(), scope);
+                if (js != Scriptable.NOT_FOUND) {
+                    Object newValue = Context.jsToJava(js, FormatCommons.create(definition).getJavaClass());
+                    if (newValue != null) {
                         executionContext.setVariable(definition.getName(), newValue);
                     }
                 }
