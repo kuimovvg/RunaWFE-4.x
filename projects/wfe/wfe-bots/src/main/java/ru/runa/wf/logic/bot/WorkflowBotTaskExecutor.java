@@ -118,12 +118,13 @@ public class WorkflowBotTaskExecutor implements Runnable {
         TaskHandler taskHandler = null;
         User user = botExecutor.getUser();
         Bot bot = botExecutor.getBot();
+        BotTask botTask = null;
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
         try {
             String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
-            BotTask botTask = botExecutor.getBotTasks().get(botTaskName);
+            botTask = botExecutor.getBotTasks().get(botTaskName);
             if (botTask == null) {
-                log.error("No handler for bot task " + botTaskName + ", " + bot);
+                log.error("No handler for bot task " + botTaskName + " in " + bot);
                 throw new ProcessExecutionException(ProcessExecutionException.BOT_TASK_MISSED, botTaskName, bot.getUsername());
             }
             taskHandler = ClassLoaderUtil.instantiate(botTask.getTaskHandlerClassName());
@@ -142,9 +143,9 @@ public class WorkflowBotTaskExecutor implements Runnable {
                     taskHandler.setConfiguration(botTask.getConfiguration());
                 }
                 log.info("Configured taskHandler for " + botTask.getName());
-                ProcessExecutionErrors.removeBotTaskConfigurationError(bot, botTask.getName());
+                ProcessExecutionErrors.removeBotTaskConfigurationError(bot, botTask);
             } catch (Throwable th) {
-                ProcessExecutionErrors.addBotTaskConfigurationError(bot, botTask.getName(), th);
+                ProcessExecutionErrors.addBotTaskConfigurationError(bot, botTask, th);
                 log.error("Can't create handler for bot " + bot + " (task is " + botTask + ")", th);
                 throw new ProcessExecutionException(ProcessExecutionException.BOT_TASK_CONFIGURATION_ERROR, th, botTaskName, th.getMessage());
             }
@@ -161,12 +162,12 @@ public class WorkflowBotTaskExecutor implements Runnable {
                 Delegates.getExecutionService().completeTask(user, task.getId(), variables, null);
                 log.debug("Handled bot task " + task + ", " + bot + " by " + taskHandler.getClass());
             }
-            ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
+            ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getNodeId());
         } catch (TaskDoesNotExistException e) {
             log.warn(task + " already handled");
-            ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getName());
+            ProcessExecutionErrors.removeProcessError(task.getProcessId(), task.getNodeId());
         } catch (Throwable th) {
-            ProcessExecutionErrors.addProcessError(task.getProcessId(), task.getName(), th);
+            ProcessExecutionErrors.addProcessError(task, botTask, th);
             if (taskHandler != null) {
                 try {
                     taskHandler.onRollback(user, variableProvider, task);

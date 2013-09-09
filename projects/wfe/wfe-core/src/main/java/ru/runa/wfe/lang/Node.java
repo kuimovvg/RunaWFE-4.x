@@ -31,6 +31,7 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -101,6 +102,7 @@ public abstract class Node extends GraphElement {
      * transitions of the supernode are taken into account.
      */
     public Transition getLeavingTransition(String transitionName) {
+        Preconditions.checkNotNull(transitionName, "transitionName");
         for (Transition transition : leavingTransitions) {
             if (transitionName.equals(transition.getName())) {
                 return transition;

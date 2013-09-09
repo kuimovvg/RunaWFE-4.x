@@ -46,7 +46,7 @@ public class Resources {
     public static final String CLASS_VIEW_SETUP_TH = "view-setup";
     public static final String CLASS_VIEW_SETUP_TD = "view-setup";
     public static final String CLASS_BUTTON = "button";
-    public static final String CLASS_HIDABLEBLOCK = "hidableblock";
+    public static final String CLASS_HIDEABLEBLOCK = "hideableblock";
     public static final String CLASS_PAGING_TABLE = "paging";
     public static final String CLASS_PAGING_NAVIGATION_TD = "paging-navigation";
     public static final String CLASS_PAGING_TOTAL_COUNT_TD = "paging-total-count";

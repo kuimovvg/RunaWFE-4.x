@@ -110,6 +110,20 @@ public class BotStation extends IdentifiableBase {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BotStation) {
+            BotStation b = (BotStation) obj;
+            return Objects.equal(name, b.name);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("address", address).toString();
     }

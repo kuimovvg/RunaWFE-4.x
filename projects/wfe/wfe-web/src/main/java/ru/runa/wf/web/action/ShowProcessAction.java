@@ -25,15 +25,9 @@ public class ShowProcessAction extends ForwardAction {
         Long processId = Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME));
         List<TokenErrorDetail> errorDetails = ProcessExecutionErrors.getProcessErrors(processId);
         if (errorDetails != null) {
-            // ActionMessages errors = getErrors(request);
-            // for (TokenErrorDetail detail : errorDetails) {
-            // ActionExceptionHelper.addProcessError(errors,
-            // detail.getThrowable());
-            // }
-            // saveErrors(request.getSession(), errors);
             String processErrors = "";
             for (TokenErrorDetail detail : errorDetails) {
-                String url = "javascript:showProcessError(" + processId + ", '" + detail.getTaskName() + "')";
+                String url = "javascript:showProcessError(" + processId + ", '" + detail.getNodeId() + "')";
                 processErrors += "<a href=\"" + url + "\">" + detail.getTaskName() + " (" + CalendarUtil.formatDateTime(detail.getOccuredDate())
                         + ")</a><br>";
             }

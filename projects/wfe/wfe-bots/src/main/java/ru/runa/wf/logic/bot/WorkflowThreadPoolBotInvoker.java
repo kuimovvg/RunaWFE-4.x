@@ -107,10 +107,10 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                         User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
                         List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
                         botExecutors.add(new WorkflowBotExecutor(user, bot, tasks));
-                        ProcessExecutionErrors.removeBotTaskConfigurationError(bot, "*");
+                        ProcessExecutionErrors.removeBotTaskConfigurationError(bot, null);
                     } catch (Exception e) {
                         log.error("Unable to configure " + bot);
-                        ProcessExecutionErrors.addBotTaskConfigurationError(bot, "*", e);
+                        ProcessExecutionErrors.addBotTaskConfigurationError(bot, null, e);
                     }
                 }
                 configurationVersion = botStation.getVersion();
