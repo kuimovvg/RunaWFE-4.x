@@ -16,7 +16,7 @@ public class GroovyExpressionValidator extends Validator {
             IScriptExecutor scriptExecutor = getScriptExecutor();
             String expression = getParameterNotNull(String.class, "expression");
             Object result = scriptExecutor.evaluateScript(getProcessDefinition(), getVariableProvider(), expression);
-            if (Boolean.TRUE.equals(result)) {
+            if (!Boolean.TRUE.equals(result)) {
                 addError();
             }
         } catch (NullPointerException e) {
