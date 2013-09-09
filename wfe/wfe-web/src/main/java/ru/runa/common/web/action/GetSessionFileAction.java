@@ -13,22 +13,33 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.HTMLUtils;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.FileVariable;
 
-public class GetSessionFileVariableAction extends Action {
-    private static final Log log = LogFactory.getLog(GetSessionFileVariableAction.class);
+public class GetSessionFileAction extends Action {
+    private static final Log log = LogFactory.getLog(GetSessionFileAction.class);
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         String fileName = request.getParameter("fileName");
         try {
-            FileVariable fileVariable = (FileVariable) request.getSession().getAttribute(fileName);
-            response.setContentType(fileVariable.getContentType());
+            Object object = request.getSession().getAttribute(fileName);
+            byte[] data;
+            if (object instanceof FileVariable) {
+                FileVariable fileVariable = (FileVariable) object;
+                response.setContentType(fileVariable.getContentType());
+                data = fileVariable.getData();
+            } else if (object instanceof byte[]) {
+                data = (byte[]) object;
+            } else {
+                throw new InternalApplicationException("Unexpected session object: " + object);
+            }
             String encodedFileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
             response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
             OutputStream os = response.getOutputStream();
-            os.write(fileVariable.getData());
+            os.write(data);
             os.flush();
+            request.getSession().removeAttribute(fileName);
         } catch (Exception e) {
             log.error("No file found: " + fileName, e);
         }

@@ -31,9 +31,9 @@
 	<div style="position: relative;">
 		<div style="position: absolute; right: 5px; top: 5px;">
 			<table><tbody><tr>
-				<td class="hidableblock">
-					<a href="#" class="hidableblock" id="helpRequestButton">
-						<img id="helpImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">&nbsp;<bean:message key="link.help" />
+				<td class="hideableblock">
+					<a href="#" class="hideableblock" id="helpRequestButton">
+						<img id="helpImg" class="hideableblock" src="/wfe/images/view_setup_hidden.gif">&nbsp;<bean:message key="link.help" />
 					</a>
 				</td>
 			</tr></tbody></table>

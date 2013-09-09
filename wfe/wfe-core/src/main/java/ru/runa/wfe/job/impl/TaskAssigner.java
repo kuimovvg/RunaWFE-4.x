@@ -68,11 +68,11 @@ public class TaskAssigner {
                     AssignmentHandler handler = delegation.getInstance();
                     handler.assign(new ExecutionContext(processDefinition, task), task);
                 }
-                ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
+                ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getNodeId());
             } catch (Throwable th) {
                 log.warn("Unable to assign task '" + task + "' with swimlane '" + task.getSwimlane() + "'", th);
                 ProcessExecutionException e = new ProcessExecutionException(ProcessExecutionException.TASK_ASSIGNMENT_FAILED, th, task.getName());
-                ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), e);
+                ProcessExecutionErrors.addProcessError(task, e);
             }
         }
 

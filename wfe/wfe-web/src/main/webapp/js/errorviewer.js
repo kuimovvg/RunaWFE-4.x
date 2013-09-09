@@ -1,5 +1,8 @@
 $(document).ready(function() {
 	var buttons = {};
+	buttons["Support"] = function() {
+		showSupportFiles();
+	};
 	buttons[buttonCloseMessage] = function() {
 		$.errorDetailsDialog.dialog("close");
 	};
@@ -16,35 +19,48 @@ $(document).ready(function() {
 });
 
 function showBotTaskConfigurationError(botId, botTaskName) {
-	jQuery.ajax({
-	    type: "POST",
+	$.ajax({
+		dataType: "json",
 	    url: "/wfe/error_details.do",
 	    data: {
 	    	action: "getBotTaskConfigurationError", 
 	    	id: botId, 
 	    	name: botTaskName
 	    },
-	    dataType: "html",
-	    success: function(html) {
-			$("#errorDetails").html(html);
+	    success: function(data) {
+			$("#errorDetails").html(data.html);
 			$.errorDetailsDialog.dialog("open");
 	    }
     });
 }
 
 function showProcessError(processId, nodeId) {
-	jQuery.ajax({
-	    type: "POST",
+	$.ajax({
+		dataType: "json",
 	    url: "/wfe/error_details.do",
 	    data: {
 	    	action: "getProcessError", 
 	    	id: processId, 
 	    	name: nodeId
 	    },
-	    dataType: "html",
-	    success: function(html) {
-			$("#errorDetails").html(html);
+	    success: function(data) {
+			$("#errorDetails").html(data.html);
 			$.errorDetailsDialog.dialog("open");
 	    }
     });
+}
+
+function showSupportFiles() {
+	$("#errorDetails").html("<img href='/wfe/images/loading.gif' align='absmiddle' /> " + loadingMessage);
+	$.errorDetailsDialog.dialog("open");
+    $.getJSON(
+		"/wfe/error_details.do?action=showSupportFiles&" + $("#supportForm").serialize(),
+		function(data) {
+			$("#errorDetails").html("");
+			$.each(data.includedFiles, function(i, item) {
+				$("#errorDetails").append("<div><input type='radio' disabled='true' checked='"+item.included+"'>"+item.info+"</a></div>");
+			});
+			$("#errorDetails").append("<br /><br /><a href='" + data.downloadUrl + "'>" + data.downloadTitle + "</a>");
+		}
+	);
 }

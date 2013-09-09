@@ -244,6 +244,8 @@ public class Messages {
     public static final String HISTORY_SYSTEM_PH_VERSION = "history.system.placeholders.version";
 
     public static final String LABEL_SHOW_HISTORY = "label.manage_history";
+    public static final String LABEL_HISTORY_DATE = "label.history.date";
+    public static final String LABEL_HISTORY_EVENT = "label.history.event";
 
     public static final String CONF_POPUP_BUTTON_OK = "confirmpopup.button.ok";
     public static final String CONF_POPUP_BUTTON_CANCEL = "confirmpopup.button.cancel";

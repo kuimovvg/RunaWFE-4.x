@@ -6,11 +6,14 @@
 
 <%@ taglib uri="/WEB-INF/struts-tiles.tld" prefix="tiles"%>
 <%@ taglib uri="/WEB-INF/wf.tld" prefix="wf" %>
+<%@ taglib uri="/WEB-INF/struts-html.tld" prefix="html"%>
+<%@ taglib uri="/WEB-INF/struts-bean.tld" prefix="bean"%>
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
 
 <tiles:put name="head" type="string">
 
 <% if (WebResources.getDiagramRefreshInterval() > 0) { %>
+	<script type="text/javascript" src="<html:rewrite page="/js/errorviewer.js" />">c=0;</script>
 <script type="text/javascript">
 $(window).load(function() {
   window.setInterval("Reload()", <%= WebResources.getDiagramRefreshInterval() %>*1000);

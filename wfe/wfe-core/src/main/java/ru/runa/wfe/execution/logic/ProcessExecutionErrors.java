@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.bot.Bot;
+import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.dto.WfTask;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -26,29 +29,37 @@ public class ProcessExecutionErrors {
         return processErrors.get(processId);
     }
 
-    public static synchronized void addBotTaskConfigurationError(Bot bot, String botTaskName, Throwable throwable) {
-        botTaskConfigurationErrors.put(new BotTaskIdentifier(bot, botTaskName), throwable);
+    public static synchronized void addBotTaskConfigurationError(Bot bot, BotTask botTask, Throwable throwable) {
+        botTaskConfigurationErrors.put(new BotTaskIdentifier(bot, botTask), throwable);
     }
 
-    public static synchronized void removeBotTaskConfigurationError(Bot bot, String botTaskName) {
-        botTaskConfigurationErrors.remove(new BotTaskIdentifier(bot, botTaskName));
+    public static synchronized void removeBotTaskConfigurationError(Bot bot, BotTask botTask) {
+        botTaskConfigurationErrors.remove(new BotTaskIdentifier(bot, botTask));
     }
 
-    public static synchronized void addProcessError(Long processId, String taskName, Throwable throwable) {
+    public static synchronized void addProcessError(Long processId, String nodeId, String taskName, BotTask botTask, Throwable throwable) {
         List<TokenErrorDetail> tokenErrorDetail = processErrors.get(processId);
         if (tokenErrorDetail == null) {
             tokenErrorDetail = Lists.newArrayList();
             processErrors.put(processId, tokenErrorDetail);
         }
-        TokenErrorDetail details = new TokenErrorDetail(taskName, throwable);
+        TokenErrorDetail details = new TokenErrorDetail(nodeId, taskName, botTask, throwable);
         tokenErrorDetail.remove(details);
         tokenErrorDetail.add(details);
     }
 
-    public static synchronized void removeProcessError(Long processId, String taskName) {
+    public static synchronized void addProcessError(WfTask task, BotTask botTask, Throwable throwable) {
+        addProcessError(task.getProcessId(), task.getNodeId(), task.getName(), botTask, throwable);
+    }
+
+    public static synchronized void addProcessError(Task task, Throwable throwable) {
+        addProcessError(task.getProcess().getId(), task.getNodeId(), task.getName(), null, throwable);
+    }
+
+    public static synchronized void removeProcessError(Long processId, String nodeId) {
         List<TokenErrorDetail> tokenErrorDetail = processErrors.get(processId);
         if (tokenErrorDetail != null) {
-            tokenErrorDetail.remove(new TokenErrorDetail(taskName, null));
+            tokenErrorDetail.remove(new TokenErrorDetail(nodeId, null, null, null));
             if (tokenErrorDetail.isEmpty()) {
                 processErrors.remove(processId);
             }
@@ -61,11 +72,11 @@ public class ProcessExecutionErrors {
 
     public static class BotTaskIdentifier {
         private final Bot bot;
-        private final String botTaskName;
+        private final BotTask botTask;
 
-        public BotTaskIdentifier(Bot bot, String botTaskName) {
+        public BotTaskIdentifier(Bot bot, BotTask botTask) {
             this.bot = bot;
-            this.botTaskName = botTaskName;
+            this.botTask = botTask;
         }
 
         public Bot getBot() {
@@ -73,36 +84,51 @@ public class ProcessExecutionErrors {
         }
 
         public String getBotTaskName() {
-            return botTaskName;
+            if (botTask != null) {
+                return botTask.getName();
+            }
+            return "*";
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(bot.getUsername(), botTaskName);
+            return Objects.hashCode(bot.getUsername(), botTask);
         }
 
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof BotTaskIdentifier) {
                 BotTaskIdentifier bti = (BotTaskIdentifier) obj;
-                return Objects.equal(bot.getUsername(), bti.bot.getUsername()) && Objects.equal(botTaskName, bti.botTaskName);
+                return Objects.equal(bot, bti.bot) && Objects.equal(botTask, bti.botTask);
             }
             return super.equals(obj);
         }
     }
 
     public static class TokenErrorDetail {
+        private final String nodeId;
         private final String taskName;
+        private final BotTask botTask;
         private final Date occuredDate = new Date();
         private final Throwable throwable;
 
-        public TokenErrorDetail(String taskName, Throwable throwable) {
+        public TokenErrorDetail(String nodeId, String taskName, BotTask botTask, Throwable throwable) {
+            this.nodeId = nodeId;
             this.taskName = taskName;
+            this.botTask = botTask;
             this.throwable = throwable;
+        }
+
+        public String getNodeId() {
+            return nodeId;
         }
 
         public String getTaskName() {
             return taskName;
+        }
+
+        public BotTask getBotTask() {
+            return botTask;
         }
 
         public Date getOccuredDate() {
@@ -115,14 +141,14 @@ public class ProcessExecutionErrors {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(taskName);
+            return Objects.hashCode(nodeId);
         }
 
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof TokenErrorDetail) {
                 TokenErrorDetail bti = (TokenErrorDetail) obj;
-                return Objects.equal(taskName, bti.taskName);
+                return Objects.equal(nodeId, bti.nodeId);
             }
             return super.equals(obj);
         }

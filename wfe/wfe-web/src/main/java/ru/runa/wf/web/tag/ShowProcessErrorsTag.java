@@ -51,7 +51,7 @@ public class ShowProcessErrorsTag extends VisibleTag {
                 tr.addElement(new TD(processIdElement).setClass(Resources.CLASS_LIST_TABLE_TD));
                 tr.addElement(new TD(CalendarUtil.formatDateTime(detail.getOccuredDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
                 tr.addElement(new TD(detail.getTaskName()).setClass(Resources.CLASS_LIST_TABLE_TD));
-                String url = "javascript:showProcessError(" + processEntry.getKey() + ", '" + detail.getTaskName() + "')";
+                String url = "javascript:showProcessError(" + processEntry.getKey() + ", '" + detail.getNodeId() + "')";
                 String message = detail.getThrowable().getLocalizedMessage();
                 if (Strings.isNullOrEmpty(message)) {
                     message = detail.getThrowable().getClass().getName();

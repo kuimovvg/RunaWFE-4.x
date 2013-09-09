@@ -100,9 +100,9 @@ public class TaskLogic extends WFCommonLogic {
                 signalToken(executionContext, task, transition);
             }
             log.info("Task '" + task.getName() + "' was done by " + user + " in process " + task.getProcess());
-            ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getName());
+            ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getNodeId());
         } catch (Throwable th) {
-            ProcessExecutionErrors.addProcessError(task.getProcess().getId(), task.getName(), th);
+            ProcessExecutionErrors.addProcessError(task, th);
             throw Throwables.propagate(th);
         }
     }

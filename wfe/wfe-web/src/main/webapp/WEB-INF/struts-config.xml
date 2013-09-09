@@ -576,8 +576,8 @@
 			name="adminScriptForm" scope="request" validate="false">
 			<forward name="success" path="/manage_system.do" redirect="false" />
 		</action>
-		<action path="/getSessionImage"
-			type="ru.runa.common.web.action.GetSessionFileVariableAction"
+		<action path="/getSessionFile"
+			type="ru.runa.common.web.action.GetSessionFileAction"
 			validate="false">
 		</action>
 		<action path="/error_details" type="ru.runa.common.web.action.ErrorDetailsAction"

@@ -105,7 +105,13 @@ public class Timer extends Job {
             ProcessExecutionErrors.removeProcessError(getProcess().getId(), getToken().getNodeId());
         } catch (Throwable th) {
             ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.TIMER_EXECUTION_FAILED, th, th.getMessage());
-            ProcessExecutionErrors.addProcessError(getProcess().getId(), getToken().getNodeId(), pee);
+            String taskName;
+            try {
+                taskName = executionContext.getProcessDefinition().getNodeNotNull(getToken().getNodeId()).getNodeId();
+            } catch (Exception e) {
+                taskName = "Unknown due to " + e;
+            }
+            ProcessExecutionErrors.addProcessError(getProcess().getId(), getToken().getNodeId(), taskName, null, pee);
             throw Throwables.propagate(th);
         }
     }
