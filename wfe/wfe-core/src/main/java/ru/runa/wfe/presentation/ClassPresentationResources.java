@@ -20,7 +20,7 @@ package ru.runa.wfe.presentation;
 import ru.runa.wfe.commons.PropertyResources;
 
 public class ClassPresentationResources {
-    private static final PropertyResources RESOURCES = new PropertyResources("class.presentation.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("class.presentation.properties", false);
 
     public FieldState getFieldState(String property) {
         if (property.startsWith("batch_presentation.")) {
