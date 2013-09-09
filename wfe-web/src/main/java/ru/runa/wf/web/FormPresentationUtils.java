@@ -331,8 +331,8 @@ public class FormPresentationUtils {
             return userInput.get(name)[0];
         }
         Object value = variableProvider.getValue(name);
-        if (value instanceof String) {
-            return (String) value;
+        if (value instanceof String || value instanceof Number || value instanceof Boolean) {
+            return String.valueOf(value);
         }
         return null;
     }
