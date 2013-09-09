@@ -24,6 +24,7 @@ package ru.runa.wfe.lang;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.DecisionHandler;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
 /**
@@ -48,6 +49,7 @@ public class Decision extends Node {
         try {
             DecisionHandler decisionHandler = delegation.getInstance();
             String transitionName = decisionHandler.decide(executionContext);
+            Preconditions.checkNotNull(transitionName, "Null transition name by condition");
             Transition transition = getLeavingTransitionNotNull(transitionName);
             log.debug("decision " + name + " is taking '" + transition + "'");
             leave(executionContext, transition);

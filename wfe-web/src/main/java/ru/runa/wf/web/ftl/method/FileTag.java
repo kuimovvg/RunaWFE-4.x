@@ -50,7 +50,7 @@ public class FileTag extends FreemarkerTag {
             webHelper.getSession().setAttribute(fileName, fileVariable);
             Map<String, String> params = Maps.newHashMap();
             params.put("fileName", fileName);
-            String actionUrl = webHelper.getActionUrl("/getSessionImage", params);
+            String actionUrl = webHelper.getActionUrl("/getSessionFile", params);
             return "<img src='" + actionUrl + "' />";
         } else {
             throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);

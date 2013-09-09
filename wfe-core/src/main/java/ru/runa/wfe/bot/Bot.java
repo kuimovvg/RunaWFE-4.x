@@ -106,6 +106,20 @@ public class Bot implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(username);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Bot) {
+            Bot b = (Bot) obj;
+            return Objects.equal(username, b.username);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", username).toString();
     }

@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
-import org.apache.ecs.html.TH;
 import org.apache.ecs.html.TR;
 
 import ru.runa.common.web.Commons;
@@ -39,6 +38,7 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wf.web.ftl.method.ViewUtil;
+import ru.runa.wf.web.html.HistoryHeaderBuilder;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
@@ -144,7 +144,8 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
         if (mergedEventDateTD != null) {
             mergedEventDateTD.setRowSpan(mergedRowsCount + 1);
         }
-        HeaderBuilder tasksHistoryHeaderBuilder = new HistoryHeaderBuilder(maxLevel);
+        HeaderBuilder tasksHistoryHeaderBuilder = new HistoryHeaderBuilder(maxLevel, Messages.getMessage(Messages.LABEL_HISTORY_DATE, pageContext),
+                Messages.getMessage(Messages.LABEL_HISTORY_EVENT, pageContext));
         RowBuilder rowBuilder = new TRRowBuilder(rows);
         TableBuilder tableBuilder = new TableBuilder();
         tdFormElement.addElement(tableBuilder.build(tasksHistoryHeaderBuilder, rowBuilder));
@@ -225,45 +226,6 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
     @Override
     protected boolean isFormButtonVisible() {
         return false;
-    }
-
-    private class HistoryHeaderBuilder implements HeaderBuilder {
-        private final int subprocessLevel;
-
-        public HistoryHeaderBuilder(int subprocessLevel) {
-            this.subprocessLevel = subprocessLevel;
-        }
-
-        @Override
-        public TR build() {
-            TR tr = new TR();
-            for (int i = 0; i < subprocessLevel; i++) {
-                tr.addElement(new TH("").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
-            }
-            tr.addElement(new TH("Date").setClass(Resources.CLASS_LIST_TABLE_TH));
-            tr.addElement(new TH("Event").setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new
-            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_TASK_NAME,
-            // pageContext))
-            // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new
-            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_EXECUTOR,
-            // pageContext))
-            // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new
-            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_START_DATE,
-            // pageContext))
-            // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new
-            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_END_DATE,
-            // pageContext))
-            // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            // tr.addElement(new
-            // TH(Messages.getMessage(Messages.LABEL_TASK_HISTORY_TABLE_DURATION,
-            // pageContext))
-            // .setClass(Resources.CLASS_LIST_TABLE_TH));
-            return tr;
-        }
     }
 
 }

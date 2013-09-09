@@ -53,6 +53,7 @@
 	</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/xmleditor/codemirror.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/scripteditor.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/errorviewer.js" />">c=0;</script>
 </tiles:put>
 
 <tiles:put name="body" type="string" >
@@ -91,9 +92,9 @@
 	<div style="position: relative;">
 		<div style="position: absolute; right: 5px; top: 5px;">
 			<table><tbody><tr>
-				<td class="hidableblock">
+				<td class="hideableblock">
 					<a id="storageButton" href="javascript:void(0)" class="link">
-						<img id="storageImg" class="hidableblock" src="/wfe/images/view_setup_hidden.gif">
+						<img id="storageImg" class="hideableblock" src="/wfe/images/view_setup_hidden.gif">
 						&nbsp;<bean:message key="adminkit.savedscripts" />
 					</a>
 				</td>
@@ -102,7 +103,7 @@
 		<div>
 			<table>
 				<tr>
-					<td class='hidableblock'>
+					<td class='hideableblock'>
 						<a href="javascript:void(0)" class='link' onclick='javascript:uploadScript("<bean:message key="button.save" />", "<bean:message key="button.execute" />", "<bean:message key="button.cancel" />");'><bean:message key="button.upload" /></a>
 						&nbsp;&nbsp;&nbsp;
 						<a href="javascript:void(0)" class='link' onclick='javascript:editScript("", "<bean:message key="button.save" />", "<bean:message key="button.execute" />", "<bean:message key="button.cancel" />");'><bean:message key="button.create" /></a>
@@ -124,7 +125,7 @@
 <tr><td class='box'>
 	<div>
 		<a id="bottaskErrorsButton" href="javascript:void(0)" class="link">
-			<img id="bottaskErrorsImg" class="hidableblock" src="/wfe/images/view_setup_visible.gif">
+			<img id="bottaskErrorsImg" class="hideableblock" src="/wfe/images/view_setup_visible.gif">
 			&nbsp;<bean:message key="errors.bottask" />
 		</a>
 	</div>
@@ -134,14 +135,18 @@
 	<br />
 	<div>
 		<a id="processErrorsButton" href="javascript:void(0)" class="link">
-			<img id="processErrorsImg" class="hidableblock" src="/wfe/images/view_setup_visible.gif">
+			<img id="processErrorsImg" class="hideableblock" src="/wfe/images/view_setup_visible.gif">
 			&nbsp;<bean:message key="errors.processes" />
 		</a>
 	</div>
 	<div id="processErrorsContentDiv">
 		<wf:viewProcessErrors />
 	</div>
-</td></tr></table>
+</td></tr>
+<tr><td align='right' class='box'>
+	<input value='<bean:message key="support.files" />' class='button' onclick="showSupportFiles();" type='button'>
+</td></tr>
+</table>
 
 </tiles:put>
 <tiles:put name="messages" value="../common/messages.jsp" />

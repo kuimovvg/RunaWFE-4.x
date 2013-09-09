@@ -86,7 +86,7 @@ public class ViewControlsHideableBlockAjaxTag extends AbstractReturningTag {
             TR tr = new TR();
             TD headerTD = new TD();
             tr.addElement(headerTD);
-            headerTD.setClass(Resources.CLASS_HIDABLEBLOCK);
+            headerTD.setClass(Resources.CLASS_HIDEABLEBLOCK);
 
             boolean contentVisible = BatchPresentationsVisibility.get(pageContext.getSession()).isBlockVisible(hideableBlockId);
             headerTD.addElement(Entities.NBSP);
@@ -97,13 +97,13 @@ public class ViewControlsHideableBlockAjaxTag extends AbstractReturningTag {
             A link = new A("javascript:viewBlock('" + getHideableBlockId() + "', '" + getReturnAction() + "');");
             headerTD.addElement(link);
             link.setID(id + "Link");
-            link.setClass(Resources.CLASS_HIDABLEBLOCK);
+            link.setClass(Resources.CLASS_HIDEABLEBLOCK);
             String imgLink = contentVisible ? Resources.VISIBLE_IMAGE : Resources.HIDDEN_IMAGE;
             IMG img = new IMG(Commons.getUrl(imgLink, pageContext, PortletUrlType.Resource));
             img.setID(id + "Img");
             link.addElement(img);
             img.setAlt(contentVisible ? Resources.VISIBLE_ALT : Resources.HIDDEN_ALT);
-            img.setClass(Resources.CLASS_HIDABLEBLOCK);
+            img.setClass(Resources.CLASS_HIDEABLEBLOCK);
             link.addElement(contentVisible ? getHideTitle() : getShowTitle());
 
             headerTD.addElement(Entities.NBSP);

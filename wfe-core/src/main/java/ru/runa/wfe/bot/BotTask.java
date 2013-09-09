@@ -115,6 +115,20 @@ public class BotTask implements Serializable {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BotTask) {
+            BotTask b = (BotTask) obj;
+            return Objects.equal(name, b.name);
+        }
+        return super.equals(obj);
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("taskHandler", taskHandlerClassName).add("name", name).toString();
     }
