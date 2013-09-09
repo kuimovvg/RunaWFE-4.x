@@ -215,7 +215,7 @@ public class TaskState extends State implements Synchronizable {
             }
             BotTask botTask = BotCache.getBotTask(getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
             if (botTask == null) {
-                addError("taskState.botTaskLink.botTaskNotFound", getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
+                addWarning("taskState.botTaskLink.botTaskNotFound", getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
                 return;
             }
             Set<String> botTaskConfigParameterNames = botTask.getParamDefConfig().getAllParameterNames(true);
