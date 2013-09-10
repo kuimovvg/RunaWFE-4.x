@@ -129,7 +129,7 @@
                             <systemProperties>
                                 <property>
                                     <name>cactus.contextURL</name>
-                                    <value>http://localhost:8888/cactus</value>
+                                    <value>http://localhost:18888/cactus</value>
                                 </property>
                             </systemProperties>
                         </configuration>
@@ -167,11 +167,12 @@
                         <type>existing</type>
                         <home>${jboss.home}/server/default</home>
                         <properties>
-                        	<cargo.servlet.port>8888</cargo.servlet.port>
+                        	<cargo.servlet.port>18888</cargo.servlet.port>
                             <cargo.jboss.configuration>default</cargo.jboss.configuration>
                             <cargo.rmi.port>10099</cargo.rmi.port>
                             <cargo.logging>high</cargo.logging>
-                            <cargo.jvmargs>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Duser.language=en -Duser.country=US</cargo.jvmargs>
+                            <cargo.jvmargs>-Duser.language=en -Duser.country=US</cargo.jvmargs>
+                            <!-- cargo.jvmargs>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 -Duser.language=en -Duser.country=US</cargo.jvmargs -->
                         </properties>
                     </configuration>
                     <deployables>
