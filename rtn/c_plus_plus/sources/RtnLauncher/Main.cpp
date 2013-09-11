@@ -23,6 +23,7 @@
 //------------------------------------------------------
 
 #define WINDOW_CLASS_NAME		L"RtnLauncherWndClass"
+#define PROGRAM_MUTEX_NAME		L"RtnLauncherMutex"
 
 #define WM_CUSTOM_NOTIFY_ICON	(WM_APP + 1)
 
@@ -58,40 +59,6 @@ int GetOptionInt(const std::wstring& sStringName, const int nDefaultValue)
 std::wstring GetErrorMessageBoxTitle()
 {
 	return GetOption(L"ErrorMessageBoxTitle", L"Rtn Launcher");
-}
-
-//------------------------------------------------------
-
-bool IsProcNameAlreadyRunning(const wchar_t* exeFile, DWORD currentProcId)
-{
-	DWORD procId = 0;
-	bool isAlreadyRunning = false;
-
-	if (exeFile == NULL)
-	{
-		return isAlreadyRunning;
-	}
-
-	HANDLE h = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-
-	PROCESSENTRY32 pe = { 0 };
-	pe.dwSize = sizeof(PROCESSENTRY32);
-
-	if (Process32First(h, &pe))
-	{
-		do
-		{
-			if (_wcsicmp(pe.szExeFile, exeFile) == 0 && currentProcId != pe.th32ProcessID)
-			{
-				isAlreadyRunning = true;
-				break;
-			}
-		}
-		while(Process32Next(h, &pe));
-	}
-	CloseHandle(h);
-
-	return isAlreadyRunning;
 }
 
 //------------------------------------------------------
@@ -445,9 +412,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	MYTRACE("===============================================================================\n");
 
-	if (IsProcNameAlreadyRunning(GetFileName(GetExeFullName()).c_str(), GetCurrentProcessId()))
+	// Check if this is a first copy of program in current Windows Terminal session:
+	SetLastError(0);
+	HANDLE hSingleObject = ::CreateMutex(NULL, FALSE, L"Local\\" PROGRAM_MUTEX_NAME);
+	if (hSingleObject && GetLastError() == ERROR_ALREADY_EXISTS)
 	{
 		MYTRACE("Process is already running!\n");
+		return 1;
+	}
+	if (!hSingleObject)
+	{
+		MYTRACE("Can't create mutex! Error = %d\n", GetLastError());
 		return 1;
 	}
 
@@ -500,8 +475,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	} // else
 
 	CoUninitialize();
+	CloseHandle(hSingleObject);
 
-	return (int)msg.wParam;
+	return 0;
 } // wWinMain();
 
 //------------------------------------------------------
