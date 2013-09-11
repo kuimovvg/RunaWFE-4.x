@@ -761,6 +761,20 @@ void Config::SetInt(const tstring& sSection, const tstring& sKey, const int nVal
 
 //------------------------------------------------------
 
+std::string Config::GetStringA(const tstring& sSection, const tstring& sKey, const std::string& sDefaultValue) const
+{
+	// this method useful for UTF8
+	SafeCSLock lock(m_protect);
+	CHAR szValue[1024*10] = "";
+
+	USES_CONVERSION;
+	GetPrivateProfileStringA(W2CA(sSection.c_str()), W2CA(sKey.c_str()), sDefaultValue.c_str(),
+		szValue, sizeof(szValue)/sizeof(szValue[0]), W2CA(m_sIniFileName.c_str()));
+	return szValue;
+}
+
+//------------------------------------------------------
+
 tstring Config::GetString(const tstring& sSection, const tstring& sKey, const tstring& sDefaultValue) const
 {
 	SafeCSLock lock(m_protect);
