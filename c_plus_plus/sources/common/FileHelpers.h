@@ -103,6 +103,7 @@ public:
 
 	void SetString(const tstring& sSection, const tstring& sKey, const tstring& sValue);
 	void SetInt(const tstring& sSection, const tstring& sKey, const int nValue);
+	std::string GetStringA(const tstring& sSection, const tstring& sKey, const std::string& sDefaultValue = "") const; // this is useful for UTF8
 	tstring GetString(const tstring& sSection, const tstring& sKey, const tstring& sDefaultValue = _T("")) const;
 	int GetInt(const tstring& sSection, const tstring& sKey, const int nDefaultValue = 0) const;
 
