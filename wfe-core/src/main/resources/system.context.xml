@@ -342,7 +342,7 @@
 
 	<bean id="jobExecutorTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="60000" />
-		<property name="period" value="60000" />
+		<property name="period" value="${timertask.period.millis.job.execution}" />
 		<property name="timerTask">
 			<bean class="ru.runa.wfe.job.impl.ExpiredJobCheckerTask">
 				<property name="executor">
@@ -361,8 +361,8 @@
 		</property>
 	</bean>
 	<bean id="tasksAssignTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="5000" />
-		<property name="period" value="600000" />
+		<property name="delay" value="60000" />
+		<property name="period" value="${timertask.period.millis.unassigned.tasks.execution}" />
 		<property name="timerTask">
 			<bean class="ru.runa.wfe.job.impl.AssignStalledTasks">
 				<property name="executor">
@@ -373,8 +373,8 @@
 		</property>
 	</bean>
 	<bean id="ldapSynchronizerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10800000" />
-		<property name="period" value="10800000" />
+		<property name="delay" value="60000" />
+		<property name="period" value="${timertask.period.millis.ldap.sync}" />
 		<property name="timerTask">
 			<bean class="ru.runa.wfe.job.impl.LDAPSynchronizerTask">
 				<property name="ldapLogic" ref="ldapLogic" />
