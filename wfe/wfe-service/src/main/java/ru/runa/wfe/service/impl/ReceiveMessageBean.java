@@ -106,7 +106,7 @@ public class ReceiveMessageBean implements MessageListener {
                 if (suitable) {
                     HashMap<String, Object> map = (HashMap<String, Object>) objectMessage.getObject();
                     for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
-                        if (!variableMapping.isPropertySelector()) {
+                        if (!variableMapping.isPropertySelector() && map.containsKey(variableMapping.getMappedName())) {
                             Object value = map.get(variableMapping.getMappedName());
                             executionContext.setVariable(variableMapping.getName(), value);
                         }
