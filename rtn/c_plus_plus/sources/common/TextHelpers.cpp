@@ -1,4 +1,4 @@
-// (c) Sergey Kolomenkin, sergey.kolomenkin (at server) gmail.com, 2008-2012
+// (c) Sergey Kolomenkin, sergey.kolomenkin (at server) gmail.com, 2008-2013
 //////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
@@ -12,6 +12,7 @@
 #include <mbstring.h>
 #include <locale.h>
 #include <errno.h>
+#include <locale.h>
 
 #include <atlbase.h>
 #include <atlconv.h>
@@ -24,6 +25,9 @@
 #include "array_ptr.h"
 
 #include <winhttp.h>	// for WINHTTP_ERROR_BASE, WINHTTP_ERROR_LAST
+
+#include <Shlwapi.h>	// StrStrI, StrStrIW, StrCmpNI, StrChrIA, StrChrIW
+#pragma comment(lib, "shlwapi.lib")
 
 #ifdef UNITTEST_DEPENDENCY
 #include "UnitTest\UnitTest.h"
@@ -39,8 +43,12 @@ IMPLEMENT_MODULE(TextHelpers)
 //////////////////////////////////////////////////////////////////////
 
 #define START_DYN_BUFFER_SIZE	512
+#define MAX_DYN_BUFFER_SIZE		(128*1024*1024)
 #define RESIZE_DYN_BUFFER_MULT	2
 #define RESIZE_DYN_BUFFER_DIV	1
+
+#define MY_ERRNO_NO_CHANGE		(-100)
+#define MY_ERRNO_EXCEPTION		(-101)
 
 //////////////////////////////////////////////////////////////////////
 
@@ -63,7 +71,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////
 
-int ProcessFormatError(const void* pszFormat, bool bUnicode)
+int ProcessFormatException(const void* pszFormat, const bool bUnicode)
 {
 	if(!g_bQuietStringFormatting)
 	{
@@ -83,8 +91,65 @@ int ProcessFormatError(const void* pszFormat, bool bUnicode)
 		MYASSERT(FALSE && "String formatting failed! (CONTINUE will produce empty string)");
 	}
 
-	errno = EINVAL;
+	errno = MY_ERRNO_EXCEPTION; // my internal special value
 	return -1;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+int ProcessFormatResults(const void* pszFormat, const int nErrno, const int nBufferSize, const bool bUnicode)
+{
+	if(nBufferSize >= MAX_DYN_BUFFER_SIZE)
+	{
+		if(!g_bQuietStringFormatting)
+		{
+			LPCSTR pszType = bUnicode ? "Unicode" : "Ansi";
+			MYTRACE("ERROR! %s formatting allocated too many memory! (%d bytes)\n", pszType, nBufferSize);
+		}
+		return 0; // break loop, return empty string
+	}
+
+	if(nErrno == ERANGE || nErrno == MY_ERRNO_NO_CHANGE)
+	{
+		// need greater buffer
+		return -1; // continue loop, try bigger buffer
+	}
+
+	if(nErrno == MY_ERRNO_EXCEPTION)
+	{
+		// formatting failed with exception (see ProcessFormatException())
+		return 0; // break loop, return empty string
+	}
+
+	if(nErrno == EINVAL)
+	{
+		// formatting error, but execution was allowed to continue
+		ProcessFormatException(pszFormat, bUnicode);
+		return 0; // break loop, return empty string
+	}
+
+	if(!g_bQuietStringFormatting)
+	{
+		LPCSTR pszType = bUnicode ? "Unicode" : "Ansi";
+		MYTRACE("ERROR: %s formatting got errno = %d\n", pszType, nErrno);
+		if(nErrno == EILSEQ)
+		{
+			const std::string sLocale = setlocale(LC_ALL, NULL); // read current locale
+			if(sLocale == "C")
+			{
+				MYTRACE("NOTE! You should call setlocale(LC_ALL, \"English\") to set correct locale!\n");
+			}
+			if(pszFormat != NULL)
+			{
+				if(bUnicode)
+					MYTRACE("ERROR! Unsupported unicode sequence found in arguments for %s format string \"%ls\"!\n", pszType, pszFormat);
+				else
+					MYTRACE("ERROR! Unsupported unicode sequence found in arguments for %s format string \"%hs\"!\n", pszType, pszFormat);
+			}
+		}
+	}
+
+	return 0; // break loop, return empty string
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -97,27 +162,28 @@ std::string StdString::Format(LPCSTR pszFormat, ...)
 
 // 	va_list vl;
 // 	va_start(vl, pszFormat);
-// 
+//
 // 	int nBufferSize = START_DYN_BUFFER_SIZE;
 // 	int nRetVal = -1;
-// 	int nErrno = 0;
-// 
+// 	int nErrno = MY_ERRNO_NO_CHANGE;
+//
 // 	std::vector<CHAR> arrTemp;
 // 	CHAR* pszTemp = NULL;
-// 
-// 	do {
+//
+// 	do
+//	{
 // 		nBufferSize = nBufferSize * RESIZE_DYN_BUFFER_MULT / RESIZE_DYN_BUFFER_DIV;
 // 		arrTemp.resize( nBufferSize );
 // 		pszTemp = &arrTemp.front();
-// 
-// 		errno = 0;
+//
+// 		errno = MY_ERRNO_NO_CHANGE;
 // 		try
 // 		{
 // 			nRetVal = _vsnprintf_s(pszTemp, nBufferSize, nBufferSize - 1, pszFormat, vl);
 // 		}
 // 		catch(...)
 // 		{
-// 			nRetVal = ProcessFormatError(pszFormat, false);
+// 			nRetVal = ProcessFormatException(pszFormat, false);
 // 		}
 // 		nErrno = errno;
 // 		if( nRetVal == nBufferSize - 1 )
@@ -125,10 +191,14 @@ std::string StdString::Format(LPCSTR pszFormat, ...)
 // 			// write terminating character if the buffer is the same length as result
 // 			pszTemp[nBufferSize - 1] = ('\0');
 // 		}
-// 	} while (nRetVal == -1 && nErrno != EINVAL);
-// 
+// 		if(nRetVal < 0 || nBufferSize >= MAX_DYN_BUFFER_SIZE)
+// 		{
+// 			nRetVal = ProcessFormatResults(pszFormat, nErrno, nBufferSize, false);
+// 		}
+// 	} while (nRetVal == -1);
+//
 // 	va_end(vl);
-// 	if(nRetVal < 0)
+// 	if(nRetVal <= 0)
 // 		return "";
 // 	return pszTemp;
 }
@@ -143,27 +213,28 @@ std::wstring StdString::FormatW(LPCWSTR pszFormat, ...)
 
 // 	va_list vl;
 // 	va_start(vl, pszFormat);
-// 
+//
 // 	int nBufferSize = START_DYN_BUFFER_SIZE;
 // 	int nRetVal = -1;
-// 	int nErrno = 0;
-// 
+// 	int nErrno = MY_ERRNO_NO_CHANGE;
+//
 // 	std::vector<WCHAR> arrTemp;
 // 	WCHAR* pszTemp = NULL;
-// 
-// 	do {
+//
+// 	do
+//	{
 // 		nBufferSize = nBufferSize * RESIZE_DYN_BUFFER_MULT / RESIZE_DYN_BUFFER_DIV;
 // 		arrTemp.resize( nBufferSize );
 // 		pszTemp = &arrTemp.front();
-// 
-// 		errno = 0;
+//
+// 		errno = MY_ERRNO_NO_CHANGE;
 // 		try
 // 		{
 // 			nRetVal = _vsnwprintf_s(pszTemp, nBufferSize, nBufferSize - 1, pszFormat, vl);
 // 		}
 // 		catch(...)
 // 		{
-// 			nRetVal = ProcessFormatError(pszFormat, true);
+// 			nRetVal = ProcessFormatException(pszFormat, true);
 // 		}
 // 		nErrno = errno;
 // 		if( nRetVal == nBufferSize - 1 )
@@ -171,10 +242,14 @@ std::wstring StdString::FormatW(LPCWSTR pszFormat, ...)
 // 			// write terminating character if the buffer is the same length as result
 // 			pszTemp[nBufferSize - 1] = L'\0';
 // 		}
-// 	} while (nRetVal == -1 && nErrno != EINVAL);
-// 
+// 		if(nRetVal < 0 || nBufferSize >= MAX_DYN_BUFFER_SIZE)
+// 		{
+// 			nRetVal = ProcessFormatResults(pszFormat, nErrno, nBufferSize, true);
+// 		}
+// 	} while (nRetVal == -1);
+//
 // 	va_end(vl);
-// 	if(nRetVal < 0)
+// 	if(nRetVal <= 0)
 // 		return L"";
 // 	return pszTemp;
 }
@@ -185,24 +260,25 @@ std::string StdString::FormatV(LPCSTR pszFormat, va_list argList)
 {
 	int nBufferSize = START_DYN_BUFFER_SIZE;
 	int nRetVal = -1;
-	int nErrno = 0;
+	int nErrno = MY_ERRNO_NO_CHANGE;
 
 	std::vector<CHAR> arrTemp;
 	CHAR* pszTemp = NULL;
 
-	do {
+	do
+	{
 		nBufferSize = nBufferSize * RESIZE_DYN_BUFFER_MULT / RESIZE_DYN_BUFFER_DIV;
 		arrTemp.resize( nBufferSize );
 		pszTemp = &arrTemp.front();
 
-		errno = 0;
+		errno = MY_ERRNO_NO_CHANGE;
 		try
 		{
 			nRetVal = _vsnprintf_s(pszTemp, nBufferSize, nBufferSize - 1, pszFormat, argList);
 		}
 		catch(...)
 		{
-			nRetVal = ProcessFormatError(pszFormat, false);
+			nRetVal = ProcessFormatException(pszFormat, false);
 		}
 		nErrno = errno;
 		if( nRetVal == nBufferSize - 1 )
@@ -211,9 +287,13 @@ std::string StdString::FormatV(LPCSTR pszFormat, va_list argList)
 			//printf( "Writing terminating NULL!!!\n" );
 			pszTemp[nBufferSize - 1] = '\0';
 		}
-	} while (nRetVal == -1 && nErrno != EINVAL);
+		if(nRetVal < 0 || nBufferSize >= MAX_DYN_BUFFER_SIZE)
+		{
+			nRetVal = ProcessFormatResults(pszFormat, nErrno, nBufferSize, false);
+		}
+	} while (nRetVal == -1);
 
-	if(nRetVal < 0)
+	if(nRetVal <= 0)
 		return std::string();
 	return pszTemp;
 }
@@ -224,24 +304,25 @@ std::wstring StdString::FormatVW(LPCWSTR pszFormat, va_list argList)
 {
 	int nBufferSize = START_DYN_BUFFER_SIZE;
 	int nRetVal = -1;
-	int nErrno = 0;
+	int nErrno = MY_ERRNO_NO_CHANGE;
 
 	std::vector<WCHAR> arrTemp;
 	WCHAR* pszTemp = NULL;
 
-	do {
+	do
+	{
 		nBufferSize = nBufferSize * RESIZE_DYN_BUFFER_MULT / RESIZE_DYN_BUFFER_DIV;
 		arrTemp.resize( nBufferSize );
 		pszTemp = &arrTemp.front();
 
-		errno = 0;
+		errno = MY_ERRNO_NO_CHANGE;
 		try
 		{
 			nRetVal = _vsnwprintf_s(pszTemp, nBufferSize, nBufferSize - 1, pszFormat, argList);
 		}
 		catch(...)
 		{
-			nRetVal = ProcessFormatError(pszFormat, true);
+			nRetVal = ProcessFormatException(pszFormat, true);
 		}
 		nErrno = errno;
 		if( nRetVal == nBufferSize - 1 )
@@ -250,9 +331,13 @@ std::wstring StdString::FormatVW(LPCWSTR pszFormat, va_list argList)
 			//printf( "Writing terminating NULL!!!\n" );
 			pszTemp[nBufferSize - 1] = L'\0';
 		}
-	} while (nRetVal == -1 && nErrno != EINVAL);
+		if(nRetVal < 0 || nBufferSize >= MAX_DYN_BUFFER_SIZE)
+		{
+			nRetVal = ProcessFormatResults(pszFormat, nErrno, nBufferSize, true);
+		}
+	} while (nRetVal == -1);
 
-	if(nRetVal < 0)
+	if(nRetVal <= 0)
 		return std::wstring();
 	return pszTemp;
 }
@@ -275,18 +360,30 @@ HRESULT GetKnownLibraryErrorText(
 	if (hMod)
 	{
 		// Use the FormatMessage API to translate the error code
-		dwSize = FormatMessage(FORMAT_MESSAGE_FROM_HMODULE |
-			FORMAT_MESSAGE_ALLOCATE_BUFFER |
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			hMod, dwErrorCode, 0, (LPTSTR)&pMsgBuf, 0, NULL);
+		{
+			const DWORD dwEnglishLanguageId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+
+			dwSize = FormatMessage(FORMAT_MESSAGE_FROM_HMODULE |
+				FORMAT_MESSAGE_ALLOCATE_BUFFER |
+				FORMAT_MESSAGE_IGNORE_INSERTS,
+				hMod, dwErrorCode, dwEnglishLanguageId, (LPTSTR)&pMsgBuf, 0, NULL);
+
+			if(dwSize == 0 && ERROR_RESOURCE_LANG_NOT_FOUND == GetLastError())
+			{
+				dwSize = FormatMessage(FORMAT_MESSAGE_FROM_HMODULE |
+					FORMAT_MESSAGE_ALLOCATE_BUFFER |
+					FORMAT_MESSAGE_IGNORE_INSERTS,
+					hMod, dwErrorCode, 0, (LPTSTR)&pMsgBuf, 0, NULL);
+			}
+		}
 
 		FreeLibrary(hMod);
 
 		// Return the description and size to the caller in the OUT parameters.
-		if (dwSize)
+		if (dwSize > 0)
 		{
 			*pdwSize = dwSize;
-			*ppErrorText = (TCHAR*)pMsgBuf;
+			*ppErrorText = pMsgBuf;
 			return S_OK;
 		}
 	}
@@ -297,8 +394,8 @@ HRESULT GetKnownLibraryErrorText(
 
 //////////////////////////////////////////////////////////////////////////
 
-#define MQDLL_W_ERROR_TEXT  TEXT("MQutil.dll")
-#define WINHTTP_W_ERROR_TEXT  TEXT("winhttp.dll")
+#define MQDLL_W_ERROR_TEXT		TEXT("MQutil.dll")
+#define WINHTTP_W_ERROR_TEXT	TEXT("winhttp.dll")
 
 HRESULT GetErrorText(
 					DWORD dwErrorCode,
@@ -361,15 +458,26 @@ HRESULT GetErrorText(
 	default:	// for FACILITY_SECURITY, FACILITY_RPC, ...
 
 		// Retrieve the Win32 error message.
-		dwSize = FormatMessage(
-			FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL, dwErrorCode, 0, (LPTSTR) &pMsgBuf, 0, NULL);
+		{
+			const DWORD dwEnglishLanguageId = MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US);
+
+			dwSize = FormatMessage(
+				FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL, dwErrorCode, dwEnglishLanguageId, (LPTSTR) &pMsgBuf, 0, NULL);
+
+			if(dwSize == 0 && ERROR_RESOURCE_LANG_NOT_FOUND == GetLastError())
+			{
+				dwSize = FormatMessage(
+					FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS,
+					NULL, dwErrorCode, 0, (LPTSTR) &pMsgBuf, 0, NULL);
+			}
+		}
 
 		// Return the description and size to the caller in the OUT parameters.
-		if (dwSize)
+		if (dwSize > 0)
 		{
 			*pdwSize = dwSize;
-			*ppErrorText = (TCHAR*)pMsgBuf;
+			*ppErrorText = pMsgBuf;
 			return S_OK;
 		}
 
@@ -387,6 +495,7 @@ tstring StdString::FormatApiError(LONG errorCode) // Formatting trims \n at the 
 	tstring res;
 	TCHAR* p = NULL;
 	DWORD dwChars = 0;
+	const int nErrno = errno;
 	LONG le = GetLastError(); // save error
 	HRESULT hr = GetErrorText(errorCode, &p, &dwChars);
 	if(S_OK == hr)
@@ -410,9 +519,10 @@ tstring StdString::FormatApiError(LONG errorCode) // Formatting trims \n at the 
 	}
 	else
 	{
-		res = _T("Unknown_API_Error");
+		res = _T("Unknown_API_Error(") + itot(errorCode) + _T(")");
 	}
 	SetLastError(le); // restore error
+	errno = nErrno;
 	return res;
 }
 
@@ -421,10 +531,12 @@ tstring StdString::FormatApiError(LONG errorCode) // Formatting trims \n at the 
 std::string StdString::FormatApiErrorA(LONG errorCode) // Formatting trims \n at the end of string!
 {
 #ifdef _UNICODE
+	const int nErrno = errno;
 	LONG le = GetLastError(); // save error
 	USES_CONVERSION;
 	const std::string s = CW2A(StdString::FormatApiError(errorCode).c_str());
 	SetLastError(le); // restore error
+	errno = nErrno;
 	return s;
 #else
 	return StdString::FormatApiError(errorCode);
@@ -438,10 +550,12 @@ std::wstring StdString::FormatApiErrorW(LONG errorCode) // Formatting trims \n a
 #ifdef _UNICODE
 	return StdString::FormatApiError(errorCode);
 #else
+	const int nErrno = errno;
 	LONG le = GetLastError(); // save error
 	USES_CONVERSION;
 	const std::wstring s = CA2W(StdString::FormatApiError(errorCode).c_str());
 	SetLastError(le); // restore error
+	errno = nErrno;
 	return s;
 #endif
 }
@@ -475,9 +589,14 @@ tstring ultot(unsigned long x) // converts unsigned long to string
 
 //////////////////////////////////////////////////////////////////////////
 
-unsigned long atoul(const char* s)
+unsigned long mystoul(const std::string& s)
 {
-	return strtoul(s, NULL, 10);
+	return strtoul(s.c_str(), NULL, 10);
+}
+
+unsigned long mystoul(const std::wstring& s)
+{
+	return wcstoul(s.c_str(), NULL, 10);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -529,12 +648,12 @@ std::wstring ToUpper(const std::wstring& s)
 }
 
 //////////////////////////////////////////////////////////////////////////
-
+#if 0 // disabled because it expects ANSI codepage (non UTF8)
 char ToLower(const char ch)
 {
 	return (char)CharLowerA((LPSTR)ch);
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////////
 
 wchar_t ToLower(const wchar_t ch)
@@ -543,17 +662,72 @@ wchar_t ToLower(const wchar_t ch)
 }
 
 //////////////////////////////////////////////////////////////////////////
-
+#if 0 // disabled because it expects ANSI codepage (non UTF8)
 char ToUpper(const char ch)
 {
 	return (char)CharUpperA((LPSTR)ch);
 }
-
+#endif
 //////////////////////////////////////////////////////////////////////////
 
 wchar_t ToUpper(const wchar_t ch)
 {
 	return (wchar_t)CharUpperW((LPWSTR)ch);
+}
+
+//------------------------------------------------------
+#if 0 // disabled because it expects ANSI codepage (non UTF8)
+size_t StrPosI(const std::string& sText, const std::string& sSubstring, const size_t offset)	// ANSI, returns -1 if not found
+{
+	if(sText.length() < offset)
+		return -1;
+	const LPCSTR p1 = sText.c_str();
+	if(sSubstring.empty())
+		return offset;
+	const LPCSTR p2 = StrStrIA(p1 + offset, sSubstring.c_str());
+	return p2 == NULL ? -1 : p2 - p1;
+}
+#endif
+//------------------------------------------------------
+
+size_t StrPosI(const std::wstring& sText, const std::wstring& sSubstring, const size_t offset)	// Unicode, returns -1 if not found
+{
+	if(sText.length() < offset)
+		return -1;
+	const LPCWSTR p1 = sText.c_str();
+	if(sSubstring.empty())
+		return offset;
+	const LPCWSTR p2 = StrStrIW(p1 + offset, sSubstring.c_str());
+	return p2 == NULL ? -1 : p2 - p1;
+}
+
+//------------------------------------------------------
+//#if 0 // disabled because it expects ANSI codepage (non UTF8)
+size_t StrPosI(const std::string& sText, const char ch, const size_t offset)	// ANSI, returns -1 if not found
+{
+	if(sText.length() < offset)
+		return -1;
+	const LPCSTR p1 = sText.c_str();
+	const LPCSTR p2 = StrChrIA(p1 + offset, ch);
+	return p2 == NULL ? -1 : p2 - p1;
+}
+//#endif
+//------------------------------------------------------
+
+size_t StrPosI(const std::wstring& sText, const wchar_t ch, const size_t offset)	// Unicode, returns -1 if not found
+{
+	if(sText.length() < offset)
+		return -1;
+	const LPCWSTR p1 = sText.c_str();
+	const LPCWSTR p2 = StrChrIW(p1 + offset, ch);
+	return p2 == NULL ? -1 : p2 - p1;
+}
+
+//------------------------------------------------------
+
+int MyStrCmpNI(LPCWSTR p1, LPCWSTR p2, const size_t nMaxChars)	// Unicode
+{
+	return StrCmpNI(p1, p2, nMaxChars);
 }
 
 //------------------------------------------------------
@@ -594,27 +768,27 @@ void BreakStringToTokens(OUT std::vector<tstring>& vectTokens, const tstring& sT
 
 //////////////////////////////////////////////////////////////////////////
 
-void BreakStringToLines(OUT std::vector<tstring>& vectLines, const tstring& sText)
+void BreakStringToLines(OUT std::vector<std::string>& vectLines, const std::string& sText)
 {
 	// Note! This function is a bit different from BreakToTokens() because it can return empty strings!
 	// Divide text into separate lines:
 	vectLines.clear();
 
-	tstring::size_type pos = 0;
-	const tstring::const_iterator begin = sText.begin();
+	std::string::size_type pos = 0;
+	const std::string::const_iterator begin = sText.begin();
 	const tstring::size_type len = sText.length();
 
 	while(len > pos)
 	{
-		const tstring::size_type pos2 = sText.find_first_of(_T("\r\n"), pos);
-		if(tstring::npos == pos2)
+		const std::string::size_type pos2 = sText.find_first_of(("\r\n"), pos);
+		if(std::string::npos == pos2)
 		{
-			const tstring s(begin + pos, sText.end());
+			const std::string s(begin + pos, sText.end());
 			vectLines.push_back(s);
 			break;
 		}
 
-		const tstring s(begin + pos, begin + pos2);
+		const std::string s(begin + pos, begin + pos2);
 		vectLines.push_back(s);
 
 		pos = pos2;
@@ -624,29 +798,52 @@ void BreakStringToLines(OUT std::vector<tstring>& vectLines, const tstring& sTex
 		{
 			const int ch = sText[pos2];
 			const int chNext = sText[pos2+1];
-			if(ch == _T('\r') && chNext == _T('\n'))
+			if(ch == ('\r') && chNext == ('\n'))
 				pos++;
-			else if(ch == _T('\n') && chNext == _T('\r'))
+			else if(ch == ('\n') && chNext == ('\r'))
 				pos++;
 		}
 	}
+}
 
-/*
-	RegExp::matchResults res;
-//	LPCSTR szRegExp = "^.*?(?=[\r]|$)";
-//	LPCSTR szRegExp = "^.*?$";	// it includes \r symbol from file
-//	LPCSTR szRegExp = "^[^\r\n]*";
-	LPCSTR szRegExp = "[^\r\n]+";
-	res = RegExp::match(sText, szRegExp, RegExp::MATCH_GLOBAL_FIRST_BACKREFS);
+//////////////////////////////////////////////////////////////////////////
 
-	int n = res.backrefs();
+void BreakStringToLines(OUT std::vector<std::wstring>& vectLines, const std::wstring& sText)
+{
+	// Note! This function is a bit different from BreakToTokens() because it can return empty strings!
+	// Divide text into separate lines:
+	vectLines.clear();
 
-	for(int line = 0; line < n; line++)
+	std::wstring::size_type pos = 0;
+	const std::wstring::const_iterator begin = sText.begin();
+	const std::wstring::size_type len = sText.length();
+
+	while(len > pos)
 	{
-		std::string s = res.bref(line);
+		const std::wstring::size_type pos2 = sText.find_first_of((L"\r\n"), pos);
+		if(std::wstring::npos == pos2)
+		{
+			const std::wstring s(begin + pos, sText.end());
+			vectLines.push_back(s);
+			break;
+		}
+
+		const std::wstring s(begin + pos, begin + pos2);
 		vectLines.push_back(s);
+
+		pos = pos2;
+
+		pos++;
+		if(pos2 < len - 1)
+		{
+			const int ch = sText[pos2];
+			const int chNext = sText[pos2+1];
+			if(ch == (L'\r') && chNext == (L'\n'))
+				pos++;
+			else if(ch == (L'\n') && chNext == (L'\r'))
+				pos++;
+		}
 	}
-*/
 }
 
 //------------------------------------------------------
@@ -751,20 +948,20 @@ std::string TruncateUtf8String(const std::string& sSource, const size_t nMaxChar
 
 //------------------------------------------------------------------------
 
-int nocase_cmp(const std::wstring& s1, const std::wstring& s2) 
+int nocase_cmp(const std::wstring& s1, const std::wstring& s2)
 {
 	return lstrcmpiW(s1.c_str(), s2.c_str());
 // 	std::wstring::const_iterator it1 = s1.begin();
 // 	std::wstring::const_iterator it2 = s2.begin();
-// 
+//
 // 	//has the end of at least one of the strings been reached?
-// 	while ( (it1 != s1.end()) && (it2 != s2.end()) ) 
+// 	while ( (it1 != s1.end()) && (it2 != s2.end()) )
 // 	{
 // 		const int c1 = (DWORD)(WCHAR)CharUpperW((LPWSTR)(WCHAR)*it1);
 // 		const int c2 = (DWORD)(WCHAR)CharUpperW((LPWSTR)(WCHAR)*it2);
 // 		if(c1 != c2) //letters differ?
 // 			// return -1 to indicate 'smaller than', 1 otherwise
-// 			return (c1 < c2) ? -1 : 1; 
+// 			return (c1 < c2) ? -1 : 1;
 // 		//proceed to the next character in each string
 // 		++it1;
 // 		++it2;
@@ -772,34 +969,34 @@ int nocase_cmp(const std::wstring& s1, const std::wstring& s2)
 // 	const std::wstring::size_type size1 = s1.size();
 // 	const std::wstring::size_type size2 = s2.size(); // cache lengths
 // 	//return -1,0 or 1 according to strings' lengths
-// 	if (size1 == size2) 
+// 	if (size1 == size2)
 // 		return 0;
 // 	return (size1 < size2) ? -1 : 1;
 }
 
 //------------------------------------------------------------------------
 
-int nocase_cmp(const std::string& s1, const std::string& s2) 
+int nocase_cmp(const std::string& s1, const std::string& s2)
 {
 	return nocase_cmp(Utf8ToUnicode(s1), Utf8ToUnicode(s2));
 // 	std::string::const_iterator it1 = s1.begin();
 // 	std::string::const_iterator it2 = s2.begin();
-// 
+//
 // 	//has the end of at least one of the strings been reached?
-// 	while ( (it1 != s1.end()) && (it2 != s2.end()) ) 
+// 	while ( (it1 != s1.end()) && (it2 != s2.end()) )
 // 	{
 // 		const int c1 = ::toupper(*it1);
 // 		const int c2 = ::toupper(*it2);
 // 		if(c1 != c2) //letters differ?
 // 			// return -1 to indicate 'smaller than', 1 otherwise
-// 			return (c1 < c2) ? -1 : 1; 
+// 			return (c1 < c2) ? -1 : 1;
 // 		//proceed to the next character in each string
 // 		++it1;
 // 		++it2;
 // 	}
 // 	std::string::size_type size1=s1.size(), size2=s2.size();// cache lengths
 // 	//return -1,0 or 1 according to strings' lengths
-// 	if (size1 == size2) 
+// 	if (size1 == size2)
 // 		return 0;
 // 	return (size1 < size2) ? -1 : 1;
 }
@@ -902,5 +1099,4 @@ void explode(OUT std::vector<std::wstring>& vect, const std::wstring& sText, con
 	}
 }
 
-//------------------------------------------------------
 //------------------------------------------------------

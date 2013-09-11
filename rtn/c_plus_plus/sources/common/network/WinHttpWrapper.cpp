@@ -242,6 +242,41 @@ bool HttpRequest::AddIfNewHttpHeaders(const std::wstring& sHeaders)
 
 //------------------------------------------------------
 
+bool HttpRequest::EnableKerberosServerAuth()
+{
+	PROFILER;
+	bool bRes = false;
+
+	MYTRACE("EnableKerberosServerAuth\n");
+
+	DWORD dwOptionValue = WINHTTP_AUTOLOGON_SECURITY_LEVEL_LOW;
+	bRes = !!WinHttpSetOption(m_hRequest, WINHTTP_OPTION_AUTOLOGON_POLICY, &dwOptionValue, sizeof(dwOptionValue));
+	if(!bRes)
+	{
+		const LONG le = GetLastError();
+		MYTRACE("WinHttpSetOption(WINHTTP_OPTION_AUTOLOGON_POLICY) failed: %d (%s)\n",
+			le, StdString::FormatApiErrorA(le).c_str());
+		//return false;
+	}
+
+	bRes = !!WinHttpSetCredentials(m_hRequest,
+		WINHTTP_AUTH_TARGET_SERVER,
+		WINHTTP_AUTH_SCHEME_NEGOTIATE,
+		NULL, NULL,
+		NULL);
+	if(!bRes)
+	{
+		const LONG le = GetLastError();
+		MYTRACE("WinHttpSetCredentials(WINHTTP_AUTH_TARGET_SERVER, WINHTTP_AUTH_SCHEME_NEGOTIATE) failed: %d (%s)\n",
+			le, StdString::FormatApiErrorA(le).c_str());
+		//return false;
+	}
+
+	return true;
+}
+
+//------------------------------------------------------
+
 bool HttpRequest::SendRequest(
 			IN const std::vector<std::wstring>& vectAdditionalHeaders,
 			IN const std::string& sBinaryRequestBody)
@@ -262,7 +297,7 @@ bool HttpRequest::SendRequest(
 	bRes = !!WinHttpSetOption(m_hRequest, WINHTTP_OPTION_DISABLE_FEATURE, &dwOptionValue, sizeof(dwOptionValue));
 	if(!bRes)
 	{
-		MYTRACE("WinHttpSetOption failed!\n");
+		MYTRACE("WinHttpSetOption(WINHTTP_OPTION_DISABLE_FEATURE) failed!\n");
 		return false;
 	}
 
@@ -427,7 +462,7 @@ bool HttpRequest::SendRequest(
 			bRes = AddOrReplaceHttpHeaders(sHeader);
 			if(!bRes)
 			{
-				MYTRACE("AddOrReplaceHttpHeaders failed! (%ls)\n", sHeader.c_str());
+				MYTRACE("AddOrReplaceHttpHeaders failed! (%ls) err = %d\n", sHeader.c_str(), GetLastError());
 				return false;
 			}
 		}
@@ -486,7 +521,7 @@ bool HttpRequest::SendRequest(
 	if(!bRes)
 	{
 		const LONG le = GetLastError();
-		MYTRACE("WinHttpSendRequest failed: %d (%ls)!\n", le, StdString::FormatApiErrorW(le).c_str());
+		MYTRACE("WinHttpSendRequest failed: %d (%s)!\n", le, StdString::FormatApiErrorA(le).c_str());
 		return false;
 	}
 
@@ -624,7 +659,7 @@ bool HttpRequest::GetResponse(std::string& sBinaryResponce)
 	if(!bRes)
 	{
 		const LONG le = GetLastError();
-		MYTRACE("WinHttpReceiveResponse failed: %d (%ls)!\n", le, StdString::FormatApiErrorW(le).c_str());
+		MYTRACE("WinHttpReceiveResponse failed: %d (%s)!\n", le, StdString::FormatApiErrorA(le).c_str());
 		return false;
 	}
 
@@ -646,7 +681,7 @@ bool HttpRequest::GetResponse(std::string& sBinaryResponce)
 		if(!bRes)
 		{
 			const LONG le = GetLastError();
-			MYTRACE("WinHttpQueryDataAvailable failed: %d (%ls)!\n", le, StdString::FormatApiErrorW(le).c_str());
+			MYTRACE("WinHttpQueryDataAvailable failed: %d (%s)!\n", le, StdString::FormatApiErrorA(le).c_str());
 			return false;
 		}
 
@@ -662,7 +697,7 @@ bool HttpRequest::GetResponse(std::string& sBinaryResponce)
 		if(!bRes)
 		{
 			const LONG le = GetLastError();
-			MYTRACE("WinHttpReadData failed: %d (%ls)!\n", le, StdString::FormatApiErrorW(le).c_str());
+			MYTRACE("WinHttpReadData failed: %d (%s)!\n", le, StdString::FormatApiErrorA(le).c_str());
 			return false;
 		}
 		dwActualData += dwDownloaded;
@@ -682,7 +717,7 @@ bool HttpRequest::GetResponse(std::string& sBinaryResponce)
 			const LONG le = GetLastError();
 			if(ERROR_WINHTTP_HEADER_NOT_FOUND != le)
 			{
-				MYTRACE("WARNING! GetRequestContentEncoding failed: %d (%ls)\n", le, StdString::FormatApiErrorW(le).c_str());
+				MYTRACE("WARNING! GetRequestContentEncoding failed: %d (%s)\n", le, StdString::FormatApiErrorA(le).c_str());
 			}
 		}
 
@@ -878,6 +913,29 @@ HttpRequestPtr HttpConnection::OpenRequest(
 
 //------------------------------------------------------
 
+void HttpSession::UseKerberosServerAuthForNextRequest(const bool bUse, const bool bTestOnly)
+{
+	PROFILER;
+	if(!bTestOnly)
+		m_bUseKerberosServerAuthForNextRequest = bUse;
+
+	if(bUse)
+	{
+		bool bRes = false;
+
+		DWORD dwOptionValue = WINHTTP_AUTOLOGON_SECURITY_LEVEL_LOW;
+		bRes = !!WinHttpSetOption(m_hSession, WINHTTP_OPTION_AUTOLOGON_POLICY, &dwOptionValue, sizeof(dwOptionValue));
+		if(!bRes)
+		{
+			const LONG le = GetLastError();
+			MYTRACE("WinHttpSetOption(session, WINHTTP_OPTION_AUTOLOGON_POLICY) failed: %d (%s) (2)\n",
+				le, StdString::FormatApiErrorA(le).c_str());
+		}
+	}
+}
+
+//------------------------------------------------------
+
 void CALLBACK HttpSession::StatusCallback(
 					HINTERNET hInternet,
 					DWORD_PTR dwContext,
@@ -942,6 +1000,7 @@ const REQUEST_RESULT& REQUEST_RESULTS::GetLastResult() const
 HttpSession::HttpSession(HINTERNET hSession)
 {
 	m_bCheckServerSSLCertificate = false;
+	m_bUseKerberosServerAuthForNextRequest = false;
 	m_hSession = hSession;
 }
 
@@ -1008,7 +1067,7 @@ CComPtr<HttpSession> HttpSession::Create(
 
 	dwValue = 5;
 	bRes = !!WinHttpSetOption(hSession, WINHTTP_OPTION_CONNECT_RETRIES, &dwValue, sizeof(dwValue));
-	MYASSERT(bRes && "WinHttpSetOption failed!");
+	MYASSERT(bRes && "WinHttpSetOption(WINHTTP_OPTION_CONNECT_RETRIES) failed!");
 
 /*
 	DWORD dwTimeout = 0;
@@ -1069,8 +1128,8 @@ bool HttpSession::SetProxyInformation(
 	if(!bRes)
 	{
 		const LONG le = GetLastError();
-		MYTRACE("WinHttpSetOption(WINHTTP_OPTION_PROXY) failed: %d (%ls)\n",
-			le, StdString::FormatApiErrorW(le).c_str());
+		MYTRACE("WinHttpSetOption(WINHTTP_OPTION_PROXY) failed: %d (%s)\n",
+			le, StdString::FormatApiErrorA(le).c_str());
 		return false;
 	}
 
@@ -1128,8 +1187,8 @@ bool HttpSession::SetUserAgent(
 	if(!bRes)
 	{
 		const LONG le = GetLastError();
-		MYTRACE("WinHttpSetOption(WINHTTP_OPTION_USER_AGENT) failed: %d (%ls)\n",
-			le, StdString::FormatApiErrorW(le).c_str());
+		MYTRACE("WinHttpSetOption(WINHTTP_OPTION_USER_AGENT) failed: %d (%s)\n",
+			le, StdString::FormatApiErrorA(le).c_str());
 		return false;
 	}
 
@@ -1205,7 +1264,7 @@ bool HttpSession::CrackUrl(
 bool HttpSession::Connect(
 		IN const std::wstring&	sVerb,	// VERB_GET, VERB_POST, etc.
 		IN const std::wstring&	sWholeUrl,
-		OUT HttpConnectionPtr&	ptrConnection,
+		IN OUT HttpConnectionPtr&	ptrConnection,	// may be not-NULL on input
 		OUT HttpRequestPtr&		ptrRequest
 		)
 {
@@ -1221,12 +1280,16 @@ bool HttpSession::Connect(
 		return false;
 	}
 
-	HttpConnectionPtr ptrConn = Connect(sHostName, nPort);
+	HttpConnectionPtr ptrConn = ptrConnection;
 	if(!ptrConn)
 	{
-		MYTRACE("Connect() failed!, host = %ls, port = %d\n",
-			sHostName.c_str(), nPort);
-		return false;
+		ptrConn = Connect(sHostName, nPort);
+		if(!ptrConn)
+		{
+			MYTRACE("Connect() failed!, host = %ls, port = %d\n",
+				sHostName.c_str(), nPort);
+			return false;
+		}
 	}
 
 	const DWORD dwOpenRequestFlags =
@@ -1270,6 +1333,7 @@ std::wstring ConstructUrl(
 bool HttpSession::DownloadFromUrl(
 					IN const REQUEST_INFO&	globalRequest,
 					OUT REQUEST_RESULTS&	globalResults,
+					IN OUT HttpConnectionPtr&	ptrConnectionArg,	// input may be NULL
 					IN bool					bGenerateOutput,
 					IN const int			nMaxRedirects
 					)
@@ -1312,7 +1376,7 @@ bool HttpSession::DownloadFromUrl(
 		//------------------------------------------------------
 		// Connect server (possibly through the proxy):
 
-		HttpConnectionPtr ptrConnection;
+		HttpConnectionPtr ptrConnection = ptrConnectionArg;
 		HttpRequestPtr ptrRequest;
 		bRes = Connect(redirInfo.sVerb, redirInfo.sWholeUrl, ptrConnection, ptrRequest);
 		if(!bRes)
@@ -1320,6 +1384,19 @@ bool HttpSession::DownloadFromUrl(
 			MYTRACE("Connect failed! (redir #%d), verb = %ls, URL = %ls\n",
 				nRedirectIndex, redirInfo.sVerb.c_str(), redirInfo.sWholeUrl.c_str());
 			return false;
+		}
+		ptrConnectionArg = ptrConnection;
+
+		if(m_bUseKerberosServerAuthForNextRequest)
+		{
+			m_bUseKerberosServerAuthForNextRequest = false;
+
+			bRes = ptrRequest->EnableKerberosServerAuth();
+			if(!bRes)
+			{
+				MYTRACE("EnableKerberosServerAuth failed! (redir #%d), verb = %ls, URL = %ls\n",
+					nRedirectIndex, redirInfo.sVerb.c_str(), redirInfo.sWholeUrl.c_str());
+			}
 		}
 
 		//------------------------------------------------------
@@ -1354,7 +1431,7 @@ bool HttpSession::DownloadFromUrl(
 		if(!bRes)
 		{
 			const LONG le = GetLastError();
-			MYTRACE("WARNING! GetRawResponceTextHeaders failed: %d (%ls)\n", le, StdString::FormatApiErrorW(le).c_str());
+			MYTRACE("WARNING! GetRawResponceTextHeaders failed: %d (%s)\n", le, StdString::FormatApiErrorA(le).c_str());
 		}
 
 		std::wstring sContentLength;
@@ -1364,7 +1441,7 @@ bool HttpSession::DownloadFromUrl(
 		if(!bRes && sContentLength != L"0")
 		{
 			const LONG le = GetLastError();
-			MYTRACE("WARNING! GetRequestContentType failed: %d (%ls)\n", le, StdString::FormatApiErrorW(le).c_str());
+			MYTRACE("WARNING! GetRequestContentType failed: %d (%s)\n", le, StdString::FormatApiErrorA(le).c_str());
 		}
 
 		bRes = ptrRequest->QueryTextHeaders(redirResults.sContentEncoding, WINHTTP_QUERY_CONTENT_ENCODING);
@@ -1373,7 +1450,7 @@ bool HttpSession::DownloadFromUrl(
 			const LONG le = GetLastError();
 			if(ERROR_WINHTTP_HEADER_NOT_FOUND != le)
 			{
-				MYTRACE("WARNING! GetRequestContentEncoding failed: %d (%ls)\n", le, StdString::FormatApiErrorW(le).c_str());
+				MYTRACE("WARNING! GetRequestContentEncoding failed: %d (%s)\n", le, StdString::FormatApiErrorA(le).c_str());
 			}
 		}
 
@@ -1383,7 +1460,7 @@ bool HttpSession::DownloadFromUrl(
 			const LONG le = GetLastError();
 			if(ERROR_WINHTTP_HEADER_NOT_FOUND != le)
 			{
-				MYTRACE("WARNING! GetRequestTransferEncoding failed: %d (%ls)\n", le, StdString::FormatApiErrorW(le).c_str());
+				MYTRACE("WARNING! GetRequestTransferEncoding failed: %d (%s)\n", le, StdString::FormatApiErrorA(le).c_str());
 			}
 		}
 
@@ -1391,7 +1468,7 @@ bool HttpSession::DownloadFromUrl(
 		if(!bRes)
 		{
 			const LONG le = GetLastError();
-			MYTRACE("WARNING! GetRequestServer failed: %d (%ls)\n", le, StdString::FormatApiErrorW(le).c_str());
+			MYTRACE("WARNING! GetRequestServer failed: %d (%s)\n", le, StdString::FormatApiErrorA(le).c_str());
 		}
 
 		redirResults.dwHttpStatusCode = ptrRequest->GetRequestHttpStatus();

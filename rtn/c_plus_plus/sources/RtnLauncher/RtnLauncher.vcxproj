@@ -79,13 +79,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\ComBase.cpp" />
+    <ClCompile Include="..\common\encode\base64.cpp" />
     <ClCompile Include="..\common\FileHelpers.cpp" />
     <ClCompile Include="..\common\network\WinHttpCookies.cpp" />
     <ClCompile Include="..\common\network\WinHttpWrapper.cpp" />
     <ClCompile Include="..\common\TextHelpers.cpp" />
     <ClCompile Include="..\common\TimeHelpers.cpp" />
     <ClCompile Include="..\common\Tracing.cpp" />
+    <ClCompile Include="kerberos.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="runa.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -97,6 +100,7 @@
     <ClInclude Include="..\common\ComBase.h" />
     <ClInclude Include="..\common\compiler.h" />
     <ClInclude Include="..\common\debug\SmartProfiler.h" />
+    <ClInclude Include="..\common\encode\base64.h" />
     <ClInclude Include="..\common\FileHelpers.h" />
     <ClInclude Include="..\common\network\WinHttpCookies.h" />
     <ClInclude Include="..\common\network\WinHttpWrapper.h" />
@@ -105,7 +109,10 @@
     <ClInclude Include="..\common\TimeHelpers.h" />
     <ClInclude Include="..\common\Tracing.h" />
     <ClInclude Include="..\common\TracingInterface.h" />
+    <ClInclude Include="kerberos.h" />
+    <ClInclude Include="Main.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="runa.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

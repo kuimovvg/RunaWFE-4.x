@@ -75,6 +75,8 @@ public:
 	bool AddOrReplaceHttpHeaders(const std::wstring& sHeaders);
 	bool AddIfNewHttpHeaders(const std::wstring& sHeaders);
 
+	bool EnableKerberosServerAuth();
+
 public:
 	bool QueryTextHeaders(OUT std::wstring& sHeaders, IN const DWORD dwInfoLevel,
 		IN OUT LPDWORD lpdwHeaderIndex = WINHTTP_NO_HEADER_INDEX);
@@ -271,13 +273,14 @@ public:
 	bool Connect(
 		IN const std::wstring&	sVerb,	// VERB_GET, VERB_POST, etc.
 		IN const std::wstring&	sWholeUrl,
-		OUT HttpConnectionPtr&	ptrConnection,
+		IN OUT HttpConnectionPtr&	ptrConnection,	// may be not-NULL on input
 		OUT HttpRequestPtr&		ptrRequest
 		);
 
 	bool DownloadFromUrl(
 		IN const REQUEST_INFO&	request,
 		OUT REQUEST_RESULTS&	results,
+		IN OUT HttpConnectionPtr&	ptrConnectionArg,	// input may be NULL
 		IN bool					bGenerateOutput = true,
 		IN const int			nMaxRedirects = 10
 		);
@@ -290,9 +293,10 @@ public:
 		IN const int			nMaxRedirects = 10
 		)
 	{
-		REQUEST_INFO request(sVerb, sWholeUrl);
-		REQUEST_RESULTS results;
-		const bool bRes = DownloadFromUrl(request, results, bGenerateOutput, nMaxRedirects);
+		REQUEST_INFO		request(sVerb, sWholeUrl);
+		REQUEST_RESULTS		results;
+		HttpConnectionPtr	ptrConnection;
+		const bool bRes = DownloadFromUrl(request, results, ptrConnection, bGenerateOutput, nMaxRedirects);
 		const REQUEST_RESULT& res = results.GetLastResult();
 		sBinaryResponce = res.sBinaryReplyBody;
 		return bRes;
@@ -331,6 +335,8 @@ public:
 		m_bCheckServerSSLCertificate = bCheckCertificates;
 	}
 
+	void UseKerberosServerAuthForNextRequest(const bool bUse = true, const bool bTestOnly = false);
+
 protected:
 	static void CALLBACK HttpSession::StatusCallback(
 		HINTERNET hInternet,
@@ -348,6 +354,7 @@ protected:
 
 	std::vector<std::wstring>	m_vectBrowserHeaders;	// if empty, then defaults are used. Usually: Accept, Accept-language, Accept-Encoding, Accept-Charset
 	bool			m_bCheckServerSSLCertificate;
+	bool			m_bUseKerberosServerAuthForNextRequest;
 
 protected:
 	HINTERNET		m_hSession;

@@ -24,6 +24,11 @@
     <ClCompile Include="..\common\ComBase.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\encode\base64.cpp">
+      <Filter>common\encode</Filter>
+    </ClCompile>
+    <ClCompile Include="kerberos.cpp" />
+    <ClCompile Include="runa.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -68,6 +73,12 @@
     <ClInclude Include="..\common\TracingInterface.h">
       <Filter>common</Filter>
     </ClInclude>
+    <ClInclude Include="..\common\encode\base64.h">
+      <Filter>common\encode</Filter>
+    </ClInclude>
+    <ClInclude Include="kerberos.h" />
+    <ClInclude Include="runa.h" />
+    <ClInclude Include="Main.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Error.ico">
@@ -95,6 +106,9 @@
     </Filter>
     <Filter Include="Resources">
       <UniqueIdentifier>{c993b0fa-cc6b-465d-b80b-f4e4b34e52f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="common\encode">
+      <UniqueIdentifier>{a1d38b40-66a3-42e3-a6b7-198c5bf12474}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
