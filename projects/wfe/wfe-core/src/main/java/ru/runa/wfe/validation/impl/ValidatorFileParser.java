@@ -32,7 +32,6 @@ import ru.runa.wfe.validation.ValidatorConfig;
 import com.google.common.collect.Maps;
 
 public class ValidatorFileParser {
-    static final String MULTI_TEXTVALUE_SEPARATOR = " ";
 
     public static Map<String, String> parseValidatorDefinitions(InputStream is) {
         Map<String, String> result = Maps.newHashMap();
@@ -66,14 +65,13 @@ public class ValidatorFileParser {
         for (Element validatorElement : validatorElements) {
             String validatorType = validatorElement.attributeValue("type");
             Map<String, String> params = new HashMap<String, String>(extraParams);
-            List<Element> paramNodes = validatorElement.elements("param");
-            for (Element paramElement : paramNodes) {
+            List<Element> paramElements = validatorElement.elements("param");
+            for (Element paramElement : paramElements) {
                 String paramName = paramElement.attributeValue("name");
-                String text = paramElement.getTextTrim();
-                text = text.replaceAll("\n", MULTI_TEXTVALUE_SEPARATOR);
+                String text = paramElement.getText();
                 params.put(paramName, text);
             }
-            String message = validatorElement.elementTextTrim("message");
+            String message = validatorElement.elementText("message");
             ValidatorConfig config = new ValidatorConfig(validatorType, params, message);
             configs.add(config);
         }
