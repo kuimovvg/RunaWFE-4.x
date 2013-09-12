@@ -114,10 +114,12 @@ public interface ExecutionService {
      *            authorized user
      * @param processId
      *            process id process id
+     * @param recursive
+     *            <code>true</code> for all sub processes
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public List<WfProcess> getSubprocessesRecursive(User user, Long processId) throws ProcessDoesNotExistException;
+    public List<WfProcess> getSubprocesses(User user, Long processId, boolean recursive) throws ProcessDoesNotExistException;
 
     /**
      * Cancels process by id.

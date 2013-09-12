@@ -144,7 +144,7 @@
 	</div>
 </td></tr>
 <tr><td align='right' class='box'>
-	<input value='<bean:message key="support.files" />' class='button' onclick="showSupportFiles();" type='button'>
+	<input value='<bean:message key="button.support" />' class='button' onclick="showSupportFiles();" type='button'>
 </td></tr>
 </table>
 

@@ -83,7 +83,6 @@ public class ErrorDetailsAction extends ActionBase {
                         if (Objects.equal(detail.getNodeId(), form.getName())) {
                             String html = "<form id='supportForm'>";
                             html += "<input type='hidden' name='processId' value='" + form.getId() + "' />";
-                            html += "<input type='hidden' name='nodeId' value='" + form.getName() + "' />";
                             html += "</form>";
                             html += Throwables.getStackTraceAsString(detail.getThrowable());
                             rootObject.put(HTML, html);
@@ -91,98 +90,107 @@ public class ErrorDetailsAction extends ActionBase {
                     }
                 }
             } else if ("showSupportFiles".equals(action)) {
-                System.out.println(request.getQueryString());
                 boolean fileIncluded = false;
-                JSONArray array = new JSONArray();
                 User user = getLoggedUser(request);
+                JSONArray processesErrorInfo = new JSONArray();
                 // TODO privileges are required for successful operation!
-                for (Entry<Long, List<TokenErrorDetail>> processEntry : ProcessExecutionErrors.getProcessErrors().entrySet()) {
-                    WfProcess process = Delegates.getExecutionService().getProcess(user, processEntry.getKey());
-                    Map<String, byte[]> files = Maps.newHashMap();
-                    while (process != null) {
-                        // InputStream in =
-                        // ClassLoaderUtil.getAsStreamNotNull("error.report.email.config.xml",
-                        // getClass());
-                        // byte[] configBytes = ByteStreams.toByteArray(in);
-                        // EmailConfig config =
-                        // EmailConfigParser.parse(configBytes);
-                        // config.getConnectionProperties().put("Reply-To",
-                        // "dofs197@gmail.com");
-                        // List<Attachment> attachments =
-                        // Lists.newArrayList();
-                        // Attachment definitionAttachment = new
-                        // Attachment();
-                        // definitionAttachment.content =
-                        // Delegates.getDefinitionService().getProcessDefinitionFile(user,
-                        // process.getDefinitionId(),
-                        // IFileDataProvider.PAR_FILE);
-                        // definitionAttachment.fileName = process.getId() +
-                        // ".definition.par";
-                        // attachments.add(definitionAttachment);
-                        // Attachment processGraphAttachment = new
-                        // Attachment();
-                        // processGraphAttachment.content =
-                        // Delegates.getExecutionService().getProcessDiagram(user,
-                        // process.getId(), null, null);
-                        // processGraphAttachment.fileName = process.getId()
-                        // + ".graph.png";
-                        // attachments.add(processGraphAttachment);
-                        // message.append("<hr /><b>").append(process).append("</b><br />");
-                        // message.append(getProcessLogs(request, user,
-                        // process.getId()));
-                        // config.setMessage(message.toString());
-                        // EmailUtils.sendMessage(config, attachments);
-                        // ajaxResponse =
-                        // getResources(request).getMessage("errors.report.sent");
-                        try {
-                            files.put(
-                                    process.getId() + ".definition.par",
-                                    Delegates.getDefinitionService().getProcessDefinitionFile(user, process.getDefinitionId(),
-                                            IFileDataProvider.PAR_FILE));
-                            fileIncluded = true;
-                        } catch (Exception e) {
-                            fileIncluded = false;
-                            log.warn("definition for " + process, e);
-                        }
-                        addSupportFileInfo(array,
-                                MessageFormat.format(getResources(request).getMessage("support.file.process.definition"), process.getName()),
-                                fileIncluded);
-                        try {
-                            files.put(process.getId() + ".graph.png",
-                                    Delegates.getExecutionService().getProcessDiagram(user, process.getId(), null, null));
-                            fileIncluded = true;
-                        } catch (Exception e) {
-                            fileIncluded = false;
-                            log.warn("process graph for " + process, e);
-                        }
-                        addSupportFileInfo(array,
-                                MessageFormat.format(getResources(request).getMessage("support.file.process.graph"), process.getId()), fileIncluded);
-                        try {
-                            byte[] logs = getProcessLogs(request, user, process.getId()).getBytes(Charsets.UTF_8);
-                            files.put(process.getId() + ".log.html", logs);
-                            fileIncluded = true;
-                        } catch (Exception e) {
-                            fileIncluded = false;
-                            log.warn("process logs for " + process, e);
-                        }
-                        addSupportFileInfo(array,
-                                MessageFormat.format(getResources(request).getMessage("support.file.process.logs"), process.getId()), fileIncluded);
-                        try {
-                            process = Delegates.getExecutionService().getParentProcess(user, process.getId());
-                        } catch (Exception e) {
-                            log.warn("parent process for " + process, e);
-                            addSupportFileInfo(array,
-                                    MessageFormat.format(getResources(request).getMessage("support.parent.process"), process.getId()), false);
-                            process = null;
-                        }
+                // TODO zip file name encoding
+                // TODO disable Support button after click
+                // TODO bots
+                Map<Long, List<Long>> processHierarchies = Maps.newHashMap();
+                if (request.getParameter("processId") != null) {
+                    initProcessHierarchy(user, processHierarchies, Long.parseLong(request.getParameter("processId")));
+                } else {
+                    for (Long processId : ProcessExecutionErrors.getProcessErrors().keySet()) {
+                        initProcessHierarchy(user, processHierarchies, processId);
                     }
-                    String fileName = "support." + processEntry.getKey() + ".zip";
-                    request.getSession().setAttribute(fileName, createZip(files));
-                    // message.append("<br /><br /><a href='/getSessionFile.do?fileName=").append(fileName).append("'>");
-                    // message.append().append("</a>");
-                    rootObject.put("downloadUrl", "/wfe/getSessionFile.do?fileName=" + fileName);
+                }
+                Map<String, byte[]> supportFiles = Maps.newHashMap();
+                for (Entry<Long, List<Long>> processesEntry : processHierarchies.entrySet()) {
+                    JSONObject errorInfo = new JSONObject();
+                    errorInfo.put("id", processesEntry.getKey());
+                    for (Long processId : processesEntry.getValue()) {
+                        List<WfProcess> processes = Delegates.getExecutionService().getSubprocesses(user, processId, true);
+                        processes.add(0, Delegates.getExecutionService().getProcess(user, processId));
+                        Map<String, byte[]> errorFiles = Maps.newHashMap();
+                        JSONArray includedFileNames = new JSONArray();
+                        String exceptions = "";
+                        List<TokenErrorDetail> errorDetails = ProcessExecutionErrors.getProcessErrors().get(processId);
+                        for (TokenErrorDetail detail : errorDetails) {
+                            exceptions += "\r\n---------------------------------------------------------------";
+                            exceptions += "\r\n" + CalendarUtil.formatDateTime(detail.getOccuredDate()) + " " + detail.getNodeId() + "/"
+                                    + detail.getTaskName();
+                            if (detail.getBotTask() != null) {
+                                String botTaskIdentifier = detail.getBotTask().getId() + "." + detail.getBotTask().getName();
+                                exceptions += "\nbot task = " + detail.getBotTask().getTaskHandlerClassName() + "/" + botTaskIdentifier;
+                                if (!errorFiles.containsKey(botTaskIdentifier)) {
+                                    errorFiles.put(botTaskIdentifier, detail.getBotTask().getConfiguration());
+                                    addSupportFileInfo(includedFileNames, MessageFormat.format(
+                                            getResources(request).getMessage("support.file.bottask.configuration"), botTaskIdentifier), true);
+                                }
+                            }
+                            exceptions += "\r\n" + Throwables.getStackTraceAsString(detail.getThrowable());
+                        }
+                        errorFiles.put("exceptions." + processId + ".txt", exceptions.getBytes(Charsets.UTF_8));
+                        addSupportFileInfo(includedFileNames, getResources(request).getMessage("support.file.exceptions"), true);
+                        for (WfProcess process : processes) {
+                            String processDefinitionFileName = process.getName() + ".par";
+                            if (!errorFiles.containsKey(processDefinitionFileName)) {
+                                try {
+                                    errorFiles.put(
+                                            processDefinitionFileName,
+                                            Delegates.getDefinitionService().getProcessDefinitionFile(user, process.getDefinitionId(),
+                                                    IFileDataProvider.PAR_FILE));
+                                    fileIncluded = true;
+                                } catch (Exception e) {
+                                    fileIncluded = false;
+                                    log.warn("definition for " + process, e);
+                                }
+                                addSupportFileInfo(includedFileNames, MessageFormat.format(
+                                        getResources(request).getMessage("support.file.process.definition"), processDefinitionFileName), fileIncluded);
+                            }
+                            try {
+                                errorFiles.put(process.getId() + ".graph.png",
+                                        Delegates.getExecutionService().getProcessDiagram(user, process.getId(), null, null));
+                                fileIncluded = true;
+                            } catch (Exception e) {
+                                fileIncluded = false;
+                                log.warn("process graph for " + process, e);
+                            }
+                            addSupportFileInfo(includedFileNames,
+                                    MessageFormat.format(getResources(request).getMessage("support.file.process.graph"), process.getId()),
+                                    fileIncluded);
+                            try {
+                                byte[] logs = getProcessLogs(request, user, process.getId()).getBytes(Charsets.UTF_8);
+                                errorFiles.put(process.getId() + ".log.html", logs);
+                                fileIncluded = true;
+                            } catch (Exception e) {
+                                fileIncluded = false;
+                                log.warn("process logs for " + process, e);
+                            }
+                            addSupportFileInfo(includedFileNames,
+                                    MessageFormat.format(getResources(request).getMessage("support.file.process.logs"), process.getId()),
+                                    fileIncluded);
+                        }
+                        supportFiles.put("support." + processId + ".zip", createZip(errorFiles));
+                        errorInfo.put("includedFileNames", includedFileNames);
+                        processesErrorInfo.add(errorInfo);
+                    }
+                }
+                rootObject.put("processesErrorInfo", processesErrorInfo);
+                String supportFileName = null;
+                byte[] supportFile = null;
+                if (supportFiles.size() == 1) {
+                    supportFileName = supportFiles.keySet().iterator().next();
+                    supportFile = supportFiles.values().iterator().next();
+                } else if (supportFiles.size() > 1) {
+                    supportFileName = "support.files.zip";
+                    supportFile = createZip(supportFiles);
+                }
+                if (supportFileName != null && supportFile != null) {
+                    request.getSession().setAttribute(supportFileName, supportFile);
+                    rootObject.put("downloadUrl", "/wfe/getSessionFile.do?fileName=" + supportFileName);
                     rootObject.put("downloadTitle", getResources(request).getMessage("support.files.download"));
-                    rootObject.put("includedFiles", array);
                 }
             } else {
                 rootObject.put(HTML, "Unknown action: " + action);
@@ -200,6 +208,24 @@ public class ErrorDetailsAction extends ActionBase {
             log.error("Unable to write ajax output", e);
         }
         return null;
+    }
+
+    private void initProcessHierarchy(User user, Map<Long, List<Long>> processHierarchies, Long processId) {
+        try {
+            WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
+            while (process != null) {
+                processId = process.getId();
+                process = Delegates.getExecutionService().getParentProcess(user, processId);
+            }
+            List<Long> processIdsWithErrors = processHierarchies.get(processId);
+            if (processIdsWithErrors == null) {
+                processIdsWithErrors = Lists.newArrayList();
+                processHierarchies.put(processId, processIdsWithErrors);
+            }
+            processIdsWithErrors.add(processId);
+        } catch (Exception e) {
+            log.warn("for process " + processId, e);
+        }
     }
 
     private void addSupportFileInfo(JSONArray array, String fileInfo, boolean fileIncluded) {

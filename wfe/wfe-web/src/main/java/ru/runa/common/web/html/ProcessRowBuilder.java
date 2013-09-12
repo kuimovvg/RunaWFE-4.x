@@ -64,9 +64,8 @@ public class ProcessRowBuilder extends ReflectionRowBuilder {
         List<TR> result = new ArrayList<TR>();
         Object item = items.get(currentState.getItemIndex());
         ExecutionService executionService = Delegates.getExecutionService();
-        List<WfProcess> listSubProcessInstance = executionService.getSubprocessesRecursive(Commons.getUser(pageContext.getSession()),
-                ((WfProcess) item).getId());
-
+        List<WfProcess> listSubProcessInstance = executionService.getSubprocesses(Commons.getUser(pageContext.getSession()),
+                ((WfProcess) item).getId(), true);
         if (currentState.isGroupHeader()
                 && fieldsToDisplayNames[currentState.getCurrentGrouppedColumnIdx()].displayName.startsWith(ClassPresentation.filterable_prefix)) {
             result.add(buildGroupHeader(listSubProcessInstance));
@@ -182,8 +181,8 @@ public class ProcessRowBuilder extends ReflectionRowBuilder {
             allWfProcessItems = new ArrayList<WfProcess>();
             ExecutionService executionService = Delegates.getExecutionService();
             for (Object item : items) {
-                List<WfProcess> listSubProcessInstance = executionService.getSubprocessesRecursive(Commons.getUser(pageContext.getSession()),
-                        ((WfProcess) item).getId());
+                List<WfProcess> listSubProcessInstance = executionService.getSubprocesses(Commons.getUser(pageContext.getSession()),
+                        ((WfProcess) item).getId(), true);
                 allWfProcessItems.add((WfProcess) item);
                 allWfProcessItems.addAll(listSubProcessInstance);
             }

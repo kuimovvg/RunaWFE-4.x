@@ -137,9 +137,14 @@ public class ExecutionLogic extends WFCommonLogic {
         return new WfProcess(nodeProcess.getProcess());
     }
 
-    public List<WfProcess> getSubprocessesRecursive(User user, Long id) throws ProcessDoesNotExistException {
+    public List<WfProcess> getSubprocessesRecursive(User user, Long id, boolean recursive) throws ProcessDoesNotExistException {
         Process process = processDAO.getNotNull(id);
-        List<Process> subprocesses = nodeProcessDAO.getSubprocessesRecursive(process);
+        List<Process> subprocesses;
+        if (recursive) {
+            subprocesses = nodeProcessDAO.getSubprocessesRecursive(process);
+        } else {
+            subprocesses = nodeProcessDAO.getSubprocesses(process);
+        }
         subprocesses = filterIdentifiable(user, subprocesses, ProcessPermission.READ);
         return getProcesses(subprocesses);
     }
