@@ -27,6 +27,7 @@
 		var executionSuccessMessage = "<bean:message key="adminkit.script.execution.success" />";
 		var executionFailedMessage = "<bean:message key="adminkit.script.execution.failed" />";
 		var buttonCloseMessage = "<bean:message key="button.close" />";
+		var buttonSupportMessage = "<bean:message key="button.support" />";
 		var loadingMessage = "<bean:message key="message.loading" />";
 	</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery-1.7.1.min.js" />">c=0;</script>

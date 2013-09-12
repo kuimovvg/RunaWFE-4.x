@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	var buttons = {};
-	buttons["Support"] = function() {
+	buttons[buttonSupportMessage] = function() {
 		showSupportFiles();
 	};
 	buttons[buttonCloseMessage] = function() {
@@ -51,16 +51,29 @@ function showProcessError(processId, nodeId) {
 }
 
 function showSupportFiles() {
-	$("#errorDetails").html("<img href='/wfe/images/loading.gif' align='absmiddle' /> " + loadingMessage);
+	var url = "/wfe/error_details.do?action=showSupportFiles&" + $("#supportForm").serialize();
+	$("#errorDetails").html("<br/><br/><br/>&nbsp;&nbsp;&nbsp;<img src='/wfe/images/loading.gif' align='absmiddle' /> " + loadingMessage);
 	$.errorDetailsDialog.dialog("open");
     $.getJSON(
-		"/wfe/error_details.do?action=showSupportFiles&" + $("#supportForm").serialize(),
+		url,
 		function(data) {
-			$("#errorDetails").html("");
-			$.each(data.includedFiles, function(i, item) {
-				$("#errorDetails").append("<div><input type='radio' disabled='true' checked='"+item.included+"'>"+item.info+"</a></div>");
+			$("#errorDetails").html("<div id='processTabs'><ul id='processHeaders'></ul></div>");
+  			$.each(data.processesErrorInfo, function(i, processErrorInfo) {
+  				$("#processHeaders").append("<li><a href='#processError" + processErrorInfo.id + "'>" + processErrorInfo.id + "</a></li>");
+				$("#processTabs").append("<div id='processError" + processErrorInfo.id + "'></div>");
+				$.each(processErrorInfo.includedFileNames, function(i, fileInfo) {
+					var presentationFileInfo = "<input type='checkbox' disabled='true'";
+					if (fileInfo.included) {
+						presentationFileInfo += " checked='true'";
+					}
+					presentationFileInfo += ">" + fileInfo.info + "<br />";
+					$("#processError" + processErrorInfo.id).append(presentationFileInfo);
+				});
 			});
-			$("#errorDetails").append("<br /><br /><a href='" + data.downloadUrl + "'>" + data.downloadTitle + "</a>");
+			$("#processTabs").tabs();
+			if (data.downloadUrl) {
+				$("#errorDetails").append("<br /><br /><a href='" + data.downloadUrl + "' style='text-decoration: underline;'>" + data.downloadTitle + "</a>");
+			}
 		}
 	);
 }
