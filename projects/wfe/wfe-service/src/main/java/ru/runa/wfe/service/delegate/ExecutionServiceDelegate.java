@@ -102,9 +102,9 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public List<WfProcess> getSubprocessesRecursive(User user, Long id) {
+    public List<WfProcess> getSubprocesses(User user, Long id, boolean recursive) {
         try {
-            return getExecutionService().getSubprocessesRecursive(user, id);
+            return getExecutionService().getSubprocesses(user, id, recursive);
         } catch (Exception e) {
             throw handleException(e);
         }
