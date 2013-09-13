@@ -159,7 +159,7 @@ public class MultiInstanceTest extends ServletTestCase {
         variables.put("discriminator", new String[] {});
         variables.put("discriminator_r", new String[] {});
         Long processId = executionService.startProcess(user, "multiinstance superprocess", variables);
-        System.out.println("multiinstancesubprocesses=" + executionService.getSubprocessesRecursive(user, processId));
+        System.out.println("multiinstancesubprocesses=" + executionService.getSubprocesses(user, processId, true));
         assertTrue(executionService.getProcess(user, processId).isEnded());
     }
 
