@@ -76,7 +76,7 @@ UninstPage instFiles
   call ${PREFIX}ComponentSIM${SUFFIX}
   call ${PREFIX}ComponentDOC${SUFFIX}
   call ${PREFIX}ComponentSRV${SUFFIX}
-;  call ${PREFIX}ComponentBOT${SUFFIX}
+  call ${PREFIX}ComponentBOT${SUFFIX}
 !macroend
 !macro AllSectionMacroCall MacroName
   !insertmacro "${MacroName}" "ComponentRTN"
@@ -85,7 +85,7 @@ UninstPage instFiles
   !insertmacro "${MacroName}" "ComponentSIM"
   !insertmacro "${MacroName}" "ComponentDOC"
   !insertmacro "${MacroName}" "ComponentSRV"
-;  !insertmacro "${MacroName}" "ComponentBOT"
+  !insertmacro "${MacroName}" "ComponentBOT"
 !macroend
 
 Section -FinishComponents
@@ -100,7 +100,7 @@ SectionEnd
 !insertmacro generateOptionalSection ComponentDOC installDocSeq defaultUninstallSeq defaultUninstallSeq DefaultCustomizableMacro ${RUNA_CLIENT}
 
 !insertmacro generateSection ComponentSRV installServerSeq uninstallServerSeq defaultUninstallSeq DefaultCustomizableMacro ${RUNA_SERVER}
-;!insertmacro generateOptionalSection ComponentBOT installBotstationSeq uninstallServerSeq defaultUninstallSeq RtnWebBotCustomizableMacro ${RUNA_SERVER}
+!insertmacro generateOptionalSection ComponentBOT installBotstationSeq uninstallServerSeq defaultUninstallSeq RtnWebBotCustomizableMacro ${RUNA_SERVER}
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentGPD}" $(ComponentGPD_Desc)
@@ -109,7 +109,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentDOC}" $(ComponentDOC_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentSIM}" $(ComponentSIM_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentSRV}" $(ComponentSRV_Desc)
-;  !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentBOT}" $(ComponentBOT_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentBOT}" $(ComponentBOT_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section "-Installation of ${AppName}" SecAppFiles
@@ -189,7 +189,7 @@ Function .onInit
   !insertmacro MUI_INSTALLOPTIONS_EXTRACT "WelcomePage.ini"
 FunctionEnd
 
-;!insertmacro generateOnSelChange ComponentSRV ComponentBOT
+!insertmacro generateOnSelChange ComponentSRV ComponentBOT
 
 !macro generateInstallBrandingImage UNINSTALLER
 Function ${UNINSTALLER}installBrandingImage
@@ -245,7 +245,7 @@ Function selectInstallationTypeLeave
   !insertmacro MUI_INSTALLOPTIONS_READ $R0 "InstallationType.ini" "Field 1" "State"
   ${if} $R0 = 0
     StrCpy $installationType ${RUNA_SERVER}
-;    !insertmacro initServerTypeSelection ComponentSRV ComponentBOT
+    !insertmacro initServerTypeSelection ComponentSRV ComponentBOT
   ${else}
     StrCpy $installationType ${RUNA_CLIENT}
   ${endif}
@@ -260,7 +260,7 @@ FunctionEnd
 Function checkJDKinit_My
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSIM}" installJDK 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSRV}" installJDK 0
-;  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentBOT}" installJDK 0
+  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentBOT}" installJDK 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" installJava 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentGPD}" installJava 0
   Abort
@@ -274,7 +274,7 @@ FunctionEnd
 Function setJavaHomeInit_My
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSIM}" installJAVAPATH 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSRV}" installJAVAPATH 0
-;  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentBOT}" installJAVAPATH 0
+  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentBOT}" installJAVAPATH 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" installJAVAPATH 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentGPD}" installJAVAPATH 0
   Abort
@@ -306,7 +306,7 @@ Function getHostAndPort
     pop $R0
   ${else}
     Push $R0
-;    !insertmacro isSectionSelected ${${ID_PREFIX}ComponentBOT} showBotstation 0
+    !insertmacro isSectionSelected ${${ID_PREFIX}ComponentBOT} showBotstation 0
     !insertmacro isSectionSelected ${${ID_PREFIX}ComponentSRV} showServer 0
     Abort
     showServer:

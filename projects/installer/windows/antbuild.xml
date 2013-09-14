@@ -54,6 +54,11 @@
 		<delete dir="${nsis.src.dir}/jboss"/>
 		<delete dir="${artifacts.dir}/app-server"/>
 
+		<copy todir="${nsis.src.dir}/wfe-botstation-config/server/default/deploy" overwrite="true">
+			<fileset dir="${artifacts.dir}/app-botstation"/>
+		</copy>
+		<delete dir="${artifacts.dir}/app-botstation"/>
+
 		<copy file="${distr.root.dir}/simulation.properties" tofile="${nsis.src.dir}/simulation.properties"/>
 		<copy file="${nsis.settings}/nircmd.exe" tofile="${nsis.src.dir}/wfe-simulator/bin/nircmd.exe"/>
 		<copy file="${nsis.settings}/sleep.exe" tofile="${nsis.src.dir}/wfe-simulator/bin/sleep.exe"/>
