@@ -31,6 +31,9 @@
                     <include name="*.zip"/>
                   </fileset>
                 </copy>
+                <copy toDir="target/artifacts/app-botstation">
+                  <fileset dir="../../wfe/wfe-remotebots/target/wfe-remotebots-${version}"/>
+                </copy>
 
                 <exec executable="cmd" dir="../../wfe/wfe-appserver">
                   <arg value="/C"/>
