@@ -9,10 +9,12 @@
 	<property name="build.dir" value="${basedir}/build" />
 	<property name="deploy.dir" value="${basedir}/deploy" />
 	<property name="classes.dir" value="${build.dir}/classes" />
+	<property name="jboss.version" value="4" />
 
 	<fileset id="local.lib.fileset" dir="${lib.dir}">
 		<exclude name="swt-*.jar" />
 		<include name="*.jar" />
+		<include name="${jboss.version}/*.jar" />
 	</fileset>
 
 	<path id="lib.classpath">
@@ -72,6 +74,7 @@
 		<!-- copy file="${nsis.dir}/runa_tasks.exe" todir="${deploy.dir}" / -->
 		<copy todir="${deploy.dir}" overwrite="true">
 			<fileset dir="${resources.dir}" includes="*.properties" />
+			<fileset dir="${resources.dir}" includes="jboss${jboss.version}/*.properties" />
 			<fileset dir="${resources.dir}" includes="run.*" />
 		</copy>
 		<copy todir="${deploy.dir}" overwrite="true">
