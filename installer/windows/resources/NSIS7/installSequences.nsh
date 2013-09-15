@@ -206,7 +206,7 @@ var simulationWebLinks
   SetShellVarContext all
   !insertmacro Runa_SetOutPath "$INSTDIR\Icons"
   File "${BuildRoot}\Icons\C_20x20_256.ico"
-  !insertmacro createURL "Web interface RunaWFE.URL" "http://$WFEServerAddress:$WFEServerPort" "$INSTDIR\Icons\C_20x20_256.ico"
+  !insertmacro createURL "Web interface RunaWFE.URL" "http://$WFEServerAddress:$WFEServerPort/wfe" "$INSTDIR\Icons\C_20x20_256.ico"
 !macroend
 
 !macro installDocSeq
