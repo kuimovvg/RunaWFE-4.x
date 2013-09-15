@@ -11,6 +11,13 @@
 
 	<includeBaseDirectory>false</includeBaseDirectory>
 
+	<fileSets>
+		<fileSet>
+			<directory>${project.basedir}/src/main/resources/deployment</directory>
+			<outputDirectory>jboss/standalone/deployments</outputDirectory>
+		</fileSet>
+	</fileSets>
+
 	<dependencySets>
 		<dependencySet>
 			<includes>

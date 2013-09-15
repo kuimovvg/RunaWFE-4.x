@@ -70,7 +70,7 @@ var simulationWebLinks
   FileWrite $0 "del /F /S /Q %TEMP%\runawfe$\r$\n"
   FileWrite $0 "rd /S /Q %TEMP%\runawfe$\r$\n"
   FileWrite $0 "nircmd.exe exec hide runBots.bat $2 $\r$\n"
-  FileWrite $0 "call run.bat $\"-Djboss.server.log.dir=%TEMP%\runawfe\jboss\log$\" $\"-Djboss.server.temp.dir=%TEMP%\runawfe\jboss\tmp$\" $\"-Djboss.server.data.dir=%APPDATA%\runawfe\jboss\data$\" $\"-Djboss.server.home.dir=%TEMP%\runawfe\jboss$\"$\r$\n"
+  FileWrite $0 "call standalone.bat $\"-Djboss.server.log.dir=%TEMP%\runawfe\jboss\log$\" $\"-Djboss.server.temp.dir=%TEMP%\runawfe\jboss\tmp$\" $\"-Djboss.server.data.dir=%APPDATA%\runawfe\jboss\data$\" $\"-Djboss.server.home.dir=%TEMP%\runawfe\jboss$\"$\r$\n"
   FileClose $0
 !macroend
 !macro CreateRunGPDBatchFile

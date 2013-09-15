@@ -66,7 +66,7 @@ goto cmdEnd
 
 :cmdStart
 REM Executed on service start
-call run.bat >run.log
+call standalone.bat >run.log
 goto cmdEnd
 
 :cmdStop
@@ -78,7 +78,7 @@ goto cmdEnd
 REM Executed on service restart
 REM Note. We can only stop and start
 call shutdown -S -s jnp://localhost:10099 >>shutdown.log
-call run.bat >>run.log
+call standalone.bat >>run.log
 goto cmdEnd
 
 :cmdSignal
