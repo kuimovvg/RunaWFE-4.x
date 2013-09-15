@@ -62,7 +62,7 @@
                 </copy>
 
                 <exec executable="cmd" dir="../../rtn" failonerror="true">
-                  <arg line="/C ant"/>
+                  <arg line="/C ant -Djboss.version=7"/>
                 </exec>
                 <copy toDir="target/artifacts/rtn">
                   <fileset dir="../../rtn/deploy">
