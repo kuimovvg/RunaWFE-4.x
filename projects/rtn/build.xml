@@ -74,8 +74,10 @@
 		<!-- copy file="${nsis.dir}/runa_tasks.exe" todir="${deploy.dir}" / -->
 		<copy todir="${deploy.dir}" overwrite="true">
 			<fileset dir="${resources.dir}" includes="*.properties" />
-			<fileset dir="${resources.dir}" includes="jboss${jboss.version}/*.properties" />
 			<fileset dir="${resources.dir}" includes="run.*" />
+		</copy>
+		<copy todir="${deploy.dir}" overwrite="true">
+			<fileset dir="${resources.dir}/jboss${jboss.version}" includes="*.properties" />
 		</copy>
 		<copy todir="${deploy.dir}" overwrite="true">
 			<fileset dir="${lib.dir}" includes="swt-*.jar"></fileset>
