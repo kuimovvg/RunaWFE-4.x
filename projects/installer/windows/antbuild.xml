@@ -12,8 +12,8 @@
     	<property name="work.dir" value="${basedir}/target"/>
     	<property name="artifacts.dir" value="${basedir}/target/artifacts"/>
 	<property name="distr.root.dir" value="${basedir}/resources"/>
-	<property name="nsis.settings" value="${distr.root.dir}/NSIS"/>
-	<property name="nsis.dir" value="${work.dir}/NSIS"/>
+	<property name="nsis.settings" value="${distr.root.dir}/NSIS7"/>
+	<property name="nsis.dir" value="${work.dir}/NSIS7"/>
 	<property name="nsis.src.dir" value="${nsis.dir}/src"/>
 	<property name="nsis.work.dir" value="${nsis.dir}/work"/>
 
@@ -54,8 +54,13 @@
 		<delete dir="${nsis.src.dir}/jboss"/>
 		<delete dir="${artifacts.dir}/app-server"/>
 
-		<copy todir="${nsis.src.dir}/wfe-botstation-config/server/default/deploy" overwrite="true">
-			<fileset dir="${artifacts.dir}/app-botstation"/>
+		<unzip dest="${nsis.src.dir}" overwrite="true">
+			<fileset dir="${artifacts.dir}/app-botstation">
+				<include name="wfe-appserver-remotebots*.zip"/>
+			</fileset>
+		</unzip>
+		<copy todir="${nsis.src.dir}/wfe-botstation-config" overwrite="true">
+			<fileset dir="${nsis.src.dir}/jboss"/>
 		</copy>
 		<delete dir="${artifacts.dir}/app-botstation"/>
 
@@ -99,6 +104,9 @@
 				<include name="*"/>
 				<exclude name="*.zip"/>
 				<exclude name="jboss-native"/>
+			</fileset>
+			<fileset dir="${nsis.settings}/..">
+				<include name="jdk*.exe"/>
 			</fileset>
 		</copy>
 		<replace dir="${nsis.work.dir}/${nsis.name}" token="%VERSION%" value="${project.version}">

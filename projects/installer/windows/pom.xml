@@ -22,9 +22,9 @@
 
                 <mkdir dir="target/artifacts"/>
                 
-                <exec executable="cmd" dir="../../wfe/wfe-appserver">
+                <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot;"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot;"/>
                 </exec>
                 <copy toDir="target/artifacts/app-server">
                   <fileset dir="../../wfe/wfe-appserver/target">
@@ -32,12 +32,14 @@
                   </fileset>
                 </copy>
                 <copy toDir="target/artifacts/app-botstation">
-                  <fileset dir="../../wfe/wfe-remotebots/target/wfe-remotebots-${version}"/>
+                  <fileset dir="../../wfe/wfe-appserver/target">
+                    <include name="*remotebots*.zip"/>
+                  </fileset>
                 </copy>
 
-                <exec executable="cmd" dir="../../wfe/wfe-appserver">
+                <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -P simulation"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -P simulation"/>
                 </exec>
                 <copy toDir="target/artifacts/app-simulation">
                   <fileset dir="../../wfe/wfe-appserver/target">
@@ -45,7 +47,7 @@
                   </fileset>
                 </copy>
 
-                <exec executable="cmd" dir="../../gpd">
+                <exec executable="cmd" dir="../../gpd" failonerror="true">
                   <arg line="/C ant"/>
                 </exec>
                 <copy toDir="target/artifacts/gpd/32">
@@ -59,7 +61,7 @@
                   </fileset>
                 </copy>
 
-                <exec executable="cmd" dir="../../rtn">
+                <exec executable="cmd" dir="../../rtn" failonerror="true">
                   <arg line="/C ant"/>
                 </exec>
                 <copy toDir="target/artifacts/rtn">
@@ -68,7 +70,16 @@
                   </fileset>
                 </copy>
 
-                <exec executable="cmd" dir=".">
+                <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">
+                  <arg value="/C"/>
+                  <arg value="mvn clean -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot;"/>
+                </exec>
+                <exec executable="cmd" dir="../../wfe/wfe-app" failonerror="true">
+                  <arg value="/C"/>
+                  <arg value="mvn clean -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot;"/>
+                </exec>
+
+                <exec executable="cmd" dir="." failonerror="true">
                   <arg value="/C"/>
                   <arg value="ant -f antbuild.xml makeInstaller"/>
                 </exec>
