@@ -82,25 +82,26 @@ public class TasklistBuilder {
                 }
                 ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
                 log.debug("Whether " + task + " should be acquired by substitution rules?");
+                boolean firstOpen = !task.getOpenedByExecutorIds().contains(actor.getId());
                 if (taskExecutor instanceof Actor) {
                     if (isTaskAcceptableBySubstitutionRules(executionContext, task, (Actor) taskExecutor, actor)) {
                         log.debug(task + " is acquired by substitution rules [by actor]");
-                        result.add(taskObjectFactory.create(task, (Actor) taskExecutor, true));
+                        result.add(taskObjectFactory.create(task, (Actor) taskExecutor, true, firstOpen));
                     }
                 } else {
                     for (Actor groupActor : executorDAO.getGroupActors((Group) taskExecutor)) {
                         if (isTaskAcceptableBySubstitutionRules(executionContext, task, groupActor, actor)) {
                             log.debug(task + " is acquired by substitution rules [by group]");
-                            result.add(taskObjectFactory.create(task, groupActor, true));
+                            result.add(taskObjectFactory.create(task, groupActor, true, firstOpen));
                             break;
                         }
                     }
                 }
             } catch (Exception e) {
-            	if (taskDAO.get(task.getId()) == null) {
-            		log.debug(task + " has been completed", e);
-            		continue;
-            	}
+                if (taskDAO.get(task.getId()) == null) {
+                    log.debug(task + " has been completed", e);
+                    continue;
+                }
                 log.error("Unable to build " + task, e);
             }
         }
