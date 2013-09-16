@@ -113,22 +113,35 @@ public class FormSubmissionUtils {
                 Object variableValue = null;
                 if (format instanceof ListFormat) {
                     String sizeInputName = variableDefinition.getName() + ".size";
-                    String[] strings = (String[]) userInput.get(sizeInputName);
-                    if (strings == null || strings.length != 1) {
-                        log.warn("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
-                        continue;
-                    }
-                    int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
                     ListFormat listFormat = (ListFormat) format;
                     VariableFormat<?> componentFormat = FormatCommons.create(listFormat.getComponentClassName(0));
-                    List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
-                    for (int i = 0; i < listSize; i++) {
-                        String inputName = variableDefinition.getName() + "[" + i + "]";
-                        Object componentValue = userInput.get(inputName);
-                        list.add(convertComponent(inputName, componentFormat, componentValue, formatErrorsForFields));
+                    if (userInput.containsKey(sizeInputName)) {
+                        // js dynamic way
+                        String[] strings = (String[]) userInput.get(sizeInputName);
+                        if (strings == null || strings.length != 1) {
+                            log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
+                            continue;
+                        }
+                        int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
+                        List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
+                        for (int i = 0; i < listSize; i++) {
+                            String inputName = variableDefinition.getName() + "[" + i + "]";
+                            Object componentValue = userInput.get(inputName);
+                            list.add(convertComponent(inputName, componentFormat, componentValue, formatErrorsForFields));
+                        }
+                        variableValue = list;
+                    } else {
+                        // http old-style way
+                        String[] strings = (String[]) userInput.get(variableDefinition.getName());
+                        if (strings == null || strings.length == 0) {
+                            continue;
+                        }
+                        List<Object> list = Lists.newArrayListWithExpectedSize(strings.length);
+                        for (String componentValue : strings) {
+                            list.add(convertComponent(variableDefinition.getName(), componentFormat, componentValue, formatErrorsForFields));
+                        }
+                        variableValue = list;
                     }
-                    // variableValue = listFormat.parse(listItems);
-                    variableValue = list;
                 } else {
                     Object value = userInput.get(variableDefinition.getName());
                     variableValue = convertComponent(variableDefinition.getName(), format, value, formatErrorsForFields);
@@ -156,6 +169,9 @@ public class FormSubmissionUtils {
                     value = new String[] { Boolean.FALSE.toString() };
                 }
             }
+            if (value instanceof String[]) {
+                value = ((String[]) value)[0];
+            }
             if (value instanceof FormFile) {
                 FormFile formFile = (FormFile) value;
                 if (formFile.getFileSize() > 0) {
@@ -165,8 +181,8 @@ public class FormSubmissionUtils {
                     }
                     return new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
                 }
-            } else if (value instanceof String[]) {
-                String valueToFormat = ((String[]) value)[0];
+            } else if (value instanceof String) {
+                String valueToFormat = (String) value;
                 try {
                     return format.parse(valueToFormat);
                 } catch (Exception e) {
