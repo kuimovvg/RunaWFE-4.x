@@ -64,7 +64,7 @@ public final class WfTask implements Serializable {
     }
 
     public WfTask(Task task, Deployment deployment, Long processId, Actor targetActor, Date deadlineWarningDate, boolean escalated,
-            boolean acquiredBySubstitution) {
+            boolean acquiredBySubstitution, boolean firstOpen) {
         id = task.getId();
         name = task.getName();
         nodeId = task.getNodeId();
@@ -80,7 +80,7 @@ public final class WfTask implements Serializable {
         this.targetActor = targetActor;
         this.escalated = escalated;
         this.acquiredBySubstitution = acquiredBySubstitution;
-        firstOpen = !task.getOpenedByExecutorIds().contains(targetActor.getId());
+        this.firstOpen = firstOpen;
     }
 
     public boolean isFirstOpen() {
