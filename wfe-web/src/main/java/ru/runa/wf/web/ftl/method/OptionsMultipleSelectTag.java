@@ -23,6 +23,9 @@ import java.util.List;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.var.ISelectable;
+
+import com.google.common.collect.Lists;
+
 import freemarker.template.TemplateModelException;
 
 @SuppressWarnings("unchecked")
@@ -35,7 +38,10 @@ public class OptionsMultipleSelectTag extends FreemarkerTag implements FtlTagVar
         registerVariableHandler(outputVarName);
         String inputVarName = getParameterAs(String.class, 1);
         List<Object> selectedValues = variableProvider.getValue(List.class, outputVarName);
-        List<ISelectable> options = variableProvider.getValueNotNull(List.class, inputVarName);
+        List<ISelectable> options = variableProvider.getValue(List.class, inputVarName);
+        if (options == null) {
+            options = Lists.newArrayList();
+        }
         StringBuffer html = new StringBuffer();
         for (ISelectable option : options) {
             String id = outputVarName + "_" + option.getValue();
