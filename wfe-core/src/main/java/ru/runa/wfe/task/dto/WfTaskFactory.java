@@ -45,6 +45,10 @@ public class WfTaskFactory {
     private ExecutorDAO executorDAO;
 
     public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution) {
+        return create(task, targetActor, acquiredBySubstitution, !task.getOpenedByExecutorIds().contains(targetActor.getId()));
+    }
+
+    public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution, boolean firstOpen) {
         Process process = task.getProcess();
         Deployment deployment = process.getDeployment();
         boolean escalated = false;
@@ -60,7 +64,7 @@ public class WfTaskFactory {
                 }
             }
         }
-        return new WfTask(task, deployment, process.getId(), targetActor, getDeadlineWarningDate(task), escalated, acquiredBySubstitution);
+        return new WfTask(task, deployment, process.getId(), targetActor, getDeadlineWarningDate(task), escalated, acquiredBySubstitution, firstOpen);
     }
 
     public Date getDeadlineWarningDate(Task task) {
