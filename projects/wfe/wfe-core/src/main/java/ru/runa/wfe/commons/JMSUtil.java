@@ -53,7 +53,7 @@ public class JMSUtil {
         if (connectionFactory == null) {
             InitialContext iniCtx = new InitialContext();
             connectionFactory = (ConnectionFactory) iniCtx.lookup("java:/JmsXA");
-            queue = (Queue) iniCtx.lookup("queue/jbpmQueue");
+            queue = (Queue) iniCtx.lookup("queue/bpmMessages");
         }
     }
 

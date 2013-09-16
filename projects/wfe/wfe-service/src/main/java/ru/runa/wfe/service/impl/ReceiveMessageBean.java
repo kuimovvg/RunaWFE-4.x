@@ -53,7 +53,7 @@ import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Objects;
 
-@MessageDriven(activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/jbpmQueue"),
+@MessageDriven(activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/bpmMessages"),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName = "useDLQ", propertyValue = "false") })
 @TransactionManagement(TransactionManagementType.BEAN)
