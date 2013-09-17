@@ -229,7 +229,7 @@ public class TypeConversionUtil {
                 Long executorId = convertTo(Long.class, s.substring(2));
                 return (T) executorLoader.getExecutor(executorId);
             } else if (s.startsWith("G")) {
-                Long executorId = convertTo(Long.class, s.substring(1));
+                Long executorId = Long.parseLong(s.substring(1));
                 return (T) executorLoader.getExecutor(executorId);
             } else {
                 Long actorCode = Long.parseLong(s);
