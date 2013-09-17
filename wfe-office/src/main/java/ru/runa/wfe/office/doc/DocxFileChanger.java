@@ -23,8 +23,10 @@ import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.VariableFormat;
 
 public class DocxFileChanger {
-    private static final String PLACEHOLDER_END = "}";
-    private static final String PLACEHOLDER_START = "${";
+    private static final String PLACEHOLDER1_START = "${";
+    private static final String PLACEHOLDER1_END = "}";
+    private static final String PLACEHOLDER2_START = "<";
+    private static final String PLACEHOLDER2_END = ">";
     private final DocxConfig config;
     private final IVariableProvider variableProvider;
     private final XWPFDocument document;
@@ -74,34 +76,45 @@ public class DocxFileChanger {
 
     private void handleParagraph(XWPFParagraph paragraph) throws Exception {
         String pText = paragraph.getParagraphText();
-        if (!pText.contains(PLACEHOLDER_START)) {
+        if (!pText.contains(PLACEHOLDER1_START) && !pText.contains(PLACEHOLDER2_START)) {
             return;
         }
-        if (!pText.contains(PLACEHOLDER_END)) {
-            throw new InternalApplicationException("No placeholder end found in " + pText);
+        if (pText.contains(PLACEHOLDER1_START) && !pText.contains(PLACEHOLDER1_END)) {
+            throw new InternalApplicationException("No placeholder end for " + PLACEHOLDER1_START + " found in " + pText);
+        }
+        if (pText.contains(PLACEHOLDER2_START) && !pText.contains(PLACEHOLDER2_END)) {
+            throw new InternalApplicationException("No placeholder end for " + PLACEHOLDER2_START + " found in " + pText);
         }
         List<XWPFRun> runs = paragraph.getRuns();
         for (int i = 0; i < runs.size(); i++) {
             XWPFRun run = runs.get(i);
             String text = run.getText(0);
-            if (!text.contains(PLACEHOLDER_START)) {
+            String placeholderStart;
+            String placeholderEnd;
+            if (text.contains(PLACEHOLDER1_START)) {
+                placeholderStart = PLACEHOLDER1_START;
+                placeholderEnd = PLACEHOLDER1_END;
+            } else if (text.contains(PLACEHOLDER2_START)) {
+                placeholderStart = PLACEHOLDER2_START;
+                placeholderEnd = PLACEHOLDER2_END;
+            } else {
                 continue;
             }
             StylesHolder stylesHolder = new StylesHolder(run);
-            String placeholder = text.substring(text.indexOf(PLACEHOLDER_START) + 2);
-            while (!placeholder.contains(PLACEHOLDER_END)) {
+            String placeholder = text.substring(text.indexOf(placeholderStart) + placeholderStart.length());
+            while (!placeholder.contains(placeholderEnd)) {
                 // search end in next run
-                int nextIndex = i + 1;
+                int nextIndex = i + placeholderEnd.length();
                 if (runs.size() <= nextIndex) {
-                    throw new InternalApplicationException("No placeholder end can be found in " + pText);
+                    throw new InternalApplicationException("No placeholder end for " + placeholderStart + " can be found in " + pText);
                 }
                 run = runs.get(nextIndex);
                 text = run.getText(0);
                 paragraph.removeRun(nextIndex);
                 placeholder += text;
             }
-            int plEndIndex = placeholder.indexOf(PLACEHOLDER_END);
-            String remainder = placeholder.substring(plEndIndex + 1);
+            int plEndIndex = placeholder.indexOf(placeholderEnd);
+            String remainder = placeholder.substring(plEndIndex + placeholderEnd.length());
             placeholder = placeholder.substring(0, plEndIndex);
 
             TableConfig tableConfig = config.getTables().get(placeholder);
