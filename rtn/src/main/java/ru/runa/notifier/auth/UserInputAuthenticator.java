@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.notifier.GUI;
+import ru.runa.notifier.WFEConnection;
 import ru.runa.notifier.util.ResourcesManager;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.User;
+import ru.runa.wfe.webservice.User;
 
 public class UserInputAuthenticator implements Authenticator {
     private static final Log log = LogFactory.getLog(UserInputAuthenticator.class);
@@ -38,13 +38,13 @@ public class UserInputAuthenticator implements Authenticator {
                 try {
                     login = ResourcesManager.getDefaultLogin();
                     password = ResourcesManager.getDefaultPassword();
-                    return Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
+                    return WFEConnection.getAuthenticationAPI().authenticateByLoginPassword(login, password);
                 } catch (Exception e) {
                     log.warn("Auth with default credentials failed, requesting", e);
                 }
             }
             if (login != null) {
-                return Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
+                return WFEConnection.getAuthenticationAPI().authenticateByLoginPassword(login, password);
             }
             if (GUI.display != null) {
                 GUI.display.syncExec(new Runnable() {
@@ -60,7 +60,7 @@ public class UserInputAuthenticator implements Authenticator {
                 });
             }
             if (login != null) {
-                return Delegates.getAuthenticationService().authenticateByLoginPassword(login, password);
+                return WFEConnection.getAuthenticationAPI().authenticateByLoginPassword(login, password);
             }
         } catch (Exception e) {
             log.warn("Auth exception.", e);

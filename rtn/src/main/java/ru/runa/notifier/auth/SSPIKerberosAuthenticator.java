@@ -3,8 +3,8 @@ package ru.runa.notifier.auth;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.User;
+import ru.runa.notifier.WFEConnection;
+import ru.runa.wfe.webservice.User;
 
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -58,7 +58,7 @@ public class SSPIKerberosAuthenticator implements Authenticator {
                 log.error("InitializeSecurityContext result=" + clientRc + ", lastErrorCode=" + Native.getLastError());
                 throw new RuntimeException("Can't init InitializeSecurityContext");
             }
-            User user = Delegates.getAuthenticationService().authenticateByKerberos(pbClientToken.pBuffers[0].getBytes());
+            User user = WFEConnection.getAuthenticationAPI().authenticateByKerberos(pbClientToken.pBuffers[0].getBytes());
             log.info("- after authenticationServiceDelegate.authenticate");
             return user;
         } finally {

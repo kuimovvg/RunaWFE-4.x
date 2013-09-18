@@ -8,8 +8,8 @@ import org.ietf.jgss.GSSManager;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
 
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.User;
+import ru.runa.notifier.WFEConnection;
+import ru.runa.wfe.webservice.User;
 
 public class KerberosAuthenticator implements Authenticator {
     private static final Log log = LogFactory.getLog(KerberosAuthenticator.class);
@@ -27,7 +27,7 @@ public class KerberosAuthenticator implements Authenticator {
 
         byte[] token = new byte[0];
         token = context.initSecContext(token, 0, token.length);
-        return Delegates.getAuthenticationService().authenticateByKerberos(token);
+        return WFEConnection.getAuthenticationAPI().authenticateByKerberos(token);
     }
 
     @Override
