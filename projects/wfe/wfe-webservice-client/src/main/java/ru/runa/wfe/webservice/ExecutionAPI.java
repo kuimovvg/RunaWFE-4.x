@@ -300,19 +300,22 @@ public interface ExecutionAPI {
     /**
      * 
      * @param id
+     * @param recursive
      * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.WfProcess>
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSubprocessesRecursive", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocessesRecursive")
-    @ResponseWrapper(localName = "getSubprocessesRecursiveResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocessesRecursiveResponse")
-    public List<WfProcess> getSubprocessesRecursive(
+    @RequestWrapper(localName = "getSubprocesses", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocesses")
+    @ResponseWrapper(localName = "getSubprocessesResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocessesResponse")
+    public List<WfProcess> getSubprocesses(
         @WebParam(name = "user", targetNamespace = "")
         User user,
         @WebParam(name = "id", targetNamespace = "")
-        Long id);
+        Long id,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive);
 
     /**
      * 
