@@ -19,10 +19,6 @@ public class GroovyExpressionValidator extends Validator {
             if (!Boolean.TRUE.equals(result)) {
                 addError();
             }
-        } catch (NullPointerException e) {
-            // this means that some of the beans are null, we ignoring it due to
-            // required validator check
-            log.warn(e.getMessage());
         } catch (Exception e) {
             log.error("Groovy", e);
             addError();
