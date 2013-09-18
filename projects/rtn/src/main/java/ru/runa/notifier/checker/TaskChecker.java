@@ -20,9 +20,8 @@ package ru.runa.notifier.checker;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,14 +29,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.notifier.GUI;
+import ru.runa.notifier.WFEConnection;
 import ru.runa.notifier.auth.LoginHelper;
 import ru.runa.notifier.tray.SystemTray;
 import ru.runa.notifier.util.AePlayWave;
 import ru.runa.notifier.util.ResourcesManager;
-import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.AuthenticationException;
-import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.webservice.WfTask;
+
+import com.google.common.collect.Maps;
 
 /**
  * Created on 2006
@@ -112,7 +111,7 @@ public class TaskChecker {
     }
 
     private class TasksChecker extends TimerTask {
-        private final Set<WfTask> existingTasks = new HashSet<WfTask>();
+        private final Map<Long, WfTask> existingTasks = Maps.newHashMap();
 
         protected SystemTray systemTray;
 
@@ -135,13 +134,12 @@ public class TaskChecker {
                 }
                 if (LoginHelper.isLogged()) {
                     errorCount = 0;
-                    List<WfTask> tasks = Delegates.getExecutionService().getTasks(LoginHelper.getUser(),
-                            BatchPresentationFactory.TASKS.createNonPaged());
+                    List<WfTask> tasks = WFEConnection.getExecutionAPI().getTasks(LoginHelper.getUser(), null);
                     final int unreadTasksCount = getUnreadTasksCount(tasks);
                     final int newTasksCount = getNewTasksCount(tasks);
                     existingTasks.clear();
                     for (WfTask task : tasks) {
-                        existingTasks.add(task);
+                        existingTasks.put(task.getId(), task);
                     }
                     GUI.display.syncExec(new Runnable() {
                         @Override
@@ -162,7 +160,8 @@ public class TaskChecker {
                         }
                     }
                 }
-            } catch (AuthenticationException e) {
+            } catch (Exception e) {
+                // TODO AuthenticationException
                 LoginHelper.reset();
             } catch (Throwable e) {
                 log.warn("run (Unforseen Exception)", e);
@@ -190,7 +189,7 @@ public class TaskChecker {
         private int getNewTasksCount(List<WfTask> newTaskIds) {
             int result = 0;
             for (WfTask task : newTaskIds) {
-                if (!existingTasks.contains(task) && task.isFirstOpen()) {
+                if (!existingTasks.containsKey(task.getId()) && task.isFirstOpen()) {
                     result++;
                 }
             }

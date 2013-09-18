@@ -20,7 +20,7 @@ package ru.runa.notifier.auth;
 
 import java.util.Map;
 
-import ru.runa.wfe.commons.PropertyResources;
+import ru.runa.notifier.util.PropertyResources;
 
 /**
  * Created on 2006

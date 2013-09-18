@@ -1,6 +1,6 @@
 package ru.runa.notifier.auth;
 
-import ru.runa.wfe.user.User;
+import ru.runa.wfe.webservice.User;
 
 public interface Authenticator {
 

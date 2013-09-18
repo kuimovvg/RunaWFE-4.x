@@ -18,11 +18,8 @@
 
 package ru.runa.notifier.util;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created on 2006
@@ -31,243 +28,145 @@ import org.apache.commons.logging.LogFactory;
  */
 
 public class ResourcesManager {
-    private static final Log log = LogFactory.getLog(ResourcesManager.class);
-
-    public static final String LOGOUT_ACTION = "/logout.do";
-    public static final String START_ACTION = "/manage_tasks.do";
-
-    private static final String RESTART_RTN_ONCLOSE_PROPERTY = "restart.rtn.onclose";
-    private static final String START_RTN_COMMAND_PROPERTY = "start.rtn.command";
-
-    private static final String APPLICATION_NAME_PROPERTY = "application.name";
-
-    private static final String TEASE_POPUP_PROPERTY = "popup.tease";
-
-    private static final String TOOLTIP_POPUP_TASKS_PROPERTY = "popup.tasks";
-
-    private static final String TOOLTIP_POPUP_NOT_LOGGED_PROPERTY = "popup.not.logged";
-
-    private static final String TOOLTIP_POPUP_ERROR_PROPERTY = "popup.error";
-
-    private static final String TOOLTIP_POPUP_NO_TASKS_PROPERTY = "popup.no.tasks";
-
-    private static final String POPUP_NEWTASKS_PROPERTY = "popup.newtasks";
-
-    private static final String USER_NAME_PROPERTY = "user.name";
-
-    private static final String USER_PASSWORD_PROPERTY = "user.password";
-
-    private static final String MESSAGE_LOGIN_PROPERTY = "login.message";
-
-    private static final String MESSAGE_RETRY_PROPERTY = "retry.message";
-
-    private static final String ERROR_LOGIN_PROPERTY = "error.login";
-
-    private static final String ERROR_INTERNAL_PROPERTY = "error.internal";
-
-    private static final String MENU_OPEN_PROPERTY = "menu.open";
-
-    private static final String MENU_EXIT_PROPERTY = "menu.exit";
-
-    private static final String CHECK_TASKS_TIMEOUT_PROPERTY = "check.tasks.timeout";
-
-    private static final String SHOW_TRAY = "show.tray";
-
-    private static final String BUNDLE_NAME = "application";
-
-    private static final String POPUP_AUTOCLOSE_TIMEOUT_PROPERTY = "popup.autoclose.timeout";
-
-    private static final String SOUNDS_ENABLED_PROPERTY = "sounds.enabled";
-
-    private static final String ON_NEW_TASK_TRIGGER_COMMAND_PROPERTY = "onNewTask.trigger.command";
-
-    private static final String UNREAD_TASKS_NOTIFICATION_TIMEOUT_PROPERTY = "unread.tasks.notification.timeout";
-
-    private static ResourceBundle bundle;
-
-    private static ResourceBundle getBundle() {
-        if (bundle == null) {
-            bundle = ResourceBundle.getBundle(BUNDLE_NAME);
-        }
-        return bundle;
-    }
-
-    public static String getProperty(String name) {
-        return getBundle().getString(name);
-    }
+    private final static PropertyResources PROPERTIES = new PropertyResources("application.properties");
 
     public static boolean isRestartRtnOnClose() {
-        try {
-            String value = getBundle().getString(RESTART_RTN_ONCLOSE_PROPERTY);
-            if (value == null) {
-                return false;
-            }
-            if (value.compareToIgnoreCase("true") == 0) {
-                return true;
-            }
-            return false;
-        } catch (MissingResourceException e) {
-            return false;
-        }
+        return PROPERTIES.getBooleanProperty("restart.rtn.onclose", false);
     }
 
     public static String getStartRtnCommand() {
-        return getBundle().getString(START_RTN_COMMAND_PROPERTY);
+        return PROPERTIES.getStringProperty("start.rtn.command");
     }
 
     public static String getApplicationName() {
-        return getBundle().getString(APPLICATION_NAME_PROPERTY);
+        return PROPERTIES.getStringProperty("application.name");
     }
 
     public static String getTeasePopupText() {
-        return getBundle().getString(TEASE_POPUP_PROPERTY);
+        return PROPERTIES.getStringProperty("popup.tease");
     }
 
     public static String getTooltipPopupTasksText() {
-        return getBundle().getString(TOOLTIP_POPUP_TASKS_PROPERTY);
+        return PROPERTIES.getStringProperty("popup.tasks");
     }
 
     public static String getTooltipPopupNotLoggedText() {
-        return getBundle().getString(TOOLTIP_POPUP_NOT_LOGGED_PROPERTY);
+        return PROPERTIES.getStringProperty("popup.not.logged");
     }
 
     public static String getTooltipPopupErrorText() {
-        return getBundle().getString(TOOLTIP_POPUP_ERROR_PROPERTY);
+        return PROPERTIES.getStringProperty("popup.error");
     }
 
     public static String getTooltipPopupNoTasksText() {
-        return getBundle().getString(TOOLTIP_POPUP_NO_TASKS_PROPERTY);
+        return PROPERTIES.getStringProperty("popup.no.tasks");
     }
 
     public static String getNewTasksPopupTitle() {
-        return getBundle().getString(POPUP_NEWTASKS_PROPERTY);
+        return PROPERTIES.getStringProperty("popup.newtasks");
     }
 
     public static String getUserName() {
-        return getBundle().getString(USER_NAME_PROPERTY);
+        return PROPERTIES.getStringProperty("user.name");
     }
 
     public static String getPasswordName() {
-        return getBundle().getString(USER_PASSWORD_PROPERTY);
+        return PROPERTIES.getStringProperty("user.password");
     }
 
     public static String getErrorLoginMessage() {
-        return getBundle().getString(ERROR_LOGIN_PROPERTY);
+        return PROPERTIES.getStringProperty("error.login");
     }
 
     public static String getErrorInternalMessage() {
-        return getBundle().getString(ERROR_INTERNAL_PROPERTY);
+        return PROPERTIES.getStringProperty("error.internal");
     }
 
     public static String getLoginMessage() {
-        return getBundle().getString(MESSAGE_LOGIN_PROPERTY);
+        return PROPERTIES.getStringProperty("login.message");
     }
 
     public static String getRetryMessage() {
-        return getBundle().getString(MESSAGE_RETRY_PROPERTY);
+        return PROPERTIES.getStringProperty("retry.message");
     }
 
     public static String getAuthenticationType() {
-        return getBundle().getString("authentication.type");
+        return PROPERTIES.getStringProperty("authentication.type");
     }
 
     public static String getMenuOpenName() {
-        return getBundle().getString(MENU_OPEN_PROPERTY);
+        return PROPERTIES.getStringProperty("menu.open");
     }
 
     public static String getMenuExitName() {
-        return getBundle().getString(MENU_EXIT_PROPERTY);
+        return PROPERTIES.getStringProperty("menu.exit");
     }
 
     public static String getLoginRelativeUrl() {
-        return getBundle().getString("login.relative.url");
-    }
-
-    public static String getHttpServerUrl() {
-        return getBundle().getString("server.url");
+        return PROPERTIES.getStringProperty("login.relative.url");
     }
 
     public static boolean getShowTray() {
-        try {
-            String value = getBundle().getString(SHOW_TRAY);
-            if (value == null) {
-                return false;
-            }
-            if (value.compareToIgnoreCase("true") == 0) {
-                return true;
-            }
-            return false;
-        } catch (MissingResourceException e) {
-            return true;
-        }
+        return PROPERTIES.getBooleanProperty("show.tray", true);
     }
 
     public static boolean isLoginSilently() {
-        try {
-            return Boolean.parseBoolean(getBundle().getString("userinput.login.silently"));
-        } catch (Exception e) {
-            return false;
-        }
+        return PROPERTIES.getBooleanProperty("userinput.login.silently", false);
     }
 
     public static String getDefaultLogin() {
-        try {
-            return getBundle().getString("userinput.default.login");
-        } catch (MissingResourceException e) {
-            return "";
-        }
+        return PROPERTIES.getStringProperty("userinput.default.login", "");
     }
 
     public static String getDefaultPassword() {
-        try {
-            return getBundle().getString("userinput.default.password");
-        } catch (MissingResourceException e) {
-            return "";
-        }
+        return PROPERTIES.getStringProperty("userinput.default.password", "");
     }
 
     public static int getCheckTasksTimeout() {
-        int timeout = 300;
-        try {
-            timeout = Integer.parseInt(getBundle().getString(CHECK_TASKS_TIMEOUT_PROPERTY));
-        } catch (NumberFormatException e) {
-            log.warn("Failed to parse " + CHECK_TASKS_TIMEOUT_PROPERTY + " property", e);
-        }
-        return timeout * 1000;
+        return 1000 * PROPERTIES.getIntegerProperty("check.tasks.timeout", 300);
     }
 
     public static int getAutoClosePopupTimeout() {
-        int timeout = 6;
-        try {
-            timeout = Integer.parseInt(getBundle().getString(POPUP_AUTOCLOSE_TIMEOUT_PROPERTY));
-        } catch (Exception e) {
-            log.warn("Failed to parse " + POPUP_AUTOCLOSE_TIMEOUT_PROPERTY + " property", e);
-        }
-        return timeout * 1000;
+        return 1000 * PROPERTIES.getIntegerProperty("popup.autoclose.timeout", 6);
     }
 
     public static boolean isSoundsEnabled() {
-        try {
-            return Boolean.parseBoolean(getBundle().getString(SOUNDS_ENABLED_PROPERTY));
-        } catch (Exception e) {
-            return false;
-        }
+        return PROPERTIES.getBooleanProperty("sounds.enabled", false);
     }
 
     public static String getOnNewTaskTriggerCommand() {
-        try {
-            return getBundle().getString(ON_NEW_TASK_TRIGGER_COMMAND_PROPERTY);
-        } catch (Exception e) {
-            return null;
-        }
+        return PROPERTIES.getStringProperty("onNewTask.trigger.command");
     }
 
     public static int getUnreadTasksNotificationTimeout() {
-        try {
-            return 1000 * Integer.parseInt(getBundle().getString(UNREAD_TASKS_NOTIFICATION_TIMEOUT_PROPERTY));
-        } catch (Exception e) {
-            return 0;
+        return 1000 * PROPERTIES.getIntegerProperty("unread.tasks.notification.timeout", 0);
+    }
+
+    private static AppServerType getServerType() {
+        String enumValue = PROPERTIES.getStringPropertyNotNull("application.server.type").toUpperCase();
+        return AppServerType.valueOf(enumValue);
+    }
+
+    public static String getHttpServerUrl() {
+        return applyPattern("http://${server.name}:${server.port}/wfe");
+    }
+
+    public static String getWebServiceUrl() {
+        return applyPattern(getServerType().getUrlPattern());
+    }
+
+    private static final Pattern VARIABLE_REGEXP = Pattern.compile("\\$\\{(.*?[^\\\\])\\}");
+
+    private static String applyPattern(String pattern) {
+        Matcher matcher = VARIABLE_REGEXP.matcher(pattern);
+        StringBuffer buffer = new StringBuffer();
+        while (matcher.find()) {
+            String name = matcher.group(1);
+            String value = PROPERTIES.getStringPropertyNotNull(name);
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(value));
         }
+        matcher.appendTail(buffer);
+        return buffer.toString();
     }
 
 }

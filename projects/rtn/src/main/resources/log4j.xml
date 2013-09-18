@@ -10,8 +10,7 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
    <!-- A time/date based rolling appender -->
-   <appender name="FILE" class="org.jboss.logging.appender.DailyRollingFileAppender">
-      <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+   <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
       <param name="File" value="${rtn.log.dir}/rtn.log"/>
       <param name="Append" value="true"/>
 
@@ -24,7 +23,6 @@
    </appender>
 
    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
-      <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
       <param name="Target" value="System.out"/>
 
       <layout class="org.apache.log4j.PatternLayout">

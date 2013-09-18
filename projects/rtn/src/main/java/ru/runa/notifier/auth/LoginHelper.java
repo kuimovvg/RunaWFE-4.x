@@ -29,9 +29,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 
 import ru.runa.notifier.GUI;
+import ru.runa.notifier.util.ClassLoaderUtil;
 import ru.runa.notifier.util.ResourcesManager;
-import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.user.User;
+import ru.runa.wfe.webservice.User;
 
 /**
  * Created on 2006
@@ -72,16 +72,7 @@ public class LoginHelper {
             return;
         }
         String authType = ResourcesManager.getAuthenticationType();
-        Authenticator authenticator;
-        try {
-            Class<Authenticator> authenticatorClass = (Class<Authenticator>) Class.forName(authenticators.get(authType));
-            authenticator = authenticatorClass.newInstance();
-            if (authenticator == null) {
-                throw new InternalApplicationException("Authenticator not found for key: " + authType);
-            }
-        } catch (Exception e) {
-            throw new InternalApplicationException("Unable to create authenticator for key: " + authType, e);
-        }
+        Authenticator authenticator = ClassLoaderUtil.instantiate(authenticators.get(authType));
         while (user == null) {
             if (!tryLogin) {
                 return;
