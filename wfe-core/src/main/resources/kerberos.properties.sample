@@ -1,5 +1,5 @@
 
-rmi.auth.enabled=true
+api.auth.enabled=true
 http.auth.enabled=true
 
 # kerberos login module name depends on java version

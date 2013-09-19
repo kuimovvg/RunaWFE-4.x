@@ -30,11 +30,11 @@ public class KerberosLoginModuleResources {
     private static final PropertyResources RESOURCES = new PropertyResources("kerberos.properties", false);
 
     public static boolean isEnabled() {
-        return isRmiAuthEnabled() || isHttpAuthEnabled();
+        return isApiAuthEnabled() || isHttpAuthEnabled();
     }
 
-    public static boolean isRmiAuthEnabled() {
-        return RESOURCES.getBooleanProperty("rmi.auth.enabled", false);
+    public static boolean isApiAuthEnabled() {
+        return RESOURCES.getBooleanProperty("api.auth.enabled", false);
     }
 
     public static boolean isHttpAuthEnabled() {
