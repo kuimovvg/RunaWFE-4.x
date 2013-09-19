@@ -51,7 +51,7 @@ public class SubProcessState extends VariableContainerNode {
         this.subProcessName = subProcessName;
     }
 
-    protected ProcessDefinition getSubProcessDefinition(ExecutionContext executionContext) {
+    protected ProcessDefinition getSubProcessDefinition() {
         return processDefinitionLoader.getDefinition(subProcessName);
     }
 
@@ -73,7 +73,7 @@ public class SubProcessState extends VariableContainerNode {
                 }
             }
         }
-        ProcessDefinition subProcessDefinition = getSubProcessDefinition(executionContext);
+        ProcessDefinition subProcessDefinition = getSubProcessDefinition();
         Process subProcess = processFactory.createSubprocess(executionContext, subProcessDefinition, variables);
         processFactory.startSubprocess(executionContext, new ExecutionContext(subProcessDefinition, subProcess));
     }
@@ -85,12 +85,12 @@ public class SubProcessState extends VariableContainerNode {
     }
 
     protected void performLeave(ExecutionContext executionContext) {
-        List<Process> subprocesses = executionContext.getSubprocesses();
-        if (subprocesses.size() != 1) {
-            throw new InternalApplicationException("SubProcessState has " + subprocesses + " (instead of 1 instance) at leave stage!");
+        List<Process> subprocesses = executionContext.getAllSubprocesses();
+        if (subprocesses.size() == 0) {
+            throw new InternalApplicationException("SubProcessState has 0 subprocesses at leave stage!");
         }
-        Process subProcess = subprocesses.get(0);
-        ExecutionContext subExecutionContext = new ExecutionContext(getSubProcessDefinition(executionContext), subProcess);
+        Process subProcess = subprocesses.get(subprocesses.size() - 1);
+        ExecutionContext subExecutionContext = new ExecutionContext(getSubProcessDefinition(), subProcess);
         for (VariableMapping variableMapping : variableMappings) {
             // if this variable access is writable
             if (variableMapping.isWritable()) {
@@ -105,10 +105,9 @@ public class SubProcessState extends VariableContainerNode {
                 }
             }
         }
-
         // fire the subprocess ended event
         fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_END);
-        executionContext.addLog(new SubprocessEndLog(this, subProcess));
+        executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), subProcess));
     }
 
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.task.Task;
@@ -19,6 +20,15 @@ public class ProcessExecutionErrors {
 
     public static synchronized Map<BotTaskIdentifier, Throwable> getBotTaskConfigurationErrors() {
         return Maps.newHashMap(botTaskConfigurationErrors);
+    }
+
+    public static BotTaskIdentifier getBotTaskIdentifierNotNull(Long botId, String botTaskName) {
+        for (BotTaskIdentifier botTaskIdentifier : botTaskConfigurationErrors.keySet()) {
+            if (botTaskIdentifier.equals(botId, botTaskName)) {
+                return botTaskIdentifier;
+            }
+        }
+        throw new InternalApplicationException("No bot task identifier found for " + botId + ", " + botTaskName);
     }
 
     public static synchronized Map<Long, List<TokenErrorDetail>> getProcessErrors() {
@@ -71,6 +81,7 @@ public class ProcessExecutionErrors {
     }
 
     public static class BotTaskIdentifier {
+        private static final String ANY_TASK = "*";
         private final Bot bot;
         private final BotTask botTask;
 
@@ -83,11 +94,26 @@ public class ProcessExecutionErrors {
             return bot;
         }
 
+        public BotTask getBotTask() {
+            return botTask;
+        }
+
         public String getBotTaskName() {
             if (botTask != null) {
                 return botTask.getName();
             }
-            return "*";
+            return ANY_TASK;
+        }
+
+        public Long getUniqueId() {
+            if (botTask != null) {
+                return botTask.getId();
+            }
+            return bot.getId();
+        }
+
+        public boolean equals(Long botId, String botTaskName) {
+            return Objects.equal(bot.getId(), botId) && Objects.equal(getBotTaskName(), botTaskName);
         }
 
         @Override

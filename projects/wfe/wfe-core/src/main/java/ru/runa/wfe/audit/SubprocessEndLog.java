@@ -7,6 +7,7 @@ import javax.persistence.Transient;
 import ru.runa.wfe.audit.presentation.ProcessIdValue;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.Process;
+import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.lang.Node;
 
 /**
@@ -22,14 +23,20 @@ public class SubprocessEndLog extends NodeLeaveLog {
     public SubprocessEndLog() {
     }
 
-    public SubprocessEndLog(Node node, Process subProcess) {
-        super(node);
+    public SubprocessEndLog(Node processStateNode, Token parentToken, Process subProcess) {
+        super(processStateNode);
         addAttribute(ATTR_PROCESS_ID, subProcess.getId().toString());
+        addAttribute(ATTR_TOKEN_ID, parentToken.getId().toString());
     }
 
     @Transient
     public Long getSubprocessId() {
         return TypeConversionUtil.convertTo(Long.class, getAttributeNotNull(ATTR_PROCESS_ID));
+    }
+
+    @Transient
+    public Long getParentTokenId() {
+        return TypeConversionUtil.convertTo(long.class, getAttribute(ATTR_TOKEN_ID));
     }
 
     @Override
