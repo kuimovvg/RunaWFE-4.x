@@ -7,10 +7,12 @@ import java.util.Observable;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
-import ru.runa.gpd.office.InputOutputComposite.InputOutputModel;
+import ru.runa.gpd.office.InputOutputModel;
 import ru.runa.gpd.util.XmlUtil;
+
+import com.google.common.base.Strings;
 
 public class ExcelModel extends Observable {
     private final FilesSupplierMode mode;
@@ -26,23 +28,21 @@ public class ExcelModel extends Observable {
         this.inOutModel = inOutModel;
     }
 
+    public InputOutputModel getInOutModel() {
+        return inOutModel;
+    }
+
     public static ExcelModel fromXml(String xml, FilesSupplierMode mode) {
         Document document = XmlUtil.parseWithoutValidation(xml);
-        InputOutputModel inOutModel;
-        try {
-            Element input = null;
-            if (mode.isInSupported()) {
-                input = document.getRootElement().element("input");
-            }
-            Element output = null;
-            if (mode.isInSupported()) {
-                output = document.getRootElement().element("output");
-            }
-            inOutModel = InputOutputModel.deserialize(input, output);
-        } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("Unabe parse config: " + xml, e);
-            inOutModel = new InputOutputModel();
+        Element input = null;
+        if (mode.isInSupported()) {
+            input = document.getRootElement().element("input");
         }
+        Element output = null;
+        if (mode.isInSupported()) {
+            output = document.getRootElement().element("output");
+        }
+        InputOutputModel inOutModel = InputOutputModel.deserialize(input, output);
         ExcelModel model = new ExcelModel(mode, inOutModel);
         List<Element> constraintsElements = document.getRootElement().elements("binding");
         for (Element constraintsElement : constraintsElements) {
@@ -62,7 +62,13 @@ public class ExcelModel extends Observable {
         return XmlUtil.toString(document);
     }
 
-    public InputOutputModel getInOutModel() {
-        return inOutModel;
+    public void validate(GraphElement graphElement) {
+        for (ConstraintsModel constraintsModel : constraints) {
+            if (Strings.isNullOrEmpty(constraintsModel.variableName)) {
+                graphElement.addError("xlsx.constraint.variable.empty");
+            }
+        }
+        inOutModel.validate(graphElement, mode);
     }
+
 }

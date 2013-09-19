@@ -29,6 +29,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.resource.Messages;
@@ -40,6 +41,12 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
     @Override
     protected Composite createConstructorView(Composite parent, Delegable delegable) {
         return new ConstructorView(parent, delegable);
+    }
+
+    @Override
+    protected void validateModel(Delegable delegable, ExcelModel model) {
+        GraphElement graphElement = ((GraphElement) delegable);
+        model.validate(graphElement);
     }
 
     @Override

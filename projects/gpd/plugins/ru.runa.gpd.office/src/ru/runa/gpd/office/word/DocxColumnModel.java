@@ -4,7 +4,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 public class DocxColumnModel {
-    protected String variable;
+    protected String variable = "";
 
     public String getVariable() {
         return variable;
