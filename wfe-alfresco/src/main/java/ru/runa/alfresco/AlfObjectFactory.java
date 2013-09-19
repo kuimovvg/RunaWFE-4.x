@@ -14,6 +14,7 @@ import net.sf.cglib.proxy.NoOp;
 
 import org.apache.commons.beanutils.BeanUtils;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.base.Throwables;
@@ -98,7 +99,11 @@ public class AlfObjectFactory {
                 if (uuidRef.equals(alfObject.getUuidRef())) {
                     result = alfObject;
                 } else {
-                    result = alfObject.conn.loadObjectNotNull(uuidRef);
+                    try {
+                        result = alfObject.conn.loadObjectNotNull(uuidRef);
+                    } catch (Exception e) {
+                        throw new InternalApplicationException(propertyName + " in " + alfObject + " (" + alfObject.getUuidRef() + ")", e);
+                    }
                 }
                 BeanUtils.setProperty(alfObject, propertyName, result);
             }
@@ -131,7 +136,11 @@ public class AlfObjectFactory {
                 if (desc == null) {
                     throw new NullPointerException("No association defined for " + fieldName);
                 }
-                alfObject.loadCollection(desc, result);
+                try {
+                    alfObject.loadCollection(desc, result);
+                } catch (Exception e) {
+                    throw new InternalApplicationException(fieldName + " in " + alfObject + " (" + alfObject.getUuidRef() + ")", e);
+                }
             }
             return result;
         }
