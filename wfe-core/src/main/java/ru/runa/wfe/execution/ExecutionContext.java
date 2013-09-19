@@ -51,7 +51,6 @@ import ru.runa.wfe.var.format.FormatCommons;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ExecutionContext {
@@ -123,16 +122,12 @@ public class ExecutionContext {
         return nodeProcessDAO.getNodeProcessByChild(getProcess().getId());
     }
 
-    public List<Process> getSubprocesses() {
-        String nodeId = getToken().getNodeId();
-        List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(getProcess().getId());
-        List<Process> result = Lists.newArrayListWithExpectedSize(nodeProcesses.size());
-        for (NodeProcess nodeProcess : nodeProcesses) {
-            if (Objects.equal(nodeId, nodeProcess.getNodeId()) && Objects.equal(getToken(), nodeProcess.getParentToken())) {
-                result.add(nodeProcess.getSubProcess());
-            }
-        }
-        return result;
+    public List<Process> getActiveSubprocesses() {
+        return nodeProcessDAO.getActiveSubprocesses(getProcess(), getToken().getNodeId(), getToken(), true);
+    }
+
+    public List<Process> getAllSubprocesses() {
+        return nodeProcessDAO.getActiveSubprocesses(getProcess(), getToken().getNodeId(), getToken(), null);
     }
 
     public List<Process> getSubprocessesRecursively() {

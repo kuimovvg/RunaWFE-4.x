@@ -31,7 +31,7 @@ public class NodeProcess {
     protected NodeProcess() {
     }
 
-    public NodeProcess(Token parentToken, Process subProcess, Node processStateNode) {
+    public NodeProcess(Node processStateNode, Token parentToken, Process subProcess) {
         process = parentToken.getProcess();
         this.parentToken = parentToken;
         nodeId = processStateNode.getNodeId();

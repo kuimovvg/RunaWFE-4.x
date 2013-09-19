@@ -6,7 +6,7 @@ $(document).ready(function() {
 	buttons[buttonCloseMessage] = function() {
 		$.errorDetailsDialog.dialog("close");
 	};
-	$.errorDetailsDialog = $("<div style=\"padding: 10px;\"><pre id=\"errorDetails\"></pre></div>").dialog( {
+	$.errorDetailsDialog = $("<div style=\"padding: 10px;\" id=\"errorDetailsDiv\"></div>").dialog( {
 		modal: true, 
 		autoOpen: false, 
 		height: 500,
@@ -28,8 +28,9 @@ function showBotTaskConfigurationError(botId, botTaskName) {
 	    	name: botTaskName
 	    },
 	    success: function(data) {
-			$("#errorDetails").html(data.html);
+			$("#errorDetailsDiv").html("<pre>"+data.html+"</pre>");
 			$.errorDetailsDialog.dialog("open");
+			$(".ui-button:contains('" + buttonSupportMessage + "')").show();
 	    }
     });
 }
@@ -44,36 +45,51 @@ function showProcessError(processId, nodeId) {
 	    	name: nodeId
 	    },
 	    success: function(data) {
-			$("#errorDetails").html(data.html);
+			$("#errorDetailsDiv").html("<pre>"+data.html+"</pre>");
 			$.errorDetailsDialog.dialog("open");
+			$(".ui-button:contains('" + buttonSupportMessage + "')").show();
 	    }
     });
 }
 
 function showSupportFiles() {
 	var url = "/wfe/error_details.do?action=showSupportFiles&" + $("#supportForm").serialize();
-	$("#errorDetails").html("<br/><br/><br/>&nbsp;&nbsp;&nbsp;<img src='/wfe/images/loading.gif' align='absmiddle' /> " + loadingMessage);
+	$("#errorDetailsDiv").html("<br/><br/><br/>&nbsp;&nbsp;&nbsp;<img src='/wfe/images/loading.gif' align='absmiddle' /> " + loadingMessage);
 	$.errorDetailsDialog.dialog("open");
+	$(".ui-button:contains('" + buttonSupportMessage + "')").hide();
     $.getJSON(
 		url,
 		function(data) {
-			$("#errorDetails").html("<div id='processTabs'><ul id='processHeaders'></ul></div>");
-  			$.each(data.processesErrorInfo, function(i, processErrorInfo) {
-  				$("#processHeaders").append("<li><a href='#processError" + processErrorInfo.id + "'>" + processErrorInfo.id + "</a></li>");
-				$("#processTabs").append("<div id='processError" + processErrorInfo.id + "'></div>");
-				$.each(processErrorInfo.includedFileNames, function(i, fileInfo) {
-					var presentationFileInfo = "<input type='checkbox' disabled='true'";
-					if (fileInfo.included) {
-						presentationFileInfo += " checked='true'";
-					}
-					presentationFileInfo += ">" + fileInfo.info + "<br />";
-					$("#processError" + processErrorInfo.id).append(presentationFileInfo);
+			if (data.tabs.length > 1) {
+				$("#errorDetailsDiv").html("<div id='tabs'><ul id='tabHeaders'></ul></div>");
+	  			$.each(data.tabs, function(i, tab) {
+	  				$("#tabHeaders").append("<li><a href='#tab" + tab.key + "'>" + tab.title + "</a></li>");
+					$("#tabs").append("<div id='tab" + tab.key + "'></div>");
+					displayFiles(tab, $("#tab" + tab.key));
 				});
-			});
-			$("#processTabs").tabs();
+				$("#tabs").tabs();
+			} else {
+				$("#errorDetailsDiv").html("");
+	  			displayFiles(data.tabs[0], $("#errorDetailsDiv"));
+			}
+			displayFiles(data, $("#errorDetailsDiv"));
 			if (data.downloadUrl) {
-				$("#errorDetails").append("<br /><br /><a href='" + data.downloadUrl + "' style='text-decoration: underline;'>" + data.downloadTitle + "</a>");
+				$("#errorDetailsDiv").append("<br /><br /><a href='" + data.downloadUrl + "' style='text-decoration: underline;'>" + data.downloadTitle + "</a>");
+			}
+			if (data.supportUrl) {
+				$("#errorDetailsDiv").append("<br /><br /><a href='" + data.supportUrl + "' style='text-decoration: underline;' target='_blank'>" + data.supportTitle + "</a>");
 			}
 		}
 	);
+}
+
+function displayFiles(tab, element) {
+	$.each(tab.files, function(i, file) {
+		var fileInfo = "<input type='checkbox' disabled='true'";
+		if (file.included) {
+			fileInfo += " checked='true'";
+		}
+		fileInfo += ">" + file.name + "<br />";
+		element.append(fileInfo);
+	});
 }

@@ -10,6 +10,7 @@ public interface IAttributes {
     static final String ATTR_TRANSITION_ID = "transitionId";
     static final String ATTR_MESSAGE = "message";
     static final String ATTR_PROCESS_ID = "processId";
+    static final String ATTR_TOKEN_ID = "tokenId";
     static final String ATTR_ACTOR_NAME = "actorName";
     static final String ATTR_OLD_VALUE = "oldValue";
     static final String ATTR_NEW_VALUE = "newValue";
