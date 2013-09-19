@@ -7,13 +7,17 @@ import java.util.Observable;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
-import ru.runa.gpd.office.InputOutputComposite.InputOutputModel;
+import ru.runa.gpd.office.InputOutputModel;
 import ru.runa.gpd.util.XmlUtil;
+
+import com.google.common.base.Strings;
 
 public class DocxModel extends Observable {
     private boolean strict = true;
-    protected InputOutputModel inOutModel = new InputOutputModel();
+    private InputOutputModel inOutModel = new InputOutputModel();
+    private List<DocxTableModel> tables = new ArrayList<DocxTableModel>();
 
     public boolean isStrict() {
         return strict;
@@ -23,27 +27,26 @@ public class DocxModel extends Observable {
         this.strict = strict;
     }
 
-    public List<DocxTableModel> tables = new ArrayList<DocxTableModel>();
-
-    public void addNewTable(DocxTableModel t) {
-        tables.add(t);
+    public InputOutputModel getInOutModel() {
+        return inOutModel;
     }
 
+    public List<DocxTableModel> getTables() {
+        return tables;
+    }
+    
     public static DocxModel fromXml(String xml) {
         DocxModel model = new DocxModel();
         Document document = XmlUtil.parseWithoutValidation(xml);
         Element root = document.getRootElement();
         model.setStrict(Boolean.parseBoolean(root.attributeValue("strict")));
-        try {
-            Element input = root.element("input");
-            Element output = root.element("output");
-            model.setInOutModel(InputOutputModel.deserialize(input, output));
-        } catch (Exception e) {
-        }
+        Element input = root.element("input");
+        Element output = root.element("output");
+        model.inOutModel = InputOutputModel.deserialize(input, output);
         List<Element> tableElements = root.elements("table");
         for (Element tableElement : tableElements) {
             DocxTableModel tableModel = DocxTableModel.deserialize(tableElement);
-            model.addNewTable(tableModel);
+            model.tables.add(tableModel);
         }
         return model;
     }
@@ -60,11 +63,14 @@ public class DocxModel extends Observable {
         return XmlUtil.toString(document);
     }
 
-    public void setInOutModel(InputOutputModel inOutModel) {
-        this.inOutModel = inOutModel;
-    }
-
-    public InputOutputModel getInOutModel() {
-        return inOutModel;
+    public void validate(GraphElement graphElement) {
+        for (DocxTableModel tableModel : tables) {
+            for (DocxColumnModel columnModel : tableModel.columns) {
+                if (Strings.isNullOrEmpty(columnModel.variable)) {
+                    graphElement.addError("docx.table.column.empty");
+                }
+            }
+        }
+        inOutModel.validate(graphElement, FilesSupplierMode.BOTH);
     }
 }
