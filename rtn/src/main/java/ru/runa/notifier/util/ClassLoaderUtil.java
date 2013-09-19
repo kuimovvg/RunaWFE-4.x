@@ -23,6 +23,7 @@ package ru.runa.notifier.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.Locale;
@@ -31,6 +32,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
@@ -91,9 +93,9 @@ public class ClassLoaderUtil {
                 properties.load(is);
                 is.close();
             }
-            is = getAsStream(resource.replace(".properties", "_" + Locale.getDefault().getCountry() + ".properties"), ClassLoaderUtil.class);
+            is = getAsStream(Locale.getDefault().getCountry() + "." + resource, ClassLoaderUtil.class);
             if (is != null) {
-                properties.load(is);
+                properties.load(new InputStreamReader(is, Charsets.UTF_8));
                 is.close();
             }
         } catch (IOException e) {
