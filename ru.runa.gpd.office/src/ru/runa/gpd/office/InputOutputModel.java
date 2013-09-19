@@ -4,8 +4,6 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.office.word.DocxColumnModel;
-import ru.runa.gpd.office.word.DocxTableModel;
 
 import com.google.common.base.Strings;
 

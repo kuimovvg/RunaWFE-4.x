@@ -3,8 +3,6 @@ package ru.runa.gpd.office;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import org.dom4j.Document;
-import org.dom4j.Element;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,8 +19,6 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.resource.Messages;
-import ru.runa.gpd.office.word.DocxColumnModel;
-import ru.runa.gpd.office.word.DocxTableModel;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.ProcessFileUtils;
