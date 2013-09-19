@@ -44,12 +44,16 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
     public boolean validateValue(Delegable delegable) {
         String configuration = delegable.getDelegationConfiguration();
         try {
-            fromXml(configuration);
+            T model = fromXml(configuration);
+            validateModel(delegable, model);
             return true;
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog(getClass() + ": invalid configuration: " + configuration, e);
             return false;
         }
+    }
+    
+    protected void validateModel(Delegable delegable, T model) {
     }
 
     protected abstract String getTitle();

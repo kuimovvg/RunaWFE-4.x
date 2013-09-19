@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.resource.Messages;
+import ru.runa.gpd.office.word.DocxColumnModel;
+import ru.runa.gpd.office.word.DocxTableModel;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.ProcessFileUtils;
@@ -225,49 +227,4 @@ public class InputOutputComposite extends Composite {
 
     }
 
-    public static class InputOutputModel {
-        public String inputPath;
-        public String inputVariable;
-        public String outputDir;
-        public String outputVariable;
-        public String outputFilename;
-
-        public void serialize(Document document, Element parent, FilesSupplierMode mode) {
-            if (mode.isInSupported()) {
-                Element input = parent.addElement("input");
-                if (inputPath != null && inputPath.length() > 0) {
-                    input.addAttribute("path", inputPath);
-                }
-                if (inputVariable != null && inputVariable.length() > 0) {
-                    input.addAttribute("variable", inputVariable);
-                }
-            }
-            if (mode.isOutSupported()) {
-                Element output = parent.addElement("output");
-                if (outputDir != null && outputDir.length() > 0) {
-                    output.addAttribute("dir", outputDir);
-                }
-                if (outputVariable != null && outputVariable.length() > 0) {
-                    output.addAttribute("variable", outputVariable);
-                }
-                if (outputFilename != null && outputFilename.length() > 0) {
-                    output.addAttribute("fileName", outputFilename);
-                }
-            }
-        }
-
-        public static InputOutputModel deserialize(Element input, Element output) {
-            InputOutputModel model = new InputOutputModel();
-            if (input != null) {
-                model.inputPath = input.attributeValue("path");
-                model.inputVariable = input.attributeValue("variable");
-            }
-            if (output != null) {
-                model.outputFilename = output.attributeValue("fileName");
-                model.outputDir = output.attributeValue("dir");
-                model.outputVariable = output.attributeValue("variable");
-            }
-            return model;
-        }
-    }
 }

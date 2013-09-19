@@ -9,14 +9,11 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 
 public class DocxTableModel extends Observable {
-    private static int tableID = 0;
-    protected String name = "table";
-
-    public static DocxTableModel createTable() {
-        DocxTableModel m = new DocxTableModel();
-        m.name += ++tableID;
-        return m;
-    }
+    private static int tableID = 1;
+    private String name = "table" + tableID++;
+    private String styleName = "";
+    private boolean addBreak = true;
+    public List<DocxColumnModel> columns = new ArrayList<DocxColumnModel>();
 
     public String getName() {
         return name;
@@ -41,10 +38,6 @@ public class DocxTableModel extends Observable {
     public void setAddBreak(boolean addBreak) {
         this.addBreak = addBreak;
     }
-
-    protected String styleName = "";
-    protected boolean addBreak = true;
-    public List<DocxColumnModel> columns = new ArrayList<DocxColumnModel>();
 
     public void serialize(Document document, Element parent) {
         Element el = parent.addElement("table");
