@@ -130,6 +130,6 @@ public class BotTask implements Serializable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("taskHandler", taskHandlerClassName).add("name", name).toString();
+        return Objects.toStringHelper(this).add("id", id).add("taskHandler", taskHandlerClassName).add("name", name).toString();
     }
 }

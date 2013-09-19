@@ -129,8 +129,7 @@ public class ExecutionLogic extends WFCommonLogic {
     }
 
     public WfProcess getParentProcess(User user, Long id) throws ProcessDoesNotExistException {
-        Process process = processDAO.getNotNull(id);
-        NodeProcess nodeProcess = nodeProcessDAO.getNodeProcessByChild(process.getId());
+        NodeProcess nodeProcess = nodeProcessDAO.getNodeProcessByChild(id);
         if (nodeProcess == null) {
             return null;
         }
@@ -252,7 +251,7 @@ public class ExecutionLogic extends WFCommonLogic {
     public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition definition = getDefinition(process.getDeployment().getId());
-        List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(processId);
+        List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(process, null, null, null);
         StartedSubprocessesVisitor operation = new StartedSubprocessesVisitor(user, nodeProcesses);
         return getDefinitionGraphElements(user, definition, operation);
     }

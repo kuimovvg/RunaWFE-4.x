@@ -107,13 +107,14 @@ public class ProcessFactory {
             }
         }
         Process subProcess = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchySubProcess());
-        nodeProcessDAO.create(new NodeProcess(parentExecutionContext.getToken(), subProcess, subProcessNode));
+        nodeProcessDAO.create(new NodeProcess(subProcessNode, parentExecutionContext.getToken(), subProcess));
         return subProcess;
     }
 
     public void startSubprocess(ExecutionContext parentExecutionContext, ExecutionContext executionContext) {
         parentExecutionContext.getNode().fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_START);
-        parentExecutionContext.addLog(new SubprocessStartLog(parentExecutionContext.getNode(), executionContext.getProcess()));
+        parentExecutionContext.addLog(new SubprocessStartLog(parentExecutionContext.getNode(), parentExecutionContext.getToken(), executionContext
+                .getProcess()));
         grantSubprocessPermissions(executionContext.getProcessDefinition(), executionContext.getProcess(), parentExecutionContext.getProcess());
         startProcessInternal(executionContext.getProcessDefinition(), executionContext.getProcess(), null);
     }

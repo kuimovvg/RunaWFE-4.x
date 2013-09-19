@@ -1,9 +1,11 @@
 package ru.runa.common.web.action;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,6 +39,7 @@ import ru.runa.wfe.audit.presentation.ExecutorNameValue;
 import ru.runa.wfe.audit.presentation.FileValue;
 import ru.runa.wfe.audit.presentation.ProcessIdValue;
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
@@ -51,6 +54,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 @SuppressWarnings("unchecked")
 public class ErrorDetailsAction extends ActionBase {
@@ -91,29 +95,39 @@ public class ErrorDetailsAction extends ActionBase {
                 }
             } else if ("showSupportFiles".equals(action)) {
                 boolean fileIncluded = false;
+                request.getParameter("botId");
                 User user = getLoggedUser(request);
-                JSONArray processesErrorInfo = new JSONArray();
+                JSONArray tabs = new JSONArray();
+                Map<String, byte[]> supportFiles = Maps.newHashMap();
                 // TODO privileges are required for successful operation!
-                // TODO zip file name encoding
-                // TODO disable Support button after click
-                // TODO bots
+                // TODO zip file name encoding (introduce zip encoding after
+                // moving to Java7)
                 Map<Long, List<Long>> processHierarchies = Maps.newHashMap();
                 if (request.getParameter("processId") != null) {
                     initProcessHierarchy(user, processHierarchies, Long.parseLong(request.getParameter("processId")));
+                } else if (request.getParameter("botTaskName") != null) {
+                    Long botId = Long.parseLong(request.getParameter("botId"));
+                    String botTaskName = request.getParameter("botTaskName");
+                    BotTaskIdentifier botTaskIdentifier = ProcessExecutionErrors.getBotTaskIdentifierNotNull(botId, botTaskName);
+                    addBotTabError(request, tabs, supportFiles, botTaskIdentifier);
                 } else {
                     for (Long processId : ProcessExecutionErrors.getProcessErrors().keySet()) {
                         initProcessHierarchy(user, processHierarchies, processId);
                     }
+                    for (BotTaskIdentifier botTaskIdentifier : ProcessExecutionErrors.getBotTaskConfigurationErrors().keySet()) {
+                        addBotTabError(request, tabs, supportFiles, botTaskIdentifier);
+                    }
                 }
-                Map<String, byte[]> supportFiles = Maps.newHashMap();
                 for (Entry<Long, List<Long>> processesEntry : processHierarchies.entrySet()) {
-                    JSONObject errorInfo = new JSONObject();
-                    errorInfo.put("id", processesEntry.getKey());
+                    Long rootProcessId = processesEntry.getKey();
+                    JSONObject tab = new JSONObject();
+                    tab.put("key", "process" + rootProcessId);
+                    tab.put("title", getResources(request).getMessage("label.process") + " " + rootProcessId);
+                    List<WfProcess> processes = Delegates.getExecutionService().getSubprocesses(user, rootProcessId, true);
+                    processes.add(0, Delegates.getExecutionService().getProcess(user, rootProcessId));
+                    Map<String, byte[]> processFiles = Maps.newHashMap();
+                    JSONArray files = new JSONArray();
                     for (Long processId : processesEntry.getValue()) {
-                        List<WfProcess> processes = Delegates.getExecutionService().getSubprocesses(user, processId, true);
-                        processes.add(0, Delegates.getExecutionService().getProcess(user, processId));
-                        Map<String, byte[]> errorFiles = Maps.newHashMap();
-                        JSONArray includedFileNames = new JSONArray();
                         String exceptions = "";
                         List<TokenErrorDetail> errorDetails = ProcessExecutionErrors.getProcessErrors().get(processId);
                         for (TokenErrorDetail detail : errorDetails) {
@@ -122,75 +136,82 @@ public class ErrorDetailsAction extends ActionBase {
                                     + detail.getTaskName();
                             if (detail.getBotTask() != null) {
                                 String botTaskIdentifier = detail.getBotTask().getId() + "." + detail.getBotTask().getName();
-                                exceptions += "\nbot task = " + detail.getBotTask().getTaskHandlerClassName() + "/" + botTaskIdentifier;
-                                if (!errorFiles.containsKey(botTaskIdentifier)) {
-                                    errorFiles.put(botTaskIdentifier, detail.getBotTask().getConfiguration());
-                                    addSupportFileInfo(includedFileNames, MessageFormat.format(
-                                            getResources(request).getMessage("support.file.bottask.configuration"), botTaskIdentifier), true);
+                                exceptions += "\r\nbot task = " + detail.getBotTask().getTaskHandlerClassName() + "/" + botTaskIdentifier;
+                                if (!processFiles.containsKey(botTaskIdentifier)) {
+                                    processFiles.put(botTaskIdentifier, detail.getBotTask().getConfiguration());
+                                    addSupportFileInfo(files, MessageFormat.format(
+                                            getResources(request).getMessage("support.file.bottask.configuration"), detail.getBotTask().getName()),
+                                            true);
                                 }
                             }
                             exceptions += "\r\n" + Throwables.getStackTraceAsString(detail.getThrowable());
                         }
-                        errorFiles.put("exceptions." + processId + ".txt", exceptions.getBytes(Charsets.UTF_8));
-                        addSupportFileInfo(includedFileNames, getResources(request).getMessage("support.file.exceptions"), true);
-                        for (WfProcess process : processes) {
-                            String processDefinitionFileName = process.getName() + ".par";
-                            if (!errorFiles.containsKey(processDefinitionFileName)) {
-                                try {
-                                    errorFiles.put(
-                                            processDefinitionFileName,
-                                            Delegates.getDefinitionService().getProcessDefinitionFile(user, process.getDefinitionId(),
-                                                    IFileDataProvider.PAR_FILE));
-                                    fileIncluded = true;
-                                } catch (Exception e) {
-                                    fileIncluded = false;
-                                    log.warn("definition for " + process, e);
-                                }
-                                addSupportFileInfo(includedFileNames, MessageFormat.format(
-                                        getResources(request).getMessage("support.file.process.definition"), processDefinitionFileName), fileIncluded);
-                            }
-                            try {
-                                errorFiles.put(process.getId() + ".graph.png",
-                                        Delegates.getExecutionService().getProcessDiagram(user, process.getId(), null, null));
-                                fileIncluded = true;
-                            } catch (Exception e) {
-                                fileIncluded = false;
-                                log.warn("process graph for " + process, e);
-                            }
-                            addSupportFileInfo(includedFileNames,
-                                    MessageFormat.format(getResources(request).getMessage("support.file.process.graph"), process.getId()),
-                                    fileIncluded);
-                            try {
-                                byte[] logs = getProcessLogs(request, user, process.getId()).getBytes(Charsets.UTF_8);
-                                errorFiles.put(process.getId() + ".log.html", logs);
-                                fileIncluded = true;
-                            } catch (Exception e) {
-                                fileIncluded = false;
-                                log.warn("process logs for " + process, e);
-                            }
-                            addSupportFileInfo(includedFileNames,
-                                    MessageFormat.format(getResources(request).getMessage("support.file.process.logs"), process.getId()),
-                                    fileIncluded);
-                        }
-                        supportFiles.put("support." + processId + ".zip", createZip(errorFiles));
-                        errorInfo.put("includedFileNames", includedFileNames);
-                        processesErrorInfo.add(errorInfo);
+                        processFiles.put("exceptions." + processId + ".txt", exceptions.getBytes(Charsets.UTF_8));
                     }
+                    addSupportFileInfo(files, getResources(request).getMessage("support.file.exceptions"), true);
+                    for (WfProcess process : processes) {
+                        String processDefinitionFileName = process.getName() + ".par";
+                        if (!processFiles.containsKey(processDefinitionFileName)) {
+                            try {
+                                processFiles.put(
+                                        processDefinitionFileName,
+                                        Delegates.getDefinitionService().getProcessDefinitionFile(user, process.getDefinitionId(),
+                                                IFileDataProvider.PAR_FILE));
+                                fileIncluded = true;
+                            } catch (Exception e) {
+                                fileIncluded = false;
+                                log.warn("definition for " + process, e);
+                            }
+                            addSupportFileInfo(files, MessageFormat.format(getResources(request).getMessage("support.file.process.definition"),
+                                    processDefinitionFileName), fileIncluded);
+                        }
+                        try {
+                            processFiles.put(process.getId() + ".graph.png",
+                                    Delegates.getExecutionService().getProcessDiagram(user, process.getId(), null, null));
+                            fileIncluded = true;
+                        } catch (Exception e) {
+                            fileIncluded = false;
+                            log.warn("process graph for " + process, e);
+                        }
+                        addSupportFileInfo(files,
+                                MessageFormat.format(getResources(request).getMessage("support.file.process.graph"), process.getId()), fileIncluded);
+                        try {
+                            byte[] logs = getProcessLogs(request, user, process.getId()).getBytes(Charsets.UTF_8);
+                            processFiles.put(process.getId() + ".log.html", logs);
+                            fileIncluded = true;
+                        } catch (Exception e) {
+                            fileIncluded = false;
+                            log.warn("process logs for " + process, e);
+                        }
+                        addSupportFileInfo(files,
+                                MessageFormat.format(getResources(request).getMessage("support.file.process.logs"), process.getId()), fileIncluded);
+                    }
+                    supportFiles.put("process." + rootProcessId + ".zip", createZip(processFiles));
+                    tab.put("files", files);
+                    tabs.add(tab);
                 }
-                rootObject.put("processesErrorInfo", processesErrorInfo);
+                rootObject.put("tabs", tabs);
+                if (supportFiles.size() > 0) {
+                    JSONArray files = new JSONArray();
+                    addLogFile(files, supportFiles, "boot.log");
+                    addLogFile(files, supportFiles, "server.log");
+                    rootObject.put("files", files);
+                }
                 String supportFileName = null;
                 byte[] supportFile = null;
                 if (supportFiles.size() == 1) {
                     supportFileName = supportFiles.keySet().iterator().next();
                     supportFile = supportFiles.values().iterator().next();
                 } else if (supportFiles.size() > 1) {
-                    supportFileName = "support.files.zip";
+                    supportFileName = "support.files." + CalendarUtil.formatDate(new Date()) + ".zip";
                     supportFile = createZip(supportFiles);
                 }
                 if (supportFileName != null && supportFile != null) {
                     request.getSession().setAttribute(supportFileName, supportFile);
                     rootObject.put("downloadUrl", "/wfe/getSessionFile.do?fileName=" + supportFileName);
                     rootObject.put("downloadTitle", getResources(request).getMessage("support.files.download"));
+                    rootObject.put("supportUrl", getResources(request).getMessage("support.url"));
+                    rootObject.put("supportTitle", getResources(request).getMessage("support.title"));
                 }
             } else {
                 rootObject.put(HTML, "Unknown action: " + action);
@@ -210,17 +231,60 @@ public class ErrorDetailsAction extends ActionBase {
         return null;
     }
 
+    private void addLogFile(JSONArray files, Map<String, byte[]> supportFiles, String fileName) throws IOException {
+        File file = new File(IOCommons.getLogDirPath(), fileName);
+        if (!file.exists()) {
+            log.error("No log file found at " + file.getAbsolutePath());
+            return;
+        }
+        long serverLogSizeInMb = file.length() / (1024 * 1024) + 1;
+        boolean logFileIncluded = serverLogSizeInMb <= 100;
+        if (logFileIncluded) {
+            supportFiles.put(fileName, Files.toByteArray(file));
+        }
+        addSupportFileInfo(files, fileName + " (" + serverLogSizeInMb + " Mb)", logFileIncluded);
+    }
+
+    private void addBotTabError(HttpServletRequest request, JSONArray tabs, Map<String, byte[]> supportFiles, BotTaskIdentifier botTaskIdentifier)
+            throws IOException {
+        JSONObject tab = new JSONObject();
+        String type = botTaskIdentifier.getBotTask() != null ? "bottask" : "bot";
+        tab.put("key", "b" + botTaskIdentifier.getUniqueId());
+        tab.put("title", getResources(request).getMessage("errors." + type + ".name") + " " + botTaskIdentifier.getUniqueId());
+        Map<String, byte[]> botFiles = Maps.newHashMap();
+        JSONArray files = new JSONArray();
+        String exceptions = "";
+        if (botTaskIdentifier.getBotTask() != null) {
+            exceptions += "\r\nbot task = " + botTaskIdentifier.getBotTask();
+            botFiles.put(botTaskIdentifier.getBotTaskName(), botTaskIdentifier.getBotTask().getConfiguration());
+            addSupportFileInfo(files, MessageFormat.format(getResources(request).getMessage("support.file.bottask.configuration"), botTaskIdentifier
+                    .getBotTask().getName()), true);
+        } else {
+            exceptions += "\r\nbot = " + botTaskIdentifier.getBot();
+        }
+        Throwable throwable = ProcessExecutionErrors.getBotTaskConfigurationErrors().get(botTaskIdentifier);
+        exceptions += "\r\n" + Throwables.getStackTraceAsString(throwable);
+        botFiles.put("exception." + botTaskIdentifier.getUniqueId() + ".txt", exceptions.getBytes(Charsets.UTF_8));
+        addSupportFileInfo(files, getResources(request).getMessage("support.file.exceptions"), true);
+        supportFiles.put(type + "." + botTaskIdentifier.getUniqueId() + ".zip", createZip(botFiles));
+        tab.put("files", files);
+        tabs.add(tab);
+    }
+
     private void initProcessHierarchy(User user, Map<Long, List<Long>> processHierarchies, Long processId) {
         try {
-            WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
-            while (process != null) {
-                processId = process.getId();
-                process = Delegates.getExecutionService().getParentProcess(user, processId);
+            Long parentProcessId = processId;
+            while (true) {
+                WfProcess process = Delegates.getExecutionService().getParentProcess(user, parentProcessId);
+                if (process == null) {
+                    break;
+                }
+                parentProcessId = process.getId();
             }
-            List<Long> processIdsWithErrors = processHierarchies.get(processId);
+            List<Long> processIdsWithErrors = processHierarchies.get(parentProcessId);
             if (processIdsWithErrors == null) {
                 processIdsWithErrors = Lists.newArrayList();
-                processHierarchies.put(processId, processIdsWithErrors);
+                processHierarchies.put(parentProcessId, processIdsWithErrors);
             }
             processIdsWithErrors.add(processId);
         } catch (Exception e) {
@@ -230,7 +294,7 @@ public class ErrorDetailsAction extends ActionBase {
 
     private void addSupportFileInfo(JSONArray array, String fileInfo, boolean fileIncluded) {
         JSONObject object = new JSONObject();
-        object.put("info", fileInfo);
+        object.put("name", fileInfo);
         object.put("included", fileIncluded);
         array.add(object);
     }

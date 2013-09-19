@@ -127,7 +127,7 @@ public class MultiProcessState extends SubProcessState {
         }
         int subprocessesCount = TypeConversionUtil.getArraySize(discriminatorValue);
         List<Process> subProcesses = Lists.newArrayList();
-        ProcessDefinition subProcessDefinition = getSubProcessDefinition(executionContext);
+        ProcessDefinition subProcessDefinition = getSubProcessDefinition();
         for (int idx = 0; idx < subprocessesCount; idx++) {
             Map<String, Object> variables = Maps.newHashMap();
             for (VariableMapping variableMapping : variableMappings) {
@@ -186,20 +186,17 @@ public class MultiProcessState extends SubProcessState {
 
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
-        for (Process subprocess : executionContext.getSubprocesses()) {
-            if (!subprocess.hasEnded()) {
-                return;
-            }
+        if (executionContext.getActiveSubprocesses().size() == 0) {
+            log.debug("Leaving multiinstance due to 0 active subprocesses");
+            super.leave(executionContext, transition);
         }
-        log.debug("Leaving multiinstance due to 0 active subprocesses");
-        super.leave(executionContext, transition);
     }
 
     @Override
     protected void performLeave(ExecutionContext executionContext) {
-        List<Process> subprocesses = executionContext.getSubprocesses();
+        List<Process> subprocesses = executionContext.getAllSubprocesses();
         if (!subprocesses.isEmpty()) {
-            ProcessDefinition subProcessDefinition = getSubProcessDefinition(executionContext);
+            ProcessDefinition subProcessDefinition = getSubProcessDefinition();
             for (VariableMapping variableMapping : variableMappings) {
                 // if this variable access is writable
                 if (variableMapping.isWritable()) {
@@ -228,7 +225,7 @@ public class MultiProcessState extends SubProcessState {
         fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_END);
 
         for (Process subProcess : subprocesses) {
-            executionContext.addLog(new SubprocessEndLog(this, subProcess));
+            executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), subProcess));
         }
     }
 
