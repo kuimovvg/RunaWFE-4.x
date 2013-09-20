@@ -16,9 +16,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;extension base="{http://impl.service.wfe.runa.ru/}identifiableBase">
  *       &lt;sequence>
- *         &lt;element name="address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -29,40 +30,66 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "botStation", propOrder = {
-    "address",
+    "id",
+    "version",
     "name",
-    "version"
+    "address"
 })
 public class BotStation
     extends IdentifiableBase
 {
 
-    protected String address;
-    protected String name;
+    protected Long id;
     protected Long version;
+    protected String name;
+    protected String address;
 
     /**
-     * Gets the value of the address property.
+     * Gets the value of the id property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public String getAddress() {
-        return address;
+    public Long getId() {
+        return id;
     }
 
     /**
-     * Sets the value of the address property.
+     * Sets the value of the id property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Long }
      *     
      */
-    public void setAddress(String value) {
-        this.address = value;
+    public void setId(Long value) {
+        this.id = value;
+    }
+
+    /**
+     * Gets the value of the version property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets the value of the version property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setVersion(Long value) {
+        this.version = value;
     }
 
     /**
@@ -90,27 +117,27 @@ public class BotStation
     }
 
     /**
-     * Gets the value of the version property.
+     * Gets the value of the address property.
      * 
      * @return
      *     possible object is
-     *     {@link Long }
+     *     {@link String }
      *     
      */
-    public Long getVersion() {
-        return version;
+    public String getAddress() {
+        return address;
     }
 
     /**
-     * Sets the value of the version property.
+     * Sets the value of the address property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Long }
+     *     {@link String }
      *     
      */
-    public void setVersion(Long value) {
-        this.version = value;
+    public void setAddress(String value) {
+        this.address = value;
     }
 
 }
