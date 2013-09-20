@@ -25,6 +25,8 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -37,6 +39,7 @@ import com.google.common.base.Objects;
 @Entity
 @Table(name = "BOT_STATION")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class BotStation extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
     public static final BotStation INSTANCE = new BotStation(0L);
