@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -44,7 +45,8 @@ public class BotImportCommand extends BotSyncCommand {
                 files.put(botEntry.getName(), bytes);
             }
             //create bot
-            IPath path = new Path(botStationName).append("/src/botstation/").append(botName.replaceAll(".bot", ""));
+            String botFolderName = botName.replaceAll(Pattern.quote(".bot"), "");
+            IPath path = new Path(botStationName).append("/src/botstation/").append(botFolderName);
             IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(path);
             if (!folder.exists()) {
                 folder.create(true, true, null);
