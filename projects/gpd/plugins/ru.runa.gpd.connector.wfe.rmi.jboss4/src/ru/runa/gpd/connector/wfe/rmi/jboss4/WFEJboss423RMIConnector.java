@@ -39,6 +39,18 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
     private InitialContext remoteContext;
     private User user;
 
+    private InitialContext getInitialContext() throws NamingException {
+        if (remoteContext == null) {
+            Hashtable<String, String> environment = new Hashtable<String, String>();
+            environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
+            environment.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
+            String url = Activator.getPrefString(P_WFE_CONNECTION_HOST) + ":" + Activator.getPrefString(P_WFE_CONNECTION_PORT);
+            environment.put(Context.PROVIDER_URL, url);
+            remoteContext = new InitialContext(environment);
+        }
+        return remoteContext;
+    }
+
     private User getUser() {
         if (user == null) {
             connect();
@@ -55,12 +67,6 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
     @Override
     public void connect() {
         try {
-            Hashtable<String, String> environment = new Hashtable<String, String>();
-            environment.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
-            environment.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-            String url = Activator.getPrefString(P_WFE_CONNECTION_HOST) + ":" + Activator.getPrefString(P_WFE_CONNECTION_PORT);
-            environment.put(Context.PROVIDER_URL, url);
-            remoteContext = new InitialContext(environment);
             AuthenticationService authenticationService = getService("AuthenticationServiceBean");
             if (LOGIN_MODE_LOGIN_PASSWORD.equals(Activator.getPrefString(P_WFE_CONNECTION_LOGIN_MODE))) {
                 String login = Activator.getPrefString(P_WFE_CONNECTION_LOGIN);
@@ -86,7 +92,7 @@ public class WFEJboss423RMIConnector extends WFEServerConnector {
     private <T> T getService(String beanName) {
         String jndiName = "runawfe/" + beanName + "/remote";
         try {
-            return (T) remoteContext.lookup(jndiName);
+            return (T) getInitialContext().lookup(jndiName);
         } catch (NamingException e) {
             throw new RuntimeException("Unable to locale EJB by name " + jndiName, e);
         }
