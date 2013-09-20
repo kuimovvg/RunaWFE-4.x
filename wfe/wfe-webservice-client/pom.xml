@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ru.runa.wfe</groupId>
 	<artifactId>wfe-webservice-client</artifactId>
-	<version>4.0.5</version>
+	<version>4.0.6</version>
 	<packaging>jar</packaging>
 	<name>wfe-webservice-client</name>
 	<description>RunaWFE WebServices Client API</description>
@@ -39,17 +39,17 @@
 						</goals>
 						<configuration>
 							<wsdls>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/AuthenticationServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/AuthorizationServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/BotServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/DefinitionServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/ExecutionServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/ExecutorServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/ProfileServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/RelationServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/ScriptingServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/SystemServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.5/SubstitutionServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/AuthenticationServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/AuthorizationServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/BotServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/DefinitionServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ExecutionServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ExecutorServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ProfileServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/RelationServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ScriptingServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/SystemServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/SubstitutionServiceBean?wsdl</wsdl>
 							</wsdls>
 							<targetPackage>ru.runa.wfe.webservice</targetPackage>
 							<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
