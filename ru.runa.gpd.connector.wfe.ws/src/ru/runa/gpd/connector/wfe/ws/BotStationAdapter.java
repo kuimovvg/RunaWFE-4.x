@@ -9,6 +9,8 @@ import com.google.common.collect.Lists;
 public class BotStationAdapter {
     public static BotStation toDTO(ru.runa.wfe.webservice.BotStation botStation) {
         BotStation result = new BotStation();
+        result.setId(botStation.getId());
+        result.setVersion(botStation.getVersion());
         result.setAddress(botStation.getAddress());
         result.setName(botStation.getName());
         return result;
@@ -24,6 +26,8 @@ public class BotStationAdapter {
 
     public static ru.runa.wfe.webservice.BotStation toJAXB(BotStation botStation) {
         ru.runa.wfe.webservice.BotStation result = new ru.runa.wfe.webservice.BotStation();
+        result.setId(botStation.getId());
+        result.setVersion(botStation.getVersion());
         result.setAddress(botStation.getAddress());
         result.setName(botStation.getName());
         return result;
