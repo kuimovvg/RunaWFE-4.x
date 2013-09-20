@@ -13,7 +13,6 @@ import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wfe.bot.BotStation;
-import ru.runa.wfe.service.BotService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -29,11 +28,10 @@ public class SaveBotStationAction extends ActionBase {
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         IdForm form = (IdForm) actionForm;
         try {
-            BotService botService = Delegates.getBotService();
-            BotStation station = botService.getBotStation(form.getId());
+            BotStation station = Delegates.getBotService().getBotStation(form.getId());
             String fileName = station.getName() + ".botstation";
             fileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
-            byte[] archive = botService.exportBotStation(getLoggedUser(request), station);
+            byte[] archive = Delegates.getBotService().exportBotStation(getLoggedUser(request), station);
             response.setContentType("application/zip");
             response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
             OutputStream out = response.getOutputStream();
