@@ -4,25 +4,39 @@ import org.dom4j.Element;
 
 public class ParamDef {
     private final String name;
-    private final String variableName;
-    private final String value;
+    private String variableName;
+    private String value;
+    private boolean optional;
 
     public ParamDef(Element element) {
         name = element.attributeValue("name");
         variableName = element.attributeValue("variable");
         value = element.attributeValue("value");
+        optional = Boolean.parseBoolean(element.attributeValue("optional", "false"));
     }
 
     public String getName() {
         return name;
     }
 
+    public boolean isOptional() {
+        return optional;
+    }
+
     public String getVariableName() {
         return variableName;
     }
 
+    public void setVariableName(String variableName) {
+        this.variableName = variableName;
+    }
+
     public String getValue() {
         return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override

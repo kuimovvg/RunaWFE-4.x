@@ -3,7 +3,7 @@ package ru.runa.wfe.var;
 import ru.runa.wfe.var.dto.WfVariable;
 
 public class DelegableVariableProvider extends AbstractVariableProvider {
-    final IVariableProvider delegate;
+    private final IVariableProvider delegate;
 
     public DelegableVariableProvider(IVariableProvider delegate) {
         this.delegate = delegate;
@@ -11,17 +11,26 @@ public class DelegableVariableProvider extends AbstractVariableProvider {
 
     @Override
     public Long getProcessId() {
-        return delegate.getProcessId();
+        if (delegate != null) {
+            return delegate.getProcessId();
+        }
+        return null;
     }
 
     @Override
     public Object getValue(String variableName) {
-        return delegate.getValue(variableName);
+        if (delegate != null) {
+            return delegate.getValue(variableName);
+        }
+        return null;
     }
 
     @Override
     public WfVariable getVariable(String variableName) {
-        return delegate.getVariable(variableName);
+        if (delegate != null) {
+            return delegate.getVariable(variableName);
+        }
+        return null;
     }
 
 }

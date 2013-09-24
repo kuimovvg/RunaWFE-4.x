@@ -1,8 +1,6 @@
 package ru.runa.wf.logic.bot;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,20 +70,45 @@ public class BotTaskConfigurationUtils {
         return null;
     }
 
-    public static byte[] substituteExtendedConfiguration(User user, WfTask task, byte[] configuration, IVariableProvider variableProvider) {
-        if (configuration == null) {
-            return null;
-        }
+    public static ParamsDef getExtendedBotTaskParameters(User user, WfTask task, byte[] configuration) {
         Document document = XmlUtils.parseWithoutValidation(configuration);
+        Element parametersElement = document.getRootElement().element(PARAMETERS_PARAM);
+        ParamsDef result = ParamsDef.parse(parametersElement.element(CONFIG_PARAM));
         Element taskElement = getBotTaskElement(user, task);
         Preconditions.checkNotNull(taskElement, "Unable to get bot task link xml");
         Element configElement = taskElement.element(CONFIG_PARAM);
         if (configElement == null) {
-            return configuration;
+            if (result.getInputParams().size() > 0 || result.getOutputParams().size() > 0) {
+                throw new InternalApplicationException("Unable to apply bot task link to parameters");
+            }
+            return result;
         }
-        Element parametersElement = document.getRootElement().element(PARAMETERS_PARAM);
-        ParamsDef botTaskParamsDef = ParamsDef.parse(parametersElement.element(CONFIG_PARAM));
         ParamsDef taskParamsDef = ParamsDef.parse(configElement);
+        for (ParamDef paramDef : result.getInputParams().values()) {
+            ParamDef taskParamDef = taskParamsDef.getInputParam(paramDef.getName());
+            if (taskParamDef == null) {
+                if (paramDef.isOptional()) {
+                    continue;
+                }
+                throw new InternalApplicationException("no taskParamDef found for param " + paramDef);
+            }
+            substituteParameter(paramDef, taskParamDef);
+        }
+        for (ParamDef paramDef : result.getOutputParams().values()) {
+            ParamDef taskParamDef = taskParamsDef.getOutputParam(paramDef.getName());
+            if (taskParamDef == null) {
+                if (paramDef.isOptional()) {
+                    continue;
+                }
+                throw new InternalApplicationException("no taskParamDef found for param " + paramDef);
+            }
+            substituteParameter(paramDef, taskParamDef);
+        }
+        return result;
+    }
+
+    public static byte[] getExtendedBotTaskConfiguration(byte[] configuration) {
+        Document document = XmlUtils.parseWithoutValidation(configuration);
         Element botConfigElement = document.getRootElement().element(BOTCONFIG_PARAM);
         String substituted;
         if (botConfigElement.elements().size() > 0) {
@@ -94,28 +117,17 @@ public class BotTaskConfigurationUtils {
         } else {
             substituted = botConfigElement.getText();
         }
-        for (ParamDef botTaskParamDef : botTaskParamsDef.getInputParams().values()) {
-            ParamDef taskParamDef = taskParamsDef.getInputParamNotNull(botTaskParamDef.getName());
-            substituted = substituteParameter(substituted, botTaskParamDef, taskParamDef);
-        }
-        for (ParamDef botTaskParamDef : botTaskParamsDef.getOutputParams().values()) {
-            ParamDef taskParamDef = taskParamsDef.getOutputParamNotNull(botTaskParamDef.getName());
-            substituted = substituteParameter(substituted, botTaskParamDef, taskParamDef);
-        }
         return substituted.getBytes(Charsets.UTF_8);
     }
 
-    private static String substituteParameter(String config, ParamDef botTaskParamDef, ParamDef taskParamDef) {
-        String replacement;
+    private static void substituteParameter(ParamDef paramDef, ParamDef taskParamDef) {
         if (!Strings.isNullOrEmpty(taskParamDef.getVariableName())) {
-            replacement = taskParamDef.getVariableName();
+            paramDef.setVariableName(taskParamDef.getVariableName());
         } else if (!Strings.isNullOrEmpty(taskParamDef.getValue())) {
-            replacement = taskParamDef.getValue();
+            paramDef.setValue(taskParamDef.getValue());
         } else {
-            throw new InternalApplicationException("no replacement found for param " + taskParamDef);
+            throw new InternalApplicationException("no replacement found for param " + paramDef);
         }
-        config = config.replaceAll(Pattern.quote("param:" + taskParamDef.getName()), Matcher.quoteReplacement(replacement));
-        return config;
     }
 
     public static boolean isParameterizedBotTaskConfiguration(byte[] configuration) {
@@ -131,6 +143,7 @@ public class BotTaskConfigurationUtils {
         return false;
     }
 
+    // TODO move to mechanism as for extended task.
     public static byte[] substituteParameterizedConfiguration(User user, WfTask task, byte[] configuration, IVariableProvider variableProvider) {
         Element taskElement = getBotTaskElement(user, task);
         if (taskElement == null) {
