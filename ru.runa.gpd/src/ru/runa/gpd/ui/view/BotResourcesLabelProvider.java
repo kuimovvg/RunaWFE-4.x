@@ -20,7 +20,10 @@ public class BotResourcesLabelProvider extends ResourcesLabelProvider {
             return SharedImages.getImage("icons/bot.gif");
         }
         if (element instanceof IFile) {
-            BotTask task = BotCache.getBotTaskNotNull((IFile) element);
+            BotTask task = BotCache.getBotTask((IFile) element);
+            if (task == null) {
+                return null;
+            }
             if (task.getType() != BotTaskType.SIMPLE) {
                 return SharedImages.getImage("icons/bot_task_formal.gif");
             }
