@@ -26,6 +26,7 @@ import org.w3c.dom.ls.LSResourceResolver;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 
 /**
  * Util for HTML with custom tags
@@ -34,6 +35,18 @@ import com.google.common.base.Charsets;
  */
 public class XmlUtil {
     public static final String RUNA_NAMESPACE = "http://runa.ru/xml";
+
+    public static boolean isXml(String data) {
+        if (Strings.isNullOrEmpty(data)) {
+            return false;
+        }
+        try {
+            parseWithoutValidation(data);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public static Document parseWithoutValidation(String data) {
         return parseWithoutValidation(data.getBytes(Charsets.UTF_8));

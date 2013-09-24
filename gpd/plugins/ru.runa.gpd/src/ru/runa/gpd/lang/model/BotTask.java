@@ -67,20 +67,16 @@ public class BotTask implements Delegable, Comparable<BotTask> {
     }
 
     public boolean isDelegationConfigurationInXml() {
-        try {
-            if (HandlerRegistry.getProvider(delegationClassName) instanceof XmlBasedConstructorProvider) {
-                return true;
-            }
-            XmlUtil.parseWithoutValidation(delegationConfiguration);
+        if (HandlerRegistry.getProvider(delegationClassName) instanceof XmlBasedConstructorProvider) {
             return true;
-        } catch (Exception e) {
-            return false;
         }
+        return XmlUtil.isXml(delegationConfiguration);
     }
 
     /**
      * param-based config
-     * @return null for simple bot task type 
+     * 
+     * @return null for simple bot task type
      */
     public ParamDefConfig getParamDefConfig() {
         return paramDefConfig;
