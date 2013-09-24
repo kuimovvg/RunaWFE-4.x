@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.CalendarInterval;
@@ -31,12 +32,15 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.TaskHandler;
+import ru.runa.wfe.extension.handler.ParamDef;
+import ru.runa.wfe.extension.handler.ParamsDef;
 import ru.runa.wfe.service.client.DelegateProcessVariableProvider;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.ParamBasedVariableProvider;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -130,11 +134,9 @@ public class WorkflowBotTaskExecutor implements Runnable {
             taskHandler = ClassLoaderUtil.instantiate(botTask.getTaskHandlerClassName());
             try {
                 if (BotTaskConfigurationUtils.isExtendedBotTaskConfiguration(botTask.getConfiguration())) {
-                    if (botTask.getConfiguration() != null) {
-                        byte[] configuration = BotTaskConfigurationUtils.substituteExtendedConfiguration(user, task, botTask.getConfiguration(),
-                                variableProvider);
-                        taskHandler.setConfiguration(configuration);
-                    }
+                    taskHandler.setConfiguration(BotTaskConfigurationUtils.getExtendedBotTaskConfiguration(botTask.getConfiguration()));
+                    ParamsDef paramsDef = BotTaskConfigurationUtils.getExtendedBotTaskParameters(user, task, botTask.getConfiguration());
+                    variableProvider = new ParamBasedVariableProvider(variableProvider, paramsDef);
                 } else if (BotTaskConfigurationUtils.isParameterizedBotTaskConfiguration(botTask.getConfiguration())) {
                     byte[] configuration = BotTaskConfigurationUtils.substituteParameterizedConfiguration(user, task, botTask.getConfiguration(),
                             variableProvider);
@@ -159,6 +161,28 @@ public class WorkflowBotTaskExecutor implements Runnable {
             if (Objects.equal(Boolean.TRUE, skipTaskCompletion)) {
                 log.info("Bot task " + task + " postponed (skipTaskCompletion) by task handler " + taskHandler.getClass());
             } else {
+                if (variableProvider instanceof ParamBasedVariableProvider) {
+                    ParamsDef paramsDef = ((ParamBasedVariableProvider) variableProvider).getParamsDef();
+                    for (Map.Entry<String, ParamDef> entry : paramsDef.getOutputParams().entrySet()) {
+                        String paramName = entry.getKey();
+                        Object object = null;
+                        // TODO back compatibility until 4.1.0
+                        if (variables.containsKey(paramName)) {
+                            object = variables.remove(paramName);
+                        } else if (variables.containsKey("param:" + paramName)) {
+                            object = variables.remove("param:" + paramName);
+                        } else {
+                            continue;
+                        }
+                        if (entry.getValue().getVariableName() == null) {
+                            if (entry.getValue().isOptional()) {
+                                continue;
+                            }
+                            throw new InternalApplicationException("Cannot set required output param " + entry.getValue() + " to " + object);
+                        }
+                        variables.put(entry.getValue().getVariableName(), object);
+                    }
+                }
                 Delegates.getExecutionService().completeTask(user, task.getId(), variables, null);
                 log.debug("Handled bot task " + task + ", " + bot + " by " + taskHandler.getClass());
             }
