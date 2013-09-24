@@ -105,7 +105,7 @@ public class BotTask implements Delegable, Comparable<BotTask> {
                         }
                     }
                     if (applicable) {
-                        result.add("param:" + paramDef.getName());
+                        result.add(paramDef.getName());
                     }
                 }
             }
