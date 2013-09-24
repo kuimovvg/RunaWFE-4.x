@@ -185,11 +185,22 @@ public class BotCache {
     /**
      * Gets bot task by file.
      */
-    public static synchronized BotTask getBotTaskNotNull(IFile botTaskFile) {
+    public static synchronized BotTask getBotTask(IFile botTaskFile) {
         for (Map.Entry<BotTask, IFile> entry : BOT_TASK_FILES.entrySet()) {
             if (Objects.equal(botTaskFile, entry.getValue())) {
                 return entry.getKey();
             }
+        }
+        return null;
+    }
+
+    /**
+     * Gets bot task by file.
+     */
+    public static synchronized BotTask getBotTaskNotNull(IFile botTaskFile) {
+        BotTask botTask = getBotTask(botTaskFile);
+        if (botTask != null) {
+            return botTask;
         }
         throw new RuntimeException("bot task not found by file '" + botTaskFile + "'");
     }

@@ -2,6 +2,7 @@ package ru.runa.gpd.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -276,10 +277,12 @@ public class WorkspaceOperations {
     }
 
     public static void saveBotTask(IFile botTaskFile, BotTask botTask) throws CoreException {
-        if (!botTaskFile.exists()) {
-            IOUtils.createFile(botTaskFile);
+        InputStream inputStream = BotTaskUtils.createBotTaskInfo((IFolder) botTaskFile.getParent(), botTask);
+        if (botTaskFile.exists()) {
+            botTaskFile.setContents(inputStream, true, true, null);
+        } else {
+            IOUtils.createFile(botTaskFile, inputStream);
         }
-        botTaskFile.setContents(BotTaskUtils.createBotTaskInfo((IFolder) botTaskFile.getParent(), botTask), true, true, null);
     }
 
     public static void openBotTask(IFile botTaskFile) {

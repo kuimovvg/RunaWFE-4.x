@@ -32,7 +32,7 @@ public abstract class WFEServerConnector implements IConnector, PrefConstants {
         Configuration.setConfiguration(new KerberosLoginConfiguration());
     }
     private static WFEServerConnector instance;
-    private String password;
+    private String userInputPassword;
 
     public static synchronized WFEServerConnector getInstance() {
         if (instance == null) {
@@ -46,22 +46,23 @@ public abstract class WFEServerConnector implements IConnector, PrefConstants {
     }
 
     protected String getPassword() {
-        if (password == null) {
-            password = Activator.getPrefString(P_WFE_CONNECTION_PASSWORD);
-            if (password.length() == 0) {
+        String password = Activator.getPrefString(P_WFE_CONNECTION_PASSWORD);
+        if (password.length() == 0) {
+            if (userInputPassword == null) {
                 Display.getDefault().syncExec(new Runnable() {
                     @Override
                     public void run() {
                         UserInputDialog userInputDialog = new UserInputDialog(Localization.getString("pref.connection.password"));
                         if (Window.OK == userInputDialog.open()) {
-                            password = userInputDialog.getUserInput();
+                            userInputPassword = userInputDialog.getUserInput();
                         }
                     }
                 });
-                if (password.length() == 0) {
-                    PluginLogger.logInfo("[wfeconnector] empty password");
-                    return null;
-                }
+                password = userInputPassword;
+            }
+            if (password.length() == 0) {
+                PluginLogger.logInfo("[wfeconnector] empty password");
+                return null;
             }
         }
         return password;
