@@ -2,6 +2,7 @@ package ru.runa.gpd.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.regex.Pattern;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -148,7 +149,9 @@ public class BotTaskUtils {
                 Element configElement = (Element) botConfigElement.elements().get(0);
                 botTask.setDelegationConfiguration(XmlUtil.toString(configElement, OutputFormat.createPrettyPrint()));
             } else {
-                botTask.setDelegationConfiguration(botConfigElement.getText());
+                String config = botConfigElement.getText();
+                config = config.replaceAll(Pattern.quote("param:"), "");
+                botTask.setDelegationConfiguration(config);
             }
         } else {
             botTask.setType(BotTaskType.SIMPLE);
