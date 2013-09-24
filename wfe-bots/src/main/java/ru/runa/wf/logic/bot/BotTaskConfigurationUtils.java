@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
@@ -85,7 +86,14 @@ public class BotTaskConfigurationUtils {
         Element parametersElement = document.getRootElement().element(PARAMETERS_PARAM);
         ParamsDef botTaskParamsDef = ParamsDef.parse(parametersElement.element(CONFIG_PARAM));
         ParamsDef taskParamsDef = ParamsDef.parse(configElement);
-        String substituted = document.getRootElement().element(BOTCONFIG_PARAM).getTextTrim();
+        Element botConfigElement = document.getRootElement().element(BOTCONFIG_PARAM);
+        String substituted;
+        if (botConfigElement.elements().size() > 0) {
+            Element taskConfigElement = (Element) botConfigElement.elements().get(0);
+            substituted = XmlUtils.toString(taskConfigElement, OutputFormat.createPrettyPrint());
+        } else {
+            substituted = botConfigElement.getText();
+        }
         for (ParamDef botTaskParamDef : botTaskParamsDef.getInputParams().values()) {
             ParamDef taskParamDef = taskParamsDef.getInputParamNotNull(botTaskParamDef.getName());
             substituted = substituteParameter(substituted, botTaskParamDef, taskParamDef);
