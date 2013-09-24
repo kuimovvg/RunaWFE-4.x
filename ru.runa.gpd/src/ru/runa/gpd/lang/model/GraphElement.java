@@ -187,7 +187,11 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
             if (child instanceof NamedGraphElement) {
                 NamedGraphElement namedGraphElement = (NamedGraphElement) child;
                 if (Strings.isNullOrEmpty(namedGraphElement.getName())) {
-                    namedGraphElement.setName(child.getTypeDefinition().getLabel() + " " + nodeId);
+                    String name = child.getTypeDefinition().getLabel();
+                    if (!(child instanceof EndState) && !(child instanceof StartState)) {
+                        name += " " + nodeId;
+                    }
+                    namedGraphElement.setName(name);
                 }
             }
         } catch (StringIndexOutOfBoundsException e) {
