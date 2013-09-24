@@ -147,9 +147,9 @@ int IsThereAnyTask()
 		const std::string sPostXml =
 			"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:impl=\"http://impl.service.wfe.runa.ru/\">"
 			"<SOAP-ENV:Header/><SOAP-ENV:Body>"
-			"<impl:authenticateByKerberos><arg0>"
+			"<impl:authenticateByKerberos><token>"
 			+ base64_encode(Ticket, UNLIMITED_LINE_LENGTH) +
-			"</arg0></impl:authenticateByKerberos>"
+			"</token></impl:authenticateByKerberos>"
 			"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
 		REQUEST_INFO request(VERB_POST, sUrl);
@@ -190,9 +190,9 @@ int IsThereAnyTask()
 		const std::string sPostXml =
 			"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:impl=\"http://impl.service.wfe.runa.ru/\">"
 			"<SOAP-ENV:Header/><SOAP-ENV:Body>"
-			"<impl:getTasks><arg0>"
+			"<impl:getTasks><user>"
 			+ sRunaAuthData +
-			"</arg0></impl:getTasks>"
+			"</user></impl:getTasks>"
 			"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
 		REQUEST_INFO request(VERB_POST, sUrl);
