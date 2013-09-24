@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
@@ -46,14 +45,7 @@ public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
 
     @Override
     public boolean validateValue(Delegable delegable) {
-        String configuration = delegable.getDelegationConfiguration();
-        try {
-            XmlUtil.parseWithoutValidation(configuration);
-            return true;
-        } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("SwimlaneAssignerActionHandler: invalid configuration " + configuration, e);
-            return false;
-        }
+        return XmlUtil.isXml(delegable.getDelegationConfiguration());
     }
 
     public class SwimlaneAssignerConfigurationDialog extends DelegableConfigurationDialog {
