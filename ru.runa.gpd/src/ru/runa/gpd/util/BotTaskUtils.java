@@ -6,6 +6,7 @@ import java.io.InputStream;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
@@ -57,9 +58,14 @@ public class BotTaskUtils {
             Element root = document.addElement(EXTENDED_ELEMENT);
             Element parametersElement = root.addElement(PARAMETERS_ELEMENT);
             botTask.getParamDefConfig().writeXml(parametersElement);
-            Element botconfigElement = root.addElement(BOTCONFIG_ELEMENT);
-            botconfigElement.addCDATA(botTask.getDelegationConfiguration());
-            return XmlUtil.toString(document);
+            Element botConfigElement = root.addElement(BOTCONFIG_ELEMENT);
+            if (XmlUtil.isXml(botTask.getDelegationConfiguration())) {
+                Document conf = XmlUtil.parseWithoutValidation(botTask.getDelegationConfiguration());
+                botConfigElement.add(conf.getRootElement().detach());
+            } else {
+                botConfigElement.addCDATA(botTask.getDelegationConfiguration());
+            }
+            return XmlUtil.toString(document, OutputFormat.createPrettyPrint());
         } else if (botTask.getType() == BotTaskType.PARAMETERIZED) {
             if (!Strings.isNullOrEmpty(botTask.getDelegationConfiguration())) {
                 // http://sourceforge.net/p/runawfe/bugs/317/
@@ -137,7 +143,13 @@ public class BotTaskUtils {
             Element element = botElement.element(PARAMETERS_ELEMENT).element(ParamDefConfig.NAME_CONFIG);
             Preconditions.checkNotNull(element);
             botTask.setParamDefConfig(ParamDefConfig.parse(element));
-            botTask.setDelegationConfiguration(botElement.elementText(BOTCONFIG_ELEMENT));
+            Element botConfigElement = botElement.element(BOTCONFIG_ELEMENT);
+            if (botConfigElement.elements().size() > 0) {
+                Element configElement = (Element) botConfigElement.elements().get(0);
+                botTask.setDelegationConfiguration(XmlUtil.toString(configElement, OutputFormat.createPrettyPrint()));
+            } else {
+                botTask.setDelegationConfiguration(botConfigElement.getText());
+            }
         } else {
             botTask.setType(BotTaskType.SIMPLE);
             botTask.setDelegationConfiguration(configuration);
