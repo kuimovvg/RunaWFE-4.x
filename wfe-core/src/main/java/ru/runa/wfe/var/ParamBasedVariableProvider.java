@@ -20,8 +20,8 @@ public class ParamBasedVariableProvider extends DelegableVariableProvider {
 
     private ParamDef getInputParamDef(String source) {
         // TODO back compatibility until 4.1.0
-        if (paramsDef.getInputParams().containsKey("param:" + source)) {
-            return paramsDef.getInputParams().get("param:" + source);
+        if (source != null && source.startsWith("param:")) {
+            source = source.substring("param:".length());
         }
         return paramsDef.getInputParam(source);
     }
