@@ -17,6 +17,9 @@ public class ActorFormat implements VariableFormat<Actor> {
 
     @Override
     public String format(Actor object) {
+        if (object == null) {
+            return null;
+        }
         return object.getName();
     }
 

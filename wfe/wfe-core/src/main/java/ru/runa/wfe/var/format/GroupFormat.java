@@ -17,6 +17,9 @@ public class GroupFormat implements VariableFormat<Group> {
 
     @Override
     public String format(Group object) {
+        if (object == null) {
+            return null;
+        }
         return object.getName();
     }
 
