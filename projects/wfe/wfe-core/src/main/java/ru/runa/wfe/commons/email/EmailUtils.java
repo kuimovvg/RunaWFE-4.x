@@ -146,7 +146,7 @@ public class EmailUtils {
                 if (SystemProperties.isV3CompatibilityMode()) {
                     formTemplate = " ";
                 } else {
-                    throw new Exception("Set property 'UseMessageFromTaskForm' but form does not exist");
+                    throw new Exception("Property 'UseMessageFromTaskForm' is set but form does not exist");
                 }
             }
         } else {

@@ -43,6 +43,9 @@ public class AbstractIteratorOperation extends Operation {
     }
 
     public Object getContainerValue() {
+        if (containerVariable == null) {
+            return null;
+        }
         return containerVariable.getValue();
     }
 

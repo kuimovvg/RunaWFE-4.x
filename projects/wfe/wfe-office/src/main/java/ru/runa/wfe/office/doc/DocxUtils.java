@@ -35,38 +35,38 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+// TODO use scripting name for variables!
 public class DocxUtils {
     public static final String PLACEHOLDER_START = OfficeProperties.getDocxPlaceholderStart();
     public static final String PLACEHOLDER_END = OfficeProperties.getDocxPlaceholderEnd();
     public static final String ELEMENT_START = OfficeProperties.getDocxElementStart();
     public static final String ELEMENT_END = OfficeProperties.getDocxElementEnd();
-    public static final String STRING_START = OfficeProperties.getDocxStringStart();
-    public static final String STRING_END = OfficeProperties.getDocxStringEnd();
     public static final String CLOSING_PLACEHOLDER_START = PLACEHOLDER_START + "/";
 
     public static int getPictureType(DocxConfig config, String fileName) {
-        if (fileName.endsWith(".emf"))
+        if (fileName.endsWith(".emf")) {
             return XWPFDocument.PICTURE_TYPE_EMF;
-        else if (fileName.endsWith(".wmf"))
+        } else if (fileName.endsWith(".wmf")) {
             return XWPFDocument.PICTURE_TYPE_WMF;
-        else if (fileName.endsWith(".pict"))
+        } else if (fileName.endsWith(".pict")) {
             return XWPFDocument.PICTURE_TYPE_PICT;
-        else if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg"))
+        } else if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg")) {
             return XWPFDocument.PICTURE_TYPE_JPEG;
-        else if (fileName.endsWith(".png"))
+        } else if (fileName.endsWith(".png")) {
             return XWPFDocument.PICTURE_TYPE_PNG;
-        else if (fileName.endsWith(".dib"))
+        } else if (fileName.endsWith(".dib")) {
             return XWPFDocument.PICTURE_TYPE_DIB;
-        else if (fileName.endsWith(".gif"))
+        } else if (fileName.endsWith(".gif")) {
             return XWPFDocument.PICTURE_TYPE_GIF;
-        else if (fileName.endsWith(".tiff"))
+        } else if (fileName.endsWith(".tiff")) {
             return XWPFDocument.PICTURE_TYPE_TIFF;
-        else if (fileName.endsWith(".eps"))
+        } else if (fileName.endsWith(".eps")) {
             return XWPFDocument.PICTURE_TYPE_EPS;
-        else if (fileName.endsWith(".bmp"))
+        } else if (fileName.endsWith(".bmp")) {
             return XWPFDocument.PICTURE_TYPE_BMP;
-        else if (fileName.endsWith(".wpg"))
+        } else if (fileName.endsWith(".wpg")) {
             return XWPFDocument.PICTURE_TYPE_WPG;
+        }
         config.reportProblem("Unsupported picture: " + fileName + ". Expected emf|wmf|pict|jpeg|png|dib|gif|tiff|eps|bmp|wpg");
         return -1;
     }
@@ -91,7 +91,6 @@ public class DocxUtils {
         if (Strings.isNullOrEmpty(selector)) {
             return value;
         }
-        // TODO format support
         StringTokenizer tokenizer = new StringTokenizer(selector, "\\.");
         while (tokenizer.hasMoreTokens()) {
             String variableName = tokenizer.nextToken();
@@ -115,26 +114,24 @@ public class DocxUtils {
                 }
             }
             if (value == null) {
-                // TODO? config.reportProblem("returning null for " + selector + " at stage " + variableName);
+                // TODO? config.reportProblem("returning null for " + selector +
+                // " at stage " + variableName);
                 return null;
             }
             if (keyName != null) {
                 if (value instanceof Map) {
-                    Object key;
-                    if (keyName.startsWith(STRING_START) && keyName.endsWith(STRING_END)) {
-                        key = keyName.substring(STRING_START.length(), keyName.length() - STRING_END.length());
-                    } else {
-                        key = variableProvider.getValue(keyName);
-                    }
+                    Object key = variableProvider.getValue(keyName);
                     if (key == null) {
-                        config.reportProblem("Null key for " + keyName);
+                        key = keyName;
+                        if (keyName.startsWith("\"") && keyName.endsWith("\"")) {
+                            key = keyName.substring(1, keyName.length() - 1);
+                        }
                     }
                     value = ((Map<?, ?>) value).get(key);
                 } else if (value instanceof List) {
                     Integer index;
                     try {
-                        // TODO find similar code
-                        index = TypeConversionUtil.convertTo(Integer.class, keyName);
+                        index = Integer.parseInt(keyName);
                     } catch (Exception e) {
                         index = variableProvider.getValue(Integer.class, keyName);
                     }
@@ -184,88 +181,12 @@ public class DocxUtils {
                 operation.setContainerVariable(variable);
             }
             if (!operation.isValid()) {
-                //config.reportProblem("Invalid " + operation);
+                // config.reportProblem("Invalid " + operation);
                 return null;
             }
             return operation;
         }
         return null;
-    }
-
-    private static void replaceInParagraphOldWay(DocxConfig config, IVariableProvider variableProvider, XWPFParagraph paragraph) {
-        String pText = paragraph.getParagraphText();
-        if (!pText.contains(PLACEHOLDER_START)) {
-            return;
-        }
-        if (!pText.contains(PLACEHOLDER_END)) {
-            config.reportProblem("No placeholder end '" + PLACEHOLDER_END + "' found in " + pText);
-            return;
-        }
-        List<XWPFRun> runs = paragraph.getRuns();
-        for (int i = 0; i < runs.size(); i++) {
-            XWPFRun run = runs.get(i);
-            String text = run.getText(0);
-            if (!text.contains(PLACEHOLDER_START)) {
-                continue;
-            }
-            StylesHolder stylesHolder = new StylesHolder(run);
-            String startRemainder = "";
-            int placeholderStartIndex = text.indexOf(PLACEHOLDER_START);
-            if (placeholderStartIndex != 0) {
-                startRemainder = text.substring(0, placeholderStartIndex);
-            }
-            String placeholder = text.substring(placeholderStartIndex + PLACEHOLDER_START.length());
-            while (!placeholder.contains(PLACEHOLDER_END)) {
-                // search end in next run
-                int nextIndex = i + PLACEHOLDER_END.length();
-                if (runs.size() <= nextIndex) {
-                    config.reportProblem("No placeholder end '" + PLACEHOLDER_END + "' can be found in " + pText);
-                    return;
-                }
-                run = runs.get(nextIndex);
-                text = run.getText(0);
-                paragraph.removeRun(nextIndex);
-                placeholder += text;
-            }
-            int plEndIndex = placeholder.indexOf(PLACEHOLDER_END);
-            String endRemainder = placeholder.substring(plEndIndex + PLACEHOLDER_END.length());
-            placeholder = placeholder.substring(0, plEndIndex);
-            Object value = getValue(config, variableProvider, null, placeholder);
-            if (value == null) {
-                if (config.isStrictMode()) {
-                    config.reportProblem("No template variable defined in process: '" + placeholder + "'");
-                }
-                continue;
-            }
-            paragraph.removeRun(i);
-            XWPFRun newRun = paragraph.insertNewRun(i);
-            stylesHolder.applyStyles(newRun);
-            if (value instanceof FileVariable) {
-                try {
-                    FileVariable fileVariable = (FileVariable) value;
-                    newRun.setText(startRemainder + endRemainder);
-                    int imageType = DocxUtils.getPictureType(config, fileVariable.getName());
-                    if (imageType > 0) {
-                        BufferedImage image = ImageIO.read(new ByteArrayInputStream(fileVariable.getData()));
-                        newRun.addPicture(new ByteArrayInputStream(fileVariable.getData()), imageType, fileVariable.getName(),
-                                Units.toEMU(image.getWidth()), Units.toEMU(image.getHeight()));
-                    }
-                } catch (Exception e) {
-                    config.reportProblem(e);
-                }
-                continue;
-            }
-            String replacement;
-            WfVariable variable = variableProvider.getVariable(placeholder);
-            if (variable != null) {
-                // TODO non-strict format case
-                VariableFormat format = variable.getFormatNotNull();
-                replacement = format.format(variable.getValue());
-            } else {
-                replacement = TypeConversionUtil.convertTo(String.class, value);
-            }
-            newRun.setText(startRemainder + replacement + endRemainder);
-        }
     }
 
     public static void replaceInParagraphs(DocxConfig config, MapDelegableVariableProvider variableProvider, List<XWPFParagraph> paragraphs) {
@@ -282,7 +203,6 @@ public class DocxUtils {
                     if (operations.peek().isEndBlock(paragraphText)) {
                         XWPFDocument document = paragraph.getDocument();
                         int insertPosition = document.getParagraphPos(document.getPosOfParagraph(paragraph));
-                        // TODO? insertPosition--;
                         loopOperation = (LoopOperation) operations.pop();
                         Iterator<? extends Object> iterator = loopOperation.createIterator();
                         Object iteratorValue0 = null;
@@ -403,8 +323,8 @@ public class DocxUtils {
                         int imageType = getPictureType(config, fileVariable.getName());
                         if (imageType > 0) {
                             BufferedImage image = ImageIO.read(new ByteArrayInputStream(fileVariable.getData()));
-                            // TODO TEST without org.apache.poi.ooxml-schemas
-                            // 1.1
+                            // TODO does not work without
+                            // org.apache.poi.ooxml-schemas 1.1
                             imageOperation.setImageType(imageType);
                             imageOperation.setWidth(Units.toEMU(image.getWidth()));
                             imageOperation.setHeight(Units.toEMU(image.getHeight()));

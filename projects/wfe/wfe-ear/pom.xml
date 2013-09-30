@@ -25,6 +25,17 @@
 			<artifactId>wfe-office</artifactId>
 			<version>${project.version}</version>
 			<type>jar</type>
+			<exclusions>
+				<exclusion>
+					<artifactId>poi-ooxml-schemas</artifactId>
+					<groupId>org.apache.poi</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>ooxml-schemas</artifactId>
+			<type>jar</type>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
