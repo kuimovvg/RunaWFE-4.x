@@ -29,7 +29,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
 public class DocxFileChangerTest extends Assert {
-    private static final String[] prefixes = { "lo_" };
+    private static final String[] prefixes = { "lo_", "ms_" };
 
     // Map<String, Object> data = Maps.newHashMap();
     // data.put("contractNumber", "2");
@@ -181,7 +181,7 @@ public class DocxFileChangerTest extends Assert {
             DocxFileChanger changer = new DocxFileChanger(config, new TestVariableProvider(data), templateInputStream);
             XWPFDocument document = changer.changeAll();
             try {
-                document.write(new FileOutputStream("result_" + appTemplateFileName));
+                document.write(new FileOutputStream("target/result_" + appTemplateFileName));
             } catch (IOException e) {
                 e.printStackTrace();
             }

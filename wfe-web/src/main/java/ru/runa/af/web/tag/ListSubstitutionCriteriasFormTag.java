@@ -73,9 +73,9 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
         if (string == null || string.isEmpty()) {
             return result;
         }
-        String[] strings = string.replace("[", "").replace("]", "").split(", ");
+        String[] strings = string.replace("[", "").replace("]", "").split(",");
         for (int i = 0; i < strings.length; i++) {
-            result.add(Long.valueOf(strings[i]));
+            result.add(Long.valueOf(strings[i].trim()));
         }
         return result;
     }
