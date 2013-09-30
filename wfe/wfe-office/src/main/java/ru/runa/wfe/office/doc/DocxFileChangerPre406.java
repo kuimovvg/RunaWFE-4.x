@@ -143,7 +143,6 @@ public class DocxFileChangerPre406 {
                 if (tableConfig.getStyleName() != null) {
                     table.setStyleID(getStyleIdbyName(tableConfig.getStyleName()));
                 }
-                // TODO document.insertTable(0, table);
             } else {
                 WfVariable variable = variableProvider.getVariable(placeholder);
                 if (variable == null || variable.getValue() == null) {

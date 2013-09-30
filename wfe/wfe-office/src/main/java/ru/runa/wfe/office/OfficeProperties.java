@@ -21,12 +21,4 @@ public class OfficeProperties {
         return RESOURCES.getStringProperty("docx.element.end", "]");
     }
 
-    public static String getDocxStringStart() {
-        return RESOURCES.getStringProperty("docx.string.start", "\"");
-    }
-
-    public static String getDocxStringEnd() {
-        return RESOURCES.getStringProperty("docx.string.end", "\"");
-    }
-
 }

@@ -21,13 +21,16 @@ public class TableExpansionOperation extends Operation {
     public int getRows() {
         return rows;
     }
-    
+
     @Override
     public boolean isValid() {
         return rows > 0;
     }
-        
+
     public void addOperation(int columnIndex, ColumnExpansionOperation operation) {
+        while (columnIndex > operations.size()) {
+            operations.add(null);
+        }
         operations.add(columnIndex, operation);
         if (operation.getContainerValue() instanceof Map) {
             Map<Comparable<?>, ?> map = (Map<Comparable<?>, ?>) operation.getContainerValue();
@@ -36,15 +39,15 @@ public class TableExpansionOperation extends Operation {
                 sortedMapKeys = new ArrayList(map.keySet());
                 Collections.sort(sortedMapKeys);
             }
-        } 
-        if (operation.getContainerValue() instanceof List){
+        }
+        if (operation.getContainerValue() instanceof List) {
             List<?> list = (List<?>) operation.getContainerValue();
             if (list.size() > rows) {
                 rows = list.size();
             }
         }
     }
-    
+
     public String getStringValue(DocxConfig config, IVariableProvider variableProvider, int columnIndex, int rowIndex) {
         ColumnExpansionOperation operation = operations.get(columnIndex);
         if (operation != null) {
@@ -58,9 +61,9 @@ public class TableExpansionOperation extends Operation {
         }
         return null;
     }
-    
+
     public List<Comparable> getSortedMapKeys() {
         return sortedMapKeys;
     }
-    
+
 }

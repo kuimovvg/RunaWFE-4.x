@@ -67,6 +67,7 @@ public class DocxFileChanger {
                             XWPFTableRow dynamicRow = table.createRow();
                             for (int columnIndex = 0; columnIndex < dynamicRow.getTableCells().size(); columnIndex++) {
                                 String text = tableExpansionOperation.getStringValue(config, variableProvider, columnIndex, rowIndex);
+                                // TODO copy with styles
                                 dynamicRow.getCell(columnIndex).setText(text);
                             }
                         }

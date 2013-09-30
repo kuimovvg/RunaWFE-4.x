@@ -36,7 +36,7 @@ public class FileExtensionValidator extends FieldValidator {
             return;
         }
         for (String ext : extensions) {
-            if (fileName.toLowerCase().endsWith(ext.toLowerCase())) {
+            if (fileName.toLowerCase().endsWith(ext.trim().toLowerCase())) {
                 return;
             }
         }
