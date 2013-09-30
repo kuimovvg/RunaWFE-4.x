@@ -1,5 +1,6 @@
 package ru.runa.wfe.office.doc;
 
+import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -21,9 +22,17 @@ public class DocxHandler extends OfficeFilesSupplierHandler<DocxConfig> {
     @Override
     protected Map<String, Object> executeAction(IVariableProvider variableProvider, IFileDataProvider fileDataProvider) throws Exception {
         Map<String, Object> result = Maps.newHashMap();
-        DocxFileChanger fileChanger = new DocxFileChanger(config, variableProvider, fileDataProvider);
-        XWPFDocument document = fileChanger.changeAll();
-        document.write(config.getFileOutputStream(result, true));
+        InputStream templateInputStream = config.getFileInputStream(variableProvider, fileDataProvider, true);
+        if (config.getTables().size() > 0) {
+            log.warn("Using deprecated pre 4.0.6 changer for table configs");
+            DocxFileChangerPre406 fileChanger = new DocxFileChangerPre406(config, variableProvider, templateInputStream);
+            XWPFDocument document = fileChanger.changeAll();
+            document.write(config.getFileOutputStream(result, true));
+        } else {
+            DocxFileChanger fileChanger = new DocxFileChanger(config, variableProvider, templateInputStream);
+            XWPFDocument document = fileChanger.changeAll();
+            document.write(config.getFileOutputStream(result, true));
+        }
         return result;
     }
 
