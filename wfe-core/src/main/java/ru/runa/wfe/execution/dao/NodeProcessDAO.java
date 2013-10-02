@@ -39,6 +39,10 @@ public class NodeProcessDAO extends GenericDAO<NodeProcess> {
                     conditions.add("parentToken=:parentToken");
                     parameters.put("parentToken", parentToken);
                 }
+                if (nodeId != null) {
+                    conditions.add("nodeId=:nodeId");
+                    parameters.put("nodeId", nodeId);
+                }
                 if (active != null) {
                     if (active) {
                         conditions.add("subProcess.endDate is null");
