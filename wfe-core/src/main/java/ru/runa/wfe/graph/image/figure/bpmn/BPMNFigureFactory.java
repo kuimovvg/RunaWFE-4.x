@@ -40,12 +40,10 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             ((TaskNodeFigure) figure).setGraphiti(graphiti);
             break;
         // TODO MultiTaskNode
-        case DECISION:
-        case MERGE:
+        case EXCLUSIVE_GATEWAY:
             figure = new Rhomb("image/bpmn/decision.png");
             break;
-        case FORK:
-        case JOIN:
+        case PARALLEL_GATEWAY:
             figure = new Rhomb("image/bpmn/fork_join.png");
             break;
         case START_EVENT:
