@@ -20,12 +20,10 @@ import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.BaseTaskNode;
-import ru.runa.wfe.lang.Decision;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
 import ru.runa.wfe.lang.EndTokenNode;
 import ru.runa.wfe.lang.Event;
-import ru.runa.wfe.lang.Fork;
 import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.MultiProcessState;
@@ -42,9 +40,8 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.lang.WaitState;
-import ru.runa.wfe.lang.bpmn2.ExclusiveDecision;
-import ru.runa.wfe.lang.bpmn2.ExclusiveMerge;
-import ru.runa.wfe.lang.bpmn2.Join;
+import ru.runa.wfe.lang.bpmn2.ExclusiveGateway;
+import ru.runa.wfe.lang.bpmn2.ParallelGateway;
 import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Objects;
@@ -130,6 +127,8 @@ public class BpmnXmlReader {
         // back compatibility v < 4.0.4
         nodeTypes.put(SERVICE_TASK, ScriptTask.class);
         nodeTypes.put(SCRIPT_TASK, ScriptTask.class);
+        nodeTypes.put(EXCLUSIVE_GATEWAY, ExclusiveGateway.class);
+        nodeTypes.put(PARALLEL_GATEWAY, ParallelGateway.class);
     }
 
     public BpmnXmlReader(Document document) {
@@ -182,7 +181,7 @@ public class BpmnXmlReader {
                 }
                 SwimlaneDefinition swimlaneDefinition = new SwimlaneDefinition();
                 swimlaneDefinition.setName(swimlaneName);
-                swimlaneDefinition.setDelegation(readDelegation(swimlaneElement));
+                swimlaneDefinition.setDelegation(readDelegation(swimlaneElement, true));
                 SwimlaneUtils.setOrgFunctionLabel(swimlaneDefinition, localizationDAO);
                 List<Element> flowNodeRefElements = swimlaneElement.elements(FLOW_NODE_REF);
                 List<String> flowNodeIds = Lists.newArrayList();
@@ -202,22 +201,6 @@ public class BpmnXmlReader {
             Node node = null;
             if (nodeTypes.containsKey(nodeName)) {
                 node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
-            } else if (PARALLEL_GATEWAY.equals(nodeName)) {
-                String nodeId = element.attributeValue(ID);
-                int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
-                if (outgoingTransitionsCount > 1) {
-                    node = ApplicationContextFactory.createAutowiredBean(Fork.class);
-                } else {
-                    node = ApplicationContextFactory.createAutowiredBean(Join.class);
-                }
-            } else if (EXCLUSIVE_GATEWAY.equals(nodeName)) {
-                String nodeId = element.attributeValue(ID);
-                int outgoingTransitionsCount = getOutgoingTransitionsCount(parentElement, nodeId);
-                if (outgoingTransitionsCount > 1) {
-                    node = ApplicationContextFactory.createAutowiredBean(ExclusiveDecision.class);
-                } else {
-                    node = ApplicationContextFactory.createAutowiredBean(ExclusiveMerge.class);
-                }
             } else if (END_STATE.equals(nodeName)) {
                 Map<String, String> properties = parseExtensionProperties(element);
                 if (properties.containsKey(TOKEN)) {
@@ -279,9 +262,9 @@ public class BpmnXmlReader {
             SubProcessState subprocess = (SubProcessState) node;
             subprocess.setSubProcessName(element.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
         }
-        if (node instanceof Decision) {
-            Decision decision = (Decision) node;
-            decision.setDelegation(readDelegation(element));
+        if (node instanceof ExclusiveGateway) {
+            ExclusiveGateway gateway = (ExclusiveGateway) node;
+            gateway.setDelegation(readDelegation(element, false));
         }
         if (node instanceof WaitState) {
             WaitState waitState = (WaitState) node;
@@ -289,7 +272,7 @@ public class BpmnXmlReader {
         }
         if (node instanceof ScriptTask) {
             ScriptTask serviceTask = (ScriptTask) node;
-            serviceTask.setDelegation(readDelegation(element));
+            serviceTask.setDelegation(readDelegation(element, true));
         }
         if (node instanceof SendMessage) {
             SendMessage sendMessage = (SendMessage) node;
@@ -414,17 +397,19 @@ public class BpmnXmlReader {
         }
     }
 
-    private int getOutgoingTransitionsCount(Element processDefinitionElement, String sourceNodeId) {
-        int count = 0;
-        List<Element> elements = processDefinitionElement.elements(SEQUENCE_FLOW);
-        for (Element element : elements) {
-            String from = element.attributeValue(SOURCE_REF);
-            if (Objects.equal(from, sourceNodeId)) {
-                count++;
-            }
-        }
-        return count;
-    }
+    // private int getOutgoingTransitionsCount(Element processDefinitionElement,
+    // String sourceNodeId) {
+    // int count = 0;
+    // List<Element> elements =
+    // processDefinitionElement.elements(SEQUENCE_FLOW);
+    // for (Element element : elements) {
+    // String from = element.attributeValue(SOURCE_REF);
+    // if (Objects.equal(from, sourceNodeId)) {
+    // count++;
+    // }
+    // }
+    // return count;
+    // }
 
     private void readTask(ProcessDefinition processDefinition, Element element, InteractionNode node) {
         TaskDefinition taskDefinition = new TaskDefinition();
@@ -445,11 +430,14 @@ public class BpmnXmlReader {
         }
     }
 
-    private Delegation readDelegation(Element element) {
+    private Delegation readDelegation(Element element, boolean required) {
         Map<String, String> swimlaneProperties = parseExtensionProperties(element);
         String className = swimlaneProperties.get(CLASS);
         if (className == null) {
-            throw new InternalApplicationException("no className specified in " + element.asXML());
+            if (required) {
+                throw new InternalApplicationException("no className specified in " + element.asXML());
+            }
+            return null;
         }
         ClassLoaderUtil.instantiate(className);
         String configuration = swimlaneProperties.get(CONFIG);

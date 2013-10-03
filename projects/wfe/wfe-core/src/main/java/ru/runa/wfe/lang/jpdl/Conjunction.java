@@ -1,6 +1,8 @@
-package ru.runa.wfe.lang;
+package ru.runa.wfe.lang.jpdl;
 
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.NodeType;
 
 import com.google.common.base.Throwables;
 
@@ -15,7 +17,7 @@ public class Conjunction extends Node {
     @Override
     protected void execute(ExecutionContext executionContext) {
         try {
-            log.info("Executing " + this); // TODO debug
+            log.debug("Executing " + this);
             leave(executionContext);
         } catch (Exception e) {
             log.error("Failed " + this);

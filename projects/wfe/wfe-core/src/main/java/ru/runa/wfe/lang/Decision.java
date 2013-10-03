@@ -45,6 +45,13 @@ public class Decision extends Node {
     }
 
     @Override
+    public void validate() {
+        super.validate();
+        Preconditions.checkNotNull(delegation, "delegation in " + this);
+        delegation.validate();
+    }
+
+    @Override
     public void execute(ExecutionContext executionContext) {
         try {
             DecisionHandler decisionHandler = delegation.getInstance();

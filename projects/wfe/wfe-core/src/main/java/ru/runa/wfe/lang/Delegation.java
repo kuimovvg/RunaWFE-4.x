@@ -30,6 +30,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.extension.Configurable;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Delegation implements Serializable {
@@ -44,6 +45,13 @@ public class Delegation implements Serializable {
     public Delegation(String className, String configuration) {
         this.className = className;
         this.configuration = configuration;
+    }
+
+    /**
+     * Checks all prerequisites needed for execution.
+     */
+    public void validate() {
+        Preconditions.checkNotNull(className, "className in " + this);
     }
 
     public <T extends Configurable> T getInstance() throws Exception {
