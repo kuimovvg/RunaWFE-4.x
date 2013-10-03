@@ -15,7 +15,6 @@ import java.util.zip.ZipOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.struts.action.ActionForm;
@@ -410,8 +409,6 @@ public class ErrorDetailsAction extends ActionBase {
             } else if (arguments[i] instanceof FileValue) {
                 FileValue fileValue = (FileValue) arguments[i];
                 result[i] = fileValue.getFileName() + " (ID=" + fileValue.getLogId() + ")";
-            } else if (arguments[i] instanceof String) {
-                result[i] = StringEscapeUtils.escapeHtml((String) arguments[i]);
             } else {
                 result[i] = arguments[i];
             }
