@@ -37,6 +37,7 @@ public abstract class AlfAjaxTag extends AjaxFreemarkerTag {
                 }
             }.runInSession();
         } catch (Exception e) {
+            log.error("Tag execution error", e);
             if (e instanceof ConnectionException) {
                 throw new Exception(Messages.getMessage("error.alfresco.unavailable"), e);
             } else {
