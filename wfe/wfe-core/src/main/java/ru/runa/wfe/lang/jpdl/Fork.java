@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package ru.runa.wfe.lang;
+package ru.runa.wfe.lang.jpdl;
 
 import java.util.Map;
 
@@ -27,6 +27,9 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.NodeType;
+import ru.runa.wfe.lang.Transition;
 
 import com.google.common.collect.Maps;
 
@@ -59,12 +62,8 @@ public class Fork extends Node {
     }
 
     private void checkCyclicExecution(Token token) {
-        int unsavedTokensLevel = 0;
-        while (token != null && token.getId() == null) {
-            unsavedTokensLevel++;
-            token = token.getParent();
-        }
-        if (unsavedTokensLevel > SystemProperties.getTokenMaximumDepth()) {
+        int tokenDepth = token.getName().split("/").length;
+        if (tokenDepth > SystemProperties.getTokenMaximumDepth()) {
             throw new RuntimeException("Cyclic fork execution does not allowed");
         }
     }

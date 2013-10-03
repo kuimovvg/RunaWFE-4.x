@@ -70,7 +70,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
- * Modified on 26.02.2009 by gavrusev_sergei
+ * Modified on 26.02.2009 by gavrusev_sergei TODO adapt for EXCLUSIVE_GATEWAY,
+ * PARALLEL_GATEWAY
  */
 public class GraphHistoryBuilder {
     private static final int heightBetweenNode = 40;
