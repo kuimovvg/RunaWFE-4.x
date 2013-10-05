@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="END_TOKEN"/>
  *     &lt;enumeration value="MULTI_TASK_STATE"/>
  *     &lt;enumeration value="MERGE"/>
+ *     &lt;enumeration value="EXCLUSIVE_GATEWAY"/>
+ *     &lt;enumeration value="PARALLEL_GATEWAY"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -51,7 +53,9 @@ public enum NodeType {
     RECEIVE_MESSAGE,
     END_TOKEN,
     MULTI_TASK_STATE,
-    MERGE;
+    MERGE,
+    EXCLUSIVE_GATEWAY,
+    PARALLEL_GATEWAY;
 
     public String value() {
         return name();

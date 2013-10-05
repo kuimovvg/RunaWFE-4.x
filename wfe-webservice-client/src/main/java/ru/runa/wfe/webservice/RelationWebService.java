@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "RelationWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/runawfe-wfe-service-4.0.5/RelationServiceBean?wsdl")
+@WebServiceClient(name = "RelationWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/wfe-service-4.0.6/RelationWebService/RelationAPI?wsdl")
 public class RelationWebService
     extends Service
 {
@@ -30,7 +30,7 @@ public class RelationWebService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/runawfe-wfe-service-4.0.5/RelationServiceBean?wsdl");
+            url = new URL("http://localhost:8080/wfe-service-4.0.6/RelationWebService/RelationAPI?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

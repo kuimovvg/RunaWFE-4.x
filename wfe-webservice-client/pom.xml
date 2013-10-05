@@ -39,17 +39,17 @@
 						</goals>
 						<configuration>
 							<wsdls>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/AuthenticationServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/AuthorizationServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/BotServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/DefinitionServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ExecutionServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ExecutorServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ProfileServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/RelationServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/ScriptingServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/SystemServiceBean?wsdl</wsdl>
-								<wsdl>http://localhost:8080/runawfe-wfe-service-4.0.6/SubstitutionServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/AuthenticationWebService/AuthenticationAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/AuthorizationWebService/AuthorizationAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/BotWebService/BotAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/DefinitionWebService/DefinitionAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/ExecutionWebService/ExecutionAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/ExecutorWebService/ExecutorAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/ProfileWebService/ProfileAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/RelationWebService/RelationAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/ScriptingWebService/ScriptingAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/SystemWebService/SystemAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-4.0.6/SubstitutionWebService/SubstitutionAPI?wsdl</wsdl>
 							</wsdls>
 							<targetPackage>ru.runa.wfe.webservice</targetPackage>
 							<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
