@@ -47,6 +47,11 @@
                   </fileset>
                 </copy>
 
+                <!--exec executable="cmd" dir="../../wfe/wfe-webservice-client" failonerror="true">
+                  <arg value="/C"/>
+                  <arg value="mvn clean install -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot;"/>
+                </exec-->
+
                 <exec executable="cmd" dir="../../gpd" failonerror="true">
                   <arg line="/C ant"/>
                 </exec>
@@ -65,8 +70,8 @@
                   <arg line="/C ant -Djboss.version=7"/>
                 </exec>
                 <copy toDir="target/artifacts/rtn">
-                  <fileset dir="../../rtn/deploy">
-                    <include name="*"/>
+                  <fileset dir="../../rtn/target">
+                    <include name="*.jar"/>
                   </fileset>
                 </copy>
 
@@ -77,6 +82,10 @@
                 <exec executable="cmd" dir="../../wfe/wfe-app" failonerror="true">
                   <arg value="/C"/>
                   <arg value="mvn clean -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot;"/>
+                </exec>
+                <exec executable="cmd" dir="../../wfe/wfe-webservice-client" failonerror="true">
+                  <arg value="/C"/>
+                  <arg value="mvn clean -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot;"/>
                 </exec>
 
                 <exec executable="cmd" dir="." failonerror="true">
