@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://impl.service.wfe.runa.ru/}wfExecutor" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}anyType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetExecutorsResponse {
 
     @XmlElement(name = "return")
-    protected List<WfExecutor> _return;
+    protected List<Object> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetExecutorsResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link WfExecutor }
+     * {@link Object }
      * 
      * 
      */
-    public List<WfExecutor> getReturn() {
+    public List<Object> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<WfExecutor>();
+            _return = new ArrayList<Object>();
         }
         return this._return;
     }

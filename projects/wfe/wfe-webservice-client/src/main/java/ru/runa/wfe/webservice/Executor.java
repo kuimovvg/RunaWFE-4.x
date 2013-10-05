@@ -39,7 +39,8 @@ import javax.xml.bind.annotation.XmlType;
     "fullName"
 })
 @XmlSeeAlso({
-    Actor.class
+    Actor.class,
+    WfExecutor.class
 })
 public abstract class Executor
     extends IdentifiableBase
