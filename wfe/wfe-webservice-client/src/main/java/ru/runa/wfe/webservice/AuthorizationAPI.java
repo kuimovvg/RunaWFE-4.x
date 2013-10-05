@@ -121,26 +121,6 @@ public interface AuthorizationAPI {
 
     /**
      * 
-     * @param permission
-     * @param user
-     * @param identifiable
-     * @return
-     *     returns boolean
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "isAllowed", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowed")
-    @ResponseWrapper(localName = "isAllowedResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowedResponse")
-    public boolean isAllowed(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "permission", targetNamespace = "")
-        Permission permission,
-        @WebParam(name = "identifiable", targetNamespace = "")
-        Identifiable identifiable);
-
-    /**
-     * 
      * @param executorId
      * @param permissions
      * @param user
@@ -156,6 +136,26 @@ public interface AuthorizationAPI {
         Long executorId,
         @WebParam(name = "permissions", targetNamespace = "")
         List<Permission> permissions,
+        @WebParam(name = "identifiable", targetNamespace = "")
+        Identifiable identifiable);
+
+    /**
+     * 
+     * @param permission
+     * @param user
+     * @param identifiable
+     * @return
+     *     returns boolean
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "isAllowed", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowed")
+    @ResponseWrapper(localName = "isAllowedResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowedResponse")
+    public boolean isAllowed(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "permission", targetNamespace = "")
+        Permission permission,
         @WebParam(name = "identifiable", targetNamespace = "")
         Identifiable identifiable);
 

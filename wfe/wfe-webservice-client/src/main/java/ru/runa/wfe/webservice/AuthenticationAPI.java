@@ -25,17 +25,6 @@ public interface AuthenticationAPI {
 
     /**
      * 
-     * @return
-     *     returns ru.runa.wfe.webservice.User
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "authenticateByCallerPrincipal", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByCallerPrincipal")
-    @ResponseWrapper(localName = "authenticateByCallerPrincipalResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByCallerPrincipalResponse")
-    public User authenticateByCallerPrincipal();
-
-    /**
-     * 
      * @param token
      * @return
      *     returns ru.runa.wfe.webservice.User
@@ -64,5 +53,16 @@ public interface AuthenticationAPI {
         String name,
         @WebParam(name = "password", targetNamespace = "")
         String password);
+
+    /**
+     * 
+     * @return
+     *     returns ru.runa.wfe.webservice.User
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "authenticateByCallerPrincipal", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByCallerPrincipal")
+    @ResponseWrapper(localName = "authenticateByCallerPrincipalResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.AuthenticateByCallerPrincipalResponse")
+    public User authenticateByCallerPrincipal();
 
 }
