@@ -51,7 +51,6 @@
       <import plugin="tk.eclipse.plugin.htmleditor"/>
    </requires>
    <extension-point id="tags" name="Freemarker methods" schema="metadata/tags.exsd"/>
-   <extension-point id="formats" name="Freemarker output formats for variables" schema="metadata/formats.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">
@@ -748,6 +747,40 @@
                type="richcombo"
                variableTypeFilter="java.lang.Object"
                variableAccess="READ">
+         </param>
+      </tag>
+      <tag
+            enabled="true"
+            height="40"
+            id="DisplayProcessVariable"
+            image="metadata/icons/VariableValueDisplay.png"
+            name="%Method.DisplayProcessVariable"
+            width="250">
+         <param
+               name="%Param.ProcessId"
+               type="combo"
+               variableTypeFilter="java.lang.Long"
+               variableAccess="READ">
+         </param>
+         <param
+               name="%Param.Variable"
+               type="richcombo"
+               variableTypeFilter="java.lang.String"
+               variableAccess="READ">
+         </param>
+         <param
+               multiple="false"
+               name="%Param.DisplayFormat"
+               type="combo"
+               variableAccess="NONE">
+            <paramValue
+                  name="%Format.Variable.Output"
+                  value="false">
+            </paramValue>
+            <paramValue
+                  name="%Format.Variable.Component"
+                  value="true">
+            </paramValue>
          </param>
       </tag>
    </extension>
