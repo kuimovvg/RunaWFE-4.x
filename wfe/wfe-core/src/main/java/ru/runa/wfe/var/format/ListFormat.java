@@ -12,7 +12,7 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class ListFormat implements VariableFormat<List<?>>, VariableFormatContainer {
+public class ListFormat implements VariableFormat, VariableFormatContainer {
     private static final Log log = LogFactory.getLog(ListFormat.class);
     private String componentClassName;
 
@@ -43,7 +43,7 @@ public class ListFormat implements VariableFormat<List<?>>, VariableFormatContai
         JSONParser parser = new JSONParser();
         JSONArray array = (JSONArray) parser.parse(json);
         List result = Lists.newArrayListWithExpectedSize(array.size());
-        VariableFormat<?> componentFormat = FormatCommons.create(componentClassName);
+        VariableFormat componentFormat = FormatCommons.create(componentClassName);
         for (String string : (List<String>) array) {
             try {
                 result.add(componentFormat.parse(String.valueOf(string)));
@@ -56,13 +56,13 @@ public class ListFormat implements VariableFormat<List<?>>, VariableFormatContai
     }
 
     @Override
-    public String format(List<?> list) {
+    public String format(Object object) {
+        List<?> list = (List<?>) object;
         JSONArray array = new JSONArray();
-        VariableFormat<Object> componentFormat = FormatCommons.create(componentClassName);
-        for (int i = 0; i < list.size(); i++) {
-            Object object = list.get(i);
-            object = TypeConversionUtil.convertTo(componentFormat.getJavaClass(), object);
-            String value = componentFormat.format(object);
+        VariableFormat componentFormat = FormatCommons.create(componentClassName);
+        for (Object o : list) {
+            o = TypeConversionUtil.convertTo(componentFormat.getJavaClass(), o);
+            String value = componentFormat.format(o);
             array.add(value);
         }
         return array.toJSONString();

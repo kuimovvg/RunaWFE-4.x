@@ -24,7 +24,7 @@ import java.text.ParseException;
  * Created on 22.05.2006
  * 
  */
-public class LongFormat implements VariableFormat<Number> {
+public class LongFormat implements VariableFormat {
     private final DecimalFormat decimalFormat = new DecimalFormat("0");
 
     @Override
@@ -42,7 +42,7 @@ public class LongFormat implements VariableFormat<Number> {
     }
 
     @Override
-    public String format(Number obj) {
+    public String format(Object obj) {
         return decimalFormat.format(obj);
     }
 }

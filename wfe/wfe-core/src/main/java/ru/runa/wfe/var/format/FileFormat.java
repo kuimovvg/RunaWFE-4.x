@@ -22,7 +22,7 @@ import ru.runa.wfe.var.FileVariable;
 /**
  * This class is marker class for validation.
  */
-public class FileFormat implements VariableFormat<FileVariable> {
+public class FileFormat implements VariableFormat {
 
     @Override
     public Class<? extends FileVariable> getJavaClass() {
@@ -30,8 +30,8 @@ public class FileFormat implements VariableFormat<FileVariable> {
     }
 
     @Override
-    public String format(FileVariable object) {
-        return object.getName();
+    public String format(Object object) {
+        return ((FileVariable) object).getName();
     }
 
     @Override

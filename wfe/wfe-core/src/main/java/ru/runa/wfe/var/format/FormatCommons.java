@@ -38,7 +38,7 @@ public class FormatCommons {
         return format;
     }
 
-    public static VariableFormat<Object> createComponent(VariableFormatContainer formatContainer, int index) {
+    public static VariableFormat createComponent(VariableFormatContainer formatContainer, int index) {
         String elementFormatClassName = formatContainer.getComponentClassName(index);
         return create(elementFormatClassName);
     }

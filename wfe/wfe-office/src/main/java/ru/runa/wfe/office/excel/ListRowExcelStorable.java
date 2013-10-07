@@ -21,7 +21,7 @@ public class ListRowExcelStorable extends ExcelStorable<RowConstraints, List<?>>
         Row row = getRow(workbook);
         int columnIndex = constraints.getColumnStartIndex();
         String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);
-        VariableFormat<Object> elementFormat = FormatCommons.create(elementFormatClassName);
+        VariableFormat elementFormat = FormatCommons.create(elementFormatClassName);
         while (true) {
             Cell cell = ExcelHelper.getCell(row, columnIndex, false);
             if (ExcelHelper.isCellEmptyOrNull(cell)) {
@@ -39,7 +39,7 @@ public class ListRowExcelStorable extends ExcelStorable<RowConstraints, List<?>>
         List<?> list = data;
         int columnIndex = constraints.getColumnStartIndex();
         String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);
-        VariableFormat<Object> elementFormat = FormatCommons.create(elementFormatClassName);
+        VariableFormat elementFormat = FormatCommons.create(elementFormatClassName);
         for (Object object : list) {
             Cell cell = ExcelHelper.getCell(row, columnIndex, true);
             ExcelHelper.setCellValue(cell, elementFormat.format(object));

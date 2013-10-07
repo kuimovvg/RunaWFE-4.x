@@ -21,7 +21,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-public class DoubleFormat implements VariableFormat<Number> {
+public class DoubleFormat implements VariableFormat {
     private final NumberFormat decimalFormat = new DecimalFormat("0.####################################");
 
     @Override
@@ -39,7 +39,7 @@ public class DoubleFormat implements VariableFormat<Number> {
     }
 
     @Override
-    public String format(Number obj) {
+    public String format(Object obj) {
         return decimalFormat.format(obj);
     }
 }
