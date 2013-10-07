@@ -15,5 +15,6 @@
 	<ftltag name="DisplayLinkedMapsInTable" class="ru.runa.wf.web.ftl.method.DisplayLinkedMapsTag" />
 	<ftltag name="DisplayLinkedLists" class="ru.runa.wf.web.ftl.method.DisplayLinkedListsTag" />
 	<ftltag name="EditLinkedLists" class="ru.runa.wf.web.ftl.method.EditLinkedListsTag" />
+	<ftltag name="DisplayProcessVariable" class="ru.runa.wf.web.ftl.method.DisplayProcessVariableTag" />
 	
 </configuration>
