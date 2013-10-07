@@ -37,6 +37,7 @@ import com.google.common.collect.Lists;
 
 // TODO use scripting name for variables!
 public class DocxUtils {
+    private static final String LINE_DELIMITER = "\n";
     public static final String PLACEHOLDER_START = OfficeProperties.getDocxPlaceholderStart();
     public static final String PLACEHOLDER_END = OfficeProperties.getDocxPlaceholderEnd();
     public static final String ELEMENT_START = OfficeProperties.getDocxElementStart();
@@ -261,11 +262,22 @@ public class DocxUtils {
             return;
         }
         List<ReplaceOperation> operations = Lists.newArrayList();
-        for (XWPFRun run : paragraph.getRuns()) {
+        for (XWPFRun run : Lists.newArrayList(paragraph.getRuns())) {
             String text = run.getText(0);
             String replacedText = replaceText(config, variableProvider, operations, text);
             if (!Objects.equal(replacedText, text)) {
-                run.setText(replacedText, 0);
+                if (replacedText.contains(LINE_DELIMITER)) {
+                    StringTokenizer tokenizer = new StringTokenizer(replacedText, LINE_DELIMITER);
+                    while (tokenizer.hasMoreTokens()) {
+                        run.setText(tokenizer.nextToken(), 0);
+                        if (tokenizer.hasMoreTokens()) {
+                            run.addBreak();
+                            run = paragraph.insertNewRun(paragraph.getRuns().indexOf(run) + 1);
+                        }
+                    }
+                } else {
+                    run.setText(replacedText, 0);
+                }
             }
             for (ReplaceOperation replaceOperation : Lists.newArrayList(operations)) {
                 if (replaceOperation instanceof InsertImageOperation) {
