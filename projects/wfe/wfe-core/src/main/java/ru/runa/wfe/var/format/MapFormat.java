@@ -11,7 +11,7 @@ import org.json.simple.parser.JSONParser;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class MapFormat implements VariableFormat<Map<?, ?>>, VariableFormatContainer {
+public class MapFormat implements VariableFormat, VariableFormatContainer {
     private static final Log log = LogFactory.getLog(MapFormat.class);
     private String keyFormatClassName;
     private String valueFormatClassName;
@@ -48,8 +48,8 @@ public class MapFormat implements VariableFormat<Map<?, ?>>, VariableFormatConta
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(json);
         Map result = Maps.newHashMapWithExpectedSize(object.size());
-        VariableFormat<?> keyFormat = FormatCommons.create(keyFormatClassName);
-        VariableFormat<?> valueFormat = FormatCommons.create(valueFormatClassName);
+        VariableFormat keyFormat = FormatCommons.create(keyFormatClassName);
+        VariableFormat valueFormat = FormatCommons.create(valueFormatClassName);
         for (Map.Entry<String, String> entry : (Set<Map.Entry<String, String>>) object.entrySet()) {
             try {
                 result.put(keyFormat.parse(entry.getKey()), valueFormat.parse(entry.getValue()));
@@ -61,8 +61,8 @@ public class MapFormat implements VariableFormat<Map<?, ?>>, VariableFormatConta
     }
 
     @Override
-    public String format(Map<?, ?> map) {
-        JSONObject object = new JSONObject(map);
+    public String format(Object map) {
+        JSONObject object = new JSONObject((Map<?, ?>) map);
         return object.toJSONString();
     }
 

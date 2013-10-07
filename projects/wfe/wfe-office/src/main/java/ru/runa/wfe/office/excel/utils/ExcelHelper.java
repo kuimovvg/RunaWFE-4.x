@@ -63,7 +63,7 @@ public class ExcelHelper {
         }
     }
 
-    public static Object getCellValue(Cell cell, VariableFormat<Object> elementFormat) {
+    public static Object getCellValue(Cell cell, VariableFormat elementFormat) {
         Object value;
         switch (cell.getCellType()) {
         case Cell.CELL_TYPE_STRING:

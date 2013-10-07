@@ -109,12 +109,12 @@ public class FormSubmissionUtils {
         try {
             HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
-                VariableFormat<?> format = FormatCommons.create(variableDefinition);
+                VariableFormat format = FormatCommons.create(variableDefinition);
                 Object variableValue = null;
                 if (format instanceof ListFormat) {
                     String sizeInputName = variableDefinition.getName() + ".size";
                     ListFormat listFormat = (ListFormat) format;
-                    VariableFormat<?> componentFormat = FormatCommons.create(listFormat.getComponentClassName(0));
+                    VariableFormat componentFormat = FormatCommons.create(listFormat.getComponentClassName(0));
                     if (userInput.containsKey(sizeInputName)) {
                         // js dynamic way
                         String[] strings = (String[]) userInput.get(sizeInputName);
@@ -161,7 +161,7 @@ public class FormSubmissionUtils {
         }
     }
 
-    private static Object convertComponent(String inputName, VariableFormat<?> format, Object value, List<String> formatErrorsForFields) {
+    private static Object convertComponent(String inputName, VariableFormat format, Object value, List<String> formatErrorsForFields) {
         try {
             if (format instanceof BooleanFormat) {
                 if (value == null) {

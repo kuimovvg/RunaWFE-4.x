@@ -7,7 +7,7 @@ package ru.runa.wfe.var.format;
  * @author dofs
  * @since 4.0
  */
-public interface VariableFormat<T> {
+public interface VariableFormat {
 
     public Class<?> getJavaClass();
 
@@ -20,7 +20,7 @@ public interface VariableFormat<T> {
      * @return object, can be <code>null</code>
      * @throws Exception
      */
-    public T parse(String source) throws Exception;
+    public Object parse(String source) throws Exception;
 
     /**
      * Formats given variable object.
@@ -29,5 +29,5 @@ public interface VariableFormat<T> {
      *            object, can be <code>null</code>
      * @return formatted string, can be <code>null</code>
      */
-    public String format(T object);
+    public String format(Object object);
 }

@@ -22,7 +22,7 @@ import java.util.Date;
 
 import ru.runa.wfe.commons.CalendarUtil;
 
-public abstract class AbstractDateFormat implements VariableFormat<Date> {
+public abstract class AbstractDateFormat implements VariableFormat {
     private final java.text.DateFormat dateTimeFormat;
 
     public AbstractDateFormat(java.text.DateFormat dateTimeFormat) {
@@ -35,8 +35,8 @@ public abstract class AbstractDateFormat implements VariableFormat<Date> {
     }
 
     @Override
-    public String format(Date object) {
-        return CalendarUtil.format(object, dateTimeFormat);
+    public String format(Object object) {
+        return CalendarUtil.format((Date) object, dateTimeFormat);
     }
 
     @Override
