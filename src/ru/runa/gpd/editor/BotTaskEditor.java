@@ -345,6 +345,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                                 if (dialog.open() == Window.OK) {
                                     setTableInput(parameterType);
                                     setDirty(true);
+                                    break;
                                 }
                             }
                         }
