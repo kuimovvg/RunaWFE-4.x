@@ -335,7 +335,7 @@ public class DocxUtils {
                         config.reportProblem(e);
                     }
                 } else {
-                    VariableFormat<Object> valueFormat = null;
+                    VariableFormat valueFormat = null;
                     String placeholder = operation.getPlaceholder();
                     if (placeholder.contains(ELEMENT_START) && placeholder.endsWith(ELEMENT_END)) {
                         placeholder = placeholder.substring(0, placeholder.indexOf(ELEMENT_START));

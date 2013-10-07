@@ -3,7 +3,7 @@ package ru.runa.wfe.var.format;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.user.Executor;
 
-public class ExecutorFormat implements VariableFormat<Executor> {
+public class ExecutorFormat implements VariableFormat {
 
     @Override
     public Class<? extends Executor> getJavaClass() {
@@ -16,11 +16,11 @@ public class ExecutorFormat implements VariableFormat<Executor> {
     }
 
     @Override
-    public String format(Executor object) {
+    public String format(Object object) {
         if (object == null) {
             return null;
         }
-        return object.getName();
+        return ((Executor) object).getName();
     }
 
 }

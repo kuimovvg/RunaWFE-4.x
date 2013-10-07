@@ -7,7 +7,7 @@ import ru.runa.wfe.var.format.VariableFormat;
 public abstract class ExcelStorable<C extends IExcelConstraints, Data> {
     protected C constraints;
     protected Data data;
-    protected VariableFormat<Data> format;
+    protected VariableFormat format;
 
     public C getConstraints() {
         return constraints;
@@ -25,7 +25,7 @@ public abstract class ExcelStorable<C extends IExcelConstraints, Data> {
         this.data = data;
     }
 
-    public void setFormat(VariableFormat<Data> format) {
+    public void setFormat(VariableFormat format) {
         this.format = format;
     }
 
