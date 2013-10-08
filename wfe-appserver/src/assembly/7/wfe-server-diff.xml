@@ -16,6 +16,10 @@
 			<directory>${project.basedir}/src/main/resources/deployment</directory>
 			<outputDirectory>jboss/standalone/deployments</outputDirectory>
 		</fileSet>
+		<fileSet>
+			<directory>${project.build.directory}/${jboss.zip.folder}/standalone/data/h2</directory>
+			<outputDirectory>jboss/standalone/data/h2</outputDirectory>
+		</fileSet>
 	</fileSets>
 
 	<dependencySets>
