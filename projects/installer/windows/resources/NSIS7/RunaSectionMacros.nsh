@@ -53,7 +53,7 @@ Function .onSelChange
   GetDlgItem $0 $HWNDPARENT 1
   ${if} $installationType == ${RUNA_CLIENT}
     !insertmacro isSectionSelected "${${ID_PREFIX}ComponentGPD}" clientNextWndEnable 0
-    !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" clientNextWndEnable 0
+;    !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" clientNextWndEnable 0
     !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSIM}" clientNextWndEnable 0
     !insertmacro isSectionSelected "${${ID_PREFIX}ComponentWEB}" clientNextWndEnable 0
     !insertmacro isSectionSelected "${${ID_PREFIX}ComponentDOC}" clientNextWndEnable 0

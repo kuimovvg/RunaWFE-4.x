@@ -249,7 +249,7 @@ var simulationWebLinks
   File ${BuildRoot}\Icons\CS_20x20_256.ico
   !insertmacro createURL "Simulation web interface.URL" "http://localhost:8080/wfe" "$INSTDIR\Icons\Si_20x20_256.ico"
   !insertmacro createMenuShortcut "Start Simulation.lnk" "$INSTDIR\Simulation\bin\runSimulation.bat" " " "$INSTDIR\Simulation\bin" "$INSTDIR\Icons\SI_20x20_256.ico" "$(ShortcutDesc_StartSim)"
-  !insertmacro createMenuShortcut "Stop Simulation.lnk" "$INSTDIR\Simulation\bin\nircmd.exe" "exec hide $\"$INSTDIR\Simulation\bin\runBatch.bat$\" shutdown.bat -S -s jnp://localhost:10099" "$INSTDIR\Simulation\bin" "$INSTDIR\Icons\SI_20x20_256.ico" "$(ShortcutDesc_StopSim)"
+;  !insertmacro createMenuShortcut "Stop Simulation.lnk" "$INSTDIR\Simulation\bin\nircmd.exe" "exec hide $\"$INSTDIR\Simulation\bin\runBatch.bat$\" shutdown.bat -S -s jnp://localhost:10099" "$INSTDIR\Simulation\bin" "$INSTDIR\Icons\SI_20x20_256.ico" "$(ShortcutDesc_StopSim)"
   !insertmacro Runa_SetOutPath "$INSTDIR\Simulation\standalone\deployments\runawfe.ear"
   ${if} "$simulationWebLinks" == "1"
     ; Login links must be available
