@@ -141,4 +141,38 @@ public class Actor extends Executor {
     public String getLabel() {
         return getFullName();
     }
+
+    @Transient
+    public String getLastName() {
+        if (getFullName() != null) {
+            String[] strings = getFullName().split(" ", -1);
+            if (strings.length > 0) {
+                return strings[0];
+            }
+        }
+        return "";
+    }
+
+    @Transient
+    public String getFirstName() {
+        if (getFullName() != null) {
+            String[] strings = getFullName().split(" ", -1);
+            if (strings.length > 1) {
+                return strings[1];
+            }
+        }
+        return "";
+    }
+
+    @Transient
+    public String getMiddleName() {
+        if (getFullName() != null) {
+            String[] strings = getFullName().split(" ", -1);
+            if (strings.length > 2) {
+                return strings[2];
+            }
+        }
+        return "";
+    }
+
 }
