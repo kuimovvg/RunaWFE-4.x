@@ -45,7 +45,7 @@ public class InitializerServiceBean implements InitializerService {
     @Override
     public void onSystemStartup() {
         UserTransaction transaction = sessionContext.getUserTransaction();
-        initializerLogic.init(transaction);
+        initializerLogic.onStartup(transaction);
     }
 
 }

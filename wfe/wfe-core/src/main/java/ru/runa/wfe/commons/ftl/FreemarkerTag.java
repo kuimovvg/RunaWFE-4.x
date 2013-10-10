@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.TemplateMethodModelEx;
@@ -17,19 +18,22 @@ import freemarker.template.TemplateModelException;
 @SuppressWarnings("unchecked")
 public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializable {
     private static final long serialVersionUID = 1L;
+    public static final String TARGET_PROCESS_PREFIX = "TargetProcess";
     protected User user;
     protected IVariableProvider variableProvider;
     protected WebHelper webHelper;
     private List<TemplateModel> arguments;
+    private boolean targetProcess;
 
-    public void init(User user, WebHelper webHelper, IVariableProvider variableProvider) {
+    public void init(User user, WebHelper webHelper, IVariableProvider variableProvider, boolean targetProcess) {
         this.user = user;
         this.webHelper = webHelper;
         this.variableProvider = variableProvider;
+        this.targetProcess = targetProcess;
     }
 
     public void initChained(FreemarkerTag parent) {
-        init(parent.user, parent.webHelper, parent.variableProvider);
+        init(parent.user, parent.webHelper, parent.variableProvider, false);
         arguments = parent.arguments;
     }
 
@@ -38,6 +42,11 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
     public final Object exec(List arguments) throws TemplateModelException {
         try {
             this.arguments = arguments;
+            if (targetProcess) {
+                Long targetProcessId = getParameterVariableNotNull(Long.class, 0);
+                this.arguments.remove(0);
+                this.variableProvider = ((AbstractVariableProvider) variableProvider).getSameProvider(targetProcessId);
+            }
             return executeTag();
         } catch (Throwable th) {
             LogFactory.getLog(getClass()).error(arguments.toString(), th);
