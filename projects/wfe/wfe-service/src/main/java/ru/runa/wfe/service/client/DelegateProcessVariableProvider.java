@@ -41,4 +41,9 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
     public WfVariable getVariable(String variableName) {
         return Delegates.getExecutionService().getVariable(user, processId, variableName);
     }
+
+    @Override
+    public DelegateProcessVariableProvider getSameProvider(Long processId) {
+        return new DelegateProcessVariableProvider(user, processId);
+    }
 }

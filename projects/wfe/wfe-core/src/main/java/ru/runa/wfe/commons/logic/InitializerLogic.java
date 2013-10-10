@@ -123,10 +123,9 @@ public class InitializerLogic {
     }
 
     /**
-     * Initialize database if needed. Default hibernate session must be already
-     * set to archive if required.
+     * Initialize database if needed.
      */
-    public void init(UserTransaction transaction) {
+    public void onStartup(UserTransaction transaction) {
         try {
             if (!isAlreadyIntialized()) {
                 initializeDatabase(transaction);
@@ -151,6 +150,12 @@ public class InitializerLogic {
         } catch (Exception e) {
             log.error("initialization failed", e);
         }
+    }
+
+    /**
+     * Backups database if needed.
+     */
+    public void backupDatabase(UserTransaction transaction) {
     }
 
     /**

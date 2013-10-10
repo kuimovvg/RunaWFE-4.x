@@ -53,4 +53,8 @@ public abstract class AbstractVariableProvider implements IVariableProvider {
         }
         return variable;
     }
+
+    public AbstractVariableProvider getSameProvider(Long processId) {
+        throw new UnsupportedOperationException("in " + getClass());
+    }
 }

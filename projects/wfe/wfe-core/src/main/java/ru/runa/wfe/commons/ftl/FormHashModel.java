@@ -44,7 +44,7 @@ public class FormHashModel extends SimpleHash {
             FreemarkerConfiguration configuration = FreemarkerConfiguration.getInstance();
             FreemarkerTag tag = configuration.getTag(key);
             if (tag != null) {
-                tag.init(user, webHelper, variableProvider);
+                tag.init(user, webHelper, variableProvider, key.startsWith(FreemarkerTag.TARGET_PROCESS_PREFIX));
                 if (webHelper != null && tag instanceof AjaxFreemarkerTag) {
                     webHelper.setTag(key, (AjaxFreemarkerTag) tag);
                 }
