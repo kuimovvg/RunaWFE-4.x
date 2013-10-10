@@ -202,7 +202,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                 try {
                     element.validate();
                 } catch (Exception e) {
-                    element.addWarning("error", e.getMessage());
+                    PluginLogger.logErrorWithoutDialog("validation error", e);
+                    element.addWarning("error", e);
                 }
             }
             this.definitionFile = null;
