@@ -62,6 +62,7 @@ public class FreemarkerConfiguration {
                     String className = tagElement.attributeValue(CLASS_ATTR);
                     Class<? extends FreemarkerTag> tagClass = (Class<? extends FreemarkerTag>) ClassLoaderUtil.loadClass(className);
                     addTag(name, tagClass);
+                    addTag(FreemarkerTag.TARGET_PROCESS_PREFIX + name, tagClass);
                 } catch (Throwable e) {
                     log.warn("Unable to create freemarker tag " + name, e);
                 }
