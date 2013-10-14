@@ -54,6 +54,7 @@ import ru.runa.wfe.audit.VariableUpdateLog;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
+import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
 
@@ -202,6 +203,8 @@ public abstract class Variable<T extends Object> {
         String string;
         if (SystemProperties.isV3CompatibilityMode() && value != null && String[].class == value.getClass()) {
             string = Arrays.toString((String[]) value);
+        } else if (value instanceof Executor) {
+            string = ((Executor) value).getLabel();
         } else {
             string = String.valueOf(value);
         }
