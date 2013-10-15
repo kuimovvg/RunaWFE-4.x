@@ -55,7 +55,7 @@ var simulationWebLinks
   FileWrite $0 "del /F /S /Q $\"%APPDATA%\runawfe\configuration$\"$\r$\n"
   FileWrite $0 "del /F /S /Q $\"%APPDATA%\runawfe\deployments$\"$\r$\n"
   FileWrite $0 "xcopy ..\standalone\configuration $\"%APPDATA%\runawfe\jboss\configuration$\" /D /I /S /Y /R$\r$\n"
-  FileWrite $0 "xcopy ..\standalone\deployments$ $\"%APPDATA%\runawfe\jboss\deployments$\" /D /I /S /Y /R$\r$\n"
+  FileWrite $0 "xcopy ..\standalone\deployments $\"%APPDATA%\runawfe\jboss\deployments$\" /D /I /S /Y /R$\r$\n"
   ${if} "$newSimulationDatabase" == "1"
     FileWrite $0 "if not exist $\"%APPDATA%\runawfe\jboss\runawfe-ver-$2$\" ($\r$\n"
     FileWrite $0 "  del /S /Q $\"%APPDATA%\runawfe\jboss\runawfe-ver-*$\" $\r$\n"
@@ -74,7 +74,7 @@ var simulationWebLinks
   FileWrite $0 "del /F /S /Q %TEMP%\runawfe$\r$\n"
   FileWrite $0 "rd /S /Q %TEMP%\runawfe$\r$\n"
   FileWrite $0 "nircmd.exe exec hide runBots.bat $2 $\r$\n"
-  FileWrite $0 "call standalone.bat $\"-Djboss.server.log.dir=%TEMP%\runawfe\jboss\log$\" $\"-Djboss.server.temp.dir=%TEMP%\runawfe\jboss\tmp$\" $\"-Djboss.server.base.dir=%TEMP%\runawfe\jboss$\"$\r$\n"
+  FileWrite $0 "call standalone.bat $\"-Djboss.server.log.dir=%TEMP%\runawfe\jboss\log$\" $\"-Djboss.server.temp.dir=%TEMP%\runawfe\jboss\tmp$\" $\"-Djboss.server.base.dir=%APPDATA%\runawfe\jboss$\"$\r$\n"
   FileClose $0
 !macroend
 !macro CreateRunGPDBatchFile
