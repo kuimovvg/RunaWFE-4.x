@@ -154,6 +154,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
             functions.add("number_to_string_ru(n1, s2, s3, s4, s5)");
             functions.add("number_to_short_string_ru(n1, s2, s3, s4, s5)");
             functions.add("FIO_case_ru(fio, caseNumber, mode)");
+            functions.add("isExecutorInGroup(group, executor)");
         }
 
         public ChooseFunctionDialog() {
