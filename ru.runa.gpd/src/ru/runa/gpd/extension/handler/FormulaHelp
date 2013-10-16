@@ -22,6 +22,7 @@ current_date() - current date
 current_time() - current time
 current_date_time() - current date and time
 get_instance_id() - returns current instance id
+isExecutorInGroup(group, executor) - checks whether executor belongs to group (result is boolean)
  
    Examples:
 variable1 = 2
