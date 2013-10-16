@@ -22,10 +22,13 @@ import java.util.Date;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Group;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -715,6 +718,33 @@ public class FormulaActionHandler implements ActionHandler {
             String s2 = param4.toString();
             String s3 = param5.toString();
             return NumberToString_ru.numberToShortString(number, new NumberToString_ru.Word(p, new String[] { s1, s2, s3 }));
+        }
+        if (s.equals("isExecutorInGroup")) {
+            Object param1 = parsePriority0();
+            if (param1 == null || !nextToken().equals(",")) {
+                incorrectParameters(s);
+                return null;
+            }
+            Group group;
+            try {
+                group = TypeConversionUtil.convertTo(Group.class, param1);
+            } catch (Exception e) {
+                errorMessage = "param1 cannot is not group: " + e.toString();
+                return null;
+            }
+            Object param2 = parsePriority0();
+            if (param2 == null || !nextToken().equals(")")) {
+                incorrectParameters(s);
+                return null;
+            }
+            Executor executor;
+            try {
+                executor = TypeConversionUtil.convertTo(Executor.class, param2);
+            } catch (Exception e) {
+                errorMessage = "param2 cannot is not executor: " + e.toString();
+                return null;
+            }
+            return ApplicationContextFactory.getExecutorDAO().isExecutorInGroup(executor, group);
         }
         return null;
     }
