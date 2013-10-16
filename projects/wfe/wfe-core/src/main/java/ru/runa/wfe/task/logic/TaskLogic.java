@@ -30,6 +30,7 @@ import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
+import ru.runa.wfe.task.TaskCompletionBy;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.TasklistBuilder;
 import ru.runa.wfe.task.dto.WfTask;
@@ -70,7 +71,7 @@ public class TaskLogic extends WFCommonLogic {
             }
             ProcessDefinition processDefinition = getDefinition(task);
             ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
-            checkCanParticipate(user.getActor(), task);
+            TaskCompletionBy completionBy = checkCanParticipate(user.getActor(), task);
             checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
             if (swimlaneActorId != null) {
                 Actor swimlaneActor = executorDAO.getActor(swimlaneActorId);
@@ -95,7 +96,7 @@ public class TaskLogic extends WFCommonLogic {
                 transition = node.getDefaultLeavingTransitionNotNull();
             }
             executionContext.setTransientVariable(WfProcess.SELECTED_TRANSITION_KEY, transition.getName());
-            task.end(executionContext);
+            task.end(executionContext, completionBy, user.getActor());
             if (!(node instanceof Synchronizable) || !((Synchronizable) node).isAsync()) {
                 signalToken(executionContext, task, transition);
             }

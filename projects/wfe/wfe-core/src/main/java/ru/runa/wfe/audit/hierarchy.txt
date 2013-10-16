@@ -12,7 +12,7 @@
     
     <!-- P : ru.runa.bpm.log.ProcessLog -->
     <!-- R : ru.runa.bpm.log.VariableCreateLog -->
-    
+    <!-- S : ru.runa.bpm.log.TaskEndBySubstitutorLog -->
     <!-- T : ru.runa.bpm.log.TransitionLog -->
     <!-- U : ru.runa.bpm.log.StringUpdateLog -->
     <!-- V : ru.runa.bpm.log.VariableLog -->
