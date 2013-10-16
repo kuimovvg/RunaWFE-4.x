@@ -38,6 +38,7 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
+@SuppressWarnings("unchecked")
 public class FormulaActionHandlerOperations {
     private static final Log log = LogFactory.getLog(FormulaActionHandlerOperations.class);
 
@@ -67,7 +68,7 @@ public class FormulaActionHandlerOperations {
         if (String.class.isInstance(o2)) {
             return translate(o1, String.class).toString() + (String) o2;
         }
-        log.error("Cannot make sum for " + o1.getClass() + " with " + o2.getClass());
+        log.error("Cannot make summation for " + o1.getClass() + " with " + o2.getClass());
         return null;
     }
 
@@ -87,7 +88,7 @@ public class FormulaActionHandlerOperations {
         if (Date.class.isInstance(o1) && Date.class.isInstance(o2)) {
             return new Long((((Date) o1).getTime() - ((Date) o2).getTime()) / 60000);
         }
-        log.error("Cannot make sub for " + o1.getClass() + " with " + o2.getClass());
+        log.error("Cannot make substraction for " + o1.getClass() + " with " + o2.getClass());
         return null;
     }
 
@@ -101,7 +102,7 @@ public class FormulaActionHandlerOperations {
         if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
             return new Long((long) (((Number) o1).doubleValue() * ((Number) o2).doubleValue()));
         }
-        log.error("Cannot make mul for " + (o1 != null ? o1.getClass() : "null") + " with " + (o2 != null ? o2.getClass() : "null"));
+        log.error("Cannot make multiplication for " + (o1 != null ? o1.getClass() : "null") + " with " + (o2 != null ? o2.getClass() : "null"));
         return null;
     }
 
@@ -112,7 +113,7 @@ public class FormulaActionHandlerOperations {
         if (Long.class.isInstance(o1) && Number.class.isInstance(o2)) {
             return new Long((long) (((Long) o1).doubleValue() / ((Number) o2).doubleValue()));
         }
-        log.error("Cannot make div for " + o1.getClass() + " with " + o2.getClass());
+        log.error("Cannot make division for " + o1.getClass() + " with " + o2.getClass());
         return null;
     }
 
