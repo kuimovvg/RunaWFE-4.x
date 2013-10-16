@@ -166,6 +166,13 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
         attributes.put(name, value);
     }
 
+    protected void addAttributeWithTruncation(String name, String value, int maxLength) {
+        if (value.length() > maxLength) {
+            value = value.substring(0, maxLength) + "...";
+        }
+        addAttribute(name, value);
+    }
+
     protected String getAttribute(String name) {
         return attributes.get(name);
     }

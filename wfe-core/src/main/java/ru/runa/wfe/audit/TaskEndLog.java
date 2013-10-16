@@ -27,6 +27,9 @@ import javax.persistence.Transient;
 
 import ru.runa.wfe.audit.presentation.ExecutorNameValue;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.user.Executor;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Logging task completion.
@@ -41,11 +44,10 @@ public class TaskEndLog extends TaskLog {
     public TaskEndLog() {
     }
 
-    public TaskEndLog(Task task) {
+    public TaskEndLog(Task task, Executor executor) {
         super(task);
-        if (task.getExecutor() != null) {
-            addAttribute(ATTR_ACTOR_NAME, task.getExecutor().getName());
-        }
+        Preconditions.checkNotNull(executor, "executor");
+        addAttribute(ATTR_ACTOR_NAME, executor.getName());
         setSeverity(Severity.INFO);
     }
 

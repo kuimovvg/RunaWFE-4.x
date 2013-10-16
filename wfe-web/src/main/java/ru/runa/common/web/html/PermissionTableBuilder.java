@@ -114,6 +114,9 @@ public class PermissionTableBuilder {
             tr.addElement(new TD(checkbox).setClass(Resources.CLASS_PERMISSION_TABLE_TD));
         }
         input.setDisabled(executorIsPrivileged || additionalExecutor);
+        if (additionalExecutor) {
+            tr.addElement(new Input(Input.HIDDEN, IdsForm.IDS_INPUT_NAME, String.valueOf(executor.getId())));
+        }
         return tr;
     }
 }

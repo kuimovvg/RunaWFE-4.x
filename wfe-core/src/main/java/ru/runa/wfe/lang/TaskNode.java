@@ -23,6 +23,7 @@ package ru.runa.wfe.lang;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.TaskCompletionBy;
 
 import com.google.common.base.Objects;
 
@@ -53,11 +54,10 @@ public class TaskNode extends BaseTaskNode {
 
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
-        log.debug("invoked from timer in " + this);
         if (!async) {
             for (Task task : executionContext.getToken().getTasks()) {
                 if (Objects.equal(task.getNodeId(), getNodeId())) {
-                    task.end(executionContext);
+                    task.end(executionContext, TaskCompletionBy.TIMER, null);
                 }
             }
         }
