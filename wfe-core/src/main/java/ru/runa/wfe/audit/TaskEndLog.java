@@ -29,8 +29,6 @@ import ru.runa.wfe.audit.presentation.ExecutorNameValue;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Logging task completion.
  * 
@@ -46,8 +44,9 @@ public class TaskEndLog extends TaskLog {
 
     public TaskEndLog(Task task, Executor executor) {
         super(task);
-        Preconditions.checkNotNull(executor, "executor");
-        addAttribute(ATTR_ACTOR_NAME, executor.getName());
+        if (executor != null) {
+            addAttribute(ATTR_ACTOR_NAME, executor.getName());
+        }
         setSeverity(Severity.INFO);
     }
 
