@@ -76,7 +76,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
 
     @Override
     public User authenticateByLoginPassword(@WebParam(name = "name") String name, @WebParam(name = "password") String password) {
-        Preconditions.checkArgument(name != null && !name.isEmpty());
+        Preconditions.checkArgument(name != null);
         Preconditions.checkArgument(password != null);
         log.debug("Authenticating (login) " + name);
         User user = authenticationLogic.authenticate(name, password);
