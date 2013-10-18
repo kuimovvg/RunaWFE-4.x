@@ -223,15 +223,21 @@ void OnTimer(HWND hWnd)
 
 } // OnTimer();
 
-//------------------------------------------------------
+// TODO to PropertyManager
+std::wstring GetBrowserStartURL() {
+	const std::wstring serverName = GetOption(L"server.name", L"localhost");
+	const std::wstring serverPort = GetOption(L"server.port", L"8080");
+	const std::wstring loginRelativeURL = GetOption(L"login.relative.url", L"login.do");
+	return L"http://" + serverName + L":" + serverPort + L"/wfe" + loginRelativeURL;
+}
+
 
 void Launch(HWND hWnd)
 {
 	// use empty string to use default system browser, L"IEXPLORE.EXE" for MSIE:
 	const std::wstring sCmd = GetOption(L"Browser", L"");
-	const std::wstring sParam = GetOption(L"LaunchURL", L"http://google.com/");
 	const int nShowCmd = GetOptionInt(L"LaunchURL_ShowCmd", SW_SHOWMAXIMIZED);
-	ShellExecute(hWnd, L"open", sCmd.c_str(), sParam.c_str(), NULL, nShowCmd);
+	ShellExecute(hWnd, L"open", sCmd.c_str(), GetBrowserStartURL().c_str(), NULL, nShowCmd);
 }
 
 //------------------------------------------------------
