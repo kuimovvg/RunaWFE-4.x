@@ -7,7 +7,7 @@ import javax.interceptor.InvocationContext;
 import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.exception.LockAcquisitionException;
+import org.springframework.dao.ConcurrencyFailureException;
 
 import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.cache.CachingLogic;
@@ -65,8 +65,8 @@ public class EjbTransactionSupport {
     private Object invokeWithRetry(InvocationContext ic) throws Throwable {
         try {
             return ic.proceed();
-        } catch (LockAcquisitionException e) {
-            LogFactory.getLog(getClass()).error("Got LockAcquisitionException: " + e);
+        } catch (ConcurrencyFailureException e) {
+            LogFactory.getLog(getClass()).error("Got ConcurrencyFailureException: " + e);
             Thread.sleep(1000);
             return ic.proceed();
         }
