@@ -33,8 +33,7 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
      * Creates new calendar interval by dates.
      * 
      * @param expandTimeInBounds
-     *            if <code>true</code> then from time will be set to 00:00:00
-     *            and to time to 23:59:59
+     *            if <code>true</code> then from time will be set to 00:00:00 and to time to 23:59:59
      */
     public CalendarInterval(Date from, Date to, boolean expandTimeInBounds) {
         this(CalendarUtil.dateToCalendar(from), CalendarUtil.dateToCalendar(to), expandTimeInBounds);
@@ -51,8 +50,7 @@ public class CalendarInterval implements Comparable<CalendarInterval> {
      * Creates new calendar interval by calendars.
      * 
      * @param expandTimeInBounds
-     *            if <code>true</code> then from time will be set to 00:00:00
-     *            and to time to 23:59:59
+     *            if <code>true</code> then from time will be set to 00:00:00 and to time to 23:59:59
      */
     public CalendarInterval(Calendar from, Calendar to, boolean expandTimeInBounds) {
         this.from = CalendarUtil.clone(from);
