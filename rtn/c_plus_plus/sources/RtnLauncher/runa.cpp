@@ -88,24 +88,30 @@ bool GetXmlStringValue(const std::string& sXml, const std::string& sXmlTagName,
 	return true;
 }
 
-//------------------------------------------------------
+std::wstring GetWebServiceURL(std::wstring serviceName) {
+	const std::wstring serverName = GetOption(L"server.name", L"localhost");
+	const std::wstring serverPort = GetOption(L"server.port", L"8080");
+	const std::wstring serverVersion = GetOption(L"server.version", L"4.0.6");
+	const std::wstring serverType = GetOption(L"application.server.type", L"jboss4");
+	if (L"jboss4" == serverType) {
+		return L"http://" + serverName + L":" + serverPort + L"/runawfe-wfe-service-" + serverVersion + L"/" + serviceName + L"ServiceBean?wsdl";
+	} else {
+		return L"http://" + serverName + L":" + serverPort + L"/wfe-service-" + serverVersion + L"/" + serviceName + L"WebService/" + serviceName + L"API?wsdl";
+	}
+}
 
-int IsThereAnyTask()
-{
-	MYTRACE("IsThereAnyTask...\n");
+int IsThereAnyTask() {
+	MYTRACE("Checking for new tasks ...\n");
 
 	bool bRes = false;
 	HttpSessionPtr ptrSession = HttpSession::Create();
-	if(!ptrSession)
-	{
+	if(!ptrSession) {
 		MYTRACE("Can't create session!\n");
 		return -1;
 	}
 
-	const std::wstring sServerUrl = GetOption(L"ServerUrl", L"http://localhost:8080/runawfe-wfe-service-4.0.0/");
 	const std::wstring sUserAgent = GetOption(L"UserAgent");
-	if(!sUserAgent.empty())
-	{
+	if(!sUserAgent.empty())	{
 		ptrSession->SetUserAgent(sUserAgent);
 	}
 
@@ -142,8 +148,6 @@ int IsThereAnyTask()
 	// POST HTTP SOAP REQUEST TO LOGIN INTO RUNA:
 
 	{
-		const std::wstring sUrl = sServerUrl + L"AuthenticationServiceBean";
-
 		const std::string sPostXml =
 			"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:impl=\"http://impl.service.wfe.runa.ru/\">"
 			"<SOAP-ENV:Header/><SOAP-ENV:Body>"
@@ -152,7 +156,7 @@ int IsThereAnyTask()
 			"</token></impl:authenticateByKerberos>"
 			"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-		REQUEST_INFO request(VERB_POST, sUrl);
+		REQUEST_INFO request(VERB_POST, GetWebServiceURL(L"Authentication"));
 		request.sBinaryRequestBody = sPostXml;
 		request.sContentType = L"text/xml; charset=utf-8";
 
@@ -185,8 +189,6 @@ int IsThereAnyTask()
 	// REQUEST TASK LIST FROM RUNA:
 
 	{
-		const std::wstring sUrl = sServerUrl + L"ExecutionServiceBean";
-
 		const std::string sPostXml =
 			"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:impl=\"http://impl.service.wfe.runa.ru/\">"
 			"<SOAP-ENV:Header/><SOAP-ENV:Body>"
@@ -195,7 +197,7 @@ int IsThereAnyTask()
 			"</user></impl:getTasks>"
 			"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-		REQUEST_INFO request(VERB_POST, sUrl);
+		REQUEST_INFO request(VERB_POST, GetWebServiceURL(L"Execution"));
 		request.sBinaryRequestBody = sPostXml;
 		request.sContentType = L"text/xml; charset=utf-8";
 
