@@ -175,8 +175,7 @@ public class CalendarUtil {
      *            is a list of start - end pairs of calendar
      * @param two
      *            is a list of start - end pairs of calendar
-     * @return 0 if no intersection. Returns N milliseconds of total
-     *         intersection time
+     * @return 0 if no intersection. Returns N milliseconds of total intersection time
      */
     private static boolean isIntersectionStrong(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
         if (oneEnd.compareTo(twoStart) < 0 || twoEnd.compareTo(oneStart) < 0) {
@@ -333,7 +332,7 @@ public class CalendarUtil {
         return compareOnlyDate(c1, c2) == 0;
     }
 
-    private static List<Calendar> transformToCalendarList(List<CalendarInterval> list) {
+    protected static List<Calendar> transformToCalendarList(List<CalendarInterval> list) {
         ArrayList<Calendar> result = new ArrayList<Calendar>(2 * list.size());
         for (CalendarInterval calendarInterval : list) {
             result.add(calendarInterval.getFrom());
@@ -342,7 +341,7 @@ public class CalendarUtil {
         return result;
     }
 
-    private static List<CalendarInterval> transformToCalendarIntervalList(List<Calendar> list) {
+    protected static List<CalendarInterval> transformToCalendarIntervalList(List<Calendar> list) {
         ArrayList<CalendarInterval> result = new ArrayList<CalendarInterval>(list.size() / 2);
         for (int i = 0; i < list.size(); i = i + 2) {
             result.add(new CalendarInterval(list.get(i), list.get(i + 1)));
@@ -393,6 +392,15 @@ public class CalendarUtil {
 
     public static synchronized Calendar convertToCalendar(String dateAsString, DateFormat dateFormat) {
         return dateToCalendar(convertToDate(dateAsString, dateFormat));
+    }
+
+    public static void main(String[] arg) {
+        CalendarInterval calendarInterval = new CalendarInterval(CalendarUtil.convertToCalendar("01.01.2013 00:00",
+                CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT), CalendarUtil.convertToCalendar("01.01.2013 23:59:59",
+                CalendarUtil.DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT));
+        double days = calendarInterval.getDaysBetween();
+        System.out.println(days);
+        System.out.println((int) days);
     }
 
 }
