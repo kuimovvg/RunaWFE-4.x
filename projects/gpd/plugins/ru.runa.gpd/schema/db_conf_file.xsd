@@ -1,0 +1,15 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="datasource">
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="xs:string">
+          <xs:attribute type="xs:string" name="jndi-name"/>
+          <xs:attribute type="xs:string" name="connection-url"/>
+          <xs:attribute type="xs:string" name="driver-class"/>
+          <xs:attribute type="xs:string" name="user-name"/>
+          <xs:attribute type="xs:string" name="password"/>
+        </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

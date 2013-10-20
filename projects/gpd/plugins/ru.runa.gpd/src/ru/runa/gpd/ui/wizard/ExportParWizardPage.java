@@ -1,5 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -58,6 +59,7 @@ import com.google.common.base.Throwables;
 
 @SuppressWarnings("restriction")
 public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
+    private static final String PROJECT_PROPERTIES_FILE_NAME="project.properties";
     private final Map<String, IFile> definitionNameFileMap;
     private ListViewer definitionListViewer;
     private Button exportToFileButton;
@@ -199,6 +201,12 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 definition.getLanguage().getSerializer().validateProcessDefinitionXML(definitionFile);
                 List<IFile> resourcesToExport = new ArrayList<IFile>();
                 IFolder processFolder = (IFolder) definitionFile.getParent();
+                IFolder projectProcessFolder = (IFolder) processFolder.getParent();
+                IFile projectPropFile = projectProcessFolder.getFile(PROJECT_PROPERTIES_FILE_NAME);
+                if (projectPropFile.exists()){
+                    resourcesToExport.add(projectPropFile);
+                }
+            
                 processFolder.refreshLocal(1, null);
                 IResource[] members = processFolder.members();
                 for (IResource resource : members) {

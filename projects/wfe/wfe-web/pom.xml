@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>ru.runa.wfe</groupId>
 		<artifactId>wfe-app</artifactId>
-		<version>4.0.6</version>
+		<version>4.0.6-SNAPSHOT</version>
 		<relativePath>../wfe-app/pom.xml</relativePath>
 	</parent>
 
@@ -258,4 +258,5 @@ if ( pr == null || !pr.trim().toLowerCase().equals("true") ){
 			</build>
 		</profile>
 	</profiles>
+
 </project>

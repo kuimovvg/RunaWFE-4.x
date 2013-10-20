@@ -11,9 +11,9 @@
 
     <properties>
         <!-- Zip file with Jboss AS. Used to build wfe application server and so on. -->
-        <jboss.zip.file>C:/dofs/eclipse.mvn/workspace/RunaWFE_Server.cactus.zip</jboss.zip.file>
+        <!--jboss.zip.file>C:/dofs/eclipse.mvn/workspace/RunaWFE_Server.cactus.zip</jboss.zip.file-->
         <!-- Jboss AS folder name in zip file. -->
-        <jboss.zip.folder>runawfe.4.0.5</jboss.zip.folder>
+        <jboss.zip.folder>runawfe.${project.version}</jboss.zip.folder>
         <jboss.home>${project.build.directory}/${jboss.zip.folder}</jboss.home>
     </properties>
 

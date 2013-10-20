@@ -93,8 +93,11 @@ FCKEditingArea.prototype.Start = function( html, secondCall )
 
 		// IE: Avoid JavaScript errors thrown by the editing are source (like tags events).
 		// See #1055.
-		var sOverrideError = '<script type="text/javascript" _fcktemp="true">window.onerror=function(){return true;};</script>' ;
-
+      var sOverrideError =
+          '<script type="text/javascript" _fcktemp="true">window.onerror=function(){return true;};</script>' +
+              '<link href=' + FCKConfig.BootstrapCSS + ' rel="stylesheet">' +
+              '<script type="text/javascript" src=' + FCKConfig.JqueryJS + '></script>' +
+              '<script type="text/javascript" src=' + FCKConfig.BootstrapJS + '></script>';
 		oIFrame.frameBorder = 0 ;
 		oIFrame.style.width = oIFrame.style.height = '100%' ;
 

@@ -23,9 +23,11 @@ import ru.runa.gpd.BotStationNature;
 import ru.runa.gpd.lang.par.ParContentProvider;
 
 /**
- * Be careful using this class (methods can return nulls if no active editor opened).
+ * Be careful using this class (methods can return nulls if no active editor
+ * opened).
  */
 public class ProjectFinder {
+
     public static IProject[] getAllProcessDefinitionProjects() {
         List<IProject> returnList = new ArrayList<IProject>();
         try {
@@ -40,7 +42,7 @@ public class ProjectFinder {
         return returnList.toArray(new IProject[0]);
     }
 
-    private static IProject[] getWorkspaceProjects() {
+    public static IProject[] getWorkspaceProjects() {
         return ResourcesPlugin.getWorkspace().getRoot().getProjects();
     }
 
@@ -149,7 +151,7 @@ public class ProjectFinder {
             }
             return projects.toArray(new IProject[0]);
         } catch (CoreException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 

@@ -130,7 +130,19 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 WorkspaceOperations.createNewProject();
             }
         });
+        manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.importProject"), SharedImages.getImageDescriptor("icons/import.gif")) {
+            @Override
+            public void run() {                
+                WorkspaceOperations.importProject();
+            }
+        });
         if (menuOnProject) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.changeDbConfigurationFile"), SharedImages.getImageDescriptor("icons/database_model.png")) {
+                @Override
+                public void run() {
+                    WorkspaceOperations.changeDbConfigurationFile((IProject) selectedObject);
+                }
+            });
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProcess"), SharedImages.getImageDescriptor("icons/process.gif")) {
                 @Override
                 public void run() {
@@ -141,6 +153,12 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 @Override
                 public void run() {
                     WorkspaceOperations.importProcessDefinition(selection);
+                }
+            });
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.exportProject"), SharedImages.getImageDescriptor("icons/export.gif")) {
+                @Override
+                public void run() {
+                    WorkspaceOperations.exportProject(selection);
                 }
             });
         }

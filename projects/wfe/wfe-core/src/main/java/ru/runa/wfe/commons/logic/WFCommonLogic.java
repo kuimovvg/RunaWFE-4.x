@@ -42,7 +42,6 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskCompletionBy;
 import ru.runa.wfe.task.dao.TaskDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -131,24 +130,24 @@ public class WFCommonLogic extends CommonLogic {
         return false;
     }
 
-    protected TaskCompletionBy checkCanParticipate(Actor actor, Task task) {
+    protected void checkCanParticipate(Actor actor, Task task) {
         Executor taskExecutor = task.getExecutor();
         if (taskExecutor == null) {
             throw new AuthorizationException("Unable to participate in unassigned task");
         }
         if (taskExecutor instanceof Actor) {
             if (Objects.equal(actor, taskExecutor)) {
-                return TaskCompletionBy.ASSIGNED_EXECUTOR;
+                return;
             }
         } else {
             Set<Actor> groupActors = executorDAO.getGroupActors((Group) taskExecutor);
             if (groupActors.contains(actor)) {
-                return TaskCompletionBy.ASSIGNED_EXECUTOR;
+                return;
             }
             log.debug("Group " + groupActors + " does not contains interested " + actor);
         }
         if (canParticipateAsSubstitutor(actor, task)) {
-            return TaskCompletionBy.SUBSTITUTOR;
+            return;
         }
         throw new AuthorizationException(actor + " has no pemission to participate as " + taskExecutor + " in task " + task);
     }

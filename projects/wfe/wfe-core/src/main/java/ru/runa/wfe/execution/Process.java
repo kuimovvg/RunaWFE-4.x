@@ -344,7 +344,7 @@ public class Process extends IdentifiableBase {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).toString();
+        return Objects.toStringHelper(this).add("definition", deployment).add("id", id).toString();
     }
 
 }

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RunaWFE GPD application
+Bundle-SymbolicName: ru.runa.gpd.app; singleton:=true
+Bundle-Version: 4.0.5.qualifier
+Bundle-Vendor: Runa
+Bundle-Localization: plugin
+Require-Bundle: ru.runa.gpd,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources
+Bundle-ActivationPolicy: lazy

@@ -8,13 +8,15 @@ CKEDITOR.editorConfig = function( config )
 	// Define changes to default configuration here. For example:
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
-	config.extraPlugins="FreemarkerTags";
+	config.extraPlugins="FreemarkerTags,runaExTabs";
 
-	config.skin = "v2";
-	
+	config.skin = "BootstrapCK-Skin";
+
 	config.contentsCss = "form.css";
 
 	config.height = "500px";
+
+    config.allowedContent = true;
 
 	config.toolbar = "Runa";
 	config.toolbar_Runa=[
@@ -22,7 +24,7 @@ CKEDITOR.editorConfig = function( config )
 		['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print','SpellChecker','Scayt'],
 		['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 		['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
-		['FreemarkerMethod'],
+//		['FreemarkerMethod'],
 		'/',
 		['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
 		['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
@@ -31,7 +33,8 @@ CKEDITOR.editorConfig = function( config )
 		['Image','Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak'],
 		'/',
 		['Styles','Format','Font','FontSize'],
-		['TextColor','BGColor'],['Maximize','ShowBlocks','-','About']
+		['TextColor','BGColor'],['Maximize','ShowBlocks','-','About'],
+        [ 'InsertTab','DeleteTab' ]
 		];
 
 };

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: ru.runa.gpd.connector.wfe.rmi.jboss4;singleton:=true
-Bundle-Version: 4.0.6
+Bundle-Version: 4.0.6.qualifier
 Bundle-Activator: ru.runa.gpd.connector.wfe.rmi.jboss4.PluginActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

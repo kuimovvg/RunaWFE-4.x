@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="ear" name="wfe-remotebots:ear">
+    <output-path>$PROJECT_DIR$/../wfe-remotebots/target</output-path>
+    <root id="archive" name="wfe-remotebots-4.0.6-SNAPSHOT.ear">
+      <element id="artifact" artifact-name="wfe-remotebots:ear exploded" />
+    </root>
+  </artifact>
+</component>

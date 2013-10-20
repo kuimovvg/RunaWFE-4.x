@@ -21,6 +21,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
+import ru.runa.gpd.ui.dialog.ChooseGroovyFunctionDialog;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 
 import com.google.common.collect.Lists;
@@ -35,15 +36,16 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
         return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariables(true));
     }
 
-    private static class ConfigurationDialog extends DelegableConfigurationDialog {
+    public static class ConfigurationDialog extends DelegableConfigurationDialog {
         private final List<String> variableNames = Lists.newArrayList();
+        
         private HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
 
         public ConfigurationDialog(String initialValue, List<Variable> variables) {
             super(initialValue);
             for (Variable variable : variables) {
                 this.variableNames.add(variable.getScriptingName());
-            }
+            }                       
         }
 
         @Override
@@ -67,6 +69,23 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
                 }
             });
             hyperlinkGroup.add(hl3);
+            
+            Hyperlink addGroovyFunctionHypelink = new Hyperlink(composite, SWT.NONE);
+            addGroovyFunctionHypelink.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+            addGroovyFunctionHypelink.setText(Localization.getString("button.insert_groovy_function"));
+            addGroovyFunctionHypelink.addHyperlinkListener(new HyperlinkAdapter() {
+                @Override
+                public void linkActivated(HyperlinkEvent e) {
+                	ChooseGroovyFunctionDialog dialog = new ChooseGroovyFunctionDialog();
+                    String groovyFunction = dialog.openDialog();
+                    if (groovyFunction != null) {
+                        styledText.insert(groovyFunction);
+                        styledText.setFocus();
+                        styledText.setCaretOffset(styledText.getCaretOffset() + groovyFunction.length());
+                    }
+                }
+            });
+            hyperlinkGroup.add(addGroovyFunctionHypelink);
         }
 
         @Override

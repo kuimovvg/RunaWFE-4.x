@@ -28,6 +28,8 @@ public abstract class FormType {
     public abstract Map<String, Integer> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception;
 
     public abstract void validate(IFile formFile, FormNode formNode);
+    
+	public abstract void validateFormContent(IFile formFile, FormNode formNode);
 
     public String getType() {
         return type;

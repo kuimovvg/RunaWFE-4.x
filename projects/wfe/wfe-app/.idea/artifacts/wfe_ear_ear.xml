@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="ear" name="wfe-ear:ear">
+    <output-path>$PROJECT_DIR$/../wfe-ear/target</output-path>
+    <root id="archive" name="wfe-ear-4.0.6-SNAPSHOT.ear">
+      <element id="artifact" artifact-name="wfe-ear:ear exploded" />
+    </root>
+  </artifact>
+</component>

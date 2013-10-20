@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<extensions>
+	<hidden>
+		<toc id="/tk.eclipse.plugin.htmleditor/toc.xml" />
+	</hidden>
+</extensions>

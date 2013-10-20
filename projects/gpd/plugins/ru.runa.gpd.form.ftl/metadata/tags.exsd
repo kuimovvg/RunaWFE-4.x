@@ -94,6 +94,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="help_page" type="string">
+            <annotation>
+               <documentation>
+                  Path to help page starting with the plugin name
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -109,24 +116,15 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="type" use="required">
+         <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="ru.runa.gpd.form.ftl.parameter_type/type/@id"/>
+               </appInfo>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="combo">
-                  </enumeration>
-                  <enumeration value="text">
-                  </enumeration>
-                  <enumeration value="richcombo">
-                  </enumeration>
-                  <enumeration value="varcombo">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
          <attribute name="variableAccess" use="required">
             <annotation>
@@ -183,6 +181,20 @@
                   </enumeration>
                </restriction>
             </simpleType>
+         </attribute>
+         <attribute name="required" type="boolean">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="help" type="string">
+            <annotation>
+               <documentation>
+                  Context field help.
+               </documentation>
+            </annotation>
          </attribute>
          <attribute name="multiple" type="boolean" use="default" value="false">
             <annotation>

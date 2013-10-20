@@ -122,13 +122,26 @@ public class FtlTagSupportServlet extends HttpServlet {
                     resultHtml.append("<option value=\"").append(variable.getName()).append("\">").append(variable.getName()).append("</option>");
                 }
                 resultHtml.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ftl.format.dialog.end")));
+            } else if ("OpenComponentHelp".equals(commandStr)) {
+                String helpPage = MethodTag.getTagNotNull(tagName).helpPage;
+                WYSIWYGHTMLEditor.getCurrent().openHelp(helpPage);
             } else if ("GetParameters".equals(commandStr)) {
                 resultHtml.append("<table style=\"width: 100%;\">");
                 int paramCounter = 0;
                 for (Param param : MethodTag.getTagNotNull(tagName).params) {
                     resultHtml.append("<tr><td class='leftParam'>");
+
+                    resultHtml.append("<span ");
+                    if (param.help != null) {
+                        resultHtml.append("title=\"").append(param.help).append("\"");
+                    }
+                    resultHtml.append(">");
                     resultHtml.append(param.label);
-                    resultHtml.append("</td><td class='rightParam'>");
+                    resultHtml.append("</span>");
+                    if (param.required)
+                        resultHtml.append("<span class=\"parameter-required\">*</span>");
+
+                    resultHtml.append("</span></td><td class='rightParam'>");
                     if (param.isCombo() || param.isVarCombo()) {
                         resultHtml.append("<select id=\"pc_").append(paramCounter).append("\">");
                         for (OptionalValue option : param.optionalValues) {
@@ -210,7 +223,19 @@ public class FtlTagSupportServlet extends HttpServlet {
                     }
                     resultHtml.append(variable.getName());
                 }
-            } else {
+            } else if ("CreateComponent".equals(commandStr)) {
+                int componentId = WYSIWYGHTMLEditor.getCurrent().createComponent(tagName);
+                response.setContentType("application/json; charset=UTF-8");
+                resultHtml.append("{\"componentId\":").append(componentId).append("}");
+            } else if ("ComponentSelected".equals(commandStr)) {
+                int componentId = Integer.valueOf(request.getParameter("componentId"));
+                WYSIWYGHTMLEditor.getCurrent().componentSelected(componentId);
+            } else if ("ComponentDeselected".equals(commandStr)) {
+                WYSIWYGHTMLEditor.getCurrent().componentDeselected();
+            }
+            else if ("SynchronizeIds".equals(commandStr)) {
+              WYSIWYGHTMLEditor.getCurrent().doDrop();
+            }else {
                 WYSIWYGPlugin.logInfo("Unknown cmd: " + commandStr);
             }
             response.getOutputStream().write(resultHtml.toString().getBytes("UTF-8"));

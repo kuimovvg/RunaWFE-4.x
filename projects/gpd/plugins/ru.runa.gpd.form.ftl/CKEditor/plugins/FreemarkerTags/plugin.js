@@ -24,6 +24,63 @@ FreemarkerTags.GetTagImage = function( tagType ) {return FreemarkerTags.GetFromS
 FreemarkerTags.GetParameters = function( tagType ) {return FreemarkerTags.GetFromServer( "GetParameters", tagType, "Error.");}
 FreemarkerTags.GetFormats = function( tagType ) {return FreemarkerTags.GetFromServer( "GetFormats", tagType, "Error.");}
 
+FreemarkerTags.OpenComponentHelp = function( tagName ) {
+  var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=OpenComponentHelp&tagName=" + tagName, false ) ;
+  oXmlHttp.send( null ) ;
+  if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+    return oXmlHttp.responseText ;
+  } else {
+    return "Error." ;
+  }
+};
+
+FreemarkerTags.ComponentSelected = function( componentId ) {
+  var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentSelected&componentId=" + componentId, false ) ;
+  oXmlHttp.send( null ) ;
+  if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+    return oXmlHttp.responseText ;
+  } else {
+    return "Error." ;
+  }
+};
+
+FreemarkerTags.ComponentDeselected = function() {
+  var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentDeselected", false ) ;
+  oXmlHttp.send( null ) ;
+  if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+    return oXmlHttp.responseText ;
+  } else {
+    return "Error." ;
+  }
+};
+
+FreemarkerTags.GetComponentId = function (tagName) {
+  var oXmlHttp = (!window.XMLHttpRequest) ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open("GET", "/editor/FreemarkerTags.java?method=CreateComponent&tagName=" + tagName, false);
+  oXmlHttp.send(null);
+  if (oXmlHttp.status == 200 || oXmlHttp.status == 304) {
+    return JSON.parse(oXmlHttp.responseText).componentId;
+  }
+  else {
+    return "Error.";
+  }
+};
+
+FreemarkerTags.SynchronizeIds = function () {
+  var oXmlHttp = (!window.XMLHttpRequest) ? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open("GET", "/editor/FreemarkerTags.java?method=SynchronizeIds", false);
+  oXmlHttp.send(null);
+  if (oXmlHttp.status == 200 || oXmlHttp.status == 304) {
+    return oXmlHttp.responseText;
+  }
+  else {
+    return "Error.";
+  }
+};
+
 FreemarkerTags.createFakeParserElement = function( realElement, className, realElementType )
 {
 	var writer = new CKEDITOR.htmlParser.basicWriter();
@@ -31,7 +88,8 @@ FreemarkerTags.createFakeParserElement = function( realElement, className, realE
 	var html = writer.getHtml();
 	var attributes =
 	{
-		'class' : className,
+      'id' : FreemarkerTags.GetComponentId(realElement.attributes[FTL_TYPE_ATTR]),
+      'class' : className,
 		_cke_realelement : encodeURIComponent( html ),
 		height: FreemarkerTags.GetTagHeight(realElement.attributes[FTL_TYPE_ATTR]),
 		width: FreemarkerTags.GetTagWidth(realElement.attributes[FTL_TYPE_ATTR]),
@@ -63,7 +121,7 @@ CKEDITOR.plugins.add(
 					//alert(isAvailable);
 				}
 			}
-			
+
 			editor.addCommand(FTL_METHOD_CMD, new CKEDITOR.dialogCommand(FTL_METHOD_CMD));
 			if(isAvailable == "true")
 				editor.ui.addButton(FTL_METHOD_CMD, {label:editor.lang.FreemarkerTags.MethodTitle, icon: this.path + "toolbar.gif", command:FTL_METHOD_CMD});
@@ -76,7 +134,7 @@ CKEDITOR.plugins.add(
 
 			if ( editor.addMenuItems )
 			{	// If the "menu" plugin is loaded, register the menu items.
-				editor.addMenuItems(
+/*				editor.addMenuItems(
 				{
 					ftl_element :
 					{
@@ -84,7 +142,7 @@ CKEDITOR.plugins.add(
 						command : FTL_METHOD_CMD,
 						group : 'runawfe'
 					}
-				});
+				});*/
 				editor.addMenuItems(
 				{
 					ftl_element_output :
@@ -97,12 +155,13 @@ CKEDITOR.plugins.add(
 			}
 			if ( editor.contextMenu )
 			{ 	// If the "contextmenu" plugin is loaded, register the listeners.
-				editor.contextMenu.addListener( function( element, selection )
+/*				editor.contextMenu.addListener( function( element, selection )
 					{
 						if ( element && element.getAttribute( '_cke_real_element_type' ) == 'ftl_element' ){
 							return { ftl_element : CKEDITOR.TRISTATE_ON };
 						}
-					});
+					});*/
+
 				editor.contextMenu.addListener( function( element, selection )
 						{
 							if ( element && element.getAttribute( '_cke_real_element_type' ) == 'ftl_element_output' ){
@@ -113,9 +172,22 @@ CKEDITOR.plugins.add(
 		},
 		afterInit : function( editor )
 		{
+          editor.on('selectionChange', function () {
+            var selection = editor.getSelection();
+            var selectedElement = selection.getSelectedElement();
+            if (!selectedElement || selectedElement.$.className.indexOf("ftl_component") == -1)
+              FreemarkerTags.ComponentDeselected();
+            else
+              FreemarkerTags.ComponentSelected(selectedElement.$.id);
+          });
+
+          editor.on('paste', function () {
+            FreemarkerTags.SynchronizeIds();
+          }, editor.element.$);
+
+
 			var dataProcessor = editor.dataProcessor,
 				dataFilter = dataProcessor && dataProcessor.dataFilter;
-	
 			if ( dataFilter )
 			{
 				dataFilter.addRules(
@@ -124,7 +196,7 @@ CKEDITOR.plugins.add(
 					{
 						ftl_element : function( element )
 						{
-							return FreemarkerTags.createFakeParserElement( element, 'cke_' + 'ftl_element', 'ftl_element');
+							return FreemarkerTags.createFakeParserElement( element, 'cke_' + 'ftl_element ftl_component', 'ftl_element');
 						}
 					}
 				});
@@ -134,7 +206,7 @@ CKEDITOR.plugins.add(
 					{
 						ftl_element_output : function( element )
 						{
-							return FreemarkerTags.createFakeParserElement( element, 'cke_' + 'ftl_element_output', 'ftl_element_output');
+							return FreemarkerTags.createFakeParserElement( element, 'cke_' + 'ftl_element_output ftl_component', 'ftl_element_output');
 						}
 					}
 				});

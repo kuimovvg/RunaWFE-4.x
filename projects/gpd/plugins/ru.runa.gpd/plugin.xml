@@ -871,11 +871,21 @@
                ratio="0.8"
                relationship="right"
                relative="org.eclipse.ui.editorss"/>
+        <view
+            id="ru.runa.gpd.dbExplorerView"
+            ratio="0.1"
+            relationship="stack"
+            relative="ru.runa.gpd.explorerView"/>
+        <view
+            id="ru.runa.gpd.groovyFunctionsView"
+            ratio="0.1"
+            relationship="stack"
+            relative="ru.runa.gpd.dbExplorerView"/>
          <view
                id="ru.runa.gpd.botExplorerView"
-               ratio="0.2"
+               ratio="0.1"
                relationship="stack"
-               relative="ru.runa.gpd.explorerView" />
+               relative="ru.runa.gpd.groovyFunctionsView" />
          <viewShortcut id="ru.runa.gpd.explorerView"/>
          <newWizardShortcut id="wizard.new.process.definition"/>
          <newWizardShortcut id="wizard.new.project"/>
@@ -907,6 +917,18 @@
             icon="icons/properties_view.gif"
             id="ru.runa.gpd.propertiesView"
             name="%label.view.properties"/>
+     <view
+         category="ru.runa.gpd.view.category"
+         class="ru.runa.gpd.ui.view.DBExplorerTreeView"
+         icon="icons/database_model.png"
+         id="ru.runa.gpd.dbExplorerView"
+         name="%label.view.dbExplorer"/>
+     <view
+         category="ru.runa.gpd.view.category"
+         class="ru.runa.gpd.ui.view.GroovyFunctionsView"
+         icon="icons/groovy_functions.png"
+         id="ru.runa.gpd.groovyFunctionsView"
+         name="%label.view.groovyFunctionsView"/>
       <view
             category="ru.runa.gpd.view.category"
             class="ru.runa.gpd.ui.view.BotExplorerTreeView"
@@ -1822,6 +1844,15 @@
                toolbarPath="normal/processes"
                tooltip="%tooltip.menu.newProject"/>
          <action
+               class="ru.runa.gpd.ui.action.ImportProjectAction"
+               icon="icons/import.gif"
+               id="ru.runa.gpd.ImportProjectAction"
+               label="%label.menu.importProject"
+               menubarPath="file/newFile/common"
+               style="push"
+               toolbarPath="normal/processes"
+               tooltip="%tooltip.menu.importProject"/>
+         <action
          		class="ru.runa.gpd.ui.action.NewBotTaskWithFormalAction"
          		icon="icons/bot_task_formal.gif"
          		id="ru.runa.gpd.ui.newBotTaskWithFormal"
@@ -1991,6 +2022,27 @@
                menubarPath="window/additions"
                style="push"/>
          <action
+               class="ru.runa.gpd.ui.action.OpenDatabaseExplorer"
+               icon="icons/database_model.png"
+               id="ru.runa.gpd.ui.action.openDatabaseExplorer"
+               label="%label.menu.view.dbExplorer"
+               menubarPath="window/additions"
+               style="push"/>
+         <action
+               class="ru.runa.gpd.ui.action.OpenToolPaletteExplorer"
+               icon="icons/toolbar-palette.png"
+               id="ru.runa.gpd.ui.action.openToolPaletteExplorer"
+               label="%label.menu.view.toolPalleteExplorer"
+               menubarPath="window/additions"
+               style="push"/>
+        <action
+            class="ru.runa.gpd.ui.action.OpenGroovyFunctionsView"
+            icon="icons/groovy_functions.png"
+            id="ru.runa.gpd.ui.action.openGroovyFunctionsView"
+            label="%label.menu.view.groovyFunctionsView"
+            menubarPath="window/additions"
+            style="push"/>
+         <action
                class="ru.runa.gpd.ui.action.OpenBotExplorer"
                icon="icons/filenav_nav.gif"
                id="ru.runa.gpd.ui.action.openBotExplorer"
@@ -2107,6 +2159,12 @@
             contextId="ru.runa.gpd.context.app"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="Delete">
+      </key>
+      <key
+            commandId="org.eclipse.ui.help.displayHelp"
+            contextId="org.eclipse.ui.contexts.window"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F1">
       </key>
       <scheme
             id="ru.runa.gpd.scheme"
@@ -2233,12 +2291,30 @@
             label="%ru.runa.wfe.var.format.GroupFormat"
             javaClassName="ru.runa.wfe.user.Group">
       </format>
-   </extension>
+	</extension>
 	<extension id="botStationNature" name="specific nature for bot station project" point="org.eclipse.core.resources.natures">
 	      <runtime>
 	         <run class="ru.runa.gpd.BotStationNature"></run>
 	      </runtime>
 	</extension>	
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="menu:file">
+			<command commandId="org.eclipse.ui.help.helpContents" style="push"></command>
+		</menuContribution>
+	</extension>	
 
-
+	<extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="ru.runa.gpd.help.ContextSensitiveHelpHandler"
+            commandId="org.eclipse.ui.help.displayHelp">
+        <activeWhen>
+			<with variable="activeContexts">
+				<iterate ifEmpty="false" operator="or">
+					<equals value="org.eclipse.ui.contexts.window"></equals>
+				</iterate>
+			</with>
+         </activeWhen>
+      </handler>
+   </extension>
 </plugin>

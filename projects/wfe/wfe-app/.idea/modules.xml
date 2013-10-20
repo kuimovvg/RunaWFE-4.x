@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/wfe-app.iml" filepath="$PROJECT_DIR$/wfe-app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wfe-bots/wfe-bots.iml" filepath="$PROJECT_DIR$/../wfe-bots/wfe-bots.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wfe-core/wfe-core.iml" filepath="$PROJECT_DIR$/../wfe-core/wfe-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wfe-ear/wfe-ear.iml" filepath="$PROJECT_DIR$/../wfe-ear/wfe-ear.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wfe-office/wfe-office.iml" filepath="$PROJECT_DIR$/../wfe-office/wfe-office.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wfe-remotebots/wfe-remotebots.iml" filepath="$PROJECT_DIR$/../wfe-remotebots/wfe-remotebots.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wfe-service/wfe-service.iml" filepath="$PROJECT_DIR$/../wfe-service/wfe-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wfe-web/wfe-web.iml" filepath="$PROJECT_DIR$/../wfe-web/wfe-web.iml" />
+    </modules>
+  </component>
+</project>
+

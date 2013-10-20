@@ -2,17 +2,8 @@
 <?eclipse version="3.0"?>
 <plugin
    id="ru.runa.gpd.app"
-   name="RunaWFE GPD application"
-   version="4.0"
-   provider-name="Runa">
-   <requires>
-      <import plugin="ru.runa.gpd"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-   </requires>
-
-
-   <extension
+>
+    <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product

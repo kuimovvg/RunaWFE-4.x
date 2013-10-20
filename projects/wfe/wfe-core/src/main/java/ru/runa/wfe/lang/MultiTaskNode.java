@@ -28,7 +28,6 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskCompletionBy;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
@@ -74,7 +73,7 @@ public class MultiTaskNode extends BaseTaskNode {
     @Override
     public void execute(ExecutionContext executionContext) {
         TaskDefinition taskDefinition = getFirstTaskNotNull();
-        List<?> executors = executionContext.getVariableProvider().getValueNotNull(List.class, executorsVariableName);
+        List<Object> executors = executionContext.getVariableProvider().getValueNotNull(List.class, executorsVariableName);
         boolean tasksCreated = false;
         // TODO temporary set, introduce unique property in GPD
         for (Object executorIdentity : new HashSet<Object>(executors)) {
@@ -88,9 +87,6 @@ public class MultiTaskNode extends BaseTaskNode {
             taskFactory.notify(executionContext, task);
             tasksCreated = true;
         }
-        if (!tasksCreated) {
-            log.debug("no tasks were created in " + this);
-        }
         // check if we should continue execution
         if (async || !tasksCreated) {
             log.debug("continue execution " + this);
@@ -103,7 +99,7 @@ public class MultiTaskNode extends BaseTaskNode {
         if (!async) {
             for (Task task : executionContext.getToken().getTasks()) {
                 if (Objects.equal(task.getNodeId(), getNodeId())) {
-                    task.end(executionContext, TaskCompletionBy.TIMER, null);
+                    task.end(executionContext);
                 }
             }
         }

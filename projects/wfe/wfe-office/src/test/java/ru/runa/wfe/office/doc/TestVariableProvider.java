@@ -1,11 +1,14 @@
 package ru.runa.wfe.office.doc;
 
+import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.LongFormat;
+import ru.runa.wfe.var.format.MapFormat;
 import ru.runa.wfe.var.format.StringFormat;
 
 import com.google.common.collect.Maps;
@@ -21,10 +24,10 @@ public class TestVariableProvider extends AbstractVariableProvider {
                 VariableDefinition definition = new VariableDefinition(true, entry.getKey(), entry.getKey());
                 if (entry.getValue() instanceof Long) {
                     definition.setFormat(LongFormat.class.getName());
-                    // } else if (entry.getValue() instanceof Map) {
-                    // definition.setFormat(MapFormat.class.getName());
-                    // } else if (entry.getValue() instanceof List) {
-                    // definition.setFormat(ListFormat.class.getName());
+//                } else if (entry.getValue() instanceof Map) {
+//                    definition.setFormat(MapFormat.class.getName());
+//                } else if (entry.getValue() instanceof List) {
+//                    definition.setFormat(ListFormat.class.getName());
                 } else {
                     definition.setFormat(StringFormat.class.getName());
                 }
@@ -34,12 +37,10 @@ public class TestVariableProvider extends AbstractVariableProvider {
         }
     }
 
-    @Override
     public Long getProcessId() {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     public Object getValue(String variableName) {
         WfVariable variable = getVariable(variableName);
         if (variable != null) {
@@ -48,7 +49,6 @@ public class TestVariableProvider extends AbstractVariableProvider {
         return null;
     }
 
-    @Override
     public WfVariable getVariable(String variableName) {
         return variables.get(variableName);
     }

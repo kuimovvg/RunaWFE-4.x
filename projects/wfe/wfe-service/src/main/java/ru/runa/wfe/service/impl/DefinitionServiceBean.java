@@ -17,8 +17,8 @@
  */
 package ru.runa.wfe.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -27,16 +27,20 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
-
+import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.service.decl.DefinitionServiceLocal;
 import ru.runa.wfe.service.decl.DefinitionServiceRemote;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
@@ -45,11 +49,9 @@ import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
-import com.google.common.base.Preconditions;
-
 @Stateless(name = "DefinitionServiceBean")
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class})
 @WebService(name = "DefinitionAPI", serviceName = "DefinitionWebService")
 @SOAPBinding
 public class DefinitionServiceBean implements DefinitionServiceLocal, DefinitionServiceRemote {
@@ -95,6 +97,23 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
             batchPresentation = BatchPresentationFactory.DEFINITIONS.createDefault();
         }
         return definitionLogic.getLatestProcessDefinitions(user, batchPresentation);
+    }
+
+    @Override
+    public List<WfDefinition> getLatestProcessDefinitionsWithPermission(@WebParam(name = "user") User user, 
+            @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "processDefinitionPermission") Permission processDefinitionPermission) {
+        Preconditions.checkArgument(user != null);
+        if (batchPresentation == null) {
+            batchPresentation = BatchPresentationFactory.DEFINITIONS.createDefault();
+        }
+
+        List<Deployment> list = definitionLogic.getPersistentObjects(user, batchPresentation, processDefinitionPermission,
+              new SecuredObjectType[] {SecuredObjectType.DEFINITION, SecuredObjectType.NONE}, true);
+        List<WfDefinition> dtoList = new ArrayList<WfDefinition>(list.size());
+        for (Deployment deployment : list) {
+            dtoList.add(new WfDefinition(deployment));
+        }
+        return dtoList;
     }
 
     @Override

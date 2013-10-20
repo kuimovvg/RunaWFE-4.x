@@ -7,7 +7,6 @@ import java.util.List;
 import org.eclipse.jface.dialogs.IDialogConstants;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 

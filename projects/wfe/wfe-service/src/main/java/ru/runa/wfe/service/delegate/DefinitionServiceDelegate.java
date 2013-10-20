@@ -24,6 +24,7 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
@@ -66,6 +67,11 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
         } catch (Exception e) {
             throw handleException(e);
         }
+    }
+
+    @Override
+    public List<WfDefinition> getLatestProcessDefinitionsWithPermission(User user, BatchPresentation batchPresentation, Permission processDefinitionPermission) {
+        return getDefinitionService().getLatestProcessDefinitionsWithPermission(user, batchPresentation, processDefinitionPermission);
     }
 
     @Override

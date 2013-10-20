@@ -20,7 +20,7 @@ public class TaskExpiredLog extends TaskEndLog {
     }
 
     public TaskExpiredLog(Task task) {
-        super(task, null);
+        super(task);
     }
 
     @Override

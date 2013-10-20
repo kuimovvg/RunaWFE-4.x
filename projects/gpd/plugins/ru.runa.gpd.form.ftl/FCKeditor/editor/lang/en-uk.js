@@ -303,6 +303,7 @@ DlgTableCellSpace	: "Cell spacing",
 DlgTableCellPad		: "Cell padding",
 DlgTableCaption		: "Caption",
 DlgTableSummary		: "Summary",
+DlgTableId		    : "Table ID",
 
 // Table Cell Dialog
 DlgCellTitle		: "Cell Properties",

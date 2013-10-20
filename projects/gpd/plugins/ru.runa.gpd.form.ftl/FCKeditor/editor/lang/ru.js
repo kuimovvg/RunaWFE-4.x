@@ -106,6 +106,8 @@ ImageButton		: "Кнопка с изображением",
 
 FitWindow		: "Развернуть окно редактора",
 ShowBlocks		: "Показать блоки",
+MakeTab			: "Создать таб-панель",
+DeleteTab		: "Удалить таб-панель",
 
 // Context Menu
 EditLink			: "Вставить ссылку",
@@ -303,6 +305,7 @@ DlgTableCellSpace	: "Промежуток (spacing)",
 DlgTableCellPad		: "Отступ (padding)",
 DlgTableCaption		: "Заголовок",
 DlgTableSummary		: "Резюме",
+DlgTableId		    : "ID таблицы",
 
 // Table Cell Dialog
 DlgCellTitle		: "Свойства ячейки",

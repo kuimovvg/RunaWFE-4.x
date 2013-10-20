@@ -41,6 +41,10 @@ public abstract class BaseHtmlFormType extends FormType {
 
     @Override
     public void validate(IFile formFile, FormNode formNode) {
+       	validateVariables(formFile, formNode);
+    }
+
+    private void validateVariables(IFile formFile, FormNode formNode) {
         try {
             Map<String, Integer> formVars = getFormVariableNames(formFile, formNode);
             List<String> allVariableNames = formNode.getProcessDefinition().getVariableNames(true);

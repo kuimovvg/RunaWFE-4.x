@@ -48,7 +48,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.TaskAssignLog;
-import ru.runa.wfe.audit.TaskEndBySubstitutorLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskExpiredLog;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -250,23 +249,14 @@ public class Task implements Assignable {
      * name will be used in the signal. If this task completion does not trigger
      * execution to move on, the transition is ignored.
      */
-    public void end(ExecutionContext executionContext, TaskCompletionBy completionBy, Executor executor) {
-        log.debug("Ending " + this + " by " + completionBy + " with " + executor);
+    public void end(ExecutionContext executionContext) {
         // fire the task end event
         TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
         taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_END);
-        switch (completionBy) {
-        case TIMER:
+        if (getExecutor() != null) {
+            executionContext.addLog(new TaskEndLog(this));
+        } else {
             executionContext.addLog(new TaskExpiredLog(this));
-            break;
-        case ASSIGNED_EXECUTOR:
-            executionContext.addLog(new TaskEndLog(this, executor));
-            break;
-        case SUBSTITUTOR:
-            executionContext.addLog(new TaskEndBySubstitutorLog(this, executor));
-            break;
-        default:
-            throw new IllegalArgumentException("Unimplemented for " + completionBy);
         }
         delete();
     }

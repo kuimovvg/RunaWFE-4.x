@@ -29,13 +29,14 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
 /**
  * Process definition service.
- * 
+ *
  * @author Dofs
  * @since 4.0
  */
@@ -43,7 +44,7 @@ public interface DefinitionService {
 
     /**
      * Deploys new process definition.
-     * 
+     *
      * @param user
      *            authorized user
      * @param archive
@@ -59,7 +60,7 @@ public interface DefinitionService {
 
     /**
      * Redeploys process definition by name.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -80,7 +81,7 @@ public interface DefinitionService {
 
     /**
      * Gets only last version from each process definition.
-     * 
+     *
      * @param user
      *            authorized user
      * @param batchPresentation
@@ -89,8 +90,18 @@ public interface DefinitionService {
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation);
 
     /**
+     * Gets only last version from each process definition.
+     *
+     * @param user authorized user
+     * @param batchPresentation
+     * @param processDefinitionPermission permission
+     * @return not <code>null</code>
+     */
+    public List<WfDefinition> getLatestProcessDefinitionsWithPermission(User user, BatchPresentation batchPresentation, Permission processDefinitionPermission);
+
+    /**
      * Gets only last version from process definition by name.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionName
@@ -104,7 +115,7 @@ public interface DefinitionService {
 
     /**
      * Gets process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -117,7 +128,7 @@ public interface DefinitionService {
 
     /**
      * Deletes process definition by name with all versions and all processes.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionName
@@ -129,7 +140,7 @@ public interface DefinitionService {
 
     /**
      * Deletes process definition by name of specified version.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionName
@@ -141,7 +152,7 @@ public interface DefinitionService {
 
     /**
      * Retrieves file data from process definition archive.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -156,10 +167,10 @@ public interface DefinitionService {
     /**
      * Gets available output transition names. Process definition id or task id
      * is required.
-     * 
+     *
      * @param user
      *            authorized user
-     * 
+     *
      * @param definitionId
      *            process definition id, can be <code>null</code>
      * @param taskId
@@ -171,7 +182,7 @@ public interface DefinitionService {
 
     /**
      * Gets task user interaction.
-     * 
+     *
      * @param user
      *            authorized user
      * @param taskId
@@ -183,7 +194,7 @@ public interface DefinitionService {
 
     /**
      * Gets start task user interaction.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -195,7 +206,7 @@ public interface DefinitionService {
 
     /**
      * Gets all role definitions for process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -207,7 +218,7 @@ public interface DefinitionService {
 
     /**
      * Gets all variable definitions for process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -219,7 +230,7 @@ public interface DefinitionService {
 
     /**
      * Gets all graph elements for process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -230,7 +241,7 @@ public interface DefinitionService {
 
     /**
      * Gets all versions of process definition specified by name.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionName

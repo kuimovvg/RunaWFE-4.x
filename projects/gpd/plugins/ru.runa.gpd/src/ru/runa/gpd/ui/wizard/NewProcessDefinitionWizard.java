@@ -20,6 +20,7 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.data.util.ProjectStructureUtils;
 import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.par.GpdXmlContentProvider;
@@ -31,7 +32,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
-    private IStructuredSelection selection;
+	private IStructuredSelection selection;
     private IWorkbench workbench;
     private NewProcessDefinitionWizardPage page;
 
@@ -81,6 +82,8 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                         WorkspaceOperations.openProcessDefinition(definitionFile);
                         monitor.worked(1);
                         BasicNewResourceWizard.selectAndReveal(gpdFile, getActiveWorkbenchWindow());
+                        monitor.worked(1);
+                        ProjectStructureUtils.addProcess(processName, page.getCategoryFullPath());
                         monitor.done();
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);

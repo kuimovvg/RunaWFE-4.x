@@ -17,24 +17,34 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.data.util.ProjectStructureUtils;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
+import ru.runa.gpd.ui.dialog.projectstructure.ProjectStructureDirectory;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
+import ru.runa.gpd.ui.widget.treecombo.TreeCombo;
+import ru.runa.gpd.ui.widget.treecombo.TreeComboItem;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
@@ -53,6 +63,8 @@ public class ImportParWizardPage extends ImportWizardPage {
     private TreeViewer serverDefinitionViewer;
     private String selectedDirFileName;
     private String[] selectedFileNames;
+    private TreeCombo categoryCombo;
+    private Button openProjectStructureDirectoryBtn;
 
     public ImportParWizardPage(String pageName, IStructuredSelection selection) {
         super(pageName, selection);
@@ -67,7 +79,27 @@ public class ImportParWizardPage extends ImportWizardPage {
         pageControl.setLayoutData(new GridData(GridData.FILL_BOTH));
         SashForm sashForm = new SashForm(pageControl, SWT.HORIZONTAL);
         sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
-        createProjectsGroup(sashForm);
+        
+        Composite projectPanel = new Composite(sashForm, SWT.NONE);
+        GridLayout layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        layout.numColumns = 1;        
+        projectPanel.setLayout(layout);
+        projectPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+        
+        createProjectsGroup(projectPanel);
+        
+        Composite processCategoryPanel = new Composite(projectPanel, SWT.NONE);
+        layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        layout.numColumns = 2;
+        processCategoryPanel.setLayout(layout);
+        processCategoryPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));       
+        
+        createCategoryCombo(processCategoryPanel);       
+        
         Group importGroup = new Group(sashForm, SWT.NONE);
         importGroup.setLayout(new GridLayout(1, false));
         importGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -119,6 +151,37 @@ public class ImportParWizardPage extends ImportWizardPage {
         createServerDefinitionsGroup(importGroup);
         setControl(pageControl);
     }
+    
+    private void createCategoryCombo(Composite parent) {
+    	Label label = new Label(parent, SWT.NONE);
+    	label.setText(Localization.getString("label.process_category"));
+    	
+    	Composite directoryButtonsPanel = new Composite(parent, SWT.NONE);
+    	GridLayout layout = new GridLayout();
+        layout.marginWidth = 0;
+        layout.marginHeight = 0;
+        layout.numColumns = 2;
+        directoryButtonsPanel.setLayout(layout);
+        directoryButtonsPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));  
+    	
+    	int style = SWT.BORDER | SWT.READ_ONLY | SWT.BORDER;
+    	categoryCombo = new TreeCombo(directoryButtonsPanel, style);
+    	categoryCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+    	
+    	openProjectStructureDirectoryBtn = new Button(directoryButtonsPanel, SWT.NONE);
+    	openProjectStructureDirectoryBtn.setToolTipText(Localization.getString("button.open_project_structure_directory"));    	
+    	Image directoryBtnImage = SharedImages.getImageDescriptor("icons/filenav_nav.gif").createImage();
+    	openProjectStructureDirectoryBtn.setImage(directoryBtnImage);
+    	openProjectStructureDirectoryBtn.addListener(SWT.Selection, new Listener() {
+    		
+    		@Override
+    		public void handleEvent(Event event) {
+    			openProjectStructureDirectory();
+    		}
+    	});
+
+    	reloadProjectStructureCombo();
+    }
 
     private void setImportMode() {
         boolean fromFile = importFromFileButton.getSelection();
@@ -158,6 +221,9 @@ public class ImportParWizardPage extends ImportWizardPage {
             if (fromFile) {
                 if (selectedDirFileName == null) {
                     throw new Exception(Localization.getString("ImportParWizardPage.error.selectValidPar"));
+                }
+                else if (processCategoryIsEmpty()) {
+                	throw new Exception(Localization.getString("error.category_is_empty"));                    
                 }
                 processNames = new String[selectedFileNames.length];
                 parInputStreams = new InputStream[selectedFileNames.length];
@@ -207,6 +273,7 @@ public class ImportParWizardPage extends ImportWizardPage {
                     ProcessCache.newProcessDefinitionWasCreated(movedDefinitionFile);
                     ProcessCache.invalidateProcessDefinition(definitionFile);
                 }
+                ProjectStructureUtils.addProcess(processName, getCategoryFullPath());
             }
         } catch (Exception exception) {
             PluginLogger.logErrorWithoutDialog("import par", exception);
@@ -289,5 +356,59 @@ public class ImportParWizardPage extends ImportWizardPage {
             }
             return super.getText(element);
         }
+    }   
+    
+    private boolean processCategoryIsEmpty() {
+        return categoryCombo.getSelection().length == 0;
+    }
+    
+    private void reloadProjectStructureCombo() {    	
+		String selectedProjectName = getProjectName();
+		
+		categoryCombo.removeAll();
+		
+		if (selectedProjectName != null) {    		    		    		    	        
+        	ProjectStructureUtils.fillTreeCombo(categoryCombo, selectedProjectName, true);    		
+    	}   	    	   
+    }
+    
+    public String[] getCategoryFullPath() {
+    	TreeComboItem[] selection = categoryCombo.getSelection();
+    	
+    	if (selection.length > 0) {
+    		return selection[0].getFullPath();
+    	}
+    	
+    	return new String[0];
+    }
+    
+    private void openProjectStructureDirectory() {
+    	ProjectStructureDirectory dialog = new ProjectStructureDirectory(getProjectName());    	
+    	dialog.open();
+    	
+    	reloadProjectStructureCombo();
+    	switch(dialog.getReturnCode()) {
+    		case Window.OK:    			
+    			categoryCombo.selectByFullPath(dialog.getSelectedCategoryFullPath());
+    			break;
+    		case Window.CANCEL:
+    			//Do nothing
+    			break;
+    	}
+    }
+    
+    private String getProjectName() {
+    	IProject selectedProject;
+		try {			
+			selectedProject = getSelectedProject();
+			
+			if (selectedProject != null) {    		
+	    		return selectedProject.getName();		
+	    	}
+		} catch (Exception ex) {
+			PluginLogger.logErrorWithoutDialog("Error getting selected project", ex);            
+		}
+		
+		return null;
     }
 }

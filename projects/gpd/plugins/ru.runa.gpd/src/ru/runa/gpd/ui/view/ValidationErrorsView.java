@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
@@ -96,44 +97,49 @@ public class ValidationErrorsView extends ViewPart implements ISelectionChangedL
         }
         try {
             IFile resource = (IFile) marker.getResource();
-            ProcessEditorBase editor = (ProcessEditorBase) IDE.openEditor(getSite().getPage(), resource);
-            GraphElement graphElement = null;
-            String elementId = marker.getAttribute(PluginConstants.SELECTION_LINK_KEY, null);
-            if (elementId != null) {
-                List<? extends Node> elements = editor.getDefinition().getChildrenRecursive(Node.class);
-                for (Node element : elements) {
-                    if (Objects.equal(elementId, element.getId())) {
-                        graphElement = element;
-                        break;
-                    }
-                }
-            }
-            String swimlaneName = marker.getAttribute(PluginConstants.SWIMLANE_LINK_KEY, null);
-            if (swimlaneName != null) {
-                graphElement = findElement(editor.getDefinition(), Swimlane.class, swimlaneName);
-            }
-            int actionIndex = marker.getAttribute(PluginConstants.ACTION_INDEX_KEY, -1);
-            if (actionIndex != -1) {
-                String parentTreePath = marker.getAttribute(PluginConstants.PARENT_NODE_KEY, null);
-                String[] paths = parentTreePath.split("\\|", -1);
-                Active active;
-                if (paths.length == 1) {
-                    active = (Active) findElement(editor.getDefinition(), NamedGraphElement.class, paths[0]);
-                } else if (paths.length == 2) {
-                    Node node = (Node) findElement(editor.getDefinition(), Node.class, paths[0]);
-                    active = node.getTransitionByName(paths[1]);
-                } else {
-                    throw new RuntimeException("Invalid tree path: " + parentTreePath);
-                }
-                List<? extends Action> activeActions = active.getActions();
-                graphElement = activeActions.get(actionIndex);
-            }
-            if (graphElement != null) {
-                editor.select(graphElement);
-            }
+            IEditorPart editor = IDE.openEditor(getSite().getPage(), resource);
+            if (editor instanceof ProcessEditorBase)
+            	selectGraphElement(marker, (ProcessEditorBase) editor);
         } catch (Exception e) {
             // don't display error to user
             PluginLogger.logErrorWithoutDialog("Unable select element", e);
+        }
+    }
+    
+    private void selectGraphElement(IMarker marker, ProcessEditorBase editor) {
+        GraphElement graphElement = null;
+        String elementId = marker.getAttribute(PluginConstants.SELECTION_LINK_KEY, null);
+        if (elementId != null) {
+            List<? extends Node> elements = editor.getDefinition().getChildrenRecursive(Node.class);
+            for (Node element : elements) {
+                if (Objects.equal(elementId, element.getId())) {
+                    graphElement = element;
+                    break;
+                }
+            }
+        }
+        String swimlaneName = marker.getAttribute(PluginConstants.SWIMLANE_LINK_KEY, null);
+        if (swimlaneName != null) {
+            graphElement = findElement(editor.getDefinition(), Swimlane.class, swimlaneName);
+        }
+        int actionIndex = marker.getAttribute(PluginConstants.ACTION_INDEX_KEY, -1);
+        if (actionIndex != -1) {
+            String parentTreePath = marker.getAttribute(PluginConstants.PARENT_NODE_KEY, null);
+            String[] paths = parentTreePath.split("\\|", -1);
+            Active active;
+            if (paths.length == 1) {
+                active = (Active) findElement(editor.getDefinition(), NamedGraphElement.class, paths[0]);
+            } else if (paths.length == 2) {
+                Node node = (Node) findElement(editor.getDefinition(), Node.class, paths[0]);
+                active = node.getTransitionByName(paths[1]);
+            } else {
+                throw new RuntimeException("Invalid tree path: " + parentTreePath);
+            }
+            List<? extends Action> activeActions = active.getActions();
+            graphElement = activeActions.get(actionIndex);
+        }
+        if (graphElement != null) {
+            editor.select(graphElement);
         }
     }
 

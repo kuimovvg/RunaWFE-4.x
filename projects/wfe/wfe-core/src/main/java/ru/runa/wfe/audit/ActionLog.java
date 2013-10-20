@@ -39,7 +39,7 @@ public class ActionLog extends ProcessLog {
     }
 
     public ActionLog(Object action) {
-        addAttributeWithTruncation(ATTR_ACTION, action.toString(), 1000);
+        addAttribute(ATTR_ACTION, action.toString());
     }
 
     @Transient

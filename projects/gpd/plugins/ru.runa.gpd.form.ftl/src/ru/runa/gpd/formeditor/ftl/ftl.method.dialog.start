@@ -27,6 +27,11 @@ window.onload = function () {
 
 var eSelected = oEditor.FCKSelection.GetSelectedElement() ;
 
+function openComponentHelp() {
+   var tagName = document.getElementById("tagName").value;
+   varTags.OpenComponentHelp(tagName);
+}
+
 function LoadSelected() {
 	if ( !eSelected || !eSelected.getAttribute("ftltagparams") ) {
 		eSelected == null;
@@ -46,7 +51,7 @@ function LoadSelected() {
 				combo = null;
 			}
 		} else { 
-			var text = $("pc_"+i);
+			var text = $("pt_"+i);
 			if (text != null) {
 				text.value = paramsArray[i];
 			}
@@ -106,13 +111,18 @@ function Ok() {
 	 .rightParam {
 	   width: 60%;
 	 }
+	 .parameter-required {
+	   color: red;
+	   font-size: 16px;
+	 }
 	 select {
 	   width: 100%;
 	 }
 	</style>
 	<body style="overflow: auto;">
-		<table style="width: 100%; border: 0px;">
-			<tr>
-				<td>
-					<select id="tagName" style="width: 100%;">
+		<div>
+			<div style="display:block">
+		    <table><tr>
+	            <td width="100%">
+					<select id="tagName">
 

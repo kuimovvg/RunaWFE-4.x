@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>ru.runa.wfe</groupId>
 		<artifactId>wfe-app</artifactId>
-		<version>4.0.6</version>
+		<version>4.0.6-SNAPSHOT</version>
 		<relativePath>../wfe-app/pom.xml</relativePath>
 	</parent>
 
@@ -110,13 +110,13 @@
 									<contextRoot>/wfe</contextRoot>
 								</webModule>
 							</modules>
-							<jboss>
-								<version>4.2</version>
-								<data-sources>
-									<data-source>runawfe-ds.xml</data-source>
-									<data-source>runawfe-jms-service.xml</data-source>
-								</data-sources>
-							</jboss>
+							<!--<jboss>--> <!-- todo каким-то образом попадало в билд для jboss7-->
+								<!--<version>4.2</version>-->
+								<!--<data-sources>-->
+									<!--<data-source>runawfe-ds.xml</data-source>-->
+									<!--<data-source>runawfe-jms-service.xml</data-source>-->
+								<!--</data-sources>-->
+							<!--</jboss>-->
 						</configuration>
 					</plugin>
 				</plugins>

@@ -139,6 +139,11 @@ public abstract class FormNode extends SwimlanedNode {
             formType.validate(formFile, this);
         }
     }
+    
+   public void validateFormContent(IFile formFile) {
+       FormType formType = FormTypeProvider.getFormType(this.formType);
+       formType.validateFormContent(formFile, this);
+   }
 
     public Set<String> getValidationVariables(IFolder processFolder) throws Exception {
         if (!hasFormValidation()) {

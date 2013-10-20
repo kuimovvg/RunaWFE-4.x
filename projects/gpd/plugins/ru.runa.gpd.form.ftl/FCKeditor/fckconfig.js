@@ -27,6 +27,9 @@
 FCKConfig.CustomConfigurationsPath = '' ;
 
 FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'form.css' ;
+FCKConfig.BootstrapCSS = FCKConfig.BasePath + 'bootstrap.css' ;
+FCKConfig.JqueryJS = FCKConfig.BasePath + 'jquery.js' ;
+FCKConfig.BootstrapJS = FCKConfig.BasePath + 'bootstrap.js' ;
 FCKConfig.EditorAreaStyles = '' ;
 FCKConfig.ToolbarComboPreviewCSS = '' ;
 
@@ -104,13 +107,12 @@ FCKConfig.ToolbarSets["Default"] = [
 	['Cut','Copy','Paste','PasteText','PasteWord'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	['Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField','UploadFile'],
-	['FreemarkerMethod'],
 	'/',
 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList','-','Outdent','Indent','Blockquote'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
-	['Image','Flash','Table','Rule','SpecialChar','PageBreak'],
+	['Image','Flash','Table','Rule','SpecialChar','PageBreak','MakeTab','DeleteTab'],
 	'/',
 	['FontFormat','FontName','FontSize'],
 	['TextColor','BGColor'],

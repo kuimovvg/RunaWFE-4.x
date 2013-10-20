@@ -14,7 +14,7 @@ import ru.runa.gpd.Localization;
 
 public class DelegableConfigurationDialog extends Dialog {
     protected StyledText styledText;
-    private String title;
+    protected String title;
     protected final String initialValue;
     private String result;
 
@@ -39,7 +39,7 @@ public class DelegableConfigurationDialog extends Dialog {
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         createDialogHeader(composite);
-        
+
         styledText = new StyledText(composite, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         styledText.setLayoutData(new GridData(GridData.FILL_BOTH));
         styledText.setLineSpacing(2);
@@ -49,7 +49,7 @@ public class DelegableConfigurationDialog extends Dialog {
         styledText.setFocus();
         return composite;
     }
-    
+
     protected void createDialogHeader(Composite composite) {
     }
 
@@ -58,12 +58,16 @@ public class DelegableConfigurationDialog extends Dialog {
 
     @Override
     protected void okPressed() {
-        this.result = styledText.getText();
+        this.result = assembleResult();
         super.okPressed();
     }
 
     public String getResult() {
         return result;
+    }
+
+    protected String assembleResult() {
+        return styledText.getText();
     }
 
 }

@@ -34,7 +34,8 @@ import ru.runa.gpd.util.IOUtils;
 public class WYSIWYGPlugin extends AbstractUIPlugin {
     private static WYSIWYGPlugin plugin;
     private Server server;
-    private static ResourceBundle resource = ResourceBundle.getBundle("ru.runa.gpd.formeditor.wysiwyg.messages");
+    public static String PLUGIN_ID = "ru.runa.gpd.formeditor.wysiwyg.messages"; 
+    private static ResourceBundle resource = ResourceBundle.getBundle(PLUGIN_ID);
     public static final int SERVER_PORT = 48780;
 
     /**

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="wfe-web:war">
+    <output-path>$PROJECT_DIR$/../wfe-web/target</output-path>
+    <root id="archive" name="wfe-web-4.0.6-SNAPSHOT.war">
+      <element id="artifact" artifact-name="wfe-web:war exploded" />
+    </root>
+  </artifact>
+</component>

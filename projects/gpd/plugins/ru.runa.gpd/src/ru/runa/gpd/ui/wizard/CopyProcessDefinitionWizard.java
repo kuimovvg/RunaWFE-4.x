@@ -14,6 +14,7 @@ import org.eclipse.ui.IWorkbench;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.data.util.ProjectStructureUtils;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.WorkspaceOperations;
@@ -47,16 +48,23 @@ public class CopyProcessDefinitionWizard extends Wizard implements INewWizard {
                     try {
                         monitor.beginTask(Localization.getString("CopyProcessDefinitionWizard.monitor.title"), 3);
                         monitor.worked(1);
+                        
                         IFolder targetFolder = page.getTargetProcessFolder();
                         page.getSourceProcessFolder().copy(targetFolder.getFullPath(), true, monitor);
                         IFile definitionFile = ProjectFinder.getProcessDefinitionFile(targetFolder);
                         monitor.worked(1);
+                        
                         ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
                         definition.setName(page.getProcessName());
                         definition.setLanguage(page.getLanguage());
                         WorkspaceOperations.saveProcessDefinition(definitionFile, definition);
                         ProcessCache.newProcessDefinitionWasCreated(definitionFile);
                         WorkspaceOperations.refreshResource(targetFolder);
+                        monitor.worked(1);
+                        
+                        String processName = page.getProcessName();
+                        ProjectStructureUtils.addProcess(processName, page.getCategoryFullPath());
+                        
                         monitor.done();
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);

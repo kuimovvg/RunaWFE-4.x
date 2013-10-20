@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../wfe-bots" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../wfe-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../wfe-ear" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../wfe-office" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../wfe-remotebots" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../wfe-service" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../wfe-web" charset="UTF-8" />
+  </component>
+</project>
+

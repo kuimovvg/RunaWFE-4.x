@@ -2,7 +2,10 @@ package ru.runa.gpd;
 
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.contexts.IContextService;
@@ -28,5 +31,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
         }
         IContextService contextService = (IContextService) PlatformUI.getWorkbench().getService(IContextService.class);
         contextService.activateContext("ru.runa.gpd.context.app");
+    }
+
+    protected void makeActions(IWorkbenchWindow window) {
+    	IWorkbenchAction contentsHelpAction = ActionFactory.HELP_CONTENTS.create(window);
+    	register(contentsHelpAction);
     }
 }

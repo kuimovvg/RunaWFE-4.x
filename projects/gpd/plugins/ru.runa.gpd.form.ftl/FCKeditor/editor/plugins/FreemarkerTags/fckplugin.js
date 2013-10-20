@@ -33,6 +33,8 @@ FreemarkerTags.SetupSpan = function( span, tagName, format, width, height ) {
 		width = this.GetTagWidth( tagName );
 	if (height == null)
 		height = this.GetTagHeight( tagName );
+	
+	span.className = 'ftl_component';
 	span.setAttribute("src", "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + tagName);
 	span.style.width = width;
 	span.style.height = height;
@@ -40,8 +42,16 @@ FreemarkerTags.SetupSpan = function( span, tagName, format, width, height ) {
 	// To avoid it to be resized.
 	span.onresizestart = function() {
 		FCK.EditorWindow.event.returnValue = false ;
-		return false ;
-	}
+		return false;
+	};
+	
+	$.ajax({
+	    url: 'http://localhost:48780/editor/FreemarkerTags.java?method=CreateComponent&tagName=' + tagName,
+	    type: 'GET',
+	    success: function (result) {
+	    	span.id = result.componentId;
+	    }
+	});
 }
 
 // On Gecko we must do this trick so the user select all the SPAN when clicking on it.
@@ -54,14 +64,16 @@ FreemarkerTags._SetupClickListener = function() {
 	FCK.EditorDocument.addEventListener( 'click', FreemarkerTags._ClickListener, true ) ;
 }
 
-FCK.ContextMenu.RegisterListener( { AddItems : function( menu, tag, tagName ) {
-	if ( tagName && tagName.toLowerCase() == VISUAL_ELEMENT ) {
-		menu.AddSeparator();
+FCK.ContextMenu.RegisterListener( { 
+	AddItems : function( menu, tag, tagName ) {
+		if ( tagName && tagName.toLowerCase() == VISUAL_ELEMENT ) {
+			menu.AddSeparator();
+		}
+		/*if ( tag && tag.getAttribute("ftltagparams") != null) {
+			menu.AddItem( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
+		}  */
 	}
-	if ( tag && tag.getAttribute("ftltagparams") != null) {
-		menu.AddItem( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
-	}
-}});
+});
 
 FreemarkerTags.GetTagWidth = function( tagName ) {
 	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
@@ -105,7 +117,40 @@ FreemarkerTags.GetParameters = function( tagName ) {
 	} else {
 		return "Error." ;
 	}
-}
+};
+
+FreemarkerTags.OpenComponentHelp = function( tagName ) {
+	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
+	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=OpenComponentHelp&tagName=" + tagName, false ) ;
+	oXmlHttp.send( null ) ;
+	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+		return oXmlHttp.responseText ;
+	} else {
+		return "Error." ;
+	}
+};
+
+FreemarkerTags.ComponentSelected = function( componentId ) {
+	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
+	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentSelected&componentId=" + componentId, false ) ;
+	oXmlHttp.send( null ) ;
+	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+		return oXmlHttp.responseText ;
+	} else {
+		return "Error." ;
+	}
+};
+
+FreemarkerTags.ComponentDeselected = function( componentId ) {
+	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
+	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentDeselected", false ) ;
+	oXmlHttp.send( null ) ;
+	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+		return oXmlHttp.responseText ;
+	} else {
+		return "Error." ;
+	}
+};
 
 FreemarkerTags.GetFormats = function( tagName ) {
 	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;

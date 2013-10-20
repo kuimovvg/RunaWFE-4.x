@@ -2,6 +2,10 @@ package ru.runa.gpd.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -10,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -21,28 +26,38 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.wizards.IWizardDescriptor;
+import org.xml.sax.SAXParseException;
 
 import ru.runa.gpd.BotCache;
+import ru.runa.gpd.BotStationNature;
+import ru.runa.gpd.GPDProject;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.data.util.ProjectStructureUtils;
 import ru.runa.gpd.editor.BotTaskEditor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
+import ru.runa.gpd.exception.InvalidDbConfigurationFileException;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.par.ParContentProvider;
+import ru.runa.gpd.ui.dialog.ChangeDbConfigurationFileDialog;
 import ru.runa.gpd.ui.dialog.InfoWithDetailsDialog;
 import ru.runa.gpd.ui.dialog.RenameBotDialog;
 import ru.runa.gpd.ui.dialog.RenameBotStationDialog;
@@ -54,14 +69,15 @@ import ru.runa.gpd.ui.wizard.CopyProcessDefinitionWizard;
 import ru.runa.gpd.ui.wizard.ExportBotElementWizardPage;
 import ru.runa.gpd.ui.wizard.ExportBotWizard;
 import ru.runa.gpd.ui.wizard.ExportParWizard;
+import ru.runa.gpd.ui.wizard.ExportProjectWizard;
+import ru.runa.gpd.ui.wizard.ImportProjectWizard;
 import ru.runa.gpd.ui.wizard.ImportBotElementWizardPage;
 import ru.runa.gpd.ui.wizard.ImportBotWizard;
 import ru.runa.gpd.ui.wizard.ImportParWizard;
 import ru.runa.gpd.ui.wizard.NewBotStationWizard;
 import ru.runa.gpd.ui.wizard.NewBotTaskWizard;
 import ru.runa.gpd.ui.wizard.NewBotWizard;
-import ru.runa.gpd.ui.wizard.NewProcessDefinitionWizard;
-import ru.runa.gpd.ui.wizard.NewProcessProjectWizard;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
@@ -85,6 +101,10 @@ public class WorkspaceOperations {
                     }
                     resource.delete(true, null);
                     deletedDefinitions.addAll(tmpFiles);
+                }
+
+                if (!processFolder) {
+                    ProjectStructureUtils.removeProcess(resource.getProject().getName(), resource.getName());
                 }
             } catch (CoreException e) {
                 PluginLogger.logError("Error deleting", e);
@@ -121,17 +141,34 @@ public class WorkspaceOperations {
     }
 
     public static void createNewProject() {
-        NewProcessProjectWizard wizard = new NewProcessProjectWizard();
-        wizard.init(PlatformUI.getWorkbench(), null);
-        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-        dialog.open();
+        IWizardDescriptor wizardDescriptor = PlatformUI.getWorkbench().getNewWizardRegistry().findWizard("wizard.new.project");
+
+        try {
+            if (wizardDescriptor != null) {
+                IWizard wizard = wizardDescriptor.createWizard();
+                WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+                dialog.open();
+            }
+        } catch (CoreException ex) {
+            PluginLogger.logError("Error creating new project wizard", ex);
+        }
     }
 
     public static void createNewProcessDefinition(IStructuredSelection selection) {
-        NewProcessDefinitionWizard wizard = new NewProcessDefinitionWizard();
-        wizard.init(PlatformUI.getWorkbench(), selection);
-        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-        dialog.open();
+        IWizardDescriptor wizardDescriptor = PlatformUI.getWorkbench().getNewWizardRegistry().findWizard("wizard.new.process.definition");
+
+        try {
+            if (wizardDescriptor != null) {
+                IWizard wizard = wizardDescriptor.createWizard();
+                if (wizard instanceof IWorkbenchWizard) {
+                    ((IWorkbenchWizard) wizard).init(PlatformUI.getWorkbench(), selection);
+                }
+                WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+                dialog.open();
+            }
+        } catch (CoreException ex) {
+            PluginLogger.logError("Error creating new process wizard", ex);
+        }
     }
 
     public static void copyProcessDefinition(IStructuredSelection selection) {
@@ -151,6 +188,7 @@ public class WorkspaceOperations {
         dialog.setName(definition.getName());
         if (dialog.open() == IDialogConstants.OK_ID) {
             String newName = dialog.getName();
+            String oldName = definition.getName();
             try {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.findEditor(new FileEditorInput(definitionFile));
@@ -168,6 +206,9 @@ public class WorkspaceOperations {
                 ProcessCache.newProcessDefinitionWasCreated(definitionFile);
                 ResourcesPlugin.getWorkspace().getRoot().getFolder(oldPath).delete(true, null);
                 refreshResource(definitionFolder);
+
+                String projectName = definitionFolder.getProject().getName();
+                ProjectStructureUtils.renameProcess(projectName, newName, oldName);
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
@@ -181,6 +222,21 @@ public class WorkspaceOperations {
         byte[] bytes = XmlUtil.writeXml(document);
         ParContentProvider.saveAuxInfo(definitionFile, definition);
         definitionFile.setContents(new ByteArrayInputStream(bytes), true, true, null);
+    }
+
+    public static void deleteDBResources(IProject project) {
+        try {
+            if (project != null && project.getNature(BotStationNature.NATURE_ID) == null) {
+                IFolder dbResourcesFolder = project.getFolder(GPDProject.DB_RESOURCES_FOLDER);
+                dbResourcesFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+                if (dbResourcesFolder.exists()) {
+                    dbResourcesFolder.delete(true, null);
+                }
+                dbResourcesFolder.refreshLocal(IResource.DEPTH_INFINITE, null);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static ProcessEditorBase openProcessDefinition(IFolder definitionFolder) {
@@ -452,5 +508,105 @@ public class WorkspaceOperations {
         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
         dialog.open();
         BotCache.reload();
+    }
+
+    public static void exportProject(IStructuredSelection selection) {
+        ExportProjectWizard wizard = new ExportProjectWizard();
+        wizard.init(PlatformUI.getWorkbench(), selection);
+        CompactWizardDialog dialog = new CompactWizardDialog(wizard);
+        dialog.open();
+    }
+
+    public static void importProject() {
+        ImportProjectWizard wizard = new ImportProjectWizard();
+        CompactWizardDialog dialog = new CompactWizardDialog(wizard);
+        dialog.open();
+    }
+
+    public static void changeDbConfigurationFile(IProject project) {
+        ChangeDbConfigurationFileDialog dialog = new ChangeDbConfigurationFileDialog();
+        dialog.open();
+        String filePath = null;
+
+        switch (dialog.getReturnCode()) {
+        case Window.OK: {
+            filePath = dialog.getDBConfigFilePath();
+            break;
+        }
+        case Window.CANCEL: {
+            // Do nothing
+            break;
+        }
+        }
+        loadDbConfigFileIfPossible(project, filePath, true);
+    }
+
+    public static void loadDbConfigFileIfPossible(IProject project, String filePath, boolean validateFile) {
+        try {
+            if (filePath != null) {
+                IFile datasourcesFile = project.getFile(GPDProject.DATASOURCE_FILE_NAME);
+                datasourcesFile.refreshLocal(IResource.DEPTH_ONE, null);
+                if (validateFile) {
+                    validateDbConfigFile(filePath);
+                }
+                if (datasourcesFile.exists()) {
+                    datasourcesFile.delete(true, null);
+                }
+
+                datasourcesFile.refreshLocal(IResource.DEPTH_ONE, null);
+                datasourcesFile.create(new FileInputStream(filePath), IResource.NONE, null);
+                datasourcesFile.refreshLocal(IResource.DEPTH_ONE, null);
+                deleteDBResources(project);
+            }
+        } catch (CoreException e) {
+            throw new RuntimeException(e);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void validateDbConfigFile(String filePath) {
+        FileInputStream fileInputStream = null;
+        try {
+            if (filePath != null) {
+                fileInputStream = new FileInputStream(filePath);
+                XmlUtil.parseWithXSDValidation(fileInputStream, "db_conf_file.xsd");
+            }
+        } catch (Exception e) {
+            if (e instanceof InternalApplicationException && e.getCause() instanceof DocumentException
+                    && ((DocumentException) e.getCause()).getNestedException() instanceof SAXParseException) {
+                PluginLogger.logError(Localization.getString("dbConfigurationFileParseError"), e);
+            }
+            throw new InvalidDbConfigurationFileException(e);
+        } finally {
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {
+                    PluginLogger.logError(e);
+                }
+            }
+        }
+    }
+
+    public static void validateDbConfigFile(InputStream in) {
+        try {
+            XmlUtil.parseWithXSDValidation(in, "db_conf_file.xsd");
+        } catch (Exception e) {
+            if (e instanceof InternalApplicationException && e.getCause() instanceof DocumentException
+                    && ((DocumentException) e.getCause()).getNestedException() instanceof SAXParseException) {
+                PluginLogger.logError(Localization.getString("dbConfigurationFileParseError"), e);
+            }
+            throw new InvalidDbConfigurationFileException(e);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    PluginLogger.logError(e);
+                }
+            }
+        }
     }
 }
