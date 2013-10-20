@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.cg.sphinx-tools:core:0.5.2-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-20130422.080133-3.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-20130422.080133-3-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-20130422.080133-3-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

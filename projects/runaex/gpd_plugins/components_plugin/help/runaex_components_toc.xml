@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="GPD documentation" link_to="../ru.runa.gpd.form.ftl/ftl_components_toc.xml#ftlcomponents">
+  <topic label="Таблицы" href="help/components/grids.html">
+    <topic label="FlexiGrid" href="help/components/grids/FlexiGrid.html"/>
+    <topic label="DependentFlexiGrid" href="help/components/grids/DependentFlexiGrid.html"/>
+    <topic label="LinkFlexiGrid" href="help/components/grids/LinkFlexiGrid.html"/>
+    <topic label="SelectFlexiGrid" href="help/components/grids/SelectFlexiGrid.html"/>
+    <topic label="TreeGrid" href="help/components/grids/TreeGrid.html"/>
+  </topic>
+  <topic label="Фильтры" href="help/components/filters.html">
+    <topic label="FilterAutocomplete" href="help/components/filters/FilterAutocomplete.html"/>
+    <topic label="FilterCheckBox" href="help/components/filters/FilterCheckBox.html"/>
+    <topic label="FilterComboBox" href="help/components/filters/FilterComboBox.html"/>
+    <topic label="FilterDateTimePicker" href="help/components/filters/FilterDateTimePicker.html"/>
+    <topic label="FilterRadioButtonGroup" href="help/components/filters/FilterRadioButtonGroup.html"/>
+    <topic label="FilterFiasAddress" href="help/components/filters/FilterFiasAddress.html"/>
+    <topic label="FilterField" href="help/components/filters/FilterField.html"/>
+  </topic>
+  <topic label="Кнопка действия" href="help/components/ActionButton.html"/>
+  <topic label="Список с поиском" href="help/components/Autocomplete.html"/>
+  <topic label="Флажок" href="help/components/CheckBox.html"/>
+  <topic label="Список" href="help/components/ComboBox.html"/>
+  <topic label="Дата и время" href="help/components/DateTimePicker.html"/>
+  <topic label="Адрес" href="help/components/FiasAddress.html"/>
+  <topic label="Загрузка файла" href="help/components/FileUpload.html"/>
+  <topic label="Скрытое поле" href="help/components/HiddenInput.html"/>
+  <topic label="Значение по идентификатору" href="help/components/Label.html"/>
+  <topic label="Кнопка навигации" href="help/components/NavigateButton.html"/>
+  <topic label="Меню навигации" href="help/components/NavigationTreeMenu.html"/>
+  <topic label="Кнопка печати" href="help/components/PrintButton.html"/>
+  <topic label="Группа переключателей" href="help/components/RadioButtonGroup.html"/>
+  <topic label="Текст" href="help/components/TextField.html"/>
+  <topic label="SphinxSearch" href="help/components/SphinxSearch.html"/>
+  <topic label="Установка ЭП" href="help/components/SignAndSaveButton.html"/>
+  <topic label="Проверка ЭП" href="help/components/SignVerify.html"/>
+  <topic label="Генератор номеров записей" href="help/components/RecordNumberGenerator.html"/>>
+</toc>

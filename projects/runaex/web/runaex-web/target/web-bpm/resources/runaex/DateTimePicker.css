@@ -1,0 +1,17 @@
+input.sdtpt-datetimepicker {
+  padding-right: 5px;
+}
+
+img.sdtpt-datetimepicker {
+  cursor: pointer;
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+
+.MonthSelector {
+  width: 100px;
+}
+
+.YearSelector {
+  width: 80px;
+}

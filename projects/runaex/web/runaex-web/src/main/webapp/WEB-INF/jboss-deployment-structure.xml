@@ -1,0 +1,9 @@
+<jboss-deployment-structure>
+  <deployment>
+    <dependencies>
+      <module name="org.postgresql"/>
+      <module name="deployment.runawfe.ear.wfe-service-4.0.0.jar" export="true"/>
+      <module name="deployment.runawfe.ear.wfe-bots-4.0.0.jar" export="true"/>
+    </dependencies>
+  </deployment>
+</jboss-deployment-structure>

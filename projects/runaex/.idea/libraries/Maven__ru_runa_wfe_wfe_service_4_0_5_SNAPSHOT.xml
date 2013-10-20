@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: ru.runa.wfe:wfe-service:4.0.5-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/runa/wfe/wfe-service/4.0.5-SNAPSHOT/wfe-service-4.0.5-20130927.053935-43.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/runa/wfe/wfe-service/4.0.5-SNAPSHOT/wfe-service-4.0.5-20130927.053935-43-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/runa/wfe/wfe-service/4.0.5-SNAPSHOT/wfe-service-4.0.5-20130927.053935-43-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

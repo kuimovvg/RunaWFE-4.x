@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+  <security:http entry-point-ref="authenticationEntryPoint" use-expressions="true" access-denied-page="/tasks">
+    <security:intercept-url pattern="/login*" access="permitAll()"/>
+    <security:intercept-url pattern="/downloadLogo*" access="permitAll()"/>
+    <security:intercept-url pattern="/resources/**" access="permitAll()"/>
+
+    <security:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+
+    <security:custom-filter position="FORM_LOGIN_FILTER" ref="runaWfeLoginFilter"/>
+
+    <security:logout
+        invalidate-session="true"
+        logout-success-url="/tasks"/>
+
+    <security:session-management invalid-session-url="/login"/>
+
+  </security:http>
+
+  <security:authentication-manager alias="authenticationManager"/>
+
+  <bean id="runaWfeLoginFilter"
+        class="org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter">
+    <property name="authenticationManager" ref="runaWfeAuthenticationManager"/>
+
+    <property name="usernameParameter" value="login"/>
+    <property name="passwordParameter" value="password"/>
+
+    <property name="authenticationSuccessHandler" ref="authenticationSuccessHandler"/>
+    <property name="authenticationFailureHandler" ref="authenticationFailureHandler"/>
+  </bean>
+
+  <bean id="userDetailService" class="ru.cg.runaex.web.service.RunaWfeUserDetailsServiceImpl"/>
+
+  <bean id="runaWfeAuthenticationManager" class="ru.cg.runaex.web.security.RunaWfeAuthenticationManager">
+    <constructor-arg name="userDetailsService" ref="userDetailService"/>
+  </bean>
+
+  <bean id="authenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+    <constructor-arg name="loginFormUrl" value="/login"/>
+  </bean>
+
+  <bean id="authenticationFailureHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+    <property name="defaultFailureUrl" value="/login?error=1"/>
+  </bean>
+
+  <bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler">
+    <property name="defaultTargetUrl" value="/tasks"/>
+  </bean>
+</beans>

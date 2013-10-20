@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="runaex-database" />
+    <orderEntry type="module" module-name="runaex-core" />
+    <orderEntry type="module" module-name="runaex-components" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-codec:commons-codec:1.7" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.2.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.groovy:groovy:2.0.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: antlr:antlr:2.7.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-tree:4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm:4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-commons:4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-util:4.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.ow2.asm:asm-analysis:4.0" level="project" />
+    <orderEntry type="library" name="Maven: com.cg.jul:core:1.8-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.6.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: org.slf4j:slf4j-log4j12:1.6.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: log4j:log4j:1.2.16" level="project" />
+    <orderEntry type="library" name="Maven: net.sourceforge.javacsv:javacsv:2.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.springframework:spring-jdbc:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-beans:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.springframework:spring-core:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-asm:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-logging:commons-logging:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-tx:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-aop:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-context:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-expression:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: jcifs:jcifs:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.liquibase:liquibase-core:2.0.5-cg-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: commons-io:commons-io:2.3" level="project" />
+    <orderEntry type="library" name="Maven: ru.cg.fias.search:search-core:1.6-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: com.cg.sphinx-tools:core:0.5.2-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.ddlutils:ddlutils:1.0-cg-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.8.3" level="project" />
+    <orderEntry type="library" name="Maven: commons-betwixt:commons-betwixt:0.8" level="project" />
+    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils-core:1.7.0" level="project" />
+    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-digester:commons-digester:1.7" level="project" />
+    <orderEntry type="library" name="Maven: xml-apis:xml-apis:1.0.b2" level="project" />
+    <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging-api:1.0.4" level="project" />
+    <orderEntry type="library" name="Maven: dom4j:dom4j:1.4" level="project" />
+    <orderEntry type="library" name="Maven: jaxen:jaxen:1.0-FCS" level="project" />
+    <orderEntry type="library" name="Maven: saxpath:saxpath:1.0-FCS" level="project" />
+    <orderEntry type="library" name="Maven: msv:msv:20020414" level="project" />
+    <orderEntry type="library" name="Maven: relaxngDatatype:relaxngDatatype:20020414" level="project" />
+    <orderEntry type="library" name="Maven: isorelax:isorelax:20020414" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.8.1" level="project" />
+    <orderEntry type="library" name="Maven: stax:stax-api:1.0.1" level="project" />
+    <orderEntry type="library" name="Maven: oro:oro:2.0.8" level="project" />
+    <orderEntry type="module" module-name="groovy-logic" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:14.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-sql:2.0.5" level="project" />
+    <orderEntry type="module" module-name="runaex-esb-core" />
+    <orderEntry type="module" module-name="ws-client" />
+    <orderEntry type="library" name="Maven: org.aspectj:aspectjrt:1.6.8" level="project" />
+    <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.6.8" level="project" />
+    <orderEntry type="module" module-name="wsdl-analyzer" />
+    <orderEntry type="library" name="Maven: org.apache.axis:axis-jaxrpc:1.4" level="project" />
+    <orderEntry type="library" name="Maven: wsdl4j:wsdl4j:1.6.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jdom:jdom2:2.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.castor:castor-xml-schema:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.castor:castor:1.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: ru.runa.wfe:wfe-core:4.0.5-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.springframework:spring-orm:3.1.3.RELEASE" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.hibernate:hibernate:3.2.4.sp1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.ehcache:ehcache:1.2.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: asm:asm-attrs:1.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: cglib:cglib:3.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: asm:asm:1.5.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.hibernate:hibernate-annotations:3.2.1.ga" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.persistence:persistence-api:1.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.ehcache:ehcache-core:2.4.3" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: freemarker:freemarker.patched:2.3.11" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mozilla:rhino:1.7R4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.bull.javamelody:javamelody-core:1.44.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jrobin:jrobin:1.5.9" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.modules:jboss-modules:1.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-server:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-controller:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss:jboss-dmr:1.1.6.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-controller-client:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-protocol:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.logging:jboss-logging:3.1.2.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.marshalling:jboss-marshalling:1.3.16.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.remoting3:jboss-remoting:3.2.14.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.xnio:xnio-api:3.0.7.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.sasl:jboss-sasl:1.0.3.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.threads:jboss-threads:2.1.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.xnio:xnio-nio:3.0.7.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-build-config:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.msc:jboss-msc:1.0.4.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss:staxmapper:1.1.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-domain-http-interface:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-domain-management:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss:jboss-common-core:2.2.17.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.com.sun.httpserver:httpserver:1.0.1.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-deployment-repository:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss:jboss-vfs:3.1.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-platform-mbean:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-process-controller:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-version:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.logmanager:jboss-logmanager:1.4.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: system:jdk-tools:jdk" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-remoting:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.as:jboss-as-network:7.2.0.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss:jandex:1.0.3.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.invocation:jboss-invocation:1.1.1.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.logmanager:log4j-jboss-logmanager:1.0.1.Final" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.jboss.stdio:jboss-stdio:1.0.1.GA" level="project" />
+  </component>
+</module>
+

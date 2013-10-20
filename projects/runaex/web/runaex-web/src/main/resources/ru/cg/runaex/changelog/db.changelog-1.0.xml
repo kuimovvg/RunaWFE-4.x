@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+  <property name="now" value="now()" dbms="postgresql"/>
+
+  <changeSet id="001" author="korablev">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="f">SELECT exists(select schema_name FROM information_schema.schemata WHERE schema_name = 'metadata')</sqlCheck>
+    </preConditions>
+    <sql>create schema metadata</sql>
+  </changeSet>
+
+  <changeSet id="001" author="kochetkov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="report_templates" schemaName="metadata"/>
+      </not>
+    </preConditions>
+    <createTable tableName="report_templates" schemaName="metadata">
+      <column name="report_template_id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="pk_report_templates"/>
+      </column>
+      <column name="report_template_bytes" type="bytea"/>
+      <column name="report_template_name" type="varchar(255)">
+        <constraints unique="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="002" author="kochetkov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="cascade_fks" schemaName="metadata"/>
+      </not>
+    </preConditions>
+    <createTable tableName="cascade_fks" schemaName="metadata">
+      <column name="cascade_fks_id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="pk_cascade_fks"/>
+      </column>
+      <column name="fields" type="varchar[]">
+        <constraints nullable="false"/>
+      </column>
+      <column name="table_name" type="varchar(200)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="003" author="kochetkov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="fias_columns" schemaName="metadata"/>
+      </not>
+    </preConditions>
+    <createTable tableName="fias_columns" schemaName="metadata">
+      <column name="fias_columns_id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="pk_fias_columns"/>
+      </column>
+      <column name="fields" type="varchar[]">
+        <constraints nullable="false"/>
+      </column>
+      <column name="table_name" type="varchar(200)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="004" author="kochetkov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="sphinx_search" schemaName="metadata"/>
+      </not>
+    </preConditions>
+    <createTable tableName="sphinx_search" schemaName="metadata">
+      <column name="sphinx_search_id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="pk_sphinx_search"/>
+      </column>
+      <column name="columns" type="varchar[]">
+        <constraints nullable="false"/>
+      </column>
+      <column name="index" type="varchar(200)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="is_id" type="varchar[]">
+        <constraints nullable="false"/>
+      </column>
+      <column name="using_tables" type="varchar[]">
+        <constraints nullable="false"/>
+      </column>
+      <column name="indexing_columns" type="varchar(500)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="view_columns" type="varchar(500)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="005" author="kochetkov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="context_variable" schemaName="public"/>
+      </not>
+    </preConditions>
+    <createTable tableName="context_variable" schemaName="public">
+      <column name="context_variable_id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="pk_context_variable"/>
+      </column>
+      <column name="name" type="varchar(255)"/>
+      <column name="value" type="varchar(4000)"/>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="006" author="kochetkov">
+    <addColumn tableName="report_templates" schemaName="metadata">
+      <column name="parent_report_template_id" type="bigint"/>
+    </addColumn>
+    <addForeignKeyConstraint constraintName="fk_report_templates1" baseTableSchemaName="metadata"
+                             baseTableName="report_templates" baseColumnNames="parent_report_template_id"
+                             referencedTableSchemaName="metadata" referencedTableName="report_templates"
+                             referencedColumnNames="report_template_id"
+                             deleteCascade="true"/>
+  </changeSet>
+
+  <changeSet id="007" author="golovlyev">
+    <comment>Увеличение допустимого количества для ввода символов в таблицу sphinx_search</comment>
+    <modifyDataType schemaName="metadata" tableName="sphinx_search" columnName="indexing_columns" newDataType="varchar(3000)"/>
+    <modifyDataType schemaName="metadata" tableName="sphinx_search" columnName="view_columns" newDataType="varchar(3000)"/>
+  </changeSet>
+
+  <changeSet id="008" author="kochetkov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="groovy_scripts" schemaName="metadata"/>
+      </not>
+    </preConditions>
+    <createTable tableName="groovy_scripts" schemaName="metadata">
+      <column name="script_id" type="bigserial">
+        <constraints primaryKey="true" primaryKeyName="pk_groovy_scripts"/>
+      </column>
+      <column name="script" type="text">
+        <constraints nullable="false"/>
+      </column>
+      <column name="creation_date" type="TIMESTAMP" defaultValueComputed="${now}">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+</databaseChangeLog>

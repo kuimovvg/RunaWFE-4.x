@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>runaex-esb</artifactId>
+    <groupId>runaex</groupId>
+    <version>1.25.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>runaex.runaex-esb</groupId>
+  <artifactId>ws</artifactId>
+  <packaging>war</packaging>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>runaex.runaex-esb</groupId>
+      <artifactId>runaex-esb-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>runaex.runaex-esb</groupId>
+      <artifactId>ws-client</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>runawfe</groupId>-->
+      <!--<artifactId>ws-client</artifactId>-->
+    <!--</dependency>-->
+
+  </dependencies>
+
+  <build>
+    <finalName>start-process-instance</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jvnet.jax-ws-commons</groupId>
+        <artifactId>jaxws-maven-plugin</artifactId>
+        <version>2.2</version>
+        <executions>
+          <execution>
+            <id>StartProcessInstanceService</id>
+            <goals>
+              <goal>wsgen</goal>
+            </goals>
+            <configuration>
+              <sei>ru.cg.runaex.esb.service.StartProcessInstanceService</sei>
+              <genWsdl>true</genWsdl>
+              <keep>true</keep>
+            </configuration>
+          </execution>
+        </executions>
+
+        <dependencies>
+          <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>
+            <version>2.1.4</version>
+            <type>jar</type>
+          </dependency>
+        </dependencies>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

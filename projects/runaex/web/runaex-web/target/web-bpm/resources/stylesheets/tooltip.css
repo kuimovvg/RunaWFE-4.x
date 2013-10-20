@@ -1,0 +1,151 @@
+/*-----------------------------------------------------------------------------------------------*/
+/*                                      SIMPLE jQUERY TOOLTIP                                    */
+/*                                      VERSION: 1.1                                             */
+/*                                      AUTHOR: jon cazier                                       */
+/*                                      EMAIL: jon@3nhanced.com                                  */
+/*                                      WEBSITE: 3nhanced.com                                    */
+/*-----------------------------------------------------------------------------------------------*/
+
+/*-----------------------------------------------------------------------------------------------*/
+/*                         CSS RESET (MODIFIED VERSION OF YAHOO UI CSS RESET)                    */
+/*-----------------------------------------------------------------------------------------------*/
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+	margin: 0;
+	padding:0;
+}
+
+table {
+	border-collapse:collapse;
+	border-spacing:0;
+}
+
+fieldset,img {
+	border:0;
+}
+
+address,caption,cite,code,dfn,em,strong,th,var {
+	font-style:normal;
+	font-weight:normal;
+}
+
+ol,ul {
+	list-style:none;
+}
+
+caption,th {
+	text-align:left;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-size:100%;
+	font-weight:normal;
+}
+
+q:before,q:after {
+	content:'';
+}
+
+abbr,acronym {
+	border:0;
+}
+
+img {
+	border: none;
+	text-decoration: none;
+}
+
+*:focus {
+	outline: none;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+/*                                            STYLES                                             */
+/*-----------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 0.75em;
+	line-height: 1.50em;
+	color: #333;
+	background: #999;
+}
+
+h1, h2, h3, h4 {
+	color: #96c509;
+}
+
+h1, h2, h3, h4, p {
+	margin-bottom: 15px;
+}
+
+h1 {
+	font-size: 140%;
+}
+
+h2 {
+	font-size: 130%;
+}
+
+h3 {
+	font-size: 120%;
+}
+
+h4 {
+	font-size: 110%;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+/*                                            LAYOUT                                             */
+/*-----------------------------------------------------------------------------------------------*/
+
+#wrapper {
+	width: 900px;
+	margin: 20px auto;
+	padding: 30px;
+	background: #FFF;
+	border: solid 1px #666;
+}
+
+/*-----------------------------------------------------------------------------------------------*/
+/*                                            TOOLTIP                                            */
+/*-----------------------------------------------------------------------------------------------*/
+
+.toolTip { /* This is the hook that the jQuery script will use */
+	padding-right: 20px; /* This is need to make sure that the help icon is always visible */
+	background: transparent url(../images/tooltip/help.gif) no-repeat right;
+	color: #3366FF;
+	cursor: help; 
+	position: relative; /* This contains the .toolTipWrapper div that is absolutely positioned  */
+}
+
+	.toolTipWrapper { /* The wrapper holds its insides together */
+		width: 175px;
+		position: absolute; /* Absolute will make the tooltip float above other content in the page */
+		top: 20px;
+		display: none; /* It has to be displayed none so that the jQuery fadein and fadeout functions will work */
+		color: #FFF;
+		font-weight: bold;
+		font-size: 9pt; /* A font size is needed to maintain consistancy */
+	}
+	
+		.toolTipTop { /* Top section of the tooltip */
+			width: 175px;
+			height: 30px;
+			background: transparent url(../images/tooltip/bubbleTop.gif) no-repeat;
+		}
+
+		.toolTipMid { /* Middle section of the tooltip */
+			padding: 8px 15px;
+			background: #A1D40A url(../images/tooltip/bubbleMid.gif) repeat-x top;
+		}
+		
+		.toolTipBtm { /* Bottom Section of the tooltip */
+			height: 13px;
+			background: transparent url(../images/tooltip/bubbleBtm.gif) no-repeat;
+		}
+		
+		
+		
+		
+		

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: ru.cg.fias.search:search-core:1.6-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-20130905.105035-6.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-20130905.105035-6-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-20130905.105035-6-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

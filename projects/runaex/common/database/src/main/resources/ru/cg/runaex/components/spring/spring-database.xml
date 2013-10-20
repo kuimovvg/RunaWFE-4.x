@@ -1,0 +1,113 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+  <import resource="classpath:/ru/cg/fias/search/core/search-core.xml"/>
+
+  <bean id="jndiDataSourceLookup" class="org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup"/>
+
+  <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <property name="jndiName" value="java:/RunaDataSource"/>
+  </bean>
+
+  <bean id="runaexDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <property name="jndiName" ref="defaultDataSourceJndiName"/>
+  </bean>
+
+  <bean id="defaultDataSourceJndiName" class="java.lang.String">
+    <constructor-arg index="0" value="java:/RunaExDataSource"/>
+  </bean>
+
+  <bean id="runaexTmpDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <property name="jndiName" value="java:/RunaExTmpDataSource"/>
+  </bean>
+
+  <bean id="sphinxDataSource" class="ru.cg.fias.search.core.server.datasource.jndi.SphinxJndiDataSource">
+    <property name="jndiName" value="SphinxDataSource"/>
+  </bean>
+  <bean id="sphinxToolsSphinxDataSource" class="ru.cg.fias.search.core.server.datasource.jndi.SphinxJndiDataSource">
+    <property name="jndiName" value="SphinxToolsSphinxDataSource"/>
+  </bean>
+  <bean id="sphinxToolsDataSource" class="com.cg.jul.core.net.JndiHostPortSource">
+    <property name="jndiName" value="SphinxToolsDataSource"/>
+  </bean>
+
+  <!--<bean id="esbHostSource" class="ru.cg.runaex.database.util.JndiUrlSource">-->
+  <!--<property name="jndiName" value="EsbHostSource"/>-->
+  <!--</bean>-->
+
+  <bean id="jdbcTemplateProvider" class="ru.cg.runaex.database.dao.util.JdbcTemplateProviderJndiImpl">
+    <property name="jndiDataSourceLookup" ref="jndiDataSourceLookup"/>
+    <property name="defaultDataSource" ref="runaexDataSource"/>
+    <property name="metadataDataSource" ref="runaexDataSource"/>
+  </bean>
+
+  <bean id="baseDaoService" class="ru.cg.runaex.database.dao.BaseDaoImpl">
+    <property name="templateProvider" ref="jdbcTemplateProvider"/>
+  </bean>
+  <bean id="saveDao" class="ru.cg.runaex.database.dao.SaveDaoImpl">
+    <property name="templateProvider" ref="jdbcTemplateProvider"/>
+  </bean>
+
+  <bean id="metadataDao" class="ru.cg.runaex.database.dao.MetadataDaoImpl">
+    <constructor-arg index="0" ref="metadataJdbcTemplate"/>
+    <property name="templateProvider" ref="jdbcTemplateProvider"/>
+  </bean>
+
+  <bean id="metadataJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+    <constructor-arg index="0" ref="runaexDataSource"/>
+  </bean>
+
+  <bean id="componentDbServices" class="ru.cg.runaex.database.dao.ComponentDbServices">
+    <constructor-arg index="0" ref="baseDaoService"/>
+  </bean>
+
+  <bean id="dbObjectDao" class="ru.cg.runaex.database.dao.DbObjectDaoImpl">
+    <property name="jdbcTemplate">
+      <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+      </bean>
+    </property>
+    <property name="runaexJdbcTemplate">
+      <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="runaexDataSource"/>
+      </bean>
+    </property>
+    <property name="runaexTmpJdbcTemplate">
+      <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="runaexTmpDataSource"/>
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="reportTemplateDao" class="ru.cg.runaex.database.dao.ReportDaoImpl">
+    <property name="jdbcTemplateProvider" ref="jdbcTemplateProvider"/>
+  </bean>
+
+  <bean id="connectionInfo" class="ru.cg.runaex.components.ConnectionInfo">
+    <property name="jndiName" value="LiquibaseDatabaseDS"/>
+  </bean>
+
+  <bean id="liquibaseDatabaseFactory" class="ru.cg.runaex.database.factory.LiquibaseDatabaseFactoryImpl">
+    <property name="connectionInfo" ref="connectionInfo"/>
+  </bean>
+
+  <bean id="childrenSumDependencyAdapter" class="ru.cg.runaex.database.bean.CSDependencyAdapter"/>
+
+  <context:component-scan base-package="ru.cg.runaex.database.service"/>
+  <context:component-scan base-package="ru.cg.runaex.database.util"/>
+
+  <bean id="databaseSpringContext" class="ru.cg.runaex.database.context.DatabaseSpringContext"/>
+
+  <bean id="transactionManagerFactory" class="ru.cg.runaex.database.factory.TransactionManagerFactoryImpl"/>
+  <bean id="transactionManagerProvider" class="ru.cg.runaex.database.provider.TransactionManagerProvider"/>
+
+  <bean id="txDataSourceProxyFactory" class="ru.cg.runaex.database.factory.TxDataSourceProxyFactoryImpl"/>
+  <bean id="txDataSourceProxyProvider" class="ru.cg.runaex.database.provider.TxDataSourceProxyProvider"/>
+
+</beans>

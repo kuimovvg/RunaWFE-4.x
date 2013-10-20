@@ -1,0 +1,17 @@
+.qgt-quadrogrid {
+}
+
+.qgt-gallery {
+    position: relative;
+    padding: 0;
+}
+
+.qgt-gallery li.qgt-cell {
+    position: relative;
+    display: block;
+    float: left;
+    padding: 10px;
+    border: 1px solid grey;
+    margin: 5px;
+    background-color: #E6E6FA;
+}

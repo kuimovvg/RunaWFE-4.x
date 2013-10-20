@@ -1,0 +1,739 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://10.10.31.12:8081/arm-directory/" />
+<title>New Test</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Модуль "Таблицы", вкладка "Таблица зависимых элементов"</td></tr>
+</thead><tbody>
+<!--AUTHOR: К.В.Пискарева-->
+<!--TEST PRIORITY: 1-->
+<!--SPEC ID: --->
+<!--OVERVIEW: Проверяется работоспособность компонента "Таблица зависимых элементов", CRUD-тест-->
+<!--IDEA: Базовые операции привязки и отвязки записей в таблицу выполняются успешно.-->
+<!--SETUP&INFO: Тест 0_0_00_000_Enter_system выполнен успешно-->
+<!---->
+<!--Открываем приложение "Web-BPM" и пытаемся залогиниться-->
+<tr>
+	<td>open</td>
+	<td>${mainProject}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>${mainProject}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>100000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>windowMaximize</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>login</td>
+	<td>${login_admin}</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>password</td>
+	<td>${pwd_admin}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Войти']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>20000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Администрирование')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Задачи')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Бизнес процесс')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Наименование узла действия')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Версия')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Дата создания')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Срок')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Начать задачу')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<!--Запускаем бизнес-процесс-->
+<tr>
+	<td>echo</td>
+	<td>Запускаем бизнес-процесс</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@href='/web-bpm/startProcessInstance?n=Тестовый']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@href='/web-bpm/startProcessInstance?n=Тестовый']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<!--Проверяем наличие меню навигации на стартовой странице-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие меню навигации на стартовой странице</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Простые поля'][contains(text(), 'Простые поля')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Таблицы'][contains(text(), 'Таблицы')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='ЭЦП'][contains(text(), 'ЭЦП')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Компонента поиска(SphinxSearch)'][contains(text(), 'Компонента поиска(SphinxSearch)')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Выход'][contains(text(), 'Завершение процесса')]</td>
+	<td>50000</td>
+</tr>
+<!--Открываем вкладку "Таблицы"-->
+<tr>
+	<td>echo</td>
+	<td>Открываем вкладку &quot;Таблица&quot;</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Таблицы'][contains(text(), 'Таблицы')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@next-task='Таблицы'][contains(text(), 'Таблицы')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<!--Открываем вкладку "Таблица зависимых элементов"-->
+<tr>
+	<td>echo</td>
+	<td>Открываем вкладку &quot;Таблица зависимых элементов&quot;</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Таблица зависимых элементов'][contains(text(), 'Таблица зависимых элементов')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@next-task='Таблица зависимых элементов'][contains(text(), 'Таблица зависимых элементов')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Основная таблица')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Таблица зависимых элементов')]</td>
+	<td>50000</td>
+</tr>
+<!--Проверяем наличие в таблице записей-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие в таблице записей</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(), 'Доценко')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(), 'Пискарева')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(), 'Якупов')]</td>
+	<td>50000</td>
+</tr>
+<!--Переходим на форму привязки гражданства к физическому лицу-->
+<tr>
+	<td>echo</td>
+	<td>Переходим на форму привязки гражданства к физическому лицу</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[contains(text(), 'Доценко')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Привязать гражданство'][contains(text(), 'Привязать гражданство')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Привязать гражданство'][contains(text(), 'Привязать гражданство')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма привязки гражданства')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Таблица зависимых элементов')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<!--Добавляем 3 гражданства в список привязки-->
+<tr>
+	<td>echo</td>
+	<td>Добавляем 3 гражданства в список привязки</td>
+	<td></td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>0</td>
+	<td>i</td>
+</tr>
+<tr>
+	<td>while</td>
+	<td>storedVars['i']&lt;3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Добавить гражданство'][contains(text(), 'Добавить гражданство')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Добавить гражданство'][contains(text(), 'Добавить гражданство')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма добавления гражданства')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//input[@id='Наименование гражданства']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>randomString</td>
+	<td>10</td>
+	<td>x</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='Наименование гражданства']</td>
+	<td>${selTestString}</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Сохранить и привязать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(),'Объект успешно сохранен!')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>storeEval</td>
+	<td>${i}+1</td>
+	<td>i</td>
+</tr>
+<tr>
+	<td>endWhile</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Отвязываем привязанные гражданства-->
+<tr>
+	<td>echo</td>
+	<td>Отвязываем привязанные гражданства</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeElementPresent</td>
+	<td>//td[@abbr='Наименование гражданства']/div[contains(text(), '_Sel')]</td>
+	<td>f</td>
+</tr>
+<tr>
+	<td>while</td>
+	<td>storedVars['f']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//td[@abbr='Наименование гражданства']/..//div[contains(text(), '_Sel')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Отвязать гражданство'][contains(text(), 'Отвязать гражданство')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Отвязать гражданство'][contains(text(), 'Отвязать гражданство')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма отвязки')]</td>
+	<td>50000</td>
+</tr>
+<!--Проверяем наличие на форме значения по идентификатору-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие на форме значения по идентификатору</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Наименование гражданства'][contains(text(),'_Sel')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Отвязать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(),'Объект успешно удален!')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeElementPresent</td>
+	<td>//td[@abbr='Наименование гражданства']/div[contains(text(), '_Sel')]</td>
+	<td>f</td>
+</tr>
+<tr>
+	<td>endWhile</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Возвращаемся к списку физ. лиц-->
+<tr>
+	<td>echo</td>
+	<td>Возвращаемся к списку физ. лиц</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Назад'][contains(text(), 'Назад')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Назад'][contains(text(), 'Назад')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Основная таблица')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Таблица зависимых элементов')]</td>
+	<td>50000</td>
+</tr>
+<!--Возвращаемся в меню таблиц-->
+<tr>
+	<td>echo</td>
+	<td>Возвращаемся в меню таблиц</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Выход'][contains(text(), 'Выход')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Выход'][contains(text(), 'Выход')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//h3[contains(text(), 'Доступные таблицы')]</td>
+	<td>50000</td>
+</tr>
+<!--Выходим в главное меню-->
+<tr>
+	<td>echo</td>
+	<td>Выходим в главное меню</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Главное меню'][contains(text(), 'Выход')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@next-task='Главное меню'][contains(text(), 'Выход')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<!--Завершаем процесс-->
+<tr>
+	<td>echo</td>
+	<td>Завершаем процесс</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Выход'][contains(text(), 'Завершение процесса')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@next-task='Выход'][contains(text(), 'Завершение процесса')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Администрирование')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Задачи')]</td>
+	<td></td>
+</tr>
+<!--Выходим из системы-->
+<tr>
+	<td>echo</td>
+	<td>Выходим из системы</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]/..//a[contains(text(), 'Выход')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(), 'Default System Administrator')]/..//a[contains(text(), 'Выход')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//h1[contains(text(), 'Авторизация')]</td>
+	<td>50000</td>
+</tr>
+</tbody></table>
+</body>
+</html>
+

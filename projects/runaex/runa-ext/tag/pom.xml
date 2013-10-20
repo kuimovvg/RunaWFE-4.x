@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>runaex</groupId>
+    <artifactId>runa-ext</artifactId>
+    <version>1.27.2</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>runaex.runa-ext</groupId>
+  <artifactId>tag</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>runaex</groupId>
+      <artifactId>runaex-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>runaex</groupId>
+      <artifactId>runaex-components</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>runaex</groupId>
+      <artifactId>runaex-database</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>runaex</groupId>
+      <artifactId>groovy-logic</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>ru.runa.wfe</groupId>
+      <artifactId>wfe-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>ru.runa.wfe</groupId>
+      <artifactId>wfe-service</artifactId>
+     </dependency>
+
+    <dependency>
+      <artifactId>jsp-api</artifactId>
+      <groupId>jsp-api</groupId>
+    </dependency>
+
+    <dependency>
+      <artifactId>ecs</artifactId>
+      <groupId>ecs</groupId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.cg.jul</groupId>
+      <artifactId>core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.cg.sphinx-tools</groupId>
+      <artifactId>core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.cg.jul.sign</groupId>
+      <artifactId>cryptopro</artifactId>
+    </dependency>
+
+  </dependencies>
+
+</project>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+  <comment>
+    Default values for new not-null columns
+  </comment>
+
+  <entry key="varchar">-</entry>
+  <entry key="bool">false</entry>
+  <entry key="timestamp">2000-01-01</entry>
+  <entry key="date">2000-01-01</entry>
+  <entry key="bytea">E'\u0200'</entry>
+
+</properties>

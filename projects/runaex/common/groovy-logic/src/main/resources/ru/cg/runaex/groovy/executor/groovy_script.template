@@ -1,0 +1,12 @@
+def getSelectedRowId()'{'
+    return selectedRowId;
+'}'
+
+try '{'
+  init();
+
+  {0}
+'}'
+finally '{'
+  sql.close();
+'}'

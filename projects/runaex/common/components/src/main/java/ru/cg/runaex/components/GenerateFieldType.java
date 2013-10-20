@@ -1,0 +1,22 @@
+package ru.cg.runaex.components;
+
+/**
+ * @author Sabirov
+ */
+public enum GenerateFieldType {
+  VARCHAR,
+  TEXT,
+  INTEGER,
+  BIGINT,
+  NUMERIC,
+//  BIGDECIMAL,
+  BOOLEAN,
+  TIMESTAMP_WITHOUT_TIME_ZONE,
+  LINK_TABLE,
+  DATE,
+  FILEUPLOAD,
+  FILEUPLOAD_FILEDATA,
+  FILEUPLOAD_FILENAME,
+  VARCHAR_ARRAY,
+  RECORD_NUMBER_GENERATOR
+}

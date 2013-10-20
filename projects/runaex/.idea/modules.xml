@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/web/distribution/distribution.iml" filepath="$PROJECT_DIR$/web/distribution/distribution.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runaex-esb/esb/esb.iml" filepath="$PROJECT_DIR$/runaex-esb/esb/esb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gpd_plugins/gpd_plugins.iml" filepath="$PROJECT_DIR$/gpd_plugins/gpd_plugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/groovy-logic/groovy-logic.iml" filepath="$PROJECT_DIR$/common/groovy-logic/groovy-logic.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runa-ext/handler/handler.iml" filepath="$PROJECT_DIR$/runa-ext/handler/handler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runa-ext/handler-bundle/handler-bundle.iml" filepath="$PROJECT_DIR$/runa-ext/handler-bundle/handler-bundle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/report-fonts/report-fonts.iml" filepath="$PROJECT_DIR$/web/report-fonts/report-fonts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gpd_plugins/components_plugin/ru.cg.runaex.components_plugin.iml" filepath="$PROJECT_DIR$/gpd_plugins/components_plugin/ru.cg.runaex.components_plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runa-ext/runa-ext.iml" filepath="$PROJECT_DIR$/runa-ext/runa-ext.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runaex.iml" filepath="$PROJECT_DIR$/runaex.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/runaex-common.iml" filepath="$PROJECT_DIR$/common/runaex-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/components/runaex-components.iml" filepath="$PROJECT_DIR$/common/components/runaex-components.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/core/runaex-core.iml" filepath="$PROJECT_DIR$/common/core/runaex-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/database/runaex-database.iml" filepath="$PROJECT_DIR$/common/database/runaex-database.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runaex-esb/runaex-esb.iml" filepath="$PROJECT_DIR$/runaex-esb/runaex-esb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runaex-esb/core/runaex-esb-core.iml" filepath="$PROJECT_DIR$/runaex-esb/core/runaex-esb-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/validation/runaex-validation.iml" filepath="$PROJECT_DIR$/validation/runaex-validation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shared/shared.iml" filepath="$PROJECT_DIR$/shared/shared.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runa-ext/tag/tag.iml" filepath="$PROJECT_DIR$/runa-ext/tag/tag.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/runaex-web/web-bpm.iml" filepath="$PROJECT_DIR$/web/runaex-web/web-bpm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runaex-esb/ws-client/ws-client.iml" filepath="$PROJECT_DIR$/runaex-esb/ws-client/ws-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/runaex-esb/wsdl-analyzer/wsdl-analyzer.iml" filepath="$PROJECT_DIR$/runaex-esb/wsdl-analyzer/wsdl-analyzer.iml" />
+    </modules>
+  </component>
+</project>
+

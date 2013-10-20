@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="web-bpm:war">
+    <output-path>$PROJECT_DIR$/web/runaex-web/target</output-path>
+    <root id="archive" name="web-bpm.war">
+      <element id="artifact" artifact-name="web-bpm:war exploded" />
+    </root>
+  </artifact>
+</component>

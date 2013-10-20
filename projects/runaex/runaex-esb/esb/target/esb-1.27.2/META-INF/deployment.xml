@@ -1,0 +1,27 @@
+<jbossesb-deployment>
+  <depends>jboss.esb:deployment=soap.esb</depends>
+
+  <jmsQueue>quickstart_webservice_startprocessinstance_gw</jmsQueue>
+  <jmsQueue>quickstart_webservice_startprocessinstance_esb</jmsQueue>
+  <jmsQueue>quickstart_webservice_startprocessinstance_esb_reply</jmsQueue>
+
+  <jmsQueue>quickstart_webservice_ESB-Authentication_gw</jmsQueue>
+  <jmsQueue>quickstart_webservice_ESB-Authentication_esb</jmsQueue>
+  <jmsQueue>quickstart_webservice_ESB-Authentication_esb_reply</jmsQueue>
+
+  <jmsQueue>quickstart_webservice_ESB-Execution_gw</jmsQueue>
+  <jmsQueue>quickstart_webservice_ESB-Execution_esb</jmsQueue>
+  <jmsQueue>quickstart_webservice_ESB-Execution_esb_reply</jmsQueue>
+
+  <jmsQueue>quickstart_webservice_1CArmyService_gw</jmsQueue>
+  <jmsQueue>quickstart_webservice_1CArmyService_esb</jmsQueue>
+  <jmsQueue>quickstart_webservice_1CArmyService_esb_reply</jmsQueue>
+
+  <jmsQueue>quickstart_webservice_17startprocessinstance_gw</jmsQueue>
+  <jmsQueue>quickstart_webservice_17startprocessinstance_esb</jmsQueue>
+  <jmsQueue>quickstart_webservice_17startprocessinstance_esb_reply</jmsQueue>
+
+  <jmsQueue>quickstart_webservice_38startprocessinstance_gw</jmsQueue>
+  <jmsQueue>quickstart_webservice_38startprocessinstance_esb</jmsQueue>
+  <jmsQueue>quickstart_webservice_38startprocessinstance_esb_reply</jmsQueue>
+</jbossesb-deployment>

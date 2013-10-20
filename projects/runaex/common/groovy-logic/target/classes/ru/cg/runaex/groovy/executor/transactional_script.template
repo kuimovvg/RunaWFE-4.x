@@ -1,0 +1,10 @@
+sql.cacheConnection '{' Connection connection ->
+Savepoint savepoint = connection.setSavepoint();
+    try '{'
+        {0}
+    '}'
+    catch (e) '{'
+        connection.rollback(savepoint);
+        throw e;
+    '}'
+'}'

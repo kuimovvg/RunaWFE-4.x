@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+  <changeSet id="001" author="urmancheev">
+    <comment>Добавление разделения по бд в таблицы метаданных</comment>
+
+    <addColumn schemaName="metadata" tableName="fias_columns">
+      <column name="source_process_definition_id" type="bigint"/>
+      <column name="data_source_jndi_name" type="varchar(300)"/>
+    </addColumn>
+    <addNotNullConstraint schemaName="metadata" tableName="fias_columns" columnName="source_process_definition_id"/>
+  </changeSet>
+  
+  <changeSet id="002" author="abdulin">
+    <comment>разделение name из context_variable на две колонки, выделение process_instance_id</comment>
+    <sql>
+      DELETE FROM public.context_variable WHERE name IS NULL or name='' or regexp_replace(name,'\d+','')=name;
+      UPDATE public.context_variable SET
+      process_instance_id=(regexp_replace(name,'\D+','')::bigint),name=regexp_replace(name,'\d+\_*','');
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,29 @@
+.srbtng-container {
+
+}
+
+.srbtng-item {
+
+}
+
+.vertical {
+    display: block;
+}
+
+.horizontal {
+    display: inline;
+}
+
+.srbtng-label {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 5px;
+    margin: 0;
+}
+
+.srbtng-radio {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 5px;
+    margin: 0;
+}

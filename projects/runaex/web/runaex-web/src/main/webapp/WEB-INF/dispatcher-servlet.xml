@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+              http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+              http://www.springframework.org/schema/context
+              http://www.springframework.org/schema/context/spring-context-3.1.xsd
+              http://www.springframework.org/schema/aop
+              http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+              http://www.springframework.org/schema/mvc
+              http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+              http://www.springframework.org/schema/task
+              http://www.springframework.org/schema/task/spring-task.xsd
+              http://www.springframework.org/schema/util
+              http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <import resource="messages.xml"/>
+  <import resource="classpath:/ru/cg/runaex/groovy/spring/spring-groovy.xml"/>
+  <import resource="web-guard.xml"/>
+
+  <context:component-scan base-package="ru.cg.runaex.generatedb"/>
+  <context:component-scan base-package="ru.cg.runaex.web.controller"/>
+  <context:component-scan base-package="ru.cg.runaex.web.handler"/>
+  <context:component-scan base-package="ru.cg.runaex.web.service"/>
+  <context:component-scan base-package="ru.cg.runaex.web.aspect"/>
+  <context:component-scan base-package="ru.cg.runaex.database.dao.util"/>
+  <context:component-scan base-package="ru.cg.runaex.database.structure"/>
+  <context:component-scan base-package="ru.cg.runaex.generatedb.bean"/>
+  <context:component-scan base-package="ru.cg.runaex.web.cache"/>
+
+  <mvc:resources mapping="/resources/**" location="/resources/"/>
+
+  <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
+
+  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:prefix="/WEB-INF/jsp/" p:suffix=".jsp"/>
+
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <property name="maxUploadSize" value="300000000"/>
+    <property name="defaultEncoding" value="UTF-8"/>
+  </bean>
+
+  <bean class="ru.cg.runaex.web.handler.MappingExceptionResolver">
+    <property name="exceptionMappings">
+      <props>
+        <prop key="java.lang.Throwable">error</prop>
+        <prop key="org.springframework.web.HttpRequestMethodNotSupportedException">404</prop>
+      </props>
+    </property>
+  </bean>
+  <aop:aspectj-autoproxy/>
+
+  <bean id="trimToNullObjectMapper" class="ru.cg.runaex.web.jackson.JacksonTrimToNullObjectMapper"/>
+
+  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+    <property name="messageConverters">
+      <list>
+        <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+          <property name="objectMapper" ref="trimToNullObjectMapper"/>
+        </bean>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="jacksonSerializationConfig" class="org.codehaus.jackson.map.SerializationConfig"
+        factory-bean="trimToNullObjectMapper" factory-method="getSerializationConfig"/>
+  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetObject" ref="jacksonSerializationConfig"/>
+    <property name="targetMethod" value="withSerializationInclusion"/>
+    <property name="arguments">
+      <list>
+        <value type="org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion">NON_DEFAULT</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="groovySpringContext" class="ru.cg.runaex.groovy.util.GroovySpringContext"/>
+
+  <bean id="cachedPropertiesSource" class="com.cg.jul.core.resources.properties.dao.CachedPropertiesSource"/>
+
+  <bean id="validatorFactory" class="javax.validation.Validation" factory-method="buildDefaultValidatorFactory"/>
+  <bean id="componentsValidator" factory-bean="validatorFactory" factory-method="getValidator"/>
+
+  <util:properties id="groovyScriptCleanerJobProperties" location="/WEB-INF/properties/groovy_script__cleaner_job_conf.properties"/>
+  <bean id="cleanGroovyScriptTableJob" class="ru.cg.runaex.web.job.CleanGroovyScriptTableJob"/>
+  <task:annotation-driven scheduler="taskScheduler"/>
+  <task:scheduler id="taskScheduler" pool-size="1"/>
+  <task:scheduled-tasks scheduler="taskScheduler">
+    <task:scheduled
+        ref="cleanGroovyScriptTableJob"
+        method="doWork"
+        cron="00 01 * * * ?"/>
+  </task:scheduled-tasks>
+
+</beans>

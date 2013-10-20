@@ -1,0 +1,2291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://10.10.31.12:8081/arm-directory/" />
+<title>New Test</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">Модуль "Простые поля", вкладка "Простые поля"</td></tr>
+</thead><tbody>
+<!--AUTHOR: К.В. Пискарева-->
+<!--TEST PRIORITY: 1-->
+<!--SPEC ID: --->
+<!--OVERVIEW: проверяется работоспособность всех простых компонентов, CRUD-тест-->
+<!--IDEA: базовые операции создания, редактирования, поиска, удаления выполняются успешно-->
+<!--SETUP&INFO: Тест 0_0_00_000_Enter_system выполнен успешно-->
+<!---->
+<!--Открываем приложение "Web-BPM" и пытаемся залогиниться-->
+<tr>
+	<td>open</td>
+	<td>${mainProject}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>open</td>
+	<td>${mainProject}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>100000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>windowMaximize</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>login</td>
+	<td>${login_admin}</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>password</td>
+	<td>${pwd_admin}</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Войти']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPageToLoad</td>
+	<td>20000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Администрирование')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Задачи')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Бизнес процесс')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Наименование узла действия')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Версия')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Дата создания')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//th[contains(text(), 'Срок')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Начать задачу')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<!--Запускаем бизнес-процесс-->
+<tr>
+	<td>echo</td>
+	<td>Запускаем бизнес-процесс</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@href='/web-bpm/startProcessInstance?n=Тестовый']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@href='/web-bpm/startProcessInstance?n=Тестовый']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<!--Проверяем наличие меню навигации на стартовой странице-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие меню навигации на стартовой странице</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Простые поля'][contains(text(), 'Простые поля')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Таблицы'][contains(text(), 'Таблицы')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='ЭЦП'][contains(text(), 'ЭЦП')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Компонента поиска(SphinxSearch)'][contains(text(), 'Компонента поиска(SphinxSearch)')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Выход'][contains(text(), 'Завершение процесса')]</td>
+	<td>50000</td>
+</tr>
+<!--Открываем вкладку "Простые поля"-->
+<tr>
+	<td>echo</td>
+	<td>Открываем вкладку &quot;Простые поля&quot;</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Простые поля'][contains(text(), 'Простые поля')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@next-task='Простые поля'][contains(text(), 'Простые поля')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Простые поля')]</td>
+	<td>50000</td>
+</tr>
+<!--Добавляем 3 записи в таблицу-->
+<tr>
+	<td>echo</td>
+	<td>Добавляем 3 записи в таблицу</td>
+	<td></td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>0</td>
+	<td>i</td>
+</tr>
+<tr>
+	<td>while</td>
+	<td>storedVars['i']&lt;3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Добавить'][contains(text(), 'Добавить')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Добавить'][contains(text(), 'Добавить')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма добавления')]</td>
+	<td>50000</td>
+</tr>
+<!--Заполняем все поля на форме добавления-->
+<tr>
+	<td>echo</td>
+	<td>Заполняем все поля на форме добавления</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//input[@id='ФИО']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>randomString</td>
+	<td>10</td>
+	<td>x</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='ФИО']</td>
+	<td>${selTestString}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//textarea[@id='Многострочное поле']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>randomString</td>
+	<td>10</td>
+	<td>x</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//textarea[@id='Многострочное поле']</td>
+	<td>${selTestString}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//input[@id='Число']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='Число']</td>
+	<td>26</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Дата']/..//img</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Дата']/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Выбрать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Дата и время']/..//img</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Дата и время']/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@value='Выбрать']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Выбрать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Адрес']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@id='Адрес']</td>
+	<td>Кулахметова</td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//input[@id='Адрес']</td>
+	<td>Кулахметова</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кулахметова ул')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кулахметова ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кулахметова ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Адрес']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>xpath=//input[@id='Число']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Адрес 1']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Адрес 1']/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@value='Выбрать']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Выбрать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Адрес 1']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Адрес в истории']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>focus</td>
+	<td>//input[@id='Адрес в истории']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@id='Адрес в истории']</td>
+	<td>Кул Гали</td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//input[@id='Адрес в истории']</td>
+	<td>Кул Гали</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кул Гали ул')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кул Гали ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кул Гали ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Адрес в истории']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>xpath=//input[@id='Число']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Переключатели']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Переключатели']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<!--Загрузка файла осуществляется при помощи средств ОС, поэтому проверить ее в тесте невозможно-->
+<tr>
+	<td>echo</td>
+	<td>Загрузка файла осуществляется при помощи средств ОС, поэтому проверить ее в тесте невозможно</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>focus</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>Жен</td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>Жен</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//a[contains(text(), 'Женский')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>xpath=//a[contains(text(), 'Женский')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=//a[contains(text(), 'Женский')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>xpath=//input[@id='Число']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>Загрузка файла осуществляется при помощи средств ОС, поэтому проверить ее в тесте невозможно</td>
+	<td></td>
+</tr>
+<tr>
+	<td>randomString</td>
+	<td>5</td>
+	<td>x</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='E-mail']</td>
+	<td>${x}@${x}.com</td>
+</tr>
+<tr>
+	<td>echo</td>
+	<td>Загрузка файла осуществляется при помощи средств ОС, поэтому проверить ее в тесте невозможно</td>
+	<td></td>
+</tr>
+<!--Проверяем наличие на форме генератора номеров записей-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наоичие на форме генератора номеров записей</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Порядковый номер'][contains(@value, 'Номер')]</td>
+	<td>50000</td>
+</tr>
+<!--Проверяем наличие на форме скрытых полей-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие на форме скрытых полей</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Скрытое поле'][@type='HIDDEN']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Текущее время'][@type='HIDDEN']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='ФИО пользователя'][@type='HIDDEN']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Сохранить']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(),'Объект успешно сохранен!')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>storeEval</td>
+	<td>${i}+1</td>
+	<td>i</td>
+</tr>
+<tr>
+	<td>endWhile</td>
+	<td></td>
+	<td></td>
+</tr>
+<!--Редактируем 1 запись в таблице-->
+<tr>
+	<td>echo</td>
+	<td>Редактируем 1 запись в таблице</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>3000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeElementPresent</td>
+	<td>//td[@abbr='ФИО']/div[contains(text(), '_Sel')]</td>
+	<td>f</td>
+</tr>
+<tr>
+	<td>gotoIf</td>
+	<td>!storedVars['f']</td>
+	<td>L_Break_1</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//td[@abbr='ФИО']/div[contains(text(), '_Sel')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Редактировать'][contains(text(), 'Редактировать')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Редактировать'][contains(text(), 'Редактировать')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма редактирования')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>randomString</td>
+	<td>10</td>
+	<td>x</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='ФИО']</td>
+	<td>${selTestString}_ОТРЕДАКТИРОВАНО</td>
+</tr>
+<tr>
+	<td>randomString</td>
+	<td>10</td>
+	<td>x</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//textarea[@id='Многострочное поле']</td>
+	<td>${selTestString}_ОТРЕДАКТИРОВАНО</td>
+</tr>
+<tr>
+	<td>randomInt</td>
+	<td>2</td>
+	<td>x</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='Число']</td>
+	<td>${x}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<!--Проверяем наличие на форме таймера-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие на форме таймера</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='timer-tag']</td>
+	<td>50000</td>
+</tr>
+<!--Проверяем наличие на форме значения по идентификатору-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие на форме значения по идентификатору</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Порядковый номер'][contains(text(), 'Номер')]</td>
+	<td>50000</td>
+</tr>
+<!--Проверяем наличие на форме скрытых полей-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие на форме скрытых полей</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Скрытое поле'][@type='HIDDEN']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Текущее время'][@type='HIDDEN']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='ФИО пользователя'][@type='HIDDEN']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Сохранить']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(),'Объект успешно сохранен!')]</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по полю "ФИО"-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по полю &quot;ФИО&quot;</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='ФИО_eq']</td>
+	<td>${selTestString}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='ФИО']/div[contains(text(), '_Sel')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по многострочному полю-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по многострочному полю</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//textarea[@id='Многострочное поле_eq']</td>
+	<td>${selTestString}</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Многострочное поле']/div[contains(text(), '_Sel')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по числовому полю-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по числовому полю</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>xpath=//input[@id='Число_eq']</td>
+	<td>26</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Число']/div[contains(text(), '26')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по дате-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по дате</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Дата_eq']/..//img</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Дата_eq']/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Выбрать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Дата']/div[contains(text(), '2013')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по дате и времени-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по дате и времени</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Дата и время_lt']/..//img</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Дата и время_lt']/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Выбрать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Дата и время']/div[contains(text(), '2013')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по адресу проживания-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по адресу проживания</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Адрес_str']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@id='Адрес_str']</td>
+	<td>Кулахметова</td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//input[@id='Адрес_str']</td>
+	<td>Кулахметова</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кулахметова ул')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кулахметова ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кулахметова ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Адрес_str']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>xpath=//input[@id='Число_eq']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Адрес']/div[contains(text(), 'Кулахметова')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по историческому адресу проживания-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по историческому адресу проживания</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Адрес в истории_date']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Адрес в истории_date']/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@value='Выбрать']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@value='Выбрать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Адрес в истории_str']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Адрес в истории_str']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@id='Адрес в истории_str']</td>
+	<td>Кул Гали</td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//input[@id='Адрес в истории_str']</td>
+	<td>Кул Гали</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кул Гали ул')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кул Гали ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=//a[contains(text(), 'Татарстан Респ, Казань г, Кул Гали ул')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Адрес в истории_str']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>xpath=//input[@id='Число_eq']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Адрес в истории']/div[contains(text(), 'Кул Гали')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по группе переключателей-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по группе переключателей</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Переключатели']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Переключатели']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Переключатели;Эталонный.Пол.Пол']/div[contains(text(), 'Женский')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по списку c поиском-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по списку с поиском</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>focus</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>Жен</td>
+</tr>
+<tr>
+	<td>typeKeys</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>Жен</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>xpath=//a[contains(text(), 'Женский')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>mouseOver</td>
+	<td>xpath=//a[contains(text(), 'Женский')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>xpath=//a[contains(text(), 'Женский')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>fireEvent</td>
+	<td>//input[@id='Список с поиском']</td>
+	<td>blur</td>
+</tr>
+<tr>
+	<td>mouseDown</td>
+	<td>xpath=//input[@id='Число_eq']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Список с поиском;Эталонный.Пол.Пол']/div[contains(text(), 'Женский')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Фильтруем записи по флагу-->
+<tr>
+	<td>echo</td>
+	<td>Фильтруем записи по флагу</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Поиск'][contains(text(), 'Поиск')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма поиска')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//input[@id='Флаг']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//input[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Искать']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//td[@abbr='Флаг']/..//input[@type='checkbox']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@class='pClearFilter pButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//select[@name='rp']</td>
+	<td>50000</td>
+</tr>
+<!--Удаляем добавленные записи в таблице-->
+<tr>
+	<td>echo</td>
+	<td>Удаляем добавленные записи в таблице</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeElementPresent</td>
+	<td>//td[@abbr='ФИО']/div[contains(text(), '_Sel')]</td>
+	<td>f</td>
+</tr>
+<tr>
+	<td>while</td>
+	<td>storedVars['f']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//td[@abbr='ФИО']/..//div[contains(text(), '_Sel')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Удалить'][contains(text(), 'Удалить')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Удалить'][contains(text(), 'Удалить')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//span[contains(text(), 'Форма удаления')]</td>
+	<td>50000</td>
+</tr>
+<!--Проверяем наличие на форме значения по идентификатору-->
+<tr>
+	<td>echo</td>
+	<td>Проверяем наличие на форме значения по идентификатору</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Порядковый номер'][contains(text(), 'Номер')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Дата']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='ФИО'][contains(text(),'_Sel')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='ФИО пользователя'][contains(text(),'Administrator')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Дата и время']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Текущее время']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Число']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Многострочное поле']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='E-mail']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Адрес']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Адрес в истории']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Флаг']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Переключатели']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Список']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Список с поиском']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//label[@id='Скрытое поле']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Удалить']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementNotPresent</td>
+	<td>xpath=//img[@src='resources/images/ajax-loader.gif']</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//div[contains(text(),'Объект успешно удален!')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>1000</td>
+	<td></td>
+</tr>
+<tr>
+	<td>storeElementPresent</td>
+	<td>//td[@abbr='ФИО']/div[contains(text(), '_Sel')]</td>
+	<td>f</td>
+</tr>
+<tr>
+	<td>endWhile</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>label</td>
+	<td>L_Break_1</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//button[@value='Выход'][contains(text(), 'Выход')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//button[@value='Выход'][contains(text(), 'Выход')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<!--Завершаем процесс-->
+<tr>
+	<td>echo</td>
+	<td>Завершаем процесс</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[@next-task='Выход'][contains(text(), 'Завершение процесса')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[@next-task='Выход'][contains(text(), 'Завершение процесса')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>2000</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Администрирование')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Создать')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>verifyElementPresent</td>
+	<td>//a[contains(text(), 'Задачи')]</td>
+	<td></td>
+</tr>
+<!--Выходим из системы-->
+<tr>
+	<td>echo</td>
+	<td>Выходим из системы</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(), 'Default System Administrator')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//a[contains(text(), 'Default System Administrator')]/..//a[contains(text(), 'Выход')]</td>
+	<td>50000</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//a[contains(text(), 'Default System Administrator')]/..//a[contains(text(), 'Выход')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>pause</td>
+	<td>500</td>
+	<td>20000</td>
+</tr>
+<tr>
+	<td>assertElementNotPresent</td>
+	<td>//span[contains(text(), 'Ошибка')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForElementPresent</td>
+	<td>//h1[contains(text(), 'Авторизация')]</td>
+	<td>50000</td>
+</tr>
+</tbody></table>
+</body>
+</html>
+

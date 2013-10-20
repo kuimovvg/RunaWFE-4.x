@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="ear" name="distribution:ear">
+    <output-path>$PROJECT_DIR$/web/distribution/target</output-path>
+    <root id="archive" name="runawfe.ear">
+      <element id="artifact" artifact-name="distribution:ear exploded" />
+    </root>
+  </artifact>
+</component>

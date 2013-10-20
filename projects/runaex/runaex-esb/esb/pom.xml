@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>runaex-esb</artifactId>
+    <groupId>runaex</groupId>
+    <version>1.27.2</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>runaex.runaex-esb</groupId>
+  <artifactId>esb</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.soa.bpel.dependencies.esb</groupId>
+      <artifactId>jbossesb-rosetta</artifactId>
+      <version>4.9</version>
+      <type>jar</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.remoting</groupId>
+      <artifactId>jboss-remoting</artifactId>
+      <version>2.5.3</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.jms</groupId>
+      <artifactId>jms</artifactId>
+      <version>1.1</version>
+      <type>jar</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>jboss.jbossas.core-libs</groupId>
+      <artifactId>jboss-common</artifactId>
+      <version>4.0.4.GA</version>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jboss-packaging-maven-plugin</artifactId>
+        <version>2.1.1</version>
+        <extensions>true</extensions>
+        <configuration>
+          <archiveName>runaex-esb</archiveName>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-esb</id>
+            <goals>
+              <goal>esb</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

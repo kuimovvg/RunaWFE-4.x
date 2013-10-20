@@ -1,0 +1,29 @@
+Manifest-Version: 1.0
+Export-Package: ru.cg.runaex.components_plugin.component_parameter
+Require-Bundle: org.eclipse.help,org.eclipse.help.ui,tk.eclipse.plugin
+ .htmleditor,org.eclipse.ui,org.eclipse.core.runtime,org.eclipse.jface
+ .text,org.eclipse.ui.editors,org.eclipse.ui.workbench.texteditor,org.
+ eclipse.core.resources,org.eclipse.ui.ide,org.eclipse.help,org.eclips
+ e.help.webapp,org.eclipse.equinox.http.jetty,org.eclipse.ui.forms,org
+ .eclipse.ui.views,ru.runa.gpd,ru.runa.gpd.form.ftl,org.eclipse.draw2d
+ ,org.eclipse.ant.core
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,lib/antlr.jar,lib/asm-analysis.jar,lib/asm-commons
+ .jar,lib/asm-tree.jar,lib/asm-util.jar,lib/asm.jar,lib/axis-jaxrpc.ja
+ r,lib/castor-xml-schema.jar,lib/castor.jar,lib/commons-codec.jar,lib/
+ commons-io.jar,lib/commons-lang.jar,lib/groovy-all.jar,lib/groovy-log
+ ic.jar,lib/groovy-sql.jar,lib/groovy.jar,lib/gson.jar,lib/guava.jar,l
+ ib/handler.jar,lib/hibernate-validator.jar,lib/jdom2.jar,lib/runaex-c
+ omponents.jar,lib/runaex-core.jar,lib/runaex-esb-core.jar,lib/runaex-
+ validation.jar,lib/slf4j-log4j12.jar,lib/validation-api.jar,lib/ws-cl
+ ient.jar,lib/wsdl-analyzer.jar,lib/wsdl4j.jar,lib/slf4j-api.jar,lib/l
+ og4j.jar
+Bundle-Version: 1.27.2
+Bundle-Localization: OSGI-INF/l10n/components
+Bundle-Name: Runaex components Plug-in
+Bundle-Activator: ru.cg.runaex.components_plugin.ComponentsPluginActiv
+ ator
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: ru.cg.runaex.components_plugin;singleton:=true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+
