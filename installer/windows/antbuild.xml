@@ -17,7 +17,7 @@
 	<property name="nsis.src.dir" value="${nsis.dir}/src"/>
 	<property name="nsis.work.dir" value="${nsis.dir}/work"/>
 
-	<property name="nsis.docs" value="${basedir}/../../../docs/guides"/>
+	<property name="nsis.docs" value="C:/repo/4.x/trunk/docs/guides"/>
 
 	<target name="prepare.nsis" unless="skip.installer">
 		<delete dir="${nsis.dir}"/>
