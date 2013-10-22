@@ -12,7 +12,7 @@
     <module>../wfe-core</module>
     <module>../wfe-service</module>
     <module>../wfe-bots</module>
-		<module>../wfe-remotebots</module>
+    <module>../wfe-remotebots</module>
     <module>../wfe-office</module>
     <module>../wfe-web</module>
     <module>../wfe-ear</module>
@@ -252,30 +252,31 @@
       <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
-	<version>3.9</version>
+        <version>3.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml</artifactId>
-	<version>3.9</version>	</dependency>
-			<dependency>
-				<groupId>org.apache.poi</groupId>
-				<artifactId>ooxml-schemas</artifactId>
-				<version>1.1</version>
+        <version>3.9</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>ooxml-schemas</artifactId>
+        <version>1.1</version>
       </dependency>
 
-			<dependency>
-				<groupId>org.testng</groupId>
-				<artifactId>testng</artifactId>
-				<version>6.8.5</version>
-				<scope>test</scope>
-				<exclusions>
-					<exclusion>
-						<artifactId>junit</artifactId>
-						<groupId>junit</groupId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>6.8.5</version>
+        <scope>test</scope>
+        <exclusions>
+          <exclusion>
+            <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
+          </exclusion>
+        </exclusions>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
@@ -350,9 +351,9 @@
         <plugin>
           <artifactId>maven-war-plugin</artifactId>
           <version>2.3</version>
-					<configuration>
-						<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-					</configuration>
+          <configuration>
+            <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-ear-plugin</artifactId>
@@ -409,55 +410,10 @@
   <dependencies>
   </dependencies>
 
-  <distributionManagement>
-    <repository>
-      <id>central</id>
-      <name>ASD CG Release repository</name>
-      <url>http://10.10.108.89:8081/artifactory/libs-releases-local</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <name>ASD CG Snapshots repository</name>
-      <url>http://10.10.108.89:8081/artifactory/libs-snapshots-local</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-  </distributionManagement>
   <repositories>
     <repository>
       <id>central</id>
-      <name>CG Repo</name>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <url>http://10.10.108.89:8081/artifactory/repo</url>
+      <url>http://10.10.108.89:8081/artifactory/libs-releases</url>
     </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>CG plugins-releases</name>
-      <url>http://10.10.108.89:8081/artifactory/plugins-releases</url>
-    </pluginRepository>
-    <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>snapshots</id>
-      <name>CG plugins-snapshots</name>
-      <url>http://10.10.108.89:8081/artifactory/plugins-snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
-
 </project>

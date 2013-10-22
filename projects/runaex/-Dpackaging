@@ -1,0 +1,81 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for runaex.runaex-esb:wsdl-analyzer:jar:1.27.2
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-resources-plugin is missing. @ line 50, column 15
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-compiler-plugin is missing. @ line 46, column 15
+[WARNING] 'build.plugins.plugin.version' for org.apache.maven.plugins:maven-source-plugin is missing. @ line 54, column 15
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] runaex
+[INFO] runaex-common
+[INFO] runaex-core
+[INFO] runaex-components
+[INFO] runaex-database
+[INFO] groovy-logic
+[INFO] runaex-esb
+[INFO] runaex-esb-core
+[INFO] ws-client
+[INFO] wsdl-analyzer
+[INFO] runa-ext
+[INFO] handler
+[INFO] tag
+[INFO] handler-bundle
+[INFO] runaex-validation
+[INFO] esb
+[INFO] shared
+[INFO] web
+[INFO] report-fonts
+[INFO] web-bpm
+[INFO] distribution
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building runaex 1.27.2
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install-file (default-cli) @ runaex ---
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] runaex ............................................ FAILURE [0.112s]
+[INFO] runaex-common ..................................... SKIPPED
+[INFO] runaex-core ....................................... SKIPPED
+[INFO] runaex-components ................................. SKIPPED
+[INFO] runaex-database ................................... SKIPPED
+[INFO] groovy-logic ...................................... SKIPPED
+[INFO] runaex-esb ........................................ SKIPPED
+[INFO] runaex-esb-core ................................... SKIPPED
+[INFO] ws-client ......................................... SKIPPED
+[INFO] wsdl-analyzer ..................................... SKIPPED
+[INFO] runa-ext .......................................... SKIPPED
+[INFO] handler ........................................... SKIPPED
+[INFO] tag ............................................... SKIPPED
+[INFO] handler-bundle .................................... SKIPPED
+[INFO] runaex-validation ................................. SKIPPED
+[INFO] esb ............................................... SKIPPED
+[INFO] shared ............................................ SKIPPED
+[INFO] web ............................................... SKIPPED
+[INFO] report-fonts ...................................... SKIPPED
+[INFO] web-bpm ........................................... SKIPPED
+[INFO] distribution ...................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1.192s
+[INFO] Finished at: Mon Oct 21 19:19:30 MSK 2013
+[INFO] Final Memory: 9M/862M
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file (default-cli) on project runaex: The artifact information is incomplete or not valid:
+[ERROR] [0]  'packaging' is missing.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

@@ -2,29 +2,182 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="df975535-4e6f-4427-a16b-50c4e552a46a" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/client-0.5.2-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/1.0/core-1.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/core-1.8-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/cryptopro-1.8-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/ddlutils-1.0-cg-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/2.3.11/freemarker-2.3.11.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/2.3.11/freemarker.patched-2.3.11.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/jasperreports-1.8-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/5.0.1/jasperreports-5.0.1.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/2.0/javacsv-2.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/1.0/jcifs-1.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/1.0/jsp-api-1.0.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/liquibase-core-2.0.5-cg-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-SNAPSHOT.jar" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/client-0.5.2-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/client-0.5.2-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/client-0.5.2-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/client-0.5.2-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/client-0.5.2-SNAPSHOT.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/core-0.5.2-SNAPSHOT.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/1.0/core-1.0.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/1.0/core-1.0.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/1.0/core-1.0.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/1.0/core-1.0.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/1.0/core-1.0.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/core-1.8-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/core-1.8-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/core-1.8-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/core-1.8-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/core-1.8-SNAPSHOT.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/cryptopro-1.8-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/cryptopro-1.8-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/cryptopro-1.8-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/cryptopro-1.8-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/cryptopro-1.8-SNAPSHOT.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/ddlutils-1.0-cg-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/ddlutils-1.0-cg-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/ddlutils-1.0-cg-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/ddlutils-1.0-cg-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/ddlutils-1.0-cg-SNAPSHOT.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/2.3.11/freemarker-2.3.11.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/2.3.11/freemarker-2.3.11.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/2.3.11/freemarker-2.3.11.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/2.3.11/freemarker-2.3.11.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/2.3.11/freemarker-2.3.11.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/2.3.11/freemarker.patched-2.3.11.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/2.3.11/freemarker.patched-2.3.11.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/2.3.11/freemarker.patched-2.3.11.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/2.3.11/freemarker.patched-2.3.11.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/2.3.11/freemarker.patched-2.3.11.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/jasperreports-1.8-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/jasperreports-1.8-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/jasperreports-1.8-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/jasperreports-1.8-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/jasperreports-1.8-SNAPSHOT.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/5.0.1/jasperreports-5.0.1.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/5.0.1/jasperreports-5.0.1.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/5.0.1/jasperreports-5.0.1.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/5.0.1/jasperreports-5.0.1.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/5.0.1/jasperreports-5.0.1.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/2.0/javacsv-2.0.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/2.0/javacsv-2.0.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/2.0/javacsv-2.0.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/2.0/javacsv-2.0.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/2.0/javacsv-2.0.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/1.0/jcifs-1.0.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/1.0/jcifs-1.0.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/1.0/jcifs-1.0.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/1.0/jcifs-1.0.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/1.0/jcifs-1.0.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/1.0/jsp-api-1.0.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/1.0/jsp-api-1.0.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/1.0/jsp-api-1.0.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/1.0/jsp-api-1.0.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/1.0/jsp-api-1.0.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/liquibase-core-2.0.5-cg-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/liquibase-core-2.0.5-cg-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/liquibase-core-2.0.5-cg-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/liquibase-core-2.0.5-cg-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/liquibase-core-2.0.5-cg-SNAPSHOT.pom" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/maven-metadata-local.xml.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/maven-metadata-local.xml.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/core/1.8-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/export/jasperreports/1.8-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/jul/sign/cryptopro/1.8-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/security-manager/core/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/client/0.5.2-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/com/cg/sphinx-tools/core/0.5.2-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/freemarker/freemarker.patched/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jcifs/jcifs/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/jsp-api/jsp-api/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sf/jasperreports/jasperreports/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/net/sourceforge/javacsv/javacsv/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/apache/ddlutils/ddlutils/1.0-cg-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/org/liquibase/liquibase-core/2.0.5-cg-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/maven-metadata-local.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-SNAPSHOT.jar.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-SNAPSHOT.jar.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-SNAPSHOT.pom.md5" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-SNAPSHOT.pom.sha1" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/search-core-1.6-SNAPSHOT.pom" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gpd_plugins/components_plugin/.classpath" afterPath="$PROJECT_DIR$/gpd_plugins/components_plugin/.classpath" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/groovy/ExtendGroovyScriptExecutor.java" afterPath="$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/groovy/ExtendGroovyScriptExecutor.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gpd_plugins/components_plugin/plugin.xml" afterPath="$PROJECT_DIR$/gpd_plugins/components_plugin/plugin.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/common/database/pom.xml" afterPath="$PROJECT_DIR$/common/database/pom.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gpd_plugins/pom.xml" afterPath="$PROJECT_DIR$/gpd_plugins/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/web/runaex-web/pom.xml" afterPath="$PROJECT_DIR$/web/runaex-web/pom.xml" />
     </list>
     <ignored path="runaex.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="$PROJECT_DIR$/web/distribution/target/application.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380281731733" ignored="false" />
-    <file path="/Dummy.txt" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382103144407" ignored="false" />
+    <file path="/Dummy.txt" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382366184518" ignored="false" />
     <file path="/DatabaseMetadataServiceImpl.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380281798061" ignored="false" />
     <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/database/bean/ParFile.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
     <file path="$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/bean/DatabaseConstants.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
-    <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/ComponentValidatorServiceImpl.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
-    <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/TaskServiceImpl.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
-    <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/RunaWfeService.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
-    <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/RunaWfeUserDetailsServiceImpl.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
-    <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/RunaWfeUserDetailsService.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
     <file path="$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/bean/model/Project.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
-    <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/RunaWfeServiceImpl.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
     <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/generatedb/bean/Table.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008615" ignored="false" />
-    <file path="$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/CreateUsersSeviceImpl.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008616" ignored="false" />
     <file path="$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/dao/LoadDataDao.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285008616" ignored="false" />
     <file path="/a.dummy" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380285020916" ignored="false" />
     <file path="$PROJECT_DIR$/../jbpm-designer-6.0.0.CR4-Pre1/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380543967520" ignored="false" />
@@ -74,14 +227,16 @@
     <file path="/fragment.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380875492809" ignored="false" />
     <file path="/Заявление о рождении (форма 1).entity-structure.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381322782141" ignored="false" />
     <file path="$PROJECT_DIR$/../fb/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381419586201" ignored="false" />
-    <file path="/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381419586201" ignored="false" />
+    <file path="/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382369031843" ignored="false" />
     <file path="$PROJECT_DIR$/../sphinx-mysql/src/main/java/ru/cg/sphinx_mysql/TestMain.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381504712273" ignored="false" />
     <file path="/TestMain.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381504683962" ignored="false" />
     <file path="$PROJECT_DIR$/../sphinx-mysql/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381504232598" ignored="false" />
-    <file path="/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382085199831" ignored="false" />
+    <file path="/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382433332223" ignored="false" />
     <file path="/ColumnReferenceValidationHelper.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382006514834" ignored="false" />
     <file path="/ExtendGroovyScriptExecutor.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382076306199" ignored="false" />
     <file path="$PROJECT_DIR$/common/groovy-logic/src/main/resources/spring-groovy.context.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382075989676" ignored="false" />
+    <file path="$PROJECT_DIR$/../wfe/wfe-app/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382367081346" ignored="false" />
+    <file path="D:/work/fb/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382369031843" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,6 +251,7 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_any default_suspend_policy="SuspendAll" default_condition_enabled="true">
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -183,7 +339,6 @@
         <option name="LOG_MESSAGE" value="" />
       </breakpoint>
     </exception_breakpoints>
-    <ui_properties default_suspend_policy="SuspendAll" default_condition_enabled="true" />
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -196,7 +351,70 @@
       <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="572" column="40" selection-start="17603" selection-end="17603" vertical-scroll-proportion="0.2182285">
+            <state line="557" column="29" selection-start="17161" selection-end="17161" vertical-scroll-proportion="21.80048">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="maven-metadata-local.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/maven-metadata-local.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="22" column="23" selection-start="695" selection-end="695" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CreateUsersSeviceImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/CreateUsersSeviceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13" column="14" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/runaex-web/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PrintButtonController.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/controller/PrintButtonController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="16" column="26" selection-start="504" selection-end="504" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="UpdateDbServiceImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/service/UpdateDbServiceImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="41" selection-start="217" selection-end="217" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LiquibaseDatabaseFactoryImpl.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/factory/LiquibaseDatabaseFactoryImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="24" selection-start="64" selection-end="64" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JndiUrlSource.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/util/JndiUrlSource.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="25" selection-start="194" selection-end="194" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -205,7 +423,7 @@
       <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/runaex-web/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="273" column="4" selection-start="7379" selection-end="7379" vertical-scroll-proportion="0.0">
+            <state line="321" column="38" selection-start="8675" selection-end="8675" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -214,70 +432,7 @@
       <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/common/database/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="18" selection-start="1611" selection-end="1611" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ExtendGroovyScriptExecutor.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/groovy/ExtendGroovyScriptExecutor.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="71" column="13" selection-start="2562" selection-end="2562" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gpd_plugins/components_plugin/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="6" selection-start="264" selection-end="266" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/validation/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="maven-4.0.0.xsd" pinned="false" current="false" current-in-tab="false">
-        <entry file="jar://$APPLICATION_HOME_DIR$/plugins/maven/lib/maven.jar!/schemas/maven-4.0.0.xsd">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="731" column="6" selection-start="36043" selection-end="36043" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gpd_plugins/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="56" selection-start="457" selection-end="457" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="plugin.xml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/gpd_plugins/components_plugin/plugin.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WebserviceCallConfigurationHelper.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/webservice_call_handler/WebserviceCallConfigurationHelper.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="8" column="54" selection-start="280" selection-end="280" vertical-scroll-proportion="0.0">
+            <state line="135" column="22" selection-start="3648" selection-end="3648" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -301,7 +456,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/web/pom.xml" />
         <option value="$PROJECT_DIR$/../guvnor-distribution-5.5.0.Final/examples/sources/src/main/java/org/drools/guvnor/examples/mortgage/client/MortgageClientExample.java" />
         <option value="$PROJECT_DIR$/zags_az.xml" />
         <option value="$PROJECT_DIR$/runa-ext/tag/src/main/java/ru/cg/runaex/runa_ext/tag/BaseFreemarkerTag.java" />
@@ -316,6 +470,7 @@
         <option value="$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/groovy/ExtendGroovyScriptExecutor.java" />
         <option value="$PROJECT_DIR$/gpd_plugins/pom.xml" />
         <option value="$PROJECT_DIR$/common/database/pom.xml" />
+        <option value="$PROJECT_DIR$/web/runaex-web/pom.xml" />
         <option value="$PROJECT_DIR$/pom.xml" />
       </list>
     </option>
@@ -333,16 +488,6 @@
         <PATH_ELEMENT>
           <option name="myItemId" value="" />
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-      </PATH>
-      <PATH>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
-        </PATH_ELEMENT>
-        <PATH_ELEMENT>
-          <option name="myItemId" value="runaex" />
-          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
         </PATH_ELEMENT>
       </PATH>
       <PATH>
@@ -393,7 +538,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -412,55 +556,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="runaex" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="runaex" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="runaex" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="runaex" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="common" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="database" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="project.structure.last.edited" value="Project" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="292" />
-    <property name="project.structure.proportion" value="0.0" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="292" />
+    <property name="project.structure.proportion" value="0.0" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="MemberChooser.sorted" value="false" />
-    <property name="recentsLimit" value="5" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="293" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="recentsLimit" value="5" />
+    <property name="MemberChooser.sorted" value="false" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../process-designer-2.2.Final/pom.xml" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../wfe/wfe-app" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="293" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="967" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="967" />
@@ -474,8 +587,8 @@
     <property name="FullScreen" value="false" />
     <property name="GoToClass.includeLibraries" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
-    <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
+    <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
@@ -483,8 +596,13 @@
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="MemberChooser.copyJavadoc" value="false" />
     <property name="restartRequiresConfirmation" value="true" />
-    <property name="dynamic.classpath" value="false" />
     <property name="options.searchVisible" value="true" />
+    <property name="dynamic.classpath" value="false" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\runa---\projects\runaex" />
+    </key>
   </component>
   <component name="RunManager" selected="Remote.Unnamed">
     <configuration default="true" type="MavenRunConfiguration" factoryName="Maven">
@@ -621,7 +739,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1288" y="141" width="1296" height="1040" extended-state="6" />
+    <frame x="-1288" y="141" width="1296" height="1040" extended-state="7" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -641,10 +759,10 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28606158" sideWeight="0.5942029" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.43435982" sideWeight="0.58796823" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30875203" sideWeight="0.5942029" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.40563992" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16693678" sideWeight="0.58796823" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41203177" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="SVN Repositories" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998884" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -723,52 +841,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/common/components/src/main/java/ru/cg/runaex/components/bean/component/part/ColumnReference.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="55" selection-start="387" selection-end="387" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common/components/src/main/java/ru/cg/runaex/components/validation/annotation/ColumnReference.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="48" selection-start="417" selection-end="417" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common/components/src/main/java/ru/cg/runaex/components/validation/validator/ColumnReferenceValidator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="48" selection-start="801" selection-end="801" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common/components/src/main/java/ru/cg/runaex/components/validation/helper/ColumnReferenceValidationHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="0" selection-start="347" selection-end="347" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/ActionButtonServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="42" selection-start="2223" selection-end="2223" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gpd_plugins/gpd_plugins.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/groovy/ExtendGroovyScriptExecutor.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="71" column="13" selection-start="2562" selection-end="2562" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/plugins/maven/lib/maven.jar!/schemas/maven-4.0.0.xsd">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="731" column="6" selection-start="36043" selection-end="36043" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/validation/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
@@ -797,30 +869,86 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/web/runaex-web/pom.xml">
+    <entry file="file://$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/webservice_call_handler/WebserviceCallConfigurationHelper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="273" column="4" selection-start="7379" selection-end="7379" vertical-scroll-proportion="0.0">
+        <state line="8" column="54" selection-start="280" selection-end="280" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/service/UpdateDbServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="41" selection-start="217" selection-end="217" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/factory/LiquibaseDatabaseFactoryImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="24" selection-start="64" selection-end="64" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/util/JndiUrlSource.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="25" selection-start="194" selection-end="194" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/common/database/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="18" selection-start="1611" selection-end="1611" vertical-scroll-proportion="0.0">
+        <state line="135" column="22" selection-start="3648" selection-end="3648" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/controller/PrintButtonController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="26" selection-start="504" selection-end="504" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/service/CreateUsersSeviceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="14" selection-start="354" selection-end="354" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/runaex-web/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/web/runaex-web/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="321" column="38" selection-start="8675" selection-end="8675" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/maven-metadata-local.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="22" column="23" selection-start="695" selection-end="695" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="572" column="40" selection-start="17603" selection-end="17603" vertical-scroll-proportion="0.2182285">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/webservice_call_handler/WebserviceCallConfigurationHelper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="54" selection-start="280" selection-end="280" vertical-scroll-proportion="0.0">
+        <state line="557" column="29" selection-start="17161" selection-end="17161" vertical-scroll-proportion="21.80048">
           <folding />
         </state>
       </provider>

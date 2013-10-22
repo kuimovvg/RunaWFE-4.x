@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.cg.jul.export</groupId>
+  <artifactId>jasperreports</artifactId>
+  <versioning>
+    <versions>
+      <version>1.8-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20131022081103</lastUpdated>
+  </versioning>
+</metadata>

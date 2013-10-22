@@ -5,7 +5,7 @@
 
   <groupId>ru.runa.gpd</groupId>
   <artifactId>plugins</artifactId>
-  <version>4.0.6-SNAPSHOT</version>
+  <version>4.0.5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -24,9 +24,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <runa.version>${project.version}</runa.version>
-    <runa.version.eclipse>4.0.6.qualifier</runa.version.eclipse>
-    <runaex.version>1.25.0-SNAPSHOT</runaex.version>
-    <runaex.version.eclipse>1.25.0.qualifier</runaex.version.eclipse>
+    <runa.version.eclipse>4.0.5.qualifier</runa.version.eclipse>
+    <runaex.version>1.27.2</runaex.version>
+    <runaex.version.eclipse>1.27.2.qualifier</runaex.version.eclipse>
 
     <!--runaex libs-->
     <ddlutils.version>1.0-cg-SNAPSHOT</ddlutils.version>
@@ -51,19 +51,6 @@
     </dependencies>
   </dependencyManagement>
 
-  <distributionManagement>
-    <repository>
-      <id>central</id>
-      <name>ASD CG Release repository</name>
-      <url>http://10.10.108.89:8081/artifactory/libs-releases-local</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <name>ASD CG Snapshots repository</name>
-      <url>http://10.10.108.89:8081/artifactory/libs-snapshots-local</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-  </distributionManagement>
 
   <repositories>
     <repository>
@@ -81,56 +68,7 @@
       <url>${emf-store-repo.url}</url>
       <layout>p2</layout>
     </repository>
-
-    <repository>
-      <id>central</id>
-      <name>CG Repo</name>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <url>http://10.10.108.89:8081/artifactory/repo</url>
-    </repository>
   </repositories>
-
-  <pluginRepositories>
-    <!--<pluginRepository>-->
-      <!--<id>tycho</id>-->
-      <!--<url>${tycho-repo.url}</url>-->
-      <!--<releases>-->
-        <!--<enabled>false</enabled>-->
-      <!--</releases>-->
-      <!--<snapshots>-->
-        <!--<enabled>true</enabled>-->
-      <!--</snapshots>-->
-    <!--</pluginRepository>-->
-
-    <pluginRepository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>CG plugins-releases</name>
-      <url>http://10.10.108.89:8081/artifactory/plugins-releases</url>
-    </pluginRepository>
-    <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>snapshots</id>
-      <name>CG plugins-snapshots</name>
-      <url>http://10.10.108.89:8081/artifactory/plugins-snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
-
 
   <build>
     <plugins>

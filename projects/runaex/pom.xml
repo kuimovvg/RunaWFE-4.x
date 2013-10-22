@@ -11,7 +11,7 @@
     <module>common</module>
     <module>runa-ext</module>
     <module>validation</module>
-    <module>runaex-esb</module>
+    <!--<module>runaex-esb</module>-->
     <!--<module>gpd_plugins</module>-->
     <module>shared</module>
     <module>web</module>
@@ -41,6 +41,7 @@
     <jul.version>1.8-SNAPSHOT</jul.version>
     <fias.version>1.6-SNAPSHOT</fias.version>
     <sphinx-tools.version>0.5.2-SNAPSHOT</sphinx-tools.version>
+    <main.basedir>${project.basedir}</main.basedir>
   </properties>
 
   <dependencyManagement>
@@ -534,59 +535,28 @@
         <version>7.2.0.Final</version>
         <scope>provided</scope>
       </dependency>
+
+
+      <dependency>
+        <groupId>net.sf.jasperreports</groupId>
+        <artifactId>jasperreports</artifactId>
+        <version>5.0.1</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sourceforge.javacsv</groupId>
+        <artifactId>javacsv</artifactId>
+        <version>2.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
-  <distributionManagement>
-    <repository>
-      <id>central</id>
-      <name>ASD CG Release repository</name>
-      <url>http://10.10.108.89:8081/artifactory/libs-releases-local</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <name>ASD CG Snapshots repository</name>
-      <url>http://10.10.108.89:8081/artifactory/libs-snapshots-local</url>
-      <uniqueVersion>false</uniqueVersion>
-    </snapshotRepository>
-  </distributionManagement>
   <repositories>
     <repository>
-      <id>central</id>
-      <name>CG Repo</name>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <url>http://10.10.108.89:8081/artifactory/repo</url>
+      <id>my-local-repo</id>
+      <url>file://${main.basedir}/../../local-repo</url>
     </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>central</id>
-      <name>CG plugins-releases</name>
-      <url>http://10.10.108.89:8081/artifactory/plugins-releases</url>
-    </pluginRepository>
-    <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>snapshots</id>
-      <name>CG plugins-snapshots</name>
-      <url>http://10.10.108.89:8081/artifactory/plugins-snapshots</url>
-    </pluginRepository>
-  </pluginRepositories>
 
   <build>
     <plugins>

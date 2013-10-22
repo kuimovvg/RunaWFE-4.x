@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.cg.jul</groupId>
+  <artifactId>core</artifactId>
+  <versioning>
+    <versions>
+      <version>1.8-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20131022074357</lastUpdated>
+  </versioning>
+</metadata>

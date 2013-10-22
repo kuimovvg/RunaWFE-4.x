@@ -131,5 +131,10 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>com.cg.jul</groupId>
+      <artifactId>core</artifactId>
+    </dependency>
+
   </dependencies>
 </project>
