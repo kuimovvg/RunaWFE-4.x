@@ -227,16 +227,16 @@
     <file path="/fragment.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1380875492809" ignored="false" />
     <file path="/Заявление о рождении (форма 1).entity-structure.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381322782141" ignored="false" />
     <file path="$PROJECT_DIR$/../fb/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381419586201" ignored="false" />
-    <file path="/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382369031843" ignored="false" />
+    <file path="/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382445639999" ignored="false" />
     <file path="$PROJECT_DIR$/../sphinx-mysql/src/main/java/ru/cg/sphinx_mysql/TestMain.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381504712273" ignored="false" />
     <file path="/TestMain.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381504683962" ignored="false" />
     <file path="$PROJECT_DIR$/../sphinx-mysql/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1381504232598" ignored="false" />
-    <file path="/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382433332223" ignored="false" />
+    <file path="/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382446005346" ignored="false" />
     <file path="/ColumnReferenceValidationHelper.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382006514834" ignored="false" />
     <file path="/ExtendGroovyScriptExecutor.java" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382076306199" ignored="false" />
     <file path="$PROJECT_DIR$/common/groovy-logic/src/main/resources/spring-groovy.context.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382075989676" ignored="false" />
     <file path="$PROJECT_DIR$/../wfe/wfe-app/pom.xml" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382367081346" ignored="false" />
-    <file path="D:/work/fb/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382369031843" ignored="false" />
+    <file path="D:/work/fb/index.html" changelist="df975535-4e6f-4427-a16b-50c4e552a46a" time="1382445655885" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -351,7 +351,7 @@
       <file leaf-file-name="pom.xml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="557" column="29" selection-start="17161" selection-end="17161" vertical-scroll-proportion="21.80048">
+            <state line="14" column="22" selection-start="553" selection-end="553" vertical-scroll-proportion="0.57211536">
               <folding />
             </state>
           </provider>
@@ -384,6 +384,15 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gpd_plugins/components_plugin/pom.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="114" column="24" selection-start="3288" selection-end="3288" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="PrintButtonController.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/web/runaex-web/src/main/java/ru/cg/runaex/web/controller/PrintButtonController.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -393,19 +402,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UpdateDbServiceImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/service/UpdateDbServiceImpl.java">
+      <file leaf-file-name="pom.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/gpd_plugins/pom.xml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="41" selection-start="217" selection-end="217" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="LiquibaseDatabaseFactoryImpl.java" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/common/database/src/main/java/ru/cg/runaex/database/factory/LiquibaseDatabaseFactoryImpl.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="24" selection-start="64" selection-end="64" vertical-scroll-proportion="0.0">
+            <state line="93" column="30" selection-start="2876" selection-end="2876" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -504,6 +504,20 @@
           <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
         </PATH_ELEMENT>
       </PATH>
+      <PATH>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$RootNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="gpd_plugins" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$ProjectNode" />
+        </PATH_ELEMENT>
+        <PATH_ELEMENT>
+          <option name="myItemId" value="Lifecycle" />
+          <option name="myItemType" value="org.jetbrains.idea.maven.navigator.MavenProjectsStructure$LifecycleNode" />
+        </PATH_ELEMENT>
+      </PATH>
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
@@ -553,6 +567,52 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="runaex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runaex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runaex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="local-repo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runaex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runaex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpd_plugins" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runaex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="runaex" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpd_plugins" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="components_plugin" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -739,7 +799,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1288" y="141" width="1296" height="1040" extended-state="7" />
+    <frame x="-1288" y="141" width="1296" height="1040" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32998884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -855,20 +915,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/gpd_plugins/components_plugin/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="6" selection-start="264" selection-end="266" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gpd_plugins/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="56" selection-start="457" selection-end="457" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/runa-ext/handler/src/main/java/ru/cg/runaex/runa_ext/handler/webservice_call_handler/WebserviceCallConfigurationHelper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state line="8" column="54" selection-start="280" selection-end="280" vertical-scroll-proportion="0.0">
@@ -946,9 +992,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/gpd_plugins/components_plugin/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="114" column="24" selection-start="3288" selection-end="3288" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gpd_plugins/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="93" column="30" selection-start="2876" selection-end="2876" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="557" column="29" selection-start="17161" selection-end="17161" vertical-scroll-proportion="21.80048">
+        <state line="14" column="22" selection-start="553" selection-end="553" vertical-scroll-proportion="0.57211536">
           <folding />
         </state>
       </provider>

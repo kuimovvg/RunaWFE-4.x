@@ -142,12 +142,13 @@
     <file path="D:/runaex/web/runaex-web/src/main/resources/sql_template_code.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382076212652" ignored="false" />
     <file path="D:/runaex/web/runaex-web/src/main/resources/ru/cg/runaex/changelog/db.changelog-master.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382076212652" ignored="false" />
     <file path="D:/runaex/web/runaex-web/src/main/webapp/WEB-INF/application-context.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382076212652" ignored="false" />
-    <file path="/pom.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382433332360" ignored="false" />
-    <file path="D:/work/fb/index.html" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382369031843" ignored="false" />
-    <file path="/index.html" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382369031843" ignored="false" />
-    <file path="$PROJECT_DIR$/../../runaex/pom.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382433427415" ignored="false" />
+    <file path="/pom.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382446005470" ignored="false" />
+    <file path="D:/work/fb/index.html" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382447007257" ignored="false" />
+    <file path="/index.html" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382445639998" ignored="false" />
+    <file path="$PROJECT_DIR$/../../runaex/pom.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382446529563" ignored="false" />
     <file path="$PROJECT_DIR$/../../runaex/common/database/pom.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382427692413" ignored="false" />
     <file path="$PROJECT_DIR$/../../runaex/web/runaex-web/pom.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382431050484" ignored="false" />
+    <file path="$PROJECT_DIR$/../../runaex/local-repo/ru/cg/fias/search/search-core/1.6-SNAPSHOT/maven-metadata-local.xml" changelist="a5670552-4535-4fc4-80d8-849836986b24" time="1382438311058" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -551,7 +552,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1288" y="141" width="1296" height="1040" extended-state="7" />
+    <frame x="-1288" y="141" width="1296" height="1040" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />

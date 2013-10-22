@@ -12,7 +12,7 @@
     <module>runa-ext</module>
     <module>validation</module>
     <!--<module>runaex-esb</module>-->
-    <!--<module>gpd_plugins</module>-->
+    <module>gpd_plugins</module>
     <module>shared</module>
     <module>web</module>
   </modules>
@@ -557,6 +557,12 @@
       <url>file://${main.basedir}/../../local-repo</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>my-local-repo</id>
+      <url>file://${main.basedir}/../../local-repo</url>
+    </pluginRepository>
+  </pluginRepositories>
 
   <build>
     <plugins>
