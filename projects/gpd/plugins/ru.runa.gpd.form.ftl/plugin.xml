@@ -464,7 +464,7 @@
          </param>
       </tag>
       <tag
-            enabled="true"
+            enabled="false"
             id="MultipleSelect"
             name="%Method.MultipleSelect">
          <param
@@ -665,57 +665,6 @@
          </param>
       </tag>
       <tag
-            enabled="false"
-            id="LegacyActorsMultiSelect"
-            name="%Method.ActorsMultiSelect">
-         <param
-               name="%Param.ListVariable"
-               type="combo"
-               variableTypeFilter="java.util.List"
-               variableAccess="WRITE">
-         </param>
-         <param
-               name="%Param.InputPresentation"
-               type="combo"
-               variableAccess="NONE">
-            <paramValue
-                  name="%Param.Value.fio"
-                  value="fio">
-            </paramValue>
-            <paramValue
-                  name="%Param.Value.login"
-                  value="login">
-            </paramValue>
-         </param>
-         <param
-               name="%Param.OutputFormat"
-               type="combo"
-               variableAccess="NONE">
-            <paramValue
-                  name="%Param.Value.fio"
-                  value="fio">
-            </paramValue>
-            <paramValue
-                  name="%Param.Value.code"
-                  value="code">
-            </paramValue>
-            <paramValue
-                  name="%Param.Value.login"
-                  value="login">
-            </paramValue>
-            <paramValue
-                  name="%Param.Value.email"
-                  value="email">
-            </paramValue>
-         </param>
-         <param
-               name="%Param.GroupVariable"
-               type="richcombo"
-               variableTypeFilter="java.lang.String"
-               variableAccess="READ">
-         </param>
-      </tag>
-      <tag
             enabled="true"
             id="DisplayListElement"
             name="%Method.DisplayListElement">
@@ -747,40 +696,6 @@
                type="richcombo"
                variableTypeFilter="java.lang.Object"
                variableAccess="READ">
-         </param>
-      </tag>
-      <tag
-            enabled="true"
-            height="40"
-            id="DisplayProcessVariable"
-            image="metadata/icons/VariableValueDisplay.png"
-            name="%Method.DisplayProcessVariable"
-            width="250">
-         <param
-               name="%Param.ProcessId"
-               type="combo"
-               variableTypeFilter="java.lang.Long"
-               variableAccess="READ">
-         </param>
-         <param
-               name="%Param.Variable"
-               type="richcombo"
-               variableTypeFilter="java.lang.String"
-               variableAccess="READ">
-         </param>
-         <param
-               multiple="false"
-               name="%Param.DisplayFormat"
-               type="combo"
-               variableAccess="NONE">
-            <paramValue
-                  name="%Format.Variable.Output"
-                  value="false">
-            </paramValue>
-            <paramValue
-                  name="%Format.Variable.Component"
-                  value="true">
-            </paramValue>
          </param>
       </tag>
    </extension>
