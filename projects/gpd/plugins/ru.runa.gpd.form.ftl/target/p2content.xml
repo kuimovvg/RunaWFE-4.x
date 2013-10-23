@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='2'>
+  <unit id='ru.runa.gpd.form.ftl' version='4.0.6'>
+    <update id='ru.runa.gpd.form.ftl' range='[0.0.0,4.0.6)' severity='0'/>
+    <properties size='6'>
+      <property name='org.eclipse.equinox.p2.name' value='HTML Editor Plug-In'/>
+      <property name='org.eclipse.equinox.p2.provider' value='Runa'/>
+      <property name='org.eclipse.equinox.p2.bundle.localization' value='plugin'/>
+      <property name='maven-groupId' value='ru.runa.gpd'/>
+      <property name='maven-artifactId' value='ru.runa.gpd.form.ftl'/>
+      <property name='maven-version' value='4.0.6'/>
+    </properties>
+    <provides size='97'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='ru.runa.gpd.form.ftl' version='4.0.6'/>
+      <provided namespace='osgi.bundle' name='ru.runa.gpd.form.ftl' version='4.0.6'/>
+      <provided namespace='java.package' name='freemarker' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.cache' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.core' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.debug' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.debug.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.ant' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.beans' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.dom' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.jdom' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.jsp' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.jython' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.rhino' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.servlet' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.util' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.ext.xml' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.log' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.template' version='0.0.0'/>
+      <provided namespace='java.package' name='freemarker.template.utility' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.servlet' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.servlet.http' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.servlet.jsp' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.servlet.jsp.el' version='0.0.0'/>
+      <provided namespace='java.package' name='javax.servlet.jsp.tagext' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.fileupload' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.builder' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.enums' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.exception' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.math' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.mutable' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.reflect' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.text' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.lang.time' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.logging' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.commons.logging.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.html.dom' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.wml' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.wml.dom' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.dom' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.dom.events' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.dom3.as' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.dtd' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.dtd.models' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.dv' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.dv.dtd' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.dv.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.dv.xs' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.io' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.msg' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.validation' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xpath' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xpath.regex' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xs' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xs.identity' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xs.models' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xs.opti' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xs.traversers' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.impl.xs.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.jaxp' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.jaxp.datatype' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.jaxp.validation' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.parsers' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.xinclude' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.xni' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.xni.grammars' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.xni.parser' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.xpointer' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.xs' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xerces.xs.datatypes' version='0.0.0'/>
+      <provided namespace='java.package' name='org.apache.xml.serialize' version='0.0.0'/>
+      <provided namespace='java.package' name='org.cyberneko.html' version='0.0.0'/>
+      <provided namespace='java.package' name='org.cyberneko.html.filters' version='0.0.0'/>
+      <provided namespace='java.package' name='org.cyberneko.html.parsers' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.html' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.http' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.http.ajp' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.http.handler' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.http.nio' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.jetty' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.jetty.servlet' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.jetty.win32' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.log' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.servlet' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.mortbay.xml' version='0.0.0'/>
+      <provided namespace='java.package' name='org.w3c.dom.html' version='0.0.0'/>
+      <provided namespace='java.package' name='ru.runa.gpd.formeditor' version='0.0.0'/>
+      <provided namespace='java.package' name='ru.runa.gpd.formeditor.ftl' version='0.0.0'/>
+      <provided namespace='java.package' name='ru.runa.gpd.formeditor.ftl.bean' version='0.0.0'/>
+      <provided namespace='java.package' name='ru.runa.gpd.formeditor.ftl.validation' version='0.0.0'/>
+      <provided namespace='java.package' name='ru.runa.gpd.formeditor.vartag' version='0.0.0'/>
+      <provided namespace='java.package' name='ru.runa.gpd.formeditor.wysiwyg' version='0.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <requires size='14'>
+      <required namespace='osgi.bundle' name='tk.eclipse.plugin.htmleditor' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.ui' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.core.runtime' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.jface.text' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.ui.editors' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.ui.workbench.texteditor' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.core.resources' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.ui.ide' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='ru.runa.gpd' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.help' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.help.webapp' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.equinox.http.jetty' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.ui.forms' range='0.0.0'/>
+      <required namespace='osgi.bundle' name='org.eclipse.help.ui' range='0.0.0'/>
+    </requires>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='ru.runa.gpd.form.ftl' version='4.0.6'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: ru.runa.gpd.form.ftl; singleton:=true&#xA;Bundle-Version: 4.0.6&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+  <unit id='ru.runa.gpd.form.ftl.source' version='4.0.6' singleton='false'>
+    <update id='ru.runa.gpd.form.ftl.source' range='[0.0.0,4.0.6)' severity='0'/>
+    <properties size='9'>
+      <property name='df_LT.bundleVendor' value='Runa'/>
+      <property name='df_LT.bundleName' value='HTML Editor Plug-In Source'/>
+      <property name='org.eclipse.equinox.p2.name' value='%bundleName'/>
+      <property name='org.eclipse.equinox.p2.provider' value='%bundleVendor'/>
+      <property name='org.eclipse.equinox.p2.bundle.localization' value='OSGI-INF/l10n/bundle-src'/>
+      <property name='maven-groupId' value='ru.runa.gpd'/>
+      <property name='maven-artifactId' value='ru.runa.gpd.form.ftl'/>
+      <property name='maven-version' value='4.0.6'/>
+      <property name='maven-classifier' value='sources'/>
+    </properties>
+    <provides size='4'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='ru.runa.gpd.form.ftl.source' version='4.0.6'/>
+      <provided namespace='osgi.bundle' name='ru.runa.gpd.form.ftl.source' version='4.0.6'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='source' version='1.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.localization' name='df_LT' version='1.0.0'/>
+    </provides>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='ru.runa.gpd.form.ftl.source' version='4.0.6'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: ru.runa.gpd.form.ftl.source&#xA;Bundle-Version: 4.0.6&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

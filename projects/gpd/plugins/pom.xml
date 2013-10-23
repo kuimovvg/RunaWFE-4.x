@@ -5,7 +5,7 @@
 
   <groupId>ru.runa.gpd</groupId>
   <artifactId>plugins</artifactId>
-  <version>4.0.5-SNAPSHOT</version>
+  <version>4.0.6</version>
   <packaging>pom</packaging>
 
   <modules>
@@ -24,7 +24,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <runa.version>${project.version}</runa.version>
-    <runa.version.eclipse>4.0.5.qualifier</runa.version.eclipse>
+    <runa.version.eclipse>4.0.6</runa.version.eclipse>
     <runaex.version>1.27.2</runaex.version>
     <runaex.version.eclipse>1.27.2.qualifier</runaex.version.eclipse>
 

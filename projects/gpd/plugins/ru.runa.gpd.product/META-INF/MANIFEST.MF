@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: ru.runa.gpd.product
 Bundle-SymbolicName: ru.runa.gpd.product
-Bundle-Version: 4.0.5.qualifier
+Bundle-Version: 4.0.6
 Bundle-Activator: ru.runa.gpd.product.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime

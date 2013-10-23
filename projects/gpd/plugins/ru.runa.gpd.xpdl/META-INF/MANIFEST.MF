@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Xpdl Plug-in
+Bundle-SymbolicName: ru.runa.gpd.xpdl;singleton:=true
+Bundle-Version: 4.0.6
+Bundle-Activator: ru.runa.xpdl.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ru.runa.gpd,
+ org.eclipse.core.resources,
+ org.eclipse.jdt.core,
+ org.eclipse.ui.ide,
+ org.eclipse.jdt.ui
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .,
+ lib/jaxb-impl.jar,
+ lib/jaxb-libs.jar,
+ lib/bpmnxpdl.jar,
+ lib/jpdl32.jar,
+ lib/relaxngDatatype-1.5.jar,
+ lib/bpmnxpdl.jar,
+ lib/jpdl32.jar
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

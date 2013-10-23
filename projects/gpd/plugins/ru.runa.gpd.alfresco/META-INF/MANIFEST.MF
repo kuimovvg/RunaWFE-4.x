@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Alfresco Plug-in
+Bundle-SymbolicName: ru.runa.gpd.alfresco;singleton:=true
+Bundle-Version: 4.0.6
+Bundle-Activator: ru.runa.gpd.alfresco.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ ru.runa.gpd.form.ftl,
+ ru.runa.gpd
+Bundle-ActivationPolicy: lazy
+Export-Package: ru.runa.gpd.alfresco;
+  uses:="org.eclipse.jface.resource,
+   org.eclipse.ui.plugin,
+   org.osgi.framework"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
