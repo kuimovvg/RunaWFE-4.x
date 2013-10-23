@@ -88,18 +88,6 @@ bool GetXmlStringValue(const std::string& sXml, const std::string& sXmlTagName,
 	return true;
 }
 
-std::wstring GetWebServiceURL(std::wstring serviceName) {
-	const std::wstring serverName = GetOption(L"server.name", L"localhost");
-	const std::wstring serverPort = GetOption(L"server.port", L"8080");
-	const std::wstring serverVersion = GetOption(L"server.version", L"4.0.6");
-	const std::wstring serverType = GetOption(L"application.server.type", L"jboss4");
-	if (L"jboss4" == serverType) {
-		return L"http://" + serverName + L":" + serverPort + L"/runawfe-wfe-service-" + serverVersion + L"/" + serviceName + L"ServiceBean?wsdl";
-	} else {
-		return L"http://" + serverName + L":" + serverPort + L"/wfe-service-" + serverVersion + L"/" + serviceName + L"WebService/" + serviceName + L"API?wsdl";
-	}
-}
-
 int IsThereAnyTask() {
 	MYTRACE("Checking for new tasks ...\n");
 
@@ -110,19 +98,16 @@ int IsThereAnyTask() {
 		return -1;
 	}
 
-	const std::wstring sUserAgent = GetOption(L"UserAgent");
+	const std::wstring sUserAgent = RtnResources::GetOption(L"browser.user.agent", L"RunaWFE Task Notifier");
 	if(!sUserAgent.empty())	{
 		ptrSession->SetUserAgent(sUserAgent);
 	}
 
-	{
-		// Update logging variable:
-		const std::wstring sLogFile = GetOption(L"log_file");
-		g_bLoggingEnabled = !sLogFile.empty();
-	}
+	// Update logging variable:
+	const std::wstring sLogFile = RtnResources::GetLogFile();
+	g_bLoggingEnabled = !sLogFile.empty();
 
-	if(IsLoggingEnabled())
-	{
+	if(IsLoggingEnabled()) {
 		// Empty files:
 		DumpRequestStr("", 0);
 		DumpRequestStr("", 1);
@@ -131,10 +116,9 @@ int IsThereAnyTask() {
 	//------------------------------------------------------
 	// GET KERBEROS BINARY TICKET:
 
-	const std::wstring sKerberosServerName = GetOption(L"KerberosServerName", L"WFServer");
+	const std::wstring sKerberosServerName = RtnResources::GetOption(L"KerberosServerName", L"WFServer");
 	const std::string Ticket = GetKerberosTicket(sKerberosServerName);
-	if(Ticket.empty())
-	{
+	if(Ticket.empty()) {
 		MYTRACE("GetKerberosTicket failed!\n");
 		return -1;
 	}
@@ -156,7 +140,7 @@ int IsThereAnyTask() {
 			"</token></impl:authenticateByKerberos>"
 			"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-		REQUEST_INFO request(VERB_POST, GetWebServiceURL(L"Authentication"));
+		REQUEST_INFO request(VERB_POST, RtnResources::GetWebServiceURL(L"Authentication"));
 		request.sBinaryRequestBody = sPostXml;
 		request.sContentType = L"text/xml; charset=utf-8";
 
@@ -179,8 +163,7 @@ int IsThereAnyTask() {
 
 	//------------------------------------------------------
 
-	if(sRunaAuthData.empty())
-	{
+	if(sRunaAuthData.empty()) {
 		MYTRACE("ERROR: Authentication data was not found in SOAP reply!\n");
 		return -1;
 	}
@@ -197,7 +180,7 @@ int IsThereAnyTask() {
 			"</user></impl:getTasks>"
 			"</SOAP-ENV:Body></SOAP-ENV:Envelope>";
 
-		REQUEST_INFO request(VERB_POST, GetWebServiceURL(L"Execution"));
+		REQUEST_INFO request(VERB_POST, RtnResources::GetWebServiceURL(L"Execution"));
 		request.sBinaryRequestBody = sPostXml;
 		request.sContentType = L"text/xml; charset=utf-8";
 

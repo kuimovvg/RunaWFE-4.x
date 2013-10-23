@@ -37,28 +37,9 @@ HINSTANCE				g_hInstance = NULL;
 // http://msdn.microsoft.com/en-us/library/windows/desktop/cc144179%28v=vs.85%29.aspx
 UINT					g_uTaskbarRestart = 0;
 
-//------------------------------------------------------
-
-std::wstring GetOption(const std::wstring& sStringName, const std::wstring& sDefaultValue)
-{
-	Config cfg(GetExeFolder() + GetExeName() + L".ini");
-	//return cfg.GetString(L"options", sStringName, sDefaultValue); // ANSI codepage
-	return Utf8ToUnicode(cfg.GetStringA(L"options", sStringName, UnicodeToUtf8(sDefaultValue))); // UTF8 codepage
-}
-
-//------------------------------------------------------
-
-int GetOptionInt(const std::wstring& sStringName, const int nDefaultValue)
-{
-	Config cfg(GetExeFolder() + GetExeName() + L".ini");
-	return cfg.GetInt(L"options", sStringName, nDefaultValue);
-}
-
-//------------------------------------------------------
-
 std::wstring GetErrorMessageBoxTitle()
 {
-	return GetOption(L"ErrorMessageBoxTitle", L"Rtn Launcher");
+	return RtnResources::GetOption(L"ErrorMessageBoxTitle", L"Error");
 }
 
 //------------------------------------------------------
@@ -70,80 +51,65 @@ void QuitApplication(HWND hWnd)
 
 //------------------------------------------------------
 
-bool AddNotifyIcon(HWND hWnd,
-	UINT nResource = IDI_NOTIFICATION_ICON,
-	bool bAdd = true,
-	const std::wstring& sFileName = L"")
-{
+bool AddNotifyIcon(HWND hWnd, UINT nResource = IDI_NOTIFICATION_ICON, bool bAdd = true, const std::wstring& sFileName = L"", int status = -1) {
 	HICON hLoadedIcon = NULL;
-
 	NOTIFYICONDATAW nid;
 	ZeroMemory(&nid, sizeof(nid));
-
 	nid.cbSize = NOTIFYICONDATAW_V2_SIZE;
 	MYASSERT(nid.cbSize <= sizeof(nid));
 	nid.hWnd = hWnd;
 	nid.uID = 1;
 	nid.uFlags = NIF_ICON | NIF_MESSAGE | NIF_TIP;
 	nid.uCallbackMessage = WM_CUSTOM_NOTIFY_ICON;
-
 	// Load 16x16 icon (or other size reported by windows):
 	const int cx = GetSystemMetrics(SM_CXSMICON);
 	const int cy = GetSystemMetrics(SM_CYSMICON);
-
-	if(!sFileName.empty())
-	{
+	if(!sFileName.empty()) {
 		const std::wstring sFullName = GetExeRelativePath(sFileName);
-		if(IsFileExists(sFullName))
-		{
+		if(IsFileExists(sFullName))	{
 			nid.hIcon = (HICON)LoadImage(NULL, sFullName.c_str(),
 				IMAGE_ICON, cx, cy, LR_LOADFROMFILE);
 			hLoadedIcon = nid.hIcon;
 		}
 	}
-	if(nid.hIcon == NULL)
-	{
-		nid.hIcon = (HICON)LoadImage(g_hInstance, MAKEINTRESOURCE(nResource),
-			IMAGE_ICON, cx, cy, LR_SHARED);
+	if(nid.hIcon == NULL) {
+		nid.hIcon = (HICON)LoadImage(g_hInstance, MAKEINTRESOURCE(nResource), IMAGE_ICON, cx, cy, LR_SHARED);
 	}
-	if(nid.hIcon == NULL)
-	{
+	if(nid.hIcon == NULL) {
 		// This one will always load 32x32:
 		nid.hIcon = LoadIcon(g_hInstance, MAKEINTRESOURCE(nResource));
 	}
-	if (!nid.hIcon)
+	if (!nid.hIcon) {
 		return false;
-
-	const std::wstring sTooltip = GetErrorMessageBoxTitle();
+	}
+	std::wstring sTooltip;
+	if (status == TRUE) {
+		sTooltip = RtnResources::GetOption(L"popup.newtasks", L"New tasks found");
+	} else if (status == FALSE) {
+		sTooltip = RtnResources::GetOption(L"popup.no.tasks", L"No tasks found");
+	} else {
+		sTooltip = RtnResources::GetOption(L"popup.error", L"Error");
+	}
+	
 	wcscpy_s(nid.szTip, sTooltip.c_str());
-
 	const BOOL res = Shell_NotifyIcon(bAdd ? NIM_ADD : NIM_MODIFY, &nid);
-
-	if(hLoadedIcon)
-	{
+	if(hLoadedIcon) {
 		DestroyIcon(hLoadedIcon);
 		hLoadedIcon = NULL;
 	}
-
 	return !!res;
 }
 
 //------------------------------------------------------
 
-void UpdateIconStatus(HWND hWnd)
-{
+void UpdateIconStatus(HWND hWnd) {
 	const int res = IsThereAnyTask();
-	if(res == TRUE)
-	{
-		AddNotifyIcon(hWnd, IDI_ICON_FOUND, false, GetOption(L"icon_found", L"Found.ico"));
-	}
-	else if(res == FALSE)
-	{
-		AddNotifyIcon(hWnd, IDI_ICON_NOT_FOUND, false, GetOption(L"icon_not_found", L"NotFound.ico"));
-	}
-	else
-	{
-		AddNotifyIcon(hWnd, IDI_ICON_ERROR, false, GetOption(L"icon_error", L"Error.ico"));
+	if (res == TRUE) {
+		AddNotifyIcon(hWnd, IDI_ICON_FOUND, false, L"newtasks.ico", res);
+	} else if (res == FALSE) {
+		AddNotifyIcon(hWnd, IDI_ICON_NOT_FOUND, false, L"no.newtasks.ico", res);
+	} else {
+		AddNotifyIcon(hWnd, IDI_ICON_ERROR, false, L"error.ico", res);
 	}
 }
 
@@ -170,182 +136,122 @@ void SetItemText(HMENU hMenu, int nID, const std::wstring& sText)
 
 //------------------------------------------------------
 
-void PrepareContextMenu(HMENU hMenu)
-{
-	SetItemText(hMenu, ID__BROWSE, GetOption(L"Menu_Launch", L"Browse"));
-	SetItemText(hMenu, ID__SETTINGS, GetOption(L"Menu_Update", L"Update status"));
-	SetItemText(hMenu, ID__QUIT, GetOption(L"Menu_Quit", L"Quit"));
+void PrepareContextMenu(HMENU hMenu) {
+	SetItemText(hMenu, ID__BROWSE, RtnResources::GetOption(L"menu.open", L"Open"));
+	SetItemText(hMenu, ID__SETTINGS, RtnResources::GetOption(L"menu.update", L"Update status"));
+	SetItemText(hMenu, ID__QUIT, RtnResources::GetOption(L"menu.exit", L"Quit"));
 }
 
-//------------------------------------------------------
-
-void ShowContextMenu(HWND hWnd, POINT pt)
-{
+void ShowContextMenu(HWND hWnd, POINT pt) {
 	HMENU hMenu = LoadMenu(g_hInstance, MAKEINTRESOURCE(IDR_MENU_CONTEXT));
-	if (hMenu)
-	{
+	if (hMenu) {
 		HMENU hSubMenu = GetSubMenu(hMenu, 0);
-		if (hSubMenu)
-		{
+		if (hSubMenu) {
 			// our window must be foreground before calling TrackPopupMenu or the menu will not disappear when the user clicks away
 			SetForegroundWindow(hWnd);
-
 			PrepareContextMenu(hSubMenu);
-
 			// respect menu drop alignment
 			UINT uFlags = TPM_RIGHTBUTTON;
-			if (GetSystemMetrics(SM_MENUDROPALIGNMENT) != 0)
+			if (GetSystemMetrics(SM_MENUDROPALIGNMENT) != 0) {
 				uFlags |= TPM_RIGHTALIGN;
-			else
+			} else {
 				uFlags |= TPM_LEFTALIGN;
-
+			}
 			TrackPopupMenuEx(hSubMenu, uFlags, pt.x, pt.y, hWnd, NULL);
-		} // if
-		else
+		} else {
 			MessageBox(hWnd, L"Error loading submenu.", GetErrorMessageBoxTitle().c_str(), MB_OK | MB_ICONERROR);
-
+		}
 		DestroyMenu(hMenu);
-	} // if
-	else
+	} else {
 		MessageBox(hWnd, L"Error loading menu.", GetErrorMessageBoxTitle().c_str(), MB_OK | MB_ICONERROR);
+	}
+}
 
-} // ShowContextMenu();
-
-//------------------------------------------------------
-
-void OnTimer(HWND hWnd)
-{
-	//--------------------------
-
+void OnTimer(HWND hWnd) {
 	UpdateIconStatus(hWnd);
-
-	//--------------------------
-
-} // OnTimer();
-
-// TODO to PropertyManager
-std::wstring GetBrowserStartURL() {
-	const std::wstring serverName = GetOption(L"server.name", L"localhost");
-	const std::wstring serverPort = GetOption(L"server.port", L"8080");
-	const std::wstring loginRelativeURL = GetOption(L"login.relative.url", L"login.do");
-	return L"http://" + serverName + L":" + serverPort + L"/wfe" + loginRelativeURL;
 }
 
-
-void Launch(HWND hWnd)
-{
+void Launch(HWND hWnd) {
 	// use empty string to use default system browser, L"IEXPLORE.EXE" for MSIE:
-	const std::wstring sCmd = GetOption(L"Browser", L"");
-	const int nShowCmd = GetOptionInt(L"LaunchURL_ShowCmd", SW_SHOWMAXIMIZED);
-	ShellExecute(hWnd, L"open", sCmd.c_str(), GetBrowserStartURL().c_str(), NULL, nShowCmd);
+	const std::wstring sCmd = RtnResources::GetOption(L"browser.command", L"");
+	const int nShowCmd = RtnResources::GetOptionInt(L"browser.command.show", SW_SHOWMAXIMIZED);
+	ShellExecute(hWnd, L"open", sCmd.c_str(), RtnResources::GetBrowserStartURL().c_str(), NULL, nShowCmd);
 }
 
-//------------------------------------------------------
-
-bool InitializeSystrayIcon(HWND hWnd)
-{
-	if (!AddNotifyIcon(hWnd))
-	{
+bool InitializeSystrayIcon(HWND hWnd) {
+	if (!AddNotifyIcon(hWnd)) {
 		return false;
 	}
-
 	UpdateIconStatus(hWnd);
 	return true;
 }
 
-//------------------------------------------------------
-
-LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	switch (uMsg)
-	{
-		case WM_CREATE:
-			{
-				g_uTaskbarRestart = RegisterWindowMessage(L"TaskbarCreated"); // standard Windows message. Read here: http://msdn.microsoft.com/en-us/library/windows/desktop/cc144179%28v=vs.85%29.aspx
-				const bool bInitOK = InitializeSystrayIcon(hWnd);
-				if(!bInitOK)
-				{
-					MessageBox(NULL, L"Error adding notification icon.", GetErrorMessageBoxTitle().c_str(), MB_OK | MB_ICONERROR);
-					QuitApplication(hWnd);
-					return -1;
-				}
-				const int nTimerRes = GetOptionInt(L"CheckPeriod", 60) * 1000;
-				SetTimer(hWnd, 1, max(3000, nTimerRes), NULL);
-			}
-			break; // WM_CREATE
-
-		case WM_TIMER:
-			OnTimer(hWnd);
-			break; // WM_TIMER
-
-		case WM_CUSTOM_NOTIFY_ICON:
-			switch (LOWORD(lParam))
-			{
-				case WM_LBUTTONDBLCLK:
-					Launch(hWnd);
-					break;
-
-//				case WM_CONTEXTMENU:
-				case WM_RBUTTONUP:
-//					POINT pt = { GET_X_LPARAM(wParam), GET_Y_LPARAM(wParam) };
-					POINT pt;
-					GetCursorPos(&pt);
-					ShowContextMenu(hWnd, pt);
-					break;
-			} // switch
-			break; // WM_NOTIFY_ICON
-
-		case WM_COMMAND:
-			switch (LOWORD(wParam))
-			{
-				case ID__QUIT:
-					QuitApplication(hWnd);
-					break;
-
-				case ID__SETTINGS:
-					UpdateIconStatus(hWnd);
-					break;
-
-				case ID__BROWSE:
-					Launch(hWnd);
-					break;
-
-			} // switch
-			break; // WM_COMMAND
-
-		case WM_DESTROY:
-			if (!DeleteNotifyIcon(hWnd))
-			{
-				MessageBox(NULL, L"Error deleting notification icon.", L"ERROR", MB_OK | MB_ICONERROR);
-				return -1;
-			} // if
-
-			PostQuitMessage(0);
-			break; // WM_DESTROY
-
-		case WM_CLOSE:
-			DestroyWindow(hWnd);
-			break; // WM_CLOSE
-
-		default:
-			if(uMsg == g_uTaskbarRestart)	// standard Windows message. Read here: http://msdn.microsoft.com/en-us/library/windows/desktop/cc144179%28v=vs.85%29.aspx
-			{
-				InitializeSystrayIcon(hWnd);
-			}
-
-			return DefWindowProc(hWnd, uMsg, wParam, lParam);
-	} // switch
-
+LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	switch (uMsg) {
+	case WM_CREATE: {
+		// standard Windows message. Read here: http://msdn.microsoft.com/en-us/library/windows/desktop/cc144179%28v=vs.85%29.aspx
+		g_uTaskbarRestart = RegisterWindowMessage(L"TaskbarCreated"); 
+		const bool bInitOK = InitializeSystrayIcon(hWnd);
+		if(!bInitOK) {
+			MessageBox(NULL, L"Error adding notification icon.", GetErrorMessageBoxTitle().c_str(), MB_OK | MB_ICONERROR);
+			QuitApplication(hWnd);
+			return -1;
+		}
+		const int nTimerRes = RtnResources::GetOptionInt(L"check.tasks.timeout", 60) * 1000;
+		SetTimer(hWnd, 1, max(3000, nTimerRes), NULL);
+		}
+		break;
+	case WM_TIMER:
+		OnTimer(hWnd);
+		break;
+	case WM_CUSTOM_NOTIFY_ICON:
+		switch (LOWORD(lParam)) {
+		case WM_LBUTTONDBLCLK:
+			Launch(hWnd);
+			break;
+		case WM_RBUTTONUP:
+			POINT pt;
+			GetCursorPos(&pt);
+			ShowContextMenu(hWnd, pt);
+			break;
+		}
+		break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam)) {
+		case ID__QUIT:
+			QuitApplication(hWnd);
+			break;
+		case ID__SETTINGS:
+			UpdateIconStatus(hWnd);
+			break;
+		case ID__BROWSE:
+			Launch(hWnd);
+			break;
+		}
+		break;
+	case WM_DESTROY:
+		if (!DeleteNotifyIcon(hWnd)) {
+			MessageBox(NULL, L"Error deleting notification icon.", L"ERROR", MB_OK | MB_ICONERROR);
+			return -1;
+		}
+		PostQuitMessage(0);
+		break;
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		break;
+	default:
+		// standard Windows message. Read here: http://msdn.microsoft.com/en-us/library/windows/desktop/cc144179%28v=vs.85%29.aspx
+		if(uMsg == g_uTaskbarRestart) {
+			InitializeSystrayIcon(hWnd);
+		}
+		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+	}
 	return 0;
-} // WindowProcMain();
+}
 
-//------------------------------------------------------
-
-BOOL RegisterMainWindowClass()
-{
+BOOL RegisterMainWindowClass() {
 	WNDCLASSEXW wc;
 	ZeroMemory(&wc, sizeof(wc));
-
 	wc.cbSize = sizeof(WNDCLASSEX);
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
@@ -358,27 +264,17 @@ BOOL RegisterMainWindowClass()
 	wc.lpszClassName = WINDOW_CLASS_NAME;
 	wc.lpszMenuName = NULL;
 	wc.style = CS_HREDRAW | CS_VREDRAW;
-
-	if (!RegisterClassEx(&wc))
+	if (!RegisterClassEx(&wc)) {
 		return false;
-
+	}
 	return true;
-} // RegisterMainWindowClass();
-
-//------------------------------------------------------
+}
 
 bool g_bDeveloperMode = true;
 
-//------------------------------------------------------
-
-bool OnAssertMessageBox(LPCSTR szMessage, LPVOID pArg,
-	const bool bBeforeMessageBox, const bool bShortAssert,
-	const CTracer::TRACE_REASON reason) // returns true to execute default handler next
-{
-	if(bBeforeMessageBox)
-	{
-		if(g_bDeveloperMode)
-		{
+bool OnAssertMessageBox(LPCSTR szMessage, LPVOID pArg, const bool bBeforeMessageBox, const bool bShortAssert, const CTracer::TRACE_REASON reason) {
+	if(bBeforeMessageBox) {
+		if(g_bDeveloperMode) {
 			return true;
 		}
 	}
@@ -386,104 +282,69 @@ bool OnAssertMessageBox(LPCSTR szMessage, LPVOID pArg,
 	return false;
 }
 
-//------------------------------------------------------
-
-bool WriteTracerAdditional(LPVOID pAdditionalTracerArg,
-	LPCVOID pData, const int nBytes)  // binary data, text is CRLF-formatted before
-{
-	const std::wstring sLogFile = GetOption(L"log_file");
-	if(!sLogFile.empty())
-	{
-		const std::string sMessage =
-			GetStringDateTime() + "\t"
-			+ std::string((LPCSTR)pData, nBytes)
-			+ "\r\n"; 
-
+bool WriteTracerAdditional(LPVOID pAdditionalTracerArg,	LPCVOID pData, const int nBytes) {
+	// binary data, text is CRLF-formatted before
+	const std::wstring sLogFile = RtnResources::GetLogFile();
+	if(!sLogFile.empty()) {
+		const std::string sMessage = GetStringDateTime() + "\t"	+ std::string((LPCSTR)pData, nBytes) + "\r\n"; 
 		CMyFile f;
 		f.AppendTextWithOpeningFile(sLogFile, sMessage);
 		f.close();
 	}
-
 	return false; // don't write to console
 }
 
-//------------------------------------------------------
-
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
-{
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
 	g_hInstance = hInstance;
-
 	SetAdditionalTracer(WriteTracerAdditional, NULL);
 	SetAssertMessageBoxHandler(OnAssertMessageBox, NULL);
-
 	MYTRACE("===============================================================================\n");
-
 	// Check if this is a first copy of program in current Windows Terminal session:
 	SetLastError(0);
 	HANDLE hSingleObject = ::CreateMutex(NULL, FALSE, L"Local\\" PROGRAM_MUTEX_NAME);
-	if (hSingleObject && GetLastError() == ERROR_ALREADY_EXISTS)
-	{
+	if (hSingleObject && GetLastError() == ERROR_ALREADY_EXISTS) {
 		MYTRACE("Process is already running!\n");
 		return 1;
 	}
-	if (!hSingleObject)
-	{
+	if (!hSingleObject) {
 		MYTRACE("Can't create mutex! Error = %d\n", GetLastError());
 		return 1;
 	}
-
 	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE); // for ShellExecute()
-	if (FAILED(hr))
-	{
-		const std::wstring sMsg =
-			StdString::FormatW(L"Failed to initialize COM library. Error code = 0x%08X", hr);
+	if (FAILED(hr))	{
+		const std::wstring sMsg = StdString::FormatW(L"Failed to initialize COM library. Error code = 0x%08X", hr);
 		MYTRACE("%ls\n", sMsg.c_str());
 		MessageBoxW(NULL, sMsg.c_str(), GetErrorMessageBoxTitle().c_str(), MB_OK|MB_ICONERROR);
 		return 1;
 	}
-
 	// get window name
-	const std::wstring sWindowName = GetOption(L"SystrayTooltip", L"Rtn Launcher");
-
+	const std::wstring sWindowName = RtnResources::GetOption(L"application.name", L"RunaWFE tasks notifier");
 	MSG msg;
 	ZeroMemory(&msg, sizeof(msg));
-
-	if (!RegisterMainWindowClass())
+	if (!RegisterMainWindowClass()) {
 		return 1;
-
+	}
 	DWORD dwStyle = WS_POPUPWINDOW|WS_CAPTION|WS_MINIMIZEBOX|WS_VISIBLE;
 #if 1
 	dwStyle = 0;
 #endif
 
 	HWND hWnd = CreateWindowW(WINDOW_CLASS_NAME, sWindowName.c_str(), dwStyle, 100, 100, 200, 200, NULL, NULL, g_hInstance, NULL);
-
-	if (hWnd != NULL)
-	{
+	if (hWnd != NULL) {
 		BOOL bRet = FALSE;
-		while ((bRet = GetMessageW(&msg, NULL, 0, 0)))
-		{
-			if (bRet == -1)
-			{
+		while ((bRet = GetMessageW(&msg, NULL, 0, 0))) {
+			if (bRet == -1) {
 				// handle the error and possibly exit
-			}
-			else
-			{
+			} else {
 				TranslateMessage(&msg);
 				DispatchMessageW(&msg);
 			}
-		} // while();
-	} // if
-	else
-	{
+		}
+	} else {
 		DWORD error = GetLastError();
 		int i = 0;
-	} // else
-
+	}
 	CoUninitialize();
 	CloseHandle(hSingleObject);
-
 	return 0;
-} // wWinMain();
-
-//------------------------------------------------------
+}

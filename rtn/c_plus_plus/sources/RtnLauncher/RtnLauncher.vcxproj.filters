@@ -29,6 +29,7 @@
     </ClCompile>
     <ClCompile Include="kerberos.cpp" />
     <ClCompile Include="runa.cpp" />
+    <ClCompile Include="RtnResources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -79,20 +80,7 @@
     <ClInclude Include="kerberos.h" />
     <ClInclude Include="runa.h" />
     <ClInclude Include="Main.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Error.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="Found.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="NotFound.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="RtnLauncher.ico">
-      <Filter>Resources</Filter>
-    </None>
+    <ClInclude Include="RtnResources.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="common">
@@ -110,6 +98,23 @@
     <Filter Include="common\encode">
       <UniqueIdentifier>{a1d38b40-66a3-42e3-a6b7-198c5bf12474}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="application.properties">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="newtasks.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="no.newtasks.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="error.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="application.ico">
+      <Filter>Resources</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RtnLauncher.rc">
