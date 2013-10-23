@@ -7,6 +7,7 @@ public class SystemProperties {
     public static final String WEB_SERVICE_NAMESPACE = "http://runa.ru/wfe";
 
     public static final String RESOURCE_EXTENSION_PREFIX = "wfe.custom.";
+    public static final String DEPRECATED_PREFIX = "deprecated.";
 
     public static PropertyResources getResources() {
         return RESOURCES;

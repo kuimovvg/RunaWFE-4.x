@@ -33,7 +33,6 @@ import freemarker.template.TemplateModelException;
 public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
-    // TODO not working now: add variableName.size input...
     @Override
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);

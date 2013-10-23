@@ -40,6 +40,9 @@ public class FreemarkerConfiguration {
     }
 
     private FreemarkerConfiguration() {
+        if (SystemProperties.isV3CompatibilityMode()) {
+            parseTags(SystemProperties.DEPRECATED_PREFIX + CONFIG, false);
+        }
         parseTags(CONFIG, true);
         parseTags(SystemProperties.RESOURCE_EXTENSION_PREFIX + CONFIG, false);
     }
@@ -80,16 +83,6 @@ public class FreemarkerConfiguration {
     }
 
     public FreemarkerTag getTag(String name) {
-        if (!tags.containsKey(name)) {
-            String possibleTagClassName = "ru.runa.wf.web.ftl.method." + name + "Tag";
-            try {
-                Class<? extends FreemarkerTag> tagClass = (Class<? extends FreemarkerTag>) ClassLoaderUtil.loadClass(possibleTagClassName);
-                addTag(name, tagClass);
-            } catch (Exception e) {
-                log.warn("Unable to load tag " + name + " as " + possibleTagClassName + ". Check your " + CONFIG);
-                addTag(name, null);
-            }
-        }
         Class<? extends FreemarkerTag> tagClass = tags.get(name);
         if (tagClass != null) {
             return ApplicationContextFactory.createAutowiredBean(tagClass);
