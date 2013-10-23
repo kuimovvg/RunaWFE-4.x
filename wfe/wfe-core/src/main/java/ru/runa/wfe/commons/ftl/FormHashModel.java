@@ -1,5 +1,7 @@
 package ru.runa.wfe.commons.ftl;
 
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
@@ -41,8 +43,7 @@ public class FormHashModel extends SimpleHash {
             return model;
         }
         try {
-            FreemarkerConfiguration configuration = FreemarkerConfiguration.getInstance();
-            FreemarkerTag tag = configuration.getTag(key);
+            FreemarkerTag tag = FreemarkerConfiguration.getInstance().getTag(key);
             if (tag != null) {
                 tag.init(user, webHelper, variableProvider, key.startsWith(FreemarkerTag.TARGET_PROCESS_PREFIX));
                 if (webHelper != null && tag instanceof AjaxFreemarkerTag) {
@@ -57,6 +58,7 @@ public class FormHashModel extends SimpleHash {
         if (variableValue != null) {
             return wrap(variableValue);
         }
+        LogFactory.getLog(getClass()).warn("Null for " + key);
         return null;
     }
 }

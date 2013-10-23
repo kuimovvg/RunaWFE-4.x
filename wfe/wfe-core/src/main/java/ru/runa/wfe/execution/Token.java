@@ -53,6 +53,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
@@ -78,6 +79,7 @@ public class Token implements Serializable {
 
     private Long id;
     private Long version;
+    // TODO remove with patch
     private String name;
     private Date startDate;
     private Date endDate;
@@ -319,7 +321,8 @@ public class Token implements Serializable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("process", getProcess()).add("name", name).toString();
+        return Objects.toStringHelper(this).add("id", id).add("startDate", CalendarUtil.formatDateTime(startDate))
+                .add("endDate", CalendarUtil.formatDateTime(endDate)).toString();
     }
 
 }
