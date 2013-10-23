@@ -88,6 +88,7 @@
     <ClCompile Include="..\common\Tracing.cpp" />
     <ClCompile Include="kerberos.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="RtnResources.cpp" />
     <ClCompile Include="runa.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -112,18 +113,20 @@
     <ClInclude Include="kerberos.h" />
     <ClInclude Include="Main.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="RtnResources.h" />
     <ClInclude Include="runa.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="RtnLauncher.rc" />
+    <None Include="application.ico" />
+    <None Include="application.properties" />
+    <None Include="error.ico" />
+    <None Include="newtasks.ico" />
+    <None Include="no.newtasks.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Error.ico" />
-    <None Include="Found.ico" />
-    <None Include="NotFound.ico" />
-    <None Include="RtnLauncher.ico" />
+    <ResourceCompile Include="RtnLauncher.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
