@@ -24,6 +24,9 @@ import com.google.common.collect.Maps;
 
 import freemarker.template.TemplateModelException;
 
+/**
+ * @deprecated Use List<User> variable type + InputVariableTag.
+ */
 public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
