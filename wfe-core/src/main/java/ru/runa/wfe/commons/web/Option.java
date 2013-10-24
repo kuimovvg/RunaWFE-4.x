@@ -25,6 +25,10 @@ import java.io.Serializable;
 
 import ru.runa.wfe.var.ISelectable;
 
+/**
+ * Specified package for this class is essential due to back compatibility.
+ * @author dofs
+ */
 public class Option implements ISelectable, Serializable {
     private static final long serialVersionUID = 1L;
     private final String value;

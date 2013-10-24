@@ -28,13 +28,19 @@ import ru.runa.wfe.InternalApplicationException;
  */
 public class ExecutorParticipatesInProcessesException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;
+    private final String executorName;
     private final String idsInfo;
 
     public ExecutorParticipatesInProcessesException(String executorName, Set<Number> processIds) {
-        super(executorName);
-        idsInfo = processIds.size() > 100 ? " > 100" : processIds.toString();
+        super(executorName + " " + processIds);
+        this.executorName = executorName;
+        this.idsInfo = processIds.size() > 100 ? " > 100" : processIds.toString();
     }
 
+    public String getExecutorName() {
+        return executorName;
+    }
+    
     public String getIdsInfo() {
         return idsInfo;
     }
