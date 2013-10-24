@@ -10,5 +10,5 @@
 	<ftltag name="DisplayLinkedMapsInTable" class="ru.runa.wf.web.ftl.method.DisplayLinkedMapsTag" />
 	<ftltag name="DownloadFile" class="ru.runa.wf.web.ftl.method.DownloadFileTag" />
 	<ftltag name="InputDateTime" class="ru.runa.wf.web.ftl.method.DateTimeInputTag" />
-	<ftltag name="MultipleSelect" class="ru.runa.wf.web.ftl.method.OptionsMultipleSelectTag" />
+	<ftltag name="MultipleSelect" class="ru.runa.wf.web.ftl.method.MultipleSelectFromListTag" />
 </configuration>
