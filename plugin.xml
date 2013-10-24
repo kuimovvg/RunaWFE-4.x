@@ -698,5 +698,39 @@
                variableAccess="READ">
          </param>
       </tag>
+      <tag
+            enabled="true"
+            id="MultipleSelectFromList"
+            name="%Method.MultipleSelectFromList">
+         <param
+               name="%Param.Variable"
+               type="combo"
+               variableTypeFilter="java.util.List"
+               variableAccess="WRITE">
+         </param>
+         <param
+               name="%Param.InputData"
+               type="combo"
+               variableTypeFilter="java.util.List"
+               variableAccess="READ">
+         </param>
+      </tag>
+      <tag
+            enabled="true"
+            id="SelectFromList"
+            name="%Method.SelectFromList">
+         <param
+               name="%Param.Variable"
+               type="combo"
+               variableTypeFilter="java.lang.Object"
+               variableAccess="WRITE">
+         </param>
+         <param
+               name="%Param.InputData"
+               type="combo"
+               variableTypeFilter="java.util.List"
+               variableAccess="READ">
+         </param>
+      </tag>
    </extension>
 </plugin>
