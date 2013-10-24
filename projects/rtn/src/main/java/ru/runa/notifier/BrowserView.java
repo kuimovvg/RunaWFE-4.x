@@ -59,7 +59,11 @@ public class BrowserView extends Composite {
         browser.addStatusTextListener(new StatusTextListener() {
             @Override
             public void changed(StatusTextEvent event) {
-                status.setText(event.text);
+                if (event.text.contains("password")) {
+                    status.setText("Processing authentication");
+                } else {
+                    status.setText(event.text);
+                }
             }
         });
     }
