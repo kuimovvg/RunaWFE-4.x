@@ -365,6 +365,9 @@ public class DocxUtils {
                     String replacement;
                     if (valueFormat != null) {
                         replacement = valueFormat.format(value);
+                        if (replacement == null) {
+                            replacement = "";
+                        }
                     } else {
                         replacement = TypeConversionUtil.convertTo(String.class, value);
                     }

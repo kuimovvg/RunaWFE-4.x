@@ -3,7 +3,7 @@ package ru.runa.wfe.var;
 import ru.runa.wfe.var.dto.WfVariable;
 
 public class DelegableVariableProvider extends AbstractVariableProvider {
-    private final IVariableProvider delegate;
+    protected final IVariableProvider delegate;
 
     public DelegableVariableProvider(IVariableProvider delegate) {
         this.delegate = delegate;

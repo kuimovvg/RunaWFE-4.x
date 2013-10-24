@@ -53,4 +53,14 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
         }
         return super.getVariable(variableName);
     }
+    
+    @Override
+    public AbstractVariableProvider getSameProvider(Long processId) {
+        if (delegate instanceof AbstractVariableProvider) {
+            AbstractVariableProvider same = ((AbstractVariableProvider) delegate).getSameProvider(processId);
+            return new MapDelegableVariableProvider(variables, same);
+        }
+        return super.getSameProvider(processId);
+    }
+
 }
