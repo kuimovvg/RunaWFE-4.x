@@ -23,10 +23,12 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.wfe.WFEServerConnector;
 import ru.runa.gpd.wfe.WFEServerConnectorRegistry;
+import ru.runa.gpd.wfe.WFEServerConnectorRegistry.Entry;
 
 public class WFEConnectionPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, PrefConstants {
     private StringFieldEditor loginEditor;
     private StringFieldEditor passwordEditor;
+    private StringFieldEditor portEditor;
     private Button testButton;
 
     public WFEConnectionPreferencePage() {
@@ -44,7 +46,8 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
         addField(new ComboFieldEditor(P_WFE_CONNECTION_TYPE, Localization.getString("pref.connection.wfe.type"), WFEServerConnectorRegistry.getEntriesArray(),
                 getFieldEditorParent()));
         addField(new StringFieldEditor(P_WFE_CONNECTION_HOST, Localization.getString("pref.connection.wfe.host"), getFieldEditorParent()));
-        addField(new StringFieldEditor(P_WFE_CONNECTION_PORT, Localization.getString("pref.connection.wfe.port"), getFieldEditorParent()));
+        portEditor = new StringFieldEditor(P_WFE_CONNECTION_PORT, Localization.getString("pref.connection.wfe.port"), getFieldEditorParent());
+        addField(portEditor);
         addField(new StringFieldEditor(P_WFE_CONNECTION_VERSION, Localization.getString("pref.connection.wfe.version"), getFieldEditorParent()));
         addField(new RadioGroupFieldEditor(P_WFE_CONNECTION_LOGIN_MODE, Localization.getString("pref.connection.loginMode"), 2, new String[][] {
                 { Localization.getString("pref.connection.loginMode.byLogin"), LOGIN_MODE_LOGIN_PASSWORD },
@@ -71,7 +74,9 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
             }
             if (P_WFE_CONNECTION_TYPE.equals(fieldEditor.getPreferenceName())) {
                 WFEServerConnector.destroy();
-                setMessage(WFEServerConnectorRegistry.getEntryNotNull((String) event.getNewValue()).description);
+                Entry entry = WFEServerConnectorRegistry.getEntryNotNull((String) event.getNewValue());
+                setMessage(entry.description);
+                portEditor.setStringValue(entry.defaultPort);
             }
         }
     }

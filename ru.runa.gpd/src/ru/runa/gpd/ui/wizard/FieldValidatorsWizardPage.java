@@ -249,7 +249,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         tableViewer.getControl().setLayoutData(data);
         Table table = tableViewer.getTable();
         table.setLinesVisible(true);
-        TableColumn tableColumn = new TableColumn(table, SWT.CENTER);
+        TableColumn tableColumn = new TableColumn(table, SWT.LEFT);
         if (text != null) {
             table.setHeaderVisible(true);
             tableColumn.setText(text);

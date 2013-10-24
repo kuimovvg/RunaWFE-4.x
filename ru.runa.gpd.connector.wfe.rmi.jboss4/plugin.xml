@@ -5,6 +5,7 @@
          point="ru.runa.gpd.wfeConnectors">
       <connector
             class="ru.runa.gpd.connector.wfe.rmi.jboss4.WFEJboss423RMIConnector"
+            defaultPort="10099"
             description="%jboss4.rmi.connector.description"
             id="jboss4.rmi"
             name="%jboss4.rmi.connector.name">

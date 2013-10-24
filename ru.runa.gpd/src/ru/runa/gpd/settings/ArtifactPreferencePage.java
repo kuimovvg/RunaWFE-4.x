@@ -91,10 +91,10 @@ public class ArtifactPreferencePage<T extends Artifact> extends PreferencePage i
         table.setLinesVisible(true);
         //        GC gc = new GC(getShell());
         //        gc.setFont(JFaceResources.getDialogFont());
-        TableColumn column1 = new TableColumn(table, SWT.NONE);
+        TableColumn column1 = new TableColumn(table, SWT.LEFT);
         column1.setText("Class name");
         columnLayout.setColumnData(column1, new ColumnWeightData(2, 300, true));
-        TableColumn column2 = new TableColumn(table, SWT.NONE);
+        TableColumn column2 = new TableColumn(table, SWT.LEFT);
         column2.setText("Display name");
         columnLayout.setColumnData(column2, new ColumnWeightData(1, 200, true));
         //        TableColumn column3 = new TableColumn(table, SWT.NONE);
