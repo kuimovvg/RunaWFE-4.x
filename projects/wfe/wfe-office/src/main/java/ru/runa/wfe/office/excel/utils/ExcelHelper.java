@@ -59,7 +59,7 @@ public class ExcelHelper {
         } else if (value instanceof Boolean) {
             cell.setCellValue((Boolean) value);
         } else {
-            cell.setCellValue(value.toString());
+            cell.setCellValue(String.valueOf(value));
         }
     }
 

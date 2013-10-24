@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 
 /**
@@ -25,7 +24,6 @@ import java.text.ParseException;
  * 
  */
 public class LongFormat implements VariableFormat {
-    private final DecimalFormat decimalFormat = new DecimalFormat("0");
 
     @Override
     public Class<? extends Number> getJavaClass() {
@@ -34,15 +32,14 @@ public class LongFormat implements VariableFormat {
 
     @Override
     public Number parse(String source) throws ParseException {
-        Long result = null;
         if (source != null) {
-            result = new Long(decimalFormat.parse(source).longValue());
+            return Long.valueOf(source);
         }
-        return result;
+        return null;
     }
 
     @Override
     public String format(Object obj) {
-        return decimalFormat.format(obj);
+        return obj != null ? obj.toString() : null;
     }
 }

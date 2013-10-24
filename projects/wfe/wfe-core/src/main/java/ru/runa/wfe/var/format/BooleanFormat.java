@@ -29,8 +29,10 @@ public class BooleanFormat implements VariableFormat {
 
     @Override
     public Boolean parse(String source) {
-        String value = source;
-        return "true".equalsIgnoreCase(value) || "on".equalsIgnoreCase(value);
+        if (source == null) {
+            return null;
+        }
+        return "true".equalsIgnoreCase(source) || "on".equalsIgnoreCase(source);
 
     }
 
