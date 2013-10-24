@@ -17,12 +17,9 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 
 public class DoubleFormat implements VariableFormat {
-    private final NumberFormat decimalFormat = new DecimalFormat("0.####################################");
 
     @Override
     public Class<Double> getJavaClass() {
@@ -31,15 +28,14 @@ public class DoubleFormat implements VariableFormat {
 
     @Override
     public Number parse(String source) throws ParseException {
-        Double result = null;
         if (source != null) {
-            result = new Double(decimalFormat.parse(source).doubleValue());
+            return Double.valueOf(source);
         }
-        return result;
+        return null;
     }
 
     @Override
     public String format(Object obj) {
-        return decimalFormat.format(obj);
+        return obj != null ? obj.toString() : null;
     }
 }

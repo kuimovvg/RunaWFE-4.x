@@ -41,6 +41,9 @@ public abstract class AbstractDateFormat implements VariableFormat {
 
     @Override
     public Date parse(String source) throws ParseException {
-        return CalendarUtil.convertToDate(source, dateTimeFormat);
+        if (source != null) {
+            return CalendarUtil.convertToDate(source, dateTimeFormat);
+        }
+        return null;
     }
 }

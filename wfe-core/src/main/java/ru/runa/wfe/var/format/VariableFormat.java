@@ -27,7 +27,7 @@ public interface VariableFormat {
      * 
      * @param object
      *            object, can be <code>null</code>
-     * @return formatted string, can be <code>null</code>
+     * @return formatted string or <code>null</code>
      */
     public String format(Object object);
 }
