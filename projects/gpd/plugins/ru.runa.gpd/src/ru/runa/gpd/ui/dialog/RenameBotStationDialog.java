@@ -34,10 +34,6 @@ public class RenameBotStationDialog extends Dialog {
         Composite area = (Composite) super.createDialogArea(parent);
         GridLayout layout = new GridLayout(1, false);
         area.setLayout(layout);
-        final Label labelTitle = new Label(area, SWT.NO_BACKGROUND);
-        final GridData labelData = new GridData();
-        labelTitle.setLayoutData(labelData);
-        labelTitle.setText(Localization.getString("RenameBotStationDialog.edit"));
         final Composite composite = new Composite(area, SWT.NONE);
         final GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 2;
@@ -92,7 +88,7 @@ public class RenameBotStationDialog extends Dialog {
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Localization.getString("RenameBotStationDialog.update.title"));
+        newShell.setText(Localization.getString("RenameBotStationDialog.edit"));
     }
 
     public String getName() {

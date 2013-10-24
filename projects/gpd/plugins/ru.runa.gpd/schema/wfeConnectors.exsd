@@ -80,6 +80,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="defaultPort" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
