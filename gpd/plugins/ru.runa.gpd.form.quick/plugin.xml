@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin
+	id="ru.runa.gpd.form.quick"
+	name="Quick Form Editor Plug-In"
+    version="4.0"
+    provider-name="Runa"
+    class="ru.runa.gpd.quick.Activator">
+   <runtime>
+      <library name="lib/freemarker.patched-2.3.11.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/nekohtml.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="lib/xercesImpl.jar">
+         <export
+               name="*">
+         </export>
+      </library>
+      <library name="."/>
+   </runtime>
+   <requires>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="ru.runa.gpd"/>
+      <import plugin="org.eclipse.core.resources"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.ui.ide"/>
+   </requires>
+    	<extension-point id="quickTemplates" name="Quick templates" schema="schema/quickTemplate.exsd"/>
+   
+   	<extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="ru.runa.gpd.quick.formeditor.QuickFormEditor"
+            default="false"
+            id="ru.runa.gpd.quick.formeditor.QuickFormEditor"
+            name="quickFormEditor">
+      </editor>
+   	</extension>
+   	<extension
+         point="ru.runa.gpd.formtype">
+      <element
+            contributor="ru.runa.gpd.quick.formeditor.QuickFormType"
+            name="%FormType.quick"
+            type="quick"/>
+   	</extension>
+   	<extension
+         point="ru.runa.gpd.form.quick.quickTemplates">
+      <template
+            filename="output.template"
+            label="output"
+            name="output"
+            enabled="true">
+      </template>
+   	</extension>
+</plugin>

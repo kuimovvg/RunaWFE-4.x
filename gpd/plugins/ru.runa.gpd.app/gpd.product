@@ -150,6 +150,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
       <plugin id="ru.runa.gpd.connector.wfe.rmi.jboss4"/>
       <plugin id="ru.runa.gpd.connector.wfe.ws"/>
       <plugin id="ru.runa.gpd.form.ftl"/>
+      <plugin id="ru.runa.gpd.form.quick"/>
       <plugin id="ru.runa.gpd.office"/>
       <plugin id="ru.runa.gpd.xpdl"/>
       <plugin id="tk.eclipse.plugin.htmleditor"/>
