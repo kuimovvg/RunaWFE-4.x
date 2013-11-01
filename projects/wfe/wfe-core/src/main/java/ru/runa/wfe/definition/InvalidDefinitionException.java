@@ -12,7 +12,7 @@ public class InvalidDefinitionException extends InternalApplicationException {
     private final String definitionName;
 
     public InvalidDefinitionException(String definitionName, Throwable cause) {
-        super(cause);
+        super(definitionName, cause);
         this.definitionName = definitionName;
     }
 

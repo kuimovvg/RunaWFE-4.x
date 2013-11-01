@@ -3,8 +3,6 @@ package ru.runa.wfe.task.logic;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
@@ -18,7 +16,6 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
-import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.lang.InteractionNode;
@@ -55,7 +52,6 @@ import com.google.common.collect.Maps;
  * @since 4.0
  */
 public class TaskLogic extends WFCommonLogic {
-    private static final Log log = LogFactory.getLog(ExecutionLogic.class);
     @Autowired
     private WfTaskFactory taskObjectFactory;
     @Autowired
