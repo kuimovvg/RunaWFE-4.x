@@ -20,8 +20,6 @@ package ru.runa.wfe.execution.logic;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.audit.ProcessLog;
@@ -64,7 +62,6 @@ import com.google.common.collect.Maps;
  * @since 2.0
  */
 public class ExecutionLogic extends WFCommonLogic {
-    private static final Log log = LogFactory.getLog(ExecutionLogic.class);
     @Autowired
     private WfTaskFactory taskObjectFactory;
     @Autowired

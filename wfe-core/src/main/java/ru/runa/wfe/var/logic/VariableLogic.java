@@ -68,9 +68,14 @@ public class VariableLogic extends WFCommonLogic {
     }
 
     public HashMap<Long, WfVariable> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {
+        // TODO potential performance bottleneck
         HashMap<Long, WfVariable> map = Maps.newHashMapWithExpectedSize(processIds.size());
         for (Long processId : processIds) {
-            map.put(processId, getVariable(user, processId, variableName));
+            try {
+                map.put(processId, getVariable(user, processId, variableName));
+            } catch (Exception e) {
+                log.error("Unable to get variable '" + variableName + "' from process " + processId, e);
+            }
         }
         return map;
     }

@@ -62,7 +62,7 @@ import com.google.common.collect.Sets;
  * Created on 15.03.2005
  */
 public class WFCommonLogic extends CommonLogic {
-    private static final Log log = LogFactory.getLog(WFCommonLogic.class);
+    protected final Log log = LogFactory.getLog(getClass());
 
     @Autowired
     protected ProcessDefinitionLoader processDefinitionLoader;
