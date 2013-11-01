@@ -23,8 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
@@ -64,7 +62,6 @@ import com.google.common.collect.Lists;
  * Created on 15.03.2005
  */
 public class DefinitionLogic extends WFCommonLogic {
-    private static final Log log = LogFactory.getLog(DefinitionLogic.class);
     @Autowired
     private SystemLogDAO systemLogDAO;
 
