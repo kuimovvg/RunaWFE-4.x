@@ -47,6 +47,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
@@ -389,7 +390,14 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 	private static class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
         @Override
         public String getColumnText(Object element, int index) {
-            String[] data = (String[]) element;
+        	String[] data = (String[]) element;
+        	if(index == 0) {
+        		if (MethodTag.hasTag(data[index])) {
+                    MethodTag tag = MethodTag.getTagNotNull(data[index]);
+                    return tag.name;
+            	}
+        	}
+            
             return data[index];
         }
 

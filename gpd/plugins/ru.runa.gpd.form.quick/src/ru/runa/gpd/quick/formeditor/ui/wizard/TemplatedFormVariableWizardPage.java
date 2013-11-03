@@ -2,9 +2,15 @@ package ru.runa.gpd.quick.formeditor.ui.wizard;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import org.dom4j.Element;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -17,6 +23,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ru.runa.gpd.formeditor.ftl.MethodTag;
+import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
+import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
@@ -26,7 +35,7 @@ import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 
 public class TemplatedFormVariableWizardPage extends WizardPage {
-	private Combo tagType;
+	private ComboViewer tagType;
 	private Combo variableCombo;
 	private ProcessDefinition processDefinition;
 	private QuickFormGpdVariable variableDef;
@@ -81,7 +90,7 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
     }
 	
 	private void verifyContentsValid() {
-		if (tagType.getText().length() == 0) {
+		if (tagType.getCombo().getText().length() == 0) {
             setErrorMessage(Messages.getString("TemplatedFormVariableWizardPage.error.no_tag"));
             setPageComplete(false);
         } else if (variableCombo.getText().length() == 0) {
@@ -96,24 +105,40 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 	private void createTagTypeField(final Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Messages.getString("TemplatedFormVariableWizardPage.page.tag"));
-        List<String> types = new ArrayList<String>();        
+        List<SelectItem> types = new ArrayList<SelectItem>();        
         FreemarkerConfigurationGpdWrap freemarkerConfiguration = FreemarkerConfigurationGpdWrap.getInstance();
         
         for(String value : freemarkerConfiguration.getTagsName()) {
-        	types.add(value);
+        	if (MethodTag.hasTag(value)) {
+                MethodTag tag = MethodTag.getTagNotNull(value);
+                types.add(new SelectItem(tag.name, value));
+                continue;
+        	}
         }
         
-        tagType = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        tagType.setItems(types.toArray(new String[types.size()]));
-        tagType.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        /*if(tempTagType != null) {
-        	tagType.setText(tempTagType);
-        } */    
-        tagType.addSelectionListener(new LoggingSelectionAdapter() {
+        tagType = new ComboViewer(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+       
+        tagType.getCombo().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        tagType.setContentProvider(ArrayContentProvider.getInstance());
+        tagType.setLabelProvider(new LabelProvider() {
             @Override
-            protected void onSelection(SelectionEvent e) throws Exception {
-            	//tempTagType = tagType.getText();
-            	variableDef.setTagName(tagType.getText());
+            public String getText(Object element) {
+                if (element instanceof SelectItem) {
+                	SelectItem current = (SelectItem) element;
+
+                	return current.getLabel();
+                }
+                return "";
+            }
+        });
+        tagType.setInput(types.toArray(new SelectItem[types.size()]));
+        tagType.addSelectionChangedListener(new ISelectionChangedListener() {
+            @Override
+            public void selectionChanged(SelectionChangedEvent  e) {
+            	IStructuredSelection selection = (IStructuredSelection) e.getSelection();
+            	SelectItem selectItem = (SelectItem)selection.getFirstElement();
+                
+            	variableDef.setTagName(selectItem.getValue().toString());
             	rebuildView(parent.getParent());           	
                 verifyContentsValid();
             }
@@ -136,57 +161,89 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 	}
 	
 	private void createParamField(Composite parent) {
-		if(tagType.getText() != null && !tagType.getText().isEmpty() && "DisplayVariable".equals(tagType.getText())) {
-			/*FreemarkerConfigurationGpdWrap freemarkerConfiguration = FreemarkerConfigurationGpdWrap.getInstance();
-			FreemarkerTagGpdWrap freemarkerTagGpdWrap = null;
-			try {
-				freemarkerTagGpdWrap = freemarkerConfiguration.getTag(tagType.getText());
-			} catch (InstantiationException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IllegalAccessException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+		Map<String, MethodTag> methodTags = MethodTag.getAll();
+		if(methodTags != null) {
+			for(MethodTag methodTag : methodTags.values()) {
+				if(methodTag.name.equals(tagType.getCombo().getText())) {
+					for(int i = 1; i < methodTag.params.size(); i++) {
+						Param param = methodTag.params.get(i);
+						
+						Label label = new Label(parent, SWT.NONE);
+				        label.setText(param.label);
+				        if(param.isCombo() || param.isVarCombo()) {
+				        	final ComboViewer comboParam = new ComboViewer(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+				        	comboParam.getCombo().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				        	comboParam.setContentProvider(ArrayContentProvider.getInstance());
+				        	comboParam.setLabelProvider(new LabelProvider() {
+				                @Override
+				                public String getText(Object element) {
+				                    if (element instanceof SelectItem) {
+				                    	SelectItem current = (SelectItem) element;
+
+				                    	return current.getLabel();
+				                    }
+				                    return "";
+				                }
+				            });
+				        	
+				        	if(param.optionalValues != null) {
+				        		List<SelectItem> selectItems = new ArrayList<SelectItem>(param.optionalValues.size());
+				        		for(OptionalValue optionalValue : param.optionalValues) {
+				        			SelectItem selectItem = new SelectItem(optionalValue.value, optionalValue.name);
+				        			selectItems.add(selectItem);
+					        	}
+				        		comboParam.setInput(selectItems);
+				        	}
+				        	
+				        	if (paramValue != null) {
+				        		//comboParam.setText(paramValue);
+				        		List<SelectItem> selectItems = (List<SelectItem>) comboParam.getInput();
+				            	for(SelectItem selectItem : selectItems) {
+				            		if(paramValue.equals(selectItem.getValue())) {
+				            			comboParam.getCombo().setText(selectItem.getLabel());
+				            			break;
+				            		}
+				            	}
+						    }
+				        	comboParam.addSelectionChangedListener(new ISelectionChangedListener() {
+				                @Override
+				                public void selectionChanged(SelectionChangedEvent  e) {
+				                	IStructuredSelection selection = (IStructuredSelection) e.getSelection();
+				                	SelectItem selectItem = (SelectItem)selection.getFirstElement();				                    
+				                	paramValue = selectItem.getValue().toString();
+				                    verifyContentsValid();
+				                }
+				            });
+				        } else {
+				        	final Text text = new Text(parent, SWT.NONE);
+						    text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+						    if (paramValue != null) {
+						    	text.setText(paramValue);
+						    }
+						     
+						    text.addModifyListener(new LoggingModifyTextAdapter() {
+						        @Override
+						        protected void onTextChanged(ModifyEvent e) throws Exception {
+						        	paramValue = text.getText();
+						            verifyContentsValid();
+						        }
+						    });
+				        }						
+					}
+				}
 			}
-			
-			for(int i = 1; i < freemarkerTagGpdWrap.getArgumentsSize(); i++) {
-				Label label = new Label(parent, SWT.NONE);
-		        label.setText(Messages.getString("TemplatedFormVariableWizardPage.page.param"));
-				final Text text = new Text(parent, SWT.NONE);
-			     text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			     if (paramValue != null) {
-			    	 text.setText(paramValue);
-			     }
-			     
-			     text.addModifyListener(new LoggingModifyTextAdapter() {
-			        @Override
-			        protected void onTextChanged(ModifyEvent e) throws Exception {
-			        	paramValue = text.getText();
-			            verifyContentsValid();
-			        }
-			     });
-			}*/	
-			Label label = new Label(parent, SWT.NONE);
-	        label.setText(Messages.getString("TemplatedFormVariableWizardPage.page.param"));
-			final Text text = new Text(parent, SWT.NONE);
-		     text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		     if (paramValue != null) {
-		    	 text.setText(paramValue);
-		     }
-		     
-		     text.addModifyListener(new LoggingModifyTextAdapter() {
-		        @Override
-		        protected void onTextChanged(ModifyEvent e) throws Exception {
-		        	paramValue = text.getText();
-		            verifyContentsValid();
-		        }
-		     });
 		}
 	}
 	
 	private void populateValues() {
         if(variableDef != null && variableDef.getTagName() != null) {
-        	tagType.setText(variableDef.getTagName());
+        	SelectItem[] selectItems = (SelectItem[]) tagType.getInput();
+        	for(SelectItem selectItem : selectItems) {
+        		if(variableDef.getTagName().equals(selectItem.getValue())) {
+        			tagType.getCombo().setText(selectItem.getLabel());
+        			break;
+        		}
+        	}     	
         }    
 		if(variableDef != null && variableDef.getName() != null) {
         	variableCombo.setText(variableDef.getName());
@@ -197,7 +254,14 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 	}
 	
 	public String getTagType() {
-		return tagType.getText();
+		SelectItem[] selectItems = (SelectItem[]) tagType.getInput();
+    	for(SelectItem selectItem : selectItems) {
+    		if(tagType.getCombo().getText().equals(selectItem.getLabel())) {
+    			return selectItem.getValue().toString();
+    		}
+    	}
+    	
+		return "";
 	}
 	
 	public Variable getVariable() {
@@ -210,5 +274,30 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 	
 	public String getParamValue() {
 		return paramValue;
+	}
+	
+	
+	public static class SelectItem {
+		private String label;
+		private Object value;
+		
+		public SelectItem(String label, Object value) {
+			this.label = label;
+			this.value = value;
+		}
+		public String getLabel() {
+			return label;
+		}
+		public void setLabel(String label) {
+			this.label = label;
+		}
+		public Object getValue() {
+			return value;
+		}
+		public void setValue(Object value) {
+			this.value = value;
+		}
+		
+		
 	}
 }
