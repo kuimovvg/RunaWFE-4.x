@@ -24,6 +24,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -59,6 +60,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     private ExecutorLogic executorLogic;
 
     @Override
+    @WebResult(name = "result")
     public void update(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
@@ -66,6 +68,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public List<? extends Executor> getExecutors(@WebParam(name = "user") User user,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
@@ -76,6 +79,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public int getExecutorsCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
@@ -85,12 +89,14 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public Actor getActorCaseInsensitive(@WebParam(name = "login") String login) {
         Preconditions.checkArgument(login != null);
         return executorLogic.getActorCaseInsensitive(login);
     }
 
     @Override
+    @WebResult(name = "result")
     public Executor getExecutorByName(@WebParam(name = "user") User user, @WebParam(name = "name") String name) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(name != null);
@@ -98,6 +104,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void remove(@WebParam(name = "user") User user, @WebParam(name = "ids") List<Long> ids) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(ids != null);
@@ -105,6 +112,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public <T extends Executor> T create(@WebParam(name = "user") User user, @WebParam(name = "executor") T executor) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
@@ -112,6 +120,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void addExecutorsToGroup(@WebParam(name = "user") User user, @WebParam(name = "executorIds") List<Long> executorIds,
             @WebParam(name = "groupId") Long groupId) {
         Preconditions.checkArgument(user != null);
@@ -120,6 +129,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void addExecutorToGroups(@WebParam(name = "user") User user, @WebParam(name = "executorId") Long executorId,
             @WebParam(name = "groupIds") List<Long> groupIds) {
         Preconditions.checkArgument(user != null);
@@ -129,6 +139,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public List<Executor> getGroupChildren(@WebParam(name = "user") User user, @WebParam(name = "group") Group group,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
         Preconditions.checkArgument(user != null);
@@ -140,6 +151,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public int getGroupChildrenCount(@WebParam(name = "user") User user, @WebParam(name = "group") Group group,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
         Preconditions.checkArgument(user != null);
@@ -151,6 +163,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public List<Actor> getGroupActors(@WebParam(name = "user") User user, @WebParam(name = "group") Group group) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
@@ -158,6 +171,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeExecutorsFromGroup(@WebParam(name = "user") User user, @WebParam(name = "executorIds") List<Long> executorIds,
             @WebParam(name = "groupId") Long groupId) {
         Preconditions.checkArgument(user != null);
@@ -166,6 +180,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeExecutorFromGroups(@WebParam(name = "user") User user, @WebParam(name = "executorId") Long executorId,
             @WebParam(name = "groupIds") List<Long> groupIds) {
         Preconditions.checkArgument(user != null);
@@ -175,6 +190,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void setPassword(@WebParam(name = "user") User user, @WebParam(name = "actor") Actor actor, @WebParam(name = "password") String password) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(actor != null);
@@ -183,12 +199,14 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void setStatus(@WebParam(name = "user") User user, @WebParam(name = "actor") Actor actor, @WebParam(name = "active") boolean active) {
         Preconditions.checkArgument(user != null);
         executorLogic.setStatus(user, actor, active, true);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<Group> getExecutorGroups(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
         Preconditions.checkArgument(user != null);
@@ -200,6 +218,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public int getExecutorGroupsCount(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation, @WebParam(name = "excluded") boolean excluded) {
         Preconditions.checkArgument(user != null);
@@ -211,6 +230,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public List<Executor> getAllExecutorsFromGroup(@WebParam(name = "user") User user, @WebParam(name = "group") Group group) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
@@ -218,6 +238,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public boolean isExecutorInGroup(@WebParam(name = "user") User user, @WebParam(name = "executor") Executor executor,
             @WebParam(name = "group") Group group) {
         Preconditions.checkArgument(user != null);
@@ -227,12 +248,14 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public boolean isExecutorExist(@WebParam(name = "user") User user, @WebParam(name = "executorName") String executorName) {
         Preconditions.checkArgument(user != null);
         return executorLogic.isExecutorExist(user, executorName);
     }
 
     @Override
+    @WebResult(name = "result")
     public Executor getExecutor(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(id != null);
@@ -240,6 +263,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     }
 
     @Override
+    @WebResult(name = "result")
     public Actor getActorByCode(@WebParam(name = "user") User user, @WebParam(name = "code") Long code) {
         Preconditions.checkArgument(user != null);
         return executorLogic.getActorByCode(user, code);
