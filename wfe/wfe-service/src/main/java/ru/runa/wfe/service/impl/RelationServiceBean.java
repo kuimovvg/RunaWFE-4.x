@@ -24,6 +24,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -60,6 +61,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     private RelationLogic relationLogic;
 
     @Override
+    @WebResult(name = "result")
     public RelationPair addRelationPair(@WebParam(name = "user") User user, @WebParam(name = "relationId") Long relationId,
             @WebParam(name = "from") Executor from, @WebParam(name = "to") Executor to) {
         Preconditions.checkNotNull(user);
@@ -69,6 +71,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
+    @WebResult(name = "result")
     public Relation createRelation(@WebParam(name = "user") User user, @WebParam(name = "relation") Relation relation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(relation);
@@ -76,13 +79,14 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
-    public Relation updateRelation(@WebParam(name = "user") User user, @WebParam(name = "relation") Relation relation)
-             {
+    @WebResult(name = "result")
+    public Relation updateRelation(@WebParam(name = "user") User user, @WebParam(name = "relation") Relation relation) {
         Preconditions.checkNotNull(user);
         return relationLogic.updateRelation(user, relation);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<Relation> getRelations(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
@@ -92,18 +96,21 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
+    @WebResult(name = "result")
     public Relation getRelationByName(@WebParam(name = "user") User user, @WebParam(name = "name") String name) {
         Preconditions.checkNotNull(user);
         return relationLogic.getRelation(user, name);
     }
 
     @Override
+    @WebResult(name = "result")
     public Relation getRelation(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         return relationLogic.getRelation(user, id);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<RelationPair> getExecutorsRelationPairsRight(@WebParam(name = "user") User user, @WebParam(name = "name") String name,
             @WebParam(name = "right") List<? extends Executor> right) {
         Preconditions.checkNotNull(user);
@@ -112,6 +119,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
+    @WebResult(name = "result")
     public List<RelationPair> getExecutorsRelationPairsLeft(@WebParam(name = "user") User user, @WebParam(name = "name") String name,
             @WebParam(name = "left") List<? extends Executor> left) {
         Preconditions.checkNotNull(user);
@@ -120,6 +128,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
+    @WebResult(name = "result")
     public List<RelationPair> getRelationPairs(@WebParam(name = "user") User user, @WebParam(name = "name") String name,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
@@ -130,12 +139,14 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeRelationPair(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         relationLogic.removeRelationPair(user, id);
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeRelationPairs(@WebParam(name = "user") User user, @WebParam(name = "ids") List<Long> ids) {
         Preconditions.checkNotNull(user);
         for (Long id : ids) {
@@ -144,6 +155,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeRelation(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         relationLogic.removeRelation(user, id);

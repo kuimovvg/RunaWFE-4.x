@@ -17,6 +17,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -55,6 +56,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     private BotLogic botLogic;
 
     @Override
+    @WebResult(name = "result")
     public BotStation createBotStation(@WebParam(name = "user") User user, @WebParam(name = "botStation") BotStation botStation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(botStation);
@@ -62,23 +64,27 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public BotStation getBotStation(@WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(id);
         return botLogic.getBotStationNotNull(id);
     }
 
     @Override
+    @WebResult(name = "result")
     public BotStation getBotStationByName(@WebParam(name = "name") String name) {
         Preconditions.checkNotNull(name);
         return botLogic.getBotStation(name);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<BotStation> getBotStations() {
         return botLogic.getBotStations();
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeBotStation(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(id);
@@ -86,6 +92,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public void updateBotStation(@WebParam(name = "user") User user, @WebParam(name = "botStation") BotStation botStation) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(botStation);
@@ -93,6 +100,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public Bot getBot(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(id);
@@ -100,6 +108,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeBot(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(id);
@@ -107,6 +116,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public List<Bot> getBots(@WebParam(name = "user") User user, @WebParam(name = "botStationId") Long botStationId) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(botStationId);
@@ -114,6 +124,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public Bot createBot(@WebParam(name = "user") User user, @WebParam(name = "bot") Bot bot) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(bot);
@@ -121,6 +132,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public void updateBot(@WebParam(name = "user") User user, @WebParam(name = "bot") Bot bot) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(bot);
@@ -128,6 +140,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public List<BotTask> getBotTasks(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(id);
@@ -135,6 +148,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public BotTask createBotTask(@WebParam(name = "user") User user, @WebParam(name = "botTask") BotTask botTask) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(botTask);
@@ -142,6 +156,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public void updateBotTask(@WebParam(name = "user") User user, @WebParam(name = "botTask") BotTask botTask) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(botTask);
@@ -149,6 +164,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeBotTask(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(id);
@@ -156,6 +172,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public BotTask getBotTask(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(id);
@@ -163,6 +180,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public byte[] exportBot(@WebParam(name = "user") User user, @WebParam(name = "bot") Bot bot) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(bot);
@@ -194,6 +212,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public byte[] exportBotStation(@WebParam(name = "user") User user, @WebParam(name = "botStation") BotStation botStation) {
         try {
             Preconditions.checkNotNull(user);
@@ -218,6 +237,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public void importBot(@WebParam(name = "user") User user, @WebParam(name = "botStation") BotStation botStation,
             @WebParam(name = "archive") byte[] archive, @WebParam(name = "replace") boolean replace) {
         try {
@@ -244,6 +264,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public void importBotStation(@WebParam(name = "user") User user, @WebParam(name = "archive") byte[] archive,
             @WebParam(name = "replace") boolean replace) {
         try {
@@ -274,6 +295,7 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
     }
 
     @Override
+    @WebResult(name = "result")
     public byte[] exportBotTask(@WebParam(name = "user") User user, @WebParam(name = "bot") Bot bot,
             @WebParam(name = "botTaskName") String botTaskName) {
         Preconditions.checkNotNull(user);
