@@ -16,7 +16,6 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.ProjectFinder;
 
 public class StartImagePropertyDescriptor extends PropertyDescriptor {
     public StartImagePropertyDescriptor(Object id, String label) {
@@ -29,7 +28,7 @@ public class StartImagePropertyDescriptor extends PropertyDescriptor {
     }
 
     private IFile getImageFile() {
-        return ProjectFinder.getFile(ParContentProvider.PROCESS_INSTANCE_START_IMAGE_FILE_NAME);
+        return IOUtils.getFile(ParContentProvider.PROCESS_INSTANCE_START_IMAGE_FILE_NAME);
     }
 
     class ImageCellEditor extends DialogCellEditor {

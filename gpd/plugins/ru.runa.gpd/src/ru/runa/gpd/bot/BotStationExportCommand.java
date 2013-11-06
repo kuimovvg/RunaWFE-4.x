@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.ModalContext;
 
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 
 public class BotStationExportCommand extends BotExportCommand {
     public BotStationExportCommand(IResource exportResource, OutputStream outputStream) {
@@ -26,7 +26,7 @@ public class BotStationExportCommand extends BotExportCommand {
     @Override
     protected void execute(IProgressMonitor progressMonitor) throws InvocationTargetException {
         try {
-            List<IFolder> botFolders = ProjectFinder.getBotFolders((IProject) exportResource);
+            List<IFolder> botFolders = IOUtils.getBotFolders((IProject) exportResource);
             int totalWork = 1 + botFolders.size();
             progressMonitor.beginTask("", totalWork);
             ZipOutputStream zipStream = new ZipOutputStream(outputStream);

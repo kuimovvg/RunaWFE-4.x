@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.dom4j.Document;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -14,7 +15,6 @@ import org.eclipse.core.runtime.Platform;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Objects;
@@ -84,10 +84,10 @@ public class NodeRegistry {
         return list;
     }
 
-    public static ProcessDefinition parseProcessDefinition(IFile file) throws Exception {
+    public static ProcessDefinition parseProcessDefinition(IFile definitionFile) throws Exception {
         // Workaround for 'resource out of sync'
-        ProjectFinder.refreshProcessFolder(file);
-        Document document = XmlUtil.parseWithoutValidation(file.getContents());
+        definitionFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+        Document document = XmlUtil.parseWithoutValidation(definitionFile.getContents());
         for (Language language : Language.values()) {
             if (language.getSerializer().isSupported(document)) {
                 ProcessDefinition definition = language.getSerializer().parseXML(document);

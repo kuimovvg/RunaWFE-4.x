@@ -1,12 +1,11 @@
 package ru.runa.gpd.ui.wizard;
 
+import java.util.List;
+
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -25,26 +24,26 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 
 public class CopyProcessDefinitionWizardPage extends WizardPage {
     private Combo projectCombo;
     private Text processText;
     private Combo languageCombo;
-    private final IWorkspaceRoot workspaceRoot;
     private final IFolder sourceProcessFolder;
     private final ProcessDefinition sourceDefinition;
+    private final List<IContainer> processContainers;
 
     public CopyProcessDefinitionWizardPage(IFolder sourceProcessFolder) {
         super(Localization.getString("CopyProcessDefinitionWizardPage.page.name"));
         this.sourceProcessFolder = sourceProcessFolder;
-        this.workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
         setTitle(Localization.getString("CopyProcessDefinitionWizardPage.page.title"));
         setDescription(Localization.getString("CopyProcessDefinitionWizardPage.page.description"));
         sourceDefinition = ProcessCache.getFirstProcessDefinition(sourceProcessFolder.getName());
         if (sourceDefinition == null) {
             throw new NullPointerException("Process definition is null");
         }
+        this.processContainers = IOUtils.getAllProcessContainers();
     }
 
     public IFolder getSourceProcessFolder() {
@@ -73,11 +72,10 @@ public class CopyProcessDefinitionWizardPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("label.project"));
         projectCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        for (IProject project : ProjectFinder.getAllProcessDefinitionProjects()) {
-            projectCombo.add(project.getName());
+        for (IContainer container : processContainers) {
+            projectCombo.add(IOUtils.getProcessContainerName((IContainer) container));
         }
         projectCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        projectCombo.setText(sourceProcessFolder.getParent().getParent().getParent().getName());
         projectCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -113,45 +111,22 @@ public class CopyProcessDefinitionWizardPage extends WizardPage {
     }
 
     private void verifyContentsValid() {
-        if (!checkProjectValid()) {
+        if (projectCombo.getText().length() == 0) {
             setErrorMessage(Localization.getString("error.choose_project"));
             setPageComplete(false);
-        } else if (isProcessNameEmpty()) {
+        } else if (processText.getText().length() == 0) {
             setErrorMessage(Localization.getString("error.no_process_name"));
             setPageComplete(false);
-        } else if (!isProcessNameValid()) {
+        } else if (!ResourcesPlugin.getWorkspace().validateName(processText.getText(), IResource.FOLDER).isOK()) {
             setErrorMessage(Localization.getString("error.process_name_not_valid"));
             setPageComplete(false);
-        } else if (processExists()) {
+        } else if (getTargetProcessFolder().exists()) {
             setErrorMessage(Localization.getString("error.process_already_exists"));
             setPageComplete(false);
         } else {
             setErrorMessage(null);
             setPageComplete(true);
         }
-    }
-
-    private boolean processExists() {
-        return getTargetProcessFolder().exists();
-    }
-
-    private boolean isProcessNameEmpty() {
-        return processText.getText().length() == 0;
-    }
-
-    private boolean isProcessNameValid() {
-        return ResourcesPlugin.getWorkspace().validateName(processText.getText(), IResource.FOLDER).isOK();
-    }
-
-    private boolean checkProjectValid() {
-        if (projectCombo.getText().length() == 0) {
-            return false;
-        }
-        return workspaceRoot.getFolder(getProcessFolderPath()).exists();
-    }
-
-    private IPath getProcessFolderPath() {
-        return new Path(projectCombo.getText()).append("/src/process/");
     }
 
     public String getProcessName() {
@@ -163,7 +138,7 @@ public class CopyProcessDefinitionWizardPage extends WizardPage {
     }
 
     public IFolder getTargetProcessFolder() {
-        IPath path = getProcessFolderPath().append(getProcessName());
-        return workspaceRoot.getFolder(path);
+        IContainer container = processContainers.get(projectCombo.getSelectionIndex());
+        return IOUtils.getProcessFolder(container, getProcessName());
     }
 }

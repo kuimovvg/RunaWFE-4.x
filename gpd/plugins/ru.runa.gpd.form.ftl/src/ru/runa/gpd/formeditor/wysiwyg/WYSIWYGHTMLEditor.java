@@ -47,7 +47,7 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.EditorUtils;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.VariableUtils;
 import tk.eclipse.plugin.htmleditor.HTMLPlugin;
@@ -95,7 +95,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         ftlFormat = editorInput.getName().endsWith("ftl");
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
         lastInitializedInstance = this;
-        IFile definitionFile = ProjectFinder.getProcessDefinitionFile((IFolder) formFile.getParent());
+        IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) formFile.getParent());
         ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
         for (FormNode formNode : processDefinition.getChildren(FormNode.class)) {
             if (editorInput.getName().equals(formNode.getFormFileName())) {

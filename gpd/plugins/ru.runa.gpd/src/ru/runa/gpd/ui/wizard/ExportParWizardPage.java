@@ -50,7 +50,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 
 import com.google.common.base.Strings;
@@ -71,7 +71,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         for (IFile file : ProcessCache.getAllProcessDefinitionsMap().keySet()) {
             ProcessDefinition definition = ProcessCache.getProcessDefinition(file);
             if (definition != null) {
-                definitionNameFileMap.put(getKey(file.getProject(), definition), file);
+                definitionNameFileMap.put(getKey(file, definition), file);
             }
         }
     }
@@ -102,13 +102,13 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         giveFocusToDestination();
         setControl(pageControl);
         setPageComplete(false);
-        IFile adjacentFile = ProjectFinder.getCurrentFile();
+        IFile adjacentFile = IOUtils.getCurrentFile();
         if (adjacentFile != null && adjacentFile.getParent().exists()) {
-            IFile definitionFile = ProjectFinder.getProcessDefinitionFile((IFolder) adjacentFile.getParent());
+            IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) adjacentFile.getParent());
             if (definitionFile != null && definitionFile.exists()) {
                 ProcessDefinition currentDefinition = ProcessCache.getProcessDefinition(definitionFile);
                 if (currentDefinition != null) {
-                    definitionListViewer.setSelection(new StructuredSelection(getKey(definitionFile.getProject(), currentDefinition)));
+                    definitionListViewer.setSelection(new StructuredSelection(getKey(definitionFile, currentDefinition)));
                 }
             }
         }
@@ -128,8 +128,14 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         });
     }
 
-    private String getKey(IProject project, ProcessDefinition definition) {
-        return project.getName() + "/" + definition.getName();
+    private String getKey(IFile definitionFile, ProcessDefinition definition) {
+        IProject project = definitionFile.getProject();
+        if (IOUtils.isProjectHasProcessNature(project)) {
+            // TODO
+            return definitionFile.getParent().getFullPath().toString();
+        } else {
+            return project.getName() + "/" + definition.getName();
+        }
     }
 
     @Override
@@ -186,7 +192,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         for (String selectedDefinitionName : selectedDefinitionNames) {
             try {
                 IFile definitionFile = definitionNameFileMap.get(selectedDefinitionName);
-                ProjectFinder.refreshProcessFolder(definitionFile);
+                definitionFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
                 ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
                 int validationResult = definition.validateDefinition(definitionFile);
                 if (!exportToFile && validationResult != 0) {

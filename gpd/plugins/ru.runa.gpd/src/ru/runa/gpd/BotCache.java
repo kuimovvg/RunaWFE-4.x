@@ -17,7 +17,6 @@ import org.eclipse.ui.PlatformUI;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.ProjectFinder;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
@@ -47,7 +46,7 @@ public class BotCache {
             BOT_STATION_BOTS.clear();
             BOT_TASKS.clear();
             BOT_TASK_FILES.clear();
-            IProject[] projects = ProjectFinder.getAllBotStationProjects();
+            IProject[] projects = IOUtils.getAllBotStationProjects();
             for (IProject botStationProject : projects) {
                 Set<String> botNames = Sets.newHashSet();
                 IFolder botStationFolder = botStationProject.getFolder("src/botstation");

@@ -3,15 +3,15 @@ package ru.runa.gpd.util;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
-import com.google.common.base.Strings;
-
 import ru.runa.gpd.PluginLogger;
 import ru.runa.wfe.definition.IFileDataProvider;
+
+import com.google.common.base.Strings;
 
 public class ProcessFileUtils {
 
     public static IFile getProcessFile(String fileName) {
-        return IOUtils.getAdjacentFile(ProjectFinder.getCurrentFile(), fileName);
+        return IOUtils.getFile(fileName);
     }
 
     public static boolean isProcessFile(String path) {
