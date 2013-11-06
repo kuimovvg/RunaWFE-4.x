@@ -22,6 +22,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.FileVariable;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -75,33 +76,37 @@ public class WebScriptExecutor {
         return webScriptFileParameters;
     }
 
-    public ByteArrayOutputStream doRequest() throws Exception {
-        final DefaultHttpClient httpClient = new DefaultHttpClient();
-        httpClient.getCredentialsProvider().setCredentials(new AuthScope(null, -1, null),
-                new UsernamePasswordCredentials(WSConnectionSettings.getInstance().getLogin(), WSConnectionSettings.getInstance().getPassword()));
-        String alfBaseUrl = WSConnectionSettings.getInstance().getAlfBaseUrl();
-        final HttpUriRequest request;
-        if (useHttpPost) {
-            request = formHttpPostRequest(alfBaseUrl);
-        } else {
-            request = formHttpGetRequest(alfBaseUrl);
-        }
-        return new AlfSessionWrapper<ByteArrayOutputStream>() {
-
-            @Override
-            protected ByteArrayOutputStream code() throws Exception {
-                HttpResponse response = httpClient.execute(request);
-                int statusCode = response.getStatusLine().getStatusCode();
-                log.debug("WebScript status code = " + statusCode);
-                if (statusCode != 200 && throwExceptionOnErrorState) {
-                    throw new InternalApplicationException("WebScript " + request.getRequestLine() + " status code is " + statusCode);
-                }
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                response.getEntity().writeTo(baos);
-                return baos;
+    public ByteArrayOutputStream doRequest() {
+        try {
+            final DefaultHttpClient httpClient = new DefaultHttpClient();
+            httpClient.getCredentialsProvider().setCredentials(new AuthScope(null, -1, null),
+                    new UsernamePasswordCredentials(WSConnectionSettings.getInstance().getLogin(), WSConnectionSettings.getInstance().getPassword()));
+            String alfBaseUrl = WSConnectionSettings.getInstance().getAlfBaseUrl();
+            final HttpUriRequest request;
+            if (useHttpPost) {
+                request = formHttpPostRequest(alfBaseUrl);
+            } else {
+                request = formHttpGetRequest(alfBaseUrl);
             }
+            return new AlfSessionWrapper<ByteArrayOutputStream>() {
 
-        }.runInSession();
+                @Override
+                protected ByteArrayOutputStream code() throws Exception {
+                    HttpResponse response = httpClient.execute(request);
+                    int statusCode = response.getStatusLine().getStatusCode();
+                    log.debug("WebScript status code = " + statusCode);
+                    if (statusCode != 200 && throwExceptionOnErrorState) {
+                        throw new InternalApplicationException("WebScript " + request.getRequestLine() + " status code is " + statusCode);
+                    }
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    response.getEntity().writeTo(baos);
+                    return baos;
+                }
+
+            }.runInSession();
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     private HttpGet formHttpGetRequest(String alfBaseUrl) throws Exception {
