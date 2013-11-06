@@ -19,16 +19,25 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 
+import ru.runa.gpd.BotStationNature;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.ProcessProjectNature;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.par.ParContentProvider;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
 import com.google.common.io.Files;
@@ -243,28 +252,6 @@ public class IOUtils {
         }
     }
 
-    // unused now
-    public static void renameFormFiles(FormNode formNode, String newName) throws CoreException {
-        if (formNode.hasForm()) {
-            IFile file = ProjectFinder.getFile(formNode.getFormFileName());
-            String fileName = newName + "." + formNode.getFormType();
-            IFile movedFile = moveFileSafely(file, fileName);
-            formNode.setFormFileName(movedFile.getName());
-        }
-        if (formNode.hasFormValidation()) {
-            IFile file = ProjectFinder.getFile(formNode.getValidationFileName());
-            String fileName = newName + "." + FormNode.VALIDATION_SUFFIX;
-            IFile movedFile = moveFileSafely(file, fileName);
-            formNode.setValidationFileName(movedFile.getName());
-        }
-        if (formNode.hasFormScript()) {
-            IFile file = ProjectFinder.getFile(formNode.getScriptFileName());
-            String fileName = newName + "." + FormNode.SCRIPT_SUFFIX;
-            IFile movedFile = moveFileSafely(file, fileName);
-            formNode.setScriptFileName(movedFile.getName());
-        }
-    }
-
     public static void extractArchiveToFolder(InputStream archiveStream, IFolder folder) throws IOException, CoreException {
         ZipInputStream zis = new ZipInputStream(archiveStream);
         byte[] buf = new byte[1024];
@@ -299,6 +286,219 @@ public class IOUtils {
                 setUtfCharsetRecursively(member);
             }
         }
+    }
+
+
+    public static IFile getCurrentFile() {
+        IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+        if (activeWindow == null) {
+            return null;
+        }
+        IEditorPart editorPart = activeWindow.getActivePage().getActiveEditor();
+        if (editorPart == null) {
+            return null;
+        }
+        if (editorPart.getEditorInput() instanceof IFileEditorInput) {
+            return ((IFileEditorInput) editorPart.getEditorInput()).getFile();
+        }
+        return null;
+    }
+
+    public static IFile getFile(String fileName) {
+        return IOUtils.getAdjacentFile(getCurrentFile(), fileName);
+    }
+
+    private static IProject[] getWorkspaceProjects() {
+        return ResourcesPlugin.getWorkspace().getRoot().getProjects();
+    }
+
+    public static IProject[] getAllBotStationProjects() {
+        try {
+            List<IProject> projects = new ArrayList<IProject>();
+            for (IProject project : getWorkspaceProjects()) {
+                if (project.isOpen() && project.getNature(BotStationNature.NATURE_ID) != null) {
+                    projects.add(project);
+                }
+            }
+            return projects.toArray(new IProject[0]);
+        } catch (CoreException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    public static List<IFolder> getAllBotFolders() {
+        List<IFolder> folderList = new ArrayList<IFolder>();
+        for (IProject botStation : getAllBotStationProjects()) {
+            folderList.addAll(getBotFolders(botStation));
+        }
+        return folderList;
+    }
+
+    public static List<IFolder> getBotFolders(IProject project) {
+        try {
+            List<IFolder> folderList = new ArrayList<IFolder>();
+            IFolder botFolder = project.getFolder("src/botstation");
+            IResource[] resources = botFolder.members();
+            for (int i = 0; i < resources.length; i++) {
+                if (resources[i] instanceof IFolder) {
+                    folderList.add((IFolder) resources[i]);
+                }
+            }
+            return folderList;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static List<IFile> getBotTaskFiles(IFolder botFolder) {
+        List<IFile> fileList = new ArrayList<IFile>();
+        try {
+            IResource[] resources = botFolder.members();
+            for (int i = 0; i < resources.length; i++) {
+                if (resources[i] instanceof IFile && resources[i].getFileExtension() == null) {
+                    fileList.add((IFile) resources[i]);
+                }
+            }
+        } catch (CoreException e) {
+            throw new RuntimeException(e);
+        }
+        return fileList;
+    }
+
+    public static List<IFile> getAllBotTasks() {
+        List<IFile> fileList = new ArrayList<IFile>();
+        for (IFolder folder : getAllBotFolders()) {
+            fileList.addAll(getBotTaskFiles(folder));
+        }
+        return fileList;
+    }
+
+    public static IProject[] getAllProcessDefinitionProjects() {
+        List<IProject> result = new ArrayList<IProject>();
+        try {
+            for (IProject project : getWorkspaceProjects()) {
+                if (project.getNature(BotStationNature.NATURE_ID) == null) {
+                    result.add(project);
+                }
+            }
+        } catch (CoreException e) {
+            PluginLogger.logError(e);
+        }
+        return result.toArray(new IProject[result.size()]);
+    }
+
+    public static List<IFile> getAllProcessDefinitionFiles() {
+        List<IFile> fileList = new ArrayList<IFile>();
+        IProject[] projects = getAllProcessDefinitionProjects();
+        for (int i = 0; i < projects.length; i++) {
+            if (projects[i].isOpen()) {
+                fileList.addAll(getProcessDefinitionFiles(projects[i]));
+            }
+        }
+        return fileList;
+    }
+
+    public static List<IFile> getProcessDefinitionFiles(IProject project) {
+        try {
+            List<IFile> files = new ArrayList<IFile>();
+            findProcessDefinitionsRecursive(project, files);
+            return files;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void findProcessDefinitionsRecursive(IResource resource, List<IFile> result) throws CoreException {
+        if (resource instanceof IFolder) {
+            IFolder folder = (IFolder) resource;
+            IFile definitionFile = folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+            if (definitionFile.exists()) {
+                result.add(definitionFile);
+                return;
+            }
+            if (folder.getName().startsWith(".")) {
+                return;
+            }
+            if (folder.getName().equals("bin")) {
+                return;
+            }
+        }
+        if (resource instanceof IContainer) {
+            IContainer container = (IContainer) resource;
+            IResource[] resources = container.members();
+            for (int i = 0; i < resources.length; i++) {
+                findProcessDefinitionsRecursive(resources[i], result);
+            }
+        }
+    }
+
+    public static List<IContainer> getAllProcessContainers() {
+        List<IContainer> result = Lists.newArrayList();
+        for (IProject project : getAllProcessDefinitionProjects()) {
+            if (isProjectHasProcessNature(project)) {
+                findProcessContainers(project, result);
+            } else {
+                result.add(project.getFolder("src/process"));
+            }
+        }
+        return result;
+    }
+
+    private static void findProcessContainers(IResource resource, List<IContainer> result) {
+        if (resource instanceof IFolder) {
+            IFolder folder = (IFolder) resource;
+            IFile definitionFile = folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+            if (definitionFile.exists()) {
+                return;
+            }
+            if (folder.getName().startsWith(".")) {
+                return;
+            }
+        }
+        if (resource instanceof IContainer) {
+            IContainer container = (IContainer) resource;
+            result.add(container);
+            try {
+                IResource[] resources = container.members();
+                for (int i = 0; i < resources.length; i++) {
+                    findProcessContainers(resources[i], result);
+                }
+            } catch (CoreException e) {
+                PluginLogger.logError(e);
+            }
+        }
+    }
+    
+    public static IFolder getProcessFolder(IContainer container, String definitionName) {
+        if (container instanceof IProject) {
+            return ((IProject) container).getFolder(definitionName);
+        }
+        if (container instanceof IFolder) {
+            return ((IFolder) container).getFolder(definitionName);
+        }
+        throw new IllegalArgumentException("Unexpected " + container);
+    }
+    
+    public static boolean isProjectHasProcessNature(IProject project) {
+        try {
+            return project != null && project.getNature(ProcessProjectNature.NATURE_ID) != null;
+        } catch (CoreException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getProcessContainerName(IContainer container) {
+        IProject project =  container.getProject();
+        if (isProjectHasProcessNature(project)) {
+            // TODO
+            return container.getFullPath().toString();
+        } else {
+            return project != null ? project.getName() : "";
+        }
+    }
+
+    public static IFile getProcessDefinitionFile(IFolder folder) {
+        return folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
     }
 
 }

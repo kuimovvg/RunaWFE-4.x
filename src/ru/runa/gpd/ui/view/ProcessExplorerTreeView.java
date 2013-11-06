@@ -34,10 +34,12 @@ import org.eclipse.ui.part.ViewPart;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 
-public class ExplorerTreeView extends ViewPart implements ISelectionListener {
+public class ProcessExplorerTreeView extends ViewPart implements ISelectionListener {
     private TreeViewer viewer;
 
     @Override
@@ -65,8 +67,8 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
     @Override
     public void createPartControl(Composite parent) {
         viewer = new TreeViewer(parent, SWT.NONE);
-        viewer.setContentProvider(new ResourcesContentProvider());
-        viewer.setLabelProvider(new ResourcesLabelProvider());
+        viewer.setContentProvider(new ProcessExplorerContentProvider());
+        viewer.setLabelProvider(new ProcessExplorerLabelProvider());
         viewer.setInput(new Object());
         ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
             @Override
@@ -102,7 +104,7 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
         menuMgr.addMenuListener(new IMenuListener() {
             @Override
             public void menuAboutToShow(IMenuManager manager) {
-                ExplorerTreeView.this.fillContextMenu(manager);
+                ProcessExplorerTreeView.this.fillContextMenu(manager);
             }
         });
         viewer.getControl().setMenu(menu);
@@ -114,7 +116,11 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
         final Object selectedObject = selection.getFirstElement();
         final List<IResource> resources = selection.toList();
         boolean menuOnProject = selectedObject instanceof IProject;
-        boolean menuOnProcess = selectedObject instanceof IFolder;
+        boolean menuOnFolder = selectedObject instanceof IFolder;
+        boolean menuOnProcess = false;
+        if (menuOnFolder) {
+            menuOnProcess = ((IFolder) selectedObject).getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME).exists();
+        }
         //
         if (menuOnProcess) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.openProcess")) {
@@ -130,7 +136,17 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 WorkspaceOperations.createNewProject();
             }
         });
-        if (menuOnProject) {
+        if ((menuOnProject || menuOnFolder) && !menuOnProcess) {
+            if (IOUtils.isProjectHasProcessNature(((IContainer) selectedObject).getProject())) {
+                manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newFolder"), SharedImages.getImageDescriptor("icons/add_folder.gif")) {
+                    @Override
+                    public void run() {
+                        WorkspaceOperations.createNewFolder(selection);
+                    }
+                });
+            }
+        }
+        if (menuOnProject || menuOnFolder) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProcess"), SharedImages.getImageDescriptor("icons/process.gif")) {
                 @Override
                 public void run() {
@@ -164,7 +180,7 @@ public class ExplorerTreeView extends ViewPart implements ISelectionListener {
                 }
             });
         }
-        if (menuOnProject || menuOnProcess) {
+        if (menuOnProject || menuOnFolder || menuOnProcess) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.refresh"), SharedImages.getImageDescriptor("icons/refresh.gif")) {
                 @Override
                 public void run() {

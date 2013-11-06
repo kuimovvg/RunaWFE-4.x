@@ -49,7 +49,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TextAnnotation;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 import com.google.common.base.Strings;
@@ -63,7 +63,7 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
     }
 
     public ProcessDefinition getCurrentProcessDefinition() {
-        return ProcessCache.getProcessDefinition(ProjectFinder.getCurrentFile());
+        return ProcessCache.getProcessDefinition(IOUtils.getCurrentFile());
     }
 
     @Override
