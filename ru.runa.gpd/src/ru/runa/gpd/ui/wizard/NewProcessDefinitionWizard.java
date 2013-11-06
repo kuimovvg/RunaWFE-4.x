@@ -23,7 +23,7 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.par.GpdXmlContentProvider;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
 
@@ -40,8 +40,8 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
     }
 
     @Override
-    public void init(IWorkbench w, IStructuredSelection currentSelection) {
-        this.workbench = w;
+    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+        this.workbench = workbench;
         this.selection = currentSelection;
     }
 
@@ -63,8 +63,8 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                         IFolder folder = page.getProcessFolder();
                         folder.create(true, true, null);
                         monitor.worked(1);
-                        IFile definitionFile = ProjectFinder.getProcessDefinitionFile(folder);
-                        String processName = page.getProcessFolder().getName();
+                        IFile definitionFile = IOUtils.getProcessDefinitionFile(folder);
+                        String processName = folder.getName();
                         Language language = page.getLanguage();
                         Map<String, String> properties = Maps.newHashMap();
                         if (language == Language.BPMN) {

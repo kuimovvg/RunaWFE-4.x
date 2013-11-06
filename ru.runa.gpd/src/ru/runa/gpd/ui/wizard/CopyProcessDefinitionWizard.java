@@ -15,7 +15,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 public class CopyProcessDefinitionWizard extends Wizard implements INewWizard {
@@ -49,7 +49,7 @@ public class CopyProcessDefinitionWizard extends Wizard implements INewWizard {
                         monitor.worked(1);
                         IFolder targetFolder = page.getTargetProcessFolder();
                         page.getSourceProcessFolder().copy(targetFolder.getFullPath(), true, monitor);
-                        IFile definitionFile = ProjectFinder.getProcessDefinitionFile(targetFolder);
+                        IFile definitionFile = IOUtils.getProcessDefinitionFile(targetFolder);
                         monitor.worked(1);
                         ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
                         definition.setName(page.getProcessName());

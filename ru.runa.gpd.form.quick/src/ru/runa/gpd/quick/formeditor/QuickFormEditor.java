@@ -61,7 +61,7 @@ import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
 import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
@@ -137,7 +137,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         setInput(input);
         
         templateFormFile = ((FileEditorInput) input).getFile();
-        IFile definitionFile = ProjectFinder.getProcessDefinitionFile((IFolder) templateFormFile.getParent());
+        IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) templateFormFile.getParent());
         this.processDefinition = ProcessCache.getProcessDefinition(definitionFile);
         try {
 			quickForm = XMLUtil.getTemplateFormFromXML(templateFormFile, processDefinition);

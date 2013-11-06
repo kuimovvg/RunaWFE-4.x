@@ -1,5 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -25,7 +26,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 
 public class NewBotWizardPage extends WizardPage {
     private Combo botStationCombo;
@@ -80,7 +81,8 @@ public class NewBotWizardPage extends WizardPage {
         if (selection != null && !selection.isEmpty()) {
             Object selectedElement = selection.getFirstElement();
             if (selectedElement instanceof EditPart) {
-                return ProjectFinder.getCurrentProject();
+                IFile file = IOUtils.getCurrentFile();
+                return file == null ? null : file.getProject();
             }
             if (selectedElement instanceof IAdaptable) {
                 IAdaptable adaptable = (IAdaptable) selectedElement;

@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 
 public class NewBotTaskWizardPage extends WizardPage {
     private Combo botCombo;
@@ -133,7 +133,7 @@ public class NewBotTaskWizardPage extends WizardPage {
     }
 
     public IFolder getBotFolder() {
-        for (IFolder folder : ProjectFinder.getAllBotFolders()) {
+        for (IFolder folder : IOUtils.getAllBotFolders()) {
             if (botCombo.getText().equals(folder.getName())) {
                 return folder;
             }

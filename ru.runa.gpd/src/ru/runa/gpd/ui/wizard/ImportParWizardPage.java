@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -36,7 +36,6 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 import ru.runa.wfe.definition.dto.WfDefinition;
 
@@ -151,7 +150,7 @@ public class ImportParWizardPage extends ImportWizardPage {
 
     public boolean performFinish() {
         try {
-            IProject project = getSelectedProject();
+            IContainer container = getSelectedContainer();
             String[] processNames;
             InputStream[] parInputStreams;
             boolean fromFile = importFromFileButton.getSelection();
@@ -189,21 +188,20 @@ public class ImportParWizardPage extends ImportWizardPage {
             for (int i = 0; i < processNames.length; i++) {
                 String processName = processNames[i];
                 InputStream parInputStream = parInputStreams[i];
-                IFolder processFolder = project.getFolder("src/process/" + processName);
+                IFolder processFolder = IOUtils.getProcessFolder(container, processName);
                 if (processFolder.exists()) {
                     throw new Exception(Localization.getString("ImportParWizardPage.error.processWithSameNameExists"));
                 }
                 processFolder.create(true, true, null);
                 IOUtils.extractArchiveToFolder(parInputStream, processFolder);
-                IFile definitionFile = ProjectFinder.getProcessDefinitionFile(processFolder);
+                IFile definitionFile = IOUtils.getProcessDefinitionFile(processFolder);
                 ProcessDefinition definition = ProcessCache.newProcessDefinitionWasCreated(definitionFile);
                 if (definition != null && !Objects.equal(definition.getName(), processFolder.getName())) {
                     // if par name differs from definition name
-                    String projectPath = "src/process/" + definition.getName();
-                    IPath destination = project.getFolder(projectPath).getFullPath();
+                    IPath destination = IOUtils.getProcessFolder(container, definition.getName()).getFullPath();
                     processFolder.move(destination, true, false, null);
-                    processFolder = project.getFolder(projectPath);
-                    IFile movedDefinitionFile = ProjectFinder.getProcessDefinitionFile(processFolder);
+                    processFolder = IOUtils.getProcessFolder(container, definition.getName());
+                    IFile movedDefinitionFile = IOUtils.getProcessDefinitionFile(processFolder);
                     ProcessCache.newProcessDefinitionWasCreated(movedDefinitionFile);
                     ProcessCache.invalidateProcessDefinition(definitionFile);
                 }

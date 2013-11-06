@@ -60,6 +60,7 @@ import ru.runa.gpd.ui.wizard.ImportParWizard;
 import ru.runa.gpd.ui.wizard.NewBotStationWizard;
 import ru.runa.gpd.ui.wizard.NewBotTaskWizard;
 import ru.runa.gpd.ui.wizard.NewBotWizard;
+import ru.runa.gpd.ui.wizard.NewFolderWizard;
 import ru.runa.gpd.ui.wizard.NewProcessDefinitionWizard;
 import ru.runa.gpd.ui.wizard.NewProcessProjectWizard;
 
@@ -72,16 +73,16 @@ public class WorkspaceOperations {
         for (IResource resource : resources) {
             try {
                 resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-                boolean processFolder = (resource instanceof IProject);
-                String message = Localization.getString(processFolder ? "Delete.project.message" : "Delete.process.message", resource.getName());
+                boolean projectFolder = (resource instanceof IProject);
+                String message = Localization.getString(projectFolder ? "Delete.project.message" : "Delete.process.message", resource.getName());
                 if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"), message)) {
                     List<IFile> tmpFiles = new ArrayList<IFile>();
-                    if (processFolder) {
-                        for (IFile definitionFile : ProjectFinder.getProcessDefinitionFiles((IProject) resource)) {
+                    if (projectFolder) {
+                        for (IFile definitionFile : IOUtils.getProcessDefinitionFiles((IProject) resource)) {
                             tmpFiles.add(definitionFile);
                         }
                     } else {
-                        tmpFiles.add(ProjectFinder.getProcessDefinitionFile((IFolder) resource));
+                        tmpFiles.add(IOUtils.getProcessDefinitionFile((IFolder) resource));
                     }
                     resource.delete(true, null);
                     deletedDefinitions.addAll(tmpFiles);
@@ -127,6 +128,13 @@ public class WorkspaceOperations {
         dialog.open();
     }
 
+    public static void createNewFolder(IStructuredSelection selection) {
+        NewFolderWizard wizard = new NewFolderWizard();
+        wizard.init(PlatformUI.getWorkbench(), selection);
+        WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        dialog.open();
+    }
+
     public static void createNewProcessDefinition(IStructuredSelection selection) {
         NewProcessDefinitionWizard wizard = new NewProcessDefinitionWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
@@ -145,7 +153,7 @@ public class WorkspaceOperations {
 
     public static void renameProcessDefinition(IStructuredSelection selection) {
         IFolder definitionFolder = (IFolder) selection.getFirstElement();
-        IFile definitionFile = ProjectFinder.getProcessDefinitionFile(definitionFolder);
+        IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
         RenameProcessDefinitionDialog dialog = new RenameProcessDefinitionDialog(definitionFolder);
         ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
         dialog.setName(definition.getName());
@@ -162,7 +170,7 @@ public class WorkspaceOperations {
                 definitionFolder.copy(newPath, true, null);
                 ProcessCache.processDefinitionWasDeleted(definitionFile);
                 definitionFolder = ResourcesPlugin.getWorkspace().getRoot().getFolder(newPath);
-                IFile newDefinitionFile = ProjectFinder.getProcessDefinitionFile(definitionFolder);
+                IFile newDefinitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
                 definition.setName(newName);
                 saveProcessDefinition(newDefinitionFile, definition);
                 ProcessCache.newProcessDefinitionWasCreated(definitionFile);
@@ -184,7 +192,7 @@ public class WorkspaceOperations {
     }
 
     public static ProcessEditorBase openProcessDefinition(IFolder definitionFolder) {
-        IFile definitionFile = ProjectFinder.getProcessDefinitionFile(definitionFolder);
+        IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
         return openProcessDefinition(definitionFile);
     }
 
@@ -324,9 +332,9 @@ public class WorkspaceOperations {
                 String newRmi = dialog.getRmi();
                 if (!newName.equals(oldName)) {
                     IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                    List<IFolder> bots = ProjectFinder.getBotFolders(botStationProject);
+                    List<IFolder> bots = IOUtils.getBotFolders(botStationProject);
                     for (IFolder botFolder : bots) {
-                        List<IFile> botTasks = ProjectFinder.getBotTaskFiles(botFolder);
+                        List<IFile> botTasks = IOUtils.getBotTaskFiles(botFolder);
                         for (IFile botTask : botTasks) {
                             IEditorPart editor = page.findEditor(new FileEditorInput(botTask));
                             if (editor != null) {
@@ -362,7 +370,7 @@ public class WorkspaceOperations {
             String newName = dialog.getName();
             try {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                List<IFile> botTasks = ProjectFinder.getBotTaskFiles(botFolder);
+                List<IFile> botTasks = IOUtils.getBotTaskFiles(botFolder);
                 for (IFile botTask : botTasks) {
                     IEditorPart editor = page.findEditor(new FileEditorInput(botTask));
                     if (editor != null) {

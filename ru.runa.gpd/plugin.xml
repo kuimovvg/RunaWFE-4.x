@@ -15,8 +15,6 @@
     <editor
           class="ru.runa.gpd.editor.graphiti.GraphitiProcessEditor"
           contributorClass="ru.runa.gpd.editor.graphiti.DiagramActionBarContributor"
-          default="true"
-          filenames="processdefinition.xml"
           icon="icons/bpmn/community_icon.png"
           id="ru.runa.gpd.GraphitiProcessEditor"
           name="GraphitiEditor">
@@ -886,7 +884,7 @@
          point="org.eclipse.ui.views">
       <view
             category="ru.runa.gpd.view.category"
-            class="ru.runa.gpd.ui.view.ExplorerTreeView"
+            class="ru.runa.gpd.ui.view.ProcessExplorerTreeView"
             icon="icons/filenav_nav.gif"
             id="ru.runa.gpd.explorerView"
             name="%label.view.designerExplorer"/>
@@ -1908,7 +1906,7 @@
                toolbarPath="normal/syncbots"
                tooltip="%tooltip.menu.importBotElement"/>
          <action
-               class="ru.runa.gpd.ui.action.ExportAction"
+               class="ru.runa.gpd.ui.action.ExportProcessAction"
                icon="icons/export_wiz.gif"
                id="ru.runa.gpd.exportProcess"
                label="%label.menu.export"
@@ -1917,7 +1915,7 @@
                toolbarPath="normal/syncproc"
                tooltip="%tooltip.menu.export"/>
          <action
-               class="ru.runa.gpd.ui.action.ImportAction"
+               class="ru.runa.gpd.ui.action.ImportProcessAction"
                icon="icons/import_wiz.gif"
                id="ru.runa.gpd.importProcess"
                label="%label.menu.import"
@@ -2238,7 +2236,17 @@
 	      <runtime>
 	         <run class="ru.runa.gpd.BotStationNature"></run>
 	      </runtime>
-	</extension>	
+	</extension>
+ <extension
+       id="processNature"
+       name="specific nature for process project (used since 4.1.0)"
+       point="org.eclipse.core.resources.natures">
+    <runtime>
+       <run
+             class="ru.runa.gpd.ProcessProjectNature">
+       </run>
+    </runtime>
+ </extension>	
 
 
 </plugin>
