@@ -12,7 +12,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.bot.BotImportCommand;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.wfe.WFEServerBotElementImporter;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
@@ -22,7 +22,7 @@ public class ImportBotTaskWizardPage extends ImportBotWizardPage {
         super(pageName, selection);
         setTitle(Localization.getString("ImportBotTaskWizardPage.page.title"));
         setDescription(Localization.getString("ImportBotTaskWizardPage.page.description"));
-        for (IFolder resource : ProjectFinder.getAllBotFolders()) {
+        for (IFolder resource : IOUtils.getAllBotFolders()) {
             importObjectNameFileMap.put(getKey(resource.getProject(), resource), resource);
         }
     }

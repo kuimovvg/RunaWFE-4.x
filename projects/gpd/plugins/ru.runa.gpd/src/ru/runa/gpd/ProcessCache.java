@@ -13,14 +13,14 @@ import org.eclipse.core.resources.IFile;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.par.ParContentProvider;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 
 public class ProcessCache {
     private static Map<IFile, ProcessDefinition> CACHE_BY_FILE = new HashMap<IFile, ProcessDefinition>();
     private static Map<String, ProcessDefinition> CACHE_BY_NAME = new HashMap<String, ProcessDefinition>();
     static {
         try {
-            for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
+            for (IFile file : IOUtils.getAllProcessDefinitionFiles()) {
                 try {
                     ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
                     cacheProcessDefinition(file, definition);
@@ -116,7 +116,7 @@ public class ProcessCache {
      */
     public static IFile getFirstProcessDefinitionFile(String name) {
         try {
-            for (IFile file : ProjectFinder.getAllProcessDefinitionFiles()) {
+            for (IFile file : IOUtils.getAllProcessDefinitionFiles()) {
                 String processName = file.getFullPath().segment(3);
                 if (name.equals(processName)) {
                     return file;

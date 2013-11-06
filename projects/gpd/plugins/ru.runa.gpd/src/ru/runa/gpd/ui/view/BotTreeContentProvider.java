@@ -14,17 +14,17 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import ru.runa.gpd.BotStationNature;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 
 public class BotTreeContentProvider implements ITreeContentProvider {
     @Override
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof IProject) {
             // TODO comparator file.getParent().getName()
-            List<IFolder> botFolders = ProjectFinder.getBotFolders((IProject) parentElement);
+            List<IFolder> botFolders = IOUtils.getBotFolders((IProject) parentElement);
             return botFolders.toArray();
         } else if (parentElement instanceof IFolder) {
-            List<IFile> files = ProjectFinder.getBotTaskFiles((IFolder) parentElement);
+            List<IFile> files = IOUtils.getBotTaskFiles((IFolder) parentElement);
             return files.toArray();
         }
         return null;
@@ -38,9 +38,9 @@ public class BotTreeContentProvider implements ITreeContentProvider {
     @Override
     public boolean hasChildren(Object element) {
         if (element instanceof IProject) {
-            return ProjectFinder.getBotFolders((IProject) element).size() > 0;
+            return IOUtils.getBotFolders((IProject) element).size() > 0;
         } else if (element instanceof IFolder) {
-            return ProjectFinder.getBotTaskFiles((IFolder) element).size() > 0;
+            return IOUtils.getBotTaskFiles((IFolder) element).size() > 0;
         }
         return false;
     }

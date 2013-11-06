@@ -3,8 +3,7 @@ package ru.runa.xpdl.wizard;
 import java.io.File;
 import java.util.Arrays;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.preference.FileFieldEditor;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -22,7 +21,6 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ui.wizard.ImportWizardPage;
-import ru.runa.gpd.util.ProjectFinder;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.xpdl.convertor.XPDLImporter;
 import ru.runa.xpdl.resource.Messages;
@@ -90,15 +88,14 @@ public class ImportFromXPDLWizardPage extends ImportWizardPage {
 
     public boolean performFinish() {
         try {
-            IProject project = getSelectedProject();
+            IContainer container = getSelectedContainer();
             String xpdlFileName = editor.getStringValue();
             if (xpdlFileName == null || !new File(xpdlFileName).exists()) {
                 throw new Exception(Messages.getString("ImportXPDLWizardPage.error.selectFile"));
             }
             String runaGroupName = this.runaUsersGroupName.getText();
-            IFolder folder = ProjectFinder.getProcessFolder(project);
-            new XPDLImporter().parseXPDLFile(folder.getLocation().toFile(), xpdlFileName, useDefaultSwimlane, runaGroupName);
-            WorkspaceOperations.refreshResources(Arrays.asList((IResource) project));
+            new XPDLImporter().parseXPDLFile(container.getLocation().toFile(), xpdlFileName, useDefaultSwimlane, runaGroupName);
+            WorkspaceOperations.refreshResources(Arrays.asList((IResource) container));
             return true;
         } catch (Exception e) {
             String s = e.getMessage();

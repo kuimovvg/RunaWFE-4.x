@@ -11,7 +11,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.bot.BotStationDeployCommand;
 import ru.runa.gpd.bot.BotStationExportCommand;
-import ru.runa.gpd.util.ProjectFinder;
+import ru.runa.gpd.util.IOUtils;
 
 public class ExportBotStationWizardPage extends ExportBotElementWizardPage {
     public ExportBotStationWizardPage(IStructuredSelection selection) {
@@ -19,7 +19,7 @@ public class ExportBotStationWizardPage extends ExportBotElementWizardPage {
         setTitle(Localization.getString("ExportBotStationWizardPage.page.title"));
         setDescription(Localization.getString("ExportBotStationWizardPage.page.description"));
         this.exportObjectNameFileMap = new TreeMap<String, IResource>();
-        for (IProject resource : ProjectFinder.getAllBotStationProjects()) {
+        for (IProject resource : IOUtils.getAllBotStationProjects()) {
             exportObjectNameFileMap.put(resource.getName(), resource);
         }
     }
