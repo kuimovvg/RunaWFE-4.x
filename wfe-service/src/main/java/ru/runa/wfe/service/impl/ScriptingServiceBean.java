@@ -24,6 +24,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -51,6 +52,7 @@ public class ScriptingServiceBean implements ScriptingService {
     private AdminScriptRunner runner;
 
     @Override
+    @WebResult(name = "result")
     public void executeAdminScript(@WebParam(name = "user") User user, @WebParam(name = "configData") byte[] configData,
             @WebParam(name = "processDefinitionsBytes") byte[][] processDefinitionsBytes) {
         runner.setUser(user);
@@ -59,6 +61,7 @@ public class ScriptingServiceBean implements ScriptingService {
     }
 
     @Override
+    @WebResult(name = "result")
     public void executeGroovyScript(@WebParam(name = "user") User user, @WebParam(name = "script") String script) {
         boolean enabled = SystemProperties.getResources().getBooleanProperty("scriptingServiceAPI.executeGroovyScript.enabled", false);
         if (!enabled) {

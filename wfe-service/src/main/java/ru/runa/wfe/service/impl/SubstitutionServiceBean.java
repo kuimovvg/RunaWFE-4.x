@@ -23,6 +23,8 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -54,7 +56,8 @@ public class SubstitutionServiceBean implements SubstitutionServiceLocal, Substi
     private SubstitutionLogic substitutionLogic;
 
     @Override
-    public Substitution createSubstitution(User user, Substitution substitution) {
+    @WebResult(name = "result")
+    public Substitution createSubstitution(@WebParam(name = "user") User user, @WebParam(name = "substitution") Substitution substitution) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitution);
         substitutionLogic.create(user, substitution);
@@ -62,77 +65,90 @@ public class SubstitutionServiceBean implements SubstitutionServiceLocal, Substi
     }
 
     @Override
-    public List<Substitution> getSubstitutions(User user, Long actorId) {
+    @WebResult(name = "result")
+    public List<Substitution> getSubstitutions(@WebParam(name = "user") User user, @WebParam(name = "actorId") Long actorId) {
         return substitutionLogic.getSubstitutions(user, actorId);
     }
 
     @Override
-    public void deleteSubstitutions(User user, List<Long> substitutionIds) {
+    @WebResult(name = "result")
+    public void deleteSubstitutions(@WebParam(name = "user") User user, @WebParam(name = "substitutionIds") List<Long> substitutionIds) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionIds);
         substitutionLogic.delete(user, substitutionIds);
     }
 
     @Override
-    public Substitution getSubstitution(User user, Long substitutionId) {
+    @WebResult(name = "result")
+    public Substitution getSubstitution(@WebParam(name = "user") User user, @WebParam(name = "substitutionId") Long substitutionId) {
         Preconditions.checkNotNull(user);
         return substitutionLogic.getSubstitution(user, substitutionId);
     }
 
     @Override
-    public void updateSubstitution(User user, Substitution substitution) {
+    @WebResult(name = "result")
+    public void updateSubstitution(@WebParam(name = "user") User user, @WebParam(name = "substitution") Substitution substitution) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitution);
         substitutionLogic.update(user, substitution);
     }
 
     @Override
-    public void createCriteria(User user, SubstitutionCriteria substitutionCriteria) {
+    @WebResult(name = "result")
+    public void createCriteria(@WebParam(name = "user") User user, @WebParam(name = "substitutionCriteria") SubstitutionCriteria substitutionCriteria) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
         substitutionLogic.create(user, substitutionCriteria);
     }
 
     @Override
-    public SubstitutionCriteria getCriteria(User user, Long substitutionCriteriaId) {
+    @WebResult(name = "result")
+    public SubstitutionCriteria getCriteria(@WebParam(name = "user") User user, @WebParam(name = "substitutionCriteriaId") Long substitutionCriteriaId) {
         Preconditions.checkNotNull(user);
         return substitutionLogic.getCriteria(user, substitutionCriteriaId);
     }
 
     @Override
-    public SubstitutionCriteria getCriteriaByName(User user, String name) {
+    @WebResult(name = "result")
+    public SubstitutionCriteria getCriteriaByName(@WebParam(name = "user") User user, @WebParam(name = "name") String name) {
         Preconditions.checkNotNull(user);
         return substitutionLogic.getCriteria(user, name);
     }
 
     @Override
-    public List<SubstitutionCriteria> getAllCriterias(User user) {
+    @WebResult(name = "result")
+    public List<SubstitutionCriteria> getAllCriterias(@WebParam(name = "user") User user) {
         Preconditions.checkNotNull(user);
         return substitutionLogic.getAllCriterias(user);
     }
 
     @Override
-    public void updateCriteria(User user, SubstitutionCriteria substitutionCriteria) {
+    @WebResult(name = "result")
+    public void updateCriteria(@WebParam(name = "user") User user, @WebParam(name = "substitutionCriteria") SubstitutionCriteria substitutionCriteria) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
         substitutionLogic.update(user, substitutionCriteria);
     }
 
     @Override
-    public void deleteCriterias(User user, List<SubstitutionCriteria> criterias) {
+    @WebResult(name = "result")
+    public void deleteCriterias(@WebParam(name = "user") User user, @WebParam(name = "criterias") List<SubstitutionCriteria> criterias) {
         Preconditions.checkNotNull(user);
         substitutionLogic.deleteCriterias(user, criterias);
     }
 
     @Override
-    public void deleteCriteria(User user, SubstitutionCriteria substitutionCriteria) {
+    @WebResult(name = "result")
+    public void deleteCriteria(@WebParam(name = "user") User user, @WebParam(name = "substitutionCriteria") SubstitutionCriteria substitutionCriteria) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
         substitutionLogic.delete(user, substitutionCriteria);
     }
 
     @Override
-    public List<Substitution> getSubstitutionsByCriteria(User user, SubstitutionCriteria substitutionCriteria) {
+    @WebResult(name = "result")
+    public List<Substitution> getSubstitutionsByCriteria(@WebParam(name = "user") User user,
+            @WebParam(name = "substitutionCriteria") SubstitutionCriteria substitutionCriteria) {
         Preconditions.checkNotNull(user);
         Preconditions.checkNotNull(substitutionCriteria);
         return substitutionLogic.getSubstitutionsByCriteria(user, substitutionCriteria);

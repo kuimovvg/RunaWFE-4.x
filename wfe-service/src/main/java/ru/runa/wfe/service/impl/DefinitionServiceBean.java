@@ -24,6 +24,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -57,6 +58,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     private DefinitionLogic definitionLogic;
 
     @Override
+    @WebResult(name = "result")
     public WfDefinition deployProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "processArchive") byte[] processArchive,
             @WebParam(name = "processTypes") List<String> processTypes) {
         Preconditions.checkArgument(user != null);
@@ -66,6 +68,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public WfDefinition redeployProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "processArchive") byte[] processArchive, @WebParam(name = "processTypes") List<String> processTypes) {
         Preconditions.checkArgument(user != null);
@@ -74,6 +77,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public WfDefinition getLatestProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "definitionName") String definitionName) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionName != null);
@@ -81,6 +85,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public WfDefinition getProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
@@ -88,6 +93,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public List<WfDefinition> getLatestProcessDefinitions(@WebParam(name = "user") User user,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
@@ -98,6 +104,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public void undeployProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "processName") String processName) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(processName != null);
@@ -105,6 +112,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "definitionName") String definitionName,
             @WebParam(name = "version") int version) {
         Preconditions.checkArgument(user != null);
@@ -112,6 +120,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public List<String> getOutputTransitionNames(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId,
             @WebParam(name = "taskId") Long taskId, @WebParam(name = "withTimerTransitions") boolean withTimerTransitions) {
         Preconditions.checkArgument(user != null);
@@ -119,6 +128,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public Interaction getTaskInteraction(@WebParam(name = "user") User user, @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(taskId != null);
@@ -126,6 +136,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public Interaction getStartInteraction(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
@@ -133,6 +144,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public byte[] getProcessDefinitionFile(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId,
             @WebParam(name = "fileName") String fileName) {
         Preconditions.checkArgument(user != null);
@@ -142,6 +154,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public List<SwimlaneDefinition> getSwimlaneDefinitions(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
@@ -149,11 +162,13 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public List<VariableDefinition> getVariableDefinitions(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
         return definitionLogic.getProcessDefinitionVariables(user, definitionId);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<GraphElementPresentation> getProcessDefinitionGraphElements(@WebParam(name = "user") User user,
             @WebParam(name = "definitionId") Long definitionId) {
         Preconditions.checkArgument(user != null);
@@ -162,6 +177,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
+    @WebResult(name = "result")
     public List<WfDefinition> getProcessDefinitionHistory(@WebParam(name = "user") User user, @WebParam(name = "name") String name) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(name != null);

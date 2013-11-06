@@ -22,6 +22,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -50,12 +51,14 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     private ProfileLogic profileLogic;
 
     @Override
+    @WebResult(name = "result")
     public Profile getProfile(@WebParam(name = "user") User user) {
         Preconditions.checkArgument(user != null);
         return profileLogic.getProfile(user, user.getActor().getId());
     }
 
     @Override
+    @WebResult(name = "result")
     public Profile setActiveBatchPresentation(@WebParam(name = "user") User user, @WebParam(name = "batchPresentationId") String batchPresentationId,
             @WebParam(name = "newActiveBatchName") String newActiveBatchName) {
         Preconditions.checkArgument(user != null);
@@ -65,6 +68,7 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     }
 
     @Override
+    @WebResult(name = "result")
     public Profile deleteBatchPresentation(@WebParam(name = "user") User user,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
@@ -73,6 +77,7 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     }
 
     @Override
+    @WebResult(name = "result")
     public Profile createBatchPresentation(@WebParam(name = "user") User user,
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
@@ -81,6 +86,7 @@ public class ProfileServiceBean implements ProfileServiceLocal, ProfileServiceRe
     }
 
     @Override
+    @WebResult(name = "result")
     public Profile saveBatchPresentation(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(batchPresentation != null);

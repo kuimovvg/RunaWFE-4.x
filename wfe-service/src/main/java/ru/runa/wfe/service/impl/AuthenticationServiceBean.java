@@ -24,6 +24,7 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -58,6 +59,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     private SessionContext context;
 
     @Override
+    @WebResult(name = "result")
     public User authenticateByCallerPrincipal() {
         log.debug("Authenticating (principal)");
         User user = authenticationLogic.authenticate(context.getCallerPrincipal());
@@ -66,6 +68,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
+    @WebResult(name = "result")
     public User authenticateByKerberos(@WebParam(name = "token") byte[] token) {
         Preconditions.checkArgument(token != null, "Kerberos authentication information is null");
         log.debug("Authenticating (kerberos)");
@@ -75,6 +78,7 @@ public class AuthenticationServiceBean implements AuthenticationServiceLocal, Au
     }
 
     @Override
+    @WebResult(name = "result")
     public User authenticateByLoginPassword(@WebParam(name = "name") String name, @WebParam(name = "password") String password) {
         Preconditions.checkArgument(name != null);
         Preconditions.checkArgument(password != null);

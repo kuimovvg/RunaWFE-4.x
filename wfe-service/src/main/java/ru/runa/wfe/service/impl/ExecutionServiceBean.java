@@ -26,6 +26,7 @@ import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
+import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -94,6 +95,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public int getAllProcessesCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
@@ -103,6 +105,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public List<WfProcess> getProcesses(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
@@ -112,18 +115,21 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public WfProcess getProcess(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkArgument(user != null);
         return executionLogic.getProcess(user, id);
     }
 
     @Override
+    @WebResult(name = "result")
     public WfProcess getParentProcess(@WebParam(name = "user") User user, @WebParam(name = "id") Long id) {
         Preconditions.checkArgument(user != null);
         return executionLogic.getParentProcess(user, id);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<WfProcess> getSubprocesses(@WebParam(name = "user") User user, @WebParam(name = "id") Long id,
             @WebParam(name = "recursive") boolean recursive) {
         Preconditions.checkArgument(user != null);
@@ -131,6 +137,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public List<WfTask> getTasks(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
@@ -140,6 +147,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public WfTask getTask(@WebParam(name = "user") User user, @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
         return taskLogic.getTask(user, taskId);
@@ -168,6 +176,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public WfVariable getVariable(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "variableName") String variableName) {
         Preconditions.checkArgument(user != null);
@@ -195,24 +204,28 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public void cancelProcess(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
         Preconditions.checkArgument(user != null);
         executionLogic.cancelProcess(user, processId);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<WfSwimlane> getSwimlanes(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
         Preconditions.checkArgument(user != null);
         return taskLogic.getSwimlanes(user, processId);
     }
 
     @Override
+    @WebResult(name = "result")
     public List<WfTask> getProcessTasks(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
         Preconditions.checkArgument(user != null);
         return taskLogic.getTasks(user, processId);
     }
 
     @Override
+    @WebResult(name = "result")
     public byte[] getProcessDiagram(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "taskId") Long taskId, @WebParam(name = "childProcessId") Long childProcessId) {
         Preconditions.checkArgument(user != null);
@@ -220,6 +233,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public byte[] getProcessHistoryDiagram(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
@@ -227,6 +241,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public List<GraphElementPresentation> getProcessUIHistoryData(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
@@ -234,12 +249,14 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public List<GraphElementPresentation> getProcessGraphElements(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
         Preconditions.checkArgument(user != null);
         return executionLogic.getProcessGraphElements(user, processId);
     }
 
     @Override
+    @WebResult(name = "result")
     public void assignSwimlane(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "swimlaneName") String swimlaneName, @WebParam(name = "executor") Executor executor) {
         Preconditions.checkArgument(user != null);
@@ -247,6 +264,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public void assignTask(@WebParam(name = "user") User user, @WebParam(name = "taskId") Long taskId,
             @WebParam(name = "previousOwner") Executor previousOwner, @WebParam(name = "newExecutor") Executor newExecutor) {
         Preconditions.checkArgument(user != null);
@@ -254,23 +272,27 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public ProcessLogs getProcessLogs(@WebParam(name = "user") User user, @WebParam(name = "filter") ProcessLogFilter filter) {
         Preconditions.checkArgument(user != null);
         return auditLogic.getProcessLogs(user, filter);
     }
 
     @Override
+    @WebResult(name = "result")
     public Object getProcessLogValue(@WebParam(name = "user") User user, @WebParam(name = "logId") Long logId) {
         return auditLogic.getProcessLogValue(user, logId);
     }
 
     @Override
+    @WebResult(name = "result")
     public void markTaskOpened(@WebParam(name = "user") User user, @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
         taskLogic.markTaskOpened(user, taskId);
     }
 
     @Override
+    @WebResult(name = "result")
     public void removeProcesses(@WebParam(name = "user") User user, @WebParam(name = "filter") ProcessFilter filter) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(filter != null);
@@ -278,6 +300,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public List<SystemLog> getSystemLogs(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
@@ -287,6 +310,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public int getSystemLogsCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
@@ -306,6 +330,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public List<ru.runa.wfe.var.jaxb.WfVariable> getVariablesWS(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
         List<WfVariable> list = getVariables(user, processId);
         List<ru.runa.wfe.var.jaxb.WfVariable> result = Lists.newArrayListWithExpectedSize(list.size());
@@ -317,18 +342,21 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
+    @WebResult(name = "result")
     public Long startProcessWS(@WebParam(name = "user") User user, @WebParam(name = "definitionName") String definitionName,
             @WebParam(name = "variables") List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
         return startProcess(user, definitionName, toVariablesMap(variables));
     }
 
     @Override
+    @WebResult(name = "result")
     public void completeTaskWS(@WebParam(name = "user") User user, @WebParam(name = "taskId") Long taskId,
             @WebParam(name = "variables") List<ru.runa.wfe.var.jaxb.WfVariable> variables, @WebParam(name = "swimlaneActorId") Long swimlaneActorId) {
         completeTask(user, taskId, toVariablesMap(variables), swimlaneActorId);
     }
 
     @Override
+    @WebResult(name = "result")
     public void updateVariablesWS(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "variables") List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
         updateVariables(user, processId, toVariablesMap(variables));
