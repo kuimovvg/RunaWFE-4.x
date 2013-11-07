@@ -37,9 +37,7 @@ public class XMLUtil {
 	private static final String ATTRIBUTE_PARAM = "param";
 	
 	public static String getTemplateFromRegister(Bundle bundle, String templateName) {
-        int dotIndex = templateName.lastIndexOf(".");
-        String simpleTemplateName = templateName.substring(dotIndex + 1);
-        String path = "/template/" + simpleTemplateName + ".template";
+        String path = "/template/" + templateName;
         try {
             InputStream is = bundle.getEntry(path).openStream();
             return IOUtils.readStream(is);
@@ -115,7 +113,7 @@ public class XMLUtil {
 	
 	private static void saveTemplateToProcessDefinition(IFolder folder, QuickForm templateForm) throws CoreException {
 		if (!Strings.isNullOrEmpty(templateForm.getDelegationConfiguration())) {
-            String configurationFileName = templateForm.getDelegationClassName() + ".template";
+            String configurationFileName = templateForm.getDelegationClassName();
             IFile configurationFile = folder.getFile(configurationFileName);
             ByteArrayInputStream stream = new ByteArrayInputStream(templateForm.getDelegationConfiguration().getBytes(Charsets.UTF_8));
             if (configurationFile.exists()) {

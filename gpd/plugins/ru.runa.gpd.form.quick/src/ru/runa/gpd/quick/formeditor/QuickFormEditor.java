@@ -194,7 +194,14 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         selectTemplateCombo.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-            	String filename = selectTemplateCombo.getText();
+            	String label = selectTemplateCombo.getText();
+            	String filename = null;
+            	for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
+                    if (label != null && artifact.isEnabled() && label.equalsIgnoreCase(artifact.getLabel()) ) {
+                    	filename = artifact.getFileName();
+                    	break;
+                    }
+                }
             	if(filename != null && filename.trim().length() > 0) {
             		Bundle bundle = QuickTemplateRegister.getBundle(filename);
             		String templateHtml = XMLUtil.getTemplateFromRegister(bundle, filename);
@@ -347,7 +354,15 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         addButton(buttonsBar, "editor.button.show", new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-            	String filename = selectTemplateCombo.getText();
+            	String label = selectTemplateCombo.getText();
+            	String filename = null;
+            	for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
+                    if (label != null && artifact.isEnabled() && label.equalsIgnoreCase(artifact.getLabel()) ) {
+                    	filename = artifact.getFileName();
+                    	break;
+                    }
+                }
+            	
             	if(filename != null && filename.trim().length() > 0) {
             		Bundle bundle = QuickTemplateRegister.getBundle(filename);
             		String templateHtml = XMLUtil.getTemplateFromRegister(bundle, filename);
