@@ -46,7 +46,7 @@ public class QuickTemplateRegister extends ArtifactRegistry<QuickTemplateArtifac
                 String fileName = configElement.getAttribute("filename");
                 QuickTemplateArtifact artifact = new QuickTemplateArtifact(enabled, name, label, fileName);
                 list.add(artifact);
-                templateBundles.put(name, bundle);
+                templateBundles.put(fileName, bundle);
             }
         }
     }
