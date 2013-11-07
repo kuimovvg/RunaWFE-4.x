@@ -82,7 +82,7 @@ public abstract class BaseQuickFormBuilder {
         map.put("variables", templateVariables);
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
         FormHashModel model = new FormHashModel(user, variableProvider, new StrutsWebHelper(pageContext));
-        byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(user, definitionId, templateName + ".template");
+        byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(user, definitionId, templateName);
 
         return FreemarkerProcessor.process(new String(bytes, Charsets.UTF_8), model);
     }
