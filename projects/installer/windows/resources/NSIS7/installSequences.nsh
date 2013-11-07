@@ -56,6 +56,7 @@ var simulationWebLinks
   FileWrite $0 "del /F /S /Q $\"%APPDATA%\runawfe\deployments$\"$\r$\n"
   FileWrite $0 "xcopy ..\standalone\configuration $\"%APPDATA%\runawfe\jboss\configuration$\" /D /I /S /Y /R$\r$\n"
   FileWrite $0 "xcopy ..\standalone\deployments $\"%APPDATA%\runawfe\jboss\deployments$\" /D /I /S /Y /R$\r$\n"
+  FileWrite $0 "xcopy ..\standalone\wfe.custom $\"%APPDATA%\runawfe\jboss\wfe.custom$\" /D /I /S /Y /R$\r$\n"
   ${if} "$newSimulationDatabase" == "1"
     FileWrite $0 "if not exist $\"%APPDATA%\runawfe\jboss\runawfe-ver-$2$\" ($\r$\n"
     FileWrite $0 "  del /S /Q $\"%APPDATA%\runawfe\jboss\runawfe-ver-*$\" $\r$\n"
