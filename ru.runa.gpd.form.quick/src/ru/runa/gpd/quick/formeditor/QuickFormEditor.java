@@ -213,10 +213,13 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         });
         selectTemplateCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         if(!Strings.isNullOrEmpty(quickForm.getDelegationClassName())) {
-        	selectTemplateCombo.setText(quickForm.getDelegationClassName());
+        	for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
+                if (artifact.isEnabled() && artifact.getFileName().equals(quickForm.getDelegationClassName())) {
+                	selectTemplateCombo.setText(artifact.getLabel()); 
+                	break;
+                }
+            }
         }
-        
-        
         
         Composite tableParamComposite = new Composite(composite, SWT.NONE);
         tableParamComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
