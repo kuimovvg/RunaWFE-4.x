@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -69,6 +70,12 @@ public class WYSIWYGPlugin extends AbstractUIPlugin {
     public static String getResourceString(String key) {
         return resource.getString(key);
     }
+    
+    public static String getResourceString(String key, Object... parameters) {
+        String msg = getResourceString(key);
+        return MessageFormat.format(msg, parameters);
+    }
+
 
     public String getEditorURL() {
         return "http://localhost:" + SERVER_PORT + (useCKEditor3() ? "/ckeditor.html" : "/fckeditor.html");

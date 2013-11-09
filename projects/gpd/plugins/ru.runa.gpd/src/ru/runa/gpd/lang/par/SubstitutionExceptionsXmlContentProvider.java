@@ -4,34 +4,32 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TaskState;
-import ru.runa.gpd.util.XmlUtil;
 
+/**
+ * Substitution exceptions were moved to processdefinition.xml
+ * @author dofs
+ */
 public class SubstitutionExceptionsXmlContentProvider extends AuxContentProvider {
     private static final String XML_FILE_NAME = "substitutionExceptions.xml";
     private static final String TASK_ELEMENT_NAME = "task";
-    private static final String EXCEPTIONS_ELEMENT_NAME = "ignoreSubstitutions";
 
     @Override
-    public void readFromFile(IFolder folder, ProcessDefinition definition) throws Exception {
-        IFile file = folder.getFile(XML_FILE_NAME);
-        if (!file.exists()) {
-            return;
-        }
-        Document document = XmlUtil.parseWithoutValidation(file.getContents());
+    public String getFileName() {
+        return XML_FILE_NAME;
+    }
+    
+    @Override
+    public void read(Document document, ProcessDefinition definition) throws Exception {
         List<Element> elementsList = document.getRootElement().elements(TASK_ELEMENT_NAME);
         for (Element element : elementsList) {
             String taskId = element.attributeValue(NAME_ATTRIBUTE_NAME);
             try {
                 TaskState taskState = definition.getGraphElementByIdNotNull(taskId);
-                if (taskState != null) {
-                    taskState.setIgnoreSubstitution(true);
-                }
+                taskState.setIgnoreSubstitutionRules(true);
             } catch (Exception e) {
                 PluginLogger.logErrorWithoutDialog("No swimlane found for " + taskId, e);
             }
@@ -39,20 +37,7 @@ public class SubstitutionExceptionsXmlContentProvider extends AuxContentProvider
     }
 
     @Override
-    public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
-        Document document = XmlUtil.createDocument(EXCEPTIONS_ELEMENT_NAME);
-        Element root = document.getRootElement();
-        boolean atLeastOneExceptionExists = false;
-        for (TaskState taskState : definition.getChildren(TaskState.class)) {
-            if (taskState.isIgnoreSubstitution()) {
-                atLeastOneExceptionExists = true;
-                Element element = root.addElement(TASK_ELEMENT_NAME);
-                element.addAttribute(NAME_ATTRIBUTE_NAME, taskState.getName());
-            }
-        }
-        if (atLeastOneExceptionExists) {
-            byte[] bytes = XmlUtil.writeXml(document);
-            updateFile(folder.getFile(XML_FILE_NAME), bytes);
-        }
+    public Document save(ProcessDefinition definition) throws Exception {
+        return null;
     }
 }

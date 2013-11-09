@@ -4,7 +4,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.LocalizationRegistry;
 
-public class Action extends GraphElement implements Delegable {
+public class Action extends GraphElement implements Delegable, Describable {
     @Override
     public String getDelegationType() {
         return HandlerArtifact.ACTION;

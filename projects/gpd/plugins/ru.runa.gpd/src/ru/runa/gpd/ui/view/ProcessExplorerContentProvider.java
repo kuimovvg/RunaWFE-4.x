@@ -24,32 +24,35 @@ public class ProcessExplorerContentProvider implements ITreeContentProvider {
     
     @Override
     public Object[] getChildren(Object parentElement) {
-        List<IFolder> folders = Lists.newArrayList();
+        List<IResource> resources = Lists.newArrayList();
         if (parentElement instanceof IProject) {
             IProject project = (IProject) parentElement;
             if (IOUtils.isProjectHasProcessNature(project)) {
-                findFolders(project, folders);
+                findFolders(project, resources);
             } else {
                 List<IFile> files = IOUtils.getProcessDefinitionFiles(project);
                 for (IFile file : files) {
-                    folders.add((IFolder) file.getParent());
+                    resources.add((IFolder) file.getParent());
                 }
             }
         }
         if (parentElement instanceof IFolder) {
             IFolder folder = (IFolder) parentElement;
-            findFolders(folder, folders);
+            if (IOUtils.isProcessDefinitionFolder(folder)) {
+                findSubProcessFiles(folder, resources);
+            } else {
+                findFolders(folder, resources);
+            }
         }
-        return folders.toArray(new IFolder[folders.size()]);
+        return resources.toArray(new IResource[resources.size()]);
     }
 
-    private static void findFolders(IContainer container, List<IFolder> result) {
+    private static void findFolders(IContainer container, List<IResource> result) {
         try {
             for (IResource resource : container.members()) {
                 if (resource instanceof IFolder) {
                     IFolder folder = (IFolder) resource;
-                    IFile definitionFile = folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
-                    if (definitionFile.exists()) {
+                    if (IOUtils.isProcessDefinitionFolder(folder)) {
                         result.add(folder);
                         continue;
                     }
@@ -57,6 +60,19 @@ public class ProcessExplorerContentProvider implements ITreeContentProvider {
                         continue;
                     }
                     result.add(folder);
+                }
+            }
+        } catch (CoreException e) {
+            PluginLogger.logError(e);
+        }
+    }
+
+    private static void findSubProcessFiles(IContainer container, List<IResource> result) {
+        try {
+            for (IResource resource : container.members()) {
+                if (resource.getName().endsWith(ParContentProvider.PROCESS_DEFINITION_FILE_NAME) &&
+                        !resource.getName().equals(ParContentProvider.PROCESS_DEFINITION_FILE_NAME)) {
+                    result.add(resource);
                 }
             }
         } catch (CoreException e) {

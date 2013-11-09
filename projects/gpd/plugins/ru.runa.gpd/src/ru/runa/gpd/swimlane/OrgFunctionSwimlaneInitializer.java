@@ -1,12 +1,12 @@
 package ru.runa.gpd.swimlane;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionParameterDefinition;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
-import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.ValidationError;
+import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 
 import com.google.common.base.Objects;
@@ -90,20 +90,18 @@ public class OrgFunctionSwimlaneInitializer extends SwimlaneInitializer {
     }
 
     @Override
-    public List<String> getErrors(ProcessDefinition processDefinition) {
-        List<String> errors = new ArrayList<String>();
+    public void validate(Swimlane swimlane, List<ValidationError> errors) {
         for (OrgFunctionParameter parameter : parameters) {
             String value = parameter.getValue();
             if (value.length() == 0) {
-                errors.add("orgfunction.emptyParam");
+                errors.add(ValidationError.createLocalizedError(swimlane, "orgfunction.emptyParam"));
             } else if (parameter.isVariableValue()) {
-                List<String> variableNames = processDefinition.getVariableNames(true, parameter.getDefinition().getType());
+                List<String> variableNames = swimlane.getVariableNames(true, parameter.getDefinition().getType());
                 if (!variableNames.contains(parameter.getVariableName())) {
-                    errors.add("orgfunction.varSelectorItemNotExist");
+                    errors.add(ValidationError.createLocalizedError(swimlane, "orgfunction.varSelectorItemNotExist"));
                 }
             }
         }
-        return errors;
     }
 
     @Override

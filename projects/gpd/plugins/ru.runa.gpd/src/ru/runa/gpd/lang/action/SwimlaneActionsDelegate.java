@@ -18,7 +18,6 @@ import ru.runa.gpd.editor.gef.command.IgnoreSubstitutionCommand;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
-import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
@@ -72,15 +71,15 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
-        if (node instanceof State && selectedSwimlane != null) {
-            action = new EnableReassignmentAction();
-            action.setChecked(((State) node).isReassignmentEnabled());
-            item = new ActionContributionItem(action);
-            item.fill(menu, -1);
-        }
         if (node instanceof TaskState) {
+            if (selectedSwimlane != null) {
+                action = new EnableReassignmentAction();
+                action.setChecked(((TaskState) node).isReassignmentEnabled());
+                item = new ActionContributionItem(action);
+                item.fill(menu, -1);
+            }
             action = new IgnoreSubstitutionAction();
-            action.setChecked(((TaskState) node).isIgnoreSubstitution());
+            action.setChecked(((TaskState) node).isIgnoreSubstitutionRules());
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
@@ -166,7 +165,7 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
 
         @Override
         public void run() {
-            EnableReassignmentCommand command = new EnableReassignmentCommand((State) node);
+            EnableReassignmentCommand command = new EnableReassignmentCommand((TaskState) node);
             executeCommand(command);
         }
     }

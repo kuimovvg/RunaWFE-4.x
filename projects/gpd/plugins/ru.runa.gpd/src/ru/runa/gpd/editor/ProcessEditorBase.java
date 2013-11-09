@@ -2,17 +2,12 @@ package ru.runa.gpd.editor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.IFigure;
@@ -45,13 +40,14 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.gef.GEFImageHelper;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.gef.part.graph.ElementGraphicalEditPart;
-import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
+import ru.runa.gpd.lang.par.ProcessDefinitionValidator;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
@@ -74,11 +70,11 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
         this.definitionFile = fileInput.getFile();
         IPath path = fileInput.getPath().removeLastSegments(1);
         path = path.removeFirstSegments(path.segmentCount() - 1);
-        setPartName(path.lastSegment());
         definition = ProcessCache.getProcessDefinition(definitionFile);
         definition.setDirty(false);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
         definition.addPropertyChangeListener(this);
+        setPartName(definition.getName());
     }
 
     @Override
@@ -153,19 +149,25 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     @Override
     protected void createPages() {
         try {
+            int pageIndex = 0;
             graphPage = createGraphPage();
-            addPage(0, graphPage, getEditorInput());
-            setPageText(0, Localization.getString("DesignerEditor.title.diagram"));
-            swimlanePage = new SwimlaneEditorPage(this);
-            addPage(1, swimlanePage, getEditorInput());
-            setPageText(1, Localization.getString("DesignerEditor.title.swimlanes"));
-            variablePage = new VariableEditorPage(this);
-            addPage(2, variablePage, getEditorInput());
-            setPageText(2, Localization.getString("DesignerEditor.title.variables"));
+            addPage(pageIndex, graphPage, getEditorInput());
+            setPageText(pageIndex, Localization.getString("DesignerEditor.title.diagram"));
+            if (!(definition instanceof SubprocessDefinition)) {
+                pageIndex++;
+                swimlanePage = new SwimlaneEditorPage(this);
+                addPage(pageIndex, swimlanePage, getEditorInput());
+                setPageText(pageIndex, Localization.getString("DesignerEditor.title.swimlanes"));
+                pageIndex++;
+                variablePage = new VariableEditorPage(this);
+                addPage(pageIndex, variablePage, getEditorInput());
+                setPageText(pageIndex, Localization.getString("DesignerEditor.title.variables"));
+            }
+            pageIndex++;
             sourcePage = new TextEditor();
-            addPage(3, sourcePage, getEditorInput());
-            setPageText(3, Localization.getString("DesignerEditor.title.source"));
-            definition.validateDefinition(definitionFile);
+            addPage(pageIndex, sourcePage, getEditorInput());
+            setPageText(pageIndex, Localization.getString("DesignerEditor.title.source"));
+            ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
         } catch (PartInitException e) {
             PluginLogger.logError(Localization.getString("DesignerEditor.error.can_not_create_graphical_viewer"), e);
             throw new RuntimeException(e);
@@ -173,10 +175,10 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     }
 
     public void select(GraphElement model) {
-        if (model instanceof Swimlane) {
+        if (model instanceof Swimlane && swimlanePage != null) {
             openPage(1);
             swimlanePage.select((Swimlane) model);
-        } else if (model instanceof Variable) {
+        } else if (model instanceof Variable && variablePage != null) {
             openPage(2);
             variablePage.select((Variable) model);
         } else {
@@ -255,15 +257,19 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
 
     private String getGraphImagePath() {
         IFile file = ((FileEditorInput) getEditorInput()).getFile();
-        IPath path = file.getRawLocation().removeLastSegments(1).append(ParContentProvider.PROCESS_IMAGE_FILE_NAME);
-        return path.toOSString();
+        String fileName = ParContentProvider.PROCESS_IMAGE_FILE_NAME;
+        if (definition instanceof SubprocessDefinition) {
+            fileName = definition.getId() + "." + fileName;
+        }
+        IFile imageFile = IOUtils.getAdjacentFile(file, fileName);
+        return imageFile.getRawLocation().toOSString();
     }
 
     @Override
     public void doSave(IProgressMonitor monitor) {
         GEFImageHelper.save(getGraphicalViewer(), definition, getGraphImagePath());
         try {
-            definition.validateDefinition(definitionFile);
+            ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
             WorkspaceOperations.saveProcessDefinition(definitionFile, definition);
             getCommandStack().markSaveLocation();
             sourcePage.setInput(sourcePage.getEditorInput());
@@ -271,29 +277,30 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
         } catch (Exception e) {
             PluginLogger.logError(e);
         }
-        try {
-            Set<String> usedFormFiles = new HashSet<String>();
-            usedFormFiles.add("index.html");
-            List<FormNode> formNodes = definition.getChildren(FormNode.class);
-            for (FormNode formNode : formNodes) {
-                if (formNode.hasForm()) {
-                    usedFormFiles.add(formNode.getFormFileName());
-                }
-                if (formNode.hasFormValidation()) {
-                    usedFormFiles.add(formNode.getValidationFileName());
-                }
-            }
-            IFolder folder = (IFolder) definitionFile.getParent();
-            IResource[] children = folder.members(true);
-            for (IResource resource : children) {
-                boolean interested = IOUtils.looksLikeFormFile(resource.getName());
-                if (interested && !usedFormFiles.contains(resource.getName())) {
-                    resource.delete(true, null);
-                }
-            }
-        } catch (CoreException e) {
-            PluginLogger.logError("Cleaning unused form files", e);
-        }
+        // TODO this is nor working with embedded subprocesses
+//        try {
+//            Set<String> usedFormFiles = new HashSet<String>();
+//            usedFormFiles.add("index.html");
+//            List<FormNode> formNodes = definition.getChildren(FormNode.class);
+//            for (FormNode formNode : formNodes) {
+//                if (formNode.hasForm()) {
+//                    usedFormFiles.add(formNode.getFormFileName());
+//                }
+//                if (formNode.hasFormValidation()) {
+//                    usedFormFiles.add(formNode.getValidationFileName());
+//                }
+//            }
+//            IFolder folder = (IFolder) definitionFile.getParent();
+//            IResource[] children = folder.members(true);
+//            for (IResource resource : children) {
+//                boolean interested = IOUtils.looksLikeFormFile(resource.getName());
+//                if (interested && !usedFormFiles.contains(resource.getName())) {
+//                    resource.delete(true, null);
+//                }
+//            }
+//        } catch (CoreException e) {
+//            PluginLogger.logError("Cleaning unused form files", e);
+//        }
     }
 
     public IFile getDefinitionFile() {

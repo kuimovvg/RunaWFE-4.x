@@ -11,6 +11,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetFileCommand;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.ui.dialog.ChooseFormTypeDialog;
 import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.util.IOUtils;
@@ -30,6 +31,9 @@ public class CreateFormDelegate extends BaseModelActionDelegate {
                 return;
             }
             String fileName = formNode.getId().concat(".").concat(formNode.getFormType());
+            if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
+                fileName = formNode.getProcessDefinition().getId() + "." + fileName;
+            }
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);
             if (!file.exists()) {
                 file = IOUtils.createFileSafely(file);

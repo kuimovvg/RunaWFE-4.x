@@ -25,6 +25,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
@@ -47,9 +48,9 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     }
 
     @Override
-    protected void validateModel(Delegable delegable, DocxModel model) {
+    protected void validateModel(Delegable delegable, DocxModel model, List<ValidationError> errors) {
         GraphElement graphElement = ((GraphElement) delegable);
-        model.validate(graphElement);
+        model.validate(graphElement, errors);
     }
 
     @Override

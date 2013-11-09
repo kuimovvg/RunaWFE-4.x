@@ -14,6 +14,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.validation.ValidatorParser;
 
@@ -124,19 +125,19 @@ public abstract class FormNode extends SwimlanedNode {
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         if (hasFormValidation()) {
             IFile validationFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.validationFileName);
             if (!validationFile.exists()) {
-                addError("formNode.validationFileNotFound", this.validationFileName);
+                errors.add(ValidationError.createLocalizedError(this, "formNode.validationFileNotFound", this.validationFileName));
                 return;
             }
         }
         if (hasForm()) {
             FormType formType = FormTypeProvider.getFormType(this.formType);
             IFile formFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.formFileName);
-            formType.validate(formFile, this);
+            formType.validate(formFile, this, errors);
         }
     }
 
