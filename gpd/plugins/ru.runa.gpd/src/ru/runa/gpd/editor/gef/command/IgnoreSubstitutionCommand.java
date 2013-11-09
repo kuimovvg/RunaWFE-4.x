@@ -14,12 +14,12 @@ public class IgnoreSubstitutionCommand extends Command {
 
     @Override
     public void execute() {
-        state.setIgnoreSubstitution(!state.isIgnoreSubstitution());
+        state.setIgnoreSubstitutionRules(!state.isIgnoreSubstitutionRules());
     }
 
     @Override
     public void undo() {
-        state.setIgnoreSubstitution(!state.isIgnoreSubstitution());
+        state.setIgnoreSubstitutionRules(!state.isIgnoreSubstitutionRules());
     }
 
 }

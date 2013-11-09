@@ -12,12 +12,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 
@@ -28,15 +29,14 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
     }
 
     @Override
-    public boolean validateValue(Delegable delegable) {
+    public boolean validateValue(Delegable delegable, List<ValidationError> errors) {
         String configuration = delegable.getDelegationConfiguration();
         try {
             OrgFunctionsRegistry.getInstance().getArtifact(configuration);
-            return true;
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("EscalationActionHandler invalid configuration: " + configuration, e);
-            return false;
+            errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.invalidConfigurationWithError", e));
         }
+        return true;
     }
 
     public class EscalationConfigurationDialog extends DelegableConfigurationDialog {

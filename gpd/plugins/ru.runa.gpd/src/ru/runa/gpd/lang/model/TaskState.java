@@ -9,7 +9,9 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
@@ -22,14 +24,64 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-public class TaskState extends State implements Synchronizable {
+public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Synchronizable {
     private TimerAction escalationAction;
-    private boolean ignoreSubstitution;
+    private boolean ignoreSubstitutionRules;
     private boolean useEscalation;
     private Duration escalationDelay = new Duration();
     private boolean async;
     private AsyncCompletionMode asyncCompletionMode = AsyncCompletionMode.ON_MAIN_PROCESS_END;
     private BotTaskLink botTaskLink;
+    private Duration timeOutDelay = new Duration();
+    private boolean reassignmentEnabled = false;
+
+    @Override
+    public Timer getTimer() {
+        return getFirstChild(Timer.class);
+    }
+
+    public boolean isReassignmentEnabled() {
+        return reassignmentEnabled;
+    }
+
+    public void setReassignmentEnabled(boolean forceReassign) {
+        this.reassignmentEnabled = forceReassign;
+        firePropertyChange(PROPERTY_SWIMLANE_REASSIGN, !reassignmentEnabled, reassignmentEnabled);
+    }
+
+    public String getTimeOutDueDate() {
+        if (timeOutDelay == null || !timeOutDelay.hasDuration()) {
+            return null;
+        }
+        return timeOutDelay.getDuration();
+    }
+
+    @Override
+    public void setTimeOutDelay(Duration timeOutDuration) {
+        this.timeOutDelay = timeOutDuration;
+        firePropertyChange(PROPERTY_TIMEOUT_DELAY, null, null);
+    }
+
+    @Override
+    public Duration getTimeOutDelay() {
+        return timeOutDelay;
+    }
+
+    @Override
+    public String getNextTransitionName() {
+        if (getTimer() != null && getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME) == null) {
+            return PluginConstants.TIMER_TRANSITION_NAME;
+        }
+        return super.getNextTransitionName();
+    }
+
+    @Override
+    public void addLeavingTransition(Transition transition) {
+        if (getTimer() == null && PluginConstants.TIMER_TRANSITION_NAME.equals(transition.getName())) {
+            transition.setName(getNextTransitionName());
+        }
+        super.addLeavingTransition(transition);
+    }
 
     @Override
     public AsyncCompletionMode getAsyncCompletionMode() {
@@ -135,20 +187,20 @@ public class TaskState extends State implements Synchronizable {
         return null;
     }
 
-    public boolean isIgnoreSubstitution() {
-        return ignoreSubstitution;
+    public boolean isIgnoreSubstitutionRules() {
+        return ignoreSubstitutionRules;
     }
 
-    public void setIgnoreSubstitution(boolean ignoreSubstitution) {
-        boolean old = this.ignoreSubstitution;
-        this.ignoreSubstitution = ignoreSubstitution;
-        firePropertyChange(PROPERTY_IGNORE_SUBSTITUTION, old, this.ignoreSubstitution);
+    public void setIgnoreSubstitutionRules(boolean ignoreSubstitutionRules) {
+        boolean old = this.ignoreSubstitutionRules;
+        this.ignoreSubstitutionRules = ignoreSubstitutionRules;
+        firePropertyChange(PROPERTY_IGNORE_SUBSTITUTION_RULES, old, this.ignoreSubstitutionRules);
     }
 
     @Override
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
-        list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION, Localization.getString("property.ignoreSubstitution")));
+        list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION_RULES, Localization.getString("property.ignoreSubstitution")));
         list.add(new DurationPropertyDescriptor(PROPERTY_TIMEOUT_DELAY, getProcessDefinition(), getTimeOutDelay(), Localization.getString("timeout.property.duration")));
         if (useEscalation) {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
@@ -179,8 +231,8 @@ public class TaskState extends State implements Synchronizable {
         if (PROPERTY_ESCALATION_ACTION.equals(id)) {
             return escalationAction;
         }
-        if (PROPERTY_IGNORE_SUBSTITUTION.equals(id)) {
-            return ignoreSubstitution ? Localization.getString("yes") : Localization.getString("no");
+        if (PROPERTY_IGNORE_SUBSTITUTION_RULES.equals(id)) {
+            return ignoreSubstitutionRules ? Localization.getString("yes") : Localization.getString("no");
         }
         if (PROPERTY_ASYNC.equals(id)) {
             return async ? Localization.getString("yes") : Localization.getString("no");
@@ -197,14 +249,20 @@ public class TaskState extends State implements Synchronizable {
             setEscalationAction((TimerAction) value);
         } else if (PROPERTY_ESCALATION_DURATION.equals(id)) {
             setEscalationDelay((Duration) value);
+        } else if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
+            if (value == null) {
+                // ignore, edit was canceled
+                return;
+            }
+            setTimeOutDelay((Duration) value);
         } else {
             super.setPropertyValue(id, value);
         }
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         if (getBotTaskLink() != null) {
             Set<String> linkConfigParameterNames;
             if (Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
@@ -215,21 +273,22 @@ public class TaskState extends State implements Synchronizable {
             }
             BotTask botTask = BotCache.getBotTask(getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
             if (botTask == null) {
-                addWarning("taskState.botTaskLink.botTaskNotFound", getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
+                errors.add(ValidationError.createLocalizedWarning(this, "taskState.botTaskLink.botTaskNotFound", 
+                        getSwimlaneBotName(), getBotTaskLink().getBotTaskName()));
                 return;
             }
             if (botTask.getParamDefConfig() == null) {
-                addWarning("taskState.botTaskParamDefConfig.null");
+                errors.add(ValidationError.createLocalizedWarning(this, "taskState.botTaskParamDefConfig.null"));
                 return;
             }
             Set<String> botTaskConfigParameterNames = botTask.getParamDefConfig().getAllParameterNames(true);
             if (linkConfigParameterNames.isEmpty() && !botTaskConfigParameterNames.isEmpty()) {
-                addError("taskState.botTaskLinkConfig.empty");
+                errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.empty"));
                 return;
             }
             botTaskConfigParameterNames.removeAll(linkConfigParameterNames);
             if (botTaskConfigParameterNames.size() > 0) {
-                addError("taskState.botTaskLinkConfig.insufficient", botTaskConfigParameterNames);
+                errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.insufficient", botTaskConfigParameterNames));
             }
         }
     }

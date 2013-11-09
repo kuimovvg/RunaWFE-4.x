@@ -1,9 +1,13 @@
 package ru.runa.gpd.office;
 
+import java.util.List;
+
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.office.resource.Messages;
 
 import com.google.common.base.Strings;
 
@@ -52,16 +56,16 @@ public class InputOutputModel {
         return model;
     }
 
-    public void validate(GraphElement graphElement, FilesSupplierMode mode) {
+    public void validate(GraphElement graphElement, FilesSupplierMode mode, List<ValidationError> errors) {
         if (mode.isInSupported() && Strings.isNullOrEmpty(inputPath) && Strings.isNullOrEmpty(inputVariable)) {
-            graphElement.addError("in.file.empty");
+            errors.add(ValidationError.createError(graphElement, Messages.getString("model.validation.in.file.empty")));
         }
         if (mode.isOutSupported()) {
             if (Strings.isNullOrEmpty(outputVariable) && Strings.isNullOrEmpty(outputDir)) {
-                graphElement.addError("out.file.empty");
+                errors.add(ValidationError.createError(graphElement, Messages.getString("model.validation.out.file.empty")));
             }
             if (Strings.isNullOrEmpty(outputFilename)) {
-                graphElement.addError("out.filename.empty");
+                errors.add(ValidationError.createError(graphElement, Messages.getString("model.validation.out.filename.empty")));
             }
         }
     }

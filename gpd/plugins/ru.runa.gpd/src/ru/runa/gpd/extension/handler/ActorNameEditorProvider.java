@@ -1,8 +1,10 @@
 package ru.runa.gpd.extension.handler;
 
+import java.util.List;
 import java.util.Map;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -45,10 +47,8 @@ public class ActorNameEditorProvider extends ParamBasedProvider {
         }
 
         @Override
-        public boolean validate(Delegable delegable) {
-            if (!super.validate(delegable)) {
-                return false;
-            }
+        public boolean validate(Delegable delegable, List<ValidationError> errors) {
+            super.validate(delegable, errors);
             Map<String, String> props = parseConfiguration(delegable.getDelegationConfiguration());
             return isValid(props.get(ACTOR_CODE)) || isValid(props.get(ACTOR_LOGIN));
         }

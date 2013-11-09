@@ -38,6 +38,8 @@ import ru.runa.gpd.editor.BotTaskEditor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
+import ru.runa.gpd.lang.Language;
+import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -135,8 +137,8 @@ public class WorkspaceOperations {
         dialog.open();
     }
 
-    public static void createNewProcessDefinition(IStructuredSelection selection) {
-        NewProcessDefinitionWizard wizard = new NewProcessDefinitionWizard();
+    public static void createNewProcessDefinition(IStructuredSelection selection, ProcessDefinitionAccessType accessType) {
+        NewProcessDefinitionWizard wizard = new NewProcessDefinitionWizard(accessType);
         wizard.init(PlatformUI.getWorkbench(), selection);
         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
         dialog.open();
@@ -191,16 +193,11 @@ public class WorkspaceOperations {
         definitionFile.setContents(new ByteArrayInputStream(bytes), true, true, null);
     }
 
-    public static ProcessEditorBase openProcessDefinition(IFolder definitionFolder) {
-        IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
-        return openProcessDefinition(definitionFile);
-    }
-
     public static ProcessEditorBase openProcessDefinition(IFile definitionFile) {
         try {
             ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
             String editorId;
-            if (processDefinition.isBPMNNotation()) {
+            if (processDefinition.getLanguage() == Language.BPMN) {
                 editorId = GraphitiProcessEditor.ID;
             } else {
                 editorId = GEFProcessEditor.ID;

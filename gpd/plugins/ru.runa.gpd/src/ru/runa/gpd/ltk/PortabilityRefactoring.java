@@ -23,7 +23,6 @@ import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
@@ -55,9 +54,9 @@ public class PortabilityRefactoring extends Refactoring {
                 for (FormNode formNode : formNodes) {
                     cache.add(new FormNodePresentation(folder, formNode));
                 }
-                List<State> stateNodes = definition.getChildren(State.class);
-                for (State stateNode : stateNodes) {
-                    cache.add(new TimedPresentation(stateNode));
+                List<TaskState> stateNodes = definition.getChildren(TaskState.class);
+                for (TaskState taskState : stateNodes) {
+                    cache.add(new TimedPresentation(taskState));
                 }
                 List<Timer> timers = definition.getChildren(Timer.class);
                 for (Timer timer : timers) {

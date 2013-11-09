@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.Duration;
 
 import com.google.common.base.Objects;
@@ -68,11 +69,11 @@ public abstract class Node extends NamedGraphElement implements Describable {
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         if (!(this instanceof StartState) && !(this instanceof Timer && getParent() instanceof ITimed)) {
             if (getArrivingTransitions().size() == 0) {
-                addError("noInputTransitions");
+                errors.add(ValidationError.createLocalizedError(this, "noInputTransitions"));
             }
         }
         if (!(this instanceof EndState) && !(this instanceof EndTokenState)) {
@@ -81,7 +82,7 @@ public abstract class Node extends NamedGraphElement implements Describable {
                     // for jpdl
                     return;
                 }
-                addError("noOutputTransitions");
+                errors.add(ValidationError.createLocalizedError(this, "noOutputTransitions"));
             }
         }
         List<Transition> transitions = getLeavingTransitions();
@@ -93,7 +94,7 @@ public abstract class Node extends NamedGraphElement implements Describable {
             transitionNames.add(transition.getName());
         }
         if (transitionNames.size() != transitions.size()) {
-            addError("duplicatedTransitionNames");
+            errors.add(ValidationError.createLocalizedError(this, "duplicatedTransitionNames"));
         }
     }
 

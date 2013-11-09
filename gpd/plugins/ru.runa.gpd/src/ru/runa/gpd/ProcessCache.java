@@ -25,9 +25,11 @@ public class ProcessCache {
                     ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
                     cacheProcessDefinition(file, definition);
                 } catch (Exception e) {
+                    PluginLogger.logErrorWithoutDialog("parsing process " + file, e);
                 }
             }
         } catch (Exception e) {
+            PluginLogger.logError(e);
         }
     }
 
@@ -89,7 +91,7 @@ public class ProcessCache {
                 ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
                 cacheProcessDefinition(file, definition);
             } catch (Exception e) {
-                throw new RuntimeException("Parsing process definition failed: " + file.toString(), e);
+                throw new RuntimeException("Parsing process definition failed: " + file, e);
             }
         }
         return CACHE_BY_FILE.get(file);

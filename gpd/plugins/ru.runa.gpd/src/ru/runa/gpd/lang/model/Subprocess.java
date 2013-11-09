@@ -10,6 +10,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.extension.VariableFormatArtifact;
 import ru.runa.gpd.extension.VariableFormatRegistry;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
 
 import com.google.common.collect.Lists;
@@ -19,35 +20,36 @@ public class Subprocess extends Node implements Active {
     protected List<VariableMapping> variableMappings = new ArrayList<VariableMapping>();
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         if (subProcessName == null || subProcessName.length() == 0) {
-            addError("subprocess.empty");
+            errors.add(ValidationError.createLocalizedError(this, "subprocess.empty"));
             return;
         }
         ProcessDefinition subprocessDefinition = ProcessCache.getFirstProcessDefinition(subProcessName);
         if (subprocessDefinition == null) {
-            addWarning("subprocess.notFound");
+            errors.add(ValidationError.createLocalizedWarning(this, "subprocess.notFound"));
             return;
         }
-        for (VariableMapping variableMapping : variableMappings) {
-            if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(variableMapping.getUsage())) {
+        for (VariableMapping mapping : variableMappings) {
+            if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(mapping.getUsage())) {
                 continue;
             }
-            Variable processVariable = getProcessDefinition().getVariable(variableMapping.getProcessVariableName(), true);
+            Variable processVariable = getProcessDefinition().getVariable(mapping.getProcessVariableName(), true);
             if (processVariable == null) {
-                addError("subprocess.processVariableDoesNotExist", variableMapping.getProcessVariableName());
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.processVariableDoesNotExist", mapping.getProcessVariableName()));
                 continue;
             }
-            Variable subprocessVariable = subprocessDefinition.getVariable(variableMapping.getSubprocessVariableName(), true);
+            Variable subprocessVariable = subprocessDefinition.getVariable(mapping.getSubprocessVariableName(), true);
             if (subprocessVariable == null) {
-                addError("subprocess.subProcessVariableDoesNotExist", variableMapping.getSubprocessVariableName());
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.subProcessVariableDoesNotExist", mapping.getSubprocessVariableName()));
                 continue;
             }
             if (!isCompatibleTypes(processVariable.getJavaClassName(), subprocessVariable.getJavaClassName())) {
                 VariableFormatArtifact artifact1 = VariableFormatRegistry.getInstance().getArtifactNotNull(processVariable.getFormatClassName());
                 VariableFormatArtifact artifact2 = VariableFormatRegistry.getInstance().getArtifactNotNull(subprocessVariable.getFormatClassName());
-                addError("subprocess.variableMappingIncompatibleTypes", processVariable.getName(), artifact1.getLabel(), subprocessVariable.getName(), artifact2.getLabel());
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.variableMappingIncompatibleTypes", 
+                        processVariable.getName(), artifact1.getLabel(), subprocessVariable.getName(), artifact2.getLabel()));
             }
         }
     }

@@ -7,9 +7,11 @@ import java.util.Observable;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputModel;
+import ru.runa.gpd.office.resource.Messages;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Strings;
@@ -62,13 +64,14 @@ public class ExcelModel extends Observable {
         return XmlUtil.toString(document);
     }
 
-    public void validate(GraphElement graphElement) {
+    public void validate(GraphElement graphElement, List<ValidationError> errors) {
         for (ConstraintsModel constraintsModel : constraints) {
             if (Strings.isNullOrEmpty(constraintsModel.variableName)) {
-                graphElement.addError("xlsx.constraint.variable.empty");
+                errors.add(ValidationError.createError(graphElement, Messages.getString("model.validation.xlsx.constraint.variable.empty")));
+                break;
             }
         }
-        inOutModel.validate(graphElement, mode);
+        inOutModel.validate(graphElement, mode, errors);
     }
 
 }

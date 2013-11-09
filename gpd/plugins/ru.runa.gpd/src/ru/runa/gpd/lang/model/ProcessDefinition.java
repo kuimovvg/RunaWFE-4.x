@@ -2,37 +2,36 @@ package ru.runa.gpd.lang.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginConstants;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.Language;
+import ru.runa.gpd.lang.ProcessDefinitionAccessType;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
 import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
-import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class ProcessDefinition extends NamedGraphElement implements Active, Describable, ITimeOut {
     private Language language;
     private Dimension dimension;
-    private SwimlaneGUIConfiguration swimlaneGUIConfiguration;
+    private final SwimlaneGUIConfiguration swimlaneGUIConfiguration = new SwimlaneGUIConfiguration();
     private boolean dirty;
     private boolean showActions;
     private boolean showGrid;
@@ -42,10 +41,24 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private boolean invalid;
     private int nextNodeId;
     private SwimlaneDisplayMode swimlaneDisplayMode = SwimlaneDisplayMode.none;
+    private Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
+    private ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
 
     public ProcessDefinition() {
     }
 
+    public ProcessDefinitionAccessType getAccessType() {
+        return accessType;
+    }
+    
+    public void setAccessType(ProcessDefinitionAccessType accessType) {
+        this.accessType = accessType;
+    }
+    
+    public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
+        return embeddedSubprocesses;
+    }
+    
     public SwimlaneDisplayMode getSwimlaneDisplayMode() {
         return swimlaneDisplayMode;
     }
@@ -93,10 +106,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         }
     }
 
-    public boolean isBPMNNotation() {
-        return Language.BPMN == language;
-    }
-
     public Language getLanguage() {
         return language;
     }
@@ -142,10 +151,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         return swimlaneGUIConfiguration;
     }
 
-    public void setSwimlaneGUIConfiguration(SwimlaneGUIConfiguration swimlaneGUIConfiguration) {
-        this.swimlaneGUIConfiguration = swimlaneGUIConfiguration;
-    }
-
     @Override
     public void removeAllPropertyChangeListeners() {
         super.removeAllPropertyChangeListeners();
@@ -178,92 +183,21 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     @Override
-    protected void validate() {
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         List<StartState> startStates = getChildren(StartState.class);
         if (startStates.size() == 0) {
-            addError("startState.doesNotExist");
+            errors.add(ValidationError.createLocalizedError(this, "startState.doesNotExist"));
         }
         if (startStates.size() > 1) {
-            addError("multipleStartStatesNotAllowed");
+            errors.add(ValidationError.createLocalizedError(this, "multipleStartStatesNotAllowed"));
         }
-    }
-
-    /**
-     * 0 = no errors 1 = only warnings 2 = errors
-     */
-    public int validateDefinition(IFile definitionFile) {
-        try {
-            this.definitionFile = definitionFile;
-            hasValidationErrors = new boolean[] { false, false };
-            definitionFile.deleteMarkers(ValidationErrorsView.ID, true, IResource.DEPTH_INFINITE);
-            List<GraphElement> childs = getChildrenRecursive(GraphElement.class);
-            validate();
-            for (GraphElement element : childs) {
-                try {
-                    element.validate();
-                } catch (Exception e) {
-                    PluginLogger.logErrorWithoutDialog("validation error", e);
-                    element.addWarning("error", e);
-                }
-            }
-            this.definitionFile = null;
-            if (hasValidationErrors[1]) {
+        this.invalid = false;
+        for (ValidationError validationError : errors) {
+            if (validationError.getSeverity() == IMarker.SEVERITY_ERROR) {
                 this.invalid = true;
-                return 2;
+                break;
             }
-            this.invalid = false;
-            if (hasValidationErrors[0]) {
-                return 1;
-            }
-            return 0;
-        } catch (Throwable e) {
-            PluginLogger.logError(e);
-            return 2;
-        }
-    }
-
-    protected void addError(GraphElement element, String messageKey, Object... params) {
-        hasValidationErrors[1] = true;
-        addError(element, messageKey, IMarker.SEVERITY_ERROR, params);
-    }
-
-    protected void addWarning(GraphElement element, String messageKey, Object... params) {
-        hasValidationErrors[0] = true;
-        addError(element, messageKey, IMarker.SEVERITY_WARNING, params);
-    }
-
-    private void addError(GraphElement element, String messageKey, int severity, Object... params) {
-        try {
-            IMarker marker = definitionFile.createMarker(ValidationErrorsView.ID);
-            if (marker.exists()) {
-                String formatted = Localization.getString("model.validation." + messageKey, params);
-                marker.setAttribute(IMarker.MESSAGE, formatted);
-                String elementId = element.toString();
-                if (element instanceof Node) {
-                    elementId = ((Node) element).getId();
-                }
-                if (element instanceof Swimlane) {
-                    marker.setAttribute(PluginConstants.SWIMLANE_LINK_KEY, elementId);
-                } else if (element instanceof Action) {
-                    NamedGraphElement actionParent = (NamedGraphElement) element.getParent();
-                    marker.setAttribute(PluginConstants.ACTION_INDEX_KEY, actionParent.getActions().indexOf(element));
-                    String parentNodeTreePath;
-                    if (actionParent instanceof Transition) {
-                        parentNodeTreePath = ((NamedGraphElement) actionParent.getParent()).getName() + "|" + actionParent.getName();
-                    } else {
-                        parentNodeTreePath = actionParent.getName();
-                    }
-                    marker.setAttribute(PluginConstants.PARENT_NODE_KEY, parentNodeTreePath);
-                    elementId = element.toString() + " (" + parentNodeTreePath + ")";
-                } else {
-                    marker.setAttribute(PluginConstants.SELECTION_LINK_KEY, elementId);
-                }
-                marker.setAttribute(IMarker.LOCATION, element.toString());
-                marker.setAttribute(IMarker.SEVERITY, severity);
-                marker.setAttribute(PluginConstants.PROCESS_NAME_KEY, getName());
-            }
-        } catch (CoreException e) {
-            PluginLogger.logError(e);
         }
     }
 

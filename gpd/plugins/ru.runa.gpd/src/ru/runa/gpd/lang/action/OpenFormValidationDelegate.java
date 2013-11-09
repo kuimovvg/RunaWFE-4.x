@@ -11,6 +11,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetValidationFileCommand;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.ui.wizard.ValidatorWizard;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
@@ -26,8 +27,11 @@ public class OpenFormValidationDelegate extends BaseModelActionDelegate {
                 if (!confirm("", Localization.getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
                     return;
                 }
-                String validationFileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                IFile file = ValidationUtil.rewriteValidation(getDefinitionFile(), validationFileName, new HashMap<String, Map<String, ValidatorConfig>>());
+                String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
+                if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
+                    fileName = formNode.getProcessDefinition().getId() + "." + fileName;
+                }
+                IFile file = ValidationUtil.rewriteValidation(getDefinitionFile(), fileName, new HashMap<String, Map<String, ValidatorConfig>>());
                 setNewValidationFormFile(formNode, file.getName());
             }
             IFile validationFile = IOUtils.getAdjacentFile(getDefinitionFile(), formNode.getValidationFileName());
