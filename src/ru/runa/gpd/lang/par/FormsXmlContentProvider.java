@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Node;
@@ -15,7 +13,7 @@ import ru.runa.gpd.util.XmlUtil;
 import com.google.common.base.Strings;
 
 public class FormsXmlContentProvider extends AuxContentProvider {
-    public static final String FORMS_XML_FILE_NAME = "forms.xml";
+    public static final String XML_FILE_NAME = "forms.xml";
     private static final String TYPE_ATTRIBUTE_NAME = "type";
     private static final String FILE_ATTRIBUTE_NAME = "file";
     private static final String VALIDATION_FILE_ATTRIBUTE_NAME = "validationFile";
@@ -26,12 +24,12 @@ public class FormsXmlContentProvider extends AuxContentProvider {
     private static final String FORMS_ELEMENT_NAME = "forms";
 
     @Override
-    public void readFromFile(IFolder folder, ProcessDefinition definition) throws Exception {
-        IFile formsFile = folder.getFile(FORMS_XML_FILE_NAME);
-        if (!formsFile.exists()) {
-            return;
-        }
-        Document document = XmlUtil.parseWithoutValidation(formsFile.getContents());
+    public String getFileName() {
+        return XML_FILE_NAME;
+    }
+    
+    @Override
+    public void read(Document document, ProcessDefinition definition) throws Exception {
         List<Element> formElementsList = document.getRootElement().elements(FORM_ELEMENT_NAME);
         for (Element formElement : formElementsList) {
             String stateId = formElement.attributeValue(STATE_ATTRIBUTE_NAME);
@@ -62,7 +60,7 @@ public class FormsXmlContentProvider extends AuxContentProvider {
     }
 
     @Override
-    public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
+    public Document save(ProcessDefinition definition) throws Exception {
         Document document = XmlUtil.createDocument(FORMS_ELEMENT_NAME);
         Element root = document.getRootElement();
         for (Node node : definition.getNodes()) {
@@ -85,7 +83,6 @@ public class FormsXmlContentProvider extends AuxContentProvider {
                 }
             }
         }
-        byte[] bytes = XmlUtil.writeXml(document);
-        updateFile(folder.getFile(FORMS_XML_FILE_NAME), bytes);
+        return document;
     }
 }

@@ -411,7 +411,7 @@ public class IOUtils {
     private static void findProcessDefinitionsRecursive(IResource resource, List<IFile> result) throws CoreException {
         if (resource instanceof IFolder) {
             IFolder folder = (IFolder) resource;
-            IFile definitionFile = folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+            IFile definitionFile = getProcessDefinitionFile(folder);
             if (definitionFile.exists()) {
                 result.add(definitionFile);
                 return;
@@ -447,8 +447,7 @@ public class IOUtils {
     private static void findProcessContainers(IResource resource, List<IContainer> result) {
         if (resource instanceof IFolder) {
             IFolder folder = (IFolder) resource;
-            IFile definitionFile = folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
-            if (definitionFile.exists()) {
+            if (isProcessDefinitionFolder(folder)) {
                 return;
             }
             if (folder.getName().startsWith(".")) {
@@ -490,11 +489,18 @@ public class IOUtils {
     public static String getProcessContainerName(IContainer container) {
         IProject project =  container.getProject();
         if (isProjectHasProcessNature(project)) {
-            // TODO
-            return container.getFullPath().toString();
+            String path = container.getFullPath().toString();
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            return path;
         } else {
             return project != null ? project.getName() : "";
         }
+    }
+
+    public static boolean isProcessDefinitionFolder(IFolder folder) {
+        return getProcessDefinitionFile(folder).exists();
     }
 
     public static IFile getProcessDefinitionFile(IFolder folder) {

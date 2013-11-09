@@ -2,24 +2,23 @@ package ru.runa.gpd.editor.gef.command;
 
 import org.eclipse.gef.commands.Command;
 
-import ru.runa.gpd.lang.model.State;
+import ru.runa.gpd.lang.model.TaskState;
 
 public class EnableReassignmentCommand extends Command {
+    private final TaskState taskState;
 
-    private final State state;
-
-    public EnableReassignmentCommand(State state) {
-        this.state = state;
+    public EnableReassignmentCommand(TaskState taskState) {
+        this.taskState = taskState;
     }
 
     @Override
     public void execute() {
-        state.setReassignmentEnabled(!state.isReassignmentEnabled());
+        taskState.setReassignmentEnabled(!taskState.isReassignmentEnabled());
     }
 
     @Override
     public void undo() {
-        state.setReassignmentEnabled(!state.isReassignmentEnabled());
+        taskState.setReassignmentEnabled(!taskState.isReassignmentEnabled());
     }
 
 }

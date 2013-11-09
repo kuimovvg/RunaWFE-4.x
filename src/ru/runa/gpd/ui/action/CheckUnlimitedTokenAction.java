@@ -14,6 +14,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.algorithms.CheckUnlimitedTokenAlgorithm;
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
@@ -44,7 +45,7 @@ public class CheckUnlimitedTokenAction extends BaseActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         ProcessEditorBase editor = getActiveDesignerEditor();
-        action.setEnabled(getDirtyEditors().length == 0 && editor != null && editor.getDefinition() != null && editor.getDefinition().isBPMNNotation()
+        action.setEnabled(getDirtyEditors().length == 0 && editor != null && editor.getDefinition().getLanguage() == Language.BPMN
                 && !editor.getDefinition().isInvalid());
     }
 

@@ -1,8 +1,11 @@
 package ru.runa.gpd.extension;
 
+import java.util.List;
+
 import org.eclipse.jface.window.Window;
 import org.osgi.framework.Bundle;
 
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 
 public class DelegableProvider {
@@ -32,7 +35,7 @@ public class DelegableProvider {
      * Validates configuration. Implementors can return <code>false</code> to raise default invalid configuration message. Or can invoke delegable.addError. 
      * @return <code>false</code> for raising default invalid configuration message
      */
-    public boolean validateValue(Delegable delegable) {
+    public boolean validateValue(Delegable delegable, List<ValidationError> errors) {
         return true;
     }
     

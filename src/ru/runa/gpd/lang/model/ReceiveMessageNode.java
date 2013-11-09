@@ -4,21 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
 
 public class ReceiveMessageNode extends Node implements Active, ITimed {
     private final List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         for (VariableMapping variableMapping : variablesList) {
             if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {
                 continue;
             }
             String processVarName = variableMapping.getProcessVariableName();
             if (!getProcessDefinition().getVariableNames(true).contains(processVarName)) {
-                addError("message.processVariableDoesNotExist", processVarName);
+                errors.add(ValidationError.createLocalizedError(this, "message.processVariableDoesNotExist", processVarName));
                 continue;
             }
         }

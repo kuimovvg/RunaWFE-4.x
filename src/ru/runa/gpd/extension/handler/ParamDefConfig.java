@@ -15,6 +15,7 @@ import org.dom4j.Element;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.ParamDef.Presentation;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.util.XmlUtil;
@@ -70,7 +71,9 @@ public class ParamDefConfig {
 
     /**
      * Retrieves all founded parameter to variable mappings
-     * @param configuration param-based xml or <code>null</code> or empty string
+     * 
+     * @param configuration
+     *            param-based xml or <code>null</code> or empty string
      */
     public static Map<String, String> getAllParameters(String configuration) {
         Map<String, String> properties = new HashMap<String, String>();
@@ -96,9 +99,13 @@ public class ParamDefConfig {
     }
 
     /**
-     * Retrieves all founded parameter to variable mappings based on this definition.
-     * @param configuration valid param-based xml
-     * @return not <code>null</code> parameters (empty parameters on parsing error)
+     * Retrieves all founded parameter to variable mappings based on this
+     * definition.
+     * 
+     * @param configuration
+     *            valid param-based xml
+     * @return not <code>null</code> parameters (empty parameters on parsing
+     *         error)
      */
     public Map<String, String> parseConfiguration(String configuration) {
         Map<String, String> properties = new HashMap<String, String>();
@@ -178,33 +185,28 @@ public class ParamDefConfig {
         return null;
     }
 
-    public boolean validate(Delegable delegable) {
+    public boolean validate(Delegable delegable, List<ValidationError> errors) {
         String configuration = delegable.getDelegationConfiguration();
         GraphElement graphElement = ((GraphElement) delegable);
-        try {
-            Map<String, String> props = parseConfiguration(configuration);
-            for (ParamDefGroup group : groups) {
-                for (ParamDef paramDef : group.getParameters()) {
-                    String value = props.get(paramDef.getName());
-                    if (paramDef.isOptional() && !isValid(value)) {
-                        continue;
-                    }
-                    if (!paramDef.isOptional() && !isValid(value)) {
-                        graphElement.addError("parambased.requiredParamIsNotSet", paramDef.getLabel());
-                    } else if (paramDef.isUseVariable() && paramDef.getPresentation() == Presentation.combo) {
-                        String[] filters = paramDef.getFormatFilters().toArray(new String[paramDef.getFormatFilters().size()]);
-                        List<String> variableNames = graphElement.getProcessDefinition().getVariableNames(true, filters);
-                        if (!variableNames.contains(value)) {
-                            graphElement.addError("parambased.missedParamVariable", paramDef.getLabel(), value);
-                        }
+        Map<String, String> props = parseConfiguration(configuration);
+        for (ParamDefGroup group : groups) {
+            for (ParamDef paramDef : group.getParameters()) {
+                String value = props.get(paramDef.getName());
+                if (paramDef.isOptional() && !isValid(value)) {
+                    continue;
+                }
+                if (!paramDef.isOptional() && !isValid(value)) {
+                    errors.add(ValidationError.createLocalizedError(graphElement, "parambased.requiredParamIsNotSet", paramDef.getLabel()));
+                } else if (paramDef.isUseVariable() && paramDef.getPresentation() == Presentation.combo) {
+                    String[] filters = paramDef.getFormatFilters().toArray(new String[paramDef.getFormatFilters().size()]);
+                    List<String> variableNames = graphElement.getProcessDefinition().getVariableNames(true, filters);
+                    if (!variableNames.contains(value)) {
+                        errors.add(ValidationError.createLocalizedError(graphElement, "parambased.missedParamVariable", paramDef.getLabel(), value));
                     }
                 }
             }
-            return true;
-        } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("validation of " + configuration, e);
-            return false;
         }
+        return true;
     }
 
     protected boolean isValid(String value) {

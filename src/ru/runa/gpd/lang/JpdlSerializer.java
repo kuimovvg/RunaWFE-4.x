@@ -35,8 +35,8 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.ReceiveMessageNode;
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.lang.model.StartState;
-import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Synchronizable;
@@ -56,86 +56,86 @@ import com.google.common.base.Strings;
 
 @SuppressWarnings("unchecked")
 public class JpdlSerializer extends ProcessSerializer {
-    private static final String ROOT_ELEMENT = "process-definition";
-    private static final String INVALID_ATTR = "invalid";
-    private static final String ACCESS_ATTR = "access";
-    private static final String END_STATE_NODE = "end-state";
-    private static final String VARIABLE_NODE = "variable";
-    private static final String SUB_PROCESS_NODE = "sub-process";
-    private static final String MAPPED_NAME_ATTR = "mapped-name";
-    private static final String PROCESS_STATE_NODE = "process-state";
-    private static final String MULTI_INSTANCE_STATE_NODE = "multiinstance-state";
-    private static final String DECISION_NODE = "decision";
-    private static final String CONJUNCTION_NODE = "conjunction";
-    private static final String JOIN_NODE = "join";
-    private static final String FORK_NODE = "fork";
-    private static final String DUEDATE_ATTR = "duedate";
-    private static final String DEFAULT_DUEDATE_ATTR = "default-task-duedate";
-    private static final String REPEAT_ATTR = "repeat";
-    private static final String TIMER_NODE = "timer";
-    private static final String ASSIGNMENT_NODE = "assignment";
-    private static final String TASK_STATE_NODE = "task-node";
-    private static final String TASK_NODE = "task";
-    private static final String WAIT_STATE_NODE = "wait-state";
-    private static final String START_STATE_NODE = "start-state";
-    private static final String SWIMLANE_NODE = "swimlane";
-    private static final String REASSIGN_ATTR = "reassign";
-    private static final String TO_ATTR = "to";
-    private static final String CLASS_ATTR = "class";
-    private static final String ACTION_NODE = "action";
-    private static final String EVENT_NODE = "event";
-    private static final String TRANSITION_NODE = "transition";
-    private static final String HANDLER_NODE = "handler";
-    private static final String DESCRIPTION_NODE = "description";
-    private static final String NAME_ATTR = "name";
-    private static final String TYPE_ATTR = "type";
-    private static final String VERSION_ATTR = "version";
-    private static final String ID_ATTR = "id";
-    private static final String SWIMLANE_ATTR = "swimlane";
-    private static final String TRANSITION_ATTR = "transition";
-    private static final String SEND_MESSAGE_NODE = "send-message";
-    private static final String RECEIVE_MESSAGE_NODE = "receive-message";
-    private static final String ACTION_NODE_NODE = "node";
-    private static final String TIMER_GLOBAL_NAME = "__GLOBAL";
+    private static final String PROCESS_DEFINITION = "process-definition";
+
+    private static final String INVALID = "invalid";
+    private static final String ACCESS = "access";
+    private static final String END_STATE = "end-state";
+    private static final String SUB_PROCESS = "sub-process";
+    private static final String MAPPED_NAME = "mapped-name";
+    private static final String PROCESS_STATE = "process-state";
+    private static final String MULTIINSTANCE_STATE = "multiinstance-state";
+    private static final String DECISION = "decision";
+    private static final String CONJUNCTION = "conjunction";
+    private static final String JOIN = "join";
+    private static final String FORK = "fork";
+    private static final String DUEDATE = "duedate";
+    private static final String DEFAULT_TASK_DUEDATE = "default-task-duedate";
+    private static final String REPEAT = "repeat";
+    private static final String TIMER = "timer";
+    private static final String ASSIGNMENT = "assignment";
+    private static final String TASK_NODE = "task-node";
+    private static final String TASK = "task";
+    private static final String WAIT_STATE = "wait-state";
+    private static final String START_STATE = "start-state";
+    private static final String TO = "to";
+    private static final String ACTION = "action";
+    private static final String EVENT = "event";
+    private static final String HANDLER = "handler";
+    private static final String DESCRIPTION = "description";
+    private static final String SWIMLANE = "swimlane";
+    private static final String TRANSITION = "transition";
+    private static final String SEND_MESSAGE = "send-message";
+    private static final String RECEIVE_MESSAGE = "receive-message";
+    private static final String ACTION_NODE = "node";
+    private static final String TIMER_GLOBAL = "__GLOBAL";
     private static final String TIMER_ESCALATION = "__ESCALATION";
-    private static final String END_TOKEN_NODE = "end-token-state";
-    private static final String ASYNC_ATTR = "async";
-    private static final String ASYNC_COMPLETION_MODE_ATTR = "asyncCompletionMode";
+    private static final String END_TOKEN = "end-token-state";
     private static final String MULTI_TASK_NODE = "multi-task-node";
-    private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
-    private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
+    private static final String TASK_EXECUTORS = "taskExecutors";
+    private static final String TASK_EXECUTION_MODE = "taskExecutionMode";
 
     @Override
     public boolean isSupported(Document document) {
-        return ROOT_ELEMENT.equals(document.getRootElement().getName());
+        return PROCESS_DEFINITION.equals(document.getRootElement().getName());
     }
 
     @Override
     public Document getInitialProcessDefinitionDocument(String processName, Map<String, String> properties) {
-        Document document = XmlUtil.createDocument(ROOT_ELEMENT);
-        document.getRootElement().addAttribute(NAME_ATTR, processName);
+        Document document = XmlUtil.createDocument(PROCESS_DEFINITION);
+        document.getRootElement().addAttribute(NAME, processName);
+        if (properties != null && properties.containsKey(ID)) {
+            document.getRootElement().addAttribute(ID, properties.get(ID));
+        }
+        if (properties != null && properties.containsKey(ACCESS_TYPE)) {
+            document.getRootElement().addAttribute(ACCESS_TYPE, properties.get(ACCESS_TYPE));
+        }
         return document;
     }
 
     @Override
     public void saveToXML(ProcessDefinition definition, Document document) {
         Element root = document.getRootElement();
-        root.addAttribute(NAME_ATTR, definition.getName());
-        root.addAttribute(VERSION_ATTR, Version.get());
+        if (definition.getId() != null) {
+            root.addAttribute(ID, definition.getId());
+        }
+        root.addAttribute(NAME, definition.getName());
+        root.addAttribute(VERSION, Version.get());
+        root.addAttribute(ACCESS_TYPE, definition.getAccessType().name());
         if (definition.getDefaultTaskTimeoutDelay().hasDuration()) {
-            root.addAttribute(DEFAULT_DUEDATE_ATTR, definition.getDefaultTaskTimeoutDelay().getDuration());
+            root.addAttribute(DEFAULT_TASK_DUEDATE, definition.getDefaultTaskTimeoutDelay().getDuration());
         }
         if (definition.isInvalid()) {
-            root.addAttribute(INVALID_ATTR, String.valueOf(definition.isInvalid()));
+            root.addAttribute(INVALID, String.valueOf(definition.isInvalid()));
         }
-        if (definition.getDescription() != null && definition.getDescription().length() > 0) {
-            Element desc = root.addElement(DESCRIPTION_NODE);
+        if (!Strings.isNullOrEmpty(definition.getDescription())) {
+            Element desc = root.addElement(DESCRIPTION);
             setNodeValue(desc, definition.getDescription());
         }
         List<Swimlane> swimlanes = definition.getSwimlanes();
         for (Swimlane swimlane : swimlanes) {
             Element swimlaneElement = writeElement(root, swimlane);
-            writeDelegation(swimlaneElement, ASSIGNMENT_NODE, swimlane);
+            writeDelegation(swimlaneElement, ASSIGNMENT, swimlane);
         }
         StartState startState = definition.getFirstChild(StartState.class);
         if (startState != null) {
@@ -155,7 +155,7 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<Decision> decisions = definition.getChildren(Decision.class);
         for (Decision decision : decisions) {
-            writeNode(root, decision, HANDLER_NODE);
+            writeNode(root, decision, HANDLER);
         }
         List<Conjunction> conjunctions = definition.getChildren(Conjunction.class);
         for (Conjunction conjunction : conjunctions) {
@@ -163,30 +163,30 @@ public class JpdlSerializer extends ProcessSerializer {
         }
         List<TaskState> states = definition.getChildren(TaskState.class);
         for (TaskState state : states) {
-            Element stateElement = writeTaskStateWithDuedate(root, state);
+            Element stateElement = writeTaskState(root, state);
             if (state.isAsync()) {
-                stateElement.addAttribute(ASYNC_ATTR, Boolean.TRUE.toString());
-                stateElement.addAttribute(ASYNC_COMPLETION_MODE_ATTR, state.getAsyncCompletionMode().name());
+                stateElement.addAttribute(ASYNC, Boolean.TRUE.toString());
+                stateElement.addAttribute(ASYNC_COMPLETION_MODE, state.getAsyncCompletionMode().name());
             }
             if (state instanceof MultiTaskState) {
-                stateElement.addAttribute(TASK_EXECUTION_MODE_ATTR, ((MultiTaskState) state).getTaskExecutionMode().name());
-                stateElement.addAttribute(TASK_EXECUTORS_ATTR, ((MultiTaskState) state).getExecutorsVariableName());
+                stateElement.addAttribute(TASK_EXECUTION_MODE, ((MultiTaskState) state).getTaskExecutionMode().name());
+                stateElement.addAttribute(TASK_EXECUTORS, ((MultiTaskState) state).getExecutorsVariableName());
             }
             writeTimer(stateElement, state.getTimer());
             if (state.isUseEscalation()) {
                 String timerName = TIMER_ESCALATION;
                 Duration escalationDuration = state.getEscalationDelay();
-                Element timerElement = stateElement.addElement(TIMER_NODE);
-                setAttribute(timerElement, NAME_ATTR, timerName);
+                Element timerElement = stateElement.addElement(TIMER);
+                setAttribute(timerElement, NAME, timerName);
                 if (escalationDuration != null && escalationDuration.hasDuration()) {
-                    setAttribute(timerElement, DUEDATE_ATTR, escalationDuration.getDuration());
+                    setAttribute(timerElement, DUEDATE, escalationDuration.getDuration());
                 }
                 TimerAction escalationAction = state.getEscalationAction();
                 if (escalationAction != null) {
                     if (escalationAction.getRepeatDelay().hasDuration()) {
-                        setAttribute(timerElement, REPEAT_ATTR, escalationAction.getRepeatDelay().getDuration());
+                        setAttribute(timerElement, REPEAT, escalationAction.getRepeatDelay().getDuration());
                     }
-                    writeDelegation(timerElement, ACTION_NODE, escalationAction);
+                    writeDelegation(timerElement, ACTION, escalationAction);
                 }
             }
             writeTransitions(stateElement, state);
@@ -207,34 +207,34 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Subprocess> subprocesses = definition.getChildren(Subprocess.class);
         for (Subprocess subprocess : subprocesses) {
             Element processStateElement = writeNode(root, subprocess, null);
-            Element subProcessElement = processStateElement.addElement(SUB_PROCESS_NODE);
-            setAttribute(subProcessElement, NAME_ATTR, subprocess.getSubProcessName());
+            Element subProcessElement = processStateElement.addElement(SUB_PROCESS);
+            setAttribute(subProcessElement, NAME, subprocess.getSubProcessName());
             for (VariableMapping variable : subprocess.getVariableMappings()) {
-                Element variableElement = processStateElement.addElement(VARIABLE_NODE);
-                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariableName());
-                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariableName());
-                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
+                Element variableElement = processStateElement.addElement(VARIABLE);
+                setAttribute(variableElement, NAME, variable.getProcessVariableName());
+                setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
+                setAttribute(variableElement, ACCESS, variable.getUsage());
             }
         }
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
             Element messageElement = writeNode(root, messageNode, null);
-            messageElement.addAttribute(DUEDATE_ATTR, messageNode.getTtlDuration().getDuration());
+            messageElement.addAttribute(DUEDATE, messageNode.getTtlDuration().getDuration());
             for (VariableMapping variable : messageNode.getVariablesList()) {
-                Element variableElement = messageElement.addElement(VARIABLE_NODE);
-                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariableName());
-                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariableName());
-                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
+                Element variableElement = messageElement.addElement(VARIABLE);
+                setAttribute(variableElement, NAME, variable.getProcessVariableName());
+                setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
+                setAttribute(variableElement, ACCESS, variable.getUsage());
             }
         }
         List<ReceiveMessageNode> receiveMessageNodes = definition.getChildren(ReceiveMessageNode.class);
         for (ReceiveMessageNode messageNode : receiveMessageNodes) {
             Element messageElement = writeNode(root, messageNode, null);
             for (VariableMapping variable : messageNode.getVariablesList()) {
-                Element variableElement = messageElement.addElement(VARIABLE_NODE);
-                setAttribute(variableElement, NAME_ATTR, variable.getProcessVariableName());
-                setAttribute(variableElement, MAPPED_NAME_ATTR, variable.getSubprocessVariableName());
-                setAttribute(variableElement, ACCESS_ATTR, variable.getUsage());
+                Element variableElement = messageElement.addElement(VARIABLE);
+                setAttribute(variableElement, NAME, variable.getProcessVariableName());
+                setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
+                setAttribute(variableElement, ACCESS, variable.getUsage());
             }
             writeTimer(messageElement, messageNode.getTimer());
         }
@@ -257,31 +257,22 @@ public class JpdlSerializer extends ProcessSerializer {
         return nodeElement;
     }
 
-    private Element writeTaskStateWithDuedate(Element parent, TaskState state) {
-        Element nodeElement = writeElement(parent, state);
-        Element taskElement = nodeElement.addElement(TASK_NODE);
-        setAttribute(taskElement, DUEDATE_ATTR, state.getTimeOutDueDate());
-        setAttribute(taskElement, NAME_ATTR, state.getName());
-        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
-        if (state instanceof State && ((State) state).isReassignmentEnabled()) {
-            setAttribute(taskElement, REASSIGN_ATTR, "true");
+    private Element writeTaskState(Element parent, SwimlanedNode swimlanedNode) {
+        Element nodeElement = writeElement(parent, swimlanedNode);
+        Element taskElement = nodeElement.addElement(TASK);
+        setAttribute(taskElement, NAME, swimlanedNode.getName());
+        setAttribute(taskElement, SWIMLANE, swimlanedNode.getSwimlaneName());
+        if (swimlanedNode instanceof TaskState) {
+            TaskState taskState = (TaskState) swimlanedNode;
+            if (taskState.isReassignmentEnabled()) {
+                setAttribute(taskElement, REASSIGN, "true");
+            }
+            if (taskState.isIgnoreSubstitutionRules()) {
+                setAttribute(taskElement, IGNORE_SUBSTITUTION_RULES, "true");
+            }
+            setAttribute(taskElement, DUEDATE, taskState.getTimeOutDueDate());
         }
-        for (Action action : state.getActions()) {
-            ActionImpl actionImpl = (ActionImpl) action;
-            writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
-        }
-        return nodeElement;
-    }
-
-    private Element writeTaskState(Element parent, SwimlanedNode state) {
-        Element nodeElement = writeElement(parent, state);
-        Element taskElement = nodeElement.addElement(TASK_NODE);
-        setAttribute(taskElement, NAME_ATTR, state.getName());
-        setAttribute(taskElement, SWIMLANE_ATTR, state.getSwimlaneName());
-        if (state instanceof State && ((State) state).isReassignmentEnabled()) {
-            setAttribute(taskElement, REASSIGN_ATTR, "true");
-        }
-        for (Action action : state.getActions()) {
+        for (Action action : swimlanedNode.getActions()) {
             ActionImpl actionImpl = (ActionImpl) action;
             writeEvent(taskElement, new Event(actionImpl.getEventType()), actionImpl);
         }
@@ -289,7 +280,7 @@ public class JpdlSerializer extends ProcessSerializer {
     }
 
     private Element writeWaitState(Element parent, Timer timer) {
-        Element nodeElement = writeElement(parent, timer, WAIT_STATE_NODE);
+        Element nodeElement = writeElement(parent, timer, WAIT_STATE);
         writeTimer(nodeElement, timer);
         return nodeElement;
     }
@@ -298,16 +289,16 @@ public class JpdlSerializer extends ProcessSerializer {
         if (timer == null) {
             return;
         }
-        Element timerElement = parent.addElement(TIMER_NODE);
-        setAttribute(timerElement, ID_ATTR, timer.getId());
-        setAttribute(timerElement, DUEDATE_ATTR, timer.getDelay().getDuration());
+        Element timerElement = parent.addElement(TIMER);
+        setAttribute(timerElement, ID, timer.getId());
+        setAttribute(timerElement, DUEDATE, timer.getDelay().getDuration());
         if (timer.getAction() != null) {
             if (timer.getAction().getRepeatDelay().hasDuration()) {
-                setAttribute(timerElement, REPEAT_ATTR, timer.getAction().getRepeatDelay().getDuration());
+                setAttribute(timerElement, REPEAT, timer.getAction().getRepeatDelay().getDuration());
             }
-            writeDelegation(timerElement, ACTION_NODE, timer.getAction());
+            writeDelegation(timerElement, ACTION, timer.getAction());
         }
-        setAttribute(timerElement, TRANSITION_ATTR, PluginConstants.TIMER_TRANSITION_NAME);
+        setAttribute(timerElement, TRANSITION, PluginConstants.TIMER_TRANSITION_NAME);
     }
 
     private Element writeElement(Element parent, GraphElement element) {
@@ -316,14 +307,14 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private Element writeElement(Element parent, GraphElement element, String typeName) {
         Element result = parent.addElement(typeName);
-        setAttribute(result, ID_ATTR, element.getId());
+        setAttribute(result, ID, element.getId());
         if (element instanceof NamedGraphElement) {
-            setAttribute(result, NAME_ATTR, ((NamedGraphElement) element).getName());
+            setAttribute(result, NAME, ((NamedGraphElement) element).getName());
         }
         if (element instanceof Describable) {
             String description = ((Describable) element).getDescription();
             if (description != null && description.length() > 0) {
-                Element desc = result.addElement(DESCRIPTION_NODE);
+                Element desc = result.addElement(DESCRIPTION);
                 setNodeValue(desc, description);
             }
         }
@@ -334,22 +325,28 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Transition> transitions = node.getLeavingTransitions();
         for (Transition transition : transitions) {
             Element transitionElement = writeElement(parent, transition);
-            transitionElement.addAttribute(TO_ATTR, transition.getTarget().getId());
+            transitionElement.addAttribute(TO, transition.getTarget().getId());
             for (Action action : transition.getActions()) {
-                writeDelegation(transitionElement, ACTION_NODE, action);
+                writeDelegation(transitionElement, ACTION, action);
             }
         }
     }
 
     private void writeEvent(Element parent, Event event, ActionImpl action) {
-        Element eventElement = writeElement(parent, event, EVENT_NODE);
-        setAttribute(eventElement, TYPE_ATTR, event.getType());
-        writeDelegation(eventElement, ACTION_NODE, action);
+        Element eventElement = writeElement(parent, event, EVENT);
+        setAttribute(eventElement, TYPE, event.getType());
+        writeDelegation(eventElement, ACTION, action);
     }
 
     private void writeDelegation(Element parent, String elementName, Delegable delegable) {
         Element delegationElement = parent.addElement(elementName);
-        setAttribute(delegationElement, CLASS_ATTR, delegable.getDelegationClassName());
+        setAttribute(delegationElement, CLASS, delegable.getDelegationClassName());
+        if (delegable instanceof Describable) {
+            Describable describable = (Describable) delegable;
+            if (!Strings.isNullOrEmpty(describable.getDescription())) {
+                setAttribute(delegationElement, DESCRIPTION, describable.getDescription());
+            }
+        }
         setNodeValue(delegationElement, delegable.getDelegationConfiguration());
     }
 
@@ -360,11 +357,11 @@ public class JpdlSerializer extends ProcessSerializer {
 
     @Override
     public void validateProcessDefinitionXML(IFile file) {
-        //        try { TODO
-        //            XmlUtil.parseWithXSDValidation(file.getContents(), getClass().getResourceAsStream("/schema/jpdl-4.0.xsd"));
-        //        } catch (Exception e) {
-        //            throw new RuntimeException(e);
-        //        }
+        try {
+            XmlUtil.parseWithXSDValidation(file.getContents(), "jpdl-4.0.xsd");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
@@ -373,28 +370,33 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private <T extends GraphElement> T create(Element node, GraphElement parent, String typeName) {
         GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.JPDL, typeName).createElement(parent);
-        String nodeId = node.attributeValue(ID_ATTR);
-        String name = node.attributeValue(NAME_ATTR);
+        init(element, node);
+        if (parent != null) {
+            parent.addChild(element);
+        }
+        return (T) element;
+    }
+
+    private void init(GraphElement element, Element node) {
+        String nodeId = node.attributeValue(ID);
+        String name = node.attributeValue(NAME);
         if (element instanceof Node && nodeId == null) {
             nodeId = name;
         }
         element.setId(nodeId);
-        if (parent != null) {
-            parent.addChild(element);
-        }
         if (element instanceof NamedGraphElement) {
             ((NamedGraphElement) element).setName(name);
         }
         List<Element> nodeList = node.elements();
         for (Element childNode : nodeList) {
-            if (DESCRIPTION_NODE.equals(childNode.getName())) {
+            if (DESCRIPTION.equals(childNode.getName())) {
                 ((Describable) element).setDescription(childNode.getTextTrim());
             }
-            if (HANDLER_NODE.equals(childNode.getName()) || ASSIGNMENT_NODE.equals(childNode.getName())) {
-                setDelegableClassName((Delegable) element, childNode.attributeValue(CLASS_ATTR));
+            if (HANDLER.equals(childNode.getName()) || ASSIGNMENT.equals(childNode.getName())) {
+                setDelegableClassName((Delegable) element, childNode.attributeValue(CLASS));
                 element.setDelegationConfiguration(childNode.getText());
             }
-            if (ACTION_NODE.equals(childNode.getName())) {
+            if (ACTION.equals(childNode.getName())) {
                 // only transition actions loaded here
                 String eventType;
                 if (element instanceof Transition) {
@@ -406,40 +408,44 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
                 parseAction(childNode, element, eventType);
             }
-            if (TRANSITION_NODE.equals(childNode.getName())) {
+            if (TRANSITION.equals(childNode.getName())) {
                 parseTransition(childNode, element);
             }
         }
-        return (T) element;
     }
-
+    
     private void parseTransition(Element node, GraphElement parent) {
         Transition transition = create(node, parent);
-        String targetName = node.attributeValue(TO_ATTR);
+        String targetName = node.attributeValue(TO);
         TRANSITION_TARGETS.put(transition, targetName);
     }
 
     private void parseAction(Element node, GraphElement parent, String eventType) {
         ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
-        setDelegableClassName(action, node.attributeValue(CLASS_ATTR));
+        setDelegableClassName(action, node.attributeValue(CLASS));
         action.setDelegationConfiguration(node.getText());
         action.setId(parent.getId() + "." + parent.getActions().size());
         parent.addAction(action, -1);
         action.setEventType(eventType);
+        action.setDescription(node.attributeValue(DESCRIPTION));
     }
 
     private static Map<Transition, String> TRANSITION_TARGETS = new HashMap<Transition, String>();
 
     @Override
-    public ProcessDefinition parseXML(Document document) {
+    public void parseXML(Document document, ProcessDefinition definition) {
         TRANSITION_TARGETS.clear();
         Element root = document.getRootElement();
-        ProcessDefinition definition = create(root, null);
-        String defaultTaskTimeoutDuration = root.attributeValue(DEFAULT_DUEDATE_ATTR);
-        if (!Strings.isNullOrEmpty(defaultTaskTimeoutDuration)) {
+        init(definition, root);
+        String defaultTaskTimeoutDuration = root.attributeValue(DEFAULT_TASK_DUEDATE);
+        if (!Strings.isNullOrEmpty(defaultTaskTimeoutDuration) && !(definition instanceof SubprocessDefinition)) {
             definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeoutDuration));
         }
-        List<Element> swimlanes = root.elements(SWIMLANE_NODE);
+        String accessTypeString = root.attributeValue(ACCESS_TYPE);
+        if (!Strings.isNullOrEmpty(accessTypeString)) {
+            definition.setAccessType(ProcessDefinitionAccessType.valueOf(accessTypeString));
+        }
+        List<Element> swimlanes = root.elements(SWIMLANE);
         for (Element node : swimlanes) {
             Swimlane swimlane = create(node, definition);
             if (!Strings.isNullOrEmpty(swimlane.getDelegationConfiguration())) {
@@ -450,7 +456,7 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
             }
         }
-        List<Element> startStates = root.elements(START_STATE_NODE);
+        List<Element> startStates = root.elements(START_STATE);
         if (startStates.size() > 0) {
             if (startStates.size() > 1) {
                 ErrorDialog.open(Localization.getString("model.validation.multipleStartStatesNotAllowed"));
@@ -459,39 +465,39 @@ public class JpdlSerializer extends ProcessSerializer {
             StartState startState = create(node, definition);
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
-                if (TASK_NODE.equals(stateNodeChild.getName())) {
-                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_ATTR);
+                if (TASK.equals(stateNodeChild.getName())) {
+                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE);
                     Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
                     startState.setSwimlane(swimlane);
                 }
             }
         }
         // this is for back compatibility
-        List<Element> actionNodeNodes = root.elements(ACTION_NODE_NODE);
+        List<Element> actionNodeNodes = root.elements(ACTION_NODE);
         for (Element node : actionNodeNodes) {
             ActionNode actionNode = create(node, definition);
             List<Element> aaa = node.elements();
             for (Element a : aaa) {
-                if (EVENT_NODE.equals(a.getName())) {
+                if (EVENT.equals(a.getName())) {
                     String eventType = a.attributeValue("type");
                     List<Element> actionNodes = a.elements();
                     for (Element aa : actionNodes) {
-                        if (ACTION_NODE.equals(aa.getName())) {
+                        if (ACTION.equals(aa.getName())) {
                             parseAction(aa, actionNode, eventType);
                         }
                     }
                 }
             }
         }
-        List<Element> states = new ArrayList<Element>(root.elements(TASK_STATE_NODE));
+        List<Element> states = new ArrayList<Element>(root.elements(TASK_NODE));
         states.addAll(root.elements(MULTI_TASK_NODE));
         for (Element node : states) {
             List<Element> nodeList = node.elements();
             int transitionsCount = 0;
             boolean hasTimeOutTransition = false;
             for (Element childNode : nodeList) {
-                if (TRANSITION_NODE.equals(childNode.getName())) {
-                    String transitionName = childNode.attributeValue(NAME_ATTR);
+                if (TRANSITION.equals(childNode.getName())) {
+                    String transitionName = childNode.attributeValue(NAME);
                     if (PluginConstants.TIMER_TRANSITION_NAME.equals(transitionName)) {
                         hasTimeOutTransition = true;
                     }
@@ -501,69 +507,73 @@ public class JpdlSerializer extends ProcessSerializer {
             // backCompatibility: waitState was persisted as taskState earlier
             Node state;
             if (transitionsCount == 1 && hasTimeOutTransition) {
-                state = create(node, definition, WAIT_STATE_NODE);
+                state = create(node, definition, WAIT_STATE);
             } else {
                 state = create(node, definition);
             }
             if (state instanceof Synchronizable) {
-                ((Synchronizable) state).setAsync(Boolean.parseBoolean(node.attributeValue(ASYNC_ATTR, "false")));
-                ((Synchronizable) state).setAsyncCompletionMode(AsyncCompletionMode.valueOf(node.attributeValue(ASYNC_COMPLETION_MODE_ATTR, AsyncCompletionMode.NEVER.name())));
+                ((Synchronizable) state).setAsync(Boolean.parseBoolean(node.attributeValue(ASYNC, "false")));
+                ((Synchronizable) state).setAsyncCompletionMode(AsyncCompletionMode.valueOf(node.attributeValue(ASYNC_COMPLETION_MODE, AsyncCompletionMode.NEVER.name())));
             }
             if (state instanceof MultiTaskState) {
-                TaskExecutionMode mode = TaskExecutionMode.valueOf(node.attributeValue(TASK_EXECUTION_MODE_ATTR));
+                TaskExecutionMode mode = TaskExecutionMode.valueOf(node.attributeValue(TASK_EXECUTION_MODE));
                 ((MultiTaskState) state).setTaskExecutionMode(mode);
-                ((MultiTaskState) state).setExecutorsVariableName(node.attributeValue(TASK_EXECUTORS_ATTR));
+                ((MultiTaskState) state).setExecutorsVariableName(node.attributeValue(TASK_EXECUTORS));
             }
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
-                if (TASK_NODE.equals(stateNodeChild.getName())) {
-                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE_NODE);
+                if (TASK.equals(stateNodeChild.getName())) {
+                    String swimlaneName = stateNodeChild.attributeValue(SWIMLANE);
                     if (swimlaneName != null && state instanceof SwimlanedNode) {
                         Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
                         ((SwimlanedNode) state).setSwimlane(swimlane);
-                        String reassign = stateNodeChild.attributeValue(REASSIGN_ATTR);
+                        String reassign = stateNodeChild.attributeValue(REASSIGN);
                         if (reassign != null) {
                             boolean forceReassign = Boolean.parseBoolean(reassign);
-                            ((State) state).setReassignmentEnabled(forceReassign);
+                            ((TaskState) state).setReassignmentEnabled(forceReassign);
                         }
                     }
-                    String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
+                    String ignore = stateNodeChild.attributeValue(IGNORE_SUBSTITUTION_RULES);
+                    if (ignore != null) {
+                        ((TaskState) state).setIgnoreSubstitutionRules(Boolean.parseBoolean(ignore));
+                    }
+                    String duedateAttr = stateNodeChild.attributeValue(DUEDATE);
                     if (!Strings.isNullOrEmpty(duedateAttr)) {
-                        ((State) state).setTimeOutDelay(new Duration(duedateAttr));
+                        ((TaskState) state).setTimeOutDelay(new Duration(duedateAttr));
                     }
                     List<Element> aaa = stateNodeChild.elements();
                     for (Element a : aaa) {
-                        if (EVENT_NODE.equals(a.getName())) {
-                            String eventType = a.attributeValue(TYPE_ATTR);
+                        if (EVENT.equals(a.getName())) {
+                            String eventType = a.attributeValue(TYPE);
                             List<Element> actionNodes = a.elements();
                             for (Element aa : actionNodes) {
-                                if (ACTION_NODE.equals(aa.getName())) {
+                                if (ACTION.equals(aa.getName())) {
                                     parseAction(aa, state, eventType);
                                 }
                             }
                         }
                     }
                 }
-                if (TIMER_NODE.equals(stateNodeChild.getName())) {
-                    String nameTimer = stateNodeChild.attributeValue(NAME_ATTR);
-                    String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
+                if (TIMER.equals(stateNodeChild.getName())) {
+                    String nameTimer = stateNodeChild.attributeValue(NAME);
+                    String dueDate = stateNodeChild.attributeValue(DUEDATE);
                     if (TIMER_ESCALATION.equals(nameTimer)) {
                         ((TaskState) state).setUseEscalation(true);
                         if (!Strings.isNullOrEmpty(dueDate)) {
                             ((TaskState) state).setEscalationDelay(new Duration(dueDate));
                         }
-                    } else if (TIMER_GLOBAL_NAME.equals(nameTimer) && !Strings.isNullOrEmpty(dueDate)) {
+                    } else if (TIMER_GLOBAL.equals(nameTimer) && !Strings.isNullOrEmpty(dueDate)) {
                         definition.setTimeOutDelay(new Duration(dueDate));
                     } else {
-                        if (State.class.isInstance(state)) {
+                        if (state instanceof TaskState) {
                             Timer timer = new Timer();
-                            timer.setId(stateNodeChild.attributeValue(ID_ATTR));
+                            timer.setId(stateNodeChild.attributeValue(ID));
                             if (dueDate != null) {
                                 timer.setDelay(new Duration(dueDate));
                             }
                             state.addChild(timer);
                         }
-                        if (Timer.class.isInstance(state)) {
+                        if (state instanceof Timer) {
                             if (dueDate != null) {
                                 ((Timer) state).setDelay(new Duration(dueDate));
                             }
@@ -571,12 +581,12 @@ public class JpdlSerializer extends ProcessSerializer {
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
-                        if (ACTION_NODE.equals(aa.getName())) {
+                        if (ACTION.equals(aa.getName())) {
                             TimerAction timerAction = new TimerAction();
-                            setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
+                            setDelegableClassName(timerAction, aa.attributeValue(CLASS));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
-                            timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT_ATTR));
-                            if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
+                            timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT));
+                            if (TIMER_GLOBAL.equals(nameTimer)) {
                                 definition.setTimeOutAction(timerAction);
                             } else if (TIMER_ESCALATION.equals(nameTimer)) {
                                 ((TaskState) state).setEscalationAction(timerAction);
@@ -588,124 +598,124 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
             }
         }
-        List<Element> waitStates = root.elements(WAIT_STATE_NODE);
+        List<Element> waitStates = root.elements(WAIT_STATE);
         for (Element node : waitStates) {
             Timer timer = create(node, definition);
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
-                if (TIMER_NODE.equals(stateNodeChild.getName())) {
-                    String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
+                if (TIMER.equals(stateNodeChild.getName())) {
+                    String dueDate = stateNodeChild.attributeValue(DUEDATE);
                     if (dueDate != null) {
                         timer.setDelay(new Duration(dueDate));
                     }
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
-                        if (ACTION_NODE.equals(aa.getName())) {
+                        if (ACTION.equals(aa.getName())) {
                             TimerAction timerAction = new TimerAction();
-                            setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
+                            setDelegableClassName(timerAction, aa.attributeValue(CLASS));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
-                            timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT_ATTR));
+                            timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT));
                             timer.setAction(timerAction);
                         }
                     }
                 }
             }
         }
-        List<Element> forks = root.elements(FORK_NODE);
+        List<Element> forks = root.elements(FORK);
         for (Element node : forks) {
             create(node, definition);
         }
-        List<Element> joins = root.elements(JOIN_NODE);
+        List<Element> joins = root.elements(JOIN);
         for (Element node : joins) {
             create(node, definition);
         }
-        List<Element> decisions = root.elements(DECISION_NODE);
+        List<Element> decisions = root.elements(DECISION);
         for (Element node : decisions) {
             create(node, definition);
         }
-        List<Element> conjunctions = root.elements(CONJUNCTION_NODE);
+        List<Element> conjunctions = root.elements(CONJUNCTION);
         for (Element node : conjunctions) {
             create(node, definition);
         }
-        List<Element> processStates = root.elements(PROCESS_STATE_NODE);
+        List<Element> processStates = root.elements(PROCESS_STATE);
         for (Element node : processStates) {
             Subprocess subprocess = create(node, definition);
             List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
-                if (SUB_PROCESS_NODE.equals(childNode.getName())) {
-                    subprocess.setSubProcessName(childNode.attributeValue(NAME_ATTR));
+                if (SUB_PROCESS.equals(childNode.getName())) {
+                    subprocess.setSubProcessName(childNode.attributeValue(NAME));
                 }
-                if (VARIABLE_NODE.equals(childNode.getName())) {
+                if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME_ATTR));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME_ATTR));
-                    variable.setUsage(childNode.attributeValue(ACCESS_ATTR));
+                    variable.setProcessVariableName(childNode.attributeValue(NAME));
+                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setUsage(childNode.attributeValue(ACCESS));
                     variablesList.add(variable);
                 }
             }
             subprocess.setVariableMappings(variablesList);
         }
-        List<Element> multiInstanceStates = root.elements(MULTI_INSTANCE_STATE_NODE);
+        List<Element> multiInstanceStates = root.elements(MULTIINSTANCE_STATE);
         for (Element node : multiInstanceStates) {
             MultiSubprocess multiInstance = create(node, definition);
             List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
-                if (SUB_PROCESS_NODE.equals(childNode.getName())) {
-                    multiInstance.setSubProcessName(childNode.attributeValue(NAME_ATTR));
+                if (SUB_PROCESS.equals(childNode.getName())) {
+                    multiInstance.setSubProcessName(childNode.attributeValue(NAME));
                 }
-                if (VARIABLE_NODE.equals(childNode.getName())) {
+                if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME_ATTR));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME_ATTR));
-                    variable.setUsage(childNode.attributeValue(ACCESS_ATTR));
+                    variable.setProcessVariableName(childNode.attributeValue(NAME));
+                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setUsage(childNode.attributeValue(ACCESS));
                     variablesList.add(variable);
                 }
             }
             multiInstance.setVariableMappings(variablesList);
         }
-        List<Element> sendMessageNodes = root.elements(SEND_MESSAGE_NODE);
+        List<Element> sendMessageNodes = root.elements(SEND_MESSAGE);
         for (Element node : sendMessageNodes) {
             SendMessageNode messageNode = create(node, definition);
-            String duration = node.attributeValue(DUEDATE_ATTR, "1 days");
+            String duration = node.attributeValue(DUEDATE, "1 days");
             messageNode.setTtlDuration(new Duration(duration));
             List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
-                if (VARIABLE_NODE.equals(childNode.getName())) {
+                if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME_ATTR));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME_ATTR));
-                    variable.setUsage(childNode.attributeValue(ACCESS_ATTR));
+                    variable.setProcessVariableName(childNode.attributeValue(NAME));
+                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setUsage(childNode.attributeValue(ACCESS));
                     variablesList.add(variable);
                 }
             }
             messageNode.setVariablesList(variablesList);
         }
-        List<Element> receiveMessageNodes = root.elements(RECEIVE_MESSAGE_NODE);
+        List<Element> receiveMessageNodes = root.elements(RECEIVE_MESSAGE);
         for (Element node : receiveMessageNodes) {
             ReceiveMessageNode messageNode = create(node, definition);
             List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
-                if (VARIABLE_NODE.equals(childNode.getName())) {
+                if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME_ATTR));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME_ATTR));
-                    variable.setUsage(childNode.attributeValue(ACCESS_ATTR));
+                    variable.setProcessVariableName(childNode.attributeValue(NAME));
+                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setUsage(childNode.attributeValue(ACCESS));
                     variablesList.add(variable);
                 }
-                if (TIMER_NODE.equals(childNode.getName())) {
-                    Timer timer = create(childNode, messageNode, WAIT_STATE_NODE);
-                    timer.setDelay(new Duration(childNode.attributeValue(DUEDATE_ATTR)));
+                if (TIMER.equals(childNode.getName())) {
+                    Timer timer = create(childNode, messageNode, WAIT_STATE);
+                    timer.setDelay(new Duration(childNode.attributeValue(DUEDATE)));
                     List<Element> actionNodes = childNode.elements();
                     for (Element aa : actionNodes) {
-                        if (ACTION_NODE.equals(aa.getName())) {
+                        if (ACTION.equals(aa.getName())) {
                             TimerAction timerAction = new TimerAction();
-                            setDelegableClassName(timerAction, aa.attributeValue(CLASS_ATTR));
+                            setDelegableClassName(timerAction, aa.attributeValue(CLASS));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
-                            timerAction.setRepeatDuration(childNode.attributeValue(REPEAT_ATTR));
+                            timerAction.setRepeatDuration(childNode.attributeValue(REPEAT));
                             timer.setAction(timerAction);
                         }
                     }
@@ -713,11 +723,11 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             messageNode.setVariablesList(variablesList);
         }
-        List<Element> endTokenStates = root.elements(END_TOKEN_NODE);
+        List<Element> endTokenStates = root.elements(END_TOKEN);
         for (Element node : endTokenStates) {
             create(node, definition);
         }
-        List<Element> endStates = root.elements(END_STATE_NODE);
+        List<Element> endStates = root.elements(END_STATE);
         for (Element node : endStates) {
             create(node, definition);
         }
@@ -732,6 +742,5 @@ public class JpdlSerializer extends ProcessSerializer {
                 throw new RuntimeException("Problem with " + transition.getId() + ": " + transition.getParent() + " -> " + targetNodeId);
             }
         }
-        return definition;
     }
 }

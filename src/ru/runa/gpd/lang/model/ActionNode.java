@@ -3,16 +3,18 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.runa.gpd.lang.ValidationError;
+
 public class ActionNode extends Node implements Active {
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         int nodeActionsCount = getNodeActions().size();
         if (nodeActionsCount == 0) {
-            addError("nodeAction.required");
+            errors.add(ValidationError.createLocalizedError(this, "nodeAction.required"));
         }
         if (nodeActionsCount > 1) {
-            addError("nodeAction.single", nodeActionsCount);
+            errors.add(ValidationError.createLocalizedError(this, "nodeAction.single", nodeActionsCount));
         }
     }
 

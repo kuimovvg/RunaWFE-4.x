@@ -16,11 +16,13 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
 import ru.runa.gpd.property.DelegableConfPropertyDescriptor;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
@@ -106,32 +108,35 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     }
 
     public ProcessDefinition getProcessDefinition() {
+        if (this instanceof ProcessDefinition) {
+            return (ProcessDefinition) this;
+        }
         if (parent == null) {
-            return this instanceof ProcessDefinition ? (ProcessDefinition) this : null;
+            return null;
         }
         return parent.getProcessDefinition();
     }
 
-    protected void validate() {
+    public void validate(List<ValidationError> errors) {
         if (isDelegable()) {
             Delegable d = (Delegable) this;
             DelegableProvider provider = HandlerRegistry.getProvider(delegationClassName);
             if (delegationClassName == null || delegationClassName.length() == 0) {
-                addError("delegationClassName.empty");
+                errors.add(ValidationError.createLocalizedError(this, "delegationClassName.empty"));
             } else if (!HandlerRegistry.getInstance().isArtifactRegistered(d.getDelegationType(), delegationClassName)) {
-                addWarning("delegationClassName.classNotFound");
-            } else if (!provider.validateValue(d)) {
-                addError("delegable.invalidConfiguration");
+                errors.add(ValidationError.createLocalizedWarning(this, "delegationClassName.classNotFound"));
+            } else if (!provider.validateValue(d, errors)) {
+                errors.add(ValidationError.createLocalizedError(this, "delegable.invalidConfiguration"));
             }
         }
-    }
-
-    public void addError(String messageKey, Object... params) {
-        getProcessDefinition().addError(this, messageKey, params);
-    }
-
-    public void addWarning(String messageKey, Object... params) {
-        getProcessDefinition().addWarning(this, messageKey, params);
+        for (GraphElement element : childs) {
+            try {
+                element.validate(errors);
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("validation error", e);
+                errors.add(ValidationError.createLocalizedWarning(element, "error", e));
+            }
+        }
     }
 
     public NodeTypeDefinition getTypeDefinition() {

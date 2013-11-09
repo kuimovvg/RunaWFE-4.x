@@ -7,6 +7,7 @@ import org.eclipse.swt.graphics.Image;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.swimlane.SwimlaneInitializer;
 import ru.runa.gpd.swimlane.SwimlaneInitializerParser;
 import ru.runa.wfe.extension.assign.DefaultAssignmentHandler;
@@ -34,21 +35,18 @@ public class Swimlane extends Variable implements Delegable {
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         try {
             SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(getDelegationConfiguration());
             if (swimlaneInitializer != null) {
-                List<String> errors = swimlaneInitializer.getErrors(getProcessDefinition());
-                for (String errorKey : errors) {
-                    addError(errorKey);
-                }
+                swimlaneInitializer.validate(this, errors);
             }
         } catch (RuntimeException e) {
             if (e.getMessage() != null && e.getMessage().startsWith(OrgFunctionDefinition.MISSED_DEFINITION)) {
-                addWarning("orgfunction.missed");
+                errors.add(ValidationError.createLocalizedWarning(this, "orgfunction.missed"));
             } else {
-                addError("orgfunction.broken");
+                errors.add(ValidationError.createLocalizedError(this, "orgfunction.broken"));
             }
         }
     }

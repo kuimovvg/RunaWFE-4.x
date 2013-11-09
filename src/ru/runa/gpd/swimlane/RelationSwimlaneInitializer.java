@@ -1,9 +1,9 @@
 package ru.runa.gpd.swimlane;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.ValidationError;
+import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.wfe.user.Executor;
 
@@ -76,16 +76,14 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
     }
 
     @Override
-    public List<String> getErrors(ProcessDefinition processDefinition) {
-        List<String> errors = new ArrayList<String>();
+    public void validate(Swimlane swimlane, List<ValidationError> errors) {
         if (Strings.isNullOrEmpty(relationName)) {
-            errors.add("relation.emptyName");
+            errors.add(ValidationError.createLocalizedError(swimlane, "relation.emptyName"));
         }
-        List<String> variableNames = processDefinition.getVariableNames(true, Executor.class.getName());
+        List<String> variableNames = swimlane.getVariableNames(true, Executor.class.getName());
         if (!variableNames.contains(relationParameterVariableName)) {
-            errors.add("relation.variableDoesNotExist");
+            errors.add(ValidationError.createLocalizedError(swimlane, "relation.variableDoesNotExist"));
         }
-        return errors;
     }
 
     @Override
