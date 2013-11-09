@@ -6,6 +6,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.util.Duration;
@@ -41,13 +42,13 @@ public class Timer extends Node {
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         if (duration.getVariableName() != null && !getProcessDefinition().getVariableNames(false).contains(duration.getVariableName())) {
-            addError("timerState.invalidVariable");
+            errors.add(ValidationError.createLocalizedError(this, "timerState.invalidVariable"));
         }
         if (action != null) {
-            action.validate();
+            action.validate(null);
         }
     }
 

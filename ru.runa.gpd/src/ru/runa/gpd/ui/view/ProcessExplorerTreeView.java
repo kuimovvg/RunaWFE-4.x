@@ -3,6 +3,7 @@ package ru.runa.gpd.ui.view;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -34,7 +35,7 @@ import org.eclipse.ui.part.ViewPart;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
-import ru.runa.gpd.lang.par.ParContentProvider;
+import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
@@ -91,9 +92,7 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
             @Override
             protected void onDoubleClick(DoubleClickEvent event) {
                 Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
-                if (element instanceof IFolder) {
-                    WorkspaceOperations.openProcessDefinition((IFolder) element);
-                }
+                openProcessDefinition(element);
             }
         });
         getSite().setSelectionProvider(viewer);
@@ -109,24 +108,35 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
         });
         viewer.getControl().setMenu(menu);
     }
+    
+    private void openProcessDefinition(Object element) {
+        if (element instanceof IFolder) {
+            IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) element);
+            if (definitionFile.exists()) {
+                WorkspaceOperations.openProcessDefinition(definitionFile);
+            }
+        }
+        if (element instanceof IFile) {
+            WorkspaceOperations.openProcessDefinition((IFile) element);
+        }
+    }
 
     @SuppressWarnings("unchecked")
     protected void fillContextMenu(IMenuManager manager) {
         final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
         final Object selectedObject = selection.getFirstElement();
         final List<IResource> resources = selection.toList();
-        boolean menuOnProject = selectedObject instanceof IProject;
-        boolean menuOnFolder = selectedObject instanceof IFolder;
-        boolean menuOnProcess = false;
-        if (menuOnFolder) {
-            menuOnProcess = ((IFolder) selectedObject).getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME).exists();
+        boolean menuOnContainer = selectedObject instanceof IProject || selectedObject instanceof IFolder;
+        boolean menuOnProcess = selectedObject instanceof IFile;
+        if (selectedObject instanceof IFolder) {
+            menuOnProcess |= IOUtils.isProcessDefinitionFolder((IFolder) selectedObject);
         }
         //
         if (menuOnProcess) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.openProcess")) {
                 @Override
                 public void run() {
-                    WorkspaceOperations.openProcessDefinition((IFolder) selectedObject);
+                    openProcessDefinition(selectedObject);
                 }
             });
         }
@@ -136,7 +146,7 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
                 WorkspaceOperations.createNewProject();
             }
         });
-        if ((menuOnProject || menuOnFolder) && !menuOnProcess) {
+        if (menuOnContainer && !menuOnProcess) {
             if (IOUtils.isProjectHasProcessNature(((IContainer) selectedObject).getProject())) {
                 manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newFolder"), SharedImages.getImageDescriptor("icons/add_folder.gif")) {
                     @Override
@@ -146,11 +156,11 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
                 });
             }
         }
-        if (menuOnProject || menuOnFolder) {
+        if (menuOnContainer) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newProcess"), SharedImages.getImageDescriptor("icons/process.gif")) {
                 @Override
                 public void run() {
-                    WorkspaceOperations.createNewProcessDefinition(selection);
+                    WorkspaceOperations.createNewProcessDefinition(selection, ProcessDefinitionAccessType.Process);
                 }
             });
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.importProcess"), SharedImages.getImageDescriptor("icons/import.gif")) {
@@ -161,6 +171,12 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
             });
         }
         if (menuOnProcess) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newSubprocess"), SharedImages.getImageDescriptor("icons/process.gif")) {
+                @Override
+                public void run() {
+                    WorkspaceOperations.createNewProcessDefinition(selection, ProcessDefinitionAccessType.EmbeddedSubprocess);
+                }
+            });
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.copyProcess"), SharedImages.getImageDescriptor("icons/copy.gif")) {
                 @Override
                 public void run() {
@@ -180,20 +196,20 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
                 }
             });
         }
-        if (menuOnProject || menuOnFolder || menuOnProcess) {
+        if (menuOnContainer) {
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.refresh"), SharedImages.getImageDescriptor("icons/refresh.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.refreshResources(resources);
                 }
             });
-            manager.add(new Action(Localization.getString("button.delete"), SharedImages.getImageDescriptor("icons/delete.gif")) {
-                @Override
-                public void run() {
-                    WorkspaceOperations.deleteResources(resources);
-                }
-            });
         }
+        manager.add(new Action(Localization.getString("button.delete"), SharedImages.getImageDescriptor("icons/delete.gif")) {
+            @Override
+            public void run() {
+                WorkspaceOperations.deleteResources(resources);
+            }
+        });
     }
 
     @Override

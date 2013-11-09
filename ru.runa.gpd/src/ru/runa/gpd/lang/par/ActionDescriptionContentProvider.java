@@ -4,16 +4,17 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.util.XmlUtil;
 
+/**
+ * Action description were moved to processdescription.xml
+ * @author dofs
+ */
 public class ActionDescriptionContentProvider extends AuxContentProvider {
     private static final String DELIM = "/";
     private static final String ACTION_INDEX = "actionIndex";
@@ -21,16 +22,20 @@ public class ActionDescriptionContentProvider extends AuxContentProvider {
     private static final String PATH_ATTRIBUTE_NAME = "path";
     private static final String DESC_ATTRIBUTE_NAME = "description";
     private static final String ELEMENT_NAME = "action";
-    private static final String CONTAINER_ELEMENT_NAME = "actions";
 
     @Override
-    public void readFromFile(IFolder folder, ProcessDefinition definition) {
+    public boolean isSupportedForEmbeddedSubprocess() {
+        return false;
+    }
+    
+    @Override
+    public String getFileName() {
+        return XML_FILE_NAME;
+    }
+    
+    @Override
+    public void read(Document document, ProcessDefinition definition) {
         try {
-            IFile file = folder.getFile(XML_FILE_NAME);
-            if (!file.exists()) {
-                return;
-            }
-            Document document = XmlUtil.parseWithoutValidation(file.getContents());
             List<Element> elementsList = document.getRootElement().elements(ELEMENT_NAME);
             for (Element element : elementsList) {
                 String path = element.attributeValue(PATH_ATTRIBUTE_NAME);
@@ -46,29 +51,8 @@ public class ActionDescriptionContentProvider extends AuxContentProvider {
     }
 
     @Override
-    public void saveToFile(IFolder folder, ProcessDefinition definition) {
-        try {
-            Document document = XmlUtil.createDocument(CONTAINER_ELEMENT_NAME);
-            Element root = document.getRootElement();
-            boolean atLeastOneDescExists = false;
-            for (Action action : definition.getChildrenRecursive(Action.class)) {
-                String desc = action.getDescription();
-                if (desc != null && desc.trim().length() > 0) {
-                    atLeastOneDescExists = true;
-                    Element element = root.addElement(ELEMENT_NAME);
-                    element.addAttribute(PATH_ATTRIBUTE_NAME, getPath(action));
-                    element.addAttribute(DESC_ATTRIBUTE_NAME, desc);
-                }
-            }
-            if (atLeastOneDescExists) {
-                byte[] bytes = XmlUtil.writeXml(document);
-                updateFile(folder.getFile(XML_FILE_NAME), bytes);
-            } else {
-                deleteFile(folder.getFile(XML_FILE_NAME));
-            }
-        } catch (Exception e) {
-            PluginLogger.logError("Unable to write " + XML_FILE_NAME, e);
-        }
+    public Document save(ProcessDefinition definition) {
+        return null;
     }
 
     private Action findByPath(ProcessDefinition definition, String path) {
@@ -95,21 +79,5 @@ public class ActionDescriptionContentProvider extends AuxContentProvider {
             PluginLogger.logErrorWithoutDialog("findByPath " + path + " in " + definition, e);
         }
         return null;
-    }
-
-    private String getPath(GraphElement element) {
-        if (element instanceof ProcessDefinition) {
-            return "";
-        }
-        String name;
-        if (element instanceof NamedGraphElement) {
-            name = ((NamedGraphElement) element).getName();
-        } else if (element instanceof Action) {
-            Action action = (Action) element;
-            name = ACTION_INDEX + action.getParent().getActions().indexOf(action);
-        } else {
-            throw new IllegalArgumentException("" + element);
-        }
-        return getPath(element.getParent()) + DELIM + name;
     }
 }

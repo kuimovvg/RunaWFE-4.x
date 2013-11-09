@@ -1,5 +1,6 @@
 package ru.runa.gpd.extension.handler;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -24,7 +25,9 @@ import org.eclipse.swt.widgets.TabItem;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
@@ -41,19 +44,18 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
     }
 
     @Override
-    public boolean validateValue(Delegable delegable) {
+    public boolean validateValue(Delegable delegable, List<ValidationError> errors) {
         String configuration = delegable.getDelegationConfiguration();
         try {
             T model = fromXml(configuration);
-            validateModel(delegable, model);
-            return true;
+            validateModel(delegable, model, errors);
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog(getClass() + ": invalid configuration: " + configuration, e);
-            return false;
+            errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.invalidConfigurationWithError", e));
         }
+        return true;
     }
     
-    protected void validateModel(Delegable delegable, T model) {
+    protected void validateModel(Delegable delegable, T model, List<ValidationError> errors) {
     }
 
     protected abstract String getTitle();

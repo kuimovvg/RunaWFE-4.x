@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
@@ -48,8 +49,8 @@ public class SendMessageNode extends Node implements Active {
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         int selectorRulesCount = 0;
         for (VariableMapping variableMapping : variablesList) {
             if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {
@@ -58,12 +59,12 @@ public class SendMessageNode extends Node implements Active {
             }
             String processVarName = variableMapping.getProcessVariableName();
             if (!getProcessDefinition().getVariableNames(true).contains(processVarName)) {
-                addError("message.processVariableDoesNotExist", processVarName);
+                errors.add(ValidationError.createLocalizedError(this, "message.processVariableDoesNotExist", processVarName));
                 continue;
             }
         }
         if (selectorRulesCount == 0) {
-            addWarning("model.validation.message.selectorRulesEmpty");
+            errors.add(ValidationError.createLocalizedWarning(this, "model.validation.message.selectorRulesEmpty"));
         }
     }
 

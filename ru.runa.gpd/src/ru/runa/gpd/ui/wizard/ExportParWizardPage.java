@@ -47,6 +47,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.par.ProcessDefinitionValidator;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
@@ -105,7 +106,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         IFile adjacentFile = IOUtils.getCurrentFile();
         if (adjacentFile != null && adjacentFile.getParent().exists()) {
             IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) adjacentFile.getParent());
-            if (definitionFile != null && definitionFile.exists()) {
+            if (definitionFile.exists()) {
                 ProcessDefinition currentDefinition = ProcessCache.getProcessDefinition(definitionFile);
                 if (currentDefinition != null) {
                     definitionListViewer.setSelection(new StructuredSelection(getKey(definitionFile, currentDefinition)));
@@ -194,7 +195,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 IFile definitionFile = definitionNameFileMap.get(selectedDefinitionName);
                 definitionFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
                 ProcessDefinition definition = ProcessCache.getProcessDefinition(definitionFile);
-                int validationResult = definition.validateDefinition(definitionFile);
+                int validationResult = ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
                 if (!exportToFile && validationResult != 0) {
                     Activator.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ValidationErrorsView.ID);
                     if (validationResult == 2) {

@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -15,7 +13,7 @@ import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 
 public class VariablesXmlContentProvider extends AuxContentProvider {
-    private static final String VARIABLES_XML_FILE_NAME = "variables.xml";
+    private static final String XML_FILE_NAME = "variables.xml";
     private static final String FORMAT_ATTRIBUTE_NAME = "format";
     private static final String SWIMLANE_ATTRIBUTE_NAME = "swimlane";
     private static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
@@ -26,12 +24,17 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
     private static final String SCRIPTING_NAME_ATTRIBUTE_NAME = "scriptingName";
 
     @Override
-    public void readFromFile(IFolder folder, ProcessDefinition definition) throws Exception {
-        IFile file = folder.getFile(VARIABLES_XML_FILE_NAME);
-        if (!file.exists()) {
-            return;
-        }
-        Document document = XmlUtil.parseWithoutValidation(file.getContents());
+    public boolean isSupportedForEmbeddedSubprocess() {
+        return false;
+    }
+    
+    @Override
+    public String getFileName() {
+        return XML_FILE_NAME;
+    }
+    
+    @Override
+    public void read(Document document, ProcessDefinition definition) throws Exception {
         List<Element> elementsList = document.getRootElement().elements(VARIABLE_ELEMENT_NAME);
         for (Element element : elementsList) {
             String variableName = element.attributeValue(NAME_ATTRIBUTE_NAME);
@@ -60,7 +63,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
     }
 
     @Override
-    public void saveToFile(IFolder folder, ProcessDefinition definition) throws Exception {
+    public Document save(ProcessDefinition definition) throws Exception {
         Document document = XmlUtil.createDocument(VARIABLES_ELEMENT_NAME);
         Element root = document.getRootElement();
         for (Variable variable : definition.getVariables(true)) {
@@ -79,7 +82,6 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             }
             element.addAttribute(SWIMLANE_ATTRIBUTE_NAME, String.valueOf(variable instanceof Swimlane));
         }
-        byte[] bytes = XmlUtil.writeXml(document);
-        updateFile(folder.getFile(VARIABLES_XML_FILE_NAME), bytes);
+        return document;
     }
 }

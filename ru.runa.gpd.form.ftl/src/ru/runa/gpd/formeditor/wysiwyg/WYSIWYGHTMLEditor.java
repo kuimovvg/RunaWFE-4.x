@@ -45,6 +45,7 @@ import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.vartag.VarTagUtil;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
@@ -115,8 +116,11 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                     String op = "create";
                     try {
                         if (!formNode.hasFormValidation()) {
-                            String validationFileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, validationFileName, formNode);
+                            String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
+                            if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
+                                fileName = formNode.getProcessDefinition().getId() + "." + fileName;
+                            }
+                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, fileName, formNode);
                             formNode.setValidationFileName(validationFile.getName());
                         } else {
                             op = "update";

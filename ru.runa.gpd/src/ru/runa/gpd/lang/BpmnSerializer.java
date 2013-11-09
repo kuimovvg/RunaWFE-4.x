@@ -25,8 +25,8 @@ import ru.runa.gpd.lang.model.ReceiveMessageNode;
 import ru.runa.gpd.lang.model.ScriptTask;
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.lang.model.StartState;
-import ru.runa.gpd.lang.model.State;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
@@ -56,22 +56,13 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String EXTENSION_ELEMENTS = "extensionElements";
     private static final String EXECUTABLE = "isExecutable";
     private static final String PROPERTY = "property";
-    private static final String END_STATE = "endEvent";
+    private static final String END_EVENT = "endEvent";
     private static final String TOKEN = "token";
     private static final String TEXT_ANNOTATION = "textAnnotation";
     private static final String TEXT = "text";
     private static final String SERVICE_TASK = "serviceTask";
     private static final String SCRIPT_TASK = "scriptTask";
-    private static final String DATA_INPUT = "dataInput";
-    private static final String DATA_OUTPUT = "dataOutput";
-    private static final String INPUT_SET = "inputSet";
-    private static final String OUTPUT_SET = "outputSet";
-    private static final String DATA_INPUT_REFS = "dataInputRefs";
-    private static final String DATA_OUTPUT_REFS = "dataOutputRefs";
-    private static final String DATA_INPUT_ASSOCIATION = "dataInputAssociation";
-    private static final String DATA_OUTPUT_ASSOCIATION = "dataOutputAssociation";
     private static final String VARIABLES = "variables";
-    private static final String VARIABLE = "variable";
     private static final String SOURCE_REF = "sourceRef";
     private static final String TARGET_REF = "targetRef";
     private static final String SUBPROCESS = "subProcess";
@@ -79,36 +70,24 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
     private static final String DEFAULT_TASK_TIMOUT = "default-task-timeout";
-    private static final String REPEAT = "repeat";//
     private static final String USER_TASK = "userTask";
     private static final String START_EVENT = "startEvent";
-    private static final String SWIMLANE_SET = "laneSet";
-    private static final String SWIMLANE = "lane";
+    private static final String LANE_SET = "laneSet";
+    private static final String LANE = "lane";
     private static final String FLOW_NODE_REF = "flowNodeRef";
-    public static final String SWIMLANE_DISPLAY_MODE = "showSwimlane";
-    private static final String REASSIGN = "reassign";//
-    private static final String CLASS = "class";
+    public static final String SHOW_SWIMLANE = "showSwimlane";
     private static final String SEQUENCE_FLOW = "sequenceFlow";
     private static final String DOCUMENTATION = "documentation";
     private static final String CONFIG = "config";
-    private static final String NAME = "name";
-    private static final String VALUE = "value";
     private static final String MAPPED_NAME = "mappedName";
     private static final String USAGE = "usage";
-    private static final String ID = "id";
-    private static final String SEND_MESSAGE = "sendTask";
-    private static final String RECEIVE_MESSAGE = "receiveTask";
-    private static final String TIMER_GLOBAL = "__GLOBAL";//
-    private static final String TIMER_ESCALATION = "__ESCALATION";//
+    private static final String SEND_TASK = "sendTask";
+    private static final String RECEIVE_TASK = "receiveTask";
     private static final String BOUNDARY_EVENT = "boundaryEvent";
-    private static final String INTERMEDIATE_EVENT = "intermediateCatchEvent";
+    private static final String INTERMEDIATE_CATCH_EVENT = "intermediateCatchEvent";
     private static final String CANCEL_ACTIVITY = "cancelActivity";
     private static final String ATTACHED_TO_REF = "attachedToRef";
-    private static final String TIMER_EVENT = "timerEventDefinition";
     private static final String TIMER_DURATION = "timeDuration";
-    private static final String VERSION = "version";
-    private static final String ASYNC = "async";
-    private static final String ASYNC_COMPLETION_MODE = "asyncCompletionMode";
 
     @Override
     public boolean isSupported(Document document) {
@@ -143,8 +122,12 @@ public class BpmnSerializer extends ProcessSerializer {
             processProperties.put(DEFAULT_TASK_TIMOUT, definition.getDefaultTaskTimeoutDelay().getDuration());
         }
         if (definition.getSwimlaneDisplayMode() != null) {
-            processProperties.put(SWIMLANE_DISPLAY_MODE, definition.getSwimlaneDisplayMode().name());
+            processProperties.put(SHOW_SWIMLANE, definition.getSwimlaneDisplayMode().name());
         }
+        if (definition.getId() != null) {
+            processProperties.put(ID, definition.getId());
+        }
+        processProperties.put(ACCESS_TYPE, definition.getAccessType().name());
         processProperties.put(VERSION, Version.get());
         if (definition.isInvalid()) {
             process.addAttribute(EXECUTABLE, "false");
@@ -153,7 +136,7 @@ public class BpmnSerializer extends ProcessSerializer {
             processProperties.put(DOCUMENTATION, definition.getDescription());
         }
         writeExtensionElements(process, processProperties);
-        Element laneSetElement = process.addElement(SWIMLANE_SET).addAttribute(ID, "laneSet1");
+        Element laneSetElement = process.addElement(LANE_SET).addAttribute(ID, "laneSet1");
         List<Swimlane> swimlanes = definition.getSwimlanes();
         for (Swimlane swimlane : swimlanes) {
             Element swimlaneElement = writeElement(laneSetElement, swimlane);
@@ -184,29 +167,10 @@ public class BpmnSerializer extends ProcessSerializer {
                 boundaryEventElement.addAttribute(ATTACHED_TO_REF, taskState.getId());
                 writeTransitions(process, timer);
             }
-            // if (state.isUseEscalation()) {
-            // String timerName = TIMER_ESCALATION;
-            // Delay escalationDuration = state.getEscalationTime();
-            // Element timerElement = stateElement.addElement(TIMER_NODE);
-            // setAttribute(timerElement, NAME_ATTR, timerName);
-            // if (escalationDuration != null &&
-            // escalationDuration.hasDuration()) {
-            // setAttribute(timerElement, DUEDATE_ATTR,
-            // escalationDuration.getDuration());
-            // }
-            // TimerAction escalationAction = state.getEscalationAction();
-            // if (escalationAction != null) {
-            // if (escalationAction.getRepeat().hasDuration()) {
-            // setAttribute(timerElement, REPEAT_ATTR,
-            // escalationAction.getRepeat().getDuration());
-            // }
-            // writeDelegation(timerElement, ACTION_NODE, escalationAction);
-            // }
-            // }
         }
         List<Timer> timers = definition.getChildren(Timer.class);
         for (Timer timer : timers) {
-            Element intermediateEventElement = process.addElement(INTERMEDIATE_EVENT);
+            Element intermediateEventElement = process.addElement(INTERMEDIATE_CATCH_EVENT);
             writeTimer(intermediateEventElement, timer);
             writeTransitions(process, timer);
         }
@@ -276,8 +240,6 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     private void writeVariables(Element element, List<VariableMapping> variableMappings) {
-        // TODO Element ioSpecificationElement =
-        // element.addElement(IO_SPECIFICATION);
         Map<String, Object> properties = Maps.newHashMap();
         properties.put(VARIABLES, variableMappings);
         writeExtensionElements(element, properties);
@@ -295,7 +257,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private Element writeTaskState(Element parent, SwimlanedNode swimlanedNode) {
         Element nodeElement = writeElement(parent, swimlanedNode);
         Map<String, String> properties = Maps.newHashMap();
-        properties.put(SWIMLANE, swimlanedNode.getSwimlaneName());
+        properties.put(LANE, swimlanedNode.getSwimlaneName());
         if (swimlanedNode instanceof TaskState) {
             TaskState taskState = (TaskState) swimlanedNode;
             if (taskState.isAsync()) {
@@ -303,15 +265,16 @@ public class BpmnSerializer extends ProcessSerializer {
                 properties.put(ASYNC_COMPLETION_MODE, taskState.getAsyncCompletionMode().name());
             }
         }
-        if (swimlanedNode instanceof State && ((State) swimlanedNode).isReassignmentEnabled()) {
-            properties.put(REASSIGN, "true");
+        if (swimlanedNode instanceof TaskState) {
+            TaskState taskState = (TaskState) swimlanedNode;
+            if (taskState.isReassignmentEnabled()) {
+                properties.put(REASSIGN, "true");
+            }
+            if (taskState.isIgnoreSubstitutionRules()) {
+                properties.put(IGNORE_SUBSTITUTION_RULES, "true");
+            }
         }
         writeExtensionElements(nodeElement, properties);
-        // for (Action action : state.getActions()) {
-        // ActionImpl actionImpl = (ActionImpl) action;
-        // writeEvent(taskElement, new Event(actionImpl.getEventType()),
-        // actionImpl);
-        // }
         return nodeElement;
     }
 
@@ -328,12 +291,6 @@ public class BpmnSerializer extends ProcessSerializer {
         Element durationElement = eventElement.addElement(TIMER_DURATION);
         durationElement.addText(timer.getDelay().getDuration());
         if (timer.getAction() != null) {
-            // Map<String, String> properties
-            // if (timer.getAction().getRepeatDelay().hasDuration()) {
-            // setAttribute(timerElement, REPEAT_ATTR,
-            // timer.getAction().getRepeatDelay().getDuration());
-            // }
-            // writeDelegation(timerElement, ACTION_NODE, timer.getAction());
             // TODO
         }
     }
@@ -341,7 +298,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private Element writeElement(Element parent, GraphElement element) {
         String bpmnElementName;
         if (element instanceof EndTokenState) {
-            bpmnElementName = END_STATE;
+            bpmnElementName = END_EVENT;
         } else if (element instanceof MultiSubprocess) {
             bpmnElementName = SUBPROCESS;
         } else {
@@ -374,9 +331,6 @@ public class BpmnSerializer extends ProcessSerializer {
             }
             transitionElement.addAttribute(SOURCE_REF, sourceNodeId);
             transitionElement.addAttribute(TARGET_REF, targetNodeId);
-            // for (Action action : transition.getActions()) {
-            // writeDelegation(transitionElement, ACTION_NODE, action);
-            // }
         }
     }
 
@@ -435,15 +389,20 @@ public class BpmnSerializer extends ProcessSerializer {
             bpmnElementName = node.getName();
         }
         GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, bpmnElementName).createElement(parent);
+        init(element, node, properties);
+        if (parent != null) {
+            parent.addChild(element);
+        }
+        return (T) element;
+    }
+
+    private void init(GraphElement element, Element node, Map<String, String> properties) {
         String nodeId = node.attributeValue(ID);
         String name = node.attributeValue(NAME);
         if (element instanceof Node && nodeId == null) {
             nodeId = name;
         }
         element.setId(nodeId);
-        if (parent != null) {
-            parent.addChild(element);
-        }
         if (element instanceof NamedGraphElement) {
             ((NamedGraphElement) element).setName(name);
         }
@@ -454,46 +413,14 @@ public class BpmnSerializer extends ProcessSerializer {
             }
             if (TIMER_DURATION.equals(childNode.getName())) {
                 ((Timer) element).setDelay(new Duration(childNode.getTextTrim()));
-                // List<Element> actionNodes = childNode.elements();
-                // for (Element aa : actionNodes) {
-                // if (ACTION_NODE.equals(aa.getName())) {
-                // TimerAction timerAction = new TimerAction(null);
-                // timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
-                // timerAction.setDelegationConfiguration(aa.getTextTrim());
-                // timerAction.setRepeat(childNode.attributeValue(REPEAT_ATTR));
-                // messageNode.setTimerAction(timerAction);
-                // }
-                // }
             }
-            // if (ACTION_NODE.equals(childNode.getName())) {
-            // // only transition actions loaded here
-            // String eventType;
-            // if (element instanceof Transition) {
-            // eventType = Event.TRANSITION;
-            // } else {
-            // throw new
-            // RuntimeException("Unexpected action in XML, context of " +
-            // element);
-            // }
-            // parseAction(childNode, element, eventType);
-            // }
         }
         if (element instanceof Delegable) {
             element.setDelegationClassName(properties.get(CLASS));
             element.setDelegationConfiguration(properties.get(CONFIG));
         }
-        return (T) element;
     }
 
-    // private void parseAction(Element node, GraphElement parent, String
-    // eventType) {
-    // ActionImpl action =
-    // NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
-    // action.setDelegationClassName(node.attributeValue(CLASS_ATTR));
-    // action.setDelegationConfiguration(node.getTextTrim());
-    // parent.addAction(action, -1);
-    // action.setEventType(eventType);
-    // }
     private Map<String, String> parseExtensionProperties(Element element) {
         Map<String, String> map = Maps.newHashMap();
         Element extensionsElement = element.element(EXTENSION_ELEMENTS);
@@ -531,32 +458,35 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     @Override
-    public ProcessDefinition parseXML(Document document) {
+    public void parseXML(Document document, ProcessDefinition definition) {
         Element definitionsElement = document.getRootElement();
         Element process = definitionsElement.element(PROCESS);
-        ProcessDefinition definition = create(process, null);
         Map<String, String> processProperties = parseExtensionProperties(process);
+        init(definition, process, processProperties);
         String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
-        if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
+        if (!Strings.isNullOrEmpty(defaultTaskTimeout) && !(definition instanceof SubprocessDefinition)) {
             definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeout));
+        }
+        String accessTypeString = processProperties.get(ACCESS_TYPE);
+        if (!Strings.isNullOrEmpty(accessTypeString)) {
+            definition.setAccessType(ProcessDefinitionAccessType.valueOf(accessTypeString));
+        }
+        if (processProperties.containsKey(ID)) {
+            definition.setId(processProperties.get(ID));
         }
         if (processProperties.containsKey(DOCUMENTATION)) {
             definition.setDescription(processProperties.get(DOCUMENTATION));
         }
-        String swimlaneDisplayModeName = processProperties.get(SWIMLANE_DISPLAY_MODE);
-        if (swimlaneDisplayModeName != null) {
+        String swimlaneDisplayModeName = processProperties.get(SHOW_SWIMLANE);
+        if (swimlaneDisplayModeName != null && !(definition instanceof SubprocessDefinition)) {
             definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
         }
         Map<Swimlane, List<String>> swimlaneElementIds = Maps.newHashMap();
-        Element swimlaneSetElement = process.element(SWIMLANE_SET);
+        Element swimlaneSetElement = process.element(LANE_SET);
         if (swimlaneSetElement != null) {
-            List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
+            List<Element> swimlanes = swimlaneSetElement.elements(LANE);
             for (Element swimlaneElement : swimlanes) {
                 Swimlane swimlane = create(swimlaneElement, definition);
-                // Map<String, String> swimlaneProperties =
-                // parseExtensionProperties(swimlaneElement);
-                // swimlane.setDelegationClassName(swimlaneProperties.get(CLASS));
-                // swimlane.setDelegationConfiguration(swimlaneProperties.get(CONFIG));
                 List<Element> flowNodeRefElements = swimlaneElement.elements(FLOW_NODE_REF);
                 List<String> flowNodeIds = Lists.newArrayList();
                 for (Element flowNodeRefElement : flowNodeRefElements) {
@@ -572,7 +502,7 @@ public class BpmnSerializer extends ProcessSerializer {
             }
             Element startStateElement = startStates.get(0);
             StartState startState = create(startStateElement, definition);
-            String swimlaneName = parseExtensionProperties(startStateElement).get(SWIMLANE);
+            String swimlaneName = parseExtensionProperties(startStateElement).get(LANE);
             Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
             startState.setSwimlane(swimlane);
         }
@@ -581,13 +511,16 @@ public class BpmnSerializer extends ProcessSerializer {
             TaskState state = create(taskStateElement, definition);
             if (state instanceof TaskState) {
                 Map<String, String> properties = parseExtensionProperties(taskStateElement);
-                String swimlaneName = properties.get(SWIMLANE);
+                String swimlaneName = properties.get(LANE);
                 Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
                 state.setSwimlane(swimlane);
                 String reassign = properties.get(REASSIGN);
                 if (reassign != null) {
-                    boolean forceReassign = Boolean.parseBoolean(reassign);
-                    state.setReassignmentEnabled(forceReassign);
+                    state.setReassignmentEnabled(Boolean.parseBoolean(reassign));
+                }
+                String ignore = properties.get(IGNORE_SUBSTITUTION_RULES);
+                if (ignore != null) {
+                    state.setIgnoreSubstitutionRules(Boolean.parseBoolean(ignore));
                 }
                 String async = properties.get(ASYNC);
                 if (async != null) {
@@ -598,55 +531,6 @@ public class BpmnSerializer extends ProcessSerializer {
                     state.setAsyncCompletionMode(AsyncCompletionMode.valueOf(asyncCompletionMode));
                 }
             }
-            // String duedateAttr = stateNodeChild.attributeValue(DUEDATE_ATTR);
-            // if (duedateAttr != null) {
-            // state.setTimeOutDueDate(duedateAttr);
-            // }
-            // List<Element> aaa = stateNodeChild.elements();
-            // for (Element a : aaa) {
-            // if (EVENT_NODE.equals(a.getName())) {
-            // String eventType = a.attributeValue(TYPE_ATTR);
-            // List<Element> actionNodes = a.elements();
-            // for (Element aa : actionNodes) {
-            // if (ACTION_NODE.equals(aa.getName())) {
-            // parseAction(aa, state, eventType);
-            // }
-            // }
-            // }
-            // }
-            // if (TIMER_NODE.equals(stateNodeChild.getName())) {
-            // String nameTimer = stateNodeChild.attributeValue(NAME_ATTR);
-            // String dueDate = stateNodeChild.attributeValue(DUEDATE_ATTR);
-            // if (TIMER_ESCALATION.equals(nameTimer)) {
-            // ((TaskState) state).setUseEscalation(true);
-            // if (dueDate != null) {
-            // ((TaskState) state).setEscalationTime(new Delay(dueDate));
-            // }
-            // } else if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
-            // definition.setTimeOutDueDate(dueDate);
-            // } else {
-            // state.setHasTimer(true);
-            // if (dueDate != null) {
-            // state.setDueDate(dueDate);
-            // }
-            // }
-            // List<Element> actionNodes = stateNodeChild.elements();
-            // for (Element aa : actionNodes) {
-            // if (ACTION_NODE.equals(aa.getName())) {
-            // TimerAction timerAction = new TimerAction(null);
-            // timerAction.setDelegationClassName(aa.attributeValue(CLASS_ATTR));
-            // timerAction.setDelegationConfiguration(aa.getTextTrim());
-            // timerAction.setRepeat(stateNodeChild.attributeValue(REPEAT_ATTR));
-            // if (TIMER_GLOBAL_NAME.equals(nameTimer)) {
-            // definition.setTimeOutAction(timerAction);
-            // } else if (TIMER_ESCALATION.equals(nameTimer)) {
-            // ((TaskState) state).setEscalationAction(timerAction);
-            // } else {
-            // ((ITimed) state).setTimerAction(timerAction);
-            // }
-            // }
-            // }
-            // }
         }
         {
             // backward compatibility: versions affected: 4.0.0 .. 4.0.4
@@ -673,19 +557,19 @@ public class BpmnSerializer extends ProcessSerializer {
             subprocess.setSubProcessName(subprocessElement.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
             subprocess.setVariableMappings(parseVariableMappings(subprocessElement));
         }
-        List<Element> sendMessageElements = process.elements(SEND_MESSAGE);
+        List<Element> sendMessageElements = process.elements(SEND_TASK);
         for (Element messageElement : sendMessageElements) {
             SendMessageNode messageNode = create(messageElement, definition);
             String duration = messageElement.attributeValue(RUNA_PREFIX + ":" + TIMER_DURATION, "1 days");
             messageNode.setTtlDuration(new Duration(duration));
             messageNode.setVariablesList(parseVariableMappings(messageElement));
         }
-        List<Element> receiveMessageElements = process.elements(RECEIVE_MESSAGE);
+        List<Element> receiveMessageElements = process.elements(RECEIVE_TASK);
         for (Element messageElement : receiveMessageElements) {
             ReceiveMessageNode messageNode = create(messageElement, definition);
             messageNode.setVariablesList(parseVariableMappings(messageElement));
         }
-        List<Element> intermediateEventElements = process.elements(INTERMEDIATE_EVENT);
+        List<Element> intermediateEventElements = process.elements(INTERMEDIATE_CATCH_EVENT);
         for (Element intermediateEventElement : intermediateEventElements) {
             List<Element> eventElements = intermediateEventElement.elements();
             for (Element eventElement : eventElements) {
@@ -706,7 +590,7 @@ public class BpmnSerializer extends ProcessSerializer {
                 timer.setParentContainer(parent);
             }
         }
-        List<Element> endStates = process.elements(END_STATE);
+        List<Element> endStates = process.elements(END_EVENT);
         for (Element node : endStates) {
             create(node, definition);
         }
@@ -730,6 +614,5 @@ public class BpmnSerializer extends ProcessSerializer {
                 definition.getGraphElementByIdNotNull(nodeId).setParentContainer(entry.getKey());
             }
         }
-        return definition;
     }
 }

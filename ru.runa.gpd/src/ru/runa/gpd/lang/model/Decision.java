@@ -1,10 +1,12 @@
 package ru.runa.gpd.lang.model;
 
 import java.util.Collection;
+import java.util.List;
 
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.decision.IDecisionProvider;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.wfe.extension.decision.GroovyDecisionHandler;
 
 public class Decision extends Node implements Delegable, Active {
@@ -18,18 +20,20 @@ public class Decision extends Node implements Delegable, Active {
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         if (isDelegable()) {
             IDecisionProvider provider = HandlerRegistry.getProvider(this);
             Collection<String> modelTransitionNames = provider.getTransitionNames(this);
-            for (Transition transition : getLeavingTransitions()) {
-                if (!modelTransitionNames.remove(transition.getName())) {
-                    //                    addWarning("decision.unreachableTransition", transition.getName());
+            if (modelTransitionNames != null) {
+                for (Transition transition : getLeavingTransitions()) {
+                    if (!modelTransitionNames.remove(transition.getName())) {
+                        errors.add(ValidationError.createLocalizedWarning(this, "decision.unreachableTransition", transition.getName()));
+                    }
                 }
             }
             for (String modelTransitionName : modelTransitionNames) {
-                addError("decision.transitionDoesNotExist", modelTransitionName);
+                errors.add(ValidationError.createLocalizedError(this, "decision.transitionDoesNotExist", modelTransitionName));
             }
         }
     }

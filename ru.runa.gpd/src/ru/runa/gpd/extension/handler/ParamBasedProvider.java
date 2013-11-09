@@ -1,5 +1,6 @@
 package ru.runa.gpd.extension.handler;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -22,6 +23,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.LocalizationRegistry;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 
@@ -63,8 +65,8 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     }
 
     @Override
-    public boolean validateValue(Delegable delegable) {
-        return getParamConfig(delegable).validate(delegable);
+    public boolean validateValue(Delegable delegable, List<ValidationError> errors) {
+        return getParamConfig(delegable).validate(delegable, errors);
     }
 
     public static class ConfigurationWizard extends Wizard {

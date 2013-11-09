@@ -2,12 +2,13 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
 
 public class MultiSubprocess extends Subprocess implements IMultiInstancesContainer {
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         boolean readMultiinstanceLinkExists = false;
         boolean needTest = true;
         for (VariableMapping variableMapping : variableMappings) {
@@ -20,7 +21,7 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
             }
         }
         if (needTest && !readMultiinstanceLinkExists) {
-            addError("multiinstance.noMultiinstanceLink");
+            errors.add(ValidationError.createLocalizedError(this, "multiinstance.noMultiinstanceLink"));
             return;
         }
     }

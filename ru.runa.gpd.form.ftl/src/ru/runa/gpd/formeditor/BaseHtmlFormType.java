@@ -24,6 +24,7 @@ import org.xml.sax.SAXException;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.validation.ValidatorConfig;
@@ -40,18 +41,21 @@ public abstract class BaseHtmlFormType extends FormType {
     }
 
     @Override
-    public void validate(IFile formFile, FormNode formNode) {
+    public void validate(IFile formFile, FormNode formNode, List<ValidationError> errors) {
         try {
             Map<String, Integer> formVars = getFormVariableNames(formFile, formNode);
             List<String> allVariableNames = formNode.getProcessDefinition().getVariableNames(true);
             Set<String> validationVariables = formNode.getValidationVariables((IFolder) formFile.getParent());
             for (String formVarName : formVars.keySet()) {
                 if (formVars.get(formVarName) == FormType.DOUBTFUL) {
-                    formNode.addWarning("formNode.formVariableTagUnknown", formVarName);
+                    String message = WYSIWYGPlugin.getResourceString("validation.formVariableTagUnknown", formVarName);
+                    errors.add(ValidationError.createWarning(formNode, message));
                 } else if (!validationVariables.contains(formVarName) && formVars.get(formVarName) == FormType.WRITE_ACCESS) {
-                    formNode.addWarning("formNode.formVariableOutOfValidation", formVarName);
+                    String message = WYSIWYGPlugin.getResourceString("validation.formVariableOutOfValidation", formVarName);
+                    errors.add(ValidationError.createWarning(formNode, message));
                 } else if (!allVariableNames.contains(formVarName)) {
-                    formNode.addWarning("formNode.formVariableDoesNotExist", formVarName);
+                    String message = WYSIWYGPlugin.getResourceString("validation.formVariableDoesNotExist", formVarName);
+                    errors.add(ValidationError.createWarning(formNode, message));
                 }
             }
             for (String validationVarName : validationVariables) {
@@ -59,15 +63,18 @@ public abstract class BaseHtmlFormType extends FormType {
                     continue;
                 }
                 if (!formVars.keySet().contains(validationVarName)) {
-                    formNode.addWarning("formNode.validationVariableOutOfForm", validationVarName);
+                    String message = WYSIWYGPlugin.getResourceString("validation.validationVariableOutOfForm", validationVarName);
+                    errors.add(ValidationError.createWarning(formNode, message));
                 }
                 if (!allVariableNames.contains(validationVarName)) {
-                    formNode.addError("formNode.validationVariableDoesNotExist", validationVarName);
+                    String message = WYSIWYGPlugin.getResourceString("validation.validationVariableDoesNotExist", validationVarName);
+                    errors.add(ValidationError.createError(formNode, message));
                 }
             }
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("Error validating form: '" + getName() + "'", e);
-            formNode.addWarning("formNode.validationUnknownError", e.getMessage());
+            String message = WYSIWYGPlugin.getResourceString("validation.validationUnknownError", e);
+            errors.add(ValidationError.createWarning(formNode, message));
         }
     }
 

@@ -7,9 +7,11 @@ import java.util.Observable;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputModel;
+import ru.runa.gpd.office.resource.Messages;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Strings;
@@ -63,14 +65,15 @@ public class DocxModel extends Observable {
         return XmlUtil.toString(document);
     }
 
-    public void validate(GraphElement graphElement) {
+    public void validate(GraphElement graphElement, List<ValidationError> errors) {
         for (DocxTableModel tableModel : tables) {
             for (DocxColumnModel columnModel : tableModel.columns) {
                 if (Strings.isNullOrEmpty(columnModel.variable)) {
-                    graphElement.addError("docx.table.column.empty");
+                    errors.add(ValidationError.createError(graphElement, Messages.getString("model.validation.docx.table.column.empty")));
+                    break;
                 }
             }
         }
-        inOutModel.validate(graphElement, FilesSupplierMode.BOTH);
+        inOutModel.validate(graphElement, FilesSupplierMode.BOTH, errors);
     }
 }

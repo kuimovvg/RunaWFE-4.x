@@ -8,6 +8,7 @@ import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.ValidationError;
 
 public abstract class SwimlanedNode extends Node implements PropertyChangeListener {
     private Swimlane swimlane;
@@ -58,10 +59,10 @@ public abstract class SwimlanedNode extends Node implements PropertyChangeListen
     }
 
     @Override
-    protected void validate() {
-        super.validate();
+    public void validate(List<ValidationError> errors) {
+        super.validate(errors);
         if (getSwimlane() == null && !isSwimlaneDisabled()) {
-            addError("swimlaneNotSet");
+            errors.add(ValidationError.createLocalizedError(this, "swimlaneNotSet"));
         }
     }
 

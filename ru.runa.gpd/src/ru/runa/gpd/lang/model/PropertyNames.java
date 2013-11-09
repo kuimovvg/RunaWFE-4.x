@@ -27,7 +27,7 @@ public interface PropertyNames {
     public static final String PROPERTY_ESCALATION_ACTION = "escalationAction";
     public static final String PROPERTY_TIMER_DELAY = "timerDelay";
     public static final String PROPERTY_TIMER_ACTION = "timerAction";
-    public static final String PROPERTY_IGNORE_SUBSTITUTION = "ignoreSubstitution";
+    public static final String PROPERTY_IGNORE_SUBSTITUTION_RULES = "ignoreSubstitutionRules";
     public static final String PROPERTY_SUBPROCESS = "subprocess";
     public static final String NODE_REMOVED = "NODE_REMOVED";
     public static final String NODE_CHILDS_CHANGED = "NODE_CHILDS_CHANGED";

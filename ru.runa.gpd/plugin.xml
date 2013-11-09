@@ -69,7 +69,7 @@
     <objectContribution
            adaptable="false"
            id="jpdl.state.handlers"
-           objectClass="ru.runa.gpd.lang.model.State">
+           objectClass="ru.runa.gpd.lang.model.TaskState">
         <filter
               name="language"
               value="jpdl">

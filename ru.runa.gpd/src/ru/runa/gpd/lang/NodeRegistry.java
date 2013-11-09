@@ -13,11 +13,16 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
+import ru.runa.gpd.lang.par.ParContentProvider;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -85,14 +90,52 @@ public class NodeRegistry {
     }
 
     public static ProcessDefinition parseProcessDefinition(IFile definitionFile) throws Exception {
-        // Workaround for 'resource out of sync'
-        definitionFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+        try {
+            return parseProcessDefinitionInternal(definitionFile);
+        } catch (CoreException e) {
+            if (e.getMessage() != null && e.getMessage().startsWith("Resource is out of sync with the file system")) {
+                // Workaround for 'resource out of sync'
+                definitionFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+                return parseProcessDefinitionInternal(definitionFile);
+            }
+            throw e;
+        }
+    }
+    
+    private static ProcessDefinition parseProcessDefinitionInternal(IFile definitionFile) throws Exception {
+        boolean embeddedSubprocess = definitionFile.getName().startsWith(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX);
         Document document = XmlUtil.parseWithoutValidation(definitionFile.getContents());
         for (Language language : Language.values()) {
             if (language.getSerializer().isSupported(document)) {
-                ProcessDefinition definition = language.getSerializer().parseXML(document);
-                definition.setLanguage(language);
-                return definition;
+                if (embeddedSubprocess) {
+                    SubprocessDefinition definition = new SubprocessDefinition();
+                    IFile parentDefinitionFile = IOUtils.getAdjacentFile(definitionFile, ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                    ProcessDefinition parentProcessDefinition = ProcessCache.getProcessDefinition(parentDefinitionFile);
+                    Preconditions.checkNotNull(parentProcessDefinition, "parentProcessDefinition");
+                    definition.setParent(parentProcessDefinition);
+                    language.getSerializer().parseXML(document, definition);
+                    parentProcessDefinition.getEmbeddedSubprocesses().put(definition.getId(), definition);
+                    return definition;
+                } else {
+                    ProcessDefinition definition = new ProcessDefinition();
+                    definition.setLanguage(language);
+                    language.getSerializer().parseXML(document, definition);
+                    return definition;
+                }
+//                if (!embeddedSubprocess) {
+//                    for (IResource resource : definitionFile.getParent().members()) {
+//                        String filename = resource.getName();
+//                        if (filename.endsWith(ParContentProvider.PROCESS_DEFINITION_FILE_NAME) &&
+//                                !filename.equals(ParContentProvider.PROCESS_DEFINITION_FILE_NAME)) {
+//                            IFile subprocessFile = (IFile) resource;
+//                            document = XmlUtil.parseWithoutValidation(subprocessFile.getContents());
+//                            SubprocessDefinition subprocessDefinition = new SubprocessDefinition();
+//                            subprocessDefinition.setParent(definition);
+//                            language.getSerializer().parseXML(document, subprocessDefinition);
+//                            definition.getEmbeddedSubprocesses().put(subprocessDefinition.getId(), subprocessDefinition);
+//                        }
+//                    }
+//                } TODO remove if not needed
             }
         }
         throw new RuntimeException("No language could be determined for this content");

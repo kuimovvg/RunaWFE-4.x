@@ -1,6 +1,7 @@
 package ru.runa.gpd.extension.handler;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -21,9 +22,10 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.State;
+import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
@@ -94,19 +96,18 @@ public class SendEmailActionHandlerProvider extends DelegableProvider {
     }
 
     @Override
-    public boolean validateValue(Delegable delegable) {
+    public boolean validateValue(Delegable delegable, List<ValidationError> errors) {
         String configuration = delegable.getDelegationConfiguration();
         try {
             if (configuration.trim().length() > 0) {
                 EmailConfig config = EmailConfigParser.parse(configuration, false);
                 GraphElement parent = ((GraphElement) delegable).getParent();
-                if (config.isUseMessageFromTaskForm() && (!(parent instanceof State))) {
-                    return false;
+                if (config.isUseMessageFromTaskForm() && (!(parent instanceof TaskState))) {
+                    errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.email.taskformmissed"));
                 }
             }
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("invalid Email config " + configuration, e);
-            return false;
+            errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.invalidConfigurationWithError", e));
         }
         return true;
     }

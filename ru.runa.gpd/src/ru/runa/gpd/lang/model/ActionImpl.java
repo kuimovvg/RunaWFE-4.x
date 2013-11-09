@@ -20,7 +20,7 @@ public class ActionImpl extends Action {
             eventType = Event.NODE_LEAVE;
         } else if (parent instanceof EndState) {
             eventType = Event.NODE_ENTER;
-        } else if (parent instanceof State) {
+        } else if (parent instanceof TaskState) {
             eventType = Event.TASK_CREATE;
         } else if (parent instanceof Node) {
             eventType = Event.NODE_LEAVE;
@@ -53,7 +53,7 @@ public class ActionImpl extends Action {
         GraphElement parent = getParent();
         if (parent instanceof Transition) {
             return Arrays.asList(TRANSITION_EVENT_TYPES);
-        } else if (parent instanceof State) {
+        } else if (parent instanceof TaskState) {
             return Arrays.asList(TASK_EVENT_TYPES);
         } else if (parent instanceof StartState) {
             return Arrays.asList(START_STATE_EVENT_TYPES);

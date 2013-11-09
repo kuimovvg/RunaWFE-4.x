@@ -15,6 +15,7 @@ import org.eclipse.jface.window.Window;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -42,17 +43,21 @@ public class GroovyDecisionProvider extends DelegableProvider implements IDecisi
     }
 
     @Override
-    public boolean validateValue(Delegable delegable) {
+    public boolean validateValue(Delegable delegable, List<ValidationError> errors) {
         String configuration = delegable.getDelegationConfiguration();
-        try {
-            Binding binding = new Binding();
-            GroovyShell shell = new GroovyShell(binding);
-            shell.parse(configuration);
-            return configuration.trim().length() > 0;
-        } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("Script parse error: " + configuration, e);
-            return false;
+        if (configuration.trim().length() == 0) {
+            errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.invalidConfiguration.empty"));
+        } else {
+            try {
+                Binding binding = new Binding();
+                GroovyShell shell = new GroovyShell(binding);
+                shell.parse(configuration);
+            } catch (Exception e) {
+                errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.invalidConfigurationWithError", e));
+                PluginLogger.logErrorWithoutDialog("Script parse error: " + configuration, e);
+            }
         }
+        return true;
     }
 
     @Override
@@ -62,8 +67,8 @@ public class GroovyDecisionProvider extends DelegableProvider implements IDecisi
             GroovyDecisionModel model = new GroovyDecisionModel(decision.getDelegationConfiguration(), variables);
             return new HashSet<String>(model.getTransitionNames());
         } catch (Exception e) {
+            return null;
         }
-        return new HashSet<String>();
     }
 
     @Override
