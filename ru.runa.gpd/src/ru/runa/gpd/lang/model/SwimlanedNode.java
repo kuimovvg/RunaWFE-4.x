@@ -70,8 +70,8 @@ public abstract class SwimlanedNode extends Node implements PropertyChangeListen
     protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
         List<String> swimlaneNames = getProcessDefinition().getSwimlaneNames();
-        String[] arr = swimlaneNames.toArray(new String[swimlaneNames.size()]);
-        list.add(new ComboBoxPropertyDescriptor(PROPERTY_SWIMLANE, Localization.getString("SwimlanedNode.property.swimlane"), arr));
+        String[] array = swimlaneNames.toArray(new String[swimlaneNames.size()]);
+        list.add(new ComboBoxPropertyDescriptor(PROPERTY_SWIMLANE, Localization.getString("SwimlanedNode.property.swimlane"), array));
         return list;
     }
 
