@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -46,10 +47,13 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
 
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
+import ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
 import ru.runa.gpd.quick.extension.QuickTemplateRegister;
 import ru.runa.gpd.quick.formeditor.ui.wizard.BrowserWizard;
@@ -62,6 +66,7 @@ import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
@@ -73,6 +78,7 @@ import com.google.common.base.Strings;
 
 public class QuickFormEditor extends EditorPart implements ISelectionListener, IResourceChangeListener, PropertyChangeListener {
 	private static final int NUMBER_NAME_COLUMN = 1;
+	public static final int CLOSED = 198;
 	public static final String ID = "ru.runa.gpd.quick.formeditor.QuickFormEditor";
 	private Composite editorComposite;
 	private TableViewer tableViewer;
@@ -157,6 +163,30 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         
         getSite().getPage().addSelectionListener(this);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+        
+        addPropertyListener(new IPropertyListener() {
+            @Override
+            public void propertyChanged(Object source, int propId) {
+                if (propId == QuickFormEditor.CLOSED && templateFormFile.exists()) {
+                    String op = "create";
+                    try {
+                        if (!formNode.hasFormValidation()) {
+                            String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
+                            if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
+                                fileName = formNode.getProcessDefinition().getId() + "." + fileName;
+                            }
+                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(templateFormFile, fileName, formNode);
+                            formNode.setValidationFileName(validationFile.getName());
+                        } else {
+                            op = "update";
+                            ValidationUtil.updateValidation(templateFormFile, formNode);
+                        }
+                    } catch (Exception e) {
+                        PluginLogger.logError("Failed to " + op + " form validation", e);
+                    }
+                }
+            }
+        });
 	}
 
 	@Override
@@ -476,5 +506,12 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             this.dirty = dirty;
             firePropertyChange(IEditorPart.PROP_DIRTY);
         }
+    }
+    
+    @Override
+    public void dispose() {
+        firePropertyChange(CLOSED);
+        ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
+        super.dispose();
     }
 }

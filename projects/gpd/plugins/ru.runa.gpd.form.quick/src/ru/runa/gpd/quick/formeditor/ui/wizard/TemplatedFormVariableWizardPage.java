@@ -33,6 +33,7 @@ import ru.runa.gpd.quick.resource.Messages;
 import ru.runa.gpd.quick.tag.FreemarkerConfigurationGpdWrap;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 
 public class TemplatedFormVariableWizardPage extends WizardPage {
 	private ComboViewer tagType;
@@ -132,9 +133,9 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
             }
         });
         tagType.setInput(types.toArray(new SelectItem[types.size()]));
-        tagType.addSelectionChangedListener(new ISelectionChangedListener() {
+        tagType.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
             @Override
-            public void selectionChanged(SelectionChangedEvent  e) {
+            public void onSelectionChanged(SelectionChangedEvent  e) {
             	IStructuredSelection selection = (IStructuredSelection) e.getSelection();
             	SelectItem selectItem = (SelectItem)selection.getFirstElement();
                 
@@ -205,14 +206,14 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 				            		}
 				            	}
 						    }
-				        	comboParam.addSelectionChangedListener(new ISelectionChangedListener() {
-				                @Override
-				                public void selectionChanged(SelectionChangedEvent  e) {
-				                	IStructuredSelection selection = (IStructuredSelection) e.getSelection();
+				        	comboParam.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
+								@Override
+								protected void onSelectionChanged(SelectionChangedEvent e) throws Exception {
+									IStructuredSelection selection = (IStructuredSelection) e.getSelection();
 				                	SelectItem selectItem = (SelectItem)selection.getFirstElement();				                    
 				                	paramValue = selectItem.getValue().toString();
-				                    verifyContentsValid();
-				                }
+				                    verifyContentsValid();									
+								}
 				            });
 				        } else {
 				        	final Text text = new Text(parent, SWT.NONE);

@@ -129,7 +129,7 @@ public abstract class FormNode extends SwimlanedNode {
         super.validate(errors);
         if (hasFormValidation()) {
             IFile validationFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.validationFileName);
-            if (validationFile != null || !validationFile.exists()) {
+            if (validationFile == null || !validationFile.exists()) {
                 errors.add(ValidationError.createLocalizedError(this, "formNode.validationFileNotFound", this.validationFileName));
                 return;
             }
