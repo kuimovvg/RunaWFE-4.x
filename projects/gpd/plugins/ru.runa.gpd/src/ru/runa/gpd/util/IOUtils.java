@@ -21,8 +21,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.gef.EditPart;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -291,7 +294,7 @@ public class IOUtils {
 
     public static IFile getCurrentFile() {
         IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        if (activeWindow == null) {
+        if (activeWindow == null || activeWindow.getActivePage() == null) {
             return null;
         }
         IEditorPart editorPart = activeWindow.getActivePage().getActiveEditor();
@@ -398,10 +401,10 @@ public class IOUtils {
         return fileList;
     }
 
-    public static List<IFile> getProcessDefinitionFiles(IProject project) {
+    public static List<IFile> getProcessDefinitionFiles(IContainer container) {
         try {
             List<IFile> files = new ArrayList<IFile>();
-            findProcessDefinitionsRecursive(project, files);
+            findProcessDefinitionsRecursive(container, files);
             return files;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -505,6 +508,31 @@ public class IOUtils {
 
     public static IFile getProcessDefinitionFile(IFolder folder) {
         return folder.getFile(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+    }
+
+    public static IResource getProcessSelectionResource(IStructuredSelection selection) {
+        if (selection != null && !selection.isEmpty()) {
+            Object selectedElement = selection.getFirstElement();
+            if (selectedElement instanceof EditPart) {
+                IFile file = IOUtils.getCurrentFile();
+                return file == null ? null : file.getParent();
+            }
+            if (selectedElement instanceof IAdaptable) {
+                IAdaptable adaptable = (IAdaptable) selectedElement;
+                IResource resource = (IResource) adaptable.getAdapter(IResource.class);
+                if (resource instanceof IProject || resource instanceof IFile) {
+                    return resource;
+                }
+                if (resource instanceof IFolder) {
+                    if (isProcessDefinitionFolder((IFolder) resource)) {
+                        return resource.getParent();
+                    } else {
+                        return resource;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
 }

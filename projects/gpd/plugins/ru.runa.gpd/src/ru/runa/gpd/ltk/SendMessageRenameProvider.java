@@ -2,7 +2,6 @@ package ru.runa.gpd.ltk;
 
 import java.util.List;
 
-
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.util.VariableMapping;
 

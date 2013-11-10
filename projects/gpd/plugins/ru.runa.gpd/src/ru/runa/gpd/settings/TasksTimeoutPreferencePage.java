@@ -1,12 +1,10 @@
 package ru.runa.gpd.settings;
 
-import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ru.runa.gpd.Activator;
-import ru.runa.gpd.Localization;
 
 public class TasksTimeoutPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 

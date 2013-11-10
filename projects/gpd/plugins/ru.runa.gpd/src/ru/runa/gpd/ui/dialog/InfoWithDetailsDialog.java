@@ -2,12 +2,12 @@ package ru.runa.gpd.ui.dialog;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -15,17 +15,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class InfoWithDetailsDialog extends IconAndMessageDialog {
-    private Button detailsButton;
-    private String title;
-    private String detailsMessage;
-    private Text text;
+import com.google.common.base.Strings;
 
-    public InfoWithDetailsDialog(String dialogTitle, String infoMessage, String detailsMessage) {
+public class InfoWithDetailsDialog extends IconAndMessageDialog {
+    private final int dialogType;
+    private String title;
+    private String details;
+    private Text detailsText;
+
+    public InfoWithDetailsDialog(int dialogType, String dialogTitle, String infoMessage, String details) {
         super(Display.getCurrent().getActiveShell());
+        this.dialogType = dialogType;
         this.title = dialogTitle;
         this.message = infoMessage;
-        this.detailsMessage = detailsMessage;
+        this.details = details;
         setShellStyle(getShellStyle() | SWT.RESIZE);
     }
 
@@ -46,14 +49,39 @@ public class InfoWithDetailsDialog extends IconAndMessageDialog {
     }
 
     @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
-        createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
-        createDetailsButton(parent);
+    protected Image getImage() {
+        switch (dialogType) {
+        case MessageDialog.ERROR: {
+            return getErrorImage();
+        }
+        case MessageDialog.INFORMATION: {
+            return getInfoImage();
+        }
+        case MessageDialog.CONFIRM: {
+            return getQuestionImage();
+        }
+        case MessageDialog.WARNING: {
+            return getWarningImage();
+        }
+        }
+        return getQuestionImage();
     }
 
-    protected void createDetailsButton(Composite parent) {
-        detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        switch (dialogType) {
+        case MessageDialog.ERROR:
+        case MessageDialog.INFORMATION:
+        case MessageDialog.WARNING: {
+            createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
+        }
+        case MessageDialog.CONFIRM: {
+            createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
+        }
+        }
+        if (!Strings.isNullOrEmpty(details)) {
+            createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
+        }
     }
 
     @Override
@@ -87,49 +115,30 @@ public class InfoWithDetailsDialog extends IconAndMessageDialog {
         }
     }
 
-    @Override
-    protected Image getImage() {
-        return getQuestionImage();
-    }
-
     protected void createDropDownList(Composite parent) {
-        text = new Text(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
-        text.setText(detailsMessage);
+        detailsText = new Text(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
+        detailsText.setText(details);
         GridData data = new GridData(GridData.FILL_BOTH);
         data.horizontalSpan = 2;
-        text.setLayoutData(data);
-    }
-
-    public static int open(String title, String infoMessage, String detailsMessage) {
-        InfoWithDetailsDialog dialog = new InfoWithDetailsDialog(title, infoMessage, detailsMessage);
-        return dialog.open();
+        detailsText.setLayoutData(data);
     }
 
     private void toggleDetailsArea() {
         Point windowSize = getShell().getSize();
         Point oldSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
         if (isDetailsAreaCreated()) {
-            text.dispose();
-            detailsButton.setText(IDialogConstants.SHOW_DETAILS_LABEL);
+            detailsText.dispose();
+            getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.SHOW_DETAILS_LABEL);
         } else {
             createDropDownList((Composite) getContents());
-            detailsButton.setText(IDialogConstants.HIDE_DETAILS_LABEL);
+            getButton(IDialogConstants.DETAILS_ID).setText(IDialogConstants.HIDE_DETAILS_LABEL);
         }
         Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
         getShell().setSize(new Point(windowSize.x, windowSize.y + (newSize.y - oldSize.y)));
     }
-    
-    private boolean isDetailsAreaCreated() {
-        return (text != null && !text.isDisposed());
-    }
 
-    protected final void showDetailsArea() {
-        if (!isDetailsAreaCreated()) {
-            Control control = getContents();
-            if (control != null && !control.isDisposed()) {
-                toggleDetailsArea();
-            }
-        }
+    private boolean isDetailsAreaCreated() {
+        return (detailsText != null && !detailsText.isDisposed());
     }
 
 }

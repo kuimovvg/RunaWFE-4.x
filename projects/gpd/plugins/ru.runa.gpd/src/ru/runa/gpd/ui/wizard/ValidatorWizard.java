@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,6 +25,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
@@ -81,7 +81,7 @@ public class ValidatorWizard extends Wizard {
         List<ValidatorConfig> validatorConfigs = new ArrayList<ValidatorConfig>(fieldConfigs.get(ValidatorConfig.GLOBAL_FIELD_ID).values());
         for (ValidatorConfig config : validatorConfigs) {
             if (!config.check()) {
-                MessageDialog.openError(getShell(), "Check validator config", config.getMessage());
+                Dialogs.error("Check validator config", config.getMessage());
                 return false;
             }
         }

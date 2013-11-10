@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.util.SafeLoopRunner;
+import ru.runa.gpd.util.ThrowableCauseExtractor;
 
 public class ErrorDialog extends IconAndMessageDialog {
     private Button detailsButton;
@@ -116,21 +116,4 @@ public class ErrorDialog extends IconAndMessageDialog {
         new ErrorDialog(message, writer.toString()).open();
     }
 
-    private static class ThrowableCauseExtractor extends SafeLoopRunner {
-        Throwable cause;
-
-        ThrowableCauseExtractor(Throwable cause) {
-            this.cause = cause;
-        }
-
-        @Override
-        protected boolean condition() {
-            return cause.getCause() != null;
-        }
-
-        @Override
-        protected void loop() {
-            cause = cause.getCause();
-        }
-    }
 }

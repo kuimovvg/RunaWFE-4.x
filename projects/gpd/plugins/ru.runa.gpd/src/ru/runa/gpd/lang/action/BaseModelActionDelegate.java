@@ -5,7 +5,6 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
@@ -86,7 +85,4 @@ public abstract class BaseModelActionDelegate implements IObjectActionDelegate {
         return getActiveDesignerEditor().getDefinitionFile();
     }
 
-    protected boolean confirm(String title, String message) {
-        return MessageDialog.openQuestion(workbenchPart.getSite().getShell(), title, message);
-    }
 }

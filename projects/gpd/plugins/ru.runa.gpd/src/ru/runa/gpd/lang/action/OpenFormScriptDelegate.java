@@ -1,7 +1,5 @@
 package ru.runa.gpd.lang.action;
 
-import java.io.ByteArrayInputStream;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.ide.IDE;

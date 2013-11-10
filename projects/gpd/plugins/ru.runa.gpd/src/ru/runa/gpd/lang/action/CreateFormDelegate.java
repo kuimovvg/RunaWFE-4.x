@@ -12,8 +12,8 @@ import ru.runa.gpd.editor.gef.command.FormNodeSetFileCommand;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.dialog.ChooseFormTypeDialog;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.util.IOUtils;
 
 public class CreateFormDelegate extends BaseModelActionDelegate {
@@ -27,7 +27,7 @@ public class CreateFormDelegate extends BaseModelActionDelegate {
             }
             formNode.setFormType(chooseFormTypeDialog.getType());
             if (!FormTypeProvider.getFormType(formNode.getFormType()).isCreationAllowed()) {
-                ErrorDialog.open(Localization.getString("FormType.creationNotAllowed"));
+                Dialogs.error(Localization.getString("FormType.creationNotAllowed"));
                 return;
             }
             String fileName = formNode.getId().concat(".").concat(formNode.getFormType());

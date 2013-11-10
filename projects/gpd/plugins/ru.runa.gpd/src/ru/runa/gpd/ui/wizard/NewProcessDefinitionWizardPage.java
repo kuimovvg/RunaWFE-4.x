@@ -3,12 +3,9 @@ package ru.runa.gpd.ui.wizard;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
@@ -48,27 +45,9 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         super(Localization.getString("NewProcessDefinitionWizardPage.page.name"));
         setTitle(Localization.getString("NewProcessDefinitionWizardPage.page.title"));
         setDescription(Localization.getString("NewProcessDefinitionWizardPage.page.description"));
-        this.initialSelection = getInitialSelection(selection);
+        this.initialSelection = (IContainer) IOUtils.getProcessSelectionResource(selection);
         this.processContainers = IOUtils.getAllProcessContainers();
         this.parentProcessDefinition = parentProcessDefinition;
-    }
-
-    private IContainer getInitialSelection(IStructuredSelection selection) {
-        if (selection != null && !selection.isEmpty()) {
-            Object selectedElement = selection.getFirstElement();
-            if (selectedElement instanceof EditPart) {
-                IFile file = IOUtils.getCurrentFile();
-                return file == null ? null : file.getParent();
-            }
-            if (selectedElement instanceof IAdaptable) {
-                IAdaptable adaptable = (IAdaptable) selectedElement;
-                IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-                if (resource != null) {
-                    return resource.getParent();
-                }
-            }
-        }
-        return null;
     }
 
     @Override

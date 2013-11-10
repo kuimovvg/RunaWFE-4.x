@@ -187,8 +187,8 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
             PictogramElement pictogramElement = context.getPictogramElement();
             bo = getBusinessObjectForPictogramElement(pictogramElement);
         }
-        if (bo != null) {
-            NodeTypeDefinition definition = NodeRegistry.getNodeTypeDefinition((Class<? extends GraphElement>) bo.getClass());
+        if (bo instanceof GraphElement) {
+            NodeTypeDefinition definition = ((GraphElement) bo).getTypeDefinition();
             if (definition != null && definition.getGraphitiEntry() != null) {
                 return definition.getGraphitiEntry().createUpdateFeature(this);
             }
