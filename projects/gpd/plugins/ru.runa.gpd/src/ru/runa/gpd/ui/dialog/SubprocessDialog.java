@@ -1,6 +1,7 @@
 package ru.runa.gpd.ui.dialog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -276,6 +277,7 @@ public class SubprocessDialog extends Dialog {
                 names.add(testProcessDefinition.getName());
             }
         }
+        Collections.sort(names);
         return names.toArray(new String[names.size()]);
     }
 

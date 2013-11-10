@@ -10,12 +10,17 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 public class SubprocessDefinition extends ProcessDefinition {
 
+    public SubprocessDefinition() {
+        setAccessType(ProcessDefinitionAccessType.EmbeddedSubprocess);
+    }
+    
     @Override
     public SwimlaneDisplayMode getSwimlaneDisplayMode() {
         return getParent().getSwimlaneDisplayMode();
@@ -41,9 +46,17 @@ public class SubprocessDefinition extends ProcessDefinition {
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
         list.add(new PropertyDescriptor(PROPERTY_DEFAULT_TASK_DURATION, Localization.getString("default.task.duedate")));
+        list.add(new PropertyDescriptor(PROPERTY_ACCESS_TYPE, Localization.getString("ProcessDefinition.property.accessType")));
         return list;
     }
 
+    @Override
+    public Object getPropertyValue(Object id) {
+        if (PROPERTY_ACCESS_TYPE.equals(id)) {
+            return Localization.getString("ProcessDefinition.property.accessType.EmbeddedSubprocess");
+        }
+        return super.getPropertyValue(id);
+    }
     @Override
     public boolean isShowActions() {
         return getParent().isShowActions();
