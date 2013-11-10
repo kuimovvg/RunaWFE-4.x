@@ -6,7 +6,11 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 
+import com.google.common.base.Objects;
+
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 
 public abstract class ProcessSerializer {
     public static final String ID = "id";
@@ -21,6 +25,7 @@ public abstract class ProcessSerializer {
     public static final String REASSIGN = "reassign";
     public static final String CLASS = "class";
     public static final String IGNORE_SUBSTITUTION_RULES = "ignoreSubstitutionRules";
+    public static final String EMBEDDED = "embedded";
 
     public abstract boolean isSupported(Document document);
 
@@ -44,4 +49,12 @@ public abstract class ProcessSerializer {
         }
     }
     
+    protected boolean isSubprocessEmbedded(ProcessDefinition definition, Subprocess subprocess) {
+        for (SubprocessDefinition subprocessDefinition : definition.getEmbeddedSubprocesses().values()) {
+            if (Objects.equal(subprocessDefinition.getName(), subprocess.getSubProcessName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

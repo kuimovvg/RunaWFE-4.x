@@ -1,6 +1,5 @@
 package ru.runa.gpd.lang.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -17,7 +16,7 @@ import com.google.common.collect.Lists;
 
 public class Subprocess extends Node implements Active {
     protected String subProcessName = "";
-    protected List<VariableMapping> variableMappings = new ArrayList<VariableMapping>();
+    protected List<VariableMapping> variableMappings = Lists.newArrayList();
 
     @Override
     public void validate(List<ValidationError> errors) {

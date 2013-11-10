@@ -142,6 +142,7 @@
             <xs:attribute name="name" type="xs:string" use="required" />
             <xs:attribute name="version" type="xs:integer" />
 			<xs:attribute name="binding" type="xs:string" />
+			<xs:attribute name="embedded" type="xs:boolean" use="optional" />
           </xs:complexType>
         </xs:element>
         <xs:element ref="variable" />
@@ -161,6 +162,7 @@
             <xs:attribute name="name" type="xs:string" use="required" />
             <xs:attribute name="version" type="xs:integer" />
 			<xs:attribute name="binding" type="xs:string" />
+			<xs:attribute name="embedded" type="xs:boolean" use="optional" />
           </xs:complexType>
         </xs:element>
         <xs:element ref="variable" />

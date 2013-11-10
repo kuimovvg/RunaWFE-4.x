@@ -209,6 +209,9 @@ public class JpdlSerializer extends ProcessSerializer {
             Element processStateElement = writeNode(root, subprocess, null);
             Element subProcessElement = processStateElement.addElement(SUB_PROCESS);
             setAttribute(subProcessElement, NAME, subprocess.getSubProcessName());
+            if (isSubprocessEmbedded(definition, subprocess)) {
+                setAttribute(subProcessElement, EMBEDDED, Boolean.TRUE.toString());
+            }
             for (VariableMapping variable : subprocess.getVariableMappings()) {
                 Element variableElement = processStateElement.addElement(VARIABLE);
                 setAttribute(variableElement, NAME, variable.getProcessVariableName());

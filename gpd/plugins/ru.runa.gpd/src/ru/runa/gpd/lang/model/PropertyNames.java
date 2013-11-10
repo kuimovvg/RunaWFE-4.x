@@ -52,4 +52,5 @@ public interface PropertyNames {
     public static final String PROPERTY_BOT_TASK_NAME = "botTaskName";
     public static final String PROPERTY_TTL = "ttl";
     public static final String VALUE = "value";
+    public static final String PROPERTY_ACCESS_TYPE = "accesstype";
 }

@@ -8,6 +8,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -53,6 +54,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     
     public void setAccessType(ProcessDefinitionAccessType accessType) {
         this.accessType = accessType;
+        firePropertyChange(PROPERTY_ACCESS_TYPE, null, accessType);
     }
     
     public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
@@ -366,6 +368,10 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
         list.add(new DurationPropertyDescriptor(PROPERTY_DEFAULT_TASK_DURATION, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.duedate")));
+        String[] array = { 
+                Localization.getString("ProcessDefinition.property.accessType.Process"), 
+                Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
+        list.add(new ComboBoxPropertyDescriptor(PROPERTY_ACCESS_TYPE, Localization.getString("ProcessDefinition.property.accessType"), array));
         return list;
     }
 
@@ -385,6 +391,9 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         if (PROPERTY_TIMEOUT_ACTION.equals(id)) {
             return timeOutAction;
         }
+        if (PROPERTY_ACCESS_TYPE.equals(id)) {
+            return accessType.ordinal();
+        }
         return super.getPropertyValue(id);
     }
 
@@ -401,6 +410,9 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
             setTimeOutDelay((Duration) value);
         } else if (PROPERTY_TIMEOUT_ACTION.equals(id)) {
             setTimeOutAction((TimerAction) value);
+        } else if (PROPERTY_ACCESS_TYPE.equals(id)) {
+            int i = ((Integer) value).intValue();
+            setAccessType(ProcessDefinitionAccessType.values()[i]);
         } else {
             super.setPropertyValue(id, value);
         }
