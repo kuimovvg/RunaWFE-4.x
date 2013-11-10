@@ -186,11 +186,14 @@ public class BpmnSerializer extends ProcessSerializer {
         for (Subprocess subprocess : subprocesses) {
             Element element = writeNode(process, subprocess);
             element.addAttribute(RUNA_PREFIX + ":" + PROCESS, subprocess.getSubProcessName());
+            Map<String, Object> properties = Maps.newHashMap();
             if (subprocess instanceof MultiSubprocess) {
-                Map<String, String> properties = Maps.newHashMap();
-                properties.put(MULTI_INSTANCE, "true");
-                writeExtensionElements(element, properties);
+                properties.put(MULTI_INSTANCE, true);
             }
+            if (isSubprocessEmbedded(definition, subprocess)) {
+                properties.put(EMBEDDED, true);
+            }
+            writeExtensionElements(element, properties);
             writeVariables(element, subprocess.getVariableMappings());
         }
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
@@ -335,14 +338,14 @@ public class BpmnSerializer extends ProcessSerializer {
     }
 
     private Element writeExtensionElements(Element parent, Map<String, ? extends Object> properties) {
-        if (properties.isEmpty()) {
+        List<VariableMapping> variableMappings = (List<VariableMapping>) properties.remove(VARIABLES);
+        if (properties.isEmpty() && (variableMappings == null || variableMappings.isEmpty())) {
             return null;
         }
         Element extensionsElement = parent.element(EXTENSION_ELEMENTS);
         if (extensionsElement == null) {
             extensionsElement = parent.addElement(EXTENSION_ELEMENTS);
         }
-        List<VariableMapping> variableMappings = (List<VariableMapping>) properties.remove(VARIABLES);
         if (variableMappings != null) {
             Element variablesElement = extensionsElement.addElement(RUNA_PREFIX + ":" + VARIABLES);
             for (VariableMapping variableMapping : variableMappings) {
