@@ -6,10 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
@@ -86,8 +85,7 @@ public class WFEServerBotElementImporter extends DataImporter {
         try {
             getConnector().deployBot(botStationName, archive);
         } catch (BotStationDoesNotExistException e) {
-            MessageDialog.openError(Display.getCurrent().getActiveShell(), Localization.getString("ExportBotWizardPage.page.title"),
-                    Localization.getString("ExportBotWizardPage.page.notExistWarning"));
+            Dialogs.error(Localization.getString("ExportBotWizardPage.page.notExistWarning"));
         }
     }
 }

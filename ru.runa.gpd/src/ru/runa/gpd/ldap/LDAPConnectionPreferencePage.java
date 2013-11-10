@@ -1,7 +1,6 @@
 package ru.runa.gpd.ldap;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
@@ -20,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.settings.PrefConstants;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
+import ru.runa.gpd.ui.custom.Dialogs;
 
 public class LDAPConnectionPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, PrefConstants {
 
@@ -83,9 +82,9 @@ public class LDAPConnectionPreferencePage extends FieldEditorPreferencePage impl
                 try {
                     performApply();
                     LDAPConnector.getInstance().connect();
-                    MessageDialog.openInformation(getShell(), Localization.getString("button.test.connection"), Localization.getString("test.Connection.Ok"));
+                    Dialogs.information(Localization.getString("test.Connection.Ok"));
                 } catch (Throwable th) {
-                    ErrorDialog.open(Localization.getString("error.ConnectionFailed"), th);
+                    Dialogs.error(Localization.getString("error.ConnectionFailed"), th);
                 }
             }
         });

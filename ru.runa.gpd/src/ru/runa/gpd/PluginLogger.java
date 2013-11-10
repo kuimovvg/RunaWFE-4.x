@@ -4,7 +4,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import ru.runa.gpd.ui.dialog.ErrorDialog;
+import ru.runa.gpd.ui.custom.Dialogs;
 
 public class PluginLogger {
 
@@ -28,7 +28,7 @@ public class PluginLogger {
                 message += "\n" + Localization.getString("error.org.eclipse.core.filesystem");
             }
         }
-        ErrorDialog.open(message, exception);
+        Dialogs.error(message, exception);
     }
 
     public static void logErrorWithoutDialog(String message, Throwable exception) {

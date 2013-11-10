@@ -20,14 +20,14 @@ public class SubprocessDelegate extends BaseModelActionDelegate {
             MultiSubprocess multiSubprocess = (MultiSubprocess) subprocess;
             MultiInstanceDialog dialog = new MultiInstanceDialog(multiSubprocess);
             if (dialog.open() != Window.CANCEL) {
-                multiSubprocess.setVariableMappings(dialog.getSubprocessVariables());
                 multiSubprocess.setSubProcessName(dialog.getSubprocessName());
+                multiSubprocess.setVariableMappings(dialog.getVariableMappings(true));
             }
         } else {
             SubprocessDialog dialog = new SubprocessDialog(subprocess);
             if (dialog.open() != Window.CANCEL) {
-                subprocess.setVariableMappings(dialog.getSubprocessVariables());
                 subprocess.setSubProcessName(dialog.getSubprocessName());
+                subprocess.setVariableMappings(dialog.getVariableMappings(true));
             }
         }
     }

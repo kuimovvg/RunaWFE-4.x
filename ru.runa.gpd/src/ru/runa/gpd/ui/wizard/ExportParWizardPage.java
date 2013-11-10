@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -49,6 +48,7 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.par.ProcessDefinitionValidator;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.view.ValidationErrorsView;
 import ru.runa.gpd.util.IOUtils;
@@ -216,8 +216,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 // TODO getContainer().run
                 if (exportToFile) {
                     if (definition.isInvalid()
-                            && !MessageDialog.openConfirm(getShell(), Localization.getString("message.confirm.operation"),
-                                    Localization.getString("ExportParWizardPage.confirm.export.invalid.process", definition.getName()))) {
+                            && !Dialogs.confirm(Localization.getString("ExportParWizardPage.confirm.export.invalid.process", definition.getName()))) {
                         continue;
                     }
                     String outputFileName = getDestinationValue() + definition.getName() + ".par";

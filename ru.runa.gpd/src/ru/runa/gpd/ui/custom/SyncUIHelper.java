@@ -14,7 +14,6 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.wfe.DataImporter;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
@@ -62,7 +61,7 @@ public class SyncUIHelper {
                 try {
                     importer.synchronize();
                 } catch (Exception ex) {
-                    ErrorDialog.open(Localization.getString("error.Synchronize"), ex);
+                    Dialogs.error(Localization.getString("error.Synchronize"), ex);
                 }
             }
         });

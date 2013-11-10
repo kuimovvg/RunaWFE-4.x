@@ -19,10 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -45,7 +43,7 @@ import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.par.ParContentProvider;
-import ru.runa.gpd.ui.dialog.InfoWithDetailsDialog;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.dialog.RenameBotDialog;
 import ru.runa.gpd.ui.dialog.RenameBotStationDialog;
 import ru.runa.gpd.ui.dialog.RenameBotTaskDialog;
@@ -68,6 +66,7 @@ import ru.runa.gpd.ui.wizard.NewProcessProjectWizard;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 public class WorkspaceOperations {
     public static void deleteResources(List<IResource> resources) {
@@ -75,16 +74,44 @@ public class WorkspaceOperations {
         for (IResource resource : resources) {
             try {
                 resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-                boolean projectFolder = (resource instanceof IProject);
-                String message = Localization.getString(projectFolder ? "Delete.project.message" : "Delete.process.message", resource.getName());
-                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"), message)) {
+                boolean projectResource = (resource instanceof IProject);
+                boolean folderResource = (resource instanceof IFolder);
+                boolean fileResource = (resource instanceof IFile);
+                String messageKey;
+                if (projectResource) {
+                    messageKey = "Delete.project.message";
+                } else if (folderResource) {
+                    if (IOUtils.isProcessDefinitionFolder((IFolder) resource)) {
+                        messageKey = "Delete.process.message";
+                    } else {
+                        messageKey = "Delete.folder.message";
+                    }
+                } else if (fileResource) {
+                    messageKey = "Delete.process.message";
+                } else {
+                    throw new IllegalArgumentException("Unexpected " + resource);
+                }
+                if (Dialogs.confirm(Localization.getString(messageKey, resource.getName()))) {
                     List<IFile> tmpFiles = new ArrayList<IFile>();
-                    if (projectFolder) {
-                        for (IFile definitionFile : IOUtils.getProcessDefinitionFiles((IProject) resource)) {
-                            tmpFiles.add(definitionFile);
+                    if (projectResource) {
+                        tmpFiles.addAll(IOUtils.getProcessDefinitionFiles((IProject) resource));
+                    } else if (folderResource) {
+                        if (IOUtils.isProcessDefinitionFolder((IFolder) resource)) {
+                            tmpFiles.add(IOUtils.getProcessDefinitionFile((IFolder) resource));
+                        } else {
+                            tmpFiles.addAll(IOUtils.getProcessDefinitionFiles((IFolder) resource));
                         }
                     } else {
-                        tmpFiles.add(IOUtils.getProcessDefinitionFile((IFolder) resource));
+                        IFile definitionFile = (IFile) resource;
+                        int index = definitionFile.getName().indexOf(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                        Preconditions.checkArgument(index != -1, "not a subprocess definition file");
+                        String subprocessFileStart = definitionFile.getName().substring(0, index);
+                        tmpFiles.add(definitionFile);
+                        for (IResource testResource : definitionFile.getParent().members()) {
+                            if (testResource.getName().startsWith(subprocessFileStart)) {
+                                testResource.delete(true, null);
+                            }
+                        }
                     }
                     resource.delete(true, null);
                     deletedDefinitions.addAll(tmpFiles);
@@ -238,8 +265,7 @@ public class WorkspaceOperations {
         for (IResource resource : resources) {
             try {
                 resource.refreshLocal(IResource.DEPTH_INFINITE, null);
-                String message = Localization.getString(getConfirmMessage(resource), resource.getName());
-                if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("message.confirm.operation"), message)) {
+                if (Dialogs.confirm(Localization.getString(getConfirmMessage(resource), resource.getName()))) {
                     if (resource instanceof IFile) {
                         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                         IEditorPart editor = page.findEditor(new FileEditorInput((IFile) resource));
@@ -448,7 +474,7 @@ public class WorkspaceOperations {
             detailsMessage.append(", ");
             detailsMessage.append(iterator.next());
         }
-        InfoWithDetailsDialog.open(Localization.getString("DependentTasksDialog.title"), Localization.getString("DependentTasksDialog.infoMessage"), detailsMessage.toString());
+        Dialogs.error(Localization.getString("DependentTasksDialog.errorMessage"), detailsMessage.toString());
     }
 
     public static void copyBotTask(IStructuredSelection selection) {
