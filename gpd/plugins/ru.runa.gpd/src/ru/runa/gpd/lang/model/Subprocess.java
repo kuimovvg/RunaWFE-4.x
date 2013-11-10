@@ -3,8 +3,8 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
@@ -87,9 +87,7 @@ public class Subprocess extends Node implements Active {
     @Override
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
-        List<String> definitionNames = ProcessCache.getAllProcessDefinitionNames();
-        String[] items = definitionNames.toArray(new String[definitionNames.size()]);
-        list.add(new ComboBoxPropertyDescriptor(PROPERTY_SUBPROCESS, Localization.getString("Subprocess.Name"), items));
+        list.add(new PropertyDescriptor(PROPERTY_SUBPROCESS, Localization.getString("Subprocess.Name")));
         return list;
     }
 
@@ -101,12 +99,4 @@ public class Subprocess extends Node implements Active {
         return super.getPropertyValue(id);
     }
 
-    @Override
-    public void setPropertyValue(Object id, Object value) {
-        if (PROPERTY_SUBPROCESS.equals(id)) {
-            setSubProcessName(ProcessCache.getAllProcessDefinitionNames().get((Integer) value));
-        } else {
-            super.setPropertyValue(id, value);
-        }
-    }
 }

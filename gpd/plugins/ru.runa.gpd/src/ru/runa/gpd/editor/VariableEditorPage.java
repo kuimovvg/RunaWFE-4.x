@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.gef.ui.actions.Clipboard;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -48,6 +47,7 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
@@ -212,7 +212,7 @@ public class VariableEditorPage extends EditorPartBase {
         } else {
             formNames.append(Localization.getString("Variable.NoFormsUsed"));
         }
-        if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), formNames.toString())) {
+        if (Dialogs.confirm(Localization.getString("confirm.delete"), formNames.toString())) {
             // remove variable from form validations
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable);
             // remove variable from definition

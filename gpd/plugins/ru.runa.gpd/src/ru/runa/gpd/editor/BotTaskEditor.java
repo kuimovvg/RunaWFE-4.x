@@ -55,11 +55,11 @@ import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseHandlerClassDialog;
-import ru.runa.gpd.ui.dialog.InfoWithDetailsDialog;
 import ru.runa.gpd.ui.wizard.BotTaskParamDefWizard;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.util.BotTaskUtils;
@@ -208,7 +208,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 if (className != null) {
                     boolean taskHandlerParameterized = BotTaskUtils.isTaskHandlerParameterized(className);
                     if (extendedMode && taskHandlerParameterized) {
-                        InfoWithDetailsDialog.open(Localization.getString("message.warning"), Localization.getString("BotTaskEditor.parameterizedTaskInExtendedModeNotAllowed"), "");
+                        Dialogs.warning(Localization.getString("BotTaskEditor.parameterizedTaskInExtendedModeNotAllowed"));
                         return;
                     }
                     handlerText.setText(className);

@@ -1,10 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.gef.EditPart;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -26,25 +22,7 @@ public abstract class ImportWizardPage extends WizardPage {
 
     public ImportWizardPage(String pageName, IStructuredSelection selection) {
         super(pageName);
-        this.initialSelection = getInitialSelection(selection);
-    }
-
-    private IContainer getInitialSelection(IStructuredSelection selection) {
-        if (selection != null && !selection.isEmpty()) {
-            Object selectedElement = selection.getFirstElement();
-            if (selectedElement instanceof EditPart) {
-                IFile file = IOUtils.getCurrentFile();
-                return file == null ? null : file.getParent();
-            }
-            if (selectedElement instanceof IAdaptable) {
-                IAdaptable adaptable = (IAdaptable) selectedElement;
-                IResource resource = (IResource) adaptable.getAdapter(IResource.class);
-                if (resource != null) {
-                    return resource.getParent();
-                }
-            }
-        }
-        return null;
+        this.initialSelection = (IContainer) IOUtils.getProcessSelectionResource(selection);
     }
 
     protected void createProjectsGroup(Composite parent) {
