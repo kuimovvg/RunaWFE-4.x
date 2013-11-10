@@ -3,9 +3,7 @@ package ru.runa.gpd.ui.action;
 import java.util.List;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.part.FileEditorInput;
@@ -18,6 +16,7 @@ import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
+import ru.runa.gpd.ui.custom.Dialogs;
 
 public class CheckUnlimitedTokenAction extends BaseActionDelegate {
     @Override
@@ -32,11 +31,9 @@ public class CheckUnlimitedTokenAction extends BaseActionDelegate {
                 CheckUnlimitedTokenAlgorithm algorithm = new CheckUnlimitedTokenAlgorithm(transitions, nodes);
                 Transition redTransition = algorithm.startAlgorithm();
                 if (redTransition != null) {
-                    MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Localization.getString("message.warning"),
-                            Localization.getString("CheckingTokensAction.SituationExist.Message", redTransition.getId()));
+                    Dialogs.warning(Localization.getString("CheckingTokensAction.SituationExist.Message", redTransition.getId()));
                 } else {
-                    MessageDialog.openInformation(Display.getCurrent().getActiveShell(), Localization.getString("message.warning"),
-                            Localization.getString("CheckingTokensAction.SituationNotExist.Message"));
+                    Dialogs.information(Localization.getString("CheckingTokensAction.SituationNotExist.Message"));
                 }
             }
         }

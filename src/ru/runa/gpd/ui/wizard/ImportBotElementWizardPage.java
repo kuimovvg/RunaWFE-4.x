@@ -41,8 +41,8 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.wfe.DataImporter;
 import ru.runa.gpd.wfe.WFEServerBotElementImporter;
 import ru.runa.gpd.wfe.WFEServerBotStationElementImporter;
@@ -146,7 +146,7 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
                         try {
                             populateInputView();
                         } catch (Exception ex) {
-                            ErrorDialog.open(Localization.getString("error.Synchronize"), ex);
+                            Dialogs.error(Localization.getString("error.Synchronize"), ex);
                         }
                     }
                 });

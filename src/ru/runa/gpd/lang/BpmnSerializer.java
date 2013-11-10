@@ -33,7 +33,7 @@ import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.TextAnnotation;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
@@ -498,7 +498,7 @@ public class BpmnSerializer extends ProcessSerializer {
         List<Element> startStates = process.elements(START_EVENT);
         if (startStates.size() > 0) {
             if (startStates.size() > 1) {
-                ErrorDialog.open(Localization.getString("model.validation.multipleStartStatesNotAllowed"));
+                Dialogs.error(Localization.getString("model.validation.multipleStartStatesNotAllowed"));
             }
             Element startStateElement = startStates.get(0);
             StartState startState = create(startStateElement, definition);

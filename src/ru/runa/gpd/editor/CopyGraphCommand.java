@@ -12,8 +12,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.commands.Command;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
@@ -37,6 +35,7 @@ import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.dialog.CopyGraphRewriteDialog;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
@@ -72,8 +71,7 @@ public class CopyGraphCommand extends Command {
     public void execute() {
         try {
             if (!copyBuffer.getSourceDefinition().getLanguage().equals(targetDefinition.getLanguage())) {
-                MessageDialog.openWarning(Display.getCurrent().getActiveShell(), Localization.getString("message.warning"),
-                        Localization.getString("CopyBuffer.DifferentVersion.warning"));
+                Dialogs.warning(Localization.getString("CopyBuffer.DifferentVersion.warning"));
                 return;
             }
             Set<ExtraCopyAction> elements = new HashSet<ExtraCopyAction>();

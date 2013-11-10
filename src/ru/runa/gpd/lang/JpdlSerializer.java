@@ -44,7 +44,7 @@ import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.lang.model.Transition;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
@@ -459,7 +459,7 @@ public class JpdlSerializer extends ProcessSerializer {
         List<Element> startStates = root.elements(START_STATE);
         if (startStates.size() > 0) {
             if (startStates.size() > 1) {
-                ErrorDialog.open(Localization.getString("model.validation.multipleStartStatesNotAllowed"));
+                Dialogs.error(Localization.getString("model.validation.multipleStartStatesNotAllowed"));
             }
             Element node = startStates.get(0);
             StartState startState = create(node, definition);

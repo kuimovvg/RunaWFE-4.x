@@ -6,7 +6,6 @@ import java.util.List;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.gef.ui.actions.Clipboard;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -43,6 +42,7 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
 import ru.runa.gpd.search.VariableSearchQuery;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
@@ -210,7 +210,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         } else {
             message.append(Localization.getString("Variable.NoFormsUsed"));
         }
-        if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), message.toString())) {
+        if (Dialogs.confirm(Localization.getString("confirm.delete"), message.toString())) {
             // remove variable from form validations
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane);
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();

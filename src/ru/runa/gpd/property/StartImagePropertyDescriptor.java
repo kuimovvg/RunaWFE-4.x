@@ -63,7 +63,7 @@ public class StartImagePropertyDescriptor extends PropertyDescriptor {
         protected void updateContents(Object value) {
             try {
                 IFile imageFile = getImageFile();
-                if (!imageFile.exists()) {
+                if (imageFile == null || !imageFile.exists()) {
                     return;
                 }
                 ImageData data = new ImageData(imageFile.getContents()).scaledTo(16, 16);

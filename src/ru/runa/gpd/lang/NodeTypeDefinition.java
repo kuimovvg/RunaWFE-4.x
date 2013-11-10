@@ -15,7 +15,6 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.ltk.VariableRenameProvider;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
 
 @SuppressWarnings("unchecked")
 public class NodeTypeDefinition {
@@ -71,7 +70,7 @@ public class NodeTypeDefinition {
         try {
             return (VariableRenameProvider<?>) getVariableRenameConfigurationElement().createExecutableExtension("provider");
         } catch (CoreException e) {
-            ErrorDialog.open(e);
+            PluginLogger.logError(e);
             return null;
         }
     }
@@ -146,7 +145,7 @@ public class NodeTypeDefinition {
             Bundle bundle = Platform.getBundle(element.getDeclaringExtension().getNamespaceIdentifier());
             return (Class<? extends GraphElement>) bundle.loadClass(element.getAttribute("model"));
         } catch (Exception e) {
-            ErrorDialog.open(e);
+            PluginLogger.logError(e);
             return null;
         }
     }

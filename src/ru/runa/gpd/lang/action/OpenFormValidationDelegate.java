@@ -12,6 +12,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.gef.command.FormNodeSetValidationFileCommand;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.wizard.ValidatorWizard;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
@@ -24,7 +25,7 @@ public class OpenFormValidationDelegate extends BaseModelActionDelegate {
         try {
             FormNode formNode = getSelection();
             if (!formNode.hasFormValidation()) {
-                if (!confirm("", Localization.getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
+                if (!Dialogs.confirm(Localization.getString("OpenFormValidationDelegate.CreateEmptyValidation"))) {
                     return;
                 }
                 String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;

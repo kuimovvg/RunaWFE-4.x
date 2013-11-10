@@ -1,7 +1,6 @@
 package ru.runa.gpd.settings;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -20,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.ui.dialog.ErrorDialog;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.wfe.WFEServerConnector;
 import ru.runa.gpd.wfe.WFEServerConnectorRegistry;
 import ru.runa.gpd.wfe.WFEServerConnectorRegistry.Entry;
@@ -95,9 +94,9 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
                 try {
                     performApply();
                     WFEServerConnector.getInstance().connect();
-                    MessageDialog.openInformation(getShell(), Localization.getString("button.test.connection"), Localization.getString("test.Connection.Ok"));
+                    Dialogs.information(Localization.getString("test.Connection.Ok"));
                 } catch (Throwable th) {
-                    ErrorDialog.open(Localization.getString("error.ConnectionFailed"), th);
+                    Dialogs.error(Localization.getString("error.ConnectionFailed"), th);
                 }
             }
         });
