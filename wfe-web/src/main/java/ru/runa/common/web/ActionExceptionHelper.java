@@ -105,7 +105,8 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.EXCEPTION_EXECUTOR_ALREADY_EXISTS, exception.getExecutorName());
         } else if (e instanceof ExecutorParticipatesInProcessesException) {
             ExecutorParticipatesInProcessesException exception = (ExecutorParticipatesInProcessesException) e;
-            actionMessage = new ActionMessage(Messages.EXCEPTION_EXECUTOR_PARTICIPATES_IN_PROCESSES, exception.getExecutorName(), exception.getIdsInfo());
+            actionMessage = new ActionMessage(Messages.EXCEPTION_EXECUTOR_PARTICIPATES_IN_PROCESSES, exception.getExecutorName(),
+                    exception.getIdsInfo());
         } else if (e instanceof ProcessDoesNotExistException) {
             actionMessage = new ActionMessage(Messages.ERROR_PROCESS_DOES_NOT_EXIST, e.getMessage());
         } else if (e instanceof DefinitionAlreadyExistException) {
@@ -126,7 +127,7 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.ERROR_DEFINITION_NAME_MISMATCH, exception.getDeployedProcessDefinitionName(),
                     exception.getGivenProcessDefinitionName());
         } else if (e instanceof TaskDoesNotExistException) {
-            actionMessage = new ActionMessage(Messages.ERROR_TASK_DOES_NOT_EXIST, e.getMessage());
+            actionMessage = new ActionMessage(Messages.ERROR_TASK_DOES_NOT_EXIST);
         } else if (e instanceof SubstitutionDoesNotExistException) {
             actionMessage = new ActionMessage(Messages.SUBSTITUTION_OUT_OF_DATE);
         } else if (e instanceof InvalidSessionException) {
