@@ -10,10 +10,10 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
-import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 public class SubprocessDefinition extends ProcessDefinition {
 

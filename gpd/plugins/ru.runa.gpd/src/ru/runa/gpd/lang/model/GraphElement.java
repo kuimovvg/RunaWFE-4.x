@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IActionFilter;
@@ -117,7 +118,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         return parent.getProcessDefinition();
     }
 
-    public void validate(List<ValidationError> errors) {
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
         if (isDelegable()) {
             Delegable d = (Delegable) this;
             DelegableProvider provider = HandlerRegistry.getProvider(delegationClassName);
@@ -131,7 +132,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         }
         for (GraphElement element : childs) {
             try {
-                element.validate(errors);
+                element.validate(errors, definitionFile);
             } catch (Exception e) {
                 PluginLogger.logErrorWithoutDialog("validation error", e);
                 errors.add(ValidationError.createLocalizedWarning(element, "error", e));

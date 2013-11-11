@@ -31,7 +31,7 @@ public class ProcessDefinitionValidator {
             boolean hasWarnings = false;
             definitionFile.deleteMarkers(ValidationErrorsView.ID, true, IResource.DEPTH_INFINITE);
             List<ValidationError> errors = Lists.newArrayList();
-            definition.validate(errors);
+            definition.validate(errors, definitionFile);
             for (ValidationError validationError : errors) {
                 addError(definitionFile, definition, validationError);
                 if (validationError.getSeverity() == IMarker.SEVERITY_WARNING) {

@@ -37,7 +37,6 @@ import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
 import ru.runa.gpd.lang.Language;
-import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -63,6 +62,7 @@ import ru.runa.gpd.ui.wizard.NewBotWizard;
 import ru.runa.gpd.ui.wizard.NewFolderWizard;
 import ru.runa.gpd.ui.wizard.NewProcessDefinitionWizard;
 import ru.runa.gpd.ui.wizard.NewProcessProjectWizard;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;

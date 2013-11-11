@@ -2,13 +2,15 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
 
 public class MultiSubprocess extends Subprocess implements IMultiInstancesContainer {
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         boolean readMultiinstanceLinkExists = false;
         boolean needTest = true;
         for (VariableMapping variableMapping : variableMappings) {

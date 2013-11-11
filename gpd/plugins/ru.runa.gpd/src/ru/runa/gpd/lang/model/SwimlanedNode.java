@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
@@ -59,8 +60,8 @@ public abstract class SwimlanedNode extends Node implements PropertyChangeListen
     }
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         if (getSwimlane() == null && !isSwimlaneDisabled()) {
             errors.add(ValidationError.createLocalizedError(this, "swimlaneNotSet"));
         }

@@ -3,9 +3,9 @@ package ru.runa.gpd.ui.action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
-import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 public class NewProcessAction extends BaseActionDelegate {
     @Override
