@@ -19,4 +19,8 @@ public class TokenDAO extends GenericDAO<Token> {
         return getHibernateTemplate().find("from Token where nodeType=? and endDate is null", nodeType);
     }
 
+    public List<Token> findActiveTokens(ru.runa.wfe.execution.Process process) {
+        return getHibernateTemplate().find("from Token where process=? and endDate is null", process);
+    }
+
 }

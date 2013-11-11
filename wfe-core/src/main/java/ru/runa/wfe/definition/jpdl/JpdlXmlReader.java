@@ -42,7 +42,7 @@ import ru.runa.wfe.lang.jpdl.Conjunction;
 import ru.runa.wfe.lang.jpdl.Decision;
 import ru.runa.wfe.lang.jpdl.Fork;
 import ru.runa.wfe.lang.jpdl.Join;
-import ru.runa.wfe.lang.jpdl.JpdlEndTokenNode;
+import ru.runa.wfe.lang.jpdl.EndToken;
 import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Objects;
@@ -97,7 +97,7 @@ public class JpdlXmlReader {
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
         nodeTypes.put("start-state", StartState.class);
-        nodeTypes.put("end-token-state", JpdlEndTokenNode.class);
+        nodeTypes.put("end-token-state", EndToken.class);
         nodeTypes.put("end-state", EndNode.class);
         nodeTypes.put("wait-state", WaitState.class);
         nodeTypes.put("task-node", TaskNode.class);

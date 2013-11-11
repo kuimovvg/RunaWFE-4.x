@@ -17,6 +17,8 @@ import ru.runa.wfe.commons.bc.BusinessCalendar;
 import ru.runa.wfe.commons.hibernate.Converters;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
+import ru.runa.wfe.execution.dao.ProcessDAO;
+import ru.runa.wfe.execution.dao.TokenDAO;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.relation.dao.RelationDAO;
@@ -53,6 +55,14 @@ public class ApplicationContextFactory {
 
     public static TaskDAO getTaskDAO() {
         return getContext().getBean(TaskDAO.class);
+    }
+
+    public static TokenDAO getTokenDAO() {
+        return getContext().getBean(TokenDAO.class);
+    }
+
+    public static ProcessDAO getProcessDAO() {
+        return getContext().getBean(ProcessDAO.class);
     }
 
     public static Converters getConverters() {
