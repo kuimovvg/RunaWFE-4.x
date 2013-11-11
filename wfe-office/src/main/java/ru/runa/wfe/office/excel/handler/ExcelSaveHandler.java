@@ -29,6 +29,7 @@ public class ExcelSaveHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
         InputStream templateInputStream = config.getFileInputStream(variableProvider, fileDataProvider, true);
         Workbook workbook = dataStore.loadWorkbook(templateInputStream, config.isInputFileXLSX(variableProvider, false));
         for (ExcelBinding binding : config.getBindings()) {
+            binding.getConstraints().applyPlaceholders(variableProvider);
             WfVariable variable = variableProvider.getVariableNotNull(binding.getVariableName());
             if (variable.getValue() != null) {
                 ExcelStorable storable = dataStore.createStorable(binding.getConstraints());
