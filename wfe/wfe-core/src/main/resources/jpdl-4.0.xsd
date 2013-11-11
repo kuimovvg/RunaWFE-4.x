@@ -22,6 +22,9 @@
       <xs:attribute name="name" type="xs:string" use="required" />
       <xs:attribute name="invalid" type="xs:boolean" use="optional" />
       <xs:attribute name="default-task-duedate" type="xs:string" use="optional" />
+      <xs:attribute name="version" type="xs:string" use="optional" />
+      <xs:attribute name="id" type="xs:string" use="optional" />
+      <xs:attribute name="accessType" type="xs:string" use="optional" />
     </xs:complexType>
   </xs:element>
 
@@ -49,6 +52,18 @@
       </xs:choice>
       <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="end-token-state">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="description" />
+        <xs:element ref="event"/>
+        <xs:element ref="exception-handler"/>
+      </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
     </xs:complexType>
   </xs:element>
 
@@ -127,6 +142,7 @@
             <xs:attribute name="name" type="xs:string" use="required" />
             <xs:attribute name="version" type="xs:integer" />
 			<xs:attribute name="binding" type="xs:string" />
+			<xs:attribute name="embedded" type="xs:boolean" use="optional" />
           </xs:complexType>
         </xs:element>
         <xs:element ref="variable" />
@@ -146,6 +162,7 @@
             <xs:attribute name="name" type="xs:string" use="required" />
             <xs:attribute name="version" type="xs:integer" />
 			<xs:attribute name="binding" type="xs:string" />
+			<xs:attribute name="embedded" type="xs:boolean" use="optional" />
           </xs:complexType>
         </xs:element>
         <xs:element ref="variable" />
@@ -210,21 +227,27 @@
       </xs:choice>
       <xs:attribute name="id" type="xs:string" use="required"/>
       <xs:attribute name="name" type="xs:string" use="required"/>
-      <xs:attribute name="create-tasks" type="booleanType" default="true" />
-      <xs:attribute name="end-tasks" type="booleanType" default="false" />
-      <xs:attribute name="signal" default="last">
+      <xs:attribute name="async" type="xs:boolean" default="false" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="multi-task-node">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element ref="task" />
+        <xs:group ref="node-content-elements" />
+      </xs:choice>
+      <xs:attribute name="id" type="xs:string" use="required"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="taskExecutionMode" default="last">
         <xs:simpleType>
           <xs:restriction base="xs:string">
-            <xs:enumeration value="unsynchronized"/>
-            <xs:enumeration value="never"/>
             <xs:enumeration value="first"/>
-            <xs:enumeration value="first-wait"/>
             <xs:enumeration value="last"/>
-            <xs:enumeration value="last-wait"/>
           </xs:restriction>
         </xs:simpleType>
       </xs:attribute>
-      <xs:attribute name="async" type="xs:string" default="false" />
+      <xs:attribute name="async" type="xs:boolean" default="false" />
     </xs:complexType>
   </xs:element>
 
@@ -273,6 +296,7 @@
       <xs:attribute name="accept-propagated-events" type="booleanType" default="true" />
       <xs:attribute name="expression" type="xs:string" />
       <xs:attribute name="async" type="xs:string" />
+      <xs:attribute name="description" type="xs:string" use="optional" />
     </xs:complexType>
   </xs:element>
 
@@ -373,13 +397,12 @@
         </xs:element>
       </xs:choice>
       <xs:attribute name="name" type="xs:string" />
-      <xs:attribute name="blocking" type="booleanType" default="false"/>
-      <xs:attribute name="signalling" type="booleanType" default="true"/>
       <xs:attribute name="description" type="xs:string" />
       <xs:attribute name="duedate" type="xs:string" />
       <xs:attribute name="swimlane" type="xs:string" />
       <xs:attribute name="reassign" type="booleanType" default="false" />
       <xs:attribute name="notify" type="booleanType" default="false"/>
+      <xs:attribute name="ignoreSubstitutionRules" type="xs:boolean" use="optional" />
     </xs:complexType>
   </xs:element>
   
@@ -448,6 +471,7 @@
       <xs:element ref="node"/>
       <xs:element ref="state"/>
       <xs:element ref="task-node"/>
+      <xs:element ref="multi-task-node"/>
       <xs:element ref="super-state"/>
       <xs:element ref="process-state"/>
       <xs:element ref="multiinstance-state"/>
@@ -456,6 +480,7 @@
       <xs:element ref="fork"/>
       <xs:element ref="join"/>
       <xs:element ref="decision"/>
+      <xs:element ref="end-token-state"/>
       <xs:element ref="end-state"/>
     </xs:choice>
   </xs:group>
