@@ -3,6 +3,8 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
@@ -11,8 +13,8 @@ public class ReceiveMessageNode extends Node implements Active, ITimed {
     private final List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         for (VariableMapping variableMapping : variablesList) {
             if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {
                 continue;

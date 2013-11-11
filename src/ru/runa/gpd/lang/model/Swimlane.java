@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.graphics.Image;
 
 import ru.runa.gpd.SharedImages;
@@ -35,8 +36,8 @@ public class Swimlane extends Variable implements Delegable {
     }
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         try {
             SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(getDelegationConfiguration());
             if (swimlaneInitializer != null) {

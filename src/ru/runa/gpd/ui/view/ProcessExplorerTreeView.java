@@ -35,10 +35,10 @@ import org.eclipse.ui.part.ViewPart;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
-import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 public class ProcessExplorerTreeView extends ViewPart implements ISelectionListener {
     private TreeViewer viewer;
