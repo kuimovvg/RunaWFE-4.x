@@ -22,13 +22,13 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.Language;
-import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;

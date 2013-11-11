@@ -69,16 +69,8 @@ public class InfoWithDetailsDialog extends IconAndMessageDialog {
 
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        switch (dialogType) {
-        case MessageDialog.ERROR:
-        case MessageDialog.INFORMATION:
-        case MessageDialog.WARNING: {
-            createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
-        }
-        case MessageDialog.CONFIRM: {
-            createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
-        }
-        }
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, false);
+        createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, true);
         if (!Strings.isNullOrEmpty(details)) {
             createButton(parent, IDialogConstants.DETAILS_ID, IDialogConstants.SHOW_DETAILS_LABEL, false);
         }

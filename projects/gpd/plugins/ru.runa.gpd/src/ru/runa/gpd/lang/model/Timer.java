@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
@@ -42,13 +43,13 @@ public class Timer extends Node {
     }
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         if (duration.getVariableName() != null && !getProcessDefinition().getVariableNames(false).contains(duration.getVariableName())) {
             errors.add(ValidationError.createLocalizedError(this, "timerState.invalidVariable"));
         }
         if (action != null) {
-            action.validate(null);
+            action.validate(null, definitionFile);
         }
     }
 

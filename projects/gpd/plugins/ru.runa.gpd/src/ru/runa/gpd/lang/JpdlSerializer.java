@@ -49,6 +49,7 @@ import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.TaskExecutionMode;
 

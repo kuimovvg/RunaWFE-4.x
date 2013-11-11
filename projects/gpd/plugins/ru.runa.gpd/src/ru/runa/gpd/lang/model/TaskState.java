@@ -3,6 +3,7 @@ package ru.runa.gpd.lang.model;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -261,8 +262,8 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
     }
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         if (getBotTaskLink() != null) {
             Set<String> linkConfigParameterNames;
             if (Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {

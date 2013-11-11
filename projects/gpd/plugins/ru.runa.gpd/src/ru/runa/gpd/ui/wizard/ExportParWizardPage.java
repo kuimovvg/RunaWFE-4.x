@@ -132,8 +132,11 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
     private String getKey(IFile definitionFile, ProcessDefinition definition) {
         IProject project = definitionFile.getProject();
         if (IOUtils.isProjectHasProcessNature(project)) {
-            // TODO
-            return definitionFile.getParent().getFullPath().toString();
+            String path = definitionFile.getParent().getFullPath().toString();
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            return path;
         } else {
             return project.getName() + "/" + definition.getName();
         }
