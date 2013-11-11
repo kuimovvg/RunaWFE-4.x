@@ -38,6 +38,7 @@ import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 
 import com.google.common.base.Objects;

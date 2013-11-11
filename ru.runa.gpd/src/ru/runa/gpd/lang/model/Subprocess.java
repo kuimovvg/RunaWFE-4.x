@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -19,8 +20,8 @@ public class Subprocess extends Node implements Active {
     protected List<VariableMapping> variableMappings = Lists.newArrayList();
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         if (subProcessName == null || subProcessName.length() == 0) {
             errors.add(ValidationError.createLocalizedError(this, "subprocess.empty"));
             return;

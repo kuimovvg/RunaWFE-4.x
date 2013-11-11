@@ -16,13 +16,13 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.Language;
-import ru.runa.gpd.lang.ProcessDefinitionAccessType;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
 import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -174,19 +174,9 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         return false;
     }
 
-    private boolean[] hasValidationErrors;
-    private IFile definitionFile;
-
-    /**
-     * Used only for validation !!! Either == null
-     */
-    protected IFile getDefinitionFile() {
-        return definitionFile;
-    }
-
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         List<StartState> startStates = getChildren(StartState.class);
         if (startStates.size() == 0) {
             errors.add(ValidationError.createLocalizedError(this, "startState.doesNotExist"));

@@ -3,6 +3,7 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
@@ -49,8 +50,8 @@ public class SendMessageNode extends Node implements Active {
     }
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         int selectorRulesCount = 0;
         for (VariableMapping variableMapping : variablesList) {
             if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {

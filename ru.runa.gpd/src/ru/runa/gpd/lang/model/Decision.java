@@ -3,6 +3,8 @@ package ru.runa.gpd.lang.model;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.decision.IDecisionProvider;
@@ -20,8 +22,8 @@ public class Decision extends Node implements Delegable, Active {
     }
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         if (isDelegable()) {
             IDecisionProvider provider = HandlerRegistry.getProvider(this);
             Collection<String> modelTransitionNames = provider.getTransitionNames(this);

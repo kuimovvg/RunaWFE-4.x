@@ -125,18 +125,18 @@ public abstract class FormNode extends SwimlanedNode {
     }
 
     @Override
-    public void validate(List<ValidationError> errors) {
-        super.validate(errors);
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
         if (hasFormValidation()) {
-            IFile validationFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.validationFileName);
-            if (validationFile == null || !validationFile.exists()) {
+            IFile validationFile = IOUtils.getAdjacentFile(definitionFile, this.validationFileName);
+            if (!validationFile.exists()) {
                 errors.add(ValidationError.createLocalizedError(this, "formNode.validationFileNotFound", this.validationFileName));
                 return;
             }
         }
         if (hasForm()) {
             FormType formType = FormTypeProvider.getFormType(this.formType);
-            IFile formFile = IOUtils.getAdjacentFile(getProcessDefinition().getDefinitionFile(), this.formFileName);
+            IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);
             formType.validate(formFile, this, errors);
         }
     }
