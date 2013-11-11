@@ -34,6 +34,7 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
+import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 
@@ -77,6 +78,9 @@ public class SubmitTaskDispatcherAction extends ActionBase {
         } catch (TaskAlreadyAcceptedException e) {
             // forward user to the tasks list screen cause current task was
             // already accepted by another user...
+            forwardName = LOCAL_FORWARD_TASKS_LIST;
+            addError(request, e);
+        } catch (TaskDoesNotExistException e) {
             forwardName = LOCAL_FORWARD_TASKS_LIST;
             addError(request, e);
         } catch (Exception e) {
