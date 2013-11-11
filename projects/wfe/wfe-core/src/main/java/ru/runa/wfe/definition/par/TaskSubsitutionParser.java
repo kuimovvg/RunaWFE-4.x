@@ -9,6 +9,9 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.lang.ProcessDefinition;
 
+/**
+ * @deprecated remove in 4.2.0
+ */
 public class TaskSubsitutionParser implements ProcessArchiveParser {
 
     @Override

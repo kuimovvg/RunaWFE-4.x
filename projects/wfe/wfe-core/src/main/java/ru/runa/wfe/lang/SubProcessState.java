@@ -22,6 +22,7 @@ public class SubProcessState extends VariableContainerNode {
             Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_BEFORE_SIGNAL, Event.EVENTTYPE_AFTER_SIGNAL };
 
     private String subProcessName;
+    private boolean embedded;
     @Autowired
     private IProcessDefinitionLoader processDefinitionLoader;
     @Autowired
@@ -49,6 +50,14 @@ public class SubProcessState extends VariableContainerNode {
 
     public void setSubProcessName(String subProcessName) {
         this.subProcessName = subProcessName;
+    }
+
+    public boolean isEmbedded() {
+        return embedded;
+    }
+
+    public void setEmbedded(boolean embedded) {
+        this.embedded = embedded;
     }
 
     protected ProcessDefinition getSubProcessDefinition() {

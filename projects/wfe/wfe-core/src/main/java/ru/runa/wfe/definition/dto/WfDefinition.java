@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.IFileDataProvider;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.SecuredObjectType;
@@ -43,6 +44,7 @@ public class WfDefinition extends Identifiable {
     private boolean hasStartImage;
     private boolean hasDisabledImage;
     private Date deployedDate;
+    private boolean subprocessOnly;
 
     public WfDefinition() {
     }
@@ -52,6 +54,7 @@ public class WfDefinition extends Identifiable {
         hasHtmlDescription = definition.getFileData(IFileDataProvider.INDEX_FILE_NAME) != null;
         hasStartImage = definition.getFileData(IFileDataProvider.START_IMAGE_FILE_NAME) != null;
         hasDisabledImage = definition.getFileData(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME) != null;
+        subprocessOnly = definition.getAccessType() == ProcessDefinitionAccessType.OnlySubprocess;
     }
 
     public WfDefinition(Deployment deployment) {
@@ -103,6 +106,10 @@ public class WfDefinition extends Identifiable {
 
     public boolean hasDisabledImage() {
         return hasDisabledImage;
+    }
+
+    public boolean isSubprocessOnly() {
+        return subprocessOnly;
     }
 
     public Date getDeployedDate() {
