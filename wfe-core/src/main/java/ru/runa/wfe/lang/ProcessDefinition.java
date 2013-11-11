@@ -31,6 +31,7 @@ import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.var.VariableDefinition;
@@ -54,7 +55,11 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     private final Map<String, Interaction> interactions = Maps.newHashMap();
     private final List<VariableDefinition> variables = Lists.newArrayList();
     private final Map<String, VariableDefinition> variablesMap = Maps.newHashMap();
+    /**
+     * @deprecated remove in 4.2.0
+     */
     private final Set<String> taskNamesToignoreSubstitutionRules = Sets.newHashSet();
+    private ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
 
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_PROCESS_START, Event.EVENTTYPE_PROCESS_END,
             Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_TASK_CREATE, Event.EVENTTYPE_TASK_ASSIGN,
@@ -101,6 +106,14 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
 
     public Deployment getDeployment() {
         return deployment;
+    }
+
+    public ProcessDefinitionAccessType getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(ProcessDefinitionAccessType accessType) {
+        this.accessType = accessType;
     }
 
     /**
@@ -299,7 +312,11 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     }
 
     public boolean ignoreSubsitutionRulesForTask(Task task) {
-        return taskNamesToignoreSubstitutionRules.contains(task.getNodeId());
+        if (taskNamesToignoreSubstitutionRules.contains(task.getNodeId())) {
+            return true;
+        }
+        InteractionNode interactionNode = (InteractionNode) getNodeNotNull(task.getNodeId());
+        return interactionNode.getFirstTaskNotNull().isIgnoreSubsitutionRules();
     }
 
     public void addTaskNameToignoreSubstitutionRules(String nodeId) {

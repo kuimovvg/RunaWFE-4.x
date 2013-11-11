@@ -36,6 +36,7 @@ public class TaskDefinition extends GraphElement {
     protected InteractionNode node;
     protected SwimlaneDefinition swimlaneDefinition;
     protected boolean reassignSwimlane;
+    protected boolean ignoreSubsitutionRules;
 
     @Override
     public String[] getSupportedEventTypes() {
@@ -62,6 +63,14 @@ public class TaskDefinition extends GraphElement {
 
     public void setReassignSwimlane(boolean reassignSwimlane) {
         this.reassignSwimlane = reassignSwimlane;
+    }
+
+    public boolean isIgnoreSubsitutionRules() {
+        return ignoreSubsitutionRules;
+    }
+
+    public void setIgnoreSubsitutionRules(boolean ignoreSubsitutionRules) {
+        this.ignoreSubsitutionRules = ignoreSubsitutionRules;
     }
 
     @Override

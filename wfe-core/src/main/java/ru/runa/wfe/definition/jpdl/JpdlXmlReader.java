@@ -11,6 +11,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.definition.logic.SwimlaneUtils;
 import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
@@ -40,9 +41,9 @@ import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.lang.WaitState;
 import ru.runa.wfe.lang.jpdl.Conjunction;
 import ru.runa.wfe.lang.jpdl.Decision;
+import ru.runa.wfe.lang.jpdl.EndToken;
 import ru.runa.wfe.lang.jpdl.Fork;
 import ru.runa.wfe.lang.jpdl.Join;
-import ru.runa.wfe.lang.jpdl.EndToken;
 import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Objects;
@@ -93,6 +94,9 @@ public class JpdlXmlReader {
     private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
     private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
     private static final String ACTION_NODE = "action";
+    private static final String ACCESS_TYPE = "accessType";
+    private static final String EMBEDDED = "embedded";
+    private static final String IGNORE_SUBSTITUTION_RULES = "ignoreSubstitutionRules";
 
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
@@ -129,6 +133,10 @@ public class JpdlXmlReader {
             defaultDueDate = root.attributeValue(DEFAULT_DUEDATE_ATTR);
             if ("true".equals(root.attributeValue(INVALID_ATTR))) {
                 throw new InvalidDefinitionException(processDefinition.getName(), "invalid process definition");
+            }
+            String accessTypeString = root.attributeValue(ACCESS_TYPE);
+            if (!Strings.isNullOrEmpty(accessTypeString)) {
+                processDefinition.setAccessType(ProcessDefinitionAccessType.valueOf(accessTypeString));
             }
 
             // 1: read most content
@@ -225,11 +233,8 @@ public class JpdlXmlReader {
         } else {
             SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
             taskDefinition.setSwimlane(swimlaneDefinition);
-            String reassign = element.attributeValue(REASSIGN_ATTR);
-            if (reassign != null) {
-                // if there is a reassign attribute specified
-                taskDefinition.setReassignSwimlane(Boolean.valueOf(reassign));
-            }
+            taskDefinition.setReassignSwimlane(Boolean.valueOf(element.attributeValue(REASSIGN_ATTR, "false")));
+            taskDefinition.setIgnoreSubsitutionRules(Boolean.valueOf(element.attributeValue(IGNORE_SUBSTITUTION_RULES, "false")));
         }
     }
 
@@ -303,6 +308,7 @@ public class JpdlXmlReader {
             Element subProcessElement = element.element(SUB_PROCESS_NODE);
             if (subProcessElement != null) {
                 subProcessState.setSubProcessName(subProcessElement.attributeValue(NAME_ATTR));
+                subProcessState.setEmbedded(Boolean.parseBoolean(subProcessElement.attributeValue(EMBEDDED, "false")));
             }
         }
         if (node instanceof Decision) {

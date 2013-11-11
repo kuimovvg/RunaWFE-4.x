@@ -13,6 +13,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.definition.logic.SwimlaneUtils;
 import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
@@ -111,6 +112,9 @@ public class BpmnXmlReader {
     private static final String TIMER_DURATION = "timeDuration";
     private static final String ASYNC = "async";
     private static final String ASYNC_COMPLETION_MODE = "asyncCompletionMode";
+    private static final String ACCESS_TYPE = "accessType";
+    private static final String EMBEDDED = "embedded";
+    private static final String IGNORE_SUBSTITUTION_RULES = "ignoreSubstitutionRules";
 
     @Autowired
     private LocalizationDAO localizationDAO;
@@ -150,6 +154,10 @@ public class BpmnXmlReader {
             String swimlaneDisplayModeName = processProperties.get(SWIMLANE_DISPLAY_MODE);
             if (swimlaneDisplayModeName != null) {
                 // definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
+            }
+            String accessTypeString = processProperties.get(ACCESS_TYPE);
+            if (!Strings.isNullOrEmpty(accessTypeString)) {
+                processDefinition.setAccessType(ProcessDefinitionAccessType.valueOf(accessTypeString));
             }
             if ("false".equals(process.attributeValue(EXECUTABLE))) {
                 throw new InvalidDefinitionException(processDefinition.getName(), "process is not executable");
@@ -259,8 +267,12 @@ public class BpmnXmlReader {
             variableContainerNode.setVariableMappings(readVariableMappings(element));
         }
         if (node instanceof SubProcessState) {
-            SubProcessState subprocess = (SubProcessState) node;
-            subprocess.setSubProcessName(element.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
+            SubProcessState subProcessState = (SubProcessState) node;
+            subProcessState.setSubProcessName(element.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
+            Map<String, String> properties = parseExtensionProperties(element);
+            if (properties.containsKey(EMBEDDED)) {
+                subProcessState.setEmbedded(Boolean.parseBoolean(properties.get(EMBEDDED)));
+            }
         }
         if (node instanceof ExclusiveGateway) {
             ExclusiveGateway gateway = (ExclusiveGateway) node;
@@ -423,10 +435,11 @@ public class BpmnXmlReader {
         String swimlaneName = properties.get(SWIMLANE);
         SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
         taskDefinition.setSwimlane(swimlaneDefinition);
-        String reassign = properties.get(REASSIGN);
-        if (reassign != null) {
-            boolean forceReassign = Boolean.parseBoolean(reassign);
-            taskDefinition.setReassignSwimlane(forceReassign);
+        if (properties.containsKey(REASSIGN)) {
+            taskDefinition.setReassignSwimlane(Boolean.parseBoolean(properties.get(REASSIGN)));
+        }
+        if (properties.containsKey(IGNORE_SUBSTITUTION_RULES)) {
+            taskDefinition.setReassignSwimlane(Boolean.parseBoolean(properties.get(IGNORE_SUBSTITUTION_RULES)));
         }
     }
 
