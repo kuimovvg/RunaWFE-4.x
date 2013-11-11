@@ -20,8 +20,11 @@ package ru.runa.common.web.html;
 import org.apache.commons.beanutils.BeanUtils;
 
 import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
+import ru.runa.wfe.definition.DefinitionPermission;
+import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.security.Permission;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 
 /**
@@ -46,6 +49,10 @@ public abstract class BaseTDBuilder implements TDBuilder {
 
     protected boolean isEnabled(Object object, Env env) {
         if (permission == null) {
+            return false;
+        }
+        if (object instanceof WfDefinition && ((WfDefinition) object).isSubprocessOnly()
+                && Objects.equal(permission, DefinitionPermission.START_PROCESS)) {
             return false;
         }
         return env.isAllowed(permission, identifiableExtractor);
