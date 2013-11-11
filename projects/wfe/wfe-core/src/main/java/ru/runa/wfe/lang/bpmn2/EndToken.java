@@ -19,11 +19,16 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package ru.runa.wfe.lang;
+package ru.runa.wfe.lang.bpmn2;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.lang.Event;
+import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.NodeType;
+import ru.runa.wfe.lang.Transition;
 
-public class EndTokenNode extends Node {
+public class EndToken extends Node {
     private static final long serialVersionUID = 1L;
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER };
 
@@ -40,8 +45,11 @@ public class EndTokenNode extends Node {
     @Override
     public void execute(ExecutionContext executionContext) {
         executionContext.getToken().end(executionContext, null);
-        if (!executionContext.getProcess().hasEnded() && executionContext.getProcess().getRootToken().hasEnded()) {
-            executionContext.getProcess().end(executionContext, null);
+        if (!executionContext.getProcess().hasEnded()) {
+            int count = ApplicationContextFactory.getTokenDAO().findActiveTokens(executionContext.getProcess()).size();
+            if (count == 0) {
+                executionContext.getProcess().end(executionContext, null);
+            }
         }
     }
 

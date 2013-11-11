@@ -22,7 +22,6 @@ import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.BaseTaskNode;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EndNode;
-import ru.runa.wfe.lang.EndTokenNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.InteractionNode;
@@ -40,6 +39,7 @@ import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.lang.WaitState;
+import ru.runa.wfe.lang.bpmn2.EndToken;
 import ru.runa.wfe.lang.bpmn2.ExclusiveGateway;
 import ru.runa.wfe.lang.bpmn2.ParallelGateway;
 import ru.runa.wfe.var.VariableMapping;
@@ -204,7 +204,7 @@ public class BpmnXmlReader {
             } else if (END_STATE.equals(nodeName)) {
                 Map<String, String> properties = parseExtensionProperties(element);
                 if (properties.containsKey(TOKEN)) {
-                    node = ApplicationContextFactory.createAutowiredBean(EndTokenNode.class);
+                    node = ApplicationContextFactory.createAutowiredBean(EndToken.class);
                 } else {
                     node = ApplicationContextFactory.createAutowiredBean(EndNode.class);
                 }
