@@ -28,6 +28,7 @@ public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
         InputStream templateInputStream = config.getFileInputStream(variableProvider, fileDataProvider, true);
         Workbook workbook = dataStore.loadWorkbook(templateInputStream, config.isInputFileXLSX(variableProvider, false));
         for (ExcelBinding binding : config.getBindings()) {
+            binding.getConstraints().applyPlaceholders(variableProvider);
             ExcelStorable storable = dataStore.load(workbook, binding.getConstraints());
             result.put(binding.getVariableName(), storable.getData());
         }
