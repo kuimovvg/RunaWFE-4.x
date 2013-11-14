@@ -2,6 +2,7 @@ package ru.runa.gpd.quick.formeditor.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -25,19 +26,20 @@ import ru.runa.gpd.util.XmlUtil;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 
-public class XMLUtil {
-	private static final String TEMPLATE = "template";
-	private static final String TEMPLATE_NAME = "name";
-	private static final String TEMPLATE_VARIABLE = "variables";
+public class QuickFormXMLUtil {
+	private static final String TEMPLATE_PATH = "/template/";
+	public static final String TEMPLATE = "template";
+	public static final String TEMPLATE_NAME = "name";
+	public static final String TEMPLATE_VARIABLE = "variables";
 	
-	private static final String ATTRIBUTE_NAME = "name";
-	private static final String ATTRIBUTE_TAG = "tag";
-	private static final String ATTRIBUTE_FORMAT = "format";
-	private static final String ATTRIBUTE_DESCRIPTION = "description";
-	private static final String ATTRIBUTE_PARAM = "param";
+	public static final String ATTRIBUTE_NAME = "name";
+	public static final String ATTRIBUTE_TAG = "tag";
+	public static final String ATTRIBUTE_FORMAT = "format";
+	public static final String ATTRIBUTE_DESCRIPTION = "description";
+	public static final String ATTRIBUTE_PARAM = "param";
 	
 	public static String getTemplateFromRegister(Bundle bundle, String templateName) {
-        String path = "/template/" + templateName;
+        String path = TEMPLATE_PATH + templateName;
         try {
             InputStream is = bundle.getEntry(path).openStream();
             return IOUtils.readStream(is);
@@ -46,14 +48,14 @@ public class XMLUtil {
         }
     }
 	
-	public static final byte[] convertTemplateFormToXML(IFolder folder, QuickForm form) throws UnsupportedEncodingException, CoreException {
+	public static final byte[] convertQuickFormToXML(IFolder folder, QuickForm form) throws UnsupportedEncodingException, CoreException {
 		Document document = XmlUtil.createDocument(TEMPLATE);
 		document.getRootElement().addAttribute(TEMPLATE_NAME, form.getDelegationClassName());
 		//save in new file 
 		saveTemplateToProcessDefinition(folder, form);
 		
 		for(QuickFormGpdVariable templatedVariableDef : form.getQuickFormGpdVariable()) {
-			populateTemplateVariable(document.getRootElement().addElement(TEMPLATE_VARIABLE), templatedVariableDef);
+			populateQuickFormVariable(document.getRootElement().addElement(TEMPLATE_VARIABLE), templatedVariableDef);
 		}
 		
 		byte[] bytes = XmlUtil.writeXml(document, OutputFormat.createPrettyPrint());
@@ -61,7 +63,7 @@ public class XMLUtil {
 		return bytes;
 	}
 	
-	private static void populateTemplateVariable(Element element, QuickFormGpdVariable templatedVariableDef) {
+	private static void populateQuickFormVariable(Element element, QuickFormGpdVariable templatedVariableDef) {
 		element.addElement(ATTRIBUTE_NAME).addText(getNotNullValue(templatedVariableDef.getName()));
 		element.addElement(ATTRIBUTE_TAG).addText(getNotNullValue(templatedVariableDef.getTagName().toString()));
 		element.addElement(ATTRIBUTE_FORMAT).addText(getNotNullValue(templatedVariableDef.getFormat()));
@@ -77,14 +79,20 @@ public class XMLUtil {
 		return object == null ? "" : object;
 	}
 	
-	public static final QuickForm getTemplateFormFromXML(IFile file, ProcessDefinition processDefinition) throws CoreException {
-		QuickForm templateForm = new QuickForm();
+	@SuppressWarnings("unchecked")
+	public static final QuickForm getQuickFormFromXML(IFile file, ProcessDefinition processDefinition) throws CoreException, IOException {
+		QuickForm quickForm = new QuickForm();
 		if (file.exists() && getContentLenght(file.getLocation().toString()) != 0) {
 			
 			Document document = XmlUtil.parseWithoutValidation(file.getContents());
-			templateForm.setDelegationClassName(document.getRootElement().attributeValue(TEMPLATE_NAME));			
+			quickForm.setDelegationClassName(document.getRootElement().attributeValue(TEMPLATE_NAME));
 			
-			@SuppressWarnings("unchecked")
+			IFile confFile = ((IFolder) file.getParent()).getFile(quickForm.getDelegationClassName());
+            if (confFile.exists()) {
+                String configuration = IOUtils.readStream(confFile.getContents());
+                quickForm.setDelegationConfiguration(configuration);
+            }
+			
 			List<Element> varElementsList = document.getRootElement().elements(TEMPLATE_VARIABLE);
 			for (Element varElement : varElementsList) {
 				QuickFormGpdVariable templatedVariableDef = new QuickFormGpdVariable();		
@@ -104,25 +112,24 @@ public class XMLUtil {
 					templatedVariableDef.setParams(params.toArray(new String[0]));
 				}
 				
-				templateForm.getQuickFormGpdVariable().add(templatedVariableDef);
+				quickForm.getQuickFormGpdVariable().add(templatedVariableDef);
 			}
         }
 		
-		return templateForm;
+		return quickForm;
 	}
 	
-	private static void saveTemplateToProcessDefinition(IFolder folder, QuickForm templateForm) throws CoreException {
-		if (!Strings.isNullOrEmpty(templateForm.getDelegationConfiguration())) {
-            String configurationFileName = templateForm.getDelegationClassName();
+	private static void saveTemplateToProcessDefinition(IFolder folder, QuickForm quickForm) throws CoreException {
+		if (!Strings.isNullOrEmpty(quickForm.getDelegationConfiguration())) {
+            String configurationFileName = quickForm.getDelegationClassName();
             IFile configurationFile = folder.getFile(configurationFileName);
-            ByteArrayInputStream stream = new ByteArrayInputStream(templateForm.getDelegationConfiguration().getBytes(Charsets.UTF_8));
+            ByteArrayInputStream stream = new ByteArrayInputStream(quickForm.getDelegationConfiguration().getBytes(Charsets.UTF_8));
             if (configurationFile.exists()) {
                 configurationFile.setContents(stream, true, true, null);
             } else {
                 configurationFile.create(stream, true, null);
             }
         }
-        
     }
 	
 	private static final long getContentLenght(String path) {

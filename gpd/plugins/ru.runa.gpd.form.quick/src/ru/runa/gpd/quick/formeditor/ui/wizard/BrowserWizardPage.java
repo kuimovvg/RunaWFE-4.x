@@ -49,7 +49,7 @@ public class BrowserWizardPage extends WizardPage {
 			html = html.replaceFirst("<BODY>", "<BODY><img src=\""+ fileUrl.toString() +"\"><DIV style=\"position:absolute;left:275px;top:130px;\">");
 			html = html.replaceFirst("</BODY>", "</DIV></BODY>");
 		}        
-		//html = html.replaceFirst("<TABLE>", "<TABLE style=\"position:absolute;left:275px;top:130px;\">");
+		
 		browser.setText(html);
 		setControl(composite);
 	}

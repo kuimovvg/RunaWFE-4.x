@@ -11,15 +11,15 @@ import org.eclipse.ui.IWorkbench;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
 
-public class TemplatedFormVariableWizard extends Wizard implements INewWizard {
-	private TemplatedFormVariableWizardPage page;
+public class QuickFormVariableWizard extends Wizard implements INewWizard {
+	private QuickFormVariableWizardPage page;
 	private ProcessDefinition processDefinition;
 	private int editIndex = -1;
-	private List<QuickFormGpdVariable> templatedVariableDefs;
+	private List<QuickFormGpdVariable> quickFormVariableDefs;
 	
-	public TemplatedFormVariableWizard(ProcessDefinition processDefinition, List<QuickFormGpdVariable> templatedVariableDefs, int editIndex) {
+	public QuickFormVariableWizard(ProcessDefinition processDefinition, List<QuickFormGpdVariable> templatedVariableDefs, int editIndex) {
 		this.processDefinition = processDefinition;
-		this.templatedVariableDefs = templatedVariableDefs;
+		this.quickFormVariableDefs = templatedVariableDefs;
 		this.editIndex = editIndex;
 	}
 	
@@ -31,9 +31,9 @@ public class TemplatedFormVariableWizard extends Wizard implements INewWizard {
     public void addPages() {
         super.addPages();
         if(editIndex != -1) {
-        	page = new TemplatedFormVariableWizardPage(processDefinition, templatedVariableDefs.get(editIndex));
+        	page = new QuickFormVariableWizardPage(processDefinition, quickFormVariableDefs.get(editIndex));
         } else {
-        	page = new TemplatedFormVariableWizardPage(processDefinition, null);
+        	page = new QuickFormVariableWizardPage(processDefinition, null);
         }
         
         addPage(page);
@@ -44,7 +44,7 @@ public class TemplatedFormVariableWizard extends Wizard implements INewWizard {
 		
 		QuickFormGpdVariable variableDef = null;
 		if(editIndex != -1) {
-			variableDef = templatedVariableDefs.get(editIndex);			
+			variableDef = quickFormVariableDefs.get(editIndex);			
 		} else {
 			variableDef = new QuickFormGpdVariable();
 		}		
@@ -61,7 +61,7 @@ public class TemplatedFormVariableWizard extends Wizard implements INewWizard {
 		}
 		
 		if(editIndex == -1) {
-			templatedVariableDefs.add(variableDef);
+			quickFormVariableDefs.add(variableDef);
 		}		
 		
 		return true;
