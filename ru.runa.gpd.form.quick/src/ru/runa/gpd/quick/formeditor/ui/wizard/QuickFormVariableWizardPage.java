@@ -7,7 +7,6 @@ import java.util.Map;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -35,15 +34,14 @@ import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 
-public class TemplatedFormVariableWizardPage extends WizardPage {
+public class QuickFormVariableWizardPage extends WizardPage {
 	private ComboViewer tagType;
 	private Combo variableCombo;
 	private ProcessDefinition processDefinition;
 	private QuickFormGpdVariable variableDef;
-	//private String tempTagType;
 	private String paramValue;
 	
-	protected TemplatedFormVariableWizardPage(ProcessDefinition processDefinition, QuickFormGpdVariable variableDef) {
+	protected QuickFormVariableWizardPage(ProcessDefinition processDefinition, QuickFormGpdVariable variableDef) {
 		super(Messages.getString("TemplatedFormVariableWizardPage.page.title"));
         setTitle(Messages.getString("TemplatedFormVariableWizardPage.page.title"));
         setDescription(Messages.getString("TemplatedFormVariableWizardPage.page.description"));
@@ -197,7 +195,6 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 				        	}
 				        	
 				        	if (paramValue != null) {
-				        		//comboParam.setText(paramValue);
 				        		List<SelectItem> selectItems = (List<SelectItem>) comboParam.getInput();
 				            	for(SelectItem selectItem : selectItems) {
 				            		if(paramValue.equals(selectItem.getValue())) {
@@ -275,8 +272,7 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 	
 	public String getParamValue() {
 		return paramValue;
-	}
-	
+	}	
 	
 	public static class SelectItem {
 		private String label;
@@ -298,7 +294,5 @@ public class TemplatedFormVariableWizardPage extends WizardPage {
 		public void setValue(Object value) {
 			this.value = value;
 		}
-		
-		
 	}
 }

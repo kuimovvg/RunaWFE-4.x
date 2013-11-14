@@ -3,12 +3,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -50,21 +50,22 @@ import org.osgi.framework.Bundle;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
-import ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
 import ru.runa.gpd.quick.extension.QuickTemplateRegister;
 import ru.runa.gpd.quick.formeditor.ui.wizard.BrowserWizard;
-import ru.runa.gpd.quick.formeditor.ui.wizard.TemplatedFormVariableWizard;
+import ru.runa.gpd.quick.formeditor.ui.wizard.QuickFormVariableWizard;
 import ru.runa.gpd.quick.formeditor.util.PresentationVariableUtils;
-import ru.runa.gpd.quick.formeditor.util.XMLUtil;
+import ru.runa.gpd.quick.formeditor.util.QuickFormXMLUtil;
 import ru.runa.gpd.quick.resource.Messages;
 import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
 import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
+import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -85,28 +86,19 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 	private ProcessDefinition processDefinition;
 	private QuickForm quickForm;
 	private FormNode formNode;
-	private IFile templateFormFile;
+	private IFile quickFormFile;
 	private boolean dirty;
+	private String prevTemplateFileName;
 	private Combo selectTemplateCombo;
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
 		byte[] bytes = null;
 		try {
-			bytes = XMLUtil.convertTemplateFormToXML((IFolder) templateFormFile.getParent(), quickForm);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		 
-	    try {
-			updateFile(templateFormFile, bytes);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			bytes = QuickFormXMLUtil.convertQuickFormToXML((IFolder) quickFormFile.getParent(), quickForm);
+			updateFile(quickFormFile, bytes);
+		} catch (Exception e) {
+			PluginLogger.logErrorWithoutDialog("Error on saving template form: '" + quickForm.getName() + "'", e);
 		}
 		
 		if (formNode != null) {
@@ -132,8 +124,6 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 
 	@Override
 	public void doSaveAs() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -142,14 +132,13 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 		setSite(site);
         setInput(input);
         
-        templateFormFile = ((FileEditorInput) input).getFile();
-        IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) templateFormFile.getParent());
+        quickFormFile = ((FileEditorInput) input).getFile();
+        IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) quickFormFile.getParent());
         this.processDefinition = ProcessCache.getProcessDefinition(definitionFile);
         try {
-			quickForm = XMLUtil.getTemplateFormFromXML(templateFormFile, processDefinition);
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			quickForm = QuickFormXMLUtil.getQuickFormFromXML(quickFormFile, processDefinition);
+		} catch (Exception e) {
+			PluginLogger.logErrorWithoutDialog("Error reading quick form: '" + quickFormFile.getName() + "'", e);
 		}        
         
         ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
@@ -167,7 +156,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         addPropertyListener(new IPropertyListener() {
             @Override
             public void propertyChanged(Object source, int propId) {
-                if (propId == QuickFormEditor.CLOSED && templateFormFile.exists()) {
+                if (propId == QuickFormEditor.CLOSED && quickFormFile.exists()) {
                     String op = "create";
                     try {
                         if (!formNode.hasFormValidation()) {
@@ -175,11 +164,11 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                             if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
                                 fileName = formNode.getProcessDefinition().getId() + "." + fileName;
                             }
-                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(templateFormFile, fileName, formNode);
+                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(quickFormFile, fileName, formNode);
                             formNode.setValidationFileName(validationFile.getName());
                         } else {
                             op = "update";
-                            ValidationUtil.updateValidation(templateFormFile, formNode);
+                            ValidationUtil.updateValidation(quickFormFile, formNode);
                         }
                     } catch (Exception e) {
                         PluginLogger.logError("Failed to " + op + " form validation", e);
@@ -191,7 +180,6 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 
 	@Override
 	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -232,12 +220,22 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     	break;
                     }
                 }
+            	
             	if(filename != null && filename.trim().length() > 0) {
             		Bundle bundle = QuickTemplateRegister.getBundle(filename);
-            		String templateHtml = XMLUtil.getTemplateFromRegister(bundle, filename);
+            		String templateHtml = QuickFormXMLUtil.getTemplateFromRegister(bundle, filename);
             		quickForm.setDelegationClassName(filename);
             		quickForm.setDelegationConfiguration(templateHtml);
             	}
+            	
+            	if(StringUtils.isNotEmpty(prevTemplateFileName)) {
+        			IFile confFile = ((IFolder) quickFormFile.getParent()).getFile(prevTemplateFileName);
+                    if (confFile.exists()) {
+                    	confFile.delete(true, null);
+                    }
+        		}
+        		
+                prevTemplateFileName = filename;
             	setDirty(true);
             }
         });
@@ -245,7 +243,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         if(!Strings.isNullOrEmpty(quickForm.getDelegationClassName())) {
         	for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
                 if (artifact.isEnabled() && artifact.getFileName().equals(quickForm.getDelegationClassName())) {
-                	selectTemplateCombo.setText(artifact.getLabel()); 
+                	selectTemplateCombo.setText(artifact.getLabel());
+                	prevTemplateFileName = artifact.getFileName();
                 	break;
                 }
             }
@@ -288,7 +287,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         addButton(buttonsBar, "editor.button.add", new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-            	TemplatedFormVariableWizard wizard = new TemplatedFormVariableWizard(processDefinition, quickForm.getQuickFormGpdVariable(), -1);
+            	QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getQuickFormGpdVariable(), -1);
                 CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                 if (dialog.open() == Window.OK) {
                     setTableInput();
@@ -306,7 +305,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 }
                 for (QuickFormGpdVariable variableDef : quickForm.getQuickFormGpdVariable()) {
                     if (variableDef.getName().equals(row[NUMBER_NAME_COLUMN])) {
-                    	TemplatedFormVariableWizard wizard = new TemplatedFormVariableWizard(processDefinition, quickForm.getQuickFormGpdVariable(), quickForm.getQuickFormGpdVariable().indexOf(variableDef));
+                    	QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getQuickFormGpdVariable(), quickForm.getQuickFormGpdVariable().indexOf(variableDef));
                         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                         if (dialog.open() == Window.OK) {
                             setTableInput();
@@ -398,7 +397,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             	
             	if(filename != null && filename.trim().length() > 0) {
             		Bundle bundle = QuickTemplateRegister.getBundle(filename);
-            		String templateHtml = XMLUtil.getTemplateFromRegister(bundle, filename);
+            		String templateHtml = QuickFormXMLUtil.getTemplateFromRegister(bundle, filename);
             		
             		Map<String, Object> variables = new HashMap<String, Object>();
                     variables.put("variables", quickForm.getQuickFormGpdVariable());
@@ -466,26 +465,22 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
-	public void propertyChange(PropertyChangeEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (PropertyNames.PROPERTY_DIRTY.equals(evt.getPropertyName())) {
+            firePropertyChange(IEditorPart.PROP_DIRTY);
+        }		
 	}
 
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
-		// TODO Auto-generated method stub
-		
+		EditorUtils.closeEditorIfRequired(event, quickFormFile, this);		
 	}
 
 	@Override
-	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		// TODO Auto-generated method stub
-		
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {		
 	}
 	
 	private void setTableInput() {
