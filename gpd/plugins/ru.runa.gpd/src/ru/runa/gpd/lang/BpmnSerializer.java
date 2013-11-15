@@ -26,7 +26,6 @@ import ru.runa.gpd.lang.model.ScriptTask;
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Subprocess;
-import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
@@ -191,7 +190,7 @@ public class BpmnSerializer extends ProcessSerializer {
             if (subprocess instanceof MultiSubprocess) {
                 properties.put(MULTI_INSTANCE, true);
             }
-            if (isSubprocessEmbedded(definition, subprocess)) {
+            if (subprocess.isEmbedded()) {
                 properties.put(EMBEDDED, true);
             }
             writeExtensionElements(element, properties);
@@ -468,7 +467,7 @@ public class BpmnSerializer extends ProcessSerializer {
         Map<String, String> processProperties = parseExtensionProperties(process);
         init(definition, process, processProperties);
         String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
-        if (!Strings.isNullOrEmpty(defaultTaskTimeout) && !(definition instanceof SubprocessDefinition)) {
+        if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
             definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeout));
         }
         String accessTypeString = processProperties.get(ACCESS_TYPE);
@@ -482,7 +481,7 @@ public class BpmnSerializer extends ProcessSerializer {
             definition.setDescription(processProperties.get(DOCUMENTATION));
         }
         String swimlaneDisplayModeName = processProperties.get(SHOW_SWIMLANE);
-        if (swimlaneDisplayModeName != null && !(definition instanceof SubprocessDefinition)) {
+        if (swimlaneDisplayModeName != null) {
             definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
         }
         Map<Swimlane, List<String>> swimlaneElementIds = Maps.newHashMap();
@@ -560,6 +559,10 @@ public class BpmnSerializer extends ProcessSerializer {
             Subprocess subprocess = create(subprocessElement, definition);
             subprocess.setSubProcessName(subprocessElement.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
             subprocess.setVariableMappings(parseVariableMappings(subprocessElement));
+            Map<String, String> properties = parseExtensionProperties(subprocessElement);
+            if (properties.containsKey(EMBEDDED)) {
+                subprocess.setEmbedded(Boolean.parseBoolean(properties.get(EMBEDDED)));
+            }
         }
         List<Element> sendMessageElements = process.elements(SEND_TASK);
         for (Element messageElement : sendMessageElements) {

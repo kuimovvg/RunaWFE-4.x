@@ -18,6 +18,7 @@ import ru.runa.gpd.editor.gef.command.IgnoreSubstitutionCommand;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
@@ -64,10 +65,12 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
         Action action;
         ActionContributionItem item;
         action = new GotoSwimlaneAction();
+        action.setEnabled(!(definition instanceof SubprocessDefinition));
         item = new ActionContributionItem(action);
         item.fill(menu, -1);
         if (node instanceof StartState && selectedSwimlane == null && definition.getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
             action = new CreateSwimlaneAction();
+            action.setEnabled(!(definition instanceof SubprocessDefinition));
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }

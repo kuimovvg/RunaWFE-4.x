@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -164,11 +165,14 @@ public class WorkspaceOperations {
         dialog.open();
     }
 
-    public static void createNewProcessDefinition(IStructuredSelection selection, ProcessDefinitionAccessType accessType) {
+    public static ProcessDefinition createNewProcessDefinition(IStructuredSelection selection, ProcessDefinitionAccessType accessType) {
         NewProcessDefinitionWizard wizard = new NewProcessDefinitionWizard(accessType);
         wizard.init(PlatformUI.getWorkbench(), selection);
         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
-        dialog.open();
+        if (dialog.open() == Window.OK) {
+            return ProcessCache.getProcessDefinition(wizard.getDefinitionFile());
+        }
+        return null;
     }
 
     public static void copyProcessDefinition(IStructuredSelection selection) {

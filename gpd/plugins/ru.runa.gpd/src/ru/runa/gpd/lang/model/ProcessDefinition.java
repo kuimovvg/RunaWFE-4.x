@@ -70,6 +70,10 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         return null;
     }
 
+    public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
+        return embeddedSubprocesses;
+    }
+    
     public SubprocessDefinition getEmbeddedSubprocessById(String id) {
         return embeddedSubprocesses.get(id);
     }
