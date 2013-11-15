@@ -171,12 +171,6 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
             });
         }
         if (menuOnProcess) {
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.newSubprocess"), SharedImages.getImageDescriptor("icons/process.gif")) {
-                @Override
-                public void run() {
-                    WorkspaceOperations.createNewProcessDefinition(selection, ProcessDefinitionAccessType.EmbeddedSubprocess);
-                }
-            });
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.copyProcess"), SharedImages.getImageDescriptor("icons/copy.gif")) {
                 @Override
                 public void run() {

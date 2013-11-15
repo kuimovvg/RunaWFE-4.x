@@ -1,7 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -15,7 +14,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
@@ -31,16 +29,15 @@ import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
     private IStructuredSelection selection;
-    private IWorkbench workbench;
     private NewProcessDefinitionWizardPage page;
     private final ProcessDefinitionAccessType accessType;
     private IFolder parentProcessDefinitionFolder;
     private ProcessDefinition parentProcessDefinition;
+    private IFile definitionFile;
 
     public NewProcessDefinitionWizard(ProcessDefinitionAccessType accessType) {
         setWindowTitle(Localization.getString("NewProcessDefinitionWizard.wizard.title"));
@@ -49,7 +46,6 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
 
     @Override
     public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-        this.workbench = workbench;
         this.selection = currentSelection;
         if (accessType == ProcessDefinitionAccessType.EmbeddedSubprocess) {
             Object selectedElement = selection.getFirstElement();
@@ -93,19 +89,6 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
         return true;
     }
 
-    private IWorkbenchWindow getActiveWorkbenchWindow() {
-        return workbench.getActiveWorkbenchWindow();
-    }
-
-    private InputStream createInitialGpdInfo(String notation) {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        buffer.append("\n");
-        buffer.append("\n");
-        buffer.append("<process-diagram notation=\"").append(notation).append("\" showActions=\"true\"></process-diagram>");
-        return new ByteArrayInputStream(buffer.toString().getBytes(Charsets.UTF_8));
-    }
-
     private class CreateProcessOperation implements IRunnableWithProgress {
 
         @Override
@@ -115,7 +98,7 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                 IFolder folder = page.getProcessFolder();
                 folder.create(true, true, null);
                 monitor.worked(1);
-                IFile definitionFile = IOUtils.getProcessDefinitionFile(folder);
+                definitionFile = IOUtils.getProcessDefinitionFile(folder);
                 String processName = folder.getName();
                 Language language = page.getLanguage();
                 Map<String, String> properties = Maps.newHashMap();
@@ -143,7 +126,7 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
             try {
                 monitor.beginTask(Localization.getString("NewProcessDefinitionWizard.monitor.title"), 4);
                 int subprocessIndex = 1;
-                IFile definitionFile = parentProcessDefinitionFolder.getFile(
+                definitionFile = parentProcessDefinitionFolder.getFile(
                         ParContentProvider.SUBPROCESS_DEFINITION_PREFIX + "1." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
                 while (definitionFile.exists()) {
                     subprocessIndex++;
@@ -169,4 +152,7 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
         }
     }
 
+    public IFile getDefinitionFile() {
+        return definitionFile;
+    }
 }

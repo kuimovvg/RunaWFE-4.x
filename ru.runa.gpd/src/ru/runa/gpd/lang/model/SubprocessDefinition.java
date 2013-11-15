@@ -3,6 +3,7 @@ package ru.runa.gpd.lang.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -10,9 +11,9 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
-import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 public class SubprocessDefinition extends ProcessDefinition {
@@ -22,23 +23,8 @@ public class SubprocessDefinition extends ProcessDefinition {
     }
     
     @Override
-    public SwimlaneDisplayMode getSwimlaneDisplayMode() {
-        return SwimlaneDisplayMode.none;
-    }
-
-    @Override
-    public void setSwimlaneDisplayMode(SwimlaneDisplayMode swimlaneDisplayMode) {
-        throw new UnsupportedOperationException("This property is always SwimlaneDisplayMode.none");
-    }
-
-    @Override
     public Duration getDefaultTaskTimeoutDelay() {
         return getParent().getDefaultTaskTimeoutDelay();
-    }
-
-    @Override
-    public void setDefaultTaskTimeoutDelay(Duration defaultTaskTimeoutDelay) {
-        throw new UnsupportedOperationException("This property is inherited from main process definition");
     }
 
     @Override
@@ -178,6 +164,15 @@ public class SubprocessDefinition extends ProcessDefinition {
     @Override
     public ProcessDefinition getParent() {
         return (ProcessDefinition) super.getParent();
+    }
+    
+    @Override
+    public void validate(List<ValidationError> errors, IFile definitionFile) {
+        super.validate(errors, definitionFile);
+        List<StartState> startStates = getChildren(StartState.class);
+        if (startStates.size() == 1 && startStates.get(0).getLeavingTransitions().size() != 1) {
+            errors.add(ValidationError.createLocalizedError(startStates.get(0), "subprocess.embedded.startState.required1leavingtransition"));
+        }
     }
 
 }
