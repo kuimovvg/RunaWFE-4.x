@@ -31,7 +31,7 @@ public class ScriptTask extends Node {
         try {
             executionContext.addLog(new ActionLog(this));
             ActionHandler actionHandler = delegation.getInstance();
-            log.info("Executing " + this); // TODO debug
+            log.debug("Executing " + this);
             actionHandler.execute(executionContext);
             leave(executionContext);
         } catch (Exception e) {

@@ -227,9 +227,10 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     @WebResult(name = "result")
     public byte[] getProcessDiagram(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
-            @WebParam(name = "taskId") Long taskId, @WebParam(name = "childProcessId") Long childProcessId) {
+            @WebParam(name = "taskId") Long taskId, @WebParam(name = "childProcessId") Long childProcessId, @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
-        return executionLogic.getProcessDiagram(user, processId, taskId, childProcessId);
+        Preconditions.checkArgument(processId != null);
+        return executionLogic.getProcessDiagram(user, processId, taskId, childProcessId, subprocessId);
     }
 
     @Override

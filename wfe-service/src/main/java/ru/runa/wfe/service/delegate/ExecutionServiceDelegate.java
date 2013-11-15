@@ -192,9 +192,9 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) {
+    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId, String subprocessId) {
         try {
-            return getExecutionService().getProcessDiagram(user, processId, taskId, childProcessId);
+            return getExecutionService().getProcessDiagram(user, processId, taskId, childProcessId, subprocessId);
         } catch (Exception e) {
             throw handleException(e);
         }

@@ -25,6 +25,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.Transition;
 
@@ -63,7 +64,8 @@ public class TransitionLog extends ProcessLog {
     }
 
     public Transition getTransition(ProcessDefinition processDefinition) {
-        return processDefinition.getTransitionNotNull(getFromNodeId(), getTransitionId());
+        Node node = processDefinition.getNodeNotNull(getFromNodeId());
+        return node.getLeavingTransitionNotNull(getTransitionId());
     }
 
     @Override

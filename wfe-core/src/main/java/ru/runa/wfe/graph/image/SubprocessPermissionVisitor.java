@@ -11,6 +11,7 @@ import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.User;
 
@@ -30,6 +31,7 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      * Process definition cache.
      */
     private final IProcessDefinitionLoader loader;
+    private final ProcessDefinition definition;
 
     /**
      * Create instance of operation to set subprocess definition readable flag.
@@ -41,8 +43,9 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      * @param loader
      *            Process definition loader.
      */
-    public SubprocessPermissionVisitor(User user, IProcessDefinitionLoader loader) {
+    public SubprocessPermissionVisitor(User user, ProcessDefinition definition, IProcessDefinitionLoader loader) {
         this.user = user;
+        this.definition = definition;
         this.loader = loader;
     }
 
@@ -61,14 +64,21 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
 
     @Override
     public void onSubprocess(SubprocessGraphElementPresentation element) {
-        try {
-            ProcessDefinition def = loader.getLatestDefinition(element.getSubprocessName());
-            if (checkPermission(def)) {
-                element.setReadPermission(true);
+        if (element.isEmbedded()) {
+            element.setReadPermission(true);
+            element.setSubprocessId(definition.getId());
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessesByName(element.getSubprocessName());
+            element.setSubprocessName(subprocessDefinition.getNodeId());
+        } else {
+            try {
+                ProcessDefinition def = loader.getLatestDefinition(element.getSubprocessName());
+                if (checkPermission(def)) {
+                    element.setReadPermission(true);
+                }
+                element.setSubprocessId(def.getId());
+            } catch (DefinitionDoesNotExistException e) {
+                log.warn("ProcessDefinitionDoesNotExistException", e);
             }
-            element.setSubprocessId(def.getId());
-        } catch (DefinitionDoesNotExistException e) {
-            log.warn("ProcessDefinitionDoesNotExistException", e);
         }
     }
 

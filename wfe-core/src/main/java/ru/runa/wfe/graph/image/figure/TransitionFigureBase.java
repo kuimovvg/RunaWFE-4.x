@@ -34,6 +34,7 @@ import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.lang.NodeType;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 
 public class TransitionFigureBase {
     protected String name;
@@ -49,6 +50,9 @@ public class TransitionFigureBase {
     protected RenderHits renderHits;
 
     public void init(TransitionModel transitionModel, AbstractFigure figureFrom, AbstractFigure figureTo) {
+        Preconditions.checkNotNull(transitionModel, "transitionModel");
+        Preconditions.checkNotNull(figureFrom, "figureFrom");
+        Preconditions.checkNotNull(figureTo, "figureTo");
         name = transitionModel.getName();
         bendpoints = new ArrayList<BendpointModel>(transitionModel.getBendpoints());
         actionsCount = transitionModel.getActionsCount();

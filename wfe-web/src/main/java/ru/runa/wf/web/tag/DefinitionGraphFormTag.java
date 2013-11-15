@@ -31,7 +31,6 @@ import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -45,16 +44,12 @@ public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
 
     @Override
     protected void fillFormData(final TD tdFormElement) {
-
         String href = Commons.getActionUrl(ProcessDefinitionGraphImageAction.ACTION_PATH, IdForm.ID_INPUT_NAME, getIdentifiableId(), pageContext,
                 PortletUrlType.Resource);
         Center center = new Center();
-
         IMG processGraphImage = new IMG(href);
         processGraphImage.setBorder(0);
-
-        DefinitionService definitionService = Delegates.getDefinitionService();
-        List<GraphElementPresentation> elements = definitionService.getProcessDefinitionGraphElements(getUser(), getIdentifiableId());
+        List<GraphElementPresentation> elements = Delegates.getDefinitionService().getProcessDefinitionGraphElements(getUser(), getIdentifiableId());
         DefinitionGraphElementPresentationVisitor operation = new DefinitionGraphElementPresentationVisitor(pageContext);
         for (GraphElementPresentation graphElementPresentation : elements) {
             graphElementPresentation.visit(operation);
@@ -65,7 +60,6 @@ public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
         }
         center.addElement(processGraphImage);
         tdFormElement.addElement(center);
-
     }
 
     @Override

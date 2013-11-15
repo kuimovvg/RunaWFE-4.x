@@ -32,7 +32,9 @@ import java.util.zip.ZipInputStream;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
 import ru.runa.wfe.definition.Deployment;
+import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -83,6 +85,21 @@ public class ProcessArchive extends FileDataProvider {
         for (ProcessArchiveParser processArchiveParser : processArchiveParsers) {
             processArchiveParser.readFromArchive(this, processDefinition);
         }
+        int subprocessCounter = 1;
+        String testXml = IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + "1." + IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME;
+        while (getFileData(testXml) != null) {
+            SubprocessDefinition subprocessDefinition = new SubprocessDefinition(processDefinition);
+            subprocessDefinition.setNodeId(IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessCounter);
+            for (ProcessArchiveParser processArchiveParser : processArchiveParsers) {
+                if (processArchiveParser.isApplicableToEmbeddedSubprocess()) {
+                    processArchiveParser.readFromArchive(this, subprocessDefinition);
+                }
+            }
+            processDefinition.addEmbeddedSubprocess(subprocessDefinition);
+            subprocessCounter++;
+            testXml = IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessCounter + "." + IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME;
+        }
+        processDefinition.mergeWithEmbeddedSubprocesses();
         return processDefinition;
     }
 

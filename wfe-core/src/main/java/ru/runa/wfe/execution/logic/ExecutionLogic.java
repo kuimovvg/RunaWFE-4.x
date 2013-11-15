@@ -51,6 +51,7 @@ import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -179,7 +180,7 @@ public class ExecutionLogic extends WFCommonLogic {
         return process.getId();
     }
 
-    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) throws ProcessDoesNotExistException {
+    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId, String subprocessId) {
         try {
             Process process = processDAO.getNotNull(processId);
             checkPermissionAllowed(user, process, ProcessPermission.READ);
@@ -194,6 +195,10 @@ public class ExecutionLogic extends WFCommonLogic {
             }
             if (childProcessId != null) {
                 highlightedToken = nodeProcessDAO.getNodeProcessByChild(childProcessId).getParentToken();
+            }
+            if (subprocessId != null) {
+                processDefinition = processDefinition.getEmbeddedSubprocessesById(subprocessId);
+                Preconditions.checkNotNull(processDefinition, "sub processDefinition");
             }
             GraphImageBuilder builder = new GraphImageBuilder(taskObjectFactory, processDefinition);
             builder.setHighlightedToken(highlightedToken);
@@ -249,7 +254,7 @@ public class ExecutionLogic extends WFCommonLogic {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition definition = getDefinition(process.getDeployment().getId());
         List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(process, null, null, null);
-        StartedSubprocessesVisitor operation = new StartedSubprocessesVisitor(user, nodeProcesses);
+        StartedSubprocessesVisitor operation = new StartedSubprocessesVisitor(user, definition, process, nodeProcesses);
         return getDefinitionGraphElements(user, definition, operation);
     }
 

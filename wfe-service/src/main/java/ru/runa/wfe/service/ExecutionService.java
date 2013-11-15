@@ -283,12 +283,16 @@ public interface ExecutionService {
      * @param processId
      *            process id
      * @param taskId
-     *            active task id
-     * @param childProcessId
+     *            active task id, can be <code>null</code>
+     * @param childProcessId 
+     *            active subprocess state, can be <code>null</code>
+     * @param subprocessId
+     *            embedded subprocess id, can be <code>null</code> 
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId) throws ProcessDoesNotExistException;
+    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId, String subprocessId) 
+            throws ProcessDoesNotExistException;
 
     /**
      * Gets process graph elements for diagram.

@@ -19,13 +19,14 @@
 package ru.runa.wf.web.form;
 
 import ru.runa.common.web.form.IdForm;
+import ru.runa.common.web.form.IdNameForm;
 
 /**
  * Created on 12.05.2006
  * 
  * @struts:form name = "taskIdForm"
  */
-public class TaskIdForm extends IdForm {
+public class TaskIdForm extends IdNameForm {
 
     private static final long serialVersionUID = 23542935792835791L;
 

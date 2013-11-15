@@ -10,12 +10,22 @@ import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.bpmn.BpmnXmlReader;
 import ru.runa.wfe.definition.jpdl.JpdlXmlReader;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 
 public class ProcessDefinitionParser implements ProcessArchiveParser {
 
     @Override
+    public boolean isApplicableToEmbeddedSubprocess() {
+        return true;
+    }
+
+    @Override
     public void readFromArchive(ProcessArchive processArchive, ProcessDefinition processDefinition) {
-        byte[] definitionXml = processArchive.getFileDataNotNull(IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME);
+        String fileName = IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME;
+        if (processDefinition instanceof SubprocessDefinition) {
+            fileName = processDefinition.getNodeId() + "." + fileName;
+        }
+        byte[] definitionXml = processArchive.getFileDataNotNull(fileName);
         Document document = XmlUtils.parseWithoutValidation(definitionXml);
         Element root = document.getRootElement();
         if ("process-definition".equals(root.getName())) {

@@ -80,6 +80,7 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
     private Severity severity = Severity.DEBUG;
     private HashMap<String, String> attributes = Maps.newHashMap();
     private byte[] bytes;
+    // TODO add (String nodeId) to accelerate access to specified node logs
 
     public ProcessLog() {
     }

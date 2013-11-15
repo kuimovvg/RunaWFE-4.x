@@ -19,6 +19,11 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
     private LocalizationDAO localizationDAO;
 
     @Override
+    public boolean isApplicableToEmbeddedSubprocess() {
+        return false;
+    }
+
+    @Override
     public void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition) {
         byte[] xml = archive.getFileDataNotNull(IFileDataProvider.VARIABLES_XML_FILE_NAME);
         Document document = XmlUtils.parseWithoutValidation(xml);

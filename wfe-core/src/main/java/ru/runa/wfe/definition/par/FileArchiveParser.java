@@ -28,6 +28,11 @@ import ru.runa.wfe.lang.ProcessDefinition;
 public class FileArchiveParser implements ProcessArchiveParser {
 
     @Override
+    public boolean isApplicableToEmbeddedSubprocess() {
+        return false;
+    }
+    
+    @Override
     public void readFromArchive(ProcessArchive processArchive, ProcessDefinition processDefinition) {
         for (Map.Entry<String, byte[]> entry : processArchive.getFileData().entrySet()) {
             processDefinition.addFile(entry.getKey(), entry.getValue());

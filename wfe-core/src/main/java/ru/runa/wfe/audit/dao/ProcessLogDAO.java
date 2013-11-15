@@ -6,6 +6,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
+import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.Severity;
 import ru.runa.wfe.audit.TransitionLog;
@@ -14,6 +15,7 @@ import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.Transition;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -59,13 +61,32 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
     /**
      * Retrieves passed transitions for all Process's Tokens from process logs
      */
-    public List<Transition> getPassedTransitions(final ProcessDefinition processDefinition, Process process) {
+    public List<Transition> getPassedTransitions(ProcessDefinition processDefinition, Process process) {
         List<TransitionLog> transitionLogs = getHibernateTemplate().find("from TransitionLog where processId=?", process.getId());
         List<Transition> result = Lists.newArrayListWithExpectedSize(transitionLogs.size());
         for (TransitionLog log : transitionLogs) {
             result.add(log.getTransition(processDefinition));
         }
         return result;
+    }
+
+//    public List<String> getStartedSubprocessNodeIds(Process process) {
+//        List<SubprocessStartLog> logs = getHibernateTemplate().find("from SubprocessStartLog where processId=?", process.getId());
+//        List<String> result = Lists.newArrayListWithExpectedSize(logs.size());
+//        for (SubprocessStartLog log : logs) {
+//            result.add(log.getNodeId());
+//        }
+//        return result;
+//    }
+
+    public boolean isNodeEntered(Process process, String nodeId) {
+        List<NodeEnterLog> logs = getHibernateTemplate().find("from NodeEnterLog where processId=?", process.getId());
+        for (NodeEnterLog log : logs) {
+            if (Objects.equal(log.getNodeId(), nodeId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

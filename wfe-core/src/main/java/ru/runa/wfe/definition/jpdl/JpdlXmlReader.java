@@ -19,6 +19,7 @@ import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.Delegation;
+import ru.runa.wfe.lang.EmbeddedSubprocessEndNode;
 import ru.runa.wfe.lang.EndNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.GraphElement;
@@ -32,6 +33,7 @@ import ru.runa.wfe.lang.ScriptTask;
 import ru.runa.wfe.lang.SendMessage;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
+import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.TaskExecutionMode;
@@ -102,7 +104,7 @@ public class JpdlXmlReader {
     static {
         nodeTypes.put("start-state", StartState.class);
         nodeTypes.put("end-token-state", EndToken.class);
-        nodeTypes.put("end-state", EndNode.class);
+        //nodeTypes.put("end-state", EndNode.class);
         nodeTypes.put("wait-state", WaitState.class);
         nodeTypes.put("task-node", TaskNode.class);
         nodeTypes.put("multi-task-node", MultiTaskNode.class);
@@ -178,8 +180,17 @@ public class JpdlXmlReader {
         List<Element> elements = parentElement.elements();
         for (Element element : elements) {
             String nodeName = element.getName();
+            Node node = null;
             if (nodeTypes.containsKey(nodeName)) {
-                Node node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
+                node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
+            } else if ("end-state".equals(nodeName)) {
+                if (processDefinition instanceof SubprocessDefinition) {
+                    node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessEndNode.class);
+                } else {
+                    node = ApplicationContextFactory.createAutowiredBean(EndNode.class);
+                }
+            }
+            if (node != null) {
                 node.setProcessDefinition(processDefinition);
                 readNode(processDefinition, element, node);
             }
