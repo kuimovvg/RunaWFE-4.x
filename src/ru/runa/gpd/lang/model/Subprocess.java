@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 public class Subprocess extends Node implements Active {
     protected String subProcessName = "";
     protected List<VariableMapping> variableMappings = Lists.newArrayList();
+    private boolean embedded;
 
     @Override
     public void validate(List<ValidationError> errors, IFile definitionFile) {
@@ -25,6 +26,14 @@ public class Subprocess extends Node implements Active {
         if (subProcessName == null || subProcessName.length() == 0) {
             errors.add(ValidationError.createLocalizedError(this, "subprocess.empty"));
             return;
+        }
+        if (embedded) {
+            if (getArrivingTransitions().size() != 1) {
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.embedded.required1arrivingtransition"));
+            }
+            if (getLeavingTransitions().size() != 1) {
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.embedded.required1leavingtransition"));
+            }
         }
         ProcessDefinition subprocessDefinition = ProcessCache.getFirstProcessDefinition(subProcessName);
         if (subprocessDefinition == null) {
@@ -99,4 +108,13 @@ public class Subprocess extends Node implements Active {
         return super.getPropertyValue(id);
     }
 
+    public boolean isEmbedded() {
+        return embedded;
+    }
+    
+    public void setEmbedded(boolean embedded) {
+        boolean old = this.embedded;
+        this.embedded = embedded;
+        firePropertyChange(PROPERTY_SUBPROCESS, old, this.embedded);
+    }
 }

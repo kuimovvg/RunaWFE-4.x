@@ -38,7 +38,6 @@ import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.VariableMapping;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public class SubprocessDialog extends Dialog {
@@ -47,7 +46,6 @@ public class SubprocessDialog extends Dialog {
     protected final ProcessDefinition definition;
     protected final List<VariableMapping> variableMappings;
     private VariablesComposite variablesComposite;
-    private Label variablesLabel;
 
     public SubprocessDialog(Subprocess subprocess) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
@@ -102,23 +100,12 @@ public class SubprocessDialog extends Dialog {
         
         createConfigurationComposite(composite);
         
-        variablesLabel = new Label(composite, SWT.NONE);
+        Label variablesLabel = new Label(composite, SWT.NONE);
         variablesLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        variablesLabel.setText(Localization.getString("Subprocess.EmbeddedSubprocessVariablesList"));
+        variablesLabel.setText(Localization.getString("Subprocess.VariablesList"));
                 
         variablesComposite = new VariablesComposite(composite);
         variablesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
-        if (subprocessName != null) {
-            ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(subprocessName);
-            if (definition instanceof SubprocessDefinition) {
-                variablesComposite.setVisible(false);
-                variablesLabel.setText(Localization.getString("Subprocess.EmbeddedSubprocessVariablesList"));
-            } else {
-                variablesComposite.setVisible(true);
-                variablesLabel.setText(Localization.getString("Subprocess.VariablesList"));
-            }
-        }
         return composite;
     }
     
@@ -128,20 +115,6 @@ public class SubprocessDialog extends Dialog {
     
     protected void onSubprocessChanged() {
         subprocessName = subprocessDefinitionCombo.getText();
-        ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(subprocessName);
-        if (definition instanceof SubprocessDefinition) {
-            if (variablesComposite.isVisible()) {
-                variablesComposite.setVisible(false);
-                variablesLabel.setText(Localization.getString("Subprocess.EmbeddedSubprocessVariablesList"));
-                //getContents().pack(true);
-            }
-        } else {
-            if (!variablesComposite.isVisible()) {
-                variablesComposite.setVisible(true);
-                variablesLabel.setText(Localization.getString("Subprocess.VariablesList"));
-                //getContents().pack(true);
-            }
-        }
     }
 
     private class VariablesComposite extends Composite {
@@ -269,9 +242,7 @@ public class SubprocessDialog extends Dialog {
         List<String> names = Lists.newArrayList();
         for (ProcessDefinition testProcessDefinition : ProcessCache.getAllProcessDefinitions()) {
             if (testProcessDefinition instanceof SubprocessDefinition) {
-                if (!Objects.equal(definition, testProcessDefinition.getParent())) {
-                    continue;
-                }
+                continue;
             }
             if (!names.contains(testProcessDefinition.getName())) {
                 names.add(testProcessDefinition.getName());

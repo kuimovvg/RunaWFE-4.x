@@ -36,7 +36,6 @@ import ru.runa.gpd.lang.model.ReceiveMessageNode;
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Subprocess;
-import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Synchronizable;
@@ -210,7 +209,7 @@ public class JpdlSerializer extends ProcessSerializer {
             Element processStateElement = writeNode(root, subprocess, null);
             Element subProcessElement = processStateElement.addElement(SUB_PROCESS);
             setAttribute(subProcessElement, NAME, subprocess.getSubProcessName());
-            if (isSubprocessEmbedded(definition, subprocess)) {
+            if (subprocess.isEmbedded()) {
                 setAttribute(subProcessElement, EMBEDDED, Boolean.TRUE.toString());
             }
             for (VariableMapping variable : subprocess.getVariableMappings()) {
@@ -442,7 +441,7 @@ public class JpdlSerializer extends ProcessSerializer {
         Element root = document.getRootElement();
         init(definition, root);
         String defaultTaskTimeoutDuration = root.attributeValue(DEFAULT_TASK_DUEDATE);
-        if (!Strings.isNullOrEmpty(defaultTaskTimeoutDuration) && !(definition instanceof SubprocessDefinition)) {
+        if (!Strings.isNullOrEmpty(defaultTaskTimeoutDuration)) {
             definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeoutDuration));
         }
         String accessTypeString = root.attributeValue(ACCESS_TYPE);
@@ -649,6 +648,7 @@ public class JpdlSerializer extends ProcessSerializer {
             for (Element childNode : nodeList) {
                 if (SUB_PROCESS.equals(childNode.getName())) {
                     subprocess.setSubProcessName(childNode.attributeValue(NAME));
+                    subprocess.setEmbedded(Boolean.parseBoolean(childNode.attributeValue(EMBEDDED, "false")));
                 }
                 if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
