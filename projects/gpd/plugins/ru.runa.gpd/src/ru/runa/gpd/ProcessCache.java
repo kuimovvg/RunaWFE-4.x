@@ -8,7 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+
+import com.google.common.collect.Lists;
 
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -21,15 +26,33 @@ public class ProcessCache {
     static {
         try {
             for (IFile file : IOUtils.getAllProcessDefinitionFiles()) {
+                List<IFile> subprocessFiles = Lists.newArrayList();
                 try {
                     ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
                     cacheProcessDefinition(file, definition);
+                    findSubProcessFiles(file.getParent(), subprocessFiles);
                 } catch (Exception e) {
                     PluginLogger.logErrorWithoutDialog("parsing process " + file, e);
+                }
+                for (IFile subprocessFile : subprocessFiles) {
+                    try {
+                        ProcessDefinition definition = NodeRegistry.parseProcessDefinition(subprocessFile);
+                        cacheProcessDefinition(subprocessFile, definition);
+                    } catch (Exception e) {
+                        PluginLogger.logErrorWithoutDialog("parsing subprocess " + subprocessFile, e);
+                    }
                 }
             }
         } catch (Exception e) {
             PluginLogger.logError(e);
+        }
+    }
+
+    private static void findSubProcessFiles(IContainer container, List<IFile> result) throws CoreException {
+        for (IResource resource : container.members()) {
+            if (resource.getName().endsWith(ParContentProvider.PROCESS_DEFINITION_FILE_NAME) && !resource.getName().equals(ParContentProvider.PROCESS_DEFINITION_FILE_NAME)) {
+                result.add((IFile) resource);
+            }
         }
     }
 
