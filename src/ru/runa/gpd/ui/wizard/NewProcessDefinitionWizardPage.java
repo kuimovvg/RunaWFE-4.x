@@ -25,12 +25,9 @@ import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
-
-import com.google.common.base.Objects;
 
 public class NewProcessDefinitionWizardPage extends WizardPage {
     private Combo projectCombo;
@@ -141,7 +138,7 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         bpmnDisplaySwimlaneCombo.select(0);
         bpmnDisplaySwimlaneCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         if (parentProcessDefinition != null) {
-            bpmnDisplaySwimlaneCombo.setText(parentProcessDefinition.getSwimlaneDisplayMode().getLabel());
+            bpmnDisplaySwimlaneCombo.setText(SwimlaneDisplayMode.none.getLabel());
             bpmnDisplaySwimlaneCombo.setEnabled(false);
         }
     }
@@ -167,12 +164,7 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
     
     private boolean isProcessExists() {
         if (parentProcessDefinition != null) {
-            for (SubprocessDefinition subprocessDefinition : parentProcessDefinition.getEmbeddedSubprocesses().values()) {
-                if (Objects.equal(subprocessDefinition.getName(), getProcessName())) {
-                    return true;
-                }
-            }
-            return false;
+            return parentProcessDefinition.getEmbeddedSubprocessByName(getProcessName()) != null;
         } else {
             return getProcessFolder().exists();
         }

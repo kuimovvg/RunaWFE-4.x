@@ -23,12 +23,12 @@ public class SubprocessDefinition extends ProcessDefinition {
     
     @Override
     public SwimlaneDisplayMode getSwimlaneDisplayMode() {
-        return getParent().getSwimlaneDisplayMode();
+        return SwimlaneDisplayMode.none;
     }
 
     @Override
     public void setSwimlaneDisplayMode(SwimlaneDisplayMode swimlaneDisplayMode) {
-        throw new UnsupportedOperationException("This property is inherited from main process definition");
+        throw new UnsupportedOperationException("This property is always SwimlaneDisplayMode.none");
     }
 
     @Override

@@ -180,28 +180,22 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         child.setParent(this);
         child.setDelegatedListener(delegatedListener);
         firePropertyChange(NODE_CHILDS_CHANGED, null, 1);
-        try {
-            String nodeId = child.getId();
-            if (nodeId == null) {
-                nodeId = String.valueOf(getProcessDefinition().getNextNodeId());
-                child.setId("ID" + nodeId);
-            } else {
-                nodeId = nodeId.substring(2);
-                int nodeIdInt = Integer.parseInt(nodeId);
-                getProcessDefinition().setNextNodeIdIfApplicable(nodeIdInt);
-            }
-            if (child instanceof NamedGraphElement) {
-                NamedGraphElement namedGraphElement = (NamedGraphElement) child;
-                if (Strings.isNullOrEmpty(namedGraphElement.getName())) {
-                    String name = child.getTypeDefinition().getLabel();
-                    if (!(child instanceof EndState) && !(child instanceof StartState)) {
-                        name += " " + nodeId;
-                    }
-                    namedGraphElement.setName(name);
+        String nodeId = child.getId();
+        if (nodeId == null) {
+            nodeId = getProcessDefinition().getNextNodeId();
+            child.setId(nodeId);
+        } else {
+            getProcessDefinition().setNextNodeIdIfApplicable(nodeId);
+        }
+        if (child instanceof NamedGraphElement) {
+            NamedGraphElement namedGraphElement = (NamedGraphElement) child;
+            if (Strings.isNullOrEmpty(namedGraphElement.getName())) {
+                String name = child.getTypeDefinition().getLabel();
+                if (!(child instanceof EndState) && !(child instanceof StartState)) {
+                    name += " " + (getChildren(child.getClass()).size() + 1);
                 }
+                namedGraphElement.setName(name);
             }
-        } catch (StringIndexOutOfBoundsException e) {
-        } catch (NumberFormatException e) {
         }
     }
 

@@ -29,9 +29,6 @@ public class OpenFormValidationDelegate extends BaseModelActionDelegate {
                     return;
                 }
                 String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
-                    fileName = formNode.getProcessDefinition().getId() + "." + fileName;
-                }
                 IFile file = ValidationUtil.rewriteValidation(getDefinitionFile(), fileName, new HashMap<String, Map<String, ValidatorConfig>>());
                 setNewValidationFormFile(formNode, file.getName());
             }

@@ -26,6 +26,7 @@ import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
@@ -152,7 +153,7 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                 monitor.worked(1);
                 String processName = page.getProcessName();
                 Map<String, String> properties = Maps.newHashMap();
-                properties.put(BpmnSerializer.SHOW_SWIMLANE, parentProcessDefinition.getSwimlaneDisplayMode().name());
+                properties.put(BpmnSerializer.SHOW_SWIMLANE, SwimlaneDisplayMode.none.name());
                 properties.put(ProcessSerializer.ID, ParContentProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessIndex);
                 properties.put(ProcessSerializer.ACCESS_TYPE, accessType.name());
                 Document document = parentProcessDefinition.getLanguage().getSerializer().getInitialProcessDefinitionDocument(processName, properties);

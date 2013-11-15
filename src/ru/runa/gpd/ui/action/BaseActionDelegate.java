@@ -81,8 +81,9 @@ public abstract class BaseActionDelegate implements IWorkbenchWindowActionDelega
         if (selection != null) {
             Object selectedObject = selection.getFirstElement();
             if (selectedObject instanceof IResource) {
+                IResource resource = (IResource) selectedObject;
                 try {
-                    return ((IResource) selectedObject).getProject().getNature(BotStationNature.NATURE_ID) != null;
+                    return resource.exists() && resource.getProject().getNature(BotStationNature.NATURE_ID) != null;
                 } catch (CoreException e) {
                     PluginLogger.logError(e);
                 }
