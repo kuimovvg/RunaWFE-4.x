@@ -6,7 +6,6 @@ import java.util.Map;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.lang.bpmn2.EndToken;
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.collect.Lists;
@@ -28,14 +27,20 @@ public class SubprocessDefinition extends ProcessDefinition {
     @Override
     public void validate() {
         super.validate();
+        if (getStartStateNotNull().getLeavingTransitions().size() != 1) {
+            throw new InternalApplicationException("Start state in embedded subprocess should have 1 leaving transition");
+        }
         int endNodesCount = 0;
         for (Node node : nodes) {
-            if (node instanceof EndNode) {
-                throw new InternalApplicationException("There should be EmbeddedSubprocessEndNode");
-            }
-            if (node instanceof EndToken || node instanceof ru.runa.wfe.lang.jpdl.EndToken) {
-                throw new RuntimeException("In embedded subprocess it is not allowed end token state");
-            }
+            // if (node instanceof EndNode) {
+            // throw new
+            // InternalApplicationException("There should be EmbeddedSubprocessEndNode");
+            // }
+            // if (node instanceof EndToken || node instanceof
+            // ru.runa.wfe.lang.jpdl.EndToken) {
+            // throw new
+            // RuntimeException("In embedded subprocess it is not allowed end token state");
+            // } TODO
             if (node instanceof EmbeddedSubprocessEndNode) {
                 endNodesCount++;
             }
@@ -44,7 +49,7 @@ public class SubprocessDefinition extends ProcessDefinition {
             throw new RuntimeException("In embedded subprocess there are should be at least 1 end node");
         }
     }
-    
+
     public List<EmbeddedSubprocessEndNode> getEndNodes() {
         List<EmbeddedSubprocessEndNode> list = Lists.newArrayList();
         for (Node node : nodes) {
@@ -55,6 +60,7 @@ public class SubprocessDefinition extends ProcessDefinition {
         return list;
     }
 
+    @Override
     public byte[] getGraphImageBytes() {
         byte[] graphBytes = processDefinition.getFileData(getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
         if (graphBytes == null) {
@@ -120,15 +126,15 @@ public class SubprocessDefinition extends ProcessDefinition {
     public SubProcessState getSubProcessState() {
         return subProcessState;
     }
-    
+
     public void setSubProcessState(SubProcessState subProcessState) {
         this.subProcessState = subProcessState;
     }
-    
+
     public Node getArrivingNode() {
         return arrivingNode;
     }
-    
+
     public void setArrivingNode(Node arrivingNode) {
         this.arrivingNode = arrivingNode;
     }
