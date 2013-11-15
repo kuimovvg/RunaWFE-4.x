@@ -53,7 +53,7 @@ import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
-import ru.runa.gpd.lang.model.SubprocessDefinition;
+import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
 import ru.runa.gpd.quick.extension.QuickTemplateRegister;
 import ru.runa.gpd.quick.formeditor.ui.wizard.BrowserWizard;
@@ -74,6 +74,7 @@ import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 
@@ -93,32 +94,24 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 
 	@Override
 	public void doSave(IProgressMonitor monitor) {
-		byte[] bytes = null;
 		try {
-			bytes = QuickFormXMLUtil.convertQuickFormToXML((IFolder) quickFormFile.getParent(), quickForm);
+		    byte[] bytes = QuickFormXMLUtil.convertQuickFormToXML((IFolder) quickFormFile.getParent(), quickForm);
 			updateFile(quickFormFile, bytes);
+	        if (formNode != null) {
+	            formNode.setDirty();
+	        }
+	        setDirty(false);
 		} catch (Exception e) {
-			PluginLogger.logErrorWithoutDialog("Error on saving template form: '" + quickForm.getName() + "'", e);
+			PluginLogger.logError("Error on saving template form: '" + quickForm.getName() + "'", e);
 		}
-		
-		if (formNode != null) {
-            formNode.setDirty();
-        }
-		setDirty(false);
 	}
-	
-	protected void updateFile(IFile file, byte[] contentBytes) throws CoreException {
-        if (contentBytes != null) {
-            InputStream content = new ByteArrayInputStream(contentBytes);
-            if (!file.exists()) {
-                file.create(content, true, null);
-            } else {
-                file.setContents(content, true, true, null);
-            }
+
+    protected void updateFile(IFile file, byte[] contentBytes) throws CoreException {
+        InputStream content = new ByteArrayInputStream(contentBytes);
+        if (!file.exists()) {
+            file.create(content, true, null);
         } else {
-            if (file.exists()) {
-                file.delete(true, null);
-            }
+            file.setContents(content, true, true, null);
         }
     }
 
@@ -135,13 +128,12 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         quickFormFile = ((FileEditorInput) input).getFile();
         IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) quickFormFile.getParent());
         this.processDefinition = ProcessCache.getProcessDefinition(definitionFile);
-        try {
-			quickForm = QuickFormXMLUtil.getQuickFormFromXML(quickFormFile, processDefinition);
-		} catch (Exception e) {
-			PluginLogger.logErrorWithoutDialog("Error reading quick form: '" + quickFormFile.getName() + "'", e);
-		}        
-        
-        ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
+        quickForm = QuickFormXMLUtil.getQuickFormFromXML(quickFormFile, processDefinition);
+        if (quickFormFile.getName().startsWith(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX)) {
+            String subprocessId = quickFormFile.getName().substring(0, quickFormFile.getName().indexOf("."));
+            processDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
+            Preconditions.checkNotNull(processDefinition, "embedded subpocess");
+        }
         for (FormNode formNode : processDefinition.getChildren(FormNode.class)) {
             if (input.getName().equals(formNode.getFormFileName())) {
                 this.formNode = formNode;
@@ -161,9 +153,6 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     try {
                         if (!formNode.hasFormValidation()) {
                             String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                            if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
-                                fileName = formNode.getProcessDefinition().getId() + "." + fileName;
-                            }
                             IFile validationFile = ValidationUtil.createNewValidationUsingForm(quickFormFile, fileName, formNode);
                             formNode.setValidationFileName(validationFile.getName());
                         } else {

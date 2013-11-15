@@ -50,11 +50,6 @@ public abstract class ProcessSerializer {
     }
     
     protected boolean isSubprocessEmbedded(ProcessDefinition definition, Subprocess subprocess) {
-        for (SubprocessDefinition subprocessDefinition : definition.getEmbeddedSubprocesses().values()) {
-            if (Objects.equal(subprocessDefinition.getName(), subprocess.getSubProcessName())) {
-                return true;
-            }
-        }
-        return false;
+        return definition.getEmbeddedSubprocessByName(subprocess.getSubProcessName()) != null;
     }
 }
