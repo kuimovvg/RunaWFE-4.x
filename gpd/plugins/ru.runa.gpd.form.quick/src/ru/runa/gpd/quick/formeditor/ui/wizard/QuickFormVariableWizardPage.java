@@ -149,7 +149,7 @@ public class QuickFormVariableWizardPage extends WizardPage {
         label.setText(Messages.getString("TemplatedFormVariableWizardPage.page.var"));
         variableCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
         variableCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        List<String> names = processDefinition.getVariableNames(false);
+        List<String> names = processDefinition.getVariableNames(true);
     	variableCombo.setItems(names.toArray(new String[names.size()]));
         variableCombo.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
@@ -264,7 +264,7 @@ public class QuickFormVariableWizardPage extends WizardPage {
 	
 	public Variable getVariable() {
 		if(variableCombo.getText() != null && !variableCombo.getText().isEmpty()) {
-			return processDefinition.getVariable(variableCombo.getText(), false);
+			return processDefinition.getVariable(variableCombo.getText(), true);
 		}
 		
 		return null;

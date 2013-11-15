@@ -2,7 +2,6 @@ package ru.runa.gpd.quick.formeditor.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -80,42 +79,42 @@ public class QuickFormXMLUtil {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static final QuickForm getQuickFormFromXML(IFile file, ProcessDefinition processDefinition) throws CoreException, IOException {
+	public static final QuickForm getQuickFormFromXML(IFile file, ProcessDefinition processDefinition) {
 		QuickForm quickForm = new QuickForm();
 		if (file.exists() && getContentLenght(file.getLocation().toString()) != 0) {
-			
-			Document document = XmlUtil.parseWithoutValidation(file.getContents());
-			quickForm.setDelegationClassName(document.getRootElement().attributeValue(TEMPLATE_NAME));
-			
-			IFile confFile = ((IFolder) file.getParent()).getFile(quickForm.getDelegationClassName());
-            if (confFile.exists()) {
-                String configuration = IOUtils.readStream(confFile.getContents());
-                quickForm.setDelegationConfiguration(configuration);
+			try {
+                Document document = XmlUtil.parseWithoutValidation(file.getContents());
+                quickForm.setDelegationClassName(document.getRootElement().attributeValue(TEMPLATE_NAME));
+                IFile confFile = ((IFolder) file.getParent()).getFile(quickForm.getDelegationClassName());
+                if (confFile.exists()) {
+                    String configuration = IOUtils.readStream(confFile.getContents());
+                    quickForm.setDelegationConfiguration(configuration);
+                }
+                List<Element> varElementsList = document.getRootElement().elements(TEMPLATE_VARIABLE);
+                for (Element varElement : varElementsList) {
+                	QuickFormGpdVariable templatedVariableDef = new QuickFormGpdVariable();		
+                	templatedVariableDef.setTagName(varElement.elementText(ATTRIBUTE_TAG));
+                	templatedVariableDef.setName(varElement.elementText(ATTRIBUTE_NAME));
+                	templatedVariableDef.setFormat(varElement.elementText(ATTRIBUTE_FORMAT));
+                	Variable var = processDefinition.getVariable(templatedVariableDef.getName(), false);
+                	templatedVariableDef.setFormatLabel(var.getFormatLabel());
+                	templatedVariableDef.setJavaClassName(var.getJavaClassName());
+                	templatedVariableDef.setDescription(varElement.elementText(ATTRIBUTE_DESCRIPTION));
+                	List<Element> paramElements = varElement.elements(ATTRIBUTE_PARAM);
+                	if(paramElements != null && paramElements.size() > 0) {
+                		List<String> params = new ArrayList<String>();
+                		for(Element paramElement : paramElements) {
+                			params.add(paramElement.getText());
+                		}
+                		templatedVariableDef.setParams(params.toArray(new String[0]));
+                	}
+                	
+                	quickForm.getQuickFormGpdVariable().add(templatedVariableDef);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-			
-			List<Element> varElementsList = document.getRootElement().elements(TEMPLATE_VARIABLE);
-			for (Element varElement : varElementsList) {
-				QuickFormGpdVariable templatedVariableDef = new QuickFormGpdVariable();		
-				templatedVariableDef.setTagName(varElement.elementText(ATTRIBUTE_TAG));
-				templatedVariableDef.setName(varElement.elementText(ATTRIBUTE_NAME));
-				templatedVariableDef.setFormat(varElement.elementText(ATTRIBUTE_FORMAT));
-				Variable var = processDefinition.getVariable(templatedVariableDef.getName(), false);
-				templatedVariableDef.setFormatLabel(var.getFormatLabel());
-				templatedVariableDef.setJavaClassName(var.getJavaClassName());
-				templatedVariableDef.setDescription(varElement.elementText(ATTRIBUTE_DESCRIPTION));
-				List<Element> paramElements = varElement.elements(ATTRIBUTE_PARAM);
-				if(paramElements != null && paramElements.size() > 0) {
-					List<String> params = new ArrayList<String>();
-					for(Element paramElement : paramElements) {
-						params.add(paramElement.getText());
-					}
-					templatedVariableDef.setParams(params.toArray(new String[0]));
-				}
-				
-				quickForm.getQuickFormGpdVariable().add(templatedVariableDef);
-			}
         }
-		
 		return quickForm;
 	}
 	

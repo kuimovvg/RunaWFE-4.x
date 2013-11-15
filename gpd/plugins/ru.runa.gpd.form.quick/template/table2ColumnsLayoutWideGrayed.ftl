@@ -5,11 +5,12 @@ table.grayed {
 }
 
 table.grayed tr {
-	border-bottom: 1px solid #888888;
+	border-bottom: 1px dotted #888888;
 }
 
 table.grayed tr td {
-	border-top: 1px solid #666666;
+	border-top: 1px dotted #666666;
+	background-color: #eeeeee;
 	padding: 5px;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 10pt;

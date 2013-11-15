@@ -37,6 +37,8 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import com.google.common.base.Preconditions;
+
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.extension.VariableFormatRegistry;
@@ -47,6 +49,7 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
@@ -98,6 +101,11 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         lastInitializedInstance = this;
         IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) formFile.getParent());
         ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
+        if (formFile.getName().startsWith(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX)) {
+            String subprocessId = formFile.getName().substring(0, formFile.getName().indexOf("."));
+            processDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
+            Preconditions.checkNotNull(processDefinition, "embedded subpocess");
+        }
         for (FormNode formNode : processDefinition.getChildren(FormNode.class)) {
             if (editorInput.getName().equals(formNode.getFormFileName())) {
                 this.formNode = formNode;
@@ -117,9 +125,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                     try {
                         if (!formNode.hasFormValidation()) {
                             String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                            if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
-                                fileName = formNode.getProcessDefinition().getId() + "." + fileName;
-                            }
                             IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, fileName, formNode);
                             formNode.setValidationFileName(validationFile.getName());
                         } else {
