@@ -20,6 +20,6 @@ public class OpenSubProcessFeature extends AbstractCustomFeature {
     @Override
     public void execute(ICustomContext context) {
         Subprocess subprocess = (Subprocess) getFeatureProvider().getBusinessObjectForPictogramElement(context.getInnerPictogramElement());
-        WorkspaceOperations.openFirstProcessDefinition(subprocess.getSubProcessName());
+        WorkspaceOperations.openSubprocessDefinition(subprocess);
     }
 }

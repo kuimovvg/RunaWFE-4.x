@@ -360,11 +360,12 @@ public class JpdlSerializer extends ProcessSerializer {
 
     @Override
     public void validateProcessDefinitionXML(IFile file) {
-        try {
-            XmlUtil.parseWithXSDValidation(file.getContents(), "jpdl-4.0.xsd");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        // TODO cannot find declaration of process-definition element
+//        try {
+//            XmlUtil.parseWithXSDValidation(file.getContents(), "jpdl-4.0.xsd");
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
