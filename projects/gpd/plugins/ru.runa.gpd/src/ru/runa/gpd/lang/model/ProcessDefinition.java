@@ -40,7 +40,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private Duration timeOutDelay = new Duration();
     private TimerAction timeOutAction = null;
     private boolean invalid;
-    private int nextNodeId;
+    private int nextNodeIdCounter;
     private SwimlaneDisplayMode swimlaneDisplayMode = SwimlaneDisplayMode.none;
     private Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
     private ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
@@ -57,8 +57,21 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         firePropertyChange(PROPERTY_ACCESS_TYPE, null, accessType);
     }
     
-    public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
-        return embeddedSubprocesses;
+    public void addEmbeddedSubprocess(SubprocessDefinition subprocessDefinition) {
+        embeddedSubprocesses.put(subprocessDefinition.getId(), subprocessDefinition);
+    }
+    
+    public SubprocessDefinition getEmbeddedSubprocessByName(String name) {
+        for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
+            if (Objects.equal(subprocessDefinition.getName(), name)) {
+                return subprocessDefinition;
+            }
+        }
+        return null;
+    }
+
+    public SubprocessDefinition getEmbeddedSubprocessById(String id) {
+        return embeddedSubprocesses.get(id);
     }
     
     public SwimlaneDisplayMode getSwimlaneDisplayMode() {
@@ -139,14 +152,31 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         return dimension;
     }
 
-    public void setNextNodeIdIfApplicable(int nextNodeId) {
-        if (nextNodeId > this.nextNodeId) {
-            this.nextNodeId = nextNodeId;
+    public void setNextNodeIdIfApplicable(String nodeId) {
+        int nextNodeId = 0;
+        int dotIndex = nodeId.lastIndexOf(".");
+        if (dotIndex != -1) {
+            nodeId = nodeId.substring(dotIndex + 1);
+        }
+        if (nodeId.startsWith("ID")) {
+            nodeId = nodeId.substring(2);
+        }
+        try {
+            nextNodeId = Integer.parseInt(nodeId);
+        } catch (NumberFormatException e) {
+        }
+        if (nextNodeId > this.nextNodeIdCounter) {
+            this.nextNodeIdCounter = nextNodeId;
         }
     }
 
-    public int getNextNodeId() {
-        return ++nextNodeId;
+    public String getNextNodeId() {
+        nextNodeIdCounter++;
+        String nextNodeId = "ID" + nextNodeIdCounter;
+        if (this instanceof SubprocessDefinition) {
+            nextNodeId = getId() + "." + nextNodeId;
+        }
+        return nextNodeId;
     }
 
     public SwimlaneGUIConfiguration getSwimlaneGUIConfiguration() {
