@@ -41,6 +41,8 @@ import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ui.custom.Dialogs;
@@ -68,6 +70,7 @@ import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 
 public class WorkspaceOperations {
     public static void deleteResources(List<IResource> resources) {
@@ -246,9 +249,19 @@ public class WorkspaceOperations {
     /**
      * @return process editor or <code>null</code>
      */
-    public static ProcessEditorBase openFirstProcessDefinition(String definitionName) {
-        IFile definitionFile = ProcessCache.getFirstProcessDefinitionFile(definitionName);
-        return openProcessDefinition(definitionFile);
+    public static ProcessEditorBase openSubprocessDefinition(Subprocess subprocess) {
+        if (Strings.isNullOrEmpty(subprocess.getSubProcessName())) {
+            return null;
+        }
+        if (subprocess.isEmbedded()) {
+            SubprocessDefinition definition = subprocess.getProcessDefinition().getEmbeddedSubprocessByName(subprocess.getSubProcessName());
+            String id = definition.getId();
+            IFile definitionFile = IOUtils.getFile(id + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+            return openProcessDefinition(definitionFile);
+        } else {
+            IFile definitionFile = ProcessCache.getFirstProcessDefinitionFile(subprocess.getSubProcessName());
+            return openProcessDefinition(definitionFile);
+        }
     }
 
     public static void exportProcessDefinition(IStructuredSelection selection) {
