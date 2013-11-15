@@ -344,7 +344,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         }
         return null;
     }
-    
+
     public void mergeWithEmbeddedSubprocesses() {
         for (Node node : Lists.newArrayList(nodes)) {
             if (node instanceof SubProcessState) {
@@ -352,19 +352,17 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
                 if (subProcessState.isEmbedded()) {
                     SubprocessDefinition subprocessDefinition = getEmbeddedSubprocessesByName(subProcessState.getSubProcessName());
                     Preconditions.checkNotNull(subprocessDefinition, "subprocessDefinition");
-                    subprocessDefinition.setSubProcessState(subProcessState); // TODO 
-                    List<Transition> leavingTransitions = Lists.newArrayList(subProcessState.getLeavingTransitions());
+                    subprocessDefinition.setSubProcessState(subProcessState); // TODO
+                    Transition leavingTransition = subProcessState.getLeavingTransitions().get(0);
                     subProcessState.getLeavingTransitions().clear();
-                    for (Transition transition : subprocessDefinition.getStartStateNotNull().getLeavingTransitions()) {
-                        subProcessState.addLeavingTransition(transition);
-                    }
+                    subProcessState.addLeavingTransition(subprocessDefinition.getStartStateNotNull().getLeavingTransitions().get(0));
                     List<EmbeddedSubprocessEndNode> endNodes = subprocessDefinition.getEndNodes();
+                    // FIXME duplicate leaving transitions for multiple end
+                    // nodes?
                     for (EmbeddedSubprocessEndNode endNode : endNodes) {
-                        for (Transition transition : leavingTransitions) {
-                            endNode.addLeavingTransition(transition);
-                        }
+                        endNode.addLeavingTransition(leavingTransition);
                     }
-                    subprocessDefinition.setArrivingNode(leavingTransitions.get(0).getTo()); // TODO 
+                    subprocessDefinition.setArrivingNode(leavingTransition.getTo()); // TODO
                     processDefinition.getNodes().addAll(subprocessDefinition.getNodes());
                 }
             }
