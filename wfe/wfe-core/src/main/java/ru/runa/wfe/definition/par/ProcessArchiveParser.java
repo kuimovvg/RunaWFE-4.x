@@ -27,4 +27,6 @@ public interface ProcessArchiveParser {
 
     void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition);
 
+    boolean isApplicableToEmbeddedSubprocess();
+    
 }

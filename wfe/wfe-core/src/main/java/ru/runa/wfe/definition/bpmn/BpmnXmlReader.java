@@ -22,6 +22,7 @@ import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.BaseTaskNode;
 import ru.runa.wfe.lang.Delegation;
+import ru.runa.wfe.lang.EmbeddedSubprocessEndNode;
 import ru.runa.wfe.lang.EndNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.GraphElement;
@@ -34,6 +35,7 @@ import ru.runa.wfe.lang.ScriptTask;
 import ru.runa.wfe.lang.SendMessage;
 import ru.runa.wfe.lang.StartState;
 import ru.runa.wfe.lang.SubProcessState;
+import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.TaskNode;
@@ -213,6 +215,8 @@ public class BpmnXmlReader {
                 Map<String, String> properties = parseExtensionProperties(element);
                 if (properties.containsKey(TOKEN)) {
                     node = ApplicationContextFactory.createAutowiredBean(EndToken.class);
+                } else if (processDefinition instanceof SubprocessDefinition) {
+                    node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessEndNode.class);
                 } else {
                     node = ApplicationContextFactory.createAutowiredBean(EndNode.class);
                 }

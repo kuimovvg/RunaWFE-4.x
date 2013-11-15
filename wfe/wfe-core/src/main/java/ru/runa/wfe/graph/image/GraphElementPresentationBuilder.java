@@ -11,6 +11,7 @@ import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 
 public class GraphElementPresentationBuilder {
 
@@ -25,6 +26,9 @@ public class GraphElementPresentationBuilder {
         DiagramModel diagramModel = DiagramModel.load(definition);
         List<GraphElementPresentation> result = new ArrayList<GraphElementPresentation>();
         for (Node node : definition.getNodes()) {
+            if (node.getParent() instanceof SubprocessDefinition) {
+                continue;
+            }
             NodeModel model = diagramModel.getNodeNotNull(node.getNodeId());
             GraphElementPresentation presentation;
             switch (node.getNodeType()) {

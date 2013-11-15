@@ -25,10 +25,10 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
     @Override
     public WfVariable getVariable(String variableName) {
         ProcessDefinition processDefinition = executionContext.getProcessDefinition();
-        if (!processDefinition.isVariablePublic(variableName)) {
+        VariableDefinition variableDefinition = processDefinition.getVariable(variableName, true);
+        if (variableDefinition == null || !variableDefinition.isPublicAccess()) {
             // TODO checkReadToVariablesAllowed(subject, task);
         }
-        VariableDefinition variableDefinition = processDefinition.getVariable(variableName, true);
         Object variableValue = getValue(variableName);
         if (variableDefinition != null) {
             return new WfVariable(variableDefinition, variableValue);

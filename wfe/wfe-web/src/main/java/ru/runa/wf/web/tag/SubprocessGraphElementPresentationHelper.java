@@ -139,8 +139,14 @@ public class SubprocessGraphElementPresentationHelper {
         if (!element.isReadPermission()) {
             return null;
         }
+        String url;
+        if (element.isEmbedded()) {
+            url = "javascript:showEmbeddedSubprocess(" + element.getSubprocessId() + ", '" + element.getSubprocessName() + "');";
+        } else {
+            url = getSubprocessUrl(element.getSubprocessId());
+        }
         Area area = new Area("RECT", element.getGraphConstraints());
-        area.setHref(getSubprocessUrl(element.getSubprocessId()));
+        area.setHref(url);
         area.setTitle(element.getSubprocessName());
         map.addElement(area);
         return area;

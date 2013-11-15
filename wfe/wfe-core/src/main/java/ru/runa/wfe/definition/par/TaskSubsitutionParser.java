@@ -10,9 +10,14 @@ import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.lang.ProcessDefinition;
 
 /**
- * @deprecated remove in 4.2.0
+ * used only for processes created before v4.1.0
  */
 public class TaskSubsitutionParser implements ProcessArchiveParser {
+
+    @Override
+    public boolean isApplicableToEmbeddedSubprocess() {
+        return false;
+    }
 
     @Override
     public void readFromArchive(ProcessArchive archive, final ProcessDefinition processDefinition) {

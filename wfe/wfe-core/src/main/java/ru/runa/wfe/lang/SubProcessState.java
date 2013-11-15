@@ -66,6 +66,10 @@ public class SubProcessState extends VariableContainerNode {
 
     @Override
     public void execute(ExecutionContext executionContext) {
+        if (embedded) {
+            leave(executionContext);
+            return;
+        }
         // create the subprocess
         Map<String, Object> variables = Maps.newHashMap();
         for (VariableMapping variableMapping : variableMappings) {
@@ -89,7 +93,9 @@ public class SubProcessState extends VariableContainerNode {
 
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
-        performLeave(executionContext);
+        if (!embedded) {
+            performLeave(executionContext);
+        }
         super.leave(executionContext, transition);
     }
 

@@ -13,6 +13,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.access.ContextSingletonBeanFactoryLocator;
 import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 
+import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.commons.bc.BusinessCalendar;
 import ru.runa.wfe.commons.hibernate.Converters;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
@@ -63,6 +64,10 @@ public class ApplicationContextFactory {
 
     public static ProcessDAO getProcessDAO() {
         return getContext().getBean(ProcessDAO.class);
+    }
+
+    public static ProcessLogDAO getProcessLogDAO() {
+        return getContext().getBean(ProcessLogDAO.class);
     }
 
     public static Converters getConverters() {

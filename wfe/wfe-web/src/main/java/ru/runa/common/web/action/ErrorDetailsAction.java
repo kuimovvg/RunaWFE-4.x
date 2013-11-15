@@ -166,7 +166,7 @@ public class ErrorDetailsAction extends ActionBase {
                         }
                         try {
                             processFiles.put(process.getId() + ".graph.png",
-                                    Delegates.getExecutionService().getProcessDiagram(user, process.getId(), null, null));
+                                    Delegates.getExecutionService().getProcessDiagram(user, process.getId(), null, null, null));
                             fileIncluded = true;
                         } catch (Exception e) {
                             fileIncluded = false;

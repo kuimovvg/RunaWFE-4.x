@@ -128,7 +128,7 @@
 			name="deployBotForm" scope="request" unknown="false" validate="false">
 		</action>
 		<action path="/processDefinitionGraphImage"
-			type="ru.runa.wf.web.action.ProcessDefinitionGraphImageAction" name="idForm"
+			type="ru.runa.wf.web.action.ProcessDefinitionGraphImageAction" name="idNameForm"
 			scope="request" input="/WEB-INF/wf/manage_process_definitions.jsp"
 			unknown="false" validate="true">
 		</action>

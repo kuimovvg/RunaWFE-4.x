@@ -40,11 +40,12 @@ public class ProcessGraphImageAction extends ActionBase {
     public static final String ACTION_PATH = "/processGraphImage";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        TaskIdForm idForm = (TaskIdForm) form;
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        TaskIdForm form = (TaskIdForm) actionForm;
         try {
-            byte[] diagramBytes = Delegates.getExecutionService().getProcessDiagram(getLoggedUser(request), idForm.getId(), idForm.getTaskId(),
-                    idForm.getChildProcessId());
+            byte[] diagramBytes = Delegates.getExecutionService().getProcessDiagram(
+                    getLoggedUser(request), form.getId(), form.getTaskId(),
+                    form.getChildProcessId(), form.getName());
             response.setContentType("image/png");
             OutputStream os = response.getOutputStream();
             os.write(diagramBytes);

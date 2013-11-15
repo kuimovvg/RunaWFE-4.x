@@ -28,6 +28,7 @@ import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.base.Strings;
@@ -47,9 +48,18 @@ public class InteractionsParser implements ProcessArchiveParser {
     private final static String TYPE_ATTRIBUTE_NAME = "type";
 
     @Override
+    public boolean isApplicableToEmbeddedSubprocess() {
+        return true;
+    }
+
+    @Override
     public void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition) {
         try {
-            byte[] formsXml = archive.getFileData(IFileDataProvider.FORMS_XML_FILE_NAME);
+            String formsFileName = IFileDataProvider.FORMS_XML_FILE_NAME;
+            if (processDefinition instanceof SubprocessDefinition) {
+                formsFileName = processDefinition.getNodeId() + "." + formsFileName;
+            }
+            byte[] formsXml = archive.getFileData(formsFileName);
             if (formsXml == null) {
                 return;
             }

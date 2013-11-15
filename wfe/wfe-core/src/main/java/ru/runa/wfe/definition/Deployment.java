@@ -154,4 +154,18 @@ public class Deployment extends Identifiable {
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("version", version).toString();
     }
+    
+    @Transient
+    public Deployment getCopy() {
+        Deployment deployment = new Deployment();
+        deployment.category = category;
+        deployment.content = content;
+        deployment.deployedDate = deployedDate;
+        deployment.description = description;
+        deployment.id = id;
+        deployment.language = language;
+        deployment.name = name;
+        deployment.version = version;
+        return deployment;
+    }
 }
