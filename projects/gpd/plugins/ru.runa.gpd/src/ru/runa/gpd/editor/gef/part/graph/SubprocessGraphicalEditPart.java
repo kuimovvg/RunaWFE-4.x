@@ -17,10 +17,7 @@ public class SubprocessGraphicalEditPart extends LabeledNodeGraphicalEditPart {
     @Override
     public void performRequest(Request request) {
         if (request.getType() == RequestConstants.REQ_OPEN) {
-            String subprocessName = getModel().getSubProcessName();
-            if (subprocessName != null) {
-                WorkspaceOperations.openFirstProcessDefinition(subprocessName);
-            }
+            WorkspaceOperations.openSubprocessDefinition(getModel());
         } else {
             super.performRequest(request);
         }
