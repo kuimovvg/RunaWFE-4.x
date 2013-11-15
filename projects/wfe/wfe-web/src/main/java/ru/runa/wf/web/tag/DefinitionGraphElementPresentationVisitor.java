@@ -74,9 +74,15 @@ public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraph
         if (!element.isReadPermission()) {
             return;
         }
-        Map<String, Object> params = Maps.newHashMap();
-        params.put(IdForm.ID_INPUT_NAME, element.getSubprocessId());
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, params, pageContext, PortletUrlType.Render);
+        String url;
+        if (element.isEmbedded()) {
+            url = "javascript:showEmbeddedSubprocessDefinition(" + element.getSubprocessId() + ", '" + element.getSubprocessName() + "');";
+        } else {
+            Map<String, Object> params = Maps.newHashMap();
+            params.put(IdForm.ID_INPUT_NAME, element.getSubprocessId());
+            url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, 
+                    params, pageContext, PortletUrlType.Render);
+        }
         Area area = new Area("RECT", element.getGraphConstraints());
         area.setHref(url);
         area.setTitle(element.getName());

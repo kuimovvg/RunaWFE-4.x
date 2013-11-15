@@ -47,19 +47,20 @@ import com.google.common.collect.Sets;
 public class ProcessDefinition extends GraphElement implements IFileDataProvider {
     private static final long serialVersionUID = 1L;
 
-    private Deployment deployment;
-    private Map<String, byte[]> processFiles = Maps.newHashMap();
-    private StartState startState;
-    private final List<Node> nodes = Lists.newArrayList();
-    private final Map<String, SwimlaneDefinition> swimlaneDefinitions = Maps.newHashMap();
-    private final Map<String, Interaction> interactions = Maps.newHashMap();
-    private final List<VariableDefinition> variables = Lists.newArrayList();
-    private final Map<String, VariableDefinition> variablesMap = Maps.newHashMap();
+    protected Deployment deployment;
+    protected Map<String, byte[]> processFiles = Maps.newHashMap();
+    protected StartState startState;
+    protected final List<Node> nodes = Lists.newArrayList();
+    protected final Map<String, SwimlaneDefinition> swimlaneDefinitions = Maps.newHashMap();
+    protected final Map<String, Interaction> interactions = Maps.newHashMap();
+    protected final List<VariableDefinition> variables = Lists.newArrayList();
+    protected final Map<String, VariableDefinition> variablesMap = Maps.newHashMap();
     /**
      * @deprecated remove in 4.2.0
      */
-    private final Set<String> taskNamesToignoreSubstitutionRules = Sets.newHashSet();
-    private ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
+    protected final Set<String> taskNamesToignoreSubstitutionRules = Sets.newHashSet();
+    protected ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
+    protected Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
 
     private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_PROCESS_START, Event.EVENTTYPE_PROCESS_END,
             Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_TASK_CREATE, Event.EVENTTYPE_TASK_ASSIGN,
@@ -151,14 +152,6 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return variableDefinition;
     }
 
-    public boolean isVariablePublic(String name) {
-        VariableDefinition variableDefinition = getVariable(name, false);
-        if (variableDefinition == null) {
-            return false;
-        }
-        return variableDefinition.isPublicAccess();
-    }
-
     public List<VariableDefinition> getVariables() {
         return variables;
     }
@@ -237,12 +230,21 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return node;
     }
 
-    public Node getNodeNotNull(String id) {
+    public Node getNode(String id) {
         Preconditions.checkNotNull(id);
         for (Node node : nodes) {
             if (id.equals(node.getNodeId())) {
                 return node;
             }
+        }
+        return null;
+    }
+
+    public Node getNodeNotNull(String id) {
+        Preconditions.checkNotNull(id);
+        Node node = getNode(id);
+        if (node != null) {
+            return node;
         }
         throw new InternalApplicationException("node '" + id + "' not found");
     }
@@ -306,11 +308,6 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         throw new InternalApplicationException("task '" + nodeId + "' not found in " + this);
     }
 
-    public Transition getTransitionNotNull(String fromNodeId, String transitionName) {
-        Node node = getNodeNotNull(fromNodeId);
-        return node.getLeavingTransitionNotNull(transitionName);
-    }
-
     public boolean ignoreSubsitutionRulesForTask(Task task) {
         if (taskNamesToignoreSubstitutionRules.contains(task.getNodeId())) {
             return true;
@@ -331,4 +328,46 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return name;
     }
 
+    public void addEmbeddedSubprocess(SubprocessDefinition subprocessDefinition) {
+        embeddedSubprocesses.put(subprocessDefinition.getNodeId(), subprocessDefinition);
+    }
+
+    public SubprocessDefinition getEmbeddedSubprocessesById(String id) {
+        return embeddedSubprocesses.get(id);
+    }
+
+    public SubprocessDefinition getEmbeddedSubprocessesByName(String name) {
+        for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
+            if (Objects.equal(name, subprocessDefinition.getName())) {
+                return subprocessDefinition;
+            }
+        }
+        return null;
+    }
+    
+    public void mergeWithEmbeddedSubprocesses() {
+        for (Node node : Lists.newArrayList(nodes)) {
+            if (node instanceof SubProcessState) {
+                SubProcessState subProcessState = (SubProcessState) node;
+                if (subProcessState.isEmbedded()) {
+                    SubprocessDefinition subprocessDefinition = getEmbeddedSubprocessesByName(subProcessState.getSubProcessName());
+                    Preconditions.checkNotNull(subprocessDefinition, "subprocessDefinition");
+                    subprocessDefinition.setSubProcessState(subProcessState); // TODO 
+                    List<Transition> leavingTransitions = Lists.newArrayList(subProcessState.getLeavingTransitions());
+                    subProcessState.getLeavingTransitions().clear();
+                    for (Transition transition : subprocessDefinition.getStartStateNotNull().getLeavingTransitions()) {
+                        subProcessState.addLeavingTransition(transition);
+                    }
+                    List<EmbeddedSubprocessEndNode> endNodes = subprocessDefinition.getEndNodes();
+                    for (EmbeddedSubprocessEndNode endNode : endNodes) {
+                        for (Transition transition : leavingTransitions) {
+                            endNode.addLeavingTransition(transition);
+                        }
+                    }
+                    subprocessDefinition.setArrivingNode(leavingTransitions.get(0).getTo()); // TODO 
+                    processDefinition.getNodes().addAll(subprocessDefinition.getNodes());
+                }
+            }
+        }
+    }
 }

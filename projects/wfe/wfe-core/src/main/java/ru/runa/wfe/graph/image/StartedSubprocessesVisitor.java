@@ -9,6 +9,8 @@ import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
+import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.User;
 
@@ -28,6 +30,8 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
      * Instances of subprocesses, which must be added to graph elements.
      */
     private final List<NodeProcess> nodeProcesses;
+    private final ProcessDefinition definition;
+    private final Process process;
 
     /**
      * Create instance of operation to set starting process readable flag.
@@ -38,8 +42,10 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
      * @param subject
      *            Current subject.
      */
-    public StartedSubprocessesVisitor(User user, List<NodeProcess> nodeProcesses) {
+    public StartedSubprocessesVisitor(User user, ProcessDefinition definition, Process process, List<NodeProcess> nodeProcesses) {
         this.user = user;
+        this.definition = definition;
+        this.process = process;
         this.nodeProcesses = nodeProcesses;
     }
 
@@ -57,11 +63,20 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
 
     @Override
     public void onSubprocess(SubprocessGraphElementPresentation element) {
-        for (NodeProcess nodeProcess : nodeProcesses) {
-            if (Objects.equal(nodeProcess.getNodeId(), element.getNodeId())) {
-                element.setSubprocessId(nodeProcess.getSubProcess().getId());
-                if (checkPermission(nodeProcess.getSubProcess())) {
-                    element.setReadPermission(true);
+        if (element.isEmbedded()) {
+            boolean b = ApplicationContextFactory.getProcessLogDAO().isNodeEntered(process, element.getNodeId());
+            element.setReadPermission(b);
+            element.setSubprocessId(process.getId());
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessesByName(element.getSubprocessName());
+            element.setSubprocessName(subprocessDefinition.getNodeId());
+        } else {
+            for (NodeProcess nodeProcess : nodeProcesses) {
+                if (Objects.equal(nodeProcess.getNodeId(), element.getNodeId())) {
+                    element.setSubprocessId(nodeProcess.getSubProcess().getId());
+                    if (checkPermission(nodeProcess.getSubProcess())) {
+                        element.setReadPermission(true);
+                    }
+                    break;
                 }
             }
         }

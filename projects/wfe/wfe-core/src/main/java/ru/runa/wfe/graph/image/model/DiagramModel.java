@@ -29,6 +29,7 @@ import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 
 import com.google.common.collect.Maps;
 
@@ -85,7 +86,11 @@ public class DiagramModel {
 
     @SuppressWarnings("unchecked")
     public static DiagramModel load(ProcessDefinition definition) {
-        byte[] gpdBytes = definition.getFileDataNotNull(IFileDataProvider.GPD_XML_FILE_NAME);
+        String fileName = IFileDataProvider.GPD_XML_FILE_NAME;
+        if (definition instanceof SubprocessDefinition) {
+            fileName = definition.getNodeId() + "." + fileName;
+        }
+        byte[] gpdBytes = definition.getFileDataNotNull(fileName);
         DiagramModel diagramModel = new DiagramModel();
         Document document = XmlUtils.parseWithoutValidation(gpdBytes);
         Element root = document.getRootElement();

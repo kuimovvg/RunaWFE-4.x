@@ -43,11 +43,14 @@ public class SubprocessGraphElementPresentation extends GraphElementPresentation
      * Name of subprocess.
      */
     private String subprocessName;
+    private boolean embedded;
 
     @Override
     public void initialize(Node node, NodeModel model) {
         super.initialize(node, model);
-        this.subprocessName = ((SubProcessState) node).getSubProcessName();
+        SubProcessState subProcessState = (SubProcessState) node;
+        this.subprocessName = subProcessState.getSubProcessName();
+        this.embedded = subProcessState.isEmbedded();
     }
 
     @Override
@@ -90,5 +93,13 @@ public class SubprocessGraphElementPresentation extends GraphElementPresentation
      */
     public String getSubprocessName() {
         return subprocessName;
+    }
+    
+    public void setSubprocessName(String subprocessName) {
+        this.subprocessName = subprocessName;
+    }
+    
+    public boolean isEmbedded() {
+        return embedded;
     }
 }

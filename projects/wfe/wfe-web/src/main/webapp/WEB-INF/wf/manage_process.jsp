@@ -30,6 +30,7 @@ function Reload() {
    $("#graph").attr("src", src);
 }  
 </script>
+	<script type="text/javascript" src="<html:rewrite page="/js/embeddedsubprocessutils.js" />">c=0;</script>
 
 <% } %>
 
@@ -61,7 +62,7 @@ function Reload() {
 			<wf:showProcessGraphLink identifiableId='<%=id %>' href='<%= "/show_process_graph.do?" + parameterName+ "=" + id + "&taskId=" + taskId + "&childProcessId=" + childProcessId %>'  />
 		<% } %>
 		</td>
-		<td width="150" align="right">
+		<td width="200" align="right">
 			<wf:showTasksHistoryLink identifiableId='<%=id %>' href='<%= "/show_tasks_history.do?" + parameterName+ "=" + id %>'  />
 		</td>
 	</tr>
@@ -69,7 +70,7 @@ function Reload() {
 		<td align="right">
 			<wf:showHistoryLink identifiableId='<%=id %>' href='<%= "/show_history.do?" + parameterName+ "=" + id %>'  />
 		</td>
-		<td align="right">
+		<td width="200" align="right">
 			<wf:showGanttDiagramLink identifiableId='<%=id %>' href='<%= "/show_gantt_diagram.do?" + parameterName+ "=" + id %>'  />
 		</td>
 	</tr>
@@ -78,7 +79,7 @@ function Reload() {
 		<td align="right">
 			<wf:showGraphHistoryLink identifiableId='<%=id %>' href='<%= "/show_graph_history.do?" + parameterName+ "=" + id %>'  />
 		</td>
-		<td align="right">
+		<td width="200" align="right">
 			<wf:updatePermissionsOnIdentifiableLink identifiableId='<%=id %>' href='<%= "/manage_process_permissions.do?" + parameterName+ "=" + id %>'  />
 		</td>
 	</tr>

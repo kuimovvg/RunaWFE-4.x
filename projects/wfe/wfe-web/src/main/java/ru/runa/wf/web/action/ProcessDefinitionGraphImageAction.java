@@ -27,15 +27,14 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.common.web.form.IdForm;
+import ru.runa.common.web.form.IdNameForm;
 import ru.runa.wfe.definition.IFileDataProvider;
-import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * Created on 27.09.2005
  * 
- * @struts:action path="/processDefinitionGraphImage" name="idForm"
+ * @struts:action path="/processDefinitionGraphImage" name="idNameForm"
  *                validate="true" input =
  *                "/WEB-INF/wf/manage_process_definitions.jsp"
  */
@@ -43,13 +42,20 @@ public class ProcessDefinitionGraphImageAction extends ActionBase {
     public static final String ACTION_PATH = "/processDefinitionGraphImage";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        IdForm idForm = (IdForm) form;
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        IdNameForm form = (IdNameForm) actionForm;
         try {
-            DefinitionService definitionService = Delegates.getDefinitionService();
-            byte[] bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
+            String fileName = IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME;
+            if (form.getName() != null) {
+                fileName = form.getName() + "." + fileName;
+            }
+            byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(getLoggedUser(request), form.getId(), fileName);
             if (bytes == null) {
-                bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
+                fileName = IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME;
+                if (form.getName() != null) {
+                    fileName = form.getName() + "." + fileName;
+                }
+                bytes = Delegates.getDefinitionService().getProcessDefinitionFile(getLoggedUser(request), form.getId(), fileName);
             }
             if (bytes == null) {
                 throw new NullPointerException("No graph stream found.");

@@ -94,7 +94,7 @@ public class WebServiceTaskHandlerXSLTHelper {
     public String getProcessGraph(String processIdVariable) {
         WfVariable var = Delegates.getExecutionService().getVariable(user, task.getProcessId(), processIdVariable);
         if (var.getValue() != null) {
-            return Base64.encodeBase64String(Delegates.getExecutionService().getProcessDiagram(user, (Long) var.getValue(), null, null));
+            return Base64.encodeBase64String(Delegates.getExecutionService().getProcessDiagram(user, (Long) var.getValue(), null, null, null));
         }
         throw new InternalApplicationException("Can't create SOAP request. WFE variable " + processIdVariable + " not found");
     }
