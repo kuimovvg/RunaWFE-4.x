@@ -256,7 +256,7 @@ var simulationWebLinks
   !insertmacro createURL "Simulation web interface.URL" "http://localhost:8080/wfe" "$INSTDIR\Icons\Si_20x20_256.ico"
   !insertmacro createMenuShortcut "Start Simulation.lnk" "$INSTDIR\Simulation\bin\runSimulation.bat" " " "$INSTDIR\Simulation\bin" "$INSTDIR\Icons\SI_20x20_256.ico" "$(ShortcutDesc_StartSim)"
 ;  !insertmacro createMenuShortcut "Stop Simulation.lnk" "$INSTDIR\Simulation\bin\nircmd.exe" "exec hide $\"$INSTDIR\Simulation\bin\runBatch.bat$\" shutdown.bat -S -s jnp://localhost:10099" "$INSTDIR\Simulation\bin" "$INSTDIR\Icons\SI_20x20_256.ico" "$(ShortcutDesc_StopSim)"
-  !insertmacro Runa_SetOutPath "$INSTDIR\Simulation\standalone\deployments\runawfe.ear"
+  !insertmacro Runa_SetOutPath "$INSTDIR\Simulation\standalone\wfe.custom"
   ${if} "$simulationWebLinks" == "1"
     ; Login links must be available
   ${else}
@@ -268,8 +268,9 @@ var simulationWebLinks
   SetShellVarContext all
   !insertmacro Runa_SetOutPath "$INSTDIR\WFEServer"
   !insertmacro installJbossSeq WFEServer
-  !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\WFEServer\standalone\deployments\runawfe.ear"
-  File /r "${BuildRoot}\wfe-botstation-config\standalone\deployments\runawfe.ear\*"
+  !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\WFEServer\standalone\deployments"
+  File /r "${BuildRoot}\wfe-botstation-config\standalone\deployments\runawfe.ear"
+  !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\WFEServer\standalone\wfe.custom"
   Push "wfe_server"                            #text to be replaced
   Push $WFEServerAddress                       #replace with
   Push "$INSTDIR\WFEServer\standalone\deployments\runawfe.ear\af_delegate.properties"   #file to replace in
@@ -284,8 +285,8 @@ var simulationWebLinks
   SetShellVarContext all
   !insertmacro Runa_SetOutPath "$INSTDIR\WFEServer"
   !insertmacro installJbossSeq WFEServer
-  !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\WFEServer\standalone\deployments\runawfe.ear"
-  File /r "${BuildRoot}\wfe-server-config\standalone\deployments\runawfe.ear\*"
+  !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\WFEServer\standalone\deployments"
+  File /r "${BuildRoot}\wfe-server-config\standalone\deployments" # TODO
 
   Push "8080"                               #text to be replaced
   Push $WFEServerPort                       #replace with
