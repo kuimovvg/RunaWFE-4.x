@@ -13,10 +13,6 @@
 
 	<fileSets>
 		<fileSet>
-			<directory>${project.basedir}/src/main/resources/deployment</directory>
-			<outputDirectory>jboss/standalone/deployments</outputDirectory>
-		</fileSet>
-		<fileSet>
 			<directory>${project.build.directory}/${jboss.zip.folder}/standalone/data/h2</directory>
 			<outputDirectory>jboss/standalone/data/h2</outputDirectory>
 		</fileSet>
@@ -27,8 +23,8 @@
 			<includes>
 				<include>ru.runa.wfe:wfe-ear</include>
 			</includes>
-			<unpack>true</unpack>
-			<outputDirectory>jboss/standalone/deployments/runawfe.ear</outputDirectory>
+			<outputDirectory>jboss/standalone/deployments</outputDirectory>
+			<outputFileNameMapping>runawfe.ear</outputFileNameMapping>
 		</dependencySet>
 	</dependencySets>
 
