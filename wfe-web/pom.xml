@@ -209,8 +209,8 @@
 <% 
 String pr = null;
 try {
-	java.util.ResourceBundle resources = java.util.ResourceBundle.getBundle("simulation");
-	pr = resources.getString("skipLoginLinks");
+	ru.runa.wfe.commons.PropertyResources resources = new ru.runa.wfe.commons.PropertyResources("simulation.properties");
+	pr = resources.getStringProperty("skipLoginLinks", null);
 } catch (Throwable e) {
 }
 if ( pr == null || !pr.trim().toLowerCase().equals("true") ){ 
