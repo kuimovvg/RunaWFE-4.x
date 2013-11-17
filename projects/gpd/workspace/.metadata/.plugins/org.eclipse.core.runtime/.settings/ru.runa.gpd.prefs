@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
 wfeConnectorType=jboss7.ws
 wfeServerPort=8080
+wfeServerVersion=4.0.6
