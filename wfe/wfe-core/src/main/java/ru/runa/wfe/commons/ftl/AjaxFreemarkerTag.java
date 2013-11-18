@@ -84,8 +84,16 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
         return TypeConversionUtil.convertTo(clazz, o);
     }
 
+    /**
+     * Is invoked on first (static) page rendering
+     * 
+     * @return tag html
+     */
     protected abstract String renderRequest() throws Exception;
 
+    /**
+     * Invoked on ajax request
+     */
     public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
     }
 
