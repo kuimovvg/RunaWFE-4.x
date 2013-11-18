@@ -24,13 +24,16 @@ import org.w3c.dom.Text;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.VariableFormatRegistry;
-import ru.runa.gpd.form.FormType;
+import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.formeditor.BaseHtmlFormType;
-import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
 import ru.runa.gpd.formeditor.ftl.MethodTag.VariableAccess;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+
+import com.google.common.collect.Maps;
+
 import freemarker.Mode;
 import freemarker.core.Environment;
 import freemarker.template.Configuration;
@@ -49,11 +52,11 @@ public class FreemarkerUtil {
     public static final String IMAGE_DIR = "/editor/plugins/FreemarkerTags/im/";
 
     private static String METHOD_ELEMENT_NAME() {
-        return WYSIWYGPlugin.useCKEditor3() ? "ftl_element" : "img";
+        return WebServerUtils.useCKEditor3() ? "ftl_element" : "img";
     }
 
     private static String OUTPUT_ELEMENT_NAME() {
-        return WYSIWYGPlugin.useCKEditor3() ? "ftl_element_output" : "img";
+        return WebServerUtils.useCKEditor3() ? "ftl_element_output" : "img";
     }
 
     private static final String ATTR_FTL_TAG_FORMAT = "ftltagformat";
@@ -313,7 +316,7 @@ public class FreemarkerUtil {
     }
 
     public static class ValidationHashModel extends VariableTypeSupportHashModel {
-        private final Map<String, Integer> usedVariables = new HashMap<String, Integer>();
+        private final Map<String, FormVariableAccess> usedVariables = Maps.newHashMap();
         private final ProcessDefinition definition;
 
         public ValidationHashModel(ProcessDefinition definition) {
@@ -321,7 +324,7 @@ public class FreemarkerUtil {
             this.definition = definition;
         }
 
-        public Map<String, Integer> getUsedVariables() {
+        public Map<String, FormVariableAccess> getUsedVariables() {
             return usedVariables;
         }
 
@@ -331,7 +334,7 @@ public class FreemarkerUtil {
             Variable variable = definition.getVariable(key, true);
             if (variable != null) {
                 if (!usedVariables.containsKey(key)) {
-                    usedVariables.put(key, FormType.READ_ACCESS);
+                    usedVariables.put(key, FormVariableAccess.READ);
                 }
                 if (stageRenderingParams) {
                     return wrap(VAR_VALUE_PLC);
@@ -342,7 +345,7 @@ public class FreemarkerUtil {
                 stageRenderingParams = true;
                 return new ValidationMethodModel(key);
             }
-            usedVariables.put(key, FormType.DOUBTFUL);
+            usedVariables.put(key, FormVariableAccess.DOUBTFUL);
             return wrap("noop");
         }
 
@@ -370,10 +373,10 @@ public class FreemarkerUtil {
                     String varName = (String) args.get(i);
                     MethodTag.Param param = tag.params.size() > i ? tag.params.get(i) : tag.params.get(tag.params.size() - 1);
                     if (param.variableAccess == VariableAccess.WRITE) {
-                        usedVariables.put(varName, FormType.WRITE_ACCESS);
+                        usedVariables.put(varName, FormVariableAccess.WRITE);
                     } else if (param.variableAccess == VariableAccess.READ) {
                         if (!VAR_VALUE_PLC.equals(varName) && !usedVariables.containsKey(varName) && !param.isRichCombo()) {
-                            usedVariables.put(varName, FormType.READ_ACCESS);
+                            usedVariables.put(varName, FormVariableAccess.READ);
                         }
                     }
                 }

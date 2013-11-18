@@ -48,7 +48,9 @@ public class ChooseFormTypeDialog extends Dialog {
         typeComboData.minimumWidth = 200;
         typeCombo.setLayoutData(typeComboData);
         for (FormType formType : FormTypeProvider.getRegisteredFormTypes()) {
-            typeCombo.add(formType.getName());
+            if (formType.isCreationAllowed()) {
+                typeCombo.add(formType.getName());
+            }
         }
         typeCombo.addSelectionListener(new SelectionAdapter() {
 

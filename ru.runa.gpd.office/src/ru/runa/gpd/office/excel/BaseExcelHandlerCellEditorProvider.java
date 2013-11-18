@@ -33,7 +33,7 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
-import ru.runa.gpd.office.resource.Messages;
+import ru.runa.gpd.office.Messages;
 import ru.runa.gpd.util.ProcessFileUtils;
 
 public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstructorProvider<ExcelModel> {

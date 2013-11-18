@@ -16,6 +16,7 @@ import org.eclipse.gef.commands.Command;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
+import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.Action;
@@ -133,7 +134,7 @@ public class CopyGraphCommand extends Command {
                             copyAction.setTargetFolder(targetFolder);
                             elements.add(copyAction);
                         }
-                        Map<String, Integer> variables = formNode.getFormVariables(copyBuffer.getSourceFolder());
+                        Map<String, FormVariableAccess> variables = formNode.getFormVariables(copyBuffer.getSourceFolder());
                         for (String varName : variables.keySet()) {
                             Variable variable = copyBuffer.getSourceDefinition().getVariable(varName, false);
                             if (variable != null) {
