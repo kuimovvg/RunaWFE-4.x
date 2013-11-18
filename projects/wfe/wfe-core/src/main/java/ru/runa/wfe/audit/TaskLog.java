@@ -43,7 +43,6 @@ public abstract class TaskLog extends ProcessLog {
     public TaskLog(Task task) {
         addAttribute(ATTR_TASK_ID, task.getId().toString());
         addAttribute(ATTR_TASK_NAME, task.getName());
-        addAttribute(ATTR_NODE_ID, task.getNodeId());
     }
 
     @Transient
@@ -53,11 +52,6 @@ public abstract class TaskLog extends ProcessLog {
             return Long.parseLong(taskIdString);
         }
         return null;
-    }
-
-    @Transient
-    public String getNodeId() {
-        return getAttribute(ATTR_NODE_ID);
     }
 
     @Transient

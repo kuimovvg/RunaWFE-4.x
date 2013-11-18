@@ -80,7 +80,7 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
     private Severity severity = Severity.DEBUG;
     private HashMap<String, String> attributes = Maps.newHashMap();
     private byte[] bytes;
-    // TODO add (String nodeId) to accelerate access to specified node logs
+    private String nodeId;
 
     public ProcessLog() {
     }
@@ -114,6 +114,15 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
 
     public void setTokenId(Long tokenId) {
         this.tokenId = tokenId;
+    }
+
+    @Column(name = "NODE_ID")
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
     }
 
     @Column(name = "LOG_DATE", nullable = false)
