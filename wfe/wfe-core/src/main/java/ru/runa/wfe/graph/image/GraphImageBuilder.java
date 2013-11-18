@@ -112,8 +112,7 @@ public class GraphImageBuilder {
             }
             for (Transition transition : node.getLeavingTransitions()) {
                 Node nodeTo;
-                if (transition.getTo().getParent() instanceof SubprocessDefinition 
-                        && !(processDefinition instanceof SubprocessDefinition)) {
+                if (transition.getTo().getParent() instanceof SubprocessDefinition && !(processDefinition instanceof SubprocessDefinition)) {
                     nodeTo = ((SubprocessDefinition) transition.getTo().getParent()).getArrivingNode();
                 } else {
                     nodeTo = transition.getTo();

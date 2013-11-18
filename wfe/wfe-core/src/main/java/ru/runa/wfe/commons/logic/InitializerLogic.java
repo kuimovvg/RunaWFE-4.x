@@ -39,6 +39,7 @@ import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
+import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
 import ru.runa.wfe.commons.dbpatch.impl.ExpandDescriptionsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
 import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
@@ -47,6 +48,7 @@ import ru.runa.wfe.commons.dbpatch.impl.PermissionMappingPatch403;
 import ru.runa.wfe.commons.dbpatch.impl.TaskEndDateRemovalPatch;
 import ru.runa.wfe.commons.dbpatch.impl.TaskOpenedByExecutorsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.TransitionLogPatch;
+import ru.runa.wfe.job.impl.JobTask;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.user.Actor;
@@ -103,6 +105,7 @@ public class InitializerLogic {
         dbPatches.add(ExpandDescriptionsPatch.class);
         // 4.1.0
         dbPatches.add(TaskOpenedByExecutorsPatch.class);
+        dbPatches.add(AddNodeIdToProcessLogPatch.class);
     };
 
     @Autowired
@@ -147,6 +150,7 @@ public class InitializerLogic {
                 localizations.addAll(LocalizationParser.parseLocalizations(stream));
             }
             localizationDAO.saveLocalizations(localizations, false);
+            JobTask.setSystemStartupCompleted(true);
         } catch (Exception e) {
             log.error("initialization failed", e);
         }

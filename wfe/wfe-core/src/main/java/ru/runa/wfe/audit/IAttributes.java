@@ -2,7 +2,6 @@ package ru.runa.wfe.audit;
 
 public interface IAttributes {
     static final String ATTR_ACTION = "action";
-    static final String ATTR_NODE_ID = "nodeId";
     static final String ATTR_NODE_NAME = "nodeName";
     static final String ATTR_NODE_TYPE = "nodeType";
     static final String ATTR_NODE_ID_FROM = "nodeIdFrom";
