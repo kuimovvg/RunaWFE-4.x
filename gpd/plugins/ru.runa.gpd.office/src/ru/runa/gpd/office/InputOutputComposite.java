@@ -18,7 +18,6 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.office.resource.Messages;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.ProcessFileUtils;

@@ -8,8 +8,8 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
+import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
@@ -37,10 +37,10 @@ public class ValidationUtil {
         Map<String, Map<String, ValidatorConfig>> formFieldConfigs = new HashMap<String, Map<String, ValidatorConfig>>();
         IFile formFile = IOUtils.getAdjacentFile(adjacentFile, formNode.getFormFileName());
         if (formFile.exists()) {
-            Map<String, Integer> variableNames = FormTypeProvider.getFormType(formNode.getFormType()).getFormVariableNames(formFile, formNode);
+            Map<String, FormVariableAccess> variableNames = FormTypeProvider.getFormType(formNode.getFormType()).getFormVariableNames(formFile, formNode);
             //ValidatorDefinition requiredDefinition = getValidatorDefinition(ValidatorDefinition.REQUIRED_VALIDATOR_NAME);
             for (String varName : variableNames.keySet()) {
-                if (variableNames.get(varName) == FormType.WRITE_ACCESS && formNode.getProcessDefinition().getVariableNames(true).contains(varName)) {
+                if (variableNames.get(varName) == FormVariableAccess.WRITE && formNode.getProcessDefinition().getVariableNames(true).contains(varName)) {
                     Map<String, ValidatorConfig> configs = new HashMap<String, ValidatorConfig>();
                     // add required validator 
                     //configs.put(ValidatorDefinition.REQUIRED_VALIDATOR_NAME, requiredDefinition.create(Messages.getString("Validation.DefaultRequired")));

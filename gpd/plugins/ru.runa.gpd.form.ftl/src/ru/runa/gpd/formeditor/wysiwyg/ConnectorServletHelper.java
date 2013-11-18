@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 
@@ -25,17 +25,17 @@ public class ConnectorServletHelper {
             File[] resourceFiles = dir.listFiles(new ConnectorServletHelper.FileExtensionFilter());
             for (File file : resourceFiles) {
                 if (!file.isDirectory() && !syncronizations.contains(file.getAbsolutePath())) {
-                    IOUtils.copyFileToDir(file, WYSIWYGPlugin.getDefault().FCK_RESOURCES_FOLDER());
+                    IOUtils.copyFileToDir(file, WebServerUtils.getEditorDirectory());
                     syncronizations.add(file.getAbsolutePath());
                 }
             }
-            File formCssFile = new File(WYSIWYGPlugin.getDefault().FCK_RESOURCES_FOLDER(), ParContentProvider.FORM_CSS_FILE_NAME);
+            File formCssFile = new File(WebServerUtils.getEditorDirectory(), ParContentProvider.FORM_CSS_FILE_NAME);
             if (formCssFile.exists()) {
                 formCssFile.delete();
             }
             formCssFile = new File(dir, ParContentProvider.FORM_CSS_FILE_NAME);
             if (formCssFile.exists()) {
-                IOUtils.copyFileToDir(formCssFile, WYSIWYGPlugin.getDefault().FCK_RESOURCES_FOLDER());
+                IOUtils.copyFileToDir(formCssFile, WebServerUtils.getEditorDirectory());
             }
         } catch (IOException e) {
             PluginLogger.logError(e);

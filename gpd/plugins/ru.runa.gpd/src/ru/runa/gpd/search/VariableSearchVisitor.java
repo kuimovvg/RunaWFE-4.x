@@ -27,6 +27,7 @@ import org.eclipse.search.ui.text.Match;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
+import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskType;
@@ -194,7 +195,7 @@ public class VariableSearchVisitor {
             ElementMatch nodeElementMatch = new ElementMatch(formNode, definitionFile, ElementMatch.CONTEXT_SWIMLANE);
             if (formNode.hasForm()) {
                 IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getFormFileName());
-                Map<String, Integer> formVariables = formNode.getFormVariables((IFolder) definitionFile.getParent());
+                Map<String, FormVariableAccess> formVariables = formNode.getFormVariables((IFolder) definitionFile.getParent());
                 ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM);
                 elementMatch.setParent(nodeElementMatch);
                 int matchesCount = 0;

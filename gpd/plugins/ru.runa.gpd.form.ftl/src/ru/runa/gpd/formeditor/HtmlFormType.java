@@ -1,9 +1,11 @@
 package ru.runa.gpd.formeditor;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.model.FormNode;
+
+import com.google.common.collect.Maps;
 
 public class HtmlFormType extends BaseHtmlFormType {
     @Override
@@ -12,7 +14,7 @@ public class HtmlFormType extends BaseHtmlFormType {
     }
 
     @Override
-    protected Map<String, Integer> getTypeSpecificVariableNames(FormNode formNode, byte[] formBytes) throws Exception {
-        return new HashMap<String, Integer>();
+    protected Map<String, FormVariableAccess> getTypeSpecificVariableNames(FormNode formNode, byte[] formBytes) throws Exception {
+        return Maps.newHashMap();
     }
 }

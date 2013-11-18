@@ -53,21 +53,15 @@
    	<extension
          point="ru.runa.gpd.form.quick.quickTemplates">
       <template
-            filename="output.template"
-            label="output"
-            name="output"
-            enabled="true">
-      </template>
-      <template
             enabled="true"
             filename="table2ColumnsLayoutWideGrayed.ftl"
-            label="Table 2 columns layout wide grayed"
+            label="%template.table2ColumnsLayoutWideGrayed"
             name="table2ColumnsLayoutWideGrayed">
       </template>
       <template
             enabled="true"
             filename="table2ColumnsLayout.ftl"
-            label="Table 2 columns layout"
+            label="%template.table2ColumnsLayout"
             name="table2ColumnsLayout">
       </template>
    	</extension>

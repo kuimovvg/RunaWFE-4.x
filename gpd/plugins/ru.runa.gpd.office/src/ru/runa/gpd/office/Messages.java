@@ -1,11 +1,10 @@
-package ru.runa.gpd.office.resource;
+package ru.runa.gpd.office;
 
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class Messages {
-    private static final String BUNDLE_NAME = "ru.runa.gpd.office.resource.messages";
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("plugin");
 
     public static String getString(String key) {
         try {

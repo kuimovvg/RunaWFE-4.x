@@ -11,9 +11,6 @@ import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.FormNode;
 
 public abstract class FormType {
-    public static final Integer READ_ACCESS = 1;
-    public static final Integer WRITE_ACCESS = 2;
-    public static final Integer DOUBTFUL = 3;
     private String type;
     private String name;
 
@@ -25,11 +22,22 @@ public abstract class FormType {
         return true;
     }
 
+    /**
+     * Open form editor.
+     */
     public abstract IEditorPart openForm(IFile formFile, FormNode formNode) throws CoreException;
 
-    public abstract Map<String, Integer> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception;
+    /**
+     * Retrieve variables defined in form.
+     */
+    public abstract Map<String, FormVariableAccess> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception;
 
-    public abstract void validate(IFile formFile, FormNode formNode, List<ValidationError> errors);
+    /**
+     * Additional form validation.
+     */
+    public void validate(IFile formFile, FormNode formNode, List<ValidationError> errors) throws Exception {
+        
+    }
 
     public String getType() {
         return type;

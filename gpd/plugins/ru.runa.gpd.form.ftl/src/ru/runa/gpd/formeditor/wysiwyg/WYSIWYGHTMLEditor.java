@@ -37,17 +37,16 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import com.google.common.base.Preconditions;
-
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
+import ru.runa.gpd.formeditor.resources.Messages;
 import ru.runa.gpd.formeditor.vartag.VarTagUtil;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
-import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.EditorUtils;
@@ -57,6 +56,8 @@ import ru.runa.gpd.util.VariableUtils;
 import tk.eclipse.plugin.htmleditor.HTMLPlugin;
 import tk.eclipse.plugin.htmleditor.editors.HTMLConfiguration;
 import tk.eclipse.plugin.htmleditor.editors.HTMLSourceEditor;
+
+import com.google.common.base.Preconditions;
 
 /**
  * The WYSIWYG HTML editor using <a
@@ -219,15 +220,15 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 }
             });
             addPage(browser);
-            setPageText(pageNumber++, WYSIWYGPlugin.getResourceString("wysiwyg.design.tab_name"));
+            setPageText(pageNumber++, Messages.getString("wysiwyg.design.tab_name"));
         } catch (Throwable th) {
-            PluginLogger.logError(WYSIWYGPlugin.getResourceString("wysiwyg.design.create_error"), th);
+            PluginLogger.logError(Messages.getString("wysiwyg.design.create_error"), th);
         }
         try {
             addPage(sourceEditor, getEditorInput());
-            setPageText(pageNumber++, WYSIWYGPlugin.getResourceString("wysiwyg.source.tab_name"));
+            setPageText(pageNumber++, Messages.getString("wysiwyg.source.tab_name"));
         } catch (Exception ex) {
-            PluginLogger.logError(WYSIWYGPlugin.getResourceString("wysiwyg.source.create_error"), ex);
+            PluginLogger.logError(Messages.getString("wysiwyg.source.create_error"), ex);
         }
         if (browser == null) {
             return;
@@ -240,14 +241,14 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     try {
-                        monitor.beginTask(WYSIWYGPlugin.getResourceString("editor.task.init_wysiwyg"), 10);
-                        WYSIWYGPlugin.getDefault().startWebServer(monitor, 9);
-                        monitor.subTask(WYSIWYGPlugin.getResourceString("editor.subtask.waiting_init"));
+                        monitor.beginTask(Messages.getString("editor.task.init_wysiwyg"), 10);
+                        WebServerUtils.startWebServer(monitor, 9);
+                        monitor.subTask(Messages.getString("editor.subtask.waiting_init"));
                         display.asyncExec(new Runnable() {
                             @Override
                             public void run() {
                                 monitorDialog.setCancelable(true);
-                                browser.setUrl(WYSIWYGPlugin.getDefault().getEditorURL());
+                                browser.setUrl(WebServerUtils.getEditorURL());
                             }
                         });
                         monitorDialog.setCancelable(true);
@@ -274,7 +275,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                     try {
                         monitorDialog.run(true, false, runnable);
                     } catch (InvocationTargetException e) {
-                        PluginLogger.logError(WYSIWYGPlugin.getResourceString("wysiwyg.design.create_error"), e.getTargetException());
+                        PluginLogger.logError(Messages.getString("wysiwyg.design.create_error"), e.getTargetException());
                     } catch (InterruptedException e) {
                         WYSIWYGPlugin.logError("Web editor page", e);
                     }
@@ -282,7 +283,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             });
             savedHTML = getSourceDocumentHTML();
         } catch (Exception e) {
-            MessageDialog.openError(getContainer().getShell(), WYSIWYGPlugin.getResourceString("wysiwyg.design.create_error"), e.getCause().getMessage());
+            MessageDialog.openError(getContainer().getShell(), Messages.getString("wysiwyg.design.create_error"), e.getCause().getMessage());
             WYSIWYGPlugin.logError("Web editor page", e);
         }
     }
