@@ -14,10 +14,12 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
 import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
+import ru.runa.gpd.formeditor.resources.Messages;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.IOUtils;
 
@@ -36,7 +38,7 @@ public class FtlTagSupportServlet extends HttpServlet {
             if ("CustomizeCommonDialog".equals(commandStr)) {
                 String dialogPath = request.getParameter("dialog");
                 InputStream stream = FileLocator.openStream(WYSIWYGPlugin.getDefault().getBundle(),
-                        new Path(dialogPath.replace("http://localhost:" + WYSIWYGPlugin.SERVER_PORT, "CKEditor")), false);
+                        new Path(dialogPath.replace("http://localhost:" + WebServerUtils.SERVER_PORT, "CKEditor")), false);
                 String fileContent = IOUtils.readStream(stream);
                 {
                     int idx = fileContent.indexOf("type:'text'");
@@ -154,7 +156,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                         resultHtml.append("</select>");
                     } else if (param.isRichCombo()) {
                         resultHtml.append("<select id=\"pc_").append(paramCounter).append("\">");
-                        resultHtml.append("<option value=\"\">").append(WYSIWYGPlugin.getResourceString("message.choose")).append("</option>");
+                        resultHtml.append("<option value=\"\">").append(Messages.getString("message.choose")).append("</option>");
                         for (OptionalValue option : param.optionalValues) {
                             if (option.container) {
                                 List<Variable> variables;
@@ -176,7 +178,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                             }
                         }
                         resultHtml.append("</select>");
-                        resultHtml.append(WYSIWYGPlugin.getResourceString("message.richcombo.or")).append("<br />");
+                        resultHtml.append(Messages.getString("message.richcombo.or")).append("<br />");
                         resultHtml.append("<input id=\"pt_").append(paramCounter).append("\"/>");
                     } else {
                         resultHtml.append("<input id=\"pt_").append(paramCounter).append("\"/>");

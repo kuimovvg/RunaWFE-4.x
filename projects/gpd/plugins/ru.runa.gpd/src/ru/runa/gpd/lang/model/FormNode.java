@@ -1,6 +1,5 @@
 package ru.runa.gpd.lang.model;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,13 +11,17 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
+import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorParser;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 public abstract class FormNode extends SwimlanedNode {
     public static final String EMPTY = "";
@@ -135,9 +138,37 @@ public abstract class FormNode extends SwimlanedNode {
             }
         }
         if (hasForm()) {
-            FormType formType = FormTypeProvider.getFormType(this.formType);
-            IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);
-            formType.validate(formFile, this, errors);
+            try {
+                IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);
+                FormType formType = FormTypeProvider.getFormType(this.formType);
+                Map<String, FormVariableAccess> formVars = formType.getFormVariableNames(formFile, this);
+                List<String> allVariableNames = getProcessDefinition().getVariableNames(true);
+                Set<String> validationVariables = getValidationVariables((IFolder) formFile.getParent());
+                for (String formVarName : formVars.keySet()) {
+                    if (formVars.get(formVarName) == FormVariableAccess.DOUBTFUL) {
+                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableTagUnknown", formVarName));
+                    } else if (!validationVariables.contains(formVarName) && formVars.get(formVarName) == FormVariableAccess.WRITE) {
+                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableOutOfValidation", formVarName));
+                    } else if (!allVariableNames.contains(formVarName)) {
+                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableDoesNotExist", formVarName));
+                    }
+                }
+                for (String validationVarName : validationVariables) {
+                    if (ValidatorConfig.GLOBAL_FIELD_ID.equals(validationVarName)) {
+                        continue;
+                    }
+                    if (!formVars.keySet().contains(validationVarName)) {
+                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.validationVariableOutOfForm", validationVarName));
+                    }
+                    if (!allVariableNames.contains(validationVarName)) {
+                        errors.add(ValidationError.createLocalizedError(this, "formNode.validationVariableDoesNotExist", validationVarName));
+                    }
+                }
+                formType.validate(formFile, this, errors);
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("Error validating form: '" + getName() + "'", e);
+                errors.add(ValidationError.createLocalizedWarning(this, "formNode.validationUnknownError", e));
+            }
         }
     }
 
@@ -149,9 +180,9 @@ public abstract class FormNode extends SwimlanedNode {
         return ValidatorParser.parseValidatorConfigs(validationFile).keySet();
     }
 
-    public Map<String, Integer> getFormVariables(IFolder definitionFile) throws Exception {
+    public Map<String, FormVariableAccess> getFormVariables(IFolder definitionFile) throws Exception {
         if (!hasForm()) {
-            return new HashMap<String, Integer>();
+            return Maps.newHashMap();
         }
         FormType formType = FormTypeProvider.getFormType(this.formType);
         IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);

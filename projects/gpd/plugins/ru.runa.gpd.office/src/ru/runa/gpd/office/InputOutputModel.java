@@ -7,7 +7,6 @@ import org.dom4j.Element;
 
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.office.resource.Messages;
 
 import com.google.common.base.Strings;
 

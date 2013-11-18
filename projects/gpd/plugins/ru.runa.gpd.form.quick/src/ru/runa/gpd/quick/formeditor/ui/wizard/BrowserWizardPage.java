@@ -12,8 +12,8 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
+import ru.runa.gpd.quick.Messages;
 import ru.runa.gpd.quick.formeditor.util.FormPresentationUtils;
-import ru.runa.gpd.quick.resource.Messages;
 
 public class BrowserWizardPage extends WizardPage {
 	private String htmlContent;

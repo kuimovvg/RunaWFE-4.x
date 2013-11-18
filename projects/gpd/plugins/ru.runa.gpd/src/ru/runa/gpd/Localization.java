@@ -5,8 +5,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 public class Localization {
-    private static final String BUNDLE_NAME = "plugin";
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle("plugin");
 
     private Localization() {
     }
