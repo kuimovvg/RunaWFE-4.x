@@ -143,12 +143,16 @@ public class ResourcesManager {
     }
 
     private static AppServerType getServerType() {
-        String enumValue = PROPERTIES.getStringPropertyNotNull("application.server.type").toUpperCase();
+        String enumValue = PROPERTIES.getStringPropertyNotNull("application.server.type");
         return AppServerType.valueOf(enumValue);
     }
 
     public static String getHttpServerUrl() {
         return applyPattern("http://${server.name}:${server.port}/wfe");
+    }
+
+    public static String getHttpVersionUrl() {
+        return applyPattern("http://${server.name}:${server.port}/version");
     }
 
     public static String getWebServiceUrl() {
