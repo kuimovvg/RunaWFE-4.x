@@ -220,10 +220,6 @@ public class MultiProcessState extends SubProcessState {
                 }
             }
         }
-
-        // fire the subprocess ended event
-        fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_END);
-
         for (Process subProcess : subprocesses) {
             executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), subProcess));
         }

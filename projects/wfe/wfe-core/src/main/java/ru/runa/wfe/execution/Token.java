@@ -54,7 +54,6 @@ import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
-import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -266,11 +265,7 @@ public class Token implements Serializable {
     public void signal(ExecutionContext executionContext, Transition transition) {
         if (!hasEnded()) {
             Node node = getNode(executionContext.getProcessDefinition());
-            // fire the event before-signal
-            node.fireEvent(executionContext, Event.EVENTTYPE_BEFORE_SIGNAL);
             node.leave(executionContext, transition);
-            // fire the event after-signal
-            node.fireEvent(executionContext, Event.EVENTTYPE_AFTER_SIGNAL);
         }
     }
 

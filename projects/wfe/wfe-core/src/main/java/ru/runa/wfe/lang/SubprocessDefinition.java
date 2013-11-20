@@ -6,6 +6,7 @@ import java.util.Map;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.lang.bpmn2.EndToken;
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.collect.Lists;
@@ -13,8 +14,6 @@ import com.google.common.collect.Lists;
 public class SubprocessDefinition extends ProcessDefinition {
     private static final long serialVersionUID = 1L;
     private ProcessDefinition parentProcessDefinition;
-    private SubProcessState subProcessState;
-    private Node arrivingNode;
 
     protected SubprocessDefinition() {
     }
@@ -32,15 +31,12 @@ public class SubprocessDefinition extends ProcessDefinition {
         }
         int endNodesCount = 0;
         for (Node node : nodes) {
-            // if (node instanceof EndNode) {
-            // throw new
-            // InternalApplicationException("There should be EmbeddedSubprocessEndNode");
-            // }
-            // if (node instanceof EndToken || node instanceof
-            // ru.runa.wfe.lang.jpdl.EndToken) {
-            // throw new
-            // RuntimeException("In embedded subprocess it is not allowed end token state");
-            // } TODO
+            if (node instanceof EndNode) {
+                throw new InternalApplicationException("There should be EmbeddedSubprocessEndNode");
+            }
+            if (node instanceof EndToken || node instanceof ru.runa.wfe.lang.jpdl.EndToken) {
+                throw new RuntimeException("In embedded subprocess it is not allowed end token state");
+            }
             if (node instanceof EmbeddedSubprocessEndNode) {
                 endNodesCount++;
             }
@@ -50,6 +46,11 @@ public class SubprocessDefinition extends ProcessDefinition {
         }
     }
 
+    @Override
+    public EmbeddedSubprocessStartNode getStartStateNotNull() {
+        return (EmbeddedSubprocessStartNode) super.getStartStateNotNull();
+    }
+    
     public List<EmbeddedSubprocessEndNode> getEndNodes() {
         List<EmbeddedSubprocessEndNode> list = Lists.newArrayList();
         for (Node node : nodes) {
@@ -123,19 +124,4 @@ public class SubprocessDefinition extends ProcessDefinition {
         return parentProcessDefinition.getSwimlaneNotNull(swimlaneName);
     }
 
-    public SubProcessState getSubProcessState() {
-        return subProcessState;
-    }
-
-    public void setSubProcessState(SubProcessState subProcessState) {
-        this.subProcessState = subProcessState;
-    }
-
-    public Node getArrivingNode() {
-        return arrivingNode;
-    }
-
-    public void setArrivingNode(Node arrivingNode) {
-        this.arrivingNode = arrivingNode;
-    }
 }

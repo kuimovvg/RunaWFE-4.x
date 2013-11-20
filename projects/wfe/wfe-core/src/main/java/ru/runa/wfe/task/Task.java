@@ -240,7 +240,7 @@ public class Task implements Assignable {
         }
         // fire the event TODO simplify
         executionContext.getProcessDefinition().getTaskNotNull(nodeId)
-                .fireEvent(new ExecutionContext(executionContext.getProcessDefinition(), this), Event.EVENTTYPE_TASK_ASSIGN);
+                .fireEvent(new ExecutionContext(executionContext.getProcessDefinition(), this), Event.TASK_ASSIGN);
     }
 
     /**
@@ -254,7 +254,7 @@ public class Task implements Assignable {
         log.debug("Ending " + this + " by " + completionBy + " with " + executor);
         // fire the task end event
         TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
-        taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_END);
+        taskDefinition.fireEvent(executionContext, Event.TASK_END);
         switch (completionBy) {
         case TIMER:
             executionContext.addLog(new TaskExpiredLog(this));

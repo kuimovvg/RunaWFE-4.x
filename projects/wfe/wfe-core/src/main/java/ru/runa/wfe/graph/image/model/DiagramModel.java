@@ -53,7 +53,11 @@ public class DiagramModel {
     }
 
     public NodeModel getNodeNotNull(String name) {
-        return nodes.get(name);
+        NodeModel model = nodes.get(name);
+        if (model == null) {
+            throw new NullPointerException("no model found by name " + name);
+        }
+        return model;
     }
 
     public int getHeight() {

@@ -4,7 +4,6 @@ import java.util.Set;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
-import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
@@ -13,12 +12,6 @@ import com.google.common.collect.Sets;
 
 public class EndToken extends Node {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER };
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
-    }
 
     @Override
     public NodeType getNodeType() {

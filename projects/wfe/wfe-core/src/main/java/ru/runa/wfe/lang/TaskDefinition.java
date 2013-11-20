@@ -29,19 +29,11 @@ import com.google.common.base.Preconditions;
 public class TaskDefinition extends GraphElement {
     private static final long serialVersionUID = 1L;
 
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_TASK_CREATE, Event.EVENTTYPE_TASK_ASSIGN,
-            Event.EVENTTYPE_TASK_START, Event.EVENTTYPE_TASK_END };
-
     protected String deadlineDuration;
     protected InteractionNode node;
     protected SwimlaneDefinition swimlaneDefinition;
     protected boolean reassignSwimlane;
     protected boolean ignoreSubsitutionRules;
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
-    }
 
     @Override
     public void validate() {

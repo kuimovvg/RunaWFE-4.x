@@ -30,25 +30,16 @@ import com.google.common.collect.Lists;
 public class Event implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static final String EVENTTYPE_TRANSITION = "transition";
-    public static final String EVENTTYPE_BEFORE_SIGNAL = "before-signal";
-    public static final String EVENTTYPE_AFTER_SIGNAL = "after-signal";
-    public static final String EVENTTYPE_PROCESS_START = "process-start";
-    public static final String EVENTTYPE_PROCESS_END = "process-end";
-    public static final String EVENTTYPE_NODE_ENTER = "node-enter";
-    public static final String EVENTTYPE_NODE_LEAVE = "node-leave";
-    public static final String EVENTTYPE_SUPERSTATE_ENTER = "superstate-enter";
-    public static final String EVENTTYPE_SUPERSTATE_LEAVE = "superstate-leave";
-    // public static final String EVENTTYPE_SUBPROCESS_CREATED =
-    // "subprocess-created";
-    public static final String EVENTTYPE_SUBPROCESS_START = "subprocess-start";
-    public static final String EVENTTYPE_SUBPROCESS_END = "subprocess-end";
-    public static final String EVENTTYPE_TASK_CREATE = "task-create";
-    public static final String EVENTTYPE_TASK_ASSIGN = "task-assign";
-    public static final String EVENTTYPE_TASK_START = "task-start";
-    public static final String EVENTTYPE_TASK_END = "task-end";
-    public static final String EVENTTYPE_TIMER_CREATE = "timer-create";
-    public static final String EVENTTYPE_TIMER = "timer";
+    public static final String TRANSITION = "transition";
+        
+    public static final String NODE_ENTER = "node-enter";
+    public static final String NODE_LEAVE = "node-leave";
+            
+    public static final String TASK_CREATE = "task-create";
+    public static final String TASK_ASSIGN = "task-assign";
+    public static final String TASK_END = "task-end";
+    
+    public static final String TIMER = "timer";
 
     private final String eventType;
     private final List<Action> actions = Lists.newArrayList();

@@ -23,19 +23,12 @@ package ru.runa.wfe.lang.bpmn2;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
 
 public class EndToken extends Node {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER };
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
-    }
 
     @Override
     public NodeType getNodeType() {

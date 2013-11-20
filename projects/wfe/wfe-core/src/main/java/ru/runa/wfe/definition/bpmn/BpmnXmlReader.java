@@ -23,6 +23,7 @@ import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.BaseTaskNode;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EmbeddedSubprocessEndNode;
+import ru.runa.wfe.lang.EmbeddedSubprocessStartNode;
 import ru.runa.wfe.lang.EndNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.GraphElement;
@@ -125,7 +126,6 @@ public class BpmnXmlReader {
 
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
-        nodeTypes.put(START_EVENT, StartState.class);
         nodeTypes.put(USER_TASK, TaskNode.class);
         nodeTypes.put(INTERMEDIATE_EVENT, WaitState.class);
         nodeTypes.put(SEND_MESSAGE, SendMessage.class);
@@ -211,6 +211,12 @@ public class BpmnXmlReader {
             Node node = null;
             if (nodeTypes.containsKey(nodeName)) {
                 node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
+            } else if (START_EVENT.equals(nodeName)) {
+                if (processDefinition instanceof SubprocessDefinition) {
+                    node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessStartNode.class);
+                } else {
+                    node = ApplicationContextFactory.createAutowiredBean(StartState.class);
+                }
             } else if (END_STATE.equals(nodeName)) {
                 Map<String, String> properties = parseExtensionProperties(element);
                 if (properties.containsKey(TOKEN)) {
@@ -310,12 +316,12 @@ public class BpmnXmlReader {
             }
         }
         createTimerAction.setDueDate(durationString);
-        String createEventType = node instanceof TaskNode ? Event.EVENTTYPE_TASK_CREATE : Event.EVENTTYPE_NODE_ENTER;
+        String createEventType = node instanceof TaskNode ? Event.TASK_CREATE : Event.NODE_ENTER;
         addAction(node, createEventType, createTimerAction);
 
         CancelTimerAction cancelTimerAction = ApplicationContextFactory.createAutowiredBean(CancelTimerAction.class);
         cancelTimerAction.setName(createTimerAction.getName());
-        String cancelEventType = node instanceof TaskDefinition ? Event.EVENTTYPE_TASK_END : Event.EVENTTYPE_NODE_LEAVE;
+        String cancelEventType = node instanceof TaskDefinition ? Event.TASK_END : Event.NODE_LEAVE;
         addAction(node, cancelEventType, cancelTimerAction);
     }
 

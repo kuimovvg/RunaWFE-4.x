@@ -31,18 +31,12 @@ import com.google.common.collect.Maps;
 
 public class SendMessage extends VariableContainerNode {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE };
 
     private String ttlDuration;
 
     @Override
     public NodeType getNodeType() {
         return NodeType.SEND_MESSAGE;
-    }
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
     }
 
     public String getTtlDuration() {

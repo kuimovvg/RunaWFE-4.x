@@ -28,7 +28,6 @@ import com.google.common.base.Preconditions;
 
 public class Transition extends GraphElement {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_TRANSITION };
 
     private Node from;
     private Node to;
@@ -43,11 +42,6 @@ public class Transition extends GraphElement {
     @Override
     public GraphElement getParent() {
         return from;
-    }
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
     }
 
     @Override
@@ -88,7 +82,7 @@ public class Transition extends GraphElement {
         executionContext.getToken().setTransitionId(getNodeId());
         executionContext.addLog(new TransitionLog(this));
         // fire the transition event (if any)
-        fireEvent(executionContext, Event.EVENTTYPE_TRANSITION);
+        fireEvent(executionContext, Event.TRANSITION);
         // pass the token to the destinationNode node
         to.enter(executionContext);
     }

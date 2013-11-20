@@ -24,7 +24,6 @@ package ru.runa.wfe.lang;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
@@ -42,7 +41,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 public class ProcessDefinition extends GraphElement implements IFileDataProvider {
     private static final long serialVersionUID = 1L;
@@ -55,18 +53,8 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     protected final Map<String, Interaction> interactions = Maps.newHashMap();
     protected final List<VariableDefinition> variables = Lists.newArrayList();
     protected final Map<String, VariableDefinition> variablesMap = Maps.newHashMap();
-    /**
-     * @deprecated remove in 4.2.0
-     */
-    protected final Set<String> taskNamesToignoreSubstitutionRules = Sets.newHashSet();
     protected ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
     protected Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
-
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_PROCESS_START, Event.EVENTTYPE_PROCESS_END,
-            Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_TASK_CREATE, Event.EVENTTYPE_TASK_ASSIGN,
-            Event.EVENTTYPE_TASK_START, Event.EVENTTYPE_TASK_END, Event.EVENTTYPE_TRANSITION, Event.EVENTTYPE_BEFORE_SIGNAL,
-            Event.EVENTTYPE_AFTER_SIGNAL, Event.EVENTTYPE_SUPERSTATE_ENTER, Event.EVENTTYPE_SUPERSTATE_LEAVE, Event.EVENTTYPE_SUBPROCESS_START,
-            Event.EVENTTYPE_SUBPROCESS_END, Event.EVENTTYPE_TIMER };
 
     protected ProcessDefinition() {
     }
@@ -98,11 +86,6 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     @Override
     public void setDescription(String description) {
         deployment.setDescription(description);
-    }
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
     }
 
     public Deployment getDeployment() {
@@ -309,15 +292,8 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     }
 
     public boolean ignoreSubsitutionRulesForTask(Task task) {
-        if (taskNamesToignoreSubstitutionRules.contains(task.getNodeId())) {
-            return true;
-        }
         InteractionNode interactionNode = (InteractionNode) getNodeNotNull(task.getNodeId());
         return interactionNode.getFirstTaskNotNull().isIgnoreSubsitutionRules();
-    }
-
-    public void addTaskNameToignoreSubstitutionRules(String nodeId) {
-        taskNamesToignoreSubstitutionRules.add(nodeId);
     }
 
     @Override
@@ -332,11 +308,33 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         embeddedSubprocesses.put(subprocessDefinition.getNodeId(), subprocessDefinition);
     }
 
-    public SubprocessDefinition getEmbeddedSubprocessesById(String id) {
+    public List<String> getEmbeddedSubprocessNodeIds() {
+        List<String> result = Lists.newArrayList();
+        for (Node node : nodes) {
+            if (node instanceof SubProcessState && ((SubProcessState) node).isEmbedded()) {
+                result.add(node.getNodeId());
+            }
+        }
+        return result;
+    }
+
+    public String getEmbeddedSubprocessNodeIdNotNull(String subprocessName) {
+        for (Node node : nodes) {
+            if (node instanceof SubProcessState) {
+                SubProcessState subProcessState = (SubProcessState) node;
+                if (subProcessState.isEmbedded() && Objects.equal(subprocessName, subProcessState.getSubProcessName())) {
+                    return node.getNodeId();
+                }
+            }
+        }
+        throw new NullPointerException("No subprocess state found for composition " + subprocessName);
+    }
+
+    public SubprocessDefinition getEmbeddedSubprocessById(String id) {
         return embeddedSubprocesses.get(id);
     }
 
-    public SubprocessDefinition getEmbeddedSubprocessesByName(String name) {
+    public SubprocessDefinition getEmbeddedSubprocessByName(String name) {
         for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
             if (Objects.equal(name, subprocessDefinition.getName())) {
                 return subprocessDefinition;
@@ -350,19 +348,18 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
             if (node instanceof SubProcessState) {
                 SubProcessState subProcessState = (SubProcessState) node;
                 if (subProcessState.isEmbedded()) {
-                    SubprocessDefinition subprocessDefinition = getEmbeddedSubprocessesByName(subProcessState.getSubProcessName());
+                    SubprocessDefinition subprocessDefinition = getEmbeddedSubprocessByName(subProcessState.getSubProcessName());
                     Preconditions.checkNotNull(subprocessDefinition, "subprocessDefinition");
-                    subprocessDefinition.setSubProcessState(subProcessState); // TODO
-                    Transition leavingTransition = subProcessState.getLeavingTransitions().get(0);
-                    subProcessState.getLeavingTransitions().clear();
-                    subProcessState.addLeavingTransition(subprocessDefinition.getStartStateNotNull().getLeavingTransitions().get(0));
-                    List<EmbeddedSubprocessEndNode> endNodes = subprocessDefinition.getEndNodes();
-                    // FIXME duplicate leaving transitions for multiple end
+                    EmbeddedSubprocessStartNode startNode = subprocessDefinition.getStartStateNotNull();
+                    startNode.addArrivingTransition(subProcessState.getArrivingTransitions().get(0));
+                    startNode.setSubProcessState(subProcessState);
+                    // TODO duplicate leaving transitions for multiple end
                     // nodes?
-                    for (EmbeddedSubprocessEndNode endNode : endNodes) {
-                        endNode.addLeavingTransition(leavingTransition);
+                    for (EmbeddedSubprocessEndNode endNode : subprocessDefinition.getEndNodes()) {
+                        endNode.addLeavingTransition(subProcessState.getLeavingTransitions().get(0));
+                        endNode.setSubProcessState(subProcessState);
                     }
-                    subprocessDefinition.setArrivingNode(leavingTransition.getTo()); // TODO
+                    //processDefinition.getNodes().remove(subProcessState);
                     processDefinition.getNodes().addAll(subprocessDefinition.getNodes());
                 }
             }

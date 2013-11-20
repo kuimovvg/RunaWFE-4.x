@@ -7,6 +7,7 @@ import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
+import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.ProcessDefinition;
 
 /**
@@ -30,7 +31,8 @@ public class TaskSubsitutionParser implements ProcessArchiveParser {
         List<Element> elements = root.elements("task");
         for (Element element : elements) {
             String nodeId = element.attributeValue("name");
-            processDefinition.addTaskNameToignoreSubstitutionRules(nodeId);
+            InteractionNode interactionNode = (InteractionNode) processDefinition.getNodeNotNull(nodeId);
+            interactionNode.getFirstTaskNotNull().setIgnoreSubsitutionRules(true);
         }
     }
 

@@ -41,11 +41,6 @@ public class SwimlaneDefinition extends GraphElement {
     private List<String> flowNodeIds;
     private String scriptingName;
 
-    @Override
-    public String[] getSupportedEventTypes() {
-        return null;
-    }
-
     public Delegation getDelegation() {
         return delegation;
     }

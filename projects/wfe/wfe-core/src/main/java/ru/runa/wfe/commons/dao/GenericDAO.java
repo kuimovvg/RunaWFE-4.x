@@ -38,6 +38,7 @@ public abstract class GenericDAO<T extends Object> extends CommonDAO {
      * @return entity or <code>null</code> if no entity found.
      */
     public T get(Long id) {
+        Preconditions.checkArgument(id != null);
         return get(entityClass, id);
     }
 
