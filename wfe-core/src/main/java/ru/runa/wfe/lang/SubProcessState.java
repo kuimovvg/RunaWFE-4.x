@@ -68,8 +68,7 @@ public class SubProcessState extends VariableContainerNode {
     @Override
     public void execute(ExecutionContext executionContext) {
         if (isEmbedded()) {
-            leave(executionContext);
-            return;
+            throw new InternalApplicationException("it's not intended for execution");
         }
         // create the subprocess
         Map<String, Object> variables = Maps.newHashMap();
@@ -94,9 +93,7 @@ public class SubProcessState extends VariableContainerNode {
 
     @Override
     public void leave(ExecutionContext executionContext, Transition transition) {
-        if (!isEmbedded()) {
-            performLeave(executionContext);
-        }
+        performLeave(executionContext);
         super.leave(executionContext, transition);
     }
 
