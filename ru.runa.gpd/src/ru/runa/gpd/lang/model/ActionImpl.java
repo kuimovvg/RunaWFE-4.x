@@ -21,7 +21,7 @@ public class ActionImpl extends Action {
         } else if (parent instanceof EndState) {
             eventType = Event.NODE_ENTER;
         } else if (parent instanceof TaskState) {
-            eventType = Event.TASK_CREATE;
+            eventType = Event.TASK_ASSIGN;
         } else if (parent instanceof Node) {
             eventType = Event.NODE_LEAVE;
         }
@@ -44,7 +44,7 @@ public class ActionImpl extends Action {
     }
 
     private static final String[] TRANSITION_EVENT_TYPES = { Event.TRANSITION };
-    private static final String[] TASK_EVENT_TYPES = { Event.TASK_CREATE, Event.TASK_START, Event.TASK_ASSIGN, Event.TASK_END };
+    private static final String[] TASK_EVENT_TYPES = { Event.TASK_CREATE, Event.TASK_ASSIGN, Event.TASK_END };
     private static final String[] START_STATE_EVENT_TYPES = { Event.NODE_LEAVE };
     private static final String[] END_STATE_EVENT_TYPES = { Event.NODE_ENTER };
     private static final String[] NODE_EVENT_TYPES = { Event.NODE_ENTER, Event.NODE_ACTION, Event.NODE_LEAVE };
