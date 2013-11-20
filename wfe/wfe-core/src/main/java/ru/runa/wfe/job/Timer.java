@@ -63,7 +63,7 @@ public class Timer extends Job {
     @Override
     public void execute(ExecutionContext executionContext) {
         try {
-            Event event = executionContext.getNode().getEvent(Event.EVENTTYPE_TIMER);
+            Event event = executionContext.getNode().getEvent(Event.TIMER);
             if (event != null) {
                 for (Action timerAction : event.getActions()) {
                     // in case of multiple timers on node we discriminate

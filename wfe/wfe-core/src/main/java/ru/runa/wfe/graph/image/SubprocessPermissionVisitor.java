@@ -67,7 +67,7 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
         if (element.isEmbedded()) {
             element.setReadPermission(true);
             element.setSubprocessId(definition.getId());
-            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessesByName(element.getSubprocessName());
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessByName(element.getSubprocessName());
             element.setSubprocessName(subprocessDefinition.getNodeId());
         } else {
             try {

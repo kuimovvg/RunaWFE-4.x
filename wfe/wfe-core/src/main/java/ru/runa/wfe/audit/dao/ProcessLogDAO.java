@@ -68,17 +68,6 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
         return result;
     }
 
-    // public List<String> getStartedSubprocessNodeIds(Process process) {
-    // List<SubprocessStartLog> logs =
-    // getHibernateTemplate().find("from SubprocessStartLog where processId=?",
-    // process.getId());
-    // List<String> result = Lists.newArrayListWithExpectedSize(logs.size());
-    // for (SubprocessStartLog log : logs) {
-    // result.add(log.getNodeId());
-    // }
-    // return result;
-    // }
-
     public boolean isNodeEntered(Process process, String nodeId) {
         return getHibernateTemplate().find("from NodeEnterLog where processId=? and nodeId=?", process.getId(), nodeId).size() > 0;
     }

@@ -90,14 +90,6 @@ public abstract class GraphElement implements Serializable {
     }
 
     /**
-     * indicative set of event types supported by this graph element. this is
-     * currently only used by the process designer to know which event types to
-     * show on a given graph element. in process definitions and at runtime,
-     * there are no constraints on the event-types.
-     */
-    public abstract String[] getSupportedEventTypes();
-
-    /**
      * Checks all prerequisites needed for execution.
      */
     public void validate() {

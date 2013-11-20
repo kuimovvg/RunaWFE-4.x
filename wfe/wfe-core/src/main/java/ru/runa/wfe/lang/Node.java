@@ -22,7 +22,6 @@
 package ru.runa.wfe.lang;
 
 import java.util.List;
-import java.util.Set;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.NodeEnterLog;
@@ -33,22 +32,14 @@ import ru.runa.wfe.execution.Token;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public abstract class Node extends GraphElement {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE,
-            Event.EVENTTYPE_BEFORE_SIGNAL, Event.EVENTTYPE_AFTER_SIGNAL };
 
     private final List<Transition> leavingTransitions = Lists.newArrayList();
-    private final Set<Transition> arrivingTransitions = Sets.newHashSet();
+    private final List<Transition> arrivingTransitions = Lists.newArrayList();
 
     public abstract NodeType getNodeType();
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
-    }
 
     @Override
     public void validate() {
@@ -61,11 +52,15 @@ public abstract class Node extends GraphElement {
     public List<Transition> getLeavingTransitions() {
         return leavingTransitions;
     }
+    
+    public String getTransitionNodeId(boolean arriving) {
+        return getNodeId();
+    }
 
     /**
      * Arriving transitions for node.
      */
-    public Set<Transition> getArrivingTransitions() {
+    public List<Transition> getArrivingTransitions() {
         return arrivingTransitions;
     }
 
@@ -150,13 +145,13 @@ public abstract class Node extends GraphElement {
     /**
      * called by a transition to pass execution to this node.
      */
-    public final void enter(ExecutionContext executionContext) {
+    public void enter(ExecutionContext executionContext) {
         Token token = executionContext.getToken();
         // update the runtime context information
         token.setNodeId(getNodeId());
         token.setNodeType(getNodeType());
         // fire the leave-node event for this node
-        fireEvent(executionContext, Event.EVENTTYPE_NODE_ENTER);
+        fireEvent(executionContext, Event.NODE_ENTER);
         executionContext.addLog(new NodeEnterLog(this));
         execute(executionContext);
     }
@@ -181,7 +176,7 @@ public abstract class Node extends GraphElement {
     public void leave(ExecutionContext executionContext, Transition transition) {
         Token token = executionContext.getToken();
         // fire the leave-node event for this node
-        fireEvent(executionContext, Event.EVENTTYPE_NODE_LEAVE);
+        fireEvent(executionContext, Event.NODE_LEAVE);
         // log this node
         executionContext.addLog(new NodeLeaveLog(this));
         if (transition == null) {

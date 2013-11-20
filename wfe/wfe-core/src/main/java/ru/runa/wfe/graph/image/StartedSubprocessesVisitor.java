@@ -67,7 +67,7 @@ public class StartedSubprocessesVisitor extends SubprocessesGraphElementAdapter 
             boolean b = ApplicationContextFactory.getProcessLogDAO().isNodeEntered(process, element.getNodeId());
             element.setReadPermission(b);
             element.setSubprocessId(process.getId());
-            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessesByName(element.getSubprocessName());
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessByName(element.getSubprocessName());
             element.setSubprocessName(subprocessDefinition.getNodeId());
         } else {
             for (NodeProcess nodeProcess : nodeProcesses) {

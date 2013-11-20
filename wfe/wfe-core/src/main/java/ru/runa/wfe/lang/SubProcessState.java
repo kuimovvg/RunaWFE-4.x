@@ -18,8 +18,6 @@ import com.google.common.collect.Maps;
 
 public class SubProcessState extends VariableContainerNode {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_SUBPROCESS_START, Event.EVENTTYPE_SUBPROCESS_END,
-            Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_BEFORE_SIGNAL, Event.EVENTTYPE_AFTER_SIGNAL };
 
     private String subProcessName;
     private boolean embedded;
@@ -31,11 +29,6 @@ public class SubProcessState extends VariableContainerNode {
     @Override
     public NodeType getNodeType() {
         return NodeType.SUBPROCESS;
-    }
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
     }
 
     @Override
@@ -128,8 +121,6 @@ public class SubProcessState extends VariableContainerNode {
                 }
             }
         }
-        // fire the subprocess ended event
-        fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_END);
         executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), subProcess));
     }
 

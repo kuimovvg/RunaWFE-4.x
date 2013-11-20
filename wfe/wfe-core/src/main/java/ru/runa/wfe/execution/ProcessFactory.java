@@ -14,7 +14,6 @@ import ru.runa.wfe.audit.SubprocessStartLog;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.execution.dao.NodeProcessDAO;
 import ru.runa.wfe.execution.dao.ProcessDAO;
-import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.StartState;
@@ -112,7 +111,6 @@ public class ProcessFactory {
     }
 
     public void startSubprocess(ExecutionContext parentExecutionContext, ExecutionContext executionContext) {
-        parentExecutionContext.getNode().fireEvent(executionContext, Event.EVENTTYPE_SUBPROCESS_START);
         parentExecutionContext.addLog(new SubprocessStartLog(parentExecutionContext.getNode(), parentExecutionContext.getToken(), executionContext
                 .getProcess()));
         grantSubprocessPermissions(executionContext.getProcessDefinition(), executionContext.getProcess(), parentExecutionContext.getProcess());
@@ -157,8 +155,6 @@ public class ProcessFactory {
 
     private Process startProcessInternal(ProcessDefinition processDefinition, Process process, String transitionName) {
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
-        // fire the process start event
-        processDefinition.fireEvent(executionContext, Event.EVENTTYPE_PROCESS_START);
         // execute the start node
         StartState startState = processDefinition.getStartStateNotNull();
         // startState.enter(executionContext);
