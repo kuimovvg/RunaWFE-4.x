@@ -2,8 +2,6 @@ package ru.runa.gpd.lang.model;
 
 
 public class Event extends GraphElement {
-    public static final String SUBPROCESS_CREATED = "subprocess-created";
-
     public static final String NODE_ENTER = "node-enter";
     public static final String NODE_ACTION = "on-node";
     public static final String NODE_LEAVE= "node-leave";
