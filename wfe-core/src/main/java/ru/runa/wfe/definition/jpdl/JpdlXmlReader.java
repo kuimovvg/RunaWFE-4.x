@@ -20,6 +20,7 @@ import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.Delegation;
 import ru.runa.wfe.lang.EmbeddedSubprocessEndNode;
+import ru.runa.wfe.lang.EmbeddedSubprocessStartNode;
 import ru.runa.wfe.lang.EndNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.GraphElement;
@@ -102,7 +103,7 @@ public class JpdlXmlReader {
 
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
-        nodeTypes.put("start-state", StartState.class);
+        //nodeTypes.put("start-state", StartState.class);
         nodeTypes.put("end-token-state", EndToken.class);
         //nodeTypes.put("end-state", EndNode.class);
         nodeTypes.put("wait-state", WaitState.class);
@@ -183,6 +184,12 @@ public class JpdlXmlReader {
             Node node = null;
             if (nodeTypes.containsKey(nodeName)) {
                 node = ApplicationContextFactory.createAutowiredBean(nodeTypes.get(nodeName));
+            } else if ("start-state".equals(nodeName)) {
+                if (processDefinition instanceof SubprocessDefinition) {
+                    node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessStartNode.class);
+                } else {
+                    node = ApplicationContextFactory.createAutowiredBean(StartState.class);
+                }
             } else if ("end-state".equals(nodeName)) {
                 if (processDefinition instanceof SubprocessDefinition) {
                     node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessEndNode.class);
@@ -369,17 +376,17 @@ public class JpdlXmlReader {
             if (node instanceof TaskDefinition) {
                 throw new UnsupportedOperationException("task/timer");
             }
-            String createEventType = node instanceof TaskNode ? Event.EVENTTYPE_TASK_CREATE : Event.EVENTTYPE_NODE_ENTER;
+            String createEventType = node instanceof TaskNode ? Event.TASK_CREATE : Event.NODE_ENTER;
             addAction(node, createEventType, createTimerAction);
             Action timerAction = readSingleAction(processDefinition, element);
             if (timerAction != null) {
                 timerAction.setName(name);
-                addAction(node, Event.EVENTTYPE_TIMER, timerAction);
+                addAction(node, Event.TIMER, timerAction);
             }
 
             CancelTimerAction cancelTimerAction = ApplicationContextFactory.createAutowiredBean(CancelTimerAction.class);
             cancelTimerAction.setName(name);
-            String cancelEventType = node instanceof TaskDefinition ? Event.EVENTTYPE_TASK_END : Event.EVENTTYPE_NODE_LEAVE;
+            String cancelEventType = node instanceof TaskDefinition ? Event.TASK_END : Event.NODE_LEAVE;
             addAction(node, cancelEventType, cancelTimerAction);
         }
     }
@@ -486,7 +493,7 @@ public class JpdlXmlReader {
         Node to = processDefinition.getNodeNotNull(toId);
         to.addArrivingTransition(transition);
         // read the actions
-        readActions(processDefinition, element, transition, Event.EVENTTYPE_TRANSITION);
+        readActions(processDefinition, element, transition, Event.TRANSITION);
     }
 
     private void verifyElements(ProcessDefinition processDefinition) {

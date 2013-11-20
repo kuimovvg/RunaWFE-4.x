@@ -21,16 +21,10 @@ import ru.runa.wfe.execution.ExecutionContext;
 
 public class ReceiveMessage extends VariableContainerNode {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER, Event.EVENTTYPE_NODE_LEAVE };
 
     @Override
     public NodeType getNodeType() {
         return NodeType.RECEIVE_MESSAGE;
-    }
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
     }
 
     @Override

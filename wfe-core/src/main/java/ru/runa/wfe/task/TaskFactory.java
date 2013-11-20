@@ -59,7 +59,7 @@ public class TaskFactory {
         process.getTasks().add(task);
         ApplicationContextFactory.getTaskDAO().flushPendingChanges();
         executionContext.addLog(new TaskCreateLog(task));
-        taskDefinition.fireEvent(executionContext, Event.EVENTTYPE_TASK_CREATE);
+        taskDefinition.fireEvent(executionContext, Event.TASK_CREATE);
         return task;
     }
 

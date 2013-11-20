@@ -36,11 +36,6 @@ public class Action extends GraphElement {
     private GraphElement parent;
 
     @Override
-    public String[] getSupportedEventTypes() {
-        return null;
-    }
-
-    @Override
     public GraphElement getParent() {
         return parent;
     }

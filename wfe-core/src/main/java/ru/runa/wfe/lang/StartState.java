@@ -25,25 +25,14 @@ import ru.runa.wfe.execution.ExecutionContext;
 
 public class StartState extends InteractionNode {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_LEAVE, Event.EVENTTYPE_AFTER_SIGNAL };
 
     @Override
     public NodeType getNodeType() {
         return NodeType.START_EVENT;
     }
-
+    
     @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
-    }
-
-    @Override
-    public void execute(ExecutionContext executionContext) {
-    }
-
-    @Override
-    public Transition addArrivingTransition(Transition t) {
-        throw new UnsupportedOperationException("illegal operation : its not possible to add a transition that is arriving in a start state");
+    protected void execute(ExecutionContext executionContext) {
     }
 
 }

@@ -28,7 +28,6 @@ import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Action;
-import ru.runa.wfe.lang.Event;
 
 import com.google.common.base.Objects;
 
@@ -49,7 +48,6 @@ public class CreateTimerAction extends Action {
         timer.setDueDate(ExpressionEvaluator.evaluateDueDate(executionContext, dueDate));
         timer.setRepeatDurationString(repeatDurationString);
         timer.setOutTransitionName(transitionName);
-        getParent().fireEvent(executionContext, Event.EVENTTYPE_TIMER_CREATE);
         jobDAO.create(timer);
         executionContext.addLog(new CreateTimerActionLog(this, timer.getDueDate()));
     }

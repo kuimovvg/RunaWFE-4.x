@@ -44,8 +44,8 @@ public class TransitionLog extends ProcessLog {
 
     public TransitionLog(Transition transition) {
         addAttribute(ATTR_TRANSITION_ID, transition.getName());
-        addAttribute(ATTR_NODE_ID_FROM, transition.getFrom().getNodeId());
-        addAttribute(ATTR_NODE_ID_TO, transition.getTo().getNodeId());
+        addAttribute(ATTR_NODE_ID_FROM, transition.getFrom().getTransitionNodeId(false));
+        addAttribute(ATTR_NODE_ID_TO, transition.getTo().getTransitionNodeId(true));
     }
 
     @Transient

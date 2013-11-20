@@ -41,7 +41,6 @@ import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubProcessState;
-import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 
@@ -80,7 +79,7 @@ public class GraphImageBuilder {
         }
         // Create all nodes
         for (Node node : processDefinition.getNodes()) {
-            if (node.getParent().getClass() != processDefinition.getClass()) {
+            if (!Objects.equal(node.getParent(), processDefinition)) {
                 continue;
             }
             NodeModel nodeModel = diagramModel.getNodeNotNull(node.getNodeId());
@@ -93,7 +92,7 @@ public class GraphImageBuilder {
             allNodeFigures.put(nodeModel.getNodeId(), nodeFigure);
         }
         for (Node node : processDefinition.getNodes()) {
-            if (node.getParent().getClass() != processDefinition.getClass()) {
+            if (!Objects.equal(node.getParent(), processDefinition)) {
                 continue;
             }
             String nodeId = node.getNodeId();
@@ -107,21 +106,15 @@ public class GraphImageBuilder {
             if (nodeModel.getTimerTransitionName() != null) {
                 leavingTransitionsCount--;
             }
-            if (processDefinition instanceof SubprocessDefinition && node.getNodeType() == NodeType.END_PROCESS) {
+            if (node.getNodeType() == NodeType.END_PROCESS) {
                 continue;
             }
             for (Transition transition : node.getLeavingTransitions()) {
-                Node nodeTo;
-                if (transition.getTo().getParent() instanceof SubprocessDefinition && !(processDefinition instanceof SubprocessDefinition)) {
-                    nodeTo = ((SubprocessDefinition) transition.getTo().getParent()).getArrivingNode();
-                } else {
-                    nodeTo = transition.getTo();
-                }
                 TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
                 if (diagramModel.isShowActions()) {
                     transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
                 }
-                AbstractFigure figureTo = allNodeFigures.get(nodeTo.getNodeId());
+                AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getTransitionNodeId(true));
                 TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
                 transitionFigureBase.init(transitionModel, nodeFigure, figureTo);
                 if (!diagramModel.isUmlNotation()) {
@@ -138,45 +131,15 @@ public class GraphImageBuilder {
             }
         }
         for (TransitionLog transitionLog : logs.getLogs(TransitionLog.class)) {
-            if (processDefinition.getNode(transitionLog.getFromNodeId()) == null) {
-                continue;
-            }
             Transition transition = transitionLog.getTransition(processDefinition);
-            if (transition.getTo().getParent() instanceof SubprocessDefinition && !(processDefinition instanceof SubprocessDefinition)) {
-                continue;
-            }
-            if (processDefinition instanceof SubprocessDefinition && transition.getFrom().getNodeType() == NodeType.END_PROCESS) {
-                continue;
-            }
-            String fromNodeId;
-            String transitionName;
-            if (processDefinition instanceof SubprocessDefinition) {
-                if (Objects.equal(transition.getFrom(), ((SubprocessDefinition) processDefinition).getSubProcessState())) {
-                    fromNodeId = processDefinition.getStartStateNotNull().getNodeId();
-                    transitionName = processDefinition.getStartStateNotNull().getLeavingTransitions().get(0).getName(); // TODO
-                                                                                                                        // 1?
-                } else {
-                    fromNodeId = transition.getFrom().getNodeId();
-                    transitionName = transition.getName();
-                }
-            } else {
-                if (transition.getFrom().getParent() instanceof SubprocessDefinition) {
-                    fromNodeId = ((SubprocessDefinition) transition.getFrom().getParent()).getSubProcessState().getNodeId();
-                    transitionName = transition.getFrom().getLeavingTransitions().get(0).getName(); // TODO
-                                                                                                    // 1?
-                } else {
-                    fromNodeId = transition.getFrom().getNodeId();
-                    transitionName = transition.getName();
-                }
-            }
             // Mark 'from' block as PASSED
-            AbstractFigure nodeModelFrom = allNodeFigures.get(fromNodeId);
+            AbstractFigure nodeModelFrom = allNodeFigures.get(transition.getFrom().getTransitionNodeId(false));
             nodeFigures.put(nodeModelFrom, new RenderHits(DrawProperties.getHighlightColor(), true));
             // Mark 'to' block as PASSED
-            AbstractFigure nodeModelTo = allNodeFigures.get(transition.getTo().getNodeId());
+            AbstractFigure nodeModelTo = allNodeFigures.get(transition.getTo().getTransitionNodeId(true));
             nodeFigures.put(nodeModelTo, new RenderHits(DrawProperties.getHighlightColor(), true));
             // Mark transition as PASSED
-            TransitionFigureBase transitionFigureBase = nodeModelFrom.getTransition(transitionName);
+            TransitionFigureBase transitionFigureBase = nodeModelFrom.getTransition(transition.getName());
             transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getHighlightColor(), true));
         }
         fillActiveSubprocesses(process.getRootToken());
@@ -208,7 +171,8 @@ public class GraphImageBuilder {
             Date endDate = activeTask ? new Date() : entry.getValue().getDate();
             AbstractFigure figure = allNodeFigures.get(entry.getKey().getNodeId());
             if (figure == null) {
-                // TaskCreateLog.getNodeId() = null for old tasks
+                // ru.runa.wfe.audit.TaskCreateLog.getNodeId() = null for old
+                // tasks
                 continue;
             }
             Date deadlineWarningDate = taskObjectFactory.getDeadlineWarningDate(entry.getKey().getDate(), deadlineDate);

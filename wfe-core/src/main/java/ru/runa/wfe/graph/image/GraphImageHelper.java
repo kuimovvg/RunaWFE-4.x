@@ -42,7 +42,7 @@ public class GraphImageHelper {
     }
 
     public static int getTransitionActionsCount(Transition tr) {
-        Event event = tr.getEvent(Event.EVENTTYPE_TRANSITION);
+        Event event = tr.getEvent(Event.TRANSITION);
         if (event != null) {
             return event.getActions().size();
         }

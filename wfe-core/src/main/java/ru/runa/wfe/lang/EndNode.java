@@ -25,12 +25,6 @@ import ru.runa.wfe.execution.ExecutionContext;
 
 public class EndNode extends Node {
     private static final long serialVersionUID = 1L;
-    private static final String[] supportedEventTypes = new String[] { Event.EVENTTYPE_NODE_ENTER };
-
-    @Override
-    public String[] getSupportedEventTypes() {
-        return supportedEventTypes;
-    }
 
     @Override
     public NodeType getNodeType() {

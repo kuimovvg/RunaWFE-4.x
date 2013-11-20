@@ -55,7 +55,6 @@ import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.AssignmentHandler;
 import ru.runa.wfe.job.dao.JobDAO;
-import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -268,8 +267,6 @@ public class Process extends IdentifiableBase {
         rootToken.end(executionContext, canceller);
         // mark this process as ended
         setEndDate(new Date());
-        executionContext.getProcessDefinition().fireEvent(executionContext, Event.EVENTTYPE_PROCESS_END);
-
         // check if this process was started as a subprocess of a super
         // process
         NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
