@@ -86,7 +86,7 @@ public class SendEmailActionHandlerProvider extends DelegableProvider {
 
             @Override
             protected Point getInitialSize() {
-                return new Point(700, 500);
+                return new Point(800, 600);
             }
         };
         if (wizardDialog.open() == IDialogConstants.OK_ID) {
