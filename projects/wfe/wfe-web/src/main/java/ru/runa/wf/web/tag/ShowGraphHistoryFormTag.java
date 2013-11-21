@@ -28,6 +28,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.action.HistoryGraphImageAction;
 import ru.runa.wf.web.form.TaskIdForm;
+import ru.runa.wf.web.html.GraphElementPresentationHelper;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -77,20 +78,16 @@ public class ShowGraphHistoryFormTag extends ProcessBaseFormTag {
         params.put("childProcessId", childProcessId);
         params.put(TaskIdForm.TASK_ID_INPUT_NAME, taskId);
         String href = Commons.getActionUrl(HistoryGraphImageAction.ACTION_PATH, params, pageContext, PortletUrlType.Resource);
-        ExecutionService executionService = Delegates.getExecutionService();
-        List<GraphElementPresentation> logElements = executionService.getProcessUIHistoryData(getUser(), getIdentifiableId(), taskId);
-
-        GraphHistoryElementPresentationVisitor operation = new GraphHistoryElementPresentationVisitor(taskId, pageContext, formDataTD);
-        for (GraphElementPresentation element : logElements) {
-            element.visit(operation);
-        }
+        List<GraphElementPresentation> elements = Delegates.getExecutionService().getProcessHistoryDiagramElements(getUser(), getIdentifiableId(), taskId);
+        GraphHistoryElementPresentationVisitor visitor = new GraphHistoryElementPresentationVisitor(pageContext, formDataTD);
+        visitor.visit(elements);
         IMG img = new IMG();
         img.setSrc(href);
         img.setBorder(1);
         formDataTD.addElement(img);
-        if (!operation.getResultMap().isEmpty()) {
-            formDataTD.addElement(operation.getResultMap());
-            img.setUseMap("#processMap");
+        if (!visitor.getResultMap().isEmpty()) {
+            formDataTD.addElement(visitor.getResultMap());
+            img.setUseMap("#" + GraphElementPresentationHelper.MAP_NAME);
         }
 
         /*

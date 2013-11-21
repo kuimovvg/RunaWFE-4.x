@@ -20,8 +20,8 @@ package ru.runa.wfe.graph.image.figure.bpmn;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
+import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
-import ru.runa.wfe.graph.image.util.DrawProperties;
 
 public class RoundedRect extends AbstractFigure {
     private final String imageName;

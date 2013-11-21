@@ -32,7 +32,6 @@ import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Maps;
@@ -47,10 +46,7 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
 
     private Long taskId;
     private Long childProcessId;
-
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
-    }
+    private String subprocessId;
 
     /**
      * @jsp.attribute required = "false" rtexprvalue = "true"
@@ -59,8 +55,8 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
         return taskId;
     }
 
-    public void setChildProcessId(Long childProcessId) {
-        this.childProcessId = childProcessId;
+    public void setTaskId(Long taskId) {
+        this.taskId = taskId;
     }
 
     /**
@@ -70,41 +66,41 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
         return childProcessId;
     }
 
+    public void setChildProcessId(Long childProcessId) {
+        this.childProcessId = childProcessId;
+    }
+
+    /**
+     * @jsp.attribute required = "false" rtexprvalue = "true"
+     */
+    public String getSubprocessId() {
+        return subprocessId;
+    }
+    
+    public void setSubprocessId(String subprocessId) {
+        this.subprocessId = subprocessId;
+    }
+    
     @Override
-    protected void fillFormData(final TD formDataTD) {
+    protected void fillFormData(TD td) {
         Map<String, Object> params = Maps.newHashMap();
         params.put(IdForm.ID_INPUT_NAME, getProcess().getId());
         params.put("childProcessId", childProcessId);
+        params.put("name", subprocessId);
         params.put(TaskIdForm.TASK_ID_INPUT_NAME, taskId);
         String href = Commons.getActionUrl(ProcessGraphImageAction.ACTION_PATH, params, pageContext, PortletUrlType.Resource);
         IMG img = new IMG();
         img.setID("graph");
         img.setSrc(href);
         img.setBorder(0);
-        addImageActions(formDataTD, img);
-        formDataTD.addElement(img);
-    }
-
-    /**
-     * Adds various actions to image: Links to subprocesses, tool tips for
-     * collapsed states and so on.
-     * 
-     * @param formDataTD
-     *            Root form element
-     * @param img
-     *            Process graph image.
-     */
-    private void addImageActions(final TD formDataTD, IMG img) {
-        ExecutionService executionService = Delegates.getExecutionService();
-        List<GraphElementPresentation> elements = executionService.getProcessGraphElements(getUser(), getIdentifiableId());
-        ProcessGraphElementPresentationVisitor operation = new ProcessGraphElementPresentationVisitor(taskId, pageContext, formDataTD);
-        for (GraphElementPresentation graphElementPresentation : elements) {
-            graphElementPresentation.visit(operation);
+        List<GraphElementPresentation> elements = Delegates.getExecutionService().getProcessGraphElements(getUser(), getIdentifiableId(), subprocessId);
+        ProcessGraphElementPresentationVisitor visitor = new ProcessGraphElementPresentationVisitor(getUser(), pageContext, td, subprocessId);
+        visitor.visit(elements);
+        if (!visitor.getPresentationHelper().getMap().isEmpty()) {
+            td.addElement(visitor.getPresentationHelper().getMap());
+            img.setUseMap("#" + visitor.getPresentationHelper().getMapName());
         }
-        if (!operation.getResultMap().isEmpty()) {
-            formDataTD.addElement(operation.getResultMap());
-            img.setUseMap("#processMap");
-        }
+        td.addElement(img);
     }
 
     @Override
@@ -124,6 +120,9 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
 
     @Override
     protected String getTitle() {
+        if (subprocessId != null) {
+            return null;
+        }
         return Messages.getMessage(Messages.TITLE_PROCESS_GRAPH, pageContext);
     }
 }

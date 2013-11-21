@@ -20,7 +20,7 @@ package ru.runa.wfe.graph.image.figure.uml;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.graph.DrawProperties;
 
 public class MultiTaskNodeFigure extends MultiSubprocessFigure {
 
@@ -37,7 +37,7 @@ public class MultiTaskNodeFigure extends MultiSubprocessFigure {
     @Override
     public void draw(Graphics2D graphics, boolean cleanMode) {
         super.draw(graphics, cleanMode);
-        if (!DrawProperties.useEdgingOnly()) {
+        if (!useEgdingOnly) {
             Rectangle b = getRectangle();
             graphics.drawString("*", b.x + b.width - 20, b.y + b.height - 10);
         }

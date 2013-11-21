@@ -38,7 +38,8 @@ public abstract class Node extends GraphElement {
 
     private final List<Transition> leavingTransitions = Lists.newArrayList();
     private final List<Transition> arrivingTransitions = Lists.newArrayList();
-
+    private boolean graphMinimazedView;
+    
     public abstract NodeType getNodeType();
 
     @Override
@@ -141,7 +142,15 @@ public abstract class Node extends GraphElement {
         arrivingTransition.setTo(this);
         return arrivingTransition;
     }
-
+    
+    public boolean isGraphMinimazedView() {
+        return graphMinimazedView;
+    }
+    
+    public void setGraphMinimazedView(boolean graphMinimazedView) {
+        this.graphMinimazedView = graphMinimazedView;
+    }
+    
     /**
      * called by a transition to pass execution to this node.
      */

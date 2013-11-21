@@ -26,38 +26,45 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
-import ru.runa.wfe.graph.image.model.BendpointModel;
-import ru.runa.wfe.graph.image.model.TransitionModel;
+import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.util.ActionUtils;
-import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.lang.NodeType;
+import ru.runa.wfe.lang.Transition;
+import ru.runa.wfe.lang.Transition.Bendpoint;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public class TransitionFigureBase {
-    protected String name;
     protected String timerInfo;
 
     protected AbstractFigure figureFrom;
     protected AbstractFigure figureTo;
 
-    protected List<BendpointModel> bendpoints;
+    protected Transition transition;
     protected int actionsCount;
     protected List<Integer> failedActions = new ArrayList<Integer>();
     private boolean exclusive;
     protected RenderHits renderHits;
 
-    public void init(TransitionModel transitionModel, AbstractFigure figureFrom, AbstractFigure figureTo) {
-        Preconditions.checkNotNull(transitionModel, "transitionModel");
+    public void init(Transition transition, AbstractFigure figureFrom, AbstractFigure figureTo) {
+        Preconditions.checkNotNull(transition, "transition");
         Preconditions.checkNotNull(figureFrom, "figureFrom");
         Preconditions.checkNotNull(figureTo, "figureTo");
-        name = transitionModel.getName();
-        bendpoints = new ArrayList<BendpointModel>(transitionModel.getBendpoints());
-        actionsCount = transitionModel.getActionsCount();
+        this.transition = transition;
         this.figureFrom = figureFrom;
         this.figureTo = figureTo;
+        if (transition.getFrom().getProcessDefinition().isGraphActionsEnabled()) {
+            this.actionsCount = GraphImageHelper.getNodeActionsCount(transition);
+        }
+        if (transition.isTimerTransition()) {
+            timerInfo = transition.getFrom().getTimerActions(false).get(0).getDueDate();
+        }
+    }
+    
+    public Transition getTransition() {
+        return transition;
     }
 
     public AbstractFigure getFigureFrom() {
@@ -77,18 +84,8 @@ public class TransitionFigureBase {
     }
 
     private Point getBendpoint(int pos) {
-        BendpointModel bendpointModel = bendpoints.get(pos);
-
-        if (bendpointModel.isCompatibilityModel()) {
-            return getCompatibleBendpoint(bendpointModel);
-        } else {
-            return new Point(bendpointModel.getX(), bendpointModel.getY());
-        }
-    }
-
-    protected Point getCompatibleBendpoint(BendpointModel bendpointModel) {
-        Point center = figureTo.getBendpoint();
-        return bendpointModel.getPointTo(center);
+        Bendpoint bendpoint = transition.getBendpoints().get(pos);
+        return new Point(bendpoint.getX(), bendpoint.getY());
     }
 
     protected double[] getReferencePoint(Rectangle rectFrom, Rectangle rectTo) {
@@ -101,7 +98,7 @@ public class TransitionFigureBase {
 
         double secondX;
         double secondY;
-        if (bendpoints.size() > 0) {
+        if (transition.getBendpoints().size() > 0) {
             Point bendPoint = getBendpoint(0);
             secondX = bendPoint.x;
             secondY = bendPoint.y;
@@ -110,30 +107,30 @@ public class TransitionFigureBase {
             secondX = secondCoors[0];
             secondY = secondCoors[1];
         }
-        int[] xPoints = new int[bendpoints.size() + 2];
+        int[] xPoints = new int[transition.getBendpoints().size() + 2];
         int[] yPoints = new int[xPoints.length];
-        Point start = figureFrom.getTransitionPoint(secondX, secondY, name);
+        Point start = figureFrom.getTransitionPoint(transition, secondX, secondY);
         xPoints[0] = start.x;
         yPoints[0] = start.y;
         Point bendPoint = null;
-        for (int i = 0; i < bendpoints.size(); i++) {
+        for (int i = 0; i < transition.getBendpoints().size(); i++) {
             bendPoint = getBendpoint(i);
             xPoints[i + 1] = bendPoint.x;
             yPoints[i + 1] = bendPoint.y;
         }
         if (bendPoint == null) {
             if (figureFrom.getType() == NodeType.FORK || figureFrom.getType() == NodeType.JOIN
-                    || Objects.equal(figureFrom.getTimerTransitionName(), name)) {
+                    || transition.isTimerTransition()) {
                 bendPoint = start;
             } else {
                 bendPoint = new Point((int) rectFrom.getCenterX(), (int) rectFrom.getCenterY());// start;
             }
         }
-        Point end = figureTo.getTransitionPoint(bendPoint.x, bendPoint.y, name + ":to");
+        Point end = figureTo.getTransitionPoint(null, bendPoint.x, bendPoint.y);
         xPoints[xPoints.length - 1] = end.x;
         yPoints[yPoints.length - 1] = end.y;
 
-        if (DrawProperties.useEdgingOnly()) {
+        if (figureFrom.useEgdingOnly) {
             // Cleaning old transitions
             graphics.setStroke(new BasicStroke(DrawProperties.TRANSITION_CLEAN_WIDTH));
             graphics.setColor(DrawProperties.getBackgroundColor());
@@ -146,7 +143,7 @@ public class TransitionFigureBase {
 
         if (actionsCount > 0) {
             Point p = new Point(xPoints[1], yPoints[1]);
-            boolean fromTimer = Objects.equal(figureFrom.getTimerTransitionName(), name);
+            boolean fromTimer = transition.isTimerTransition();
             if (ActionUtils.areActionsFitInLine(actionsCount, start, p, fromTimer, exclusive)) {
                 for (int i = 0; i < actionsCount; i++) {
                     Point loc = ActionUtils.getActionLocationOnTransition(i, start, p, fromTimer, exclusive);
@@ -165,7 +162,7 @@ public class TransitionFigureBase {
         if (exclusive) {
             Point from = new Point(start);
             double angle = getAngle(xPoints[0], yPoints[0], xPoints[1], yPoints[1]);
-            if (Objects.equal(figureFrom.getTimerTransitionName(), name)) {
+            if (transition.isTimerTransition()) {
                 from.x += DrawProperties.GRID_SIZE * Math.cos(angle);
                 from.y += DrawProperties.GRID_SIZE * Math.sin(angle);
             }
@@ -200,8 +197,8 @@ public class TransitionFigureBase {
         int[] ySmPoints = new int[] { end.y, yLeft, yRight };
         graphics.fillPolygon(xSmPoints, ySmPoints, xSmPoints.length);
 
-        if (!DrawProperties.useEdgingOnly() && name != null && !name.startsWith("tr")) {
-            String drawString = Objects.equal(figureFrom.getTimerTransitionName(), name) ? timerInfo : name;
+        if (!figureFrom.useEgdingOnly && !transition.getName().startsWith("tr")) {
+            String drawString = transition.isTimerTransition() ? timerInfo : transition.getName();
             Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(drawString, graphics);
             int padding = 1;
             int xStart = 0;

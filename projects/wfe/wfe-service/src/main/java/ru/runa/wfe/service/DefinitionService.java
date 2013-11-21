@@ -224,9 +224,11 @@ public interface DefinitionService {
      *            authorized user
      * @param definitionId
      *            process definition id
+     * @param subprocessId
+     *            embedded subprocess id or <code>null</code>
      * @return not <code>null</code>
      */
-    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId);
+    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId, String subprocessId);
 
     /**
      * Gets all versions of process definition specified by name.

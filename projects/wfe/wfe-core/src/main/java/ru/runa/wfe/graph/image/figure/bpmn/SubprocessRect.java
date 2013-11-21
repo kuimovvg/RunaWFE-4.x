@@ -19,7 +19,7 @@ package ru.runa.wfe.graph.image.figure.bpmn;
 
 import java.awt.Graphics2D;
 
-import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.graph.DrawProperties;
 
 public class SubprocessRect extends RoundedRect {
 
@@ -30,7 +30,7 @@ public class SubprocessRect extends RoundedRect {
     @Override
     public void draw(Graphics2D graphics, boolean cleanMode) {
         super.draw(graphics, cleanMode);
-        if (!DrawProperties.useEdgingOnly()) {
+        if (!useEgdingOnly) {
             int d = 2;
             int xCenter = coords[0] + coords[2] / 2;
             int y = coords[1] + coords[3] - DrawProperties.GRID_SIZE;

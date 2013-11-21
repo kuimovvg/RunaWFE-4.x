@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wfe.graph.image;
+package ru.runa.wfe.graph.history;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -42,16 +42,16 @@ import ru.runa.wfe.audit.TaskLog;
 import ru.runa.wfe.audit.TransitionLog;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.Process;
-import ru.runa.wfe.graph.image.GraphImage.RenderHits;
-import ru.runa.wfe.graph.image.figure.AbstractFigure;
-import ru.runa.wfe.graph.image.figure.AbstractFigureFactory;
-import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
-import ru.runa.wfe.graph.image.figure.uml.UMLFigureFactory;
-import ru.runa.wfe.graph.image.model.BendpointModel;
-import ru.runa.wfe.graph.image.model.DiagramModel;
-import ru.runa.wfe.graph.image.model.NodeModel;
-import ru.runa.wfe.graph.image.model.TransitionModel;
-import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.graph.DrawProperties;
+import ru.runa.wfe.graph.history.GraphImage.RenderHits;
+import ru.runa.wfe.graph.history.figure.AbstractFigure;
+import ru.runa.wfe.graph.history.figure.AbstractFigureFactory;
+import ru.runa.wfe.graph.history.figure.TransitionFigureBase;
+import ru.runa.wfe.graph.history.figure.uml.UMLFigureFactory;
+import ru.runa.wfe.graph.history.model.BendpointModel;
+import ru.runa.wfe.graph.history.model.DiagramModel;
+import ru.runa.wfe.graph.history.model.NodeModel;
+import ru.runa.wfe.graph.history.model.TransitionModel;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
@@ -113,153 +113,146 @@ public class GraphHistoryBuilder {
     }
 
     public byte[] createDiagram(Process process, List<Transition> passedTransitions) throws Exception {
-        boolean tempUseEdgingMode = DrawProperties.useEdgingOnly();
-        try {
-            DrawProperties.setUseEdgingMode(false);
-            String startNodeId = null;
-            Map<String, Integer> widthTokens = new HashMap<String, Integer>();
-            Map<String, Integer> heightTokens = new HashMap<String, Integer>();
-            Map<String, String> parentNodeInTokenForNodeMap = new HashMap<String, String>();
-            Map<String, Long> nodeRepetitionCount = new HashMap<String, Long>();
+        String startNodeId = null;
+        Map<String, Integer> widthTokens = new HashMap<String, Integer>();
+        Map<String, Integer> heightTokens = new HashMap<String, Integer>();
+        Map<String, String> parentNodeInTokenForNodeMap = new HashMap<String, String>();
+        Map<String, Long> nodeRepetitionCount = new HashMap<String, Long>();
 
-            for (NodeLog log : nodeLogs) {
-                if (log instanceof NodeLeaveLog && NodeType.START_EVENT == log.getNodeType()) {
-                    startNodeId = log.getNodeId() + ":" + log.getTokenId();
-                    parentNodeInTokenForNodeMap.put(startNodeId, startNodeId);
-                    calculateWidthTokensInGraph(startNodeId, log.getId(), widthTokens, parentNodeInTokenForNodeMap);
-                    break;
-                }
+        for (NodeLog log : nodeLogs) {
+            if (log instanceof NodeLeaveLog && NodeType.START_EVENT == log.getNodeType()) {
+                startNodeId = log.getNodeId() + ":" + log.getTokenId();
+                parentNodeInTokenForNodeMap.put(startNodeId, startNodeId);
+                calculateWidthTokensInGraph(startNodeId, log.getId(), widthTokens, parentNodeInTokenForNodeMap);
+                break;
             }
+        }
 
-            calculateCoordinatesForNodes(widthTokens, heightTokens, parentNodeInTokenForNodeMap);
+        calculateCoordinatesForNodes(widthTokens, heightTokens, parentNodeInTokenForNodeMap);
 
-            // render transition
-            for (NodeLog log : nodeLogs) {
-                if (log instanceof NodeEnterLog || log instanceof NodeLeaveLog) {
-                    String nodeId = log.getNodeId();
+        // render transition
+        for (NodeLog log : nodeLogs) {
+            if (log instanceof NodeEnterLog || log instanceof NodeLeaveLog) {
+                String nodeId = log.getNodeId();
 
-                    for (Node node : processDefinition.getNodes()) {
-                        if (node.getNodeId().equals(nodeId)) {
-                            if (isNodePresentInGraph(log)) {
-                                String correctNodeId = getNodeIdIncludeRepetition(nodeId + ":" + log.getTokenId(), nodeRepetitionCount);
-                                NodeModel nodeModel = allNodes.get(correctNodeId);
-                                Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
+                for (Node node : processDefinition.getNodes(false)) {
+                    if (node.getNodeId().equals(nodeId)) {
+                        if (isNodePresentInGraph(log)) {
+                            String correctNodeId = getNodeIdIncludeRepetition(nodeId + ":" + log.getTokenId(), nodeRepetitionCount);
+                            NodeModel nodeModel = allNodes.get(correctNodeId);
+                            Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
 
-                                AbstractFigure nodeFigure = allNodeFigures.get(correctNodeId);
-                                nodeFigures.put(nodeFigure, new RenderHits(DrawProperties.getBaseColor()));
-                            }
-
-                            if (log instanceof NodeLeaveLog && !(log instanceof SubprocessEndLog && NodeType.MULTI_SUBPROCESS == log.getNodeType())) {
-                                Long tokenId = log.getTokenId();
-
-                                if (NodeType.FORK == log.getNodeType()) {
-                                    for (ProcessLog correctTokenLog : processLogs) {
-                                        if (correctTokenLog.getId().equals(log.getId())) {
-                                            break;
-                                        }
-                                        if (correctTokenLog instanceof NodeEnterLog
-                                                && ((NodeEnterLog) correctTokenLog).getNodeId().equals(log.getNodeId())) {
-                                            tokenId = correctTokenLog.getTokenId();
-                                        }
-                                    }
-                                }
-
-                                Long duplicateCount = nodeRepetitionCount.get(nodeId + ":" + tokenId);
-                                String correctNodeId = nodeId + ":" + tokenId + ":" + duplicateCount;
-                                NodeModel nodeModel = allNodes.get(correctNodeId);
-                                Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
-
-                                AbstractFigure nodeFigure = allNodeFigures.get(correctNodeId);
-                                for (Transition transition : node.getLeavingTransitions()) {
-                                    boolean correctTransition = false;
-                                    for (ProcessLog findTransitionLog : processLogs) {
-                                        if (findTransitionLog.getId() > log.getId() && findTransitionLog instanceof TransitionLog) {
-                                            correctTransition = ((TransitionLog) findTransitionLog).getTransitionId().equals(transition.getName());
-                                            break;
-                                        }
-                                    }
-                                    if (!correctTransition) {
-                                        continue;
-                                    }
-
-                                    TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
-                                    transitionModel.getBendpoints().clear();
-                                    Date transitionLeaveDate = findNextTransitionLog(log, correctNodeId).getDate();
-                                    transitionModel.setName(CalendarUtil.formatDateTime(transitionLeaveDate));
-                                    if (diagramModel.isShowActions()) {
-                                        transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
-                                    }
-
-                                    Long duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":" + log.getTokenId());
-                                    if (duplicateTransitionCount == null) {
-                                        duplicateTransitionCount = new Long(0);
-                                    }
-                                    duplicateTransitionCount = duplicateTransitionCount + 1;
-
-                                    AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + log.getTokenId() + ":"
-                                            + duplicateTransitionCount);
-                                    if (diagramModel.getNodeNotNull(transition.getTo().getNodeId()).getType() == NodeType.JOIN) {
-                                        for (ProcessLog tempLog : processLogs) {
-                                            if (tempLog.getId() > log.getId() && tempLog instanceof NodeLeaveLog
-                                                    && ((NodeLeaveLog) tempLog).getNodeId().equals(transition.getTo().getNodeId())) {
-                                                duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":"
-                                                        + tempLog.getTokenId());
-                                                if (duplicateTransitionCount == null) {
-                                                    duplicateTransitionCount = new Long(0);
-                                                }
-                                                duplicateTransitionCount = duplicateTransitionCount + 1;
-                                                figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + tempLog.getTokenId() + ":"
-                                                        + duplicateTransitionCount);
-                                                break;
-                                            }
-                                        }
-                                    }
-                                    if (figureTo != null) {
-                                        if (nodeModel.getType() == NodeType.FORK) {
-                                            BendpointModel bendpointModel = new BendpointModel();
-                                            bendpointModel.setX(figureTo.getCoords()[0] + figureTo.getCoords()[2] / 2);
-                                            bendpointModel.setY(nodeModel.getY() + nodeModel.getHeight() / 2);
-                                            transitionModel.addBendpoint(bendpointModel);
-                                        }
-                                        if (figureTo.getType() == NodeType.JOIN) {
-                                            BendpointModel bendpointModel = new BendpointModel();
-                                            bendpointModel.setX(nodeModel.getX() + nodeModel.getWidth() / 2);
-                                            bendpointModel.setY(figureTo.getCoords()[1]);
-                                            transitionModel.addBendpoint(bendpointModel);
-                                        }
-                                        TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure,
-                                                figureTo);
-                                        transitionFigureBase.init(transitionModel, nodeFigure, figureTo);
-                                        if (Objects.equal(nodeModel.getTimerTransitionName(), transitionModel.getName())) {
-                                            transitionFigureBase.setTimerInfo(GraphImageHelper.getTimerInfo(node));
-                                        }
-                                        nodeFigure.addTransition(transition.getName(), transitionFigureBase);
-                                        transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getTransitionColor()));
-                                    }
-                                }
-                            }
-
-                            break;
+                            AbstractFigure nodeFigure = allNodeFigures.get(correctNodeId);
+                            nodeFigures.put(nodeFigure, new RenderHits(DrawProperties.getBaseColor()));
                         }
+
+                        if (log instanceof NodeLeaveLog && !(log instanceof SubprocessEndLog && NodeType.MULTI_SUBPROCESS == log.getNodeType())) {
+                            Long tokenId = log.getTokenId();
+
+                            if (NodeType.FORK == log.getNodeType()) {
+                                for (ProcessLog correctTokenLog : processLogs) {
+                                    if (correctTokenLog.getId().equals(log.getId())) {
+                                        break;
+                                    }
+                                    if (correctTokenLog instanceof NodeEnterLog
+                                            && ((NodeEnterLog) correctTokenLog).getNodeId().equals(log.getNodeId())) {
+                                        tokenId = correctTokenLog.getTokenId();
+                                    }
+                                }
+                            }
+
+                            Long duplicateCount = nodeRepetitionCount.get(nodeId + ":" + tokenId);
+                            String correctNodeId = nodeId + ":" + tokenId + ":" + duplicateCount;
+                            NodeModel nodeModel = allNodes.get(correctNodeId);
+                            Preconditions.checkNotNull(nodeModel, "Node model not found by id " + nodeId);
+
+                            AbstractFigure nodeFigure = allNodeFigures.get(correctNodeId);
+                            for (Transition transition : node.getLeavingTransitions()) {
+                                boolean correctTransition = false;
+                                for (ProcessLog findTransitionLog : processLogs) {
+                                    if (findTransitionLog.getId() > log.getId() && findTransitionLog instanceof TransitionLog) {
+                                        correctTransition = ((TransitionLog) findTransitionLog).getTransitionId().equals(transition.getName());
+                                        break;
+                                    }
+                                }
+                                if (!correctTransition) {
+                                    continue;
+                                }
+
+                                TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
+                                transitionModel.getBendpoints().clear();
+                                Date transitionLeaveDate = findNextTransitionLog(log, correctNodeId).getDate();
+                                transitionModel.setName(CalendarUtil.formatDateTime(transitionLeaveDate));
+                                if (diagramModel.isShowActions()) {
+                                    transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
+                                }
+
+                                Long duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":" + log.getTokenId());
+                                if (duplicateTransitionCount == null) {
+                                    duplicateTransitionCount = new Long(0);
+                                }
+                                duplicateTransitionCount = duplicateTransitionCount + 1;
+
+                                AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + log.getTokenId() + ":"
+                                        + duplicateTransitionCount);
+                                if (diagramModel.getNodeNotNull(transition.getTo().getNodeId()).getType() == NodeType.JOIN) {
+                                    for (ProcessLog tempLog : processLogs) {
+                                        if (tempLog.getId() > log.getId() && tempLog instanceof NodeLeaveLog
+                                                && ((NodeLeaveLog) tempLog).getNodeId().equals(transition.getTo().getNodeId())) {
+                                            duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":"
+                                                    + tempLog.getTokenId());
+                                            if (duplicateTransitionCount == null) {
+                                                duplicateTransitionCount = new Long(0);
+                                            }
+                                            duplicateTransitionCount = duplicateTransitionCount + 1;
+                                            figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + tempLog.getTokenId() + ":"
+                                                    + duplicateTransitionCount);
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (figureTo != null) {
+                                    if (nodeModel.getType() == NodeType.FORK) {
+                                        BendpointModel bendpointModel = new BendpointModel();
+                                        bendpointModel.setX(figureTo.getCoords()[0] + figureTo.getCoords()[2] / 2);
+                                        bendpointModel.setY(nodeModel.getY() + nodeModel.getHeight() / 2);
+                                        transitionModel.addBendpoint(bendpointModel);
+                                    }
+                                    if (figureTo.getType() == NodeType.JOIN) {
+                                        BendpointModel bendpointModel = new BendpointModel();
+                                        bendpointModel.setX(nodeModel.getX() + nodeModel.getWidth() / 2);
+                                        bendpointModel.setY(figureTo.getCoords()[1]);
+                                        transitionModel.addBendpoint(bendpointModel);
+                                    }
+                                    TransitionFigureBase transitionFigureBase = factory.createTransitionFigure(transitionModel, nodeFigure, figureTo);
+                                    transitionFigureBase.init(transitionModel, nodeFigure, figureTo);
+                                    if (Objects.equal(nodeModel.getTimerTransitionName(), transitionModel.getName())) {
+                                        transitionFigureBase.setTimerInfo(GraphImageHelper.getTimerInfo(node));
+                                    }
+                                    nodeFigure.addTransition(transition.getName(), transitionFigureBase);
+                                    transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getTransitionColor()));
+                                }
+                            }
+                        }
+
+                        break;
                     }
                 }
             }
-
-            // find max height
-            int height = 0;
-            for (String nodeId : heightTokens.keySet()) {
-                if (heightTokens.get(nodeId) != null && heightTokens.get(nodeId) > height) {
-                    height = heightTokens.get(nodeId);
-                }
-            }
-
-            diagramModel.setHeight(height + 100);
-            diagramModel.setWidth(widthTokens.get(startNodeId) + 20);
-            GraphImage graphImage = new GraphImage(null, diagramModel, transitionFigureBases, nodeFigures);
-            return graphImage.getImageBytes();
-        } finally {
-            DrawProperties.setUseEdgingMode(tempUseEdgingMode);
         }
+
+        // find max height
+        int height = 0;
+        for (String nodeId : heightTokens.keySet()) {
+            if (heightTokens.get(nodeId) != null && heightTokens.get(nodeId) > height) {
+                height = heightTokens.get(nodeId);
+            }
+        }
+
+        diagramModel.setHeight(height + 100);
+        diagramModel.setWidth(widthTokens.get(startNodeId) + 20);
+        GraphImage graphImage = new GraphImage(null, diagramModel, transitionFigureBases, nodeFigures, false);
+        return graphImage.getImageBytes();
     }
 
     private String getNodeIdIncludeRepetition(String nodeId, Map<String, Long> nodeRepetitionCount) {
@@ -372,7 +365,7 @@ public class GraphHistoryBuilder {
     }
 
     private void initNodeModel(NodeModel nodeModel, String nodeId) {
-        for (Node node : processDefinition.getNodes()) {
+        for (Node node : processDefinition.getNodes(false)) {
             if (node.getNodeId().equals(nodeId)) {
                 GraphImageHelper.initNodeModel(node, nodeModel);
 
@@ -533,7 +526,7 @@ public class GraphHistoryBuilder {
                     }
                 }
 
-                for (Node node : processDefinition.getNodes()) {
+                for (Node node : processDefinition.getNodes(false)) {
                     if (node.getNodeId().equals(nodeId)) {
                         NodeModel nodeModelForClone = diagramModel.getNodeNotNull(node.getNodeId());
                         NodeModel nodeModel = new NodeModel();
@@ -622,7 +615,7 @@ public class GraphHistoryBuilder {
 
                         correctNodeId = getNodeIdIncludeRepetition(correctNodeId, nodeRepetitionCount);
                         allNodes.put(correctNodeId, nodeModel);
-                        AbstractFigure nodeFigure = factory.createFigure(nodeModel);
+                        AbstractFigure nodeFigure = factory.createFigure(nodeModel, false);
                         allNodeFigures.put(correctNodeId, nodeFigure);
                         if (log instanceof NodeEnterLog) {
                             addedTooltipOnGraph(node, nodeFigure, nodeModel, (NodeEnterLog) log);
@@ -715,7 +708,7 @@ public class GraphHistoryBuilder {
         switch (nodeModel.getType()) {
         case SUBPROCESS:
             presentation = new SubprocessGraphElementPresentation();
-            ((SubprocessGraphElementPresentation) presentation).setReadPermission(true);
+            ((SubprocessGraphElementPresentation) presentation).setSubprocessAccessible(true);
             for (NodeLog nodeLog : nodeLogs) {
                 if (nodeLog instanceof SubprocessStartLog && nodeEnterlog.getNodeId().equals(((SubprocessStartLog) nodeLog).getNodeId())) {
                     ((SubprocessGraphElementPresentation) presentation).setSubprocessId(((SubprocessStartLog) nodeLog).getSubprocessId());
@@ -726,12 +719,12 @@ public class GraphHistoryBuilder {
             break;
         case MULTI_SUBPROCESS:
             presentation = new MultiinstanceGraphElementPresentation();
-            ((MultiinstanceGraphElementPresentation) presentation).setReadPermission(true);
             Iterator<ProcessLog> logIterator = processLogs.iterator();
             while (logIterator.hasNext()) {
                 ProcessLog processLog = logIterator.next();
                 if (processLog.getId() > nodeEnterlog.getId() && processLog instanceof SubprocessStartLog) {
-                    ((MultiinstanceGraphElementPresentation) presentation).addSubprocessId(((SubprocessStartLog) processLog).getSubprocessId());
+                    ((MultiinstanceGraphElementPresentation) presentation).addSubprocessInfo(
+                            ((SubprocessStartLog) processLog).getSubprocessId(), true, false);
                 } else if (processLog.getId() > nodeEnterlog.getId() && !(processLog instanceof SubprocessStartLog)) {
                     break;
                 }
@@ -743,8 +736,7 @@ public class GraphHistoryBuilder {
         default:
             presentation = new GraphElementPresentation();
         }
-        presentation.initialize(node, nodeModel);
-        presentation.setGraphConstraints(nodeModel.getConstraints());
+        presentation.initialize(node, nodeModel.getConstraints());
 
         Calendar startCal = Calendar.getInstance();
         startCal.setTime(nodeEnterlog.getDate());

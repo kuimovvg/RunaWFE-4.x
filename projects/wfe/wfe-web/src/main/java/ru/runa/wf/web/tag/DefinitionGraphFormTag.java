@@ -18,6 +18,7 @@
 package ru.runa.wf.web.tag;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ecs.html.Center;
 import org.apache.ecs.html.IMG;
@@ -33,6 +34,8 @@ import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
 
+import com.google.common.collect.Maps;
+
 /**
  * Created on 30.08.2004
  * 
@@ -41,22 +44,35 @@ import ru.runa.wfe.service.delegate.Delegates;
 public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
 
     private static final long serialVersionUID = 880745425325952663L;
+    private String subprocessId;
+
+    /**
+     * @jsp.attribute required = "false" rtexprvalue = "true"
+     */
+    public String getSubprocessId() {
+        return subprocessId;
+    }
+    
+    public void setSubprocessId(String subprocessId) {
+        this.subprocessId = subprocessId;
+    }
 
     @Override
     protected void fillFormData(final TD tdFormElement) {
-        String href = Commons.getActionUrl(ProcessDefinitionGraphImageAction.ACTION_PATH, IdForm.ID_INPUT_NAME, getIdentifiableId(), pageContext,
+        Map<String, Object> params = Maps.newHashMap();
+        params.put(IdForm.ID_INPUT_NAME, getIdentifiableId());
+        params.put("name", subprocessId);
+        String href = Commons.getActionUrl(ProcessDefinitionGraphImageAction.ACTION_PATH, params, pageContext,
                 PortletUrlType.Resource);
         Center center = new Center();
         IMG processGraphImage = new IMG(href);
         processGraphImage.setBorder(0);
-        List<GraphElementPresentation> elements = Delegates.getDefinitionService().getProcessDefinitionGraphElements(getUser(), getIdentifiableId());
-        DefinitionGraphElementPresentationVisitor operation = new DefinitionGraphElementPresentationVisitor(pageContext);
-        for (GraphElementPresentation graphElementPresentation : elements) {
-            graphElementPresentation.visit(operation);
-        }
-        if (!operation.getResultMap().isEmpty()) {
-            tdFormElement.addElement(operation.getResultMap());
-            processGraphImage.setUseMap("#processMap");
+        List<GraphElementPresentation> elements = Delegates.getDefinitionService().getProcessDefinitionGraphElements(getUser(), getIdentifiableId(), subprocessId);
+        DefinitionGraphElementPresentationVisitor visitor = new DefinitionGraphElementPresentationVisitor(pageContext, subprocessId);
+        visitor.visit(elements);
+        if (!visitor.getPresentationHelper().getMap().isEmpty()) {
+            tdFormElement.addElement(visitor.getPresentationHelper().getMap());
+            processGraphImage.setUseMap("#" + visitor.getPresentationHelper().getMapName());
         }
         center.addElement(processGraphImage);
         tdFormElement.addElement(center);
@@ -74,6 +90,9 @@ public class DefinitionGraphFormTag extends ProcessDefinitionBaseFormTag {
 
     @Override
     protected String getTitle() {
+        if (subprocessId != null) {
+            return null;
+        }
         return Messages.getMessage(Messages.TITLE_PROCESS_GRAPH, pageContext);
     }
 

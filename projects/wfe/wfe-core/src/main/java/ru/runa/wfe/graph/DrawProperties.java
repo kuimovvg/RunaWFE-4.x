@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wfe.graph.image.util;
+package ru.runa.wfe.graph;
 
 import java.awt.Color;
 
@@ -62,6 +62,14 @@ public final class DrawProperties {
         return getColorProperty("highlightColor", new Color(0, 0x99, 0));
     }
 
+    public static String getHighlightColorString() {
+        String string = resources.getStringProperty("highlightColor", "009900");
+        if (string.startsWith("0x")) {
+            string = string.substring(2);
+        }
+        return string;
+    }
+
     public static Color getAlarmColor() {
         return getColorProperty("alarmColor", new Color(0x99, 0, 0));
     }
@@ -104,6 +112,10 @@ public final class DrawProperties {
             }
         }
         return defaultColor;
+    }
+
+    public static boolean isLogsInGraphEnabled() {
+        return resources.getBooleanProperty("logs.enabled", true);
     }
 
 }

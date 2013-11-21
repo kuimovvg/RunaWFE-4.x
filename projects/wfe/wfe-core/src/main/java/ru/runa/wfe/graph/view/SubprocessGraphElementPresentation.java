@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.graph.view;
 
-import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.SubProcessState;
 
@@ -34,28 +33,26 @@ public class SubprocessGraphElementPresentation extends GraphElementPresentation
     private Long subprocessId;
 
     /**
-     * Flag, equals true, if subprocess is readable by current user; false
+     * Flag, equals true, if subprocess is accessible by current user; false
      * otherwise.
      */
-    private boolean readPermission;
+    private boolean subprocessAccessible;
 
     /**
      * Name of subprocess.
      */
     private String subprocessName;
     private boolean embedded;
+    private String embeddedSubprocessId;
+    private int embeddedSubprocessGraphWidth;
+    private int embeddedSubprocessGraphHeight;
 
     @Override
-    public void initialize(Node node, NodeModel model) {
-        super.initialize(node, model);
+    public void initialize(Node node, int[] graphConstraints) {
+        super.initialize(node, graphConstraints);
         SubProcessState subProcessState = (SubProcessState) node;
         this.subprocessName = subProcessState.getSubProcessName();
         this.embedded = subProcessState.isEmbedded();
-    }
-
-    @Override
-    public void visit(GraphElementPresentationVisitor visitor) {
-        visitor.onSubprocess(this);
     }
 
     /**
@@ -73,19 +70,19 @@ public class SubprocessGraphElementPresentation extends GraphElementPresentation
     }
 
     /**
-     * Flag, equals true, if subprocess is readable by current user; false
+     * Flag, equals true, if subprocess is accessible by current user; false
      * otherwise.
      */
-    public boolean isReadPermission() {
-        return readPermission;
+    public boolean isSubprocessAccessible() {
+        return subprocessAccessible;
     }
 
     /**
      * Set flag, equals true, if subprocess is readable by current user; false
      * otherwise.
      */
-    public void setReadPermission(boolean readPermission) {
-        this.readPermission = readPermission;
+    public void setSubprocessAccessible(boolean subprocessAccessible) {
+        this.subprocessAccessible = subprocessAccessible;
     }
 
     /**
@@ -95,11 +92,32 @@ public class SubprocessGraphElementPresentation extends GraphElementPresentation
         return subprocessName;
     }
     
-    public void setSubprocessName(String subprocessName) {
-        this.subprocessName = subprocessName;
-    }
-    
     public boolean isEmbedded() {
         return embedded;
     }
+    
+    public String getEmbeddedSubprocessId() {
+        return embeddedSubprocessId;
+    }
+    
+    public void setEmbeddedSubprocessId(String embeddedSubprocessId) {
+        this.embeddedSubprocessId = embeddedSubprocessId;
+    }
+
+    public int getEmbeddedSubprocessGraphWidth() {
+        return embeddedSubprocessGraphWidth;
+    }
+
+    public void setEmbeddedSubprocessGraphWidth(int embeddedSubprocessGraphWidth) {
+        this.embeddedSubprocessGraphWidth = embeddedSubprocessGraphWidth;
+    }
+
+    public int getEmbeddedSubprocessGraphHeight() {
+        return embeddedSubprocessGraphHeight;
+    }
+
+    public void setEmbeddedSubprocessGraphHeight(int embeddedSubprocessGraphHeight) {
+        this.embeddedSubprocessGraphHeight = embeddedSubprocessGraphHeight;
+    }
+    
 }

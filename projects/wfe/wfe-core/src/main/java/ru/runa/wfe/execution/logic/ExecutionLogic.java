@@ -38,10 +38,11 @@ import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dto.WfProcess;
-import ru.runa.wfe.graph.image.GraphHistoryBuilder;
+import ru.runa.wfe.graph.DrawProperties;
+import ru.runa.wfe.graph.history.GraphHistoryBuilder;
 import ru.runa.wfe.graph.image.GraphImageBuilder;
-import ru.runa.wfe.graph.image.StartedSubprocessesVisitor;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.graph.view.ProcessGraphInfoVisitor;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -205,14 +206,28 @@ public class ExecutionLogic extends WFCommonLogic {
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             if (subprocessId != null) {
                 SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
-                String subprocessNodeId = processDefinition.getEmbeddedSubprocessNodeIdNotNull(subprocessDefinition.getName());
+                if (subprocessDefinition == null) {
+                    throw new NullPointerException("No subprocess found by '" + subprocessId + "' in " + processDefinition);
+                }
+                String subprocessNodeId = processDefinition.getEmbeddedSubprocessNodeId(subprocessDefinition.getName());
+                if (subprocessNodeId == null) {
+                    throw new NullPointerException("No subprocess state found by subprocess name '" + subprocessDefinition.getName() + "' in " + processDefinition);
+                }
                 boolean embeddedSubprocessLogs = false;
+                boolean childSubprocessLogs = false;
+                List<String> childSubprocessNodeIds = processDefinition.getEmbeddedSubprocessNodeIds();
                 for (ProcessLog log : Lists.newArrayList(logs)) {
                     if (log instanceof NodeLeaveLog && Objects.equal(subprocessNodeId, log.getNodeId())) {
                         embeddedSubprocessLogs = false;
                     }
-                    if (!embeddedSubprocessLogs) {
+                    if (log instanceof NodeLeaveLog && childSubprocessNodeIds.contains(log.getNodeId())) {
+                        childSubprocessLogs = false;
+                    }
+                    if (!embeddedSubprocessLogs || childSubprocessLogs) {
                         logs.remove(log);
+                    }
+                    if (log instanceof NodeEnterLog && childSubprocessNodeIds.contains(log.getNodeId())) {
+                        childSubprocessLogs = true;
                     }
                     if (log instanceof NodeEnterLog && Objects.equal(subprocessNodeId, log.getNodeId())) {
                         embeddedSubprocessLogs = true;
@@ -246,6 +261,26 @@ public class ExecutionLogic extends WFCommonLogic {
         }
     }
 
+    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId, String subprocessId) {
+        Process process = processDAO.getNotNull(processId);
+        ProcessDefinition definition = getDefinition(process.getDeployment().getId());
+        if (subprocessId != null) {
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessById(subprocessId);
+            if (subprocessDefinition == null) {
+                throw new NullPointerException("No subprocess found by '" + subprocessId + "' in " + definition);
+            }
+            definition = subprocessDefinition;
+        }
+        List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(process, null, null, null);
+        ProcessLogs processLogs = null;
+        if (DrawProperties.isLogsInGraphEnabled()) {
+            processLogs = new ProcessLogs(process.getId());
+            processLogs.addLogs(processLogDAO.getAll(processId), false);
+        }
+        ProcessGraphInfoVisitor visitor = new ProcessGraphInfoVisitor(user, definition, process, processLogs, nodeProcesses);
+        return getDefinitionGraphElements(user, definition, visitor);
+    }
+
     public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
         try {
             Process process = processDAO.getNotNull(processId);
@@ -260,7 +295,7 @@ public class ExecutionLogic extends WFCommonLogic {
         }
     }
 
-    public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
         try {
             Process process = processDAO.getNotNull(processId);
             checkPermissionAllowed(user, process, ProcessPermission.READ);
@@ -273,25 +308,6 @@ public class ExecutionLogic extends WFCommonLogic {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    /**
-     * Loads graph presentation elements for process definition and set identity
-     * of started subprocesses.
-     * 
-     * @param user
-     *            Current user.
-     * @param definitionId
-     *            Identity of process definition, which presentation elements
-     *            must be loaded.
-     * @return List of graph presentation elements.
-     */
-    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) {
-        Process process = processDAO.getNotNull(processId);
-        ProcessDefinition definition = getDefinition(process.getDeployment().getId());
-        List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(process, null, null, null);
-        StartedSubprocessesVisitor operation = new StartedSubprocessesVisitor(user, definition, process, nodeProcesses);
-        return getDefinitionGraphElements(user, definition, operation);
     }
 
 }

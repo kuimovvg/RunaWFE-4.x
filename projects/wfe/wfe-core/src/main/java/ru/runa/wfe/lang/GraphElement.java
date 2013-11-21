@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.job.CreateTimerAction;
+import ru.runa.wfe.job.Timer;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -53,6 +54,7 @@ public abstract class GraphElement implements Serializable {
     protected ProcessDefinition processDefinition;
     @XmlTransient
     protected Map<String, Event> events = Maps.newHashMap();
+    private int[] graphConstraints;
 
     public String getNodeId() {
         return nodeId;
@@ -89,6 +91,14 @@ public abstract class GraphElement implements Serializable {
         return processDefinition;
     }
 
+    public int[] getGraphConstraints() {
+        return graphConstraints;
+    }
+    
+    public void setGraphConstraints(int x, int y, int width, int height) {
+        this.graphConstraints = new int[] { x, y, width, height };
+    }
+
     /**
      * Checks all prerequisites needed for execution.
      */
@@ -123,11 +133,14 @@ public abstract class GraphElement implements Serializable {
         return null;
     }
 
-    public List<CreateTimerAction> getTimerActions() {
+    public List<CreateTimerAction> getTimerActions(boolean includeEscalation) {
         List<CreateTimerAction> list = Lists.newArrayList();
         for (Event event : getEvents().values()) {
             for (Action action : event.getActions()) {
                 if (action instanceof CreateTimerAction) {
+                    if (!includeEscalation && Timer.ESCALATION_NAME.equals(action.getName())) {
+                        continue;
+                    }
                     list.add((CreateTimerAction) action);
                 }
             }

@@ -11,9 +11,9 @@ import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 
+import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.util.AngleInfo;
-import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.graph.image.util.Line;
 import ru.runa.wfe.graph.image.util.LineUtils;
 
@@ -32,7 +32,7 @@ public class DiamondFigure extends AbstractFigure {
     }
 
     protected boolean drawText() {
-        return !DrawProperties.useEdgingOnly();
+        return !useEgdingOnly;
     }
 
     @Override
@@ -42,10 +42,10 @@ public class DiamondFigure extends AbstractFigure {
         if (drawText()) {
             Rectangle r = getRectangle();
             int hOffset;
-            Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(name, graphics);
+            Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(getName(), graphics);
             if (textBounds.getWidth() > r.getWidth() - 5) {
                 int y = 0;
-                AttributedString attributedString = new AttributedString(name);
+                AttributedString attributedString = new AttributedString(getName());
                 attributedString.addAttribute(TextAttribute.FONT, graphics.getFont());
                 AttributedCharacterIterator characterIterator = attributedString.getIterator();
                 LineBreakMeasurer measurer = new LineBreakMeasurer(characterIterator, graphics.getFontRenderContext());

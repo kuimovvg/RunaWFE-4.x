@@ -27,21 +27,22 @@ import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
 
-import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.graph.DrawProperties;
+import ru.runa.wfe.lang.Transition;
 
 public class WaitStateFigure extends TaskNodeFigure {
 
     @Override
-    public Point getTransitionPoint(double x, double y, String transitionName) {
+    public Point getTransitionPoint(Transition transition, double x, double y) {
         // time-out-transition treated as from timer in super class
-        return super.getTransitionPoint(x, y, null);
+        return super.getTransitionPoint(null, x, y);
     }
 
     @Override
     public void draw(Graphics2D graphics, boolean cleanMode) {
         Rectangle r = getRectangle();
         graphics.drawRoundRect(r.x, r.y, r.width, r.height, 20, 10);
-        if (!DrawProperties.useEdgingOnly()) {
+        if (!useEgdingOnly) {
             int offset = 5, diameter = 18;
             int center = offset + diameter / 2;
             graphics.drawOval(r.x + offset, r.y + offset, diameter, diameter);
@@ -49,10 +50,10 @@ public class WaitStateFigure extends TaskNodeFigure {
             graphics.drawLine(r.x + center, r.y + center, r.x + center + diameter / 2 - 5, r.y + center - diameter / 2 + 5);
 
             int hOffset;
-            Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(name, graphics);
+            Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(getName(), graphics);
             if (textBounds.getWidth() > r.getWidth() - 5) {
                 int y = 0;
-                AttributedString attributedString = new AttributedString(name);
+                AttributedString attributedString = new AttributedString(getName());
                 attributedString.addAttribute(TextAttribute.FONT, graphics.getFont());
                 AttributedCharacterIterator characterIterator = attributedString.getIterator();
                 LineBreakMeasurer measurer = new LineBreakMeasurer(characterIterator, graphics.getFontRenderContext());
