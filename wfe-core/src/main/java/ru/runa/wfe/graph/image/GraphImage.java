@@ -32,43 +32,47 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import ru.runa.wfe.definition.Language;
+import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
-import ru.runa.wfe.graph.image.model.DiagramModel;
-import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.lang.ProcessDefinition;
+
+import com.google.common.base.Throwables;
 
 public class GraphImage {
     private static final String FORMAT = "png";
-
     private BufferedImage origImage = null;
-
-    private final DiagramModel diagramModel;
-
+    private final ProcessDefinition processDefinition;
     private final Map<TransitionFigureBase, RenderHits> transitions;
-
     private final Map<AbstractFigure, RenderHits> nodes;
+    private final boolean useEdgingOnly = DrawProperties.useEdgingOnly();
 
-    public GraphImage(byte[] graphBytes, DiagramModel diagramModel, Map<TransitionFigureBase, RenderHits> transitions,
-            Map<AbstractFigure, RenderHits> nodes) throws IOException {
-        if (graphBytes != null) {
-            origImage = ImageIO.read(new ByteArrayInputStream(graphBytes));
+    public GraphImage(ProcessDefinition processDefinition, Map<TransitionFigureBase, RenderHits> transitions,
+            Map<AbstractFigure, RenderHits> nodes) {
+        try {
+            origImage = ImageIO.read(new ByteArrayInputStream(processDefinition.getGraphImageBytesNotNull()));
+        } catch (IOException e) {
+            Throwables.propagate(e);
         }
-        this.diagramModel = diagramModel;
+        this.processDefinition = processDefinition;
         this.transitions = transitions;
         this.nodes = nodes;
     }
 
     public byte[] getImageBytes() throws IOException {
-        BufferedImage resultImage = new BufferedImage(diagramModel.getWidth(), diagramModel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        int width = processDefinition.getGraphConstraints()[2];
+        int height = processDefinition.getGraphConstraints()[3];
+        BufferedImage resultImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = resultImage.createGraphics();
 
         graphics.setFont(new Font(DrawProperties.getFontFamily(), Font.PLAIN, DrawProperties.getFontSize()));
         graphics.setColor(DrawProperties.getBackgroundColor());
 
-        if (origImage != null && DrawProperties.useEdgingOnly()) {
+        if (origImage != null && useEdgingOnly) {
             graphics.drawRenderedImage(origImage, AffineTransform.getRotateInstance(0));
         } else {
-            graphics.fillRect(0, 0, diagramModel.getWidth(), diagramModel.getHeight());
+            graphics.fillRect(0, 0, width, height);
         }
 
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -85,7 +89,7 @@ public class GraphImage {
             if (hits.isActive()) {
                 lineWidth *= 2;
             }
-            if (!diagramModel.isUmlNotation()) {
+            if (processDefinition.getDeployment().getLanguage() == Language.BPMN2) {
                 lineWidth *= 2;
             }
             nodeFigure.setRenderHits(hits);
@@ -98,7 +102,7 @@ public class GraphImage {
     }
 
     private void drawAbstractFigure(Graphics2D graphics, AbstractFigure figure, RenderHits hits, Stroke stroke) {
-        if (DrawProperties.useEdgingOnly()) {
+        if (useEdgingOnly) {
             graphics.setStroke(new BasicStroke(DrawProperties.FIGURE_CLEAN_WIDTH));
             graphics.setColor(DrawProperties.getBackgroundColor());
             figure.draw(graphics, true);

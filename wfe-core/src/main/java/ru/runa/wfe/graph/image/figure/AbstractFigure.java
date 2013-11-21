@@ -40,68 +40,72 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.graph.DrawProperties;
+import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.figure.uml.TaskNodeFigure;
-import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.AngleInfo;
-import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.graph.image.util.Line;
 import ru.runa.wfe.graph.image.util.LineUtils;
+import ru.runa.wfe.lang.InteractionNode;
+import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
+import ru.runa.wfe.lang.Synchronizable;
+import ru.runa.wfe.lang.TaskDefinition;
+import ru.runa.wfe.lang.Transition;
 
 public abstract class AbstractFigure {
     private final static Log log = LogFactory.getLog(AbstractFigure.class);
 
+    protected Node node;
     protected int[] coords;
-    protected NodeType type;
-    protected String name;
     protected String swimlane;
     protected int actionsCount;
     protected boolean async;
     protected boolean minimized;
-    protected String timerTransitionName;
+    protected boolean hasTimer;
+    protected boolean useEgdingOnly;
 
     protected Map<String, TransitionFigureBase> transitions = new HashMap<String, TransitionFigureBase>();
     protected RenderHits renderHits;
 
-    public void initFigure(NodeModel model) {
-        coords = new int[] { model.getX(), model.getY(), model.getWidth(), model.getHeight() };
-        type = model.getType();
-        name = model.getName();
-        swimlane = model.getSwimlane();
-        actionsCount = model.getActionsCount();
-        async = model.isAsync();
-        minimized = model.isMinimizedView();
-        timerTransitionName = model.getTimerTransitionName();
-    }
-
-    public String getTimerTransitionName() {
-        return timerTransitionName;
-    }
-
-    public int[] getCoords() {
-        return coords;
+    public void initFigure(Node node, boolean useEgdingOnly) {
+        this.node = node;
+        this.coords = node.getGraphConstraints();
+        this.hasTimer = node.getTimerActions(false).size() > 0;
+        if (node.getProcessDefinition().isGraphActionsEnabled()) {
+            this.actionsCount = GraphImageHelper.getNodeActionsCount(node);
+        }
+        this.async = (node instanceof Synchronizable && ((Synchronizable) node).isAsync());
+        this.minimized = node.isGraphMinimazedView();
+        if (node instanceof InteractionNode) {
+            TaskDefinition taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
+            if (taskDefinition.getSwimlane() != null) {
+                this.swimlane = taskDefinition.getSwimlane().getName();
+            }
+        }
+        this.useEgdingOnly = useEgdingOnly;
     }
 
     public String getName() {
-        return name;
+        return node.getName();
     }
 
     public NodeType getType() {
-        return type;
+        return node.getNodeType();
     }
 
+    public boolean isHasTimer() {
+        return hasTimer;
+    }
+    
     public void setRenderHits(RenderHits renderHits) {
         this.renderHits = renderHits;
     }
 
-    public Map<String, TransitionFigureBase> getTransitions() {
-        return transitions;
-    }
-
-    public void addTransition(String name, TransitionFigureBase transition) {
-        transitions.put(name, transition);
+    public void addTransition(TransitionFigureBase transitionFigure) {
+        transitions.put(transitionFigure.getTransition().getName(), transitionFigure);
     }
 
     public TransitionFigureBase getTransition(String name) {
@@ -111,7 +115,7 @@ public abstract class AbstractFigure {
     protected void drawActions(Graphics2D graphics) {
         if (actionsCount > 0) {
             Color color = graphics.getColor();
-            if (DrawProperties.useEdgingOnly()) {
+            if (useEgdingOnly) {
                 int shiftX = (ActionUtils.ACTION_DELIM + 2) + actionsCount * (ActionUtils.ACTION_SIZE + (ActionUtils.ACTION_DELIM + 3));
                 int shiftY = ActionUtils.ACTION_SIZE + 6;
                 graphics.setColor(DrawProperties.getBackgroundColor());
@@ -128,7 +132,7 @@ public abstract class AbstractFigure {
     }
 
     protected void drawTextInfo(Graphics2D graphics, int hOffset) {
-        if (!DrawProperties.useEdgingOnly()) {
+        if (!useEgdingOnly) {
             Color color = graphics.getColor();
             graphics.setColor(DrawProperties.getTextColor());
             if (swimlane != null) {
@@ -136,7 +140,7 @@ public abstract class AbstractFigure {
                 // additional space after swimlane label
                 hOffset += 3;
             }
-            drawText(graphics, name, hOffset);
+            drawText(graphics, getName(), hOffset);
             graphics.setColor(color);
         }
     }
@@ -169,7 +173,7 @@ public abstract class AbstractFigure {
     }
 
     protected void drawImage(Graphics2D graphics, String name, double x, double y) {
-        drawImage(graphics, name, x, y, !DrawProperties.useEdgingOnly());
+        drawImage(graphics, name, x, y, !useEgdingOnly);
     }
 
     protected void drawImage(Graphics2D graphics, String name, double x, double y, boolean condition) {
@@ -253,7 +257,7 @@ public abstract class AbstractFigure {
         return line;
     }
 
-    public Point getTransitionPoint(double x, double y, String transitionName) {
+    public Point getTransitionPoint(Transition transition, double x, double y) {
         AngleInfo angle = getTransitionAngle(x, y);
 
         Rectangle r = getRectangle();

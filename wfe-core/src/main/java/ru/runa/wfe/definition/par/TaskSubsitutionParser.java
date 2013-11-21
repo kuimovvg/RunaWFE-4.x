@@ -2,6 +2,7 @@ package ru.runa.wfe.definition.par;
 
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -31,7 +32,11 @@ public class TaskSubsitutionParser implements ProcessArchiveParser {
         List<Element> elements = root.elements("task");
         for (Element element : elements) {
             String nodeId = element.attributeValue("name");
-            InteractionNode interactionNode = (InteractionNode) processDefinition.getNodeNotNull(nodeId);
+            InteractionNode interactionNode = (InteractionNode) processDefinition.getNode(nodeId);
+            if (interactionNode == null) {
+                LogFactory.getLog(getClass()).warn("No node found by id '" + nodeId + "' in " + processDefinition);
+                continue;
+            }
             interactionNode.getFirstTaskNotNull().setIgnoreSubsitutionRules(true);
         }
     }

@@ -17,40 +17,66 @@
  */
 package ru.runa.wfe.graph.view;
 
+import java.util.List;
+
+import ru.runa.wfe.lang.NodeType;
+
 /**
  * Interface for operations, applied to {@link GraphElementPresentation}.
  */
-public interface GraphElementPresentationVisitor {
+public abstract class GraphElementPresentationVisitor {
+
+    public void visit(List<GraphElementPresentation> elements) {
+        for (GraphElementPresentation presentation : elements) {
+            visit(presentation);
+        }
+    }
 
     /**
-     * Calling to handle graph element.
+     * Handle any graph element here.
      * 
      * @param element
      *            Element to handle.
      */
-    void onGraphElement(GraphElementPresentation element);
+    protected void visit(GraphElementPresentation element) {
+        if (element.getNodeType() == NodeType.SUBPROCESS) {
+            onSubprocess((SubprocessGraphElementPresentation) element);
+        }
+        if (element.getNodeType() == NodeType.MULTI_SUBPROCESS) {
+            onMultiSubprocess((MultiinstanceGraphElementPresentation) element);
+        }
+        if (element.getNodeType() == NodeType.TASK_STATE) {
+            onTaskState((TaskGraphElementPresentation) element);
+        }
+    }
 
     /**
-     * Calling to handle subprocesses graph element.
+     * Handle multiple instance graph element here.
      * 
      * @param element
      *            Element to handle.
      */
-    void onSubprocess(SubprocessGraphElementPresentation element);
+    protected void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
+        
+    }
 
     /**
-     * Calling to handle multiple instance graph element.
+     * Handle subprocesses graph element here.
      * 
      * @param element
      *            Element to handle.
      */
-    void onMultiSubprocess(MultiinstanceGraphElementPresentation element);
+    protected void onSubprocess(SubprocessGraphElementPresentation element) {
+        
+    }
 
     /**
-     * Calling to handle task state graph element.
+     * Handle task state graph element here.
      * 
      * @param element
      *            Element to handle.
      */
-    void onTaskState(TaskGraphElementPresentation element);
+    protected void onTaskState(TaskGraphElementPresentation element) {
+    }
+
 }

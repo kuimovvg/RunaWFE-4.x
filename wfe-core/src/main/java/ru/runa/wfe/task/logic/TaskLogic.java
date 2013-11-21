@@ -85,7 +85,7 @@ public class TaskLogic extends WFCommonLogic {
             validateVariables(user, processDefinition, task.getNodeId(), variables, validationVariableProvider);
             executionContext.setVariables(variables);
             Transition transition;
-            InteractionNode node = executionContext.getProcessDefinition().getTaskNotNull(task.getNodeId()).getNode();
+            InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
             if (transitionName != null) {
                 transition = node.getLeavingTransitionNotNull(transitionName);
             } else {

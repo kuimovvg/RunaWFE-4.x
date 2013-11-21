@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.graph.view;
 
-import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.TaskDefinition;
@@ -40,16 +39,11 @@ public class TaskGraphElementPresentation extends GraphElementPresentation {
     private String swimlaneName;
 
     @Override
-    public void initialize(Node node, NodeModel model) {
-        super.initialize(node, model);
+    public void initialize(Node node, int[] graphConstraints) {
+        super.initialize(node, graphConstraints);
         TaskDefinition taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
         swimlaneName = taskDefinition.getSwimlane().getName();
-        minimized = model.isMinimizedView();
-    }
-
-    @Override
-    public void visit(GraphElementPresentationVisitor visitor) {
-        visitor.onTaskState(this);
+        minimized = node.isGraphMinimazedView();
     }
 
     /**

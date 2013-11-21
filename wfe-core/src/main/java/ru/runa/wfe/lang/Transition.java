@@ -21,10 +21,13 @@
  */
 package ru.runa.wfe.lang;
 
+import java.util.List;
+
 import ru.runa.wfe.audit.TransitionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 public class Transition extends GraphElement {
     private static final long serialVersionUID = 1L;
@@ -32,6 +35,7 @@ public class Transition extends GraphElement {
     private Node from;
     private Node to;
     private boolean timerTransition;
+    private List<Bendpoint> bendpoints = Lists.newArrayList();
 
     @Override
     public void setName(String name) {
@@ -66,6 +70,10 @@ public class Transition extends GraphElement {
         return to;
     }
 
+    public List<Bendpoint> getBendpoints() {
+        return bendpoints;
+    }
+    
     public boolean isTimerTransition() {
         return timerTransition;
     }
@@ -87,4 +95,22 @@ public class Transition extends GraphElement {
         to.enter(executionContext);
     }
 
+    public static class Bendpoint {
+        private final int x;
+        private final int y;
+
+        public Bendpoint(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+    }
 }

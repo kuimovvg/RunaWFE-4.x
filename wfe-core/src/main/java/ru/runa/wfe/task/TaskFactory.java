@@ -39,7 +39,7 @@ public class TaskFactory {
         if (taskDefinition.getDeadlineDuration() != null) {
             return taskDefinition.getDeadlineDuration();
         }
-        List<CreateTimerAction> timerActions = taskDefinition.getNode().getTimerActions();
+        List<CreateTimerAction> timerActions = taskDefinition.getNode().getTimerActions(true);
         if (timerActions.size() > 0) {
             return timerActions.get(0).getDueDate();
         }

@@ -30,7 +30,7 @@ function Reload() {
    $("#graph").attr("src", src);
 }  
 </script>
-	<script type="text/javascript" src="<html:rewrite page="/js/embeddedsubprocessutils.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/processgraphutils.js" />">c=0;</script>
 
 <% } %>
 

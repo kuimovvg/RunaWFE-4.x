@@ -22,19 +22,18 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 
+import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
-import ru.runa.wfe.graph.image.util.DrawProperties;
-
-import com.google.common.base.Objects;
+import ru.runa.wfe.lang.Transition;
 
 public class TaskNodeFigure extends AbstractFigure {
 
     @Override
-    public Point getTransitionPoint(double x, double y, String transitionName) {
-        if (Objects.equal(timerTransitionName, transitionName)) {
+    public Point getTransitionPoint(Transition transition, double x, double y) {
+        if (transition != null && transition.isTimerTransition()) {
             return new Point(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE);
         }
-        return super.getTransitionPoint(x, y, transitionName);
+        return super.getTransitionPoint(transition, x, y);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class TaskNodeFigure extends AbstractFigure {
         } else {
             graphics.fillRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 10);
         }
-        if (!minimized && timerTransitionName != null) {
+        if (!minimized && hasTimer) {
             graphics.fillOval(coords[0], coords[1] + coords[3] - DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2,
                     DrawProperties.GRID_SIZE * 2);
         }
@@ -63,7 +62,7 @@ public class TaskNodeFigure extends AbstractFigure {
             drawActions(graphics);
             drawTextInfo(graphics, 1);
         }
-        if (!minimized && timerTransitionName != null) {
+        if (!minimized && hasTimer) {
             // Clean area for timer
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());

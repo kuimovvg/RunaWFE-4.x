@@ -21,23 +21,16 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.AbstractFigureFactory;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
-import ru.runa.wfe.graph.image.model.NodeModel;
-import ru.runa.wfe.graph.image.model.TransitionModel;
+import ru.runa.wfe.lang.Node;
 
 public class BPMNFigureFactory extends AbstractFigureFactory {
-    private final boolean graphiti;
-
-    public BPMNFigureFactory(boolean graphiti) {
-        this.graphiti = graphiti;
-    }
 
     @Override
-    public AbstractFigure createFigure(NodeModel nodeModel) {
+    public AbstractFigure createFigure(Node node, boolean useEgdingOnly) {
         AbstractFigure figure = null;
-        switch (nodeModel.getType()) {
+        switch (node.getNodeType()) {
         case TASK_STATE:
             figure = new TaskNodeFigure();
-            ((TaskNodeFigure) figure).setGraphiti(graphiti);
             break;
         // TODO MultiTaskNode
         case EXCLUSIVE_GATEWAY:
@@ -59,12 +52,7 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             figure = new SubprocessRect();
             break;
         case ACTION_NODE:
-            // if (graphiti) {
-            // figure = new RoundedRect("image/bpmn/script.png");
-            // } else {
-            // figure = new RoundedRect(null);
-            // }
-            figure = new RoundedRect(null);
+            figure = new RoundedRect("image/bpmn/script.png");
             break;
         case WAIT_STATE:
             figure = new Circle("image/bpmn/waitstate.png");
@@ -79,14 +67,14 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             figure = new Circle("image/bpmn/receivemessage.png");
             break;
         default:
-            throw new InternalApplicationException("Unexpected figure type found: " + nodeModel.getType());
+            throw new InternalApplicationException("Unexpected figure type found: " + node.getNodeType());
         }
-        figure.initFigure(nodeModel);
+        figure.initFigure(node, useEgdingOnly);
         return figure;
     }
 
     @Override
-    public TransitionFigureBase createTransitionFigure(TransitionModel transitionModel, AbstractFigure figureFrom, AbstractFigure figureTo) {
+    public TransitionFigureBase createTransitionFigure() {
         return new TransitionFigureBase();
     }
 }

@@ -21,7 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.graph.DrawProperties;
 
 public class SubprocessFigure extends TaskNodeFigure {
 
@@ -33,7 +33,7 @@ public class SubprocessFigure extends TaskNodeFigure {
     @Override
     public void draw(Graphics2D graphics, boolean cleanMode) {
         super.draw(graphics, cleanMode);
-        if (DrawProperties.useEdgingOnly()) {
+        if (useEgdingOnly) {
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());
             graphics.fillRect(coords[0] + coords[2] - 20, coords[1] + coords[3] - 10, 10, 10);

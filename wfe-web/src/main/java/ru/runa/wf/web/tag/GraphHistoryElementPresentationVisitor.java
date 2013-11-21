@@ -24,31 +24,21 @@ import org.apache.ecs.html.Map;
 import org.apache.ecs.html.TD;
 
 import ru.runa.common.WebResources;
-import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wf.web.html.GraphElementPresentationHelper;
+import ru.runa.wfe.graph.view.GraphElementPresentationVisitor;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
-import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
 import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
 
 /**
  * Operation to create tool tips on and links on process history graph.
  */
-public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphElementAdapter {
-
+public class GraphHistoryElementPresentationVisitor extends GraphElementPresentationVisitor {
     /**
-     * Created map of elements, represents links and tool tips areas.
+     * Helper to create html.
      */
-    private final Map map = new Map();
-
-    /**
-     * Helper to create links to subprocesses.
-     */
-    private final SubprocessGraphElementPresentationHelper helperSubprocess;
-
-    /**
-     * Helper to create tool tips for task graph elements.
-     */
-    private final TaskGraphElementHelper helperTasks;
+    private final GraphElementPresentationHelper presentationHelper;
+    private final TD td;
 
     /**
      * Creates operation to add tool tips and links on process history graph.
@@ -60,28 +50,27 @@ public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphEle
      * @param tdFormElement
      *            Main TD element of form, containing graph history.
      */
-    public GraphHistoryElementPresentationVisitor(Long taskId, PageContext pageContext, TD formDataTD) {
-        map.setName("processMap");
-        helperSubprocess = new SubprocessGraphElementPresentationHelper(taskId, pageContext, formDataTD, map, WebResources.ACTION_SHOW_GRAPH_HISTORY);
-        helperTasks = new TaskGraphElementHelper(map);
+    public GraphHistoryElementPresentationVisitor(PageContext pageContext, TD td) {
+        this.td = td;
+        presentationHelper = new GraphElementPresentationHelper(pageContext, null);
     }
 
     @Override
-    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
-        helperSubprocess.createMultiinstanceLinks(element);
-        addTooltip(element, null);
+    protected void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
+        td.addElement(presentationHelper.createMultiSubprocessLinks(element, WebResources.ACTION_SHOW_GRAPH_HISTORY));
+        presentationHelper.addTooltip(element, null);
     }
 
     @Override
-    public void onSubprocess(SubprocessGraphElementPresentation element) {
-        Area area = helperSubprocess.createSubprocessLink(element);
-        addTooltip(element, area);
+    protected void onSubprocess(SubprocessGraphElementPresentation element) {
+        Area area = presentationHelper.createSubprocessLink(element, WebResources.ACTION_SHOW_GRAPH_HISTORY);
+        presentationHelper.addTooltip(element, area);
     }
 
     @Override
-    public void onTaskState(TaskGraphElementPresentation element) {
-        Area area = helperTasks.createTaskTooltip(element);
-        addTooltip(element, area);
+    protected void onTaskState(TaskGraphElementPresentation element) {
+        Area area = presentationHelper.createTaskTooltip(element);
+        presentationHelper.addTooltip(element, area);
     }
 
     /**
@@ -90,24 +79,7 @@ public class GraphHistoryElementPresentationVisitor extends SubprocessesGraphEle
      * @return Map of elements, represents links and tool tips areas.
      */
     public Map getResultMap() {
-        return map;
+        return presentationHelper.getMap();
     }
 
-    /**
-     * Add tool tip for graph process element.
-     * 
-     * @param element
-     *            Process element to add tool tip.
-     * @param area
-     *            {@link Area} element, to add tool tips, or null, if
-     *            {@link Area} element must be created.
-     */
-    private Area addTooltip(GraphElementPresentation element, Area area) {
-        if (area == null) {
-            area = new Area("RECT", element.getGraphConstraints());
-            map.addElement(area);
-        }
-        area.setTitle(String.valueOf(element.getData()));
-        return area;
-    }
 }

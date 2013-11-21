@@ -34,8 +34,8 @@ import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dao.NodeProcessDAO;
 import ru.runa.wfe.execution.dao.TokenDAO;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.graph.image.GraphElementPresentationBuilder;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.graph.view.GraphElementPresentationBuilder;
 import ru.runa.wfe.graph.view.GraphElementPresentationVisitor;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -201,12 +201,10 @@ public class WFCommonLogic extends CommonLogic {
      * @return List of graph presentation elements.
      */
     public List<GraphElementPresentation> getDefinitionGraphElements(User user, ProcessDefinition definition, GraphElementPresentationVisitor visitor) {
-        List<GraphElementPresentation> result = GraphElementPresentationBuilder.createElements(definition);
+        List<GraphElementPresentation> elements = GraphElementPresentationBuilder.createElements(definition);
         if (visitor != null) {
-            for (GraphElementPresentation elementPresentation : result) {
-                elementPresentation.visit(visitor);
-            }
+            visitor.visit(elements);
         }
-        return result;
+        return elements;
     }
 }

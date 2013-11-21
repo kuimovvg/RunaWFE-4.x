@@ -20,6 +20,8 @@ package ru.runa.wfe.graph.image.util;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import ru.runa.wfe.graph.DrawProperties;
+
 public class ActionUtils {
     public static final int ACTION_SIZE = 10;
     public static final int ACTION_DELIM = 4;

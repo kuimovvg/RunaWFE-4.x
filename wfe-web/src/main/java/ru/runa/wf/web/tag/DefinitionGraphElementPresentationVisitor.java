@@ -17,103 +17,45 @@
  */
 package ru.runa.wf.web.tag;
 
-import java.util.Map;
-
 import javax.servlet.jsp.PageContext;
 
-import org.apache.ecs.html.Area;
-
-import ru.runa.common.WebResources;
-import ru.runa.common.web.Commons;
-import ru.runa.common.web.form.IdForm;
-import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wf.web.html.GraphElementPresentationHelper;
+import ru.runa.wfe.graph.view.GraphElementPresentationVisitor;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
-import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
 import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
-
-import com.google.common.collect.Maps;
 
 /**
  * Operation to create links to subprocess definitions and tool tips for
  * minimized states.
  */
-public class DefinitionGraphElementPresentationVisitor extends SubprocessesGraphElementAdapter {
-
+public class DefinitionGraphElementPresentationVisitor extends GraphElementPresentationVisitor {
     /**
-     * Rendered page context.
+     * Helper to create html
      */
-    private final PageContext pageContext;
+    private final GraphElementPresentationHelper presentationHelper;
 
-    /**
-     * Created map of elements, represents links and tool tips areas.
-     */
-    private final org.apache.ecs.html.Map map = new org.apache.ecs.html.Map();
-
-    /**
-     * Helper to create tool tips for task graph elements.
-     */
-    private final TaskGraphElementHelper helperTasks;
-
-    /**
-     * Instantiates operation to create links to subprocess definitions and tool
-     * tips for minimized states.
-     * 
-     * @param pageContext
-     *            Rendered page context.
-     */
-    public DefinitionGraphElementPresentationVisitor(PageContext pageContext) {
-        super();
-        this.pageContext = pageContext;
-        map.setName("processMap");
-        helperTasks = new TaskGraphElementHelper(map);
+    public DefinitionGraphElementPresentationVisitor(PageContext pageContext, String subprocessId) {
+        presentationHelper = new GraphElementPresentationHelper(pageContext, subprocessId);
     }
 
     @Override
-    public void onSubprocess(SubprocessGraphElementPresentation element) {
-        if (!element.isReadPermission()) {
-            return;
-        }
-        String url;
-        if (element.isEmbedded()) {
-            url = "javascript:showEmbeddedSubprocessDefinition(" + element.getSubprocessId() + ", '" + element.getSubprocessName() + "');";
-        } else {
-            Map<String, Object> params = Maps.newHashMap();
-            params.put(IdForm.ID_INPUT_NAME, element.getSubprocessId());
-            url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, 
-                    params, pageContext, PortletUrlType.Render);
-        }
-        Area area = new Area("RECT", element.getGraphConstraints());
-        area.setHref(url);
-        area.setTitle(element.getName());
-        map.addElement(area);
+    protected void onSubprocess(SubprocessGraphElementPresentation element) {
+        presentationHelper.createSubprocessDefinitionLink(element);
     }
 
     @Override
-    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
-        if (!element.isReadPermission()) {
-            return;
-        }
-        Map<String, Object> params = Maps.newHashMap();
-        params.put(IdForm.ID_INPUT_NAME, element.getSubprocessIds().get(0));
-        String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, params, pageContext, PortletUrlType.Render);
-        Area area = new Area("RECT", element.getGraphConstraints());
-        area.setHref(url);
-        area.setTitle(element.getName());
-        map.addElement(area);
+    protected void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
+        presentationHelper.createSubprocessDefinitionLink(element);
     }
 
     @Override
-    public void onTaskState(TaskGraphElementPresentation element) {
-        helperTasks.createTaskTooltip(element);
+    protected void onTaskState(TaskGraphElementPresentation element) {
+        presentationHelper.createTaskTooltip(element);
     }
 
-    /**
-     * Operation result.
-     * 
-     * @return Map of elements, represents links and tool tips areas.
-     */
-    public org.apache.ecs.html.Map getResultMap() {
-        return map;
+    public GraphElementPresentationHelper getPresentationHelper() {
+        return presentationHelper;
     }
+
 }

@@ -4190,81 +4190,26 @@
       <name>processGraphForm</name>
       <tag-class>ru.runa.wf.web.tag.ProcessGraphFormTag</tag-class>
       <body-content>JSP</body-content>
-
+      <attribute>
+         <name>identifiableId</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
       <attribute>
          <name>taskId</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <name>childProcessId</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
-         <name>identifiableId</name>
+         <name>subprocessId</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
-      <attribute>
-         <name>align</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>height</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>title</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>valign</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>width</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>buttonAlignment</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>action</name>
-         <required>false</required>
-
-      </attribute>
-      <attribute>
-         <name>method</name>
-         <required>false</required>
-
-      </attribute>
-
    </tag>
    <tag>
       <name>createActorLink</name>
@@ -4701,72 +4646,18 @@
       <name>definitionGraphForm</name>
       <tag-class>ru.runa.wf.web.tag.DefinitionGraphFormTag</tag-class>
       <body-content>empty</body-content>
-
       <attribute>
          <name>identifiableId</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
-         <name>align</name>
+         <name>subprocessId</name>
          <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
+         <rtexprvalue>true</rtexprvalue>
       </attribute>
-      <attribute>
-         <name>height</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>title</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>valign</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>width</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>buttonAlignment</name>
-         <required>false</required>
-
-           <rtexprvalue>true</rtexprvalue>
-
-      </attribute>
-      <attribute>
-         <name>action</name>
-         <required>false</required>
-
-      </attribute>
-      <attribute>
-         <name>method</name>
-         <required>false</required>
-
-      </attribute>
-
    </tag>
    <tag>
-
-      <icon>    
-      </icon>
       <name>deployBotStation</name>
       <tag-class>ru.runa.af.web.tag.DeployBotStationTag</tag-class>
       <body-content>empty</body-content>

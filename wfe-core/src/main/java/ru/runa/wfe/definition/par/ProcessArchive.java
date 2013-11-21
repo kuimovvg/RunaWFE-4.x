@@ -57,6 +57,7 @@ public class ProcessArchive extends FileDataProvider {
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new VariableDefinitionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new InteractionsParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new TaskSubsitutionParser()));
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new GraphXmlParser()));
     }
 
     private Map<String, byte[]> fileData = Maps.newHashMap();

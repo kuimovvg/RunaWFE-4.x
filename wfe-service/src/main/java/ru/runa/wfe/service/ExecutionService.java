@@ -301,10 +301,13 @@ public interface ExecutionService {
      *            authorized user
      * @param processId
      *            process id
+     * @param subprocessId
+     *            embedded subprocess id, can be <code>null</code>
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId) throws ProcessDoesNotExistException;
+    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId, String subprocessId) 
+            throws ProcessDoesNotExistException;
 
     /**
      * Gets process graph element for history diagram.
@@ -318,7 +321,7 @@ public interface ExecutionService {
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public List<GraphElementPresentation> getProcessUIHistoryData(User user, Long processId, Long taskId) throws ProcessDoesNotExistException;
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId) throws ProcessDoesNotExistException;
 
     /**
      * Gets process history graphical diagram PNG image.

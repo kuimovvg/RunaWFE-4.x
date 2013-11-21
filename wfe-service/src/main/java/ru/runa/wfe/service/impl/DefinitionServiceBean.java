@@ -170,10 +170,10 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     @Override
     @WebResult(name = "result")
     public List<GraphElementPresentation> getProcessDefinitionGraphElements(@WebParam(name = "user") User user,
-            @WebParam(name = "definitionId") Long definitionId) {
+            @WebParam(name = "definitionId") Long definitionId, @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
-        return definitionLogic.getProcessDefinitionGraphElements(user, definitionId);
+        return definitionLogic.getProcessDefinitionGraphElements(user, definitionId, subprocessId);
     }
 
     @Override
