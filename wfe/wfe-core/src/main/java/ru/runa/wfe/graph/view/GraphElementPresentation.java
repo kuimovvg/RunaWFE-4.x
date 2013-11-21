@@ -22,7 +22,6 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import ru.runa.wfe.graph.image.model.NodeModel;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 
@@ -48,20 +47,11 @@ public class GraphElementPresentation implements Serializable {
     /**
      * Initializes data.
      */
-    public void initialize(Node node, NodeModel model) {
-        nodeId = node.getNodeId();
-        nodeType = node.getNodeType();
-        name = node.getName();
-    }
-
-    /**
-     * Applies operation to element presentation component.
-     * 
-     * @param visitor
-     *            Operation, applied to component.
-     */
-    public void visit(GraphElementPresentationVisitor visitor) {
-        visitor.onGraphElement(this);
+    public void initialize(Node node, int[] graphConstraints) {
+        this.graphConstraints = graphConstraints;
+        this.nodeId = node.getNodeId();
+        this.nodeType = node.getNodeType();
+        this.name = node.getName();
     }
 
     /**
@@ -88,14 +78,6 @@ public class GraphElementPresentation implements Serializable {
      */
     public int[] getGraphConstraints() {
         return graphConstraints;
-    }
-
-    /**
-     * Graph element position constraints. For rectangles represents upper-left
-     * and bottom-right corners.
-     */
-    public void setGraphConstraints(int[] graphConstraints) {
-        this.graphConstraints = graphConstraints;
     }
 
     /**

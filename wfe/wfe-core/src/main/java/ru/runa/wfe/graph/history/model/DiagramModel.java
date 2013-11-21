@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wfe.graph.image.model;
+package ru.runa.wfe.graph.history.model;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +33,7 @@ import ru.runa.wfe.lang.SubprocessDefinition;
 
 import com.google.common.collect.Maps;
 
-public class DiagramModel {
+public class DiagramModel { // FIXME move to par definition loader and integrate with ProcessDefinition & GraphElement
     private static final String NODE_ELEMENT = "node";
     private static final String TRANSITION_ELEMENT = "transition";
     private static final String BENDPOINT_ELEMENT = "bendpoint";
@@ -115,8 +115,9 @@ public class DiagramModel {
             diagramModel.nodes.put(nodeModel.getNodeId(), nodeModel);
             List<Element> transitionElements = nodeElement.elements(TRANSITION_ELEMENT);
             NodeModel transitionSource = nodeModel;
-            if (definition.getGraphElement(nodeModel.getNodeId()) instanceof Action) {
-                GraphElement parent = definition.getGraphElementNotNull(nodeModel.getNodeId()).getParent();
+            GraphElement graphElement = definition.getGraphElement(nodeModel.getNodeId());
+            if (graphElement instanceof Action) {
+                GraphElement parent = graphElement.getParent();
                 transitionSource = diagramModel.nodes.get(parent.getNodeId());
             }
             for (Element transitionElement : transitionElements) {

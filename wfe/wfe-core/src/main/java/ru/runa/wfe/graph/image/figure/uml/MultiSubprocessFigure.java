@@ -21,7 +21,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import ru.runa.wfe.graph.image.util.DrawProperties;
+import ru.runa.wfe.graph.DrawProperties;
 
 public class MultiSubprocessFigure extends TaskNodeFigure {
     protected boolean drawSubprocessImage = true;
@@ -39,7 +39,7 @@ public class MultiSubprocessFigure extends TaskNodeFigure {
         int yCenter = b.y + b.height / 2;
         Color orig = graphics.getColor();
         graphics.setColor(DrawProperties.getBackgroundColor());
-        if (DrawProperties.useEdgingOnly()) {
+        if (useEgdingOnly) {
             graphics.fillRect(b.x + b.width - 20, b.y + b.height - 10, 10, 10);
         }
         graphics.fillRect(b.x - DrawProperties.GRID_SIZE / 2, yCenter - 3 * DrawProperties.GRID_SIZE / 2, DrawProperties.GRID_SIZE,

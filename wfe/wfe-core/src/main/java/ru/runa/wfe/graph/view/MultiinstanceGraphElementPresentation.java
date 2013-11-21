@@ -32,11 +32,8 @@ public class MultiinstanceGraphElementPresentation extends SubprocessGraphElemen
      * subprocess definition id if used in definition page.
      */
     private final List<Long> subprocessIds = Lists.newArrayList();
-
-    @Override
-    public void visit(GraphElementPresentationVisitor visitor) {
-        visitor.onMultiSubprocess(this);
-    }
+    private final List<Boolean> subprocessAccessibleInfos = Lists.newArrayList();
+    private final List<Boolean> subprocessFinishedInfos = Lists.newArrayList();
 
     /**
      * Add process id to forked subprocesses list.
@@ -44,8 +41,10 @@ public class MultiinstanceGraphElementPresentation extends SubprocessGraphElemen
      * @param id
      *            Process identity.
      */
-    public void addSubprocessId(Long id) {
+    public void addSubprocessInfo(Long id, boolean accessible, boolean finished) {
         subprocessIds.add(id);
+        subprocessAccessibleInfos.add(accessible);
+        subprocessFinishedInfos.add(finished);
     }
 
     /**
@@ -55,4 +54,17 @@ public class MultiinstanceGraphElementPresentation extends SubprocessGraphElemen
         return subprocessIds;
     }
 
+    public boolean isSubprocessAccessible(int index) {
+        if (index >= 0 && index < subprocessAccessibleInfos.size()) {
+            return subprocessAccessibleInfos.get(index);
+        }
+        return false;
+    }
+
+    public boolean isSubprocessFinished(int index) {
+        if (index >= 0 && index < subprocessFinishedInfos.size()) {
+            return subprocessFinishedInfos.get(index);
+        }
+        return false;
+    }
 }

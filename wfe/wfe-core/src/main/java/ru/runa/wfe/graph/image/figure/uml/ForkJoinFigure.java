@@ -22,6 +22,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
+import ru.runa.wfe.lang.Transition;
 
 public class ForkJoinFigure extends AbstractFigure {
 
@@ -35,7 +36,7 @@ public class ForkJoinFigure extends AbstractFigure {
     }
 
     @Override
-    public Point getTransitionPoint(double x, double y, String transitionName) {
+    public Point getTransitionPoint(Transition transition, double x, double y) {
         Rectangle r = getRectangle();
         if (x >= r.x && x <= r.x + r.width) {
             int referenceY;
@@ -55,6 +56,6 @@ public class ForkJoinFigure extends AbstractFigure {
             return new Point(referenceX, (int) y);
         }
 
-        return super.getTransitionPoint(x, y, transitionName);
+        return super.getTransitionPoint(transition, x, y);
     }
 }

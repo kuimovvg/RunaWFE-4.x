@@ -66,8 +66,10 @@ public abstract class TitledFormTag extends FormTag {
         }
         table.setClass(Resources.CLASS_BOX);
         sb.append(table.createStartTag());
-        TR trh = new TR(((TH) new TH().setClass(Resources.CLASS_BOX_TITLE)).addElement(getTitle()));
-        sb.append(trh.toString());
+        if (getTitle() != null) {
+            TR trh = new TR(((TH) new TH().setClass(Resources.CLASS_BOX_TITLE)).addElement(getTitle()));
+            sb.append(trh.toString());
+        }
         sb.append(new TR().createStartTag());
         TD td = new TD();
         td.setClass(Resources.CLASS_BOX_BODY);

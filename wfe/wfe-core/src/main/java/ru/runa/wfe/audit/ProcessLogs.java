@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.SafeIndefiniteLoop;
 import ru.runa.wfe.lang.NodeType;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -112,6 +113,16 @@ public class ProcessLogs implements Serializable {
         for (ProcessLog log : logs) {
             if (log.getClass() == logClass) {
                 list.add((T) log);
+            }
+        }
+        return list;
+    }
+
+    public List<ProcessLog> getLogs(String nodeId) {
+        List<ProcessLog> list = Lists.newArrayList();
+        for (ProcessLog log : logs) {
+            if (Objects.equal(log.getNodeId(), nodeId)) {
+                list.add(log);
             }
         }
         return list;

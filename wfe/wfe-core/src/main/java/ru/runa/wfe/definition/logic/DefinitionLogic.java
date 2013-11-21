@@ -34,7 +34,6 @@ import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.Deployment;
-import ru.runa.wfe.definition.Language;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.par.ProcessArchive;
@@ -42,9 +41,10 @@ import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.graph.image.SubprocessPermissionVisitor;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.graph.view.ProcessDefinitionInfoVisitor;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -140,22 +140,18 @@ public class DefinitionLogic extends WFCommonLogic {
         }
     }
 
-    /**
-     * Loads graph presentation elements for process definition and set readable
-     * flag.
-     * 
-     * @param user
-     *            Current user.
-     * @param definitionId
-     *            Identity of process definition, which presentation elements
-     *            must be loaded.
-     * @return List of graph presentation elements.
-     */
-    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) {
+    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId, String subprocessId) {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
-        SubprocessPermissionVisitor operation = new SubprocessPermissionVisitor(user, definition, processDefinitionLoader);
-        return getDefinitionGraphElements(user, definition, operation);
+        if (subprocessId != null) {
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessById(subprocessId);
+            if (subprocessDefinition == null) {
+                throw new NullPointerException("No subprocess found by '" + subprocessId + "' in " + definition);
+            }
+            definition = subprocessDefinition;
+        }
+        ProcessDefinitionInfoVisitor visitor = new ProcessDefinitionInfoVisitor(user, definition, processDefinitionLoader);
+        return getDefinitionGraphElements(user, definition, visitor);
     }
 
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
@@ -283,7 +279,6 @@ public class DefinitionLogic extends WFCommonLogic {
     private ProcessDefinition parseProcessDefinition(byte[] data) {
         Deployment deployment = new Deployment();
         deployment.setDeployedDate(new Date());
-        deployment.setLanguage(Language.JPDL);
         deployment.setContent(data);
         ProcessArchive archive = new ProcessArchive(deployment);
         return archive.parseProcessDefinition();

@@ -1,17 +1,11 @@
-package ru.runa.wfe.graph.image;
+package ru.runa.wfe.graph.view;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.wfe.graph.image.model.DiagramModel;
-import ru.runa.wfe.graph.image.model.NodeModel;
-import ru.runa.wfe.graph.view.GraphElementPresentation;
-import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
-import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
-import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
+import com.google.common.collect.Lists;
+
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.lang.SubprocessDefinition;
 
 public class GraphElementPresentationBuilder {
 
@@ -23,13 +17,8 @@ public class GraphElementPresentationBuilder {
      * @return List of graph elements for nodes.
      */
     public static List<GraphElementPresentation> createElements(ProcessDefinition definition) {
-        DiagramModel diagramModel = DiagramModel.load(definition);
-        List<GraphElementPresentation> result = new ArrayList<GraphElementPresentation>();
-        for (Node node : definition.getNodes()) {
-            if (node.getParent() instanceof SubprocessDefinition) {
-                continue;
-            }
-            NodeModel model = diagramModel.getNodeNotNull(node.getNodeId());
+        List<GraphElementPresentation> result = Lists.newArrayList();
+        for (Node node : definition.getNodes(false)) {
             GraphElementPresentation presentation;
             switch (node.getNodeType()) {
             case SUBPROCESS:
@@ -44,8 +33,12 @@ public class GraphElementPresentationBuilder {
             default:
                 presentation = new GraphElementPresentation();
             }
-            presentation.initialize(node, model);
-            presentation.setGraphConstraints(model.getConstraints());
+            int[] graphConstraints = new int[]{
+                    node.getGraphConstraints()[0], node.getGraphConstraints()[1],
+                    node.getGraphConstraints()[0] + node.getGraphConstraints()[2],
+                    node.getGraphConstraints()[1] + node.getGraphConstraints()[3]
+            };
+            presentation.initialize(node, graphConstraints);
             result.add(presentation);
         }
         return result;

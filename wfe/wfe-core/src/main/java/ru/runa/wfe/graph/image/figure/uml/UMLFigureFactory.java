@@ -21,15 +21,14 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.AbstractFigureFactory;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
-import ru.runa.wfe.graph.image.model.NodeModel;
-import ru.runa.wfe.graph.image.model.TransitionModel;
+import ru.runa.wfe.lang.Node;
 
 public class UMLFigureFactory extends AbstractFigureFactory {
 
     @Override
-    public AbstractFigure createFigure(NodeModel nodeModel) {
+    public AbstractFigure createFigure(Node node, boolean useEgdingOnly) {
         AbstractFigure figure = null;
-        switch (nodeModel.getType()) {
+        switch (node.getNodeType()) {
         case TASK_STATE:
             figure = new TaskNodeFigure();
             break;
@@ -74,14 +73,14 @@ public class UMLFigureFactory extends AbstractFigureFactory {
             figure = new ReceiveMessageNodeFigure();
             break;
         default:
-            throw new InternalApplicationException("Unexpected figure type found: " + nodeModel.getType());
+            throw new InternalApplicationException("Unexpected figure type found: " + node.getNodeType());
         }
-        figure.initFigure(nodeModel);
+        figure.initFigure(node, useEgdingOnly);
         return figure;
     }
 
     @Override
-    public TransitionFigureBase createTransitionFigure(TransitionModel transitionModel, AbstractFigure figureFrom, AbstractFigure figureTo) {
+    public TransitionFigureBase createTransitionFigure() {
         return new TransitionFigure();
     }
 }

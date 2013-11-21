@@ -24,6 +24,11 @@ public class SubprocessDefinition extends ProcessDefinition {
     }
 
     @Override
+    public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
+        return parentProcessDefinition.getEmbeddedSubprocesses();
+    }
+    
+    @Override
     public void validate() {
         super.validate();
         if (getStartStateNotNull().getLeavingTransitions().size() != 1) {
@@ -62,7 +67,7 @@ public class SubprocessDefinition extends ProcessDefinition {
     }
 
     @Override
-    public byte[] getGraphImageBytes() {
+    public byte[] getGraphImageBytesNotNull() {
         byte[] graphBytes = processDefinition.getFileData(getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
         if (graphBytes == null) {
             graphBytes = processDefinition.getFileData(getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);

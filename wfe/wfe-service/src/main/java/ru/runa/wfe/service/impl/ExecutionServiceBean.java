@@ -243,17 +243,18 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     @WebResult(name = "result")
-    public List<GraphElementPresentation> getProcessUIHistoryData(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
-        return executionLogic.getProcessUIHistoryData(user, processId, taskId);
+        return executionLogic.getProcessHistoryDiagramElements(user, processId, taskId);
     }
 
     @Override
     @WebResult(name = "result")
-    public List<GraphElementPresentation> getProcessGraphElements(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
+    public List<GraphElementPresentation> getProcessGraphElements(@WebParam(name = "user") User user, 
+            @WebParam(name = "processId") Long processId, @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
-        return executionLogic.getProcessGraphElements(user, processId);
+        return executionLogic.getProcessGraphElements(user, processId, subprocessId);
     }
 
     @Override

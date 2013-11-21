@@ -1,4 +1,4 @@
-package ru.runa.wfe.graph.image;
+package ru.runa.wfe.graph.view;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -7,9 +7,6 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
-import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
-import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
-import ru.runa.wfe.graph.view.SubprocessesGraphElementAdapter;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.security.dao.PermissionDAO;
@@ -18,9 +15,8 @@ import ru.runa.wfe.user.User;
 /**
  * Operation to set starting process readable flag.
  */
-public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter {
-
-    private static final Log log = LogFactory.getLog(SubprocessPermissionVisitor.class);
+public class ProcessDefinitionInfoVisitor extends GraphElementPresentationVisitor {
+    private static final Log log = LogFactory.getLog(ProcessDefinitionInfoVisitor.class);
 
     /**
      * Current subject.
@@ -43,39 +39,37 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      * @param loader
      *            Process definition loader.
      */
-    public SubprocessPermissionVisitor(User user, ProcessDefinition definition, IProcessDefinitionLoader loader) {
+    public ProcessDefinitionInfoVisitor(User user, ProcessDefinition definition, IProcessDefinitionLoader loader) {
         this.user = user;
         this.definition = definition;
         this.loader = loader;
     }
 
     @Override
-    public void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
+    protected void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
         try {
-            ProcessDefinition def = loader.getLatestDefinition(element.getSubprocessName());
-            if (checkPermission(def)) {
-                element.setReadPermission(true);
-            }
-            element.addSubprocessId(def.getId());
+            ProcessDefinition processDefinition = loader.getLatestDefinition(element.getSubprocessName());
+            element.setSubprocessAccessible(hasReadPermission(processDefinition));
+            element.setSubprocessId(processDefinition.getId());
         } catch (DefinitionDoesNotExistException e) {
             log.warn("ProcessDefinitionDoesNotExistException", e);
         }
     }
 
     @Override
-    public void onSubprocess(SubprocessGraphElementPresentation element) {
+    protected void onSubprocess(SubprocessGraphElementPresentation element) {
         if (element.isEmbedded()) {
-            element.setReadPermission(true);
+            element.setSubprocessAccessible(true);
             element.setSubprocessId(definition.getId());
             SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessByName(element.getSubprocessName());
-            element.setSubprocessName(subprocessDefinition.getNodeId());
+            element.setEmbeddedSubprocessId(subprocessDefinition.getNodeId());
+            element.setEmbeddedSubprocessGraphWidth(subprocessDefinition.getGraphConstraints()[2]);
+            element.setEmbeddedSubprocessGraphHeight(subprocessDefinition.getGraphConstraints()[3]);
         } else {
             try {
-                ProcessDefinition def = loader.getLatestDefinition(element.getSubprocessName());
-                if (checkPermission(def)) {
-                    element.setReadPermission(true);
-                }
-                element.setSubprocessId(def.getId());
+                ProcessDefinition processDefinition = loader.getLatestDefinition(element.getSubprocessName());
+                element.setSubprocessAccessible(hasReadPermission(processDefinition));
+                element.setSubprocessId(processDefinition.getId());
             } catch (DefinitionDoesNotExistException e) {
                 log.warn("ProcessDefinitionDoesNotExistException", e);
             }
@@ -90,7 +84,7 @@ public class SubprocessPermissionVisitor extends SubprocessesGraphElementAdapter
      * @return true, if current actor can read process definition and false
      *         otherwise.
      */
-    private boolean checkPermission(ProcessDefinition processDefinition) {
+    private boolean hasReadPermission(ProcessDefinition processDefinition) {
         PermissionDAO permissionDAO = ApplicationContextFactory.getPermissionDAO();
         return permissionDAO.isAllowed(user, DefinitionPermission.READ, processDefinition.getDeployment());
     }

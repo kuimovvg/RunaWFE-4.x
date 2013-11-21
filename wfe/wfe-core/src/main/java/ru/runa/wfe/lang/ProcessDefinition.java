@@ -56,6 +56,8 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     protected ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
     protected Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
 
+    private boolean graphActionsEnabled;
+
     protected ProcessDefinition() {
     }
 
@@ -163,7 +165,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return bytes;
     }
 
-    public byte[] getGraphImageBytes() {
+    public byte[] getGraphImageBytesNotNull() {
         byte[] graphBytes = processDefinition.getFileData(IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
         if (graphBytes == null) {
             graphBytes = processDefinition.getFileData(IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
@@ -196,8 +198,14 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return startState;
     }
 
-    public List<Node> getNodes() {
-        return nodes;
+    public List<Node> getNodes(boolean withEmbeddedSubprocesses) {
+        List<Node> result = Lists.newArrayList(nodes);
+        if (withEmbeddedSubprocesses) {
+            for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
+                result.addAll(subprocessDefinition.getNodes(withEmbeddedSubprocesses));
+            }
+        }
+        return result;
     }
 
     public Node addNode(Node node) {
@@ -212,11 +220,21 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         }
         return node;
     }
+    
+    public void removeNode(Node node) {
+        nodes.remove(node);
+    }
 
     public Node getNode(String id) {
         Preconditions.checkNotNull(id);
         for (Node node : nodes) {
             if (id.equals(node.getNodeId())) {
+                return node;
+            }
+        }
+        for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
+            Node node = subprocessDefinition.getNode(id);
+            if (node != null) {
                 return node;
             }
         }
@@ -240,6 +258,17 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
             Action action = node.getAction(id);
             if (action != null) {
                 return action;
+            }
+        }
+        for (SwimlaneDefinition swimlaneDefinition : swimlaneDefinitions.values()) {
+            if (id.equals(swimlaneDefinition.getNodeId())) {
+                return swimlaneDefinition;
+            }
+        }
+        for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
+            GraphElement graphElement = subprocessDefinition.getGraphElement(id);
+            if (graphElement != null) {
+                return graphElement;
             }
         }
         return null;
@@ -278,30 +307,17 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return swimlaneDefinition;
     }
 
-    public TaskDefinition getTaskNotNull(String nodeId) {
-        for (Node node : getNodes()) {
-            if (node instanceof InteractionNode) {
-                for (TaskDefinition taskDefinition : ((InteractionNode) node).getTasks()) {
-                    if (Objects.equal(nodeId, taskDefinition.getNodeId())) {
-                        return taskDefinition;
-                    }
-                }
-            }
-        }
-        throw new InternalApplicationException("task '" + nodeId + "' not found in " + this);
-    }
-
     public boolean ignoreSubsitutionRulesForTask(Task task) {
         InteractionNode interactionNode = (InteractionNode) getNodeNotNull(task.getNodeId());
         return interactionNode.getFirstTaskNotNull().isIgnoreSubsitutionRules();
     }
 
-    @Override
-    public String toString() {
-        if (deployment != null) {
-            return deployment.toString();
-        }
-        return name;
+    public boolean isGraphActionsEnabled() {
+        return graphActionsEnabled;
+    }
+
+    public void setGraphActionsEnabled(boolean graphActionsEnabled) {
+        this.graphActionsEnabled = graphActionsEnabled;
     }
 
     public void addEmbeddedSubprocess(SubprocessDefinition subprocessDefinition) {
@@ -318,7 +334,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return result;
     }
 
-    public String getEmbeddedSubprocessNodeIdNotNull(String subprocessName) {
+    public String getEmbeddedSubprocessNodeId(String subprocessName) {
         for (Node node : nodes) {
             if (node instanceof SubProcessState) {
                 SubProcessState subProcessState = (SubProcessState) node;
@@ -327,15 +343,25 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
                 }
             }
         }
-        throw new NullPointerException("No subprocess state found for composition " + subprocessName);
+        for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
+            String nodeId = subprocessDefinition.getEmbeddedSubprocessNodeId(subprocessName);
+            if (nodeId != null) {
+                return nodeId;
+            }
+        }
+        return null;
+    }
+    
+    public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
+        return embeddedSubprocesses;
     }
 
     public SubprocessDefinition getEmbeddedSubprocessById(String id) {
-        return embeddedSubprocesses.get(id);
+        return getEmbeddedSubprocesses().get(id);
     }
 
     public SubprocessDefinition getEmbeddedSubprocessByName(String name) {
-        for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
+        for (SubprocessDefinition subprocessDefinition : getEmbeddedSubprocesses().values()) {
             if (Objects.equal(name, subprocessDefinition.getName())) {
                 return subprocessDefinition;
             }
@@ -359,10 +385,17 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
                         endNode.addLeavingTransition(subProcessState.getLeavingTransitions().get(0));
                         endNode.setSubProcessState(subProcessState);
                     }
-                    //processDefinition.getNodes().remove(subProcessState);
-                    processDefinition.getNodes().addAll(subprocessDefinition.getNodes());
+                    subprocessDefinition.mergeWithEmbeddedSubprocesses();
                 }
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        if (deployment != null) {
+            return deployment.toString();
+        }
+        return name;
     }
 }

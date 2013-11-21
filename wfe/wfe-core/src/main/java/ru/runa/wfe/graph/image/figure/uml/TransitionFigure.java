@@ -17,37 +17,12 @@
  */
 package ru.runa.wfe.graph.image.figure.uml;
 
-import java.awt.Point;
 import java.awt.Rectangle;
 
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
-import ru.runa.wfe.graph.image.model.BendpointModel;
 import ru.runa.wfe.lang.NodeType;
 
 public class TransitionFigure extends TransitionFigureBase {
-
-    @Override
-    protected Point getCompatibleBendpoint(BendpointModel bendpointModel) {
-        Point center = figureFrom.getBendpoint();
-        if ((center != null) && (figureFrom instanceof TaskNodeFigure)) {
-            return bendpointModel.getPointFrom(center);
-        } else if ((figureFrom instanceof ForkJoinFigure) && (figureTo instanceof ForkJoinFigure)) {
-            Point result = bendpointModel.getPointFrom(center);
-            int w1 = bendpointModel.getW1();
-            int w2 = bendpointModel.getW2();
-            int h1 = bendpointModel.getH1();
-            int h2 = bendpointModel.getH2();
-
-            int dw1 = w1 * h1 * (w1 - w2) / ((h1 - h2) * Math.abs(w1));
-
-            result.x += dw1;
-
-            return result;
-        } else {
-            center = figureTo.getBendpoint();
-            return bendpointModel.getPointTo(center);
-        }
-    }
 
     @Override
     protected double[] getReferencePoint(Rectangle rectFrom, Rectangle rectTo) {

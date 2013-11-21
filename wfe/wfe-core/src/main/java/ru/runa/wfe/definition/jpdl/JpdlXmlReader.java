@@ -239,7 +239,7 @@ public class JpdlXmlReader {
         if (swimlaneName == null) {
             if (node instanceof MultiTaskNode) {
             } else if (waitStateCompatibility) {
-                processDefinition.getNodes().remove(node);
+                processDefinition.removeNode(node);
                 WaitState waitState = new WaitState();
                 waitState.setProcessDefinition(processDefinition);
                 readNode(processDefinition, element.getParent(), waitState);
@@ -479,7 +479,7 @@ public class JpdlXmlReader {
         transition.setProcessDefinition(processDefinition);
         node.addLeavingTransition(transition);
         transition.setName(element.attributeValue(NAME_ATTR));
-        for (CreateTimerAction createTimerAction : node.getTimerActions()) {
+        for (CreateTimerAction createTimerAction : node.getTimerActions(false)) {
             if (Objects.equal(createTimerAction.getTransitionName(), transition.getName())) {
                 transition.setTimerTransition(true);
             }
@@ -497,7 +497,7 @@ public class JpdlXmlReader {
     }
 
     private void verifyElements(ProcessDefinition processDefinition) {
-        for (Node node : processDefinition.getNodes()) {
+        for (Node node : processDefinition.getNodes(false)) {
             node.validate();
         }
     }

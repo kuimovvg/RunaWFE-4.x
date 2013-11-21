@@ -159,9 +159,9 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId) {
+    public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId, String subprocessId) {
         try {
-            return getDefinitionService().getProcessDefinitionGraphElements(user, definitionId);
+            return getDefinitionService().getProcessDefinitionGraphElements(user, definitionId, subprocessId);
         } catch (Exception e) {
             throw handleException(e);
         }

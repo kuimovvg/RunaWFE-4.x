@@ -6,22 +6,21 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 
+import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.util.AngleInfo;
-import ru.runa.wfe.graph.image.util.DrawProperties;
 import ru.runa.wfe.graph.image.util.Line;
 import ru.runa.wfe.graph.image.util.LineUtils;
-
-import com.google.common.base.Objects;
+import ru.runa.wfe.lang.Transition;
 
 public class ReceiveMessageNodeFigure extends AbstractFigure {
 
     @Override
-    public Point getTransitionPoint(double x, double y, String transitionName) {
-        if (Objects.equal(timerTransitionName, transitionName)) {
+    public Point getTransitionPoint(Transition transition, double x, double y) {
+        if (transition != null && transition.isTimerTransition()) {
             return new Point(coords[0] + DrawProperties.GRID_SIZE, coords[1] + coords[3] - DrawProperties.GRID_SIZE);
         }
-        return super.getTransitionPoint(x, y, transitionName);
+        return super.getTransitionPoint(transition, x, y);
     }
 
     private Polygon createPolygon() {
@@ -36,7 +35,7 @@ public class ReceiveMessageNodeFigure extends AbstractFigure {
     @Override
     public void fill(Graphics2D graphics) {
         graphics.fillPolygon(createPolygon());
-        if (!minimized && timerTransitionName != null) {
+        if (!minimized && hasTimer) {
             graphics.fillOval(coords[0], coords[1] + coords[3] - DrawProperties.GRID_SIZE * 2, DrawProperties.GRID_SIZE * 2,
                     DrawProperties.GRID_SIZE * 2);
         }
@@ -45,11 +44,11 @@ public class ReceiveMessageNodeFigure extends AbstractFigure {
     @Override
     public void draw(Graphics2D graphics, boolean cleanMode) {
         graphics.drawPolygon(createPolygon());
-        if (!DrawProperties.useEdgingOnly()) {
+        if (!useEgdingOnly) {
             Rectangle r = getRectangle();
             drawTextInfo(graphics, (int) r.getHeight() / 2 - DrawProperties.getFontSize());
         }
-        if (!minimized && timerTransitionName != null) {
+        if (!minimized && hasTimer) {
             // Clean area for timer
             Color orig = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());

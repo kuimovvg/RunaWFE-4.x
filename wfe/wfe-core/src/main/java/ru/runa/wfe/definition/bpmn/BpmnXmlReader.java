@@ -55,30 +55,15 @@ import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "unchecked" })
 public class BpmnXmlReader {
-    private static final String BPMN_PREFIX = "";
-    private static final String BPMN_NAMESPACE = "http://www.omg.org/spec/BPMN/20100524/MODEL";
-    private static final String RUNA_PREFIX = "runa";
     private static final String RUNA_NAMESPACE = "http://runa.ru/wfe/xml";
-    private static final String DEFINITIONS = "definitions";
     private static final String PROCESS = "process";
     private static final String EXTENSION_ELEMENTS = "extensionElements";
-    private static final String EXECUTABLE = "isExecutable";
+    private static final String IS_EXECUTABLE = "isExecutable";
     private static final String PROPERTY = "property";
-    private static final String END_STATE = "endEvent";
-    private static final String TEXT_ANNOTATION = "textAnnotation";
+    private static final String END_EVENT = "endEvent";
     private static final String SERVICE_TASK = "serviceTask";
     private static final String SCRIPT_TASK = "scriptTask";
-    private static final String TEXT = "text";
     private static final String TOKEN = "token";
-    private static final String IO_SPECIFICATION = "ioSpecification";
-    private static final String DATA_INPUT = "dataInput";
-    private static final String DATA_OUTPUT = "dataOutput";
-    private static final String INPUT_SET = "inputSet";
-    private static final String OUTPUT_SET = "outputSet";
-    private static final String DATA_INPUT_REFS = "dataInputRefs";
-    private static final String DATA_OUTPUT_REFS = "dataOutputRefs";
-    private static final String DATA_INPUT_ASSOCIATION = "dataInputAssociation";
-    private static final String DATA_OUTPUT_ASSOCIATION = "dataOutputAssociation";
     private static final String VARIABLES = "variables";
     private static final String VARIABLE = "variable";
     private static final String SOURCE_REF = "sourceRef";
@@ -88,13 +73,12 @@ public class BpmnXmlReader {
     private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
     private static final String DEFAULT_TASK_TIMEOUT = "default-task-timeout";
-    private static final String REPEAT = "repeat";//
     private static final String USER_TASK = "userTask";
     private static final String START_EVENT = "startEvent";
-    private static final String SWIMLANE_SET = "laneSet";
-    private static final String SWIMLANE = "lane";
+    private static final String LANE_SET = "laneSet";
+    private static final String LANE = "lane";
     private static final String FLOW_NODE_REF = "flowNodeRef";
-    public static final String SWIMLANE_DISPLAY_MODE = "showSwimlane";
+    public static final String SHOW_WIMLANE = "showSwimlane";
     private static final String REASSIGN = "reassign";//
     private static final String CLASS = "class";
     private static final String SEQUENCE_FLOW = "sequenceFlow";
@@ -105,14 +89,13 @@ public class BpmnXmlReader {
     private static final String MAPPED_NAME = "mappedName";
     private static final String USAGE = "usage";
     private static final String ID = "id";
-    private static final String SEND_MESSAGE = "sendTask";
-    private static final String RECEIVE_MESSAGE = "receiveTask";
+    private static final String SEND_TASK = "sendTask";
+    private static final String RECEIVE_TASK = "receiveTask";
     private static final String BOUNDARY_EVENT = "boundaryEvent";
-    private static final String INTERMEDIATE_EVENT = "intermediateCatchEvent";
-    private static final String CANCEL_ACTIVITY = "cancelActivity";
+    private static final String INTERMEDIATE_CATCH_EVENT = "intermediateCatchEvent";
     private static final String ATTACHED_TO_REF = "attachedToRef";
-    private static final String TIMER_EVENT = "timerEventDefinition";
-    private static final String TIMER_DURATION = "timeDuration";
+    private static final String TIMER_EVENT_DEFINITION = "timerEventDefinition";
+    private static final String TIME_DURATION = "timeDuration";
     private static final String ASYNC = "async";
     private static final String ASYNC_COMPLETION_MODE = "asyncCompletionMode";
     private static final String ACCESS_TYPE = "accessType";
@@ -127,9 +110,9 @@ public class BpmnXmlReader {
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
         nodeTypes.put(USER_TASK, TaskNode.class);
-        nodeTypes.put(INTERMEDIATE_EVENT, WaitState.class);
-        nodeTypes.put(SEND_MESSAGE, SendMessage.class);
-        nodeTypes.put(RECEIVE_MESSAGE, ReceiveMessage.class);
+        nodeTypes.put(INTERMEDIATE_CATCH_EVENT, WaitState.class);
+        nodeTypes.put(SEND_TASK, SendMessage.class);
+        nodeTypes.put(RECEIVE_TASK, ReceiveMessage.class);
         // back compatibility v < 4.0.4
         nodeTypes.put(SERVICE_TASK, ScriptTask.class);
         nodeTypes.put(SCRIPT_TASK, ScriptTask.class);
@@ -153,7 +136,7 @@ public class BpmnXmlReader {
                 // processDefinition.setDefaultTaskTimeoutDelay(new
                 // Delay(defaultTaskTimeout));
             }
-            String swimlaneDisplayModeName = processProperties.get(SWIMLANE_DISPLAY_MODE);
+            String swimlaneDisplayModeName = processProperties.get(SHOW_WIMLANE);
             if (swimlaneDisplayModeName != null) {
                 // definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
             }
@@ -161,7 +144,7 @@ public class BpmnXmlReader {
             if (!Strings.isNullOrEmpty(accessTypeString)) {
                 processDefinition.setAccessType(ProcessDefinitionAccessType.valueOf(accessTypeString));
             }
-            if ("false".equals(process.attributeValue(EXECUTABLE))) {
+            if ("false".equals(process.attributeValue(IS_EXECUTABLE))) {
                 throw new InvalidDefinitionException(processDefinition.getName(), "process is not executable");
             }
 
@@ -181,15 +164,16 @@ public class BpmnXmlReader {
     }
 
     private void readSwimlanes(ProcessDefinition processDefinition, Element processElement) {
-        Element swimlaneSetElement = processElement.element(SWIMLANE_SET);
+        Element swimlaneSetElement = processElement.element(LANE_SET);
         if (swimlaneSetElement != null) {
-            List<Element> swimlanes = swimlaneSetElement.elements(SWIMLANE);
+            List<Element> swimlanes = swimlaneSetElement.elements(LANE);
             for (Element swimlaneElement : swimlanes) {
                 String swimlaneName = swimlaneElement.attributeValue(NAME);
                 if (swimlaneName == null) {
                     throw new InternalApplicationException("there's a swimlane without a name");
                 }
                 SwimlaneDefinition swimlaneDefinition = new SwimlaneDefinition();
+                swimlaneDefinition.setNodeId(swimlaneElement.attributeValue(ID));
                 swimlaneDefinition.setName(swimlaneName);
                 swimlaneDefinition.setDelegation(readDelegation(swimlaneElement, true));
                 SwimlaneUtils.setOrgFunctionLabel(swimlaneDefinition, localizationDAO);
@@ -217,7 +201,7 @@ public class BpmnXmlReader {
                 } else {
                     node = ApplicationContextFactory.createAutowiredBean(StartState.class);
                 }
-            } else if (END_STATE.equals(nodeName)) {
+            } else if (END_EVENT.equals(nodeName)) {
                 Map<String, String> properties = parseExtensionProperties(element);
                 if (properties.containsKey(TOKEN)) {
                     node = ApplicationContextFactory.createAutowiredBean(EndToken.class);
@@ -298,21 +282,21 @@ public class BpmnXmlReader {
         }
         if (node instanceof SendMessage) {
             SendMessage sendMessage = (SendMessage) node;
-            sendMessage.setTtlDuration(element.attributeValue(QName.get(TIMER_DURATION, RUNA_NAMESPACE), "1 days"));
+            sendMessage.setTtlDuration(element.attributeValue(QName.get(TIME_DURATION, RUNA_NAMESPACE), "1 days"));
         }
     }
 
     private void readTimer(ProcessDefinition processDefinition, Element eventElement, GraphElement node) {
-        Element timerElement = eventElement.element(TIMER_EVENT);
+        Element timerElement = eventElement.element(TIMER_EVENT_DEFINITION);
         CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
         createTimerAction.setNodeId(eventElement.attributeValue(ID));
         String name = eventElement.attributeValue(NAME, node.getNodeId());
         createTimerAction.setName(name);
-        String durationString = timerElement.elementTextTrim(TIMER_DURATION);
+        String durationString = timerElement.elementTextTrim(TIME_DURATION);
         if (Strings.isNullOrEmpty(durationString) && node instanceof TaskNode && Timer.ESCALATION_NAME.equals(name)) {
             durationString = ((TaskNode) node).getFirstTaskNotNull().getDeadlineDuration();
             if (Strings.isNullOrEmpty(durationString)) {
-                throw new InternalApplicationException("No '" + TIMER_DURATION + "' specified for timer in " + node);
+                throw new InternalApplicationException("No '" + TIME_DURATION + "' specified for timer in " + node);
             }
         }
         createTimerAction.setDueDate(durationString);
@@ -392,7 +376,7 @@ public class BpmnXmlReader {
             if (sourceElement instanceof Node) {
                 source = (Node) sourceElement;
                 if (source instanceof WaitState) {
-                    source.getTimerActions().get(0).setTransitionName(name);
+                    source.getTimerActions(false).get(0).setTransitionName(name);
                     transition.setTimerTransition(true);
                 }
             } else if (sourceElement instanceof CreateTimerAction) {
@@ -442,7 +426,7 @@ public class BpmnXmlReader {
         node.addTask(taskDefinition);
         // assignment
         Map<String, String> properties = parseExtensionProperties(element);
-        String swimlaneName = properties.get(SWIMLANE);
+        String swimlaneName = properties.get(LANE);
         SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
         taskDefinition.setSwimlane(swimlaneDefinition);
         if (properties.containsKey(REASSIGN)) {
@@ -468,7 +452,7 @@ public class BpmnXmlReader {
     }
 
     private void verifyElements(ProcessDefinition processDefinition) {
-        for (Node node : processDefinition.getNodes()) {
+        for (Node node : processDefinition.getNodes(false)) {
             node.validate();
         }
     }

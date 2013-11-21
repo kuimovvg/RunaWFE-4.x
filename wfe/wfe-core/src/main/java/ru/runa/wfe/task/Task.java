@@ -57,6 +57,7 @@ import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.lang.Event;
+import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.user.Executor;
 
@@ -238,9 +239,9 @@ public class Task implements Assignable {
         if (cascadeUpdate) {
             swimlane.assignExecutor(executionContext, executor, false);
         }
-        // fire the event TODO simplify
-        executionContext.getProcessDefinition().getTaskNotNull(nodeId)
-                .fireEvent(new ExecutionContext(executionContext.getProcessDefinition(), this), Event.TASK_ASSIGN);
+        InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(nodeId);
+        ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);
+        node.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_ASSIGN);
     }
 
     /**
@@ -252,9 +253,6 @@ public class Task implements Assignable {
      */
     public void end(ExecutionContext executionContext, TaskCompletionBy completionBy, Executor executor) {
         log.debug("Ending " + this + " by " + completionBy + " with " + executor);
-        // fire the task end event
-        TaskDefinition taskDefinition = executionContext.getProcessDefinition().getTaskNotNull(nodeId);
-        taskDefinition.fireEvent(executionContext, Event.TASK_END);
         switch (completionBy) {
         case TIMER:
             executionContext.addLog(new TaskExpiredLog(this));
@@ -268,6 +266,9 @@ public class Task implements Assignable {
         default:
             throw new IllegalArgumentException("Unimplemented for " + completionBy);
         }
+        InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(nodeId);
+        ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);
+        node.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_END);
         delete();
     }
 
