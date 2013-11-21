@@ -1,5 +1,6 @@
 package ru.runa.gpd.quick.formeditor;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -32,13 +33,17 @@ public class QuickFormType extends FormType {
     @Override
     public Map<String, FormVariableAccess> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception {
         Map<String, FormVariableAccess> variableNames = Maps.newHashMap();
-        Document document = XmlUtil.parseWithoutValidation(formFile.getContents(true));
-        List<Element> varElementsList = document.getRootElement().elements(QuickFormXMLUtil.TEMPLATE_VARIABLE);
-        for (Element varElement : varElementsList) {
-            String name = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_NAME);
-            String tag = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_TAG);
-            variableNames.put(name, READ_TAG.equals(tag) ? FormVariableAccess.READ : FormVariableAccess.WRITE);
+        InputStream contentStream = formFile.getContents(true);
+        if(contentStream != null && contentStream.available() != 0) {
+        	Document document = XmlUtil.parseWithoutValidation(contentStream);
+            List<Element> varElementsList = document.getRootElement().elements(QuickFormXMLUtil.TEMPLATE_VARIABLE);
+            for (Element varElement : varElementsList) {
+                String name = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_NAME);
+                String tag = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_TAG);
+                variableNames.put(name, READ_TAG.equals(tag) ? FormVariableAccess.READ : FormVariableAccess.WRITE);
+            }
         }
+        
         return variableNames;
     }
 
