@@ -46,6 +46,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.par.ProcessDefinitionValidator;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.custom.Dialogs;
@@ -71,7 +72,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         this.definitionNameFileMap = new TreeMap<String, IFile>();
         for (IFile file : ProcessCache.getAllProcessDefinitionsMap().keySet()) {
             ProcessDefinition definition = ProcessCache.getProcessDefinition(file);
-            if (definition != null) {
+            if (definition != null && !(definition instanceof SubprocessDefinition)) {
                 definitionNameFileMap.put(getKey(file, definition), file);
             }
         }
@@ -108,7 +109,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
             IFile definitionFile = IOUtils.getProcessDefinitionFile((IFolder) adjacentFile.getParent());
             if (definitionFile.exists()) {
                 ProcessDefinition currentDefinition = ProcessCache.getProcessDefinition(definitionFile);
-                if (currentDefinition != null) {
+                if (currentDefinition != null && !(currentDefinition instanceof SubprocessDefinition)) {
                     definitionListViewer.setSelection(new StructuredSelection(getKey(definitionFile, currentDefinition)));
                 }
             }
@@ -204,6 +205,15 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                     if (validationResult == 2) {
                         setErrorMessage(Localization.getString("ExportParWizardPage.page.errorsExist"));
                         return false;
+                    }
+                }
+                for (SubprocessDefinition subprocessDefinition : definition.getEmbeddedSubprocesses().values()) {
+                    validationResult = ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
+                    if (!exportToFile && validationResult != 0) {
+                        if (validationResult == 2) {
+                            setErrorMessage(Localization.getString("ExportParWizardPage.page.errorsExistInEmbeddedSubprocess"));
+                            return false;
+                        }
                     }
                 }
                 definition.getLanguage().getSerializer().validateProcessDefinitionXML(definitionFile);
