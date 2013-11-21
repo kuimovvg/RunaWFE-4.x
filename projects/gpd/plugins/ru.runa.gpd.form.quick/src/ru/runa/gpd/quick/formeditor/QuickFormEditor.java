@@ -210,6 +210,10 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     }
                 }
             	
+            	if((prevTemplateFileName == null && filename == null) || (StringUtils.isNotEmpty(prevTemplateFileName) && prevTemplateFileName.equals(filename))) {
+            		return;
+            	}
+            	
             	if(filename != null && filename.trim().length() > 0) {
             		Bundle bundle = QuickTemplateRegister.getBundle(filename);
             		String templateHtml = QuickFormXMLUtil.getTemplateFromRegister(bundle, filename);
