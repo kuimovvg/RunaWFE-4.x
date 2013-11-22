@@ -208,7 +208,8 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                     }
                 }
                 for (SubprocessDefinition subprocessDefinition : definition.getEmbeddedSubprocesses().values()) {
-                    validationResult = ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
+                    IFile subprocessDefinitionFile = ProcessCache.getProcessDefinitionFile(subprocessDefinition);
+                    validationResult = ProcessDefinitionValidator.validateDefinition(subprocessDefinitionFile, subprocessDefinition);
                     if (!exportToFile && validationResult != 0) {
                         if (validationResult == 2) {
                             setErrorMessage(Localization.getString("ExportParWizardPage.page.errorsExistInEmbeddedSubprocess"));

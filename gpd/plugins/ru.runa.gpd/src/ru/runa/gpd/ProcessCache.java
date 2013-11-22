@@ -13,12 +13,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
-import com.google.common.collect.Lists;
-
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class ProcessCache {
     private static Map<IFile, ProcessDefinition> CACHE_BY_FILE = new HashMap<IFile, ProcessDefinition>();
@@ -118,6 +119,15 @@ public class ProcessCache {
             }
         }
         return CACHE_BY_FILE.get(file);
+    }
+
+    public static IFile getProcessDefinitionFile(ProcessDefinition processDefinition) {
+        for (Map.Entry<IFile, ProcessDefinition> entry : CACHE_BY_FILE.entrySet()) {
+            if (Objects.equal(processDefinition, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        throw new RuntimeException("No file found for " + processDefinition);
     }
 
     public static ProcessDefinition getFirstProcessDefinition(String name) {
