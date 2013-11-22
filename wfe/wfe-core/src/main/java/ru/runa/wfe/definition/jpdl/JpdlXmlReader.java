@@ -103,9 +103,9 @@ public class JpdlXmlReader {
 
     private static Map<String, Class<? extends Node>> nodeTypes = Maps.newHashMap();
     static {
-        //nodeTypes.put("start-state", StartState.class);
-        nodeTypes.put("end-token-state", EndToken.class);
-        //nodeTypes.put("end-state", EndNode.class);
+        // nodeTypes.put("start-state", StartState.class);
+        // nodeTypes.put("end-token-state", EndToken.class);
+        nodeTypes.put("end-state", EndNode.class);
         nodeTypes.put("wait-state", WaitState.class);
         nodeTypes.put("task-node", TaskNode.class);
         nodeTypes.put("multi-task-node", MultiTaskNode.class);
@@ -190,11 +190,11 @@ public class JpdlXmlReader {
                 } else {
                     node = ApplicationContextFactory.createAutowiredBean(StartState.class);
                 }
-            } else if ("end-state".equals(nodeName)) {
+            } else if ("end-token-state".equals(nodeName)) {
                 if (processDefinition instanceof SubprocessDefinition) {
                     node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessEndNode.class);
                 } else {
-                    node = ApplicationContextFactory.createAutowiredBean(EndNode.class);
+                    node = ApplicationContextFactory.createAutowiredBean(EndToken.class);
                 }
             }
             if (node != null) {

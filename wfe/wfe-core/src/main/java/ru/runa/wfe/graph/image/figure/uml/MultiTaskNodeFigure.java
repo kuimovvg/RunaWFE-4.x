@@ -30,7 +30,7 @@ public class MultiTaskNodeFigure extends MultiSubprocessFigure {
 
     @Override
     public Rectangle getRectangle() {
-        return new Rectangle(coords[0] + DrawProperties.GRID_SIZE, coords[1], coords[2] - 2 * DrawProperties.GRID_SIZE, coords[3]
+        return new Rectangle(coords[0] + DrawProperties.GRID_SIZE, coords[1], coords[2] - 3 * DrawProperties.GRID_SIZE / 2, coords[3]
                 - DrawProperties.GRID_SIZE);
     }
 

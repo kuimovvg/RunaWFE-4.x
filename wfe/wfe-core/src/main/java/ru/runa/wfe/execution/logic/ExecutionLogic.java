@@ -211,11 +211,12 @@ public class ExecutionLogic extends WFCommonLogic {
                 }
                 String subprocessNodeId = processDefinition.getEmbeddedSubprocessNodeId(subprocessDefinition.getName());
                 if (subprocessNodeId == null) {
-                    throw new NullPointerException("No subprocess state found by subprocess name '" + subprocessDefinition.getName() + "' in " + processDefinition);
+                    throw new NullPointerException("No subprocess state found by subprocess name '" + subprocessDefinition.getName() + "' in "
+                            + processDefinition);
                 }
                 boolean embeddedSubprocessLogs = false;
                 boolean childSubprocessLogs = false;
-                List<String> childSubprocessNodeIds = processDefinition.getEmbeddedSubprocessNodeIds();
+                List<String> childSubprocessNodeIds = subprocessDefinition.getEmbeddedSubprocessNodeIds();
                 for (ProcessLog log : Lists.newArrayList(logs)) {
                     if (log instanceof NodeLeaveLog && Objects.equal(subprocessNodeId, log.getNodeId())) {
                         embeddedSubprocessLogs = false;
@@ -234,7 +235,6 @@ public class ExecutionLogic extends WFCommonLogic {
                     }
                 }
                 processDefinition = subprocessDefinition;
-                Preconditions.checkNotNull(processDefinition, "sub processDefinition");
             } else {
                 List<String> embeddedSubprocessNodeIds = processDefinition.getEmbeddedSubprocessNodeIds();
                 if (embeddedSubprocessNodeIds.size() > 0) {
@@ -295,7 +295,8 @@ public class ExecutionLogic extends WFCommonLogic {
         }
     }
 
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId)
+            throws ProcessDoesNotExistException {
         try {
             Process process = processDAO.getNotNull(processId);
             checkPermissionAllowed(user, process, ProcessPermission.READ);

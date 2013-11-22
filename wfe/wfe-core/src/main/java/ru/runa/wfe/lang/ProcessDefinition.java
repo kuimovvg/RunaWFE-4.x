@@ -220,7 +220,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         }
         return node;
     }
-    
+
     public void removeNode(Node node) {
         nodes.remove(node);
     }
@@ -351,7 +351,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         }
         return null;
     }
-    
+
     public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
         return embeddedSubprocesses;
     }
@@ -379,8 +379,6 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
                     EmbeddedSubprocessStartNode startNode = subprocessDefinition.getStartStateNotNull();
                     startNode.addArrivingTransition(subProcessState.getArrivingTransitions().get(0));
                     startNode.setSubProcessState(subProcessState);
-                    // TODO duplicate leaving transitions for multiple end
-                    // nodes?
                     for (EmbeddedSubprocessEndNode endNode : subprocessDefinition.getEndNodes()) {
                         endNode.addLeavingTransition(subProcessState.getLeavingTransitions().get(0));
                         endNode.setSubProcessState(subProcessState);
