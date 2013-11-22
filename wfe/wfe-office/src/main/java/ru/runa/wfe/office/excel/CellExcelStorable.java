@@ -10,12 +10,12 @@ import ru.runa.wfe.office.excel.utils.ExcelHelper;
 public class CellExcelStorable extends ExcelStorable<CellConstraints, Object> {
 
     @Override
-    protected void load(Workbook workbook) {
+    public void load(Workbook workbook) {
         setData(ExcelHelper.getCellValue(getCell(workbook), format));
     }
 
     @Override
-    protected void storeIn(Workbook workbook) {
+    public void storeIn(Workbook workbook) {
         ExcelHelper.setCellValue(getCell(workbook), format.format(data));
     }
 
