@@ -20,7 +20,7 @@ public class ExcelDataStore {
         mappings.put(ColumnConstraints.class, ListColumnExcelStorable.class);
     }
 
-    public <C extends IExcelConstraints> ExcelStorable<C, ?> createStorable(C constraints) {
+    public <C extends IExcelConstraints> ExcelStorable<C, ?> create(C constraints) {
         try {
             ExcelStorable<C, ?> storable = (ExcelStorable<C, ?>) mappings.get(constraints.getClass()).newInstance();
             storable.setConstraints(constraints);
@@ -58,17 +58,6 @@ public class ExcelDataStore {
 
     public void save(Workbook workbook, ExcelStorable<?, ?> storable) throws IOException {
         storable.storeIn(workbook);
-    }
-
-    public <C extends IExcelConstraints> ExcelStorable<C, ?> load(Workbook workbook, C constraints) throws IOException {
-        try {
-            ExcelStorable<C, ?> storable = createStorable(constraints);
-            storable.load(workbook);
-            return storable;
-        } catch (Exception e) {
-            Throwables.propagateIfInstanceOf(e, IOException.class);
-            throw Throwables.propagate(e);
-        }
     }
 
 }

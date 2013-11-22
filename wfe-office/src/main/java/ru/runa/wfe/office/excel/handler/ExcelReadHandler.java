@@ -12,6 +12,7 @@ import ru.runa.wfe.office.excel.ExcelStorable;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
 import ru.runa.wfe.office.shared.OfficeFilesSupplierHandler;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 
 public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> {
 
@@ -28,8 +29,11 @@ public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
         InputStream templateInputStream = config.getFileInputStream(variableProvider, fileDataProvider, true);
         Workbook workbook = dataStore.loadWorkbook(templateInputStream, config.isInputFileXLSX(variableProvider, false));
         for (ExcelBinding binding : config.getBindings()) {
+            WfVariable variable = variableProvider.getVariableNotNull(binding.getVariableName());
             binding.getConstraints().applyPlaceholders(variableProvider);
-            ExcelStorable storable = dataStore.load(workbook, binding.getConstraints());
+            ExcelStorable storable = dataStore.create(binding.getConstraints());
+            storable.setFormat(variable.getFormatNotNull());
+            storable.load(workbook);
             result.put(binding.getVariableName(), storable.getData());
         }
         return result;

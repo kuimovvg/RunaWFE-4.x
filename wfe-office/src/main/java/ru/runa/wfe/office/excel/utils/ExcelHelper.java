@@ -68,16 +68,20 @@ public class ExcelHelper {
         switch (cell.getCellType()) {
         case Cell.CELL_TYPE_STRING:
             value = cell.getRichStringCellValue().getString();
+            break;
         case Cell.CELL_TYPE_NUMERIC:
             if (DateUtil.isCellDateFormatted(cell)) {
                 value = cell.getDateCellValue();
             } else {
                 value = cell.getNumericCellValue();
             }
+            break;
         case Cell.CELL_TYPE_BOOLEAN:
             value = cell.getBooleanCellValue();
+            break;
         case Cell.CELL_TYPE_FORMULA:
             value = cell.getCellFormula();
+            break;
         default:
             value = cell.getStringCellValue();
         }

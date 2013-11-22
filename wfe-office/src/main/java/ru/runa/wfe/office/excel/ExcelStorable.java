@@ -29,8 +29,8 @@ public abstract class ExcelStorable<C extends IExcelConstraints, Data> {
         this.format = format;
     }
 
-    protected abstract void storeIn(Workbook workbook);
+    public abstract void storeIn(Workbook workbook);
 
-    protected abstract void load(Workbook workbook);
+    public abstract void load(Workbook workbook);
 
 }

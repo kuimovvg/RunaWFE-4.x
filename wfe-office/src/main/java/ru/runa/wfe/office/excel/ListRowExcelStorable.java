@@ -34,7 +34,7 @@ public class ListRowExcelStorable extends ExcelStorable<RowConstraints, List<?>>
     }
 
     @Override
-    protected void storeIn(Workbook workbook) {
+    public void storeIn(Workbook workbook) {
         Row row = getRow(workbook);
         List<?> list = data;
         int columnIndex = constraints.getColumnStartIndex();
