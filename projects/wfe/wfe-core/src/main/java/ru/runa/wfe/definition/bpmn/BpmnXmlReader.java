@@ -204,9 +204,11 @@ public class BpmnXmlReader {
             } else if (END_EVENT.equals(nodeName)) {
                 Map<String, String> properties = parseExtensionProperties(element);
                 if (properties.containsKey(TOKEN)) {
-                    node = ApplicationContextFactory.createAutowiredBean(EndToken.class);
-                } else if (processDefinition instanceof SubprocessDefinition) {
-                    node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessEndNode.class);
+                    if (processDefinition instanceof SubprocessDefinition) {
+                        node = ApplicationContextFactory.createAutowiredBean(EmbeddedSubprocessEndNode.class);
+                    } else {
+                        node = ApplicationContextFactory.createAutowiredBean(EndToken.class);
+                    }
                 } else {
                     node = ApplicationContextFactory.createAutowiredBean(EndNode.class);
                 }

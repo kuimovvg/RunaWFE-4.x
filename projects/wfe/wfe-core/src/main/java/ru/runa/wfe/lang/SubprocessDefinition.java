@@ -27,7 +27,7 @@ public class SubprocessDefinition extends ProcessDefinition {
     public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
         return parentProcessDefinition.getEmbeddedSubprocesses();
     }
-    
+
     @Override
     public void validate() {
         super.validate();
@@ -37,10 +37,10 @@ public class SubprocessDefinition extends ProcessDefinition {
         int endNodesCount = 0;
         for (Node node : nodes) {
             if (node instanceof EndNode) {
-                throw new InternalApplicationException("There should be EmbeddedSubprocessEndNode");
+                throw new InternalApplicationException("In embedded subprocess it is not allowed end state");
             }
             if (node instanceof EndToken || node instanceof ru.runa.wfe.lang.jpdl.EndToken) {
-                throw new RuntimeException("In embedded subprocess it is not allowed end token state");
+                throw new RuntimeException("There should be EmbeddedSubprocessEndNode");
             }
             if (node instanceof EmbeddedSubprocessEndNode) {
                 endNodesCount++;
@@ -55,7 +55,7 @@ public class SubprocessDefinition extends ProcessDefinition {
     public EmbeddedSubprocessStartNode getStartStateNotNull() {
         return (EmbeddedSubprocessStartNode) super.getStartStateNotNull();
     }
-    
+
     public List<EmbeddedSubprocessEndNode> getEndNodes() {
         List<EmbeddedSubprocessEndNode> list = Lists.newArrayList();
         for (Node node : nodes) {
