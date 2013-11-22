@@ -30,6 +30,7 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -54,6 +55,7 @@ public class TasklistBuilder {
     private TaskDAO taskDAO;
 
     public List<WfTask> getTasks(Actor actor, BatchPresentation batchPresentation) {
+        Preconditions.checkNotNull(batchPresentation, "batchPresentation");
         List<WfTask> result = taskCache.getTasks(actor.getId(), batchPresentation);
         if (result != null) {
             return result;
@@ -62,7 +64,7 @@ public class TasklistBuilder {
         Set<Executor> executorsToGetTasksByMembership = getExecutorsToGetTasks(actor, false);
         Set<Executor> executorsToGetTasks = Sets.newHashSet(executorsToGetTasksByMembership);
         Set<Actor> substitutedActors = substitutionLogic.getSubstituted(actor);
-        log.debug("Building tasklist for " + actor + " with substituted: " + substitutedActors);
+        log.debug("Building tasklist for " + actor + " with BP '" + batchPresentation.getName() + "' with substituted: " + substitutedActors);
         for (Actor substitutedActor : substitutedActors) {
             executorsToGetTasks.addAll(getExecutorsToGetTasks(substitutedActor, true));
         }
