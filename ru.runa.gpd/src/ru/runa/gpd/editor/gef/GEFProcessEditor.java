@@ -25,7 +25,7 @@ public class GEFProcessEditor extends ProcessEditorBase {
     public void propertyChange(PropertyChangeEvent evt) {
         super.propertyChange(evt);
         if (PropertyNames.PROPERTY_SHOW_ACTIONS.equals(evt.getPropertyName())) {
-            ((DesignerGraphicalEditorPart) graphPage).getPaletteRoot().refreshActionsVisibility();
+            ((DesignerGraphicalEditorPart) graphPage).getPaletteRoot().refreshElementsVisibility();
         }
     }
 }
