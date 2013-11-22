@@ -33,7 +33,7 @@ public class ListColumnExcelStorable extends ExcelStorable<ColumnConstraints, Li
     }
 
     @Override
-    protected void storeIn(Workbook workbook) {
+    public void storeIn(Workbook workbook) {
         List<?> list = data;
         int rowIndex = constraints.getRowStartIndex();
         String elementFormatClassName = ((VariableFormatContainer) format).getComponentClassName(0);

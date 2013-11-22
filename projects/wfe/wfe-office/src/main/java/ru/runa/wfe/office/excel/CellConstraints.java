@@ -2,8 +2,6 @@ package ru.runa.wfe.office.excel;
 
 import org.dom4j.Element;
 
-import ru.runa.wfe.office.shared.XMLHelper;
-
 public class CellConstraints extends OnSheetConstraints {
     private int rowIndex;
     private int columnIndex;
@@ -11,8 +9,8 @@ public class CellConstraints extends OnSheetConstraints {
     @Override
     public void configure(Element element) {
         super.configure(element);
-        rowIndex = XMLHelper.getIntAttribute(element, "row");
-        columnIndex = XMLHelper.getIntAttribute(element, "column");
+        rowIndex = getIndex(element, "row");
+        columnIndex = getIndex(element, "column");
     }
 
     public int getRowIndex() {
