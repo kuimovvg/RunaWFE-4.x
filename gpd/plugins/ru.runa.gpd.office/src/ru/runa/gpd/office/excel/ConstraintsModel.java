@@ -13,11 +13,11 @@ public class ConstraintsModel {
     public static final String ROW_CLASS = "ru.runa.wfe.office.excel.RowConstraints";
     public static final String COLUMN_CLASS = "ru.runa.wfe.office.excel.ColumnConstraints";
     public String sheetName = "";
-    public int sheetIndex = 0;
+    public int sheetIndex = 1;
     public String variableName = "";
     public final int type;
-    public int row = 0;
-    public int column = 0;
+    public int row = 1;
+    public int column = 1;
 
     public String getSheetName() {
         return sheetName;

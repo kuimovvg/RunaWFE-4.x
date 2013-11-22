@@ -10,7 +10,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -34,6 +33,8 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.Messages;
+import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.ProcessFileUtils;
 
 public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstructorProvider<ExcelModel> {
@@ -66,6 +67,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
             ExcelModel model = fromXml(delegable.getDelegationConfiguration());
             ProcessFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
         } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Template file deletion", e);
         }
     }
 
@@ -194,19 +196,17 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     sheetCombo.select(1);
                     sheetText.setText("" + cmodel.sheetIndex);
                 }
-                sheetText.addModifyListener(new ModifyListener() {
+                sheetText.addModifyListener(new LoggingModifyTextAdapter() {
+                    
                     @Override
-                    public void modifyText(ModifyEvent arg0) {
+                    protected void onTextChanged(ModifyEvent e) throws Exception {
                         updateSheet(sheetCombo, sheetText);
                     }
                 });
-                sheetCombo.addSelectionListener(new SelectionListener() {
+                sheetCombo.addSelectionListener(new LoggingSelectionAdapter() {
+                    
                     @Override
-                    public void widgetDefaultSelected(SelectionEvent arg0) {
-                    }
-
-                    @Override
-                    public void widgetSelected(SelectionEvent arg0) {
+                    protected void onSelection(SelectionEvent e) throws Exception {
                         updateSheet(sheetCombo, sheetText);
                     }
                 });
@@ -222,13 +222,13 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     public void modifyText(ModifyEvent arg0) {
                         try {
                             int x = Integer.parseInt(tx.getText());
-                            if (x >= 0 && x < 65535) {
+                            if (x > 0 && x < 65535) {
                                 cmodel.setColumn(x);
                             } else {
-                                tx.setText("0");
+                                tx.setText("1");
                             }
                         } catch (Exception e) {
-                            tx.setText("0");
+                            tx.setText("1");
                         }
                     }
                 });
@@ -243,13 +243,13 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     public void modifyText(ModifyEvent arg0) {
                         try {
                             int y = Integer.parseInt(ty.getText());
-                            if (y >= 0 && y < 65535) {
+                            if (y > 0 && y < 65535) {
                                 cmodel.setRow(y);
                             } else {
-                                ty.setText("0");
+                                ty.setText("1");
                             }
                         } catch (Exception e) {
-                            ty.setText("0");
+                            ty.setText("1");
                         }
                     }
                 });
@@ -259,14 +259,17 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
             private void updateSheet(Combo combo, Text text) {
                 if (combo.getSelectionIndex() == 0) {
                     cmodel.sheetName = text.getText();
-                    cmodel.sheetIndex = 0;
+                    cmodel.sheetIndex = 1;
                 } else {
                     cmodel.sheetName = "";
                     try {
                         cmodel.sheetIndex = Integer.parseInt(text.getText());
+                        if (cmodel.sheetIndex <= 0) {
+                            cmodel.sheetIndex = 1;
+                        }
                     } catch (Exception e) {
-                        cmodel.sheetIndex = 0;
-                        text.setText("0");
+                        cmodel.sheetIndex = 1;
+                        text.setText("1");
                     }
                 }
             }
