@@ -62,7 +62,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         super.init(site, input);
         getSite().setSelectionProvider(editor.getSite().getSelectionProvider());
-        getPaletteRoot().refreshActionsVisibility();
+        getPaletteRoot().refreshElementsVisibility();
     }
 
     @Override

@@ -16,9 +16,12 @@ import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.ActionImpl;
+import ru.runa.gpd.lang.model.EndState;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 
 public class DesignerPaletteRoot extends PaletteRoot {
     private static final String ACTION_IMPL_ENTRY_ID = "ActionImpl";
+    private static final String END_STATE_ENTRY_ID = "EndState";
     private final ProcessEditorBase editor;
 
     public DesignerPaletteRoot(ProcessEditorBase editor) {
@@ -47,6 +50,9 @@ public class DesignerPaletteRoot extends PaletteRoot {
                 if (type.getModelClass() == ActionImpl.class) {
                     entry.setId(ACTION_IMPL_ENTRY_ID);
                 }
+                if (type.getModelClass() == EndState.class) {
+                    entry.setId(END_STATE_ENTRY_ID);
+                }
                 controls.add(entry);
             }
         }
@@ -55,12 +61,14 @@ public class DesignerPaletteRoot extends PaletteRoot {
     }
 
     @SuppressWarnings("unchecked")
-    public void refreshActionsVisibility() {
+    public void refreshElementsVisibility() {
         for (PaletteGroup category : (List<PaletteGroup>) getChildren()) {
             for (PaletteEntry entry : (List<PaletteEntry>) category.getChildren()) {
                 if (ACTION_IMPL_ENTRY_ID.equals(entry.getId())) {
                     entry.setVisible(editor.getDefinition().isShowActions());
-                    return;
+                }
+                if (END_STATE_ENTRY_ID.equals(entry.getId())) {
+                    entry.setVisible(!(editor.getDefinition() instanceof SubprocessDefinition));
                 }
             }
         }

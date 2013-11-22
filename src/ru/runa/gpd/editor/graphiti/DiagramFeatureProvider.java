@@ -48,6 +48,7 @@ import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.TextAnnotation;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
@@ -73,6 +74,11 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
         for (NodeTypeDefinition definition : NodeRegistry.getDefinitions()) {
             if (definition.getGraphitiEntry() != null && !Strings.isNullOrEmpty(definition.getBpmnElementName())) {
                 if (NodeTypeDefinition.TYPE_NODE.equals(definition.getType())) {
+                    if ("endEvent".equals(definition.getBpmnElementName())) {
+                        if (processDefinition instanceof SubprocessDefinition) {
+                            continue;
+                        }
+                    }
                     list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
                 }
                 if (NodeTypeDefinition.TYPE_ARTIFACT.equals(definition.getType())) {

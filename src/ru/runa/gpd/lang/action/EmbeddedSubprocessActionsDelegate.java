@@ -110,6 +110,7 @@ public class EmbeddedSubprocessActionsDelegate extends BaseModelDropDownActionDe
         @Override
         public void run() {
             setEmbeddedSubprocess(getText());
+            WorkspaceOperations.openSubprocessDefinition(subprocess);
         }
     }
 

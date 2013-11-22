@@ -107,6 +107,12 @@ public class WorkspaceOperations {
                         }
                     } else {
                         IFile definitionFile = (IFile) resource;
+                        try {
+                            SubprocessDefinition subprocessDefinition = (SubprocessDefinition) ProcessCache.getProcessDefinition(definitionFile);
+                            subprocessDefinition.getParent().getEmbeddedSubprocesses().remove(subprocessDefinition.getId());
+                        } catch (Exception e) {
+                            PluginLogger.logErrorWithoutDialog("Unable to deregister embedded subprocess", e);
+                        }
                         int index = definitionFile.getName().indexOf(ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
                         Preconditions.checkArgument(index != -1, "not a subprocess definition file");
                         String subprocessFileStart = definitionFile.getName().substring(0, index);

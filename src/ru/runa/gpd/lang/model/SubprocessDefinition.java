@@ -21,7 +21,7 @@ public class SubprocessDefinition extends ProcessDefinition {
     public SubprocessDefinition() {
         setAccessType(ProcessDefinitionAccessType.EmbeddedSubprocess);
     }
-    
+
     @Override
     public Duration getDefaultTaskTimeoutDelay() {
         return getParent().getDefaultTaskTimeoutDelay();
@@ -43,6 +43,7 @@ public class SubprocessDefinition extends ProcessDefinition {
         }
         return super.getPropertyValue(id);
     }
+
     @Override
     public boolean isShowActions() {
         return getParent().isShowActions();
@@ -165,13 +166,17 @@ public class SubprocessDefinition extends ProcessDefinition {
     public ProcessDefinition getParent() {
         return (ProcessDefinition) super.getParent();
     }
-    
+
     @Override
     public void validate(List<ValidationError> errors, IFile definitionFile) {
         super.validate(errors, definitionFile);
         List<StartState> startStates = getChildren(StartState.class);
         if (startStates.size() == 1 && startStates.get(0).getLeavingTransitions().size() != 1) {
             errors.add(ValidationError.createLocalizedError(startStates.get(0), "subprocess.embedded.startState.required1leavingtransition"));
+        }
+        List<EndState> endStates = getChildren(EndState.class);
+        for (EndState endState : endStates) {
+            errors.add(ValidationError.createLocalizedError(endState, "subprocess.embedded.endState.notAllowed"));
         }
     }
 

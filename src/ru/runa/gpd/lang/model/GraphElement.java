@@ -318,7 +318,9 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
             listeners.firePropertyChange(propName, old, newValue);
         }
         if (!PROPERTY_DIRTY.equals(propName)) {
-            setDirty();
+            if (!Objects.equal(old, newValue)) {
+                setDirty();
+            }
         }
     }
 
