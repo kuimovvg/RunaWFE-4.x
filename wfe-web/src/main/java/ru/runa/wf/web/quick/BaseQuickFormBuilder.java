@@ -66,6 +66,13 @@ public abstract class BaseQuickFormBuilder {
             }
 
             String out = quickTemplateProcess(user, pageContext, definitionId, templateName, templateVariables);
+            if (out == null) {
+                String message = "Template of form is not exist";
+                if (pageContext != null) {
+                    message = Messages.getMessage("template.form.not.exist.error", pageContext);
+                }
+                return message;
+            }
             return ftlTemplateProcess(user, pageContext, definitionId, variableProvider, interaction, out);
         } else {
             String message = "Task form is not defined";
@@ -83,6 +90,10 @@ public abstract class BaseQuickFormBuilder {
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
         FormHashModel model = new FormHashModel(user, variableProvider, new StrutsWebHelper(pageContext));
         byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(user, definitionId, templateName);
+
+        if (bytes == null) {
+            return null;
+        }
 
         return FreemarkerProcessor.process(new String(bytes, Charsets.UTF_8), model);
     }
