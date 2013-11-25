@@ -2,7 +2,6 @@ package ru.runa.gpd.ui.dialog;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -11,12 +10,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.settings.PrefConstants;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 
 public class ChooseFormTypeDialog extends Dialog {
     public final static String EDITOR_INTERNAL = Localization.getString("ChooseFormTypeDialog.editor.internal");
@@ -28,20 +29,17 @@ public class ChooseFormTypeDialog extends Dialog {
     private String type;
     private String editorType;
 
-    public ChooseFormTypeDialog(Shell parentShell) {
-        super(parentShell);
+    public ChooseFormTypeDialog() {
+        super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
     }
 
     @Override
     public Control createDialogArea(final Composite parent) {
         Composite area = (Composite) super.createDialogArea(parent);
-        GridLayout layout = new GridLayout(1, false);
-        area.setLayout(layout);
+        area.setLayout(new GridLayout());
 
-        final Composite composite = new Composite(area, SWT.NONE);
-        final GridLayout gridLayout = new GridLayout();
-        gridLayout.numColumns = 1;
-        composite.setLayout(gridLayout);
+        Composite composite = new Composite(area, SWT.NONE);
+        composite.setLayout(new GridLayout());
 
         typeCombo = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         GridData typeComboData = new GridData(GridData.FILL_HORIZONTAL);
@@ -52,10 +50,10 @@ public class ChooseFormTypeDialog extends Dialog {
                 typeCombo.add(formType.getName());
             }
         }
-        typeCombo.addSelectionListener(new SelectionAdapter() {
-
+        typeCombo.addSelectionListener(new LoggingSelectionAdapter() {
+            
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 updateVisibility();
             }
         });
@@ -70,10 +68,10 @@ public class ChooseFormTypeDialog extends Dialog {
             editorTypeCombo.add(EDITOR_EXTERNAL);
         }
         editorTypeCombo.select(0);
-        editorTypeCombo.addSelectionListener(new SelectionAdapter() {
-
+        editorTypeCombo.addSelectionListener(new LoggingSelectionAdapter() {
+            
             @Override
-            public void widgetSelected(SelectionEvent e) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 updateVisibility();
             }
         });
