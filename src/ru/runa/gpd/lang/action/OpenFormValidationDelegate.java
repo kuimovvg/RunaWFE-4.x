@@ -5,21 +5,16 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.IDialogConstants;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.editor.gef.command.FormNodeSetValidationFileCommand;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.ui.custom.Dialogs;
-import ru.runa.gpd.ui.wizard.ValidatorWizard;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
-import ru.runa.gpd.validation.ValidatorDialog;
 
-public class OpenFormValidationDelegate extends BaseModelActionDelegate {
+public class OpenFormValidationDelegate extends FormDelegate {
     @Override
     public void run(IAction action) {
         try {
@@ -42,18 +37,4 @@ public class OpenFormValidationDelegate extends BaseModelActionDelegate {
         }
     }
 
-    public void openValidationFile(FormNode formNode, IFile validationFile) {
-        ValidatorWizard wizard = new ValidatorWizard(validationFile, formNode);
-        ValidatorDialog dialog = new ValidatorDialog(wizard);
-        if (dialog.open() == IDialogConstants.OK_ID) {
-            formNode.setDirty();
-        }
-    }
-
-    private void setNewValidationFormFile(FormNode formNode, String fileName) {
-        FormNodeSetValidationFileCommand command = new FormNodeSetValidationFileCommand();
-        command.setFormNode(formNode);
-        command.setValidationFileName(fileName);
-        executeCommand(command);
-    }
 }
