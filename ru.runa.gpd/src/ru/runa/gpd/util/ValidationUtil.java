@@ -79,7 +79,7 @@ public class ValidationUtil {
         }
     }
 
-    public static IFile createEmptyValidation(IFile adjacentFile, String validationFileName) throws Exception {
+    public static IFile createEmptyValidation(IFile adjacentFile, String validationFileName) {
         Map<String, Map<String, ValidatorConfig>> formFieldConfigs = new HashMap<String, Map<String, ValidatorConfig>>();
         return rewriteValidation(adjacentFile, validationFileName, formFieldConfigs);
     }
