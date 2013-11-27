@@ -350,12 +350,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public <T extends GraphElement> T getGraphElementByIdNotNull(String nodeId) {
         T node = ((T) getGraphElementById(nodeId));
         if (node == null) {
-            // back compatibility: search by name
-            //            for (Node testNode : getNodes()) {
-            //                if (Objects.equal(nodeId, testNode.getName())) {
-            //                    return (T) node;
-            //                }
-            //            }
             List<String> nodeIds = new ArrayList<String>();
             for (Node childNode : getChildren(Node.class)) {
                 nodeIds.add(childNode.getId());
