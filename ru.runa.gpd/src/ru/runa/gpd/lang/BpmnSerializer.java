@@ -9,6 +9,7 @@ import org.dom4j.QName;
 import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.Version;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
@@ -609,7 +610,12 @@ public class BpmnSerializer extends ProcessSerializer {
         List<Element> transitions = process.elements(SEQUENCE_FLOW);
         for (Element transitionElement : transitions) {
             Node source = definition.getGraphElementByIdNotNull(transitionElement.attributeValue(SOURCE_REF));
-            Node target = definition.getGraphElementByIdNotNull(transitionElement.attributeValue(TARGET_REF));
+            Node target = definition.getGraphElementById(transitionElement.attributeValue(TARGET_REF));
+            if (target == null) {
+                PluginLogger.logInfo("ERROR: Unable to restore transition " + transitionElement.attributeValue(ID) + 
+                        " due to missed target node " + transitionElement.attributeValue(TARGET_REF));
+                continue;
+            }
             Transition transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source);
             transition.setId(transitionElement.attributeValue(ID));
             transition.setName(transitionElement.attributeValue(NAME));
