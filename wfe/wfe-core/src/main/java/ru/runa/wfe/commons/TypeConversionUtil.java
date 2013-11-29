@@ -36,6 +36,8 @@ import ru.runa.wfe.user.IExecutorLoader;
 import com.google.common.base.Defaults;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Primitives;
 
 @SuppressWarnings("unchecked")
@@ -247,5 +249,30 @@ public class TypeConversionUtil {
             result.put(convertTo(String.class, entry.getKey()), convertTo(String.class, entry.getValue()));
         }
         return result;
+    }
+    
+    public static <T extends Object> T getNotNullValue(Class<T> clazz) {
+        if (List.class.isAssignableFrom(clazz)) {
+            return (T) Lists.newArrayList();
+        }
+        if (Map.class.isAssignableFrom(clazz)) {
+            return (T) Maps.newHashMap();
+        }
+        if (clazz == String.class || clazz == Object.class) {
+            return (T) "";
+        }
+        if (clazz == Long.class) {
+            return (T) new Long(0);
+        }
+        if (clazz == Boolean.class) {
+            return (T) Boolean.FALSE;
+        }
+        if (clazz == Double.class) {
+            return (T) new Double(0);
+        }
+        if (clazz.isPrimitive()) {
+            return Defaults.defaultValue(clazz);
+        }
+        throw new InternalApplicationException("No default value registered for '" + clazz + "'");
     }
 }

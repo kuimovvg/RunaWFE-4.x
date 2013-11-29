@@ -18,6 +18,7 @@
 package ru.runa.wfe.extension.handler.var;
 
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -27,10 +28,13 @@ import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.function.Function;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
+
+import com.google.common.collect.Lists;
 
 public class FormulaActionHandler implements ActionHandler {
     private static final Log log = LogFactory.getLog(FormulaActionHandler.class);
@@ -50,9 +54,7 @@ public class FormulaActionHandler implements ActionHandler {
     private boolean quo = false;
     private String nextToken = null;
 
-    private String nextStringToken(char limitingSymbol) { // return string,
-                                                          // limited by
-                                                          // 'limitingSymbol'
+    private String nextStringToken(char limitingSymbol) {
         if (formula[nowPosition] != limitingSymbol) {
             return null;
         }
@@ -82,13 +84,6 @@ public class FormulaActionHandler implements ActionHandler {
         nowPosition++;
         return answer;
     }
-
-    // static String tststr = "";
-    // private String nextToken() {
-    // String r = nextToken2();
-    // tststr += " [" + r + "]";
-    // return r;
-    // }
 
     private String nextToken() {
         quo = false;
@@ -138,22 +133,21 @@ public class FormulaActionHandler implements ActionHandler {
         if (inputData == null) {
             log.error("Configuration not found in " + idsuf);
             return;
-        } // log.info("***  " + inputData);
+        }
         formula = inputData.toCharArray();
         nowPosition = 0;
         stringVariableToken = false;
         nextToken = null;
         String nf = "";
-        String s;// tststr = "";
+        String s;
         while ((s = nextToken()) != null) {
             if (!quo && (s.equals(";") || s.equals("\n"))) {
                 if (nf.length() > 0) {
-                    // log.info("_ " + tststr); tststr = "";
                     formula = nf.toCharArray();
                     int ip = nowPosition;
                     String nt = nextToken;
                     boolean b = stringVariableToken;
-                    parseFormula(); // tststr = "";
+                    parseFormula();
                     nowPosition = ip;
                     stringVariableToken = b;
                     nextToken = nt;
@@ -162,12 +156,6 @@ public class FormulaActionHandler implements ActionHandler {
                 }
             } else {
                 if (stringVariableToken) {
-                    // String nt = nextToken();
-                    // log.info("nt = [" + nt + "]");
-                    // nt = nt.replaceAll(""+'"', ";");
-                    // nt = nt.replaceAll(";", "\\\"");
-                    // log.info("rt = [" + nt + "]");
-                    // nf += '"' + nt + '"';
                     nf += '"' + nextToken().replaceAll("\"", "\\\\\"") + '"';
                 } else {
                     s = s.replaceAll("'", "\\\\'");
@@ -184,16 +172,9 @@ public class FormulaActionHandler implements ActionHandler {
             }
         }
         if (nf.length() > 0) {
-            // log.info("> " + tststr); tststr = "";
             formula = nf.toCharArray();
             parseFormula();
         }
-
-        /*
-         * StringTokenizer st = new StringTokenizer(inputData, ";\n"); while
-         * (st.hasMoreTokens()) { formula = st.nextToken().toCharArray(); if
-         * (formula.length>0) parseFormula(); }
-         */
     }
 
     private String errorMessage = null;
@@ -745,6 +726,15 @@ public class FormulaActionHandler implements ActionHandler {
                 return null;
             }
             return ApplicationContextFactory.getExecutorDAO().isExecutorInGroup(executor, group);
+        }
+        Function<? extends Object> function = FormulaActionHandlerOperations.getFunction(s);
+        if (function != null) {
+            List<Object> parameters = Lists.newArrayList();
+            do {
+                Object param = parsePriority0();
+                parameters.add(param);
+            } while (!nextToken().equals(")"));
+            return function.execute(parameters.toArray(new Object[parameters.size()]));
         }
         return null;
     }
