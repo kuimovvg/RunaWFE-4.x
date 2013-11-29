@@ -52,6 +52,12 @@
 				<include name="wfe-appserver-full-*.zip"/>
 			</fileset>
 		</unzip>
+                <copy toDir="target/artifacts/jboss">
+                  <fileset dir="../simulation">
+                    <include name="*"/>
+                    <include name="**/*"/>
+                  </fileset>
+                </copy>
 		<exec executable="cmd" dir="target/artifacts/jboss/bin" spawn="true">
 			<arg line="/C standalone.bat" />
 			<env key="NOPAUSE" value="yes"/>
@@ -61,11 +67,27 @@
                   <arg value="/C"/>
                   <arg value="mvn clean install -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
                 </exec>
+                <get src="http://localhost:8080/wfe/admin_scripts.do?action=executeUploadedScript&amp;fileName=deploy-samples-script.xml" dest="target/artifacts/jboss/tmp"/>
+
 		<exec executable="cmd" dir="target/artifacts/jboss/bin" spawn="true">
 			<arg value="/C" />
 			<arg line="jboss-cli.bat --commands=connect,:shutdown" />
 			<env key="NOPAUSE" value="yes"/>
 		</exec>
+		<sleep seconds="20"/>
+
+                <copy toDir="target/artifacts/simulation-data">
+                  <fileset dir="../simulation">
+                    <include name="*"/>
+                    <include name="**/*"/>
+                  </fileset>
+                  <fileset dir="target/artifacts/jboss">
+                    <include name="standalone/data/h2/*.db"/>
+                  </fileset>
+                </copy>
+		<move file="target/artifacts/simulation-data/standalone/data/h2" tofile="target/artifacts/simulation-data/standalone/data/demo-db"/>
+
+		<delete dir="target/artifacts/jboss/"/>
 
                 <exec executable="cmd" dir="../../gpd" failonerror="true">
                   <arg line="/C ant -Dproject.version=${version}"/>

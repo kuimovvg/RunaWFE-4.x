@@ -63,6 +63,27 @@ public class AdminkitScriptsAction extends ActionBase {
                         errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("adminkit.script.execution.failed"));
                     }
                 }
+            } else if ("executeUploadedScript".equals(action)) {
+                log.info("Executing script");
+                final List<String> scriptErrors = new ArrayList<String>();
+                File file = new File(IOCommons.getAdminkitScriptsDirPath() + fileName);
+                byte[] script = FileUtils.readFileToByteArray(file);
+                AdminScriptClient.run(getLoggedUser(request), script, new Handler() {
+
+                    @Override
+                    public void onTransactionException(Exception e) {
+                        scriptErrors.add(e.getMessage());
+                    }
+                });
+                if (ajaxRequest) {
+                    writeResponse(response, String.valueOf(scriptErrors.size()).getBytes());
+                } else {
+                    if (scriptErrors.size() == 0) {
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("adminkit.script.execution.success"));
+                    } else {
+                        errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("adminkit.script.execution.failed"));
+                    }
+                }
             } else if ("save".equals(action)) {
                 if (Strings.isNullOrEmpty(fileName)) {
                     throw new Exception("File name is required");
