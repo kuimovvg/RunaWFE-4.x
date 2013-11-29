@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 
@@ -37,10 +38,38 @@ import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
+import ru.runa.wfe.extension.function.CreateSubListByIndexes;
+import ru.runa.wfe.extension.function.DeleteListElementsByIndexes;
+import ru.runa.wfe.extension.function.Function;
+import ru.runa.wfe.extension.function.GetListMatchedIndexes;
+import ru.runa.wfe.extension.function.GetListMismatchedIndexes;
+import ru.runa.wfe.extension.function.GetSize;
+import ru.runa.wfe.extension.function.ListToString;
+import ru.runa.wfe.extension.function.ToList;
+
+import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class FormulaActionHandlerOperations {
     private static final Log log = LogFactory.getLog(FormulaActionHandlerOperations.class);
+    private static final Map<String, Function<? extends Object>> functions = Maps.newHashMap();
+    static {
+        registerFunction(new ListToString());
+        registerFunction(new GetListMatchedIndexes());
+        registerFunction(new GetListMismatchedIndexes());
+        registerFunction(new CreateSubListByIndexes());
+        registerFunction(new DeleteListElementsByIndexes());
+        registerFunction(new ToList());
+        registerFunction(new GetSize());
+    }
+    
+    private static void registerFunction(Function<? extends Object> function) {
+        functions.put(function.getName(), function);
+    }
+    
+    public static Function<? extends Object> getFunction(String name) {
+        return functions.get(name);
+    }
 
     public Object sum(Object o1, Object o2) {
         if (Double.class.isInstance(o1) && Number.class.isInstance(o2)) {

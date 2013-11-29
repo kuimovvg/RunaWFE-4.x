@@ -17,17 +17,20 @@
  */
 package ru.runa.wf.web.ftl.method;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
 import freemarker.template.TemplateModelException;
 
+
 /**
- * @deprecated code moved to {@link DisplayVariableTag}.
+ * shared code with {@link DisplayVariableTag}.
  * 
  * @author dofs
  * @since 4.0
  */
-@Deprecated
 public class ViewListTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
@@ -35,7 +38,21 @@ public class ViewListTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variable);
+        String scriptingVariableName = variable.getDefinition().getScriptingName();
+        String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
+        StringBuffer html = new StringBuffer();
+        List<Object> list = variableProvider.getValue(List.class, variableName);
+        if (list == null) {
+            list = new ArrayList<Object>();
+        }
+        html.append("<span class=\"viewList\" id=\"").append(scriptingVariableName).append("\">");
+        for (int row = 0; row < list.size(); row++) {
+            Object value = list.get(row);
+            html.append("<div row=\"").append(row).append("\">");
+            html.append(ViewUtil.getComponentOutput(user, variableName + "[" + row + "]", elementFormatClassName, value));
+            html.append("</div>");
+        }
+        html.append("</span>");
+        return html.toString();
     }
-
 }
