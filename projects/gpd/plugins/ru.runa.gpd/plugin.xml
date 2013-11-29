@@ -1685,6 +1685,12 @@
              label="%validator.containerElementsRequired.name"
              name="containerElementsRequired">
        </validator>
+       <validator
+             applicable="java.util.List"
+             description="%validator.listElementsAreUnique.desc"
+             label="%validator.listElementsAreUnique.name"
+             name="listElementsAreUnique">
+       </validator>
     </extension>
     <extension
           point="org.eclipse.core.runtime.preferences">

@@ -46,7 +46,7 @@ public class MultiInstanceDialog extends SubprocessDialog {
     private String tabRelationParam = "";
     private String tabRelationParamType = "";
     private String tabRelationSubProcessVariable = "";
-    private String typeMultiInstance = "";
+    private String typeMultiInstance = TYPE_VARIABLE;
     private CTabFolder typeTabFolder;
 
     public MultiInstanceDialog(MultiSubprocess multiSubprocess) {

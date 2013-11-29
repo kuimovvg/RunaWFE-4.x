@@ -155,6 +155,13 @@ public class FormulaCellEditorProvider extends DelegableProvider {
             functions.add("number_to_short_string_ru(n1, s2, s3, s4, s5)");
             functions.add("FIO_case_ru(fio, caseNumber, mode)");
             functions.add("isExecutorInGroup(group, executor)");
+            functions.add("ListToString(list)");
+            functions.add("GetListMatchedIndexes(list, argument)");
+            functions.add("GetListMismatchedIndexes(list1, list2)");
+            functions.add("CreateSubListByIndexes(list, indexes)");
+            functions.add("DeleteListElementsByIndexes(list, indexes)");
+            functions.add("ToList(argument1[, argumentN])");
+            functions.add("GetSize(container)");
         }
 
         public ChooseFunctionDialog() {
