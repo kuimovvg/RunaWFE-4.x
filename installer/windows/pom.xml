@@ -63,7 +63,6 @@
 			<env key="NOPAUSE" value="yes"/>
 		</exec>
 		<sleep seconds="60"/>
-
                 <exec executable="cmd" dir="../../wfe/wfe-webservice-client" failonerror="true">
                   <arg value="/C"/>
                   <arg value="mvn clean install -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
@@ -76,6 +75,18 @@
 			<env key="NOPAUSE" value="yes"/>
 		</exec>
 		<sleep seconds="20"/>
+
+                <copy toDir="target/artifacts/simulation-data">
+                  <fileset dir="../simulation">
+                    <include name="*"/>
+                    <include name="**/*"/>
+                  </fileset>
+                  <fileset dir="target/artifacts/jboss">
+                    <include name="standalone/data/h2/*.db"/>
+                  </fileset>
+                </copy>
+		<move file="target/artifacts/simulation-data/standalone/data/h2" tofile="target/artifacts/simulation-data/standalone/data/demo-db"/>
+
 		<delete dir="target/artifacts/jboss/"/>
 
                 <exec executable="cmd" dir="../../gpd" failonerror="true">

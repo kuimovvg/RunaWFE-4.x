@@ -29,6 +29,8 @@
 		</unzip>
 		<copy todir="${nsis.src.dir}/wfe-simulator" overwrite="true">
 			<fileset dir="${nsis.src.dir}/jboss"/>
+			<fileset dir="${basedir}/../jboss7"/>
+			<fileset dir="${artifacts.dir}/simulation-data"/>
 		</copy>
 		<delete dir="${nsis.src.dir}/jboss"/>
 		<delete dir="${artifacts.dir}/app-simulation"/>
@@ -50,6 +52,7 @@
 		</unzip>
 		<copy todir="${nsis.src.dir}/wfe-server-jboss" overwrite="true">
 			<fileset dir="${nsis.src.dir}/jboss"/>
+			<fileset dir="${basedir}/../jboss7"/>
 		</copy>
 		<delete dir="${nsis.src.dir}/jboss"/>
 		<delete dir="${artifacts.dir}/app-server"/>
