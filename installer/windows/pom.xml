@@ -68,7 +68,7 @@
                   <arg value="/C"/>
                   <arg value="mvn clean install -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
                 </exec>
-
+                <http url="http://localhost:8080/wfe/admin_scripts.do?action=execute&fileName=deploy-samples-script.xml"/>
 
 		<exec executable="cmd" dir="target/artifacts/jboss/bin" spawn="true">
 			<arg value="/C" />
