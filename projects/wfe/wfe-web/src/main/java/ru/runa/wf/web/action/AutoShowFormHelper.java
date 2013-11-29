@@ -24,12 +24,13 @@ import java.util.Map;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Lists;
-
 import ru.runa.common.web.Commons;
 import ru.runa.wf.web.form.ProcessForm;
+import ru.runa.wfe.presentation.BatchPresentation;
+import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.presentation.filter.LongFilterCriteria;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.task.TaskClassPresentation;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
@@ -39,12 +40,10 @@ public class AutoShowFormHelper {
     private static final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
 
     public static ActionForward getNextActionForward(User user, ActionMapping mapping, Profile profile, Long processId) {
-        List<WfTask> tasks = Delegates.getExecutionService().getProcessTasks(user, processId);
-        for (WfTask task : Lists.newArrayList(tasks)) {
-            if (!Objects.equal(task.getOwner(), user.getActor())) {
-                tasks.remove(task);
-            }
-        }
+        BatchPresentation batchPresentation = BatchPresentationFactory.TASKS.createDefault("getNextActionForward");
+        int fieldIndex = batchPresentation.getClassPresentation().getFieldIndex(TaskClassPresentation.PROCESS_ID);
+        batchPresentation.getFilteredFields().put(fieldIndex, new LongFilterCriteria(processId));
+        List<WfTask> tasks = Delegates.getExecutionService().getTasks(user, batchPresentation);
         if (tasks.size() == 1) {
             Map<String, Object> params = new HashMap<String, Object>();
             params.put(ProcessForm.ID_INPUT_NAME, tasks.get(0).getId());

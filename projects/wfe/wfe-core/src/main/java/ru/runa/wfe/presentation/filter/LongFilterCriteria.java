@@ -31,6 +31,10 @@ public class LongFilterCriteria extends FilterCriteria {
         super(1);
     }
 
+    public LongFilterCriteria(Long value) {
+        super(new String[]{ value != null ? value.toString() : ""});
+    }
+
     @Override
     protected void validate(String[] newTemplates) throws FilterFormatException {
         super.validate(newTemplates);
