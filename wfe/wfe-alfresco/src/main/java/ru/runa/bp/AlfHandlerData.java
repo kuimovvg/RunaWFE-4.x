@@ -22,14 +22,17 @@ import com.google.common.collect.Lists;
  */
 public class AlfHandlerData extends HandlerData {
     private final List<Long> processIdsHierarchy;
+    private final User user;
 
     public AlfHandlerData(ParamsDef paramsDef, ExecutionContext context) {
         super(paramsDef, context);
+        this.user = null;
         processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(context.getProcess().getHierarchySubProcess());
     }
 
     public AlfHandlerData(ParamsDef paramsDef, User user, IVariableProvider variableProvider, WfTask task) {
         super(paramsDef, variableProvider, task);
+        this.user = user;
         WfProcess process = Delegates.getExecutionService().getProcess(user, getProcessId());
         processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(process.getHierarchySubProcess());
     }
@@ -50,4 +53,7 @@ public class AlfHandlerData extends HandlerData {
         return reversed;
     }
 
+    public User getUser() {
+        return user;
+    }
 }
