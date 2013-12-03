@@ -28,6 +28,7 @@ import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.ss.dao.SubstitutionDAO;
 import ru.runa.wfe.task.dao.TaskDAO;
 import ru.runa.wfe.user.dao.ExecutorDAO;
+import ru.runa.wfe.user.logic.ExecutorLogic;
 
 import com.google.common.base.Throwables;
 
@@ -153,6 +154,10 @@ public class ApplicationContextFactory {
 
     public static AssignmentHelper getAssignmentHelper() {
         return getContext().getBean(AssignmentHelper.class);
+    }
+
+    public static ExecutorLogic getExecutorLogic() {
+        return getContext().getBean(ExecutorLogic.class);
     }
 
     public static <T extends Object> T createAutowiredBean(String className) {
