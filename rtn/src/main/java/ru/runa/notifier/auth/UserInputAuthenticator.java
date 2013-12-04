@@ -23,8 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.notifier.GUI;
 import ru.runa.notifier.WFEConnection;
 import ru.runa.notifier.util.ResourcesManager;
-
-import com.sun.jna.platform.win32.Netapi32Util.User;
+import ru.runa.wfe.webservice.User;
 
 public class UserInputAuthenticator implements Authenticator {
     private static final Log log = LogFactory.getLog(UserInputAuthenticator.class);
