@@ -12,7 +12,6 @@ import org.eclipse.core.resources.IFile;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.Version;
 import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.ActionImpl;
 import ru.runa.gpd.lang.model.ActionNode;
@@ -48,6 +47,7 @@ import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.TaskExecutionMode;
@@ -120,7 +120,7 @@ public class JpdlSerializer extends ProcessSerializer {
             root.addAttribute(ID, definition.getId());
         }
         root.addAttribute(NAME, definition.getName());
-        root.addAttribute(VERSION, Version.get());
+        root.addAttribute(VERSION, SystemProperties.getVersion());
         root.addAttribute(ACCESS_TYPE, definition.getAccessType().name());
         if (definition.getDefaultTaskTimeoutDelay().hasDuration()) {
             root.addAttribute(DEFAULT_TASK_DUEDATE, definition.getDefaultTaskTimeoutDelay().getDuration());
