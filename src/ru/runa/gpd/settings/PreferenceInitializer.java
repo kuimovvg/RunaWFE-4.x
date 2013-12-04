@@ -22,7 +22,6 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
         store.setDefault(P_FORM_DEFAULT_FCK_EDITOR, FORM_FCK_EDITOR);
         store.setDefault(P_FORM_EXTERNAL_EDITOR_PATH, "");
         store.setDefault(P_FORM_USE_EXTERNAL_EDITOR, false);
-        //store.setDefault(P_TASKS_TIMEOUT_ENABLED, false);
         store.setDefault(P_WFE_CONNECTION_TYPE, DEFAULT_CONNECTOR_ID);
         store.setDefault(P_WFE_CONNECTION_HOST, "localhost");
         store.setDefault(P_WFE_CONNECTION_PORT, WFEServerConnectorRegistry.getEntryNotNull(DEFAULT_CONNECTOR_ID).defaultPort);

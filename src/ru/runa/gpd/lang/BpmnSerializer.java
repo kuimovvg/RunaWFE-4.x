@@ -10,7 +10,6 @@ import org.eclipse.core.resources.IFile;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
-import ru.runa.gpd.Version;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Describable;
 import ru.runa.gpd.lang.model.EndState;
@@ -38,6 +37,7 @@ import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 
@@ -129,7 +129,7 @@ public class BpmnSerializer extends ProcessSerializer {
             processProperties.put(ID, definition.getId());
         }
         processProperties.put(ACCESS_TYPE, definition.getAccessType().name());
-        processProperties.put(VERSION, Version.get());
+        processProperties.put(VERSION, SystemProperties.getVersion());
         if (definition.isInvalid()) {
             process.addAttribute(EXECUTABLE, "false");
         }
