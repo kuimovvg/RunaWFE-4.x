@@ -3,7 +3,6 @@ package ru.runa.wfe.webservice;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -17,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://impl.service.wfe.runa.ru/}botTask" minOccurs="0"/>
+ *         &lt;element name="result" type="{http://impl.service.wfe.runa.ru/}botTask" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,35 +27,34 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getBotTaskResponse", propOrder = {
-    "_return"
+    "result"
 })
 public class GetBotTaskResponse {
 
-    @XmlElement(name = "return")
-    protected BotTask _return;
+    protected BotTask result;
 
     /**
-     * Gets the value of the return property.
+     * Gets the value of the result property.
      * 
      * @return
      *     possible object is
      *     {@link BotTask }
      *     
      */
-    public BotTask getReturn() {
-        return _return;
+    public BotTask getResult() {
+        return result;
     }
 
     /**
-     * Sets the value of the return property.
+     * Sets the value of the result property.
      * 
      * @param value
      *     allowed object is
      *     {@link BotTask }
      *     
      */
-    public void setReturn(BotTask value) {
-        this._return = value;
+    public void setResult(BotTask value) {
+        this.result = value;
     }
 
 }

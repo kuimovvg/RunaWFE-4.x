@@ -34,7 +34,7 @@ public interface AuthorizationAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.WfExecutor>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getExecutorsWithPermission", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsWithPermission")
     @ResponseWrapper(localName = "getExecutorsWithPermissionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsWithPermissionResponse")
     public List<WfExecutor> getExecutorsWithPermission(
@@ -57,7 +57,7 @@ public interface AuthorizationAPI {
      *     returns int
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getExecutorsWithPermissionCount", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsWithPermissionCount")
     @ResponseWrapper(localName = "getExecutorsWithPermissionCountResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetExecutorsWithPermissionCountResponse")
     public int getExecutorsWithPermissionCount(
@@ -79,7 +79,7 @@ public interface AuthorizationAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.Permission>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getIssuedPermissions", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetIssuedPermissions")
     @ResponseWrapper(localName = "getIssuedPermissionsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetIssuedPermissionsResponse")
     public List<Permission> getIssuedPermissions(
@@ -102,7 +102,7 @@ public interface AuthorizationAPI {
      *     returns java.util.List<java.lang.Object>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getPersistentObjects", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetPersistentObjects")
     @ResponseWrapper(localName = "getPersistentObjectsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetPersistentObjectsResponse")
     public List<Object> getPersistentObjects(
@@ -121,6 +121,26 @@ public interface AuthorizationAPI {
 
     /**
      * 
+     * @param permission
+     * @param user
+     * @param identifiable
+     * @return
+     *     returns boolean
+     */
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "")
+    @RequestWrapper(localName = "isAllowed", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowed")
+    @ResponseWrapper(localName = "isAllowedResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowedResponse")
+    public boolean isAllowed(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "permission", targetNamespace = "")
+        Permission permission,
+        @WebParam(name = "identifiable", targetNamespace = "")
+        Identifiable identifiable);
+
+    /**
+     * 
      * @param executorId
      * @param permissions
      * @param user
@@ -136,26 +156,6 @@ public interface AuthorizationAPI {
         Long executorId,
         @WebParam(name = "permissions", targetNamespace = "")
         List<Permission> permissions,
-        @WebParam(name = "identifiable", targetNamespace = "")
-        Identifiable identifiable);
-
-    /**
-     * 
-     * @param permission
-     * @param user
-     * @param identifiable
-     * @return
-     *     returns boolean
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "isAllowed", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowed")
-    @ResponseWrapper(localName = "isAllowedResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.IsAllowedResponse")
-    public boolean isAllowed(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "permission", targetNamespace = "")
-        Permission permission,
         @WebParam(name = "identifiable", targetNamespace = "")
         Identifiable identifiable);
 

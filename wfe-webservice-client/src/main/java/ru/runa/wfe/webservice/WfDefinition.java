@@ -30,6 +30,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *         &lt;element name="hasStartImage" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="hasDisabledImage" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="deployedDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
+ *         &lt;element name="subprocessOnly" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -48,7 +49,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "hasHtmlDescription",
     "hasStartImage",
     "hasDisabledImage",
-    "deployedDate"
+    "deployedDate",
+    "subprocessOnly"
 })
 public class WfDefinition
     extends Identifiable
@@ -65,6 +67,7 @@ public class WfDefinition
     protected boolean hasDisabledImage;
     @XmlSchemaType(name = "dateTime")
     protected XMLGregorianCalendar deployedDate;
+    protected boolean subprocessOnly;
 
     /**
      * Gets the value of the id property.
@@ -261,6 +264,22 @@ public class WfDefinition
      */
     public void setDeployedDate(XMLGregorianCalendar value) {
         this.deployedDate = value;
+    }
+
+    /**
+     * Gets the value of the subprocessOnly property.
+     * 
+     */
+    public boolean isSubprocessOnly() {
+        return subprocessOnly;
+    }
+
+    /**
+     * Sets the value of the subprocessOnly property.
+     * 
+     */
+    public void setSubprocessOnly(boolean value) {
+        this.subprocessOnly = value;
     }
 
 }

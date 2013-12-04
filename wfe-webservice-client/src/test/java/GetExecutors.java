@@ -20,9 +20,9 @@ public class GetExecutors {
             actorsBatchPresentation.setPageNumber(1);
             actorsBatchPresentation.setRangeSize(10);
             actorsBatchPresentation.setType(ClassPresentationType.ACTOR);
-            List<Object> actors = executorAPI.getExecutors(user, actorsBatchPresentation);
+            List<WfExecutor> actors = executorAPI.getExecutors(user, actorsBatchPresentation);
             System.out.println("actors=" + actors.size());
-            List<Object> executors = executorAPI.getExecutors(user, null);
+            List<WfExecutor> executors = executorAPI.getExecutors(user, null);
             System.out.println("executors=" + executors.size());
         } catch (Exception e) {
             e.printStackTrace();

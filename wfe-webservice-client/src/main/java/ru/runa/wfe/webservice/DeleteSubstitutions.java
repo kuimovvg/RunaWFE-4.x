@@ -19,8 +19,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="arg0" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="arg1" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
+ *         &lt;element name="substitutionIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,52 +31,52 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "deleteSubstitutions", propOrder = {
-    "arg0",
-    "arg1"
+    "user",
+    "substitutionIds"
 })
 public class DeleteSubstitutions {
 
-    protected User arg0;
+    protected User user;
     @XmlElement(type = Long.class)
-    protected List<Long> arg1;
+    protected List<Long> substitutionIds;
 
     /**
-     * Gets the value of the arg0 property.
+     * Gets the value of the user property.
      * 
      * @return
      *     possible object is
      *     {@link User }
      *     
      */
-    public User getArg0() {
-        return arg0;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * Sets the value of the arg0 property.
+     * Sets the value of the user property.
      * 
      * @param value
      *     allowed object is
      *     {@link User }
      *     
      */
-    public void setArg0(User value) {
-        this.arg0 = value;
+    public void setUser(User value) {
+        this.user = value;
     }
 
     /**
-     * Gets the value of the arg1 property.
+     * Gets the value of the substitutionIds property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the arg1 property.
+     * This is why there is not a <CODE>set</CODE> method for the substitutionIds property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getArg1().add(newItem);
+     *    getSubstitutionIds().add(newItem);
      * </pre>
      * 
      * 
@@ -86,11 +86,11 @@ public class DeleteSubstitutions {
      * 
      * 
      */
-    public List<Long> getArg1() {
-        if (arg1 == null) {
-            arg1 = new ArrayList<Long>();
+    public List<Long> getSubstitutionIds() {
+        if (substitutionIds == null) {
+            substitutionIds = new ArrayList<Long>();
         }
-        return this.arg1;
+        return this.substitutionIds;
     }
 
 }
