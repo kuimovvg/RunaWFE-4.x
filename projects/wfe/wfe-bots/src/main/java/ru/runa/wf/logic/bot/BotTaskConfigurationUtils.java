@@ -55,7 +55,15 @@ public class BotTaskConfigurationUtils {
     }
 
     private static Element getBotTaskElement(User user, WfTask task) {
-        byte[] xml = Delegates.getDefinitionService().getProcessDefinitionFile(user, task.getDefinitionId(), IFileDataProvider.BOTS_XML_FILE);
+        // TODO temporary, use another way for embedded subprocess determining
+        String fileName = IFileDataProvider.BOTS_XML_FILE;
+        if (task.getNodeId().startsWith(IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX)) {
+            int index = task.getNodeId().indexOf(".");
+            if (index > 0) {
+                fileName = task.getNodeId().substring(0, index) + "." + fileName;
+            }
+        }
+        byte[] xml = Delegates.getDefinitionService().getProcessDefinitionFile(user, task.getDefinitionId(), fileName);
         if (xml == null) {
             // this is the case of simple bot task
             return null;
