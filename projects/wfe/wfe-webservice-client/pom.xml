@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ru.runa.wfe</groupId>
 	<artifactId>wfe-webservice-client</artifactId>
-	<version>4.0.6</version>
+	<version>4.1.0</version>
 	<packaging>jar</packaging>
 	<name>wfe-webservice-client</name>
 	<description>RunaWFE WebServices Client API</description>
@@ -39,17 +39,30 @@
 						</goals>
 						<configuration>
 							<wsdls>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/AuthenticationWebService/AuthenticationAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/AuthorizationWebService/AuthorizationAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/BotWebService/BotAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/DefinitionWebService/DefinitionAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/ExecutionWebService/ExecutionAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/ExecutorWebService/ExecutorAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/ProfileWebService/ProfileAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/RelationWebService/RelationAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/ScriptingWebService/ScriptingAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/SystemWebService/SystemAPI?wsdl</wsdl>
-								<wsdl>http://localhost:8080/wfe-service-4.0.6/SubstitutionWebService/SubstitutionAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/AuthenticationServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/AuthorizationServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/BotServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/DefinitionServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/ExecutionServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/ExecutorServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/ProfileServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/RelationServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/ScriptingServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/SystemServiceBean?wsdl</wsdl>
+								<wsdl>http://localhost:8080/runawfe-wfe-service-${project.version}/SubstitutionServiceBean?wsdl</wsdl>
+								<!-- 
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/AuthenticationWebService/AuthenticationAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/AuthorizationWebService/AuthorizationAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/BotWebService/BotAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/DefinitionWebService/DefinitionAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/ExecutionWebService/ExecutionAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/ExecutorWebService/ExecutorAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/ProfileWebService/ProfileAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/RelationWebService/RelationAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/ScriptingWebService/ScriptingAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/SystemWebService/SystemAPI?wsdl</wsdl>
+								<wsdl>http://localhost:8080/wfe-service-${project.version}/SubstitutionWebService/SubstitutionAPI?wsdl</wsdl>
+								-->
 							</wsdls>
 							<targetPackage>ru.runa.wfe.webservice</targetPackage>
 							<sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>

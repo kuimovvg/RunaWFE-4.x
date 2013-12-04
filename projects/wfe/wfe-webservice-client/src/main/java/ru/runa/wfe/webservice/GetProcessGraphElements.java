@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
  *         &lt;element name="processId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="subprocessId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,12 +30,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getProcessGraphElements", propOrder = {
     "user",
-    "processId"
+    "processId",
+    "subprocessId"
 })
 public class GetProcessGraphElements {
 
     protected User user;
     protected Long processId;
+    protected String subprocessId;
 
     /**
      * Gets the value of the user property.
@@ -82,6 +85,30 @@ public class GetProcessGraphElements {
      */
     public void setProcessId(Long value) {
         this.processId = value;
+    }
+
+    /**
+     * Gets the value of the subprocessId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSubprocessId() {
+        return subprocessId;
+    }
+
+    /**
+     * Sets the value of the subprocessId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSubprocessId(String value) {
+        this.subprocessId = value;
     }
 
 }

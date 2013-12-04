@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="processId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *         &lt;element name="taskId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *         &lt;element name="childProcessId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="subprocessId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,7 +34,8 @@ import javax.xml.bind.annotation.XmlType;
     "user",
     "processId",
     "taskId",
-    "childProcessId"
+    "childProcessId",
+    "subprocessId"
 })
 public class GetProcessDiagram {
 
@@ -41,6 +43,7 @@ public class GetProcessDiagram {
     protected Long processId;
     protected Long taskId;
     protected Long childProcessId;
+    protected String subprocessId;
 
     /**
      * Gets the value of the user property.
@@ -136,6 +139,30 @@ public class GetProcessDiagram {
      */
     public void setChildProcessId(Long value) {
         this.childProcessId = value;
+    }
+
+    /**
+     * Gets the value of the subprocessId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSubprocessId() {
+        return subprocessId;
+    }
+
+    /**
+     * Sets the value of the subprocessId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSubprocessId(String value) {
+        this.subprocessId = value;
     }
 
 }

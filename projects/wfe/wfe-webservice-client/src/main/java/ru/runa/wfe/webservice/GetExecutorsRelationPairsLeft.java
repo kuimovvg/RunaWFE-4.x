@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="left" type="{http://www.w3.org/2001/XMLSchema}anyType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="left" type="{http://impl.service.wfe.runa.ru/}wfExecutor" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,7 +39,7 @@ public class GetExecutorsRelationPairsLeft {
 
     protected User user;
     protected String name;
-    protected List<Object> left;
+    protected List<WfExecutor> left;
 
     /**
      * Gets the value of the user property.
@@ -107,13 +107,13 @@ public class GetExecutorsRelationPairsLeft {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Object }
+     * {@link WfExecutor }
      * 
      * 
      */
-    public List<Object> getLeft() {
+    public List<WfExecutor> getLeft() {
         if (left == null) {
-            left = new ArrayList<Object>();
+            left = new ArrayList<WfExecutor>();
         }
         return this.left;
     }

@@ -49,6 +49,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *           &lt;/complexType>
  *         &lt;/element>
  *         &lt;element name="bytes" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="nodeId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -65,7 +66,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
     "date",
     "severity",
     "attributes",
-    "bytes"
+    "bytes",
+    "nodeId"
 })
 public abstract class ProcessLog {
 
@@ -78,6 +80,7 @@ public abstract class ProcessLog {
     @XmlElement(required = true)
     protected ProcessLog.Attributes attributes;
     protected byte[] bytes;
+    protected String nodeId;
 
     /**
      * Gets the value of the id property.
@@ -243,6 +246,30 @@ public abstract class ProcessLog {
      */
     public void setBytes(byte[] value) {
         this.bytes = ((byte[]) value);
+    }
+
+    /**
+     * Gets the value of the nodeId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    /**
+     * Sets the value of the nodeId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setNodeId(String value) {
+        this.nodeId = value;
     }
 
 
