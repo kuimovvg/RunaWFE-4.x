@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -19,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://impl.service.wfe.runa.ru/}graphElementPresentation" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="result" type="{http://impl.service.wfe.runa.ru/}graphElementPresentation" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,26 +29,25 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getProcessDefinitionGraphElementsResponse", propOrder = {
-    "_return"
+    "result"
 })
 public class GetProcessDefinitionGraphElementsResponse {
 
-    @XmlElement(name = "return")
-    protected List<GraphElementPresentation> _return;
+    protected List<GraphElementPresentation> result;
 
     /**
-     * Gets the value of the return property.
+     * Gets the value of the result property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the return property.
+     * This is why there is not a <CODE>set</CODE> method for the result property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getReturn().add(newItem);
+     *    getResult().add(newItem);
      * </pre>
      * 
      * 
@@ -59,11 +57,11 @@ public class GetProcessDefinitionGraphElementsResponse {
      * 
      * 
      */
-    public List<GraphElementPresentation> getReturn() {
-        if (_return == null) {
-            _return = new ArrayList<GraphElementPresentation>();
+    public List<GraphElementPresentation> getResult() {
+        if (result == null) {
+            result = new ArrayList<GraphElementPresentation>();
         }
-        return this._return;
+        return this.result;
     }
 
 }

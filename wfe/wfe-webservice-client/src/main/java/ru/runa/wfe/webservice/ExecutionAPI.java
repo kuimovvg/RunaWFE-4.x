@@ -106,7 +106,7 @@ public interface ExecutionAPI {
      *     returns int
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getAllProcessesCount", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetAllProcessesCount")
     @ResponseWrapper(localName = "getAllProcessesCountResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetAllProcessesCountResponse")
     public int getAllProcessesCount(
@@ -123,7 +123,7 @@ public interface ExecutionAPI {
      *     returns ru.runa.wfe.webservice.WfProcess
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getParentProcess", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetParentProcess")
     @ResponseWrapper(localName = "getParentProcessResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetParentProcessResponse")
     public WfProcess getParentProcess(
@@ -140,7 +140,7 @@ public interface ExecutionAPI {
      *     returns ru.runa.wfe.webservice.WfProcess
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcess", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcess")
     @ResponseWrapper(localName = "getProcessResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessResponse")
     public WfProcess getProcess(
@@ -155,11 +155,12 @@ public interface ExecutionAPI {
      * @param taskId
      * @param processId
      * @param user
+     * @param subprocessId
      * @return
      *     returns byte[]
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcessDiagram", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDiagram")
     @ResponseWrapper(localName = "getProcessDiagramResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessDiagramResponse")
     public byte[] getProcessDiagram(
@@ -170,24 +171,29 @@ public interface ExecutionAPI {
         @WebParam(name = "taskId", targetNamespace = "")
         Long taskId,
         @WebParam(name = "childProcessId", targetNamespace = "")
-        Long childProcessId);
+        Long childProcessId,
+        @WebParam(name = "subprocessId", targetNamespace = "")
+        String subprocessId);
 
     /**
      * 
      * @param processId
      * @param user
+     * @param subprocessId
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.GraphElementPresentation>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcessGraphElements", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessGraphElements")
     @ResponseWrapper(localName = "getProcessGraphElementsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessGraphElementsResponse")
     public List<GraphElementPresentation> getProcessGraphElements(
         @WebParam(name = "user", targetNamespace = "")
         User user,
         @WebParam(name = "processId", targetNamespace = "")
-        Long processId);
+        Long processId,
+        @WebParam(name = "subprocessId", targetNamespace = "")
+        String subprocessId);
 
     /**
      * 
@@ -198,10 +204,30 @@ public interface ExecutionAPI {
      *     returns byte[]
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcessHistoryDiagram", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessHistoryDiagram")
     @ResponseWrapper(localName = "getProcessHistoryDiagramResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessHistoryDiagramResponse")
     public byte[] getProcessHistoryDiagram(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "processId", targetNamespace = "")
+        Long processId,
+        @WebParam(name = "taskId", targetNamespace = "")
+        Long taskId);
+
+    /**
+     * 
+     * @param taskId
+     * @param processId
+     * @param user
+     * @return
+     *     returns java.util.List<ru.runa.wfe.webservice.GraphElementPresentation>
+     */
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "")
+    @RequestWrapper(localName = "getProcessHistoryDiagramElements", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessHistoryDiagramElements")
+    @ResponseWrapper(localName = "getProcessHistoryDiagramElementsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessHistoryDiagramElementsResponse")
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(
         @WebParam(name = "user", targetNamespace = "")
         User user,
         @WebParam(name = "processId", targetNamespace = "")
@@ -217,7 +243,7 @@ public interface ExecutionAPI {
      *     returns java.lang.Object
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcessLogValue", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessLogValue")
     @ResponseWrapper(localName = "getProcessLogValueResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessLogValueResponse")
     public Object getProcessLogValue(
@@ -234,7 +260,7 @@ public interface ExecutionAPI {
      *     returns ru.runa.wfe.webservice.ProcessLogs
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcessLogs", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessLogs")
     @ResponseWrapper(localName = "getProcessLogsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessLogsResponse")
     public ProcessLogs getProcessLogs(
@@ -251,7 +277,7 @@ public interface ExecutionAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.WfTask>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcessTasks", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessTasks")
     @ResponseWrapper(localName = "getProcessTasksResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessTasksResponse")
     public List<WfTask> getProcessTasks(
@@ -262,33 +288,13 @@ public interface ExecutionAPI {
 
     /**
      * 
-     * @param taskId
-     * @param processId
-     * @param user
-     * @return
-     *     returns java.util.List<ru.runa.wfe.webservice.GraphElementPresentation>
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getProcessUIHistoryData", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessUIHistoryData")
-    @ResponseWrapper(localName = "getProcessUIHistoryDataResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessUIHistoryDataResponse")
-    public List<GraphElementPresentation> getProcessUIHistoryData(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "processId", targetNamespace = "")
-        Long processId,
-        @WebParam(name = "taskId", targetNamespace = "")
-        Long taskId);
-
-    /**
-     * 
      * @param batchPresentation
      * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.WfProcess>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getProcesses", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcesses")
     @ResponseWrapper(localName = "getProcessesResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetProcessesResponse")
     public List<WfProcess> getProcesses(
@@ -306,7 +312,7 @@ public interface ExecutionAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.WfProcess>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getSubprocesses", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocesses")
     @ResponseWrapper(localName = "getSubprocessesResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubprocessesResponse")
     public List<WfProcess> getSubprocesses(
@@ -325,7 +331,7 @@ public interface ExecutionAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.WfSwimlane>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getSwimlanes", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSwimlanes")
     @ResponseWrapper(localName = "getSwimlanesResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSwimlanesResponse")
     public List<WfSwimlane> getSwimlanes(
@@ -342,7 +348,7 @@ public interface ExecutionAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.SystemLog>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getSystemLogs", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSystemLogs")
     @ResponseWrapper(localName = "getSystemLogsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSystemLogsResponse")
     public List<SystemLog> getSystemLogs(
@@ -359,7 +365,7 @@ public interface ExecutionAPI {
      *     returns int
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getSystemLogsCount", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSystemLogsCount")
     @ResponseWrapper(localName = "getSystemLogsCountResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSystemLogsCountResponse")
     public int getSystemLogsCount(
@@ -376,7 +382,7 @@ public interface ExecutionAPI {
      *     returns ru.runa.wfe.webservice.WfTask
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getTask", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetTask")
     @ResponseWrapper(localName = "getTaskResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetTaskResponse")
     public WfTask getTask(
@@ -393,7 +399,7 @@ public interface ExecutionAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.WfTask>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getTasks", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetTasks")
     @ResponseWrapper(localName = "getTasksResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetTasksResponse")
     public List<WfTask> getTasks(
@@ -411,7 +417,7 @@ public interface ExecutionAPI {
      *     returns ru.runa.wfe.webservice.WfVariable
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getVariable", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariable")
     @ResponseWrapper(localName = "getVariableResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariableResponse")
     public WfVariable getVariable(
@@ -430,7 +436,7 @@ public interface ExecutionAPI {
      *     returns java.util.List<ru.runa.wfe.webservice.WfVariable>
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "getVariablesWS", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariablesWS")
     @ResponseWrapper(localName = "getVariablesWSResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetVariablesWSResponse")
     public List<WfVariable> getVariablesWS(
@@ -476,7 +482,7 @@ public interface ExecutionAPI {
      *     returns java.lang.Long
      */
     @WebMethod
-    @WebResult(targetNamespace = "")
+    @WebResult(name = "result", targetNamespace = "")
     @RequestWrapper(localName = "startProcessWS", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.StartProcessWS")
     @ResponseWrapper(localName = "startProcessWSResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.StartProcessWSResponse")
     public Long startProcessWS(

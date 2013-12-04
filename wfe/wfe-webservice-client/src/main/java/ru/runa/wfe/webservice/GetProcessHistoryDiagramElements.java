@@ -7,17 +7,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getSubprocessesRecursive complex type.
+ * <p>Java class for getProcessHistoryDiagramElements complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getSubprocessesRecursive">
+ * &lt;complexType name="getProcessHistoryDiagramElements">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="user" type="{http://impl.service.wfe.runa.ru/}user" minOccurs="0"/>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="processId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
+ *         &lt;element name="taskId" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -27,14 +28,16 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubprocessesRecursive", propOrder = {
+@XmlType(name = "getProcessHistoryDiagramElements", propOrder = {
     "user",
-    "id"
+    "processId",
+    "taskId"
 })
-public class GetSubprocessesRecursive {
+public class GetProcessHistoryDiagramElements {
 
     protected User user;
-    protected Long id;
+    protected Long processId;
+    protected Long taskId;
 
     /**
      * Gets the value of the user property.
@@ -61,27 +64,51 @@ public class GetSubprocessesRecursive {
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the processId property.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getId() {
-        return id;
+    public Long getProcessId() {
+        return processId;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the processId property.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setId(Long value) {
-        this.id = value;
+    public void setProcessId(Long value) {
+        this.processId = value;
+    }
+
+    /**
+     * Gets the value of the taskId property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getTaskId() {
+        return taskId;
+    }
+
+    /**
+     * Sets the value of the taskId property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setTaskId(Long value) {
+        this.taskId = value;
     }
 
 }

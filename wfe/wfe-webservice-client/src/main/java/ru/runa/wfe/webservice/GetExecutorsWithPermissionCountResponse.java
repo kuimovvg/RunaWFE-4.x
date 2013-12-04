@@ -3,7 +3,6 @@ package ru.runa.wfe.webservice;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -17,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="result" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -28,27 +27,26 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "getExecutorsWithPermissionCountResponse", propOrder = {
-    "_return"
+    "result"
 })
 public class GetExecutorsWithPermissionCountResponse {
 
-    @XmlElement(name = "return")
-    protected int _return;
+    protected int result;
 
     /**
-     * Gets the value of the return property.
+     * Gets the value of the result property.
      * 
      */
-    public int getReturn() {
-        return _return;
+    public int getResult() {
+        return result;
     }
 
     /**
-     * Sets the value of the return property.
+     * Sets the value of the result property.
      * 
      */
-    public void setReturn(int value) {
-        this._return = value;
+    public void setResult(int value) {
+        this.result = value;
     }
 
 }

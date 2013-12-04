@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "AuthorizationWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/wfe-service-4.0.6/AuthorizationWebService/AuthorizationAPI?wsdl")
+@WebServiceClient(name = "AuthorizationWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/runawfe-wfe-service-4.1.0/AuthorizationServiceBean?wsdl")
 public class AuthorizationWebService
     extends Service
 {
@@ -30,7 +30,7 @@ public class AuthorizationWebService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/wfe-service-4.0.6/AuthorizationWebService/AuthorizationAPI?wsdl");
+            url = new URL("http://localhost:8080/runawfe-wfe-service-4.1.0/AuthorizationServiceBean?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
