@@ -23,7 +23,8 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.notifier.GUI;
 import ru.runa.notifier.WFEConnection;
 import ru.runa.notifier.util.ResourcesManager;
-import ru.runa.wfe.webservice.User;
+
+import com.sun.jna.platform.win32.Netapi32Util.User;
 
 public class UserInputAuthenticator implements Authenticator {
     private static final Log log = LogFactory.getLog(UserInputAuthenticator.class);
@@ -76,10 +77,9 @@ public class UserInputAuthenticator implements Authenticator {
         String param;
         try {
             param = "login=" + URLEncoder.encode(login, "utf-8") + "&password=" + URLEncoder.encode(password, "utf-8");
-            log.info("Web params is " + param);
             return param;
         } catch (UnsupportedEncodingException e) {
-            log.error("Can't create we parameters", e);
+            log.error("Can't create parameters", e);
             return null;
         }
     }

@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ru.runa.rtn</groupId>
 	<artifactId>tasknotifier</artifactId>
-	<version>4.0.6</version>
+	<version>4.1.0</version>
 	<packaging>jar</packaging>
 	<name>tasknotifier</name>
 	<description>task notifier client</description>
@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>ru.runa.wfe</groupId>
 			<artifactId>wfe-webservice-client</artifactId>
-			<version>4.0.6</version>
+			<version>${project.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jbossws-native-client</artifactId>
