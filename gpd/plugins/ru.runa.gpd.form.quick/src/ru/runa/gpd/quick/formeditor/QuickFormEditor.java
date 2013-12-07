@@ -59,6 +59,7 @@ import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
 import ru.runa.gpd.quick.extension.QuickTemplateRegister;
 import ru.runa.gpd.quick.formeditor.ui.wizard.BrowserWizard;
 import ru.runa.gpd.quick.formeditor.ui.wizard.QuickFormVariableWizard;
+import ru.runa.gpd.quick.formeditor.ui.wizard.QuickFormVariabliesToDisplayWizard;
 import ru.runa.gpd.quick.formeditor.util.PresentationVariableUtils;
 import ru.runa.gpd.quick.formeditor.util.QuickFormXMLUtil;
 import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
@@ -282,6 +283,18 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             protected void onSelection(SelectionEvent e) throws Exception {
             	QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getQuickFormGpdVariable(), -1);
                 CompactWizardDialog dialog = new CompactWizardDialog(wizard);
+                if (dialog.open() == Window.OK) {
+                    setTableInput();
+                    setDirty(true);
+                }
+            }
+        });
+        addButton(buttonsBar, "editor.button.massadd", new LoggingSelectionAdapter() {
+            @Override
+            protected void onSelection(SelectionEvent e) throws Exception {
+            	QuickFormVariabliesToDisplayWizard wizard = new QuickFormVariabliesToDisplayWizard(processDefinition, quickForm.getQuickFormGpdVariable());
+                CompactWizardDialog dialog = new CompactWizardDialog(wizard);
+                dialog.setPageSize(500,300);
                 if (dialog.open() == Window.OK) {
                     setTableInput();
                     setDirty(true);
