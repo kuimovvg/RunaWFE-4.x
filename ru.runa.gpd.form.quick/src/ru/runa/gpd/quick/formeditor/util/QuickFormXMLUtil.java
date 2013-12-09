@@ -97,6 +97,7 @@ public class QuickFormXMLUtil {
                 	templatedVariableDef.setName(varElement.elementText(ATTRIBUTE_NAME));
                 	templatedVariableDef.setFormat(varElement.elementText(ATTRIBUTE_FORMAT));
                 	Variable var = processDefinition.getVariable(templatedVariableDef.getName(), true);
+                	if(var == null) continue;
                 	templatedVariableDef.setFormatLabel(var.getFormatLabel());
                 	templatedVariableDef.setJavaClassName(var.getJavaClassName());
                 	templatedVariableDef.setDescription(varElement.elementText(ATTRIBUTE_DESCRIPTION));
