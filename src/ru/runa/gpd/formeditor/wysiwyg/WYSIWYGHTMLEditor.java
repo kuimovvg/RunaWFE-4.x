@@ -73,6 +73,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     private Browser browser;
     private boolean ftlFormat = true;
     private FormNode formNode;
+    private IFile formFile;
     private boolean dirty = false;
     private boolean browserLoaded = false;
     private static final Pattern pattern = Pattern.compile("^(.*?<(body|BODY).*?>)(.*?)(</(body|BODY)>.*?)$", Pattern.DOTALL);
@@ -96,7 +97,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     @Override
     public void init(IEditorSite site, IEditorInput editorInput) throws PartInitException {
         super.init(site, editorInput);
-        final IFile formFile = ((FileEditorInput) editorInput).getFile();
+        formFile = ((FileEditorInput) editorInput).getFile();
         ftlFormat = editorInput.getName().endsWith("ftl");
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
         lastInitializedInstance = this;
@@ -122,19 +123,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             @Override
             public void propertyChanged(Object source, int propId) {
                 if (propId == WYSIWYGHTMLEditor.CLOSED && formFile.exists()) {
-                    String op = "create";
-                    try {
-                        if (!formNode.hasFormValidation()) {
-                            String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, fileName, formNode);
-                            formNode.setValidationFileName(validationFile.getName());
-                        } else {
-                            op = "update";
-                            ValidationUtil.updateValidation(formFile, formNode);
-                        }
-                    } catch (Exception e) {
-                        PluginLogger.logError("Failed to " + op + " form validation", e);
-                    }
+                    createOrUpdateFormValidation();
                 }
             }
         });
@@ -322,8 +311,25 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         savedHTML = getSourceDocumentHTML();
         if (formNode != null) {
             formNode.setDirty();
+            createOrUpdateFormValidation();
         }
         setDirty(false);
+    }
+    
+    private void createOrUpdateFormValidation() {
+        String op = "create";
+        try {
+            if (!formNode.hasFormValidation()) {
+                String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
+                IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, fileName, formNode);
+                formNode.setValidationFileName(validationFile.getName());
+            } else {
+                op = "update";
+                ValidationUtil.updateValidation(formFile, formNode);
+            }
+        } catch (Exception e) {
+            PluginLogger.logError("Failed to " + op + " form validation", e);
+        }
     }
 
     @Override
