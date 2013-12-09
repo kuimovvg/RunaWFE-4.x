@@ -49,6 +49,7 @@ import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -223,10 +224,12 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             	}
             	
             	if(StringUtils.isNotEmpty(prevTemplateFileName)) {
-        			IFile confFile = ((IFolder) quickFormFile.getParent()).getFile(prevTemplateFileName);
-                    if (confFile.exists()) {
-                    	confFile.delete(true, null);
-                    }
+            		if(!isTemplateUsingInForms()) {
+            			IFile confFile = ((IFolder) quickFormFile.getParent()).getFile(prevTemplateFileName);
+                        if (confFile.exists()) {
+                        	confFile.delete(true, null);
+                        }
+            		}
         		}
         		
                 prevTemplateFileName = filename;
@@ -459,6 +462,27 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             return null;
         }
     }
+	
+	private final boolean isTemplateUsingInForms() {
+		boolean isUsing = false;
+		List<FormNode> formNodes = processDefinition.getChildren(FormNode.class);
+		for(FormNode localFormNode : formNodes) {
+			if(localFormNode.hasForm() && FormTypeProvider.getFormType(localFormNode.getFormType()) instanceof QuickFormType) {
+				if(localFormNode == formNode) {
+    				continue;
+    			}
+    			
+				IFile file = ((IFolder) quickFormFile.getParent()).getFile(localFormNode.getFormFileName());
+				String templateName = QuickFormXMLUtil.getQuickFormTemplateName(file);
+				if(prevTemplateFileName.equals(templateName)) {
+					isUsing = true;
+					break;
+				}
+			}
+		}
+		
+		return isUsing;
+	}
 	
 	protected Button addButton(Composite parent, String buttonKey, SelectionAdapter selectionListener) {
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
