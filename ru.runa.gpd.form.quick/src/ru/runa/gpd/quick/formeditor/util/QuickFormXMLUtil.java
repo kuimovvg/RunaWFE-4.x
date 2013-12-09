@@ -96,7 +96,7 @@ public class QuickFormXMLUtil {
                 	templatedVariableDef.setTagName(varElement.elementText(ATTRIBUTE_TAG));
                 	templatedVariableDef.setName(varElement.elementText(ATTRIBUTE_NAME));
                 	templatedVariableDef.setFormat(varElement.elementText(ATTRIBUTE_FORMAT));
-                	Variable var = processDefinition.getVariable(templatedVariableDef.getName(), false);
+                	Variable var = processDefinition.getVariable(templatedVariableDef.getName(), true);
                 	templatedVariableDef.setFormatLabel(var.getFormatLabel());
                 	templatedVariableDef.setJavaClassName(var.getJavaClassName());
                 	templatedVariableDef.setDescription(varElement.elementText(ATTRIBUTE_DESCRIPTION));
@@ -116,6 +116,19 @@ public class QuickFormXMLUtil {
             }
         }
 		return quickForm;
+	}
+	
+	public static final String getQuickFormTemplateName(IFile file) {
+		if (file.exists() && getContentLenght(file.getLocation().toString()) != 0) {
+			try {
+                Document document = XmlUtil.parseWithoutValidation(file.getContents());
+                return document.getRootElement().attributeValue(TEMPLATE_NAME);                
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+		
+		return null;
 	}
 	
 	private static void saveTemplateToProcessDefinition(IFolder folder, QuickForm quickForm) throws CoreException {
