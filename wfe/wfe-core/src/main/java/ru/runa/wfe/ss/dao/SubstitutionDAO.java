@@ -82,4 +82,11 @@ public class SubstitutionDAO extends GenericDAO<Substitution> {
         return getHibernateTemplate().find("from Substitution where actorId=? order by position " + order, actorId);
     }
 
+    public void deleteAllActorSubstitutions(Long actorId) {
+        List<Substitution> substitutions = getByActorId(actorId, true);
+        for (Substitution substitution : substitutions) {
+            delete(substitution);
+        }
+    }
+
 }
