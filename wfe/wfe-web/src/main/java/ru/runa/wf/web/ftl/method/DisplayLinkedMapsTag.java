@@ -39,25 +39,11 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
             i++;
         }
         if (maps.size() > 0) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("<table class=\"displayLinkedMaps\">");
-            StringBuffer header = new StringBuffer();
-            header.append("<tr class=\"header\">");
-            boolean headerValueNotNull = false;
-            for (i = 0; i < maps.size(); i++) {
-                String headerVariableName = getParameterAs(String.class, i) + "_header";
-                Object value = variableProvider.getValue(headerVariableName);
-                if (value != null) {
-                    headerValueNotNull = true;
-                }
-                header.append("<td>").append(value != null ? value : "&nbsp;").append("</td>");
-            }
-            header.append("</tr>");
-            if (headerValueNotNull) {
-                buffer.append(header);
-            }
+            StringBuffer html = new StringBuffer();
+            html.append("<table class=\"displayLinkedMaps\">");
+            html.append(ViewUtil.generateTableHeader(variableNames, null));
             for (Map.Entry<?, ?> entry : maps.get(0).entrySet()) {
-                buffer.append("<tr>");
+                html.append("<tr>");
                 for (int column = 0; column < maps.size(); column++) {
                     Map<?, ?> map = maps.get(column);
                     Object o = map.get(entry.getKey());
@@ -68,14 +54,14 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                         value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, null,
                                 entry.getKey());
                     } else {
-                        value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);
+                        value = ViewUtil.getComponentOutput(user, variableName, componentClassName, o);
                     }
-                    buffer.append("<td>").append(value).append("</td>");
+                    html.append("<td>").append(value).append("</td>");
                 }
-                buffer.append("</tr>");
+                html.append("</tr>");
             }
-            buffer.append("</table>");
-            return buffer.toString();
+            html.append("</table>");
+            return html.toString();
         }
         return "-";
     }

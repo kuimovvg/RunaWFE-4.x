@@ -29,7 +29,6 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -46,9 +45,8 @@ abstract class LoadProcessDefinitionFileAction extends ActionBase {
         IdForm idForm = (IdForm) form;
         String fileName = null;
         try {
-            DefinitionService definitionService = Delegates.getDefinitionService();
             fileName = getFileName(request);
-            byte[] bytes = definitionService.getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), fileName);
+            byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(getLoggedUser(request), idForm.getId(), fileName);
             String contentType = getContentType();
             if (contentType != null) {
                 response.setContentType(contentType);

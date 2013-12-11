@@ -37,22 +37,17 @@ public abstract class BaseQuickFormBuilder {
     private static final String ATTRIBUTE_PARAM = "param";
 
     public String build(User user, PageContext pageContext, Interaction interaction, Long definitionId, IVariableProvider variableProvider) {
-
         if (interaction.hasForm()) {
             String formTemplate = new String(interaction.getFormData(), Charsets.UTF_8);
-
             List<QuickFormVariable> templateVariables = new ArrayList<QuickFormVariable>();
             Document document = XmlUtils.parseWithoutValidation(formTemplate);
-
             String templateName = document.getRootElement().attributeValue(TEMPLATE_NAME);
-
             List<Element> varElementsList = document.getRootElement().elements(TEMPLATE_VARIABLE);
             for (Element varElement : varElementsList) {
                 String tag = varElement.elementText(ATTRIBUTE_TAG);
                 QuickFormVariable quickFormVariable = new QuickFormVariable();
                 quickFormVariable.setTagName(tag);
                 quickFormVariable.setName(varElement.elementText(ATTRIBUTE_NAME));
-
                 List<Element> paramElements = varElement.elements(ATTRIBUTE_PARAM);
                 if (paramElements != null && paramElements.size() > 0) {
                     List<String> params = new ArrayList<String>();
@@ -61,13 +56,11 @@ public abstract class BaseQuickFormBuilder {
                     }
                     quickFormVariable.setParams(params.toArray(new String[0]));
                 }
-
                 templateVariables.add(quickFormVariable);
             }
-
             String out = quickTemplateProcess(user, pageContext, definitionId, templateName, templateVariables);
             if (out == null) {
-                String message = "Template of form is not exist";
+                String message = "Form template does not exist";
                 if (pageContext != null) {
                     message = Messages.getMessage("template.form.not.exist.error", pageContext);
                 }
@@ -90,11 +83,9 @@ public abstract class BaseQuickFormBuilder {
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
         FormHashModel model = new FormHashModel(user, variableProvider, new StrutsWebHelper(pageContext));
         byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(user, definitionId, templateName);
-
         if (bytes == null) {
             return null;
         }
-
         return FreemarkerProcessor.process(new String(bytes, Charsets.UTF_8), model);
     }
 
@@ -106,9 +97,7 @@ public abstract class BaseQuickFormBuilder {
             variableProvider = new MapDelegableVariableProvider(userDefinedVariables, variableProvider);
         }
         FormHashModel model = new FormHashModel(user, variableProvider, new StrutsWebHelper(pageContext));
-
         String out = FreemarkerProcessor.process(template, model);
-
         return FormPresentationUtils.adjustForm(pageContext, definitionId, out, model.getVariableProvider(), interaction.getRequiredVariableNames());
     }
 }

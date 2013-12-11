@@ -44,7 +44,6 @@ public class ProcessArchive extends FileDataProvider {
     private final Deployment deployment;
     public static List<String> UNSECURED_FILE_NAMES = Lists.newArrayList();
     static {
-        UNSECURED_FILE_NAMES.add(FORM_CSS_FILE_NAME);
         UNSECURED_FILE_NAMES.add(START_IMAGE_FILE_NAME);
         UNSECURED_FILE_NAMES.add(START_DISABLED_IMAGE_FILE_NAME);
         UNSECURED_FILE_NAMES.add(BOTS_XML_FILE);
