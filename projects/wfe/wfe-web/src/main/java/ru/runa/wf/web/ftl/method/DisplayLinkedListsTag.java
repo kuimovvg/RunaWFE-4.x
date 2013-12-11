@@ -44,21 +44,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         if (variableNames.size() > 0) {
             StringBuffer html = new StringBuffer();
             html.append("<table class=\"displayLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
-            StringBuffer header = new StringBuffer();
-            header.append("<tr class=\"header\">");
-            boolean headerVisible = false;
-            for (String variableName : variableNames) {
-                String headerVariableName = variableName + "_header";
-                Object value = variableProvider.getValue(headerVariableName);
-                if (value != null) {
-                    headerVisible = true;
-                }
-                header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
-            }
-            header.append("</tr>");
-            if (headerVisible) {
-                html.append(header);
-            }
+            html.append(ViewUtil.generateTableHeader(variableNames, null));
             for (int row = 0; row < rowsCount; row++) {
                 renderRow(html, variableNames, lists, componentFormatClassNames, row);
             }

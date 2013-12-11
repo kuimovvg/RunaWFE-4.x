@@ -75,32 +75,17 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             substitutions.put("VARIABLE_NAMES", jsVariableNamesArray.toString());
             html.append(exportScript("scripts/EditLinkedListsTag.js", substitutions, true));
             html.append("<table id=\"editLinkedLists\" class=\"editLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
-            StringBuffer header = new StringBuffer();
-            header.append("<tr class=\"header\">");
-            boolean headerVisible = false;
-            boolean operationsColumnVisible = allowToAddElements || allowToDeleteElements;
-            for (String variableName : variableNames) {
-                String headerVariableName = variableName + "_header";
-                Object value = variableProvider.getValue(headerVariableName);
-                if (value != null) {
-                    headerVisible = true;
+            String operationsColumn = null;
+            if (allowToAddElements || allowToDeleteElements) {
+                operationsColumn = "<th style=\"width: 30px;\">";
+                if (allowToAddElements) {
+                    operationsColumn += "<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />";
                 }
-                header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
+                operationsColumn += "</th>";
+            }
+            html.append(ViewUtil.generateTableHeader(variableNames, operationsColumn));
+            for (String variableName : variableNames) {
                 html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class.getName(), rowsCount));
-            }
-            if (operationsColumnVisible) {
-                header.append("<td style=\"width: 30px;\">");
-            }
-            if (allowToAddElements) {
-                headerVisible = true;
-                header.append("<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />");
-            }
-            if (operationsColumnVisible) {
-                header.append("</td>");
-            }
-            header.append("</tr>");
-            if (headerVisible) {
-                html.append(header);
             }
             for (int row = 0; row < rowsCount; row++) {
                 renderRow(html, variableNames, lists, componentFormatClassNames, row, allowToChangeElements, allowToDeleteElements);
