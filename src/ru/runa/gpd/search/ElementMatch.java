@@ -13,6 +13,7 @@ public class ElementMatch {
     public static String CONTEXT_FORM_VALIDATION = "form_validation";
     public static String CONTEXT_BOT_TASK_LINK = "botTaskLink";
     public static String CONTEXT_BOT_TASK = "botTask";
+    public static String CONTEXT_PROCESS_DEFINITION = "processDefinition";
     private String context;
     private IFile file;
     private GraphElement graphElement;
