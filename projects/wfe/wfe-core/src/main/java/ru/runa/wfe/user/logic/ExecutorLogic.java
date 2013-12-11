@@ -37,6 +37,7 @@ import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.security.WeakPasswordException;
+import ru.runa.wfe.ss.dao.SubstitutionDAO;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.Executor;
@@ -63,6 +64,8 @@ public class ExecutorLogic extends CommonLogic {
     private ProfileDAO profileDAO;
     @Autowired
     private RelationPairDAO relationPairDAO;
+    @Autowired
+    private SubstitutionDAO substitutionDAO;
 
     @Required
     public void setPasswordCheckPattern(String passwordCheckPattern) {
@@ -143,6 +146,7 @@ public class ExecutorLogic extends CommonLogic {
         permissionDAO.deleteOwnPermissions(executor);
         permissionDAO.deleteAllPermissions(executor);
         relationPairDAO.removeAllRelationPairs(executor);
+        substitutionDAO.deleteAllActorSubstitutions(executor.getId());
         executorDAO.remove(executor);
     }
 
