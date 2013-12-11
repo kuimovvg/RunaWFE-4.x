@@ -91,6 +91,11 @@ public class SearchPage extends AbstractTextSearchViewPage {
             BotTaskUtils.editBotTaskLinkConfiguration((TaskState) elementMatch.getGraphElement());
         } else if (ElementMatch.CONTEXT_BOT_TASK.equals(elementMatch.getContext())) {
             IDE.openEditor(getSite().getPage(), elementMatch.getFile(), BotTaskEditor.ID);
+        } else if (ElementMatch.CONTEXT_PROCESS_DEFINITION.equals(elementMatch.getContext())) {
+            ProcessEditorBase processEditor = WorkspaceOperations.openProcessDefinition(elementMatch.getFile());
+            if (processEditor != null) {
+                processEditor.select(elementMatch.getGraphElement());
+            }
         } else if (elementMatch.getGraphElement().isDelegable()) {
             Delegable delegable = (Delegable) elementMatch.getGraphElement();
             DelegableProvider provider = HandlerRegistry.getProvider(delegable.getDelegationClassName());

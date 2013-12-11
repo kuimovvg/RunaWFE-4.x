@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
@@ -33,8 +34,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.search.SubprocessSearchQuery;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
@@ -195,6 +200,27 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
                 @Override
                 public void run() {
                     WorkspaceOperations.refreshResources(resources);
+                }
+            });
+        }
+        if (menuOnProcess) {
+            manager.add(new Action(Localization.getString("button.findReferences"), SharedImages.getImageDescriptor("icons/search.gif")) {
+                
+                @Override
+                public void run() {
+                    try {
+                        IFile definitionFile;
+                        if (selectedObject instanceof IFolder) {
+                            definitionFile = IOUtils.getProcessDefinitionFile((IFolder) selectedObject);
+                        } else {
+                            definitionFile = (IFile) selectedObject;
+                        }
+                        ProcessDefinition processDefinition = ProcessCache.getProcessDefinition(definitionFile);
+                        SubprocessSearchQuery query = new SubprocessSearchQuery(processDefinition.getName());
+                        NewSearchUI.runQueryInBackground(query);
+                    } catch (Exception ex) {
+                        PluginLogger.logError(ex);
+                    }
                 }
             });
         }
