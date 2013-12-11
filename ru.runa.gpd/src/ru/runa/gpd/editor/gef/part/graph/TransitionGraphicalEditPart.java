@@ -19,9 +19,6 @@ import ru.runa.gpd.editor.gef.policy.ActiveLayoutEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionBendpointEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionEditPolicy;
 import ru.runa.gpd.editor.gef.policy.TransitionConnectionEndpointsEditPolicy;
-import ru.runa.gpd.extension.HandlerRegistry;
-import ru.runa.gpd.extension.decision.IDecisionProvider;
-import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Timer;
@@ -148,12 +145,6 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
         } else if (PROPERTY_NAME.equals(messageId) && evt.getSource() instanceof Transition) {
             Transition transition = getModel();
             getFigure().setLabelText(transition.getLabel());
-            if (transition.getSource() instanceof Decision) {
-                // update decision configuration
-                Decision decision = (Decision) transition.getSource();
-                IDecisionProvider provider = HandlerRegistry.getProvider(decision);
-                provider.transitionRenamed(decision, (String) evt.getOldValue(), (String) evt.getNewValue());
-            }
             refreshVisuals();
         } else if (PROPERTY_TIMER_DELAY.equals(messageId)) {
             Transition transition = getModel();

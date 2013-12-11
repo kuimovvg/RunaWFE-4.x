@@ -9,6 +9,8 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.decision.IDecisionProvider;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -80,6 +82,7 @@ public class Transition extends NamedGraphElement implements Active {
 
     @Override
     public void setName(String name) {
+        String old = getName();
         Node source = getSource();
         if (source == null) {
             return;
@@ -91,6 +94,11 @@ public class Transition extends NamedGraphElement implements Active {
             }
         }
         super.setName(name);
+        if (source instanceof Decision && old != null) {
+            Decision decision = (Decision) source;
+            IDecisionProvider provider = HandlerRegistry.getProvider(decision);
+            provider.transitionRenamed(decision, old, getName());
+        }
     }
 
     public Node getSource() {

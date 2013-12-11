@@ -1,10 +1,8 @@
 <table>
-
-<#list variables as variable>   
+	<#list variables as variable>   
 	<tr>
-		<td>${variable.name}</td>
-		<td>${variable.tag}</td>
+		<td class="label">${variable.name}</td>
+		<td class="input">${variable.tag}</td>
 	</tr>
-</#list>
-
+	</#list>
 </table>
