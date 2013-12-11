@@ -20,6 +20,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.ActorFormat;
@@ -377,6 +378,37 @@ public class ViewUtil {
             }
         }
         return StringFormat.class.getName();
+    }
 
+    private static String generateOldStyleHeader(List<String> variableNames, IVariableProvider variableProvider) {
+        boolean headerVisible = false;
+        StringBuffer header = new StringBuffer();
+        header.append("<tr class=\"header\">");
+        for (String variableName : variableNames) {
+            String headerVariableName = variableName + "_header";
+            Object value = variableProvider.getValue(headerVariableName);
+            if (value != null) {
+                headerVisible = true;
+            }
+            header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
+        }
+        if (!headerVisible) {
+            return "";
+        }
+        header.append("</tr>");
+        return header.toString();
+    }
+
+    public static String generateTableHeader(List<String> variableNames, String operationsColumn) {
+        StringBuffer header = new StringBuffer();
+        header.append("<tr class=\"header\">");
+        for (String variableName : variableNames) {
+            header.append("<th>").append(variableName).append("</th>");
+        }
+        if (operationsColumn != null) {
+            header.append(operationsColumn);
+        }
+        header.append("</tr>");
+        return header.toString();
     }
 }
