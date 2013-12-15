@@ -9,7 +9,7 @@
     <!-- L : ru.runa.bpm.log.NodeLeaveLog -->
     
     <!-- N : ru.runa.bpm.log.NodeEnterLog -->
-    
+    <!-- O : ru.runa.bpm.log.TaskCancelledLog -->
     <!-- P : ru.runa.bpm.log.ProcessLog -->
     <!-- R : ru.runa.bpm.log.VariableCreateLog -->
     <!-- S : ru.runa.bpm.log.TaskEndBySubstitutorLog -->

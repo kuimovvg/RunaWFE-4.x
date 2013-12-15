@@ -28,10 +28,8 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskCompletionBy;
 import ru.runa.wfe.user.Executor;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -96,18 +94,6 @@ public class MultiTaskNode extends BaseTaskNode {
             log.debug("continue execution " + this);
             leave(executionContext);
         }
-    }
-
-    @Override
-    public void leave(ExecutionContext executionContext, Transition transition) {
-        if (!async) {
-            for (Task task : executionContext.getToken().getTasks()) {
-                if (Objects.equal(task.getNodeId(), getNodeId())) {
-                    task.end(executionContext, TaskCompletionBy.TIMER, null);
-                }
-            }
-        }
-        super.leave(executionContext, transition);
     }
 
     public boolean isCompletionTriggersSignal(Task task) {
