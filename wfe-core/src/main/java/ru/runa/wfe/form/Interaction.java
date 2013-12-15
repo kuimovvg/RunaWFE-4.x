@@ -51,6 +51,7 @@ public class Interaction implements Serializable {
 
     protected Interaction() {
     }
+    // TODO quick form template?
 
     public Interaction(String name, String description, String type, byte[] formData, byte[] validationData, boolean useJSValidation,
             byte[] scriptData, byte[] cssData) {

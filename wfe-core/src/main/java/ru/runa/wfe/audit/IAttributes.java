@@ -18,5 +18,6 @@ public interface IAttributes {
     static final String ATTR_TASK_NAME = "taskName";
     static final String ATTR_IS_FILE_VALUE = "fileValue";
     static final String ATTR_DUE_DATE = "dueDate";
+    static final String ATTR_ID = "id";
 
 }
