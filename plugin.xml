@@ -1377,6 +1377,26 @@
             enabled="true"
             label="%ru.runa.wfe.extension.handler.user.GetExecutorsByRelationHandler">
       </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.task.EndAsyncTasksHandler"
+            decisionHandler="false"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.task.EndAsyncTasksHandler">
+      </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.user.ConvertGroupsToUsersHandler"
+            decisionHandler="false"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.user.ConvertGroupsToUsersHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
