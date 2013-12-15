@@ -20,7 +20,9 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         List<String> variableNames = Lists.newArrayList();
         List<String> componentFormatClassNames = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
-        int i = 0;
+        String firstParameter = getParameterAs(String.class, 0);
+        boolean componentView = !"false".equals(firstParameter);
+        int i = ("false".equals(firstParameter) || "true".equals(firstParameter)) ? 1 : 0;
         int rowsCount = 0;
         while (true) {
             String variableName = getParameterAs(String.class, i);
@@ -44,9 +46,9 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         if (variableNames.size() > 0) {
             StringBuffer html = new StringBuffer();
             html.append("<table class=\"displayLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
-            html.append(ViewUtil.generateTableHeader(variableNames, null));
+            html.append(ViewUtil.generateTableHeader(variableNames, variableProvider, null));
             for (int row = 0; row < rowsCount; row++) {
-                renderRow(html, variableNames, lists, componentFormatClassNames, row);
+                renderRow(html, variableNames, lists, componentFormatClassNames, componentView, row);
             }
             html.append("</table>");
             return html.toString();
@@ -54,28 +56,32 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         return "-";
     }
 
-    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames, int row) {
+    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames, boolean componentView, int row) {
         html.append("<tr row=\"").append(row).append("\">");
         for (int column = 0; column < variableNames.size(); column++) {
             Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
             String componentClassName = componentFormatClassNames.get(column);
-            renderColumn(html, variableNames.get(column), componentClassName, o, row, column);
+            renderColumn(html, variableNames.get(column), componentClassName, o, componentView, row, column);
         }
         html.append("</tr>");
     }
 
-    protected void renderColumn(StringBuffer html, String variableName, String componentClassName, Object value, int row, int column) {
+    protected void renderColumn(StringBuffer html, String variableName, String componentClassName, Object value, boolean componentView, int row, int column) {
         String inputName = variableName + "[" + row + "]";
         html.append("<td column=\"").append(column).append("\">");
-        html.append(getComponentOutput(inputName, componentClassName, value, row));
+        html.append(getComponentOutput(inputName, componentClassName, value, componentView, row));
         html.append("</td>");
     }
 
-    protected String getComponentOutput(String variableName, String componentClassName, Object value, int row) {
-        if (FileFormat.class.getName().equals(componentClassName)) {
-            return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) value, row, null);
+    protected String getComponentOutput(String variableName, String componentClassName, Object value, boolean componentView, int row) {
+        if (componentView) {
+            if (FileFormat.class.getName().equals(componentClassName)) {
+                return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) value, row, null);
+            } else {
+                return ViewUtil.getComponentOutput(user, variableName, componentClassName, value);
+            }
         } else {
-            return ViewUtil.getComponentOutput(user, variableName, componentClassName, value);
+            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, value);
         }
     }
 

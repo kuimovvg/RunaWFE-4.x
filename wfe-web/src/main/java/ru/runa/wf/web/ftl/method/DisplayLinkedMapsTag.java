@@ -21,7 +21,9 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
         List<String> variableNames = Lists.newArrayList();
         List<String> componentFormatClassNames = Lists.newArrayList();
         List<Map<?, ?>> maps = Lists.newArrayList();
-        int i = 0;
+        String firstParameter = getParameterAs(String.class, 0);
+        boolean componentView = "true".equals(firstParameter);
+        int i = ("false".equals(firstParameter) || "true".equals(firstParameter)) ? 1 : 0;
         while (true) {
             String variableName = getParameterAs(String.class, i);
             if (variableName == null) {
@@ -41,7 +43,7 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
         if (maps.size() > 0) {
             StringBuffer html = new StringBuffer();
             html.append("<table class=\"displayLinkedMaps\">");
-            html.append(ViewUtil.generateTableHeader(variableNames, null));
+            html.append(ViewUtil.generateTableHeader(variableNames, variableProvider, null));
             for (Map.Entry<?, ?> entry : maps.get(0).entrySet()) {
                 html.append("<tr>");
                 for (int column = 0; column < maps.size(); column++) {
@@ -50,11 +52,15 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                     String variableName = variableNames.get(column);
                     String componentClassName = componentFormatClassNames.get(column);
                     String value;
-                    if (FileFormat.class.getName().equals(componentClassName)) {
-                        value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, null,
-                                entry.getKey());
+                    if (componentView) {
+                        if (FileFormat.class.getName().equals(componentClassName)) {
+                            value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, null,
+                                    entry.getKey());
+                        } else {
+                            value = ViewUtil.getComponentOutput(user, variableName, componentClassName, o);
+                        }
                     } else {
-                        value = ViewUtil.getComponentOutput(user, variableName, componentClassName, o);
+                        value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);
                     }
                     html.append("<td>").append(value).append("</td>");
                 }

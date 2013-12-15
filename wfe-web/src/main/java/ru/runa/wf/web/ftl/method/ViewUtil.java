@@ -319,6 +319,11 @@ public class ViewUtil {
                 html.append("]");
                 return html.toString();
             }
+            if (format instanceof TextFormat) {
+                String s = variable.getValue() != null ? variable.getValue().toString() : "";
+                s = s.replaceAll("\n", "<br>");
+                return s;
+            }
             if (format instanceof VariableDisplaySupport) {
                 VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
                 return displaySupport.getHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
@@ -380,29 +385,14 @@ public class ViewUtil {
         return StringFormat.class.getName();
     }
 
-    private static String generateOldStyleHeader(List<String> variableNames, IVariableProvider variableProvider) {
-        boolean headerVisible = false;
+    public static String generateTableHeader(List<String> variableNames, IVariableProvider variableProvider, String operationsColumn) {
         StringBuffer header = new StringBuffer();
         header.append("<tr class=\"header\">");
         for (String variableName : variableNames) {
-            String headerVariableName = variableName + "_header";
-            Object value = variableProvider.getValue(headerVariableName);
-            if (value != null) {
-                headerVisible = true;
+            Object value = variableProvider.getValue(variableName + "_header");
+            if (value == null) {
+                value = variableName;
             }
-            header.append("<td><b>").append(value != null ? value : "&nbsp;").append("</b></td>");
-        }
-        if (!headerVisible) {
-            return "";
-        }
-        header.append("</tr>");
-        return header.toString();
-    }
-
-    public static String generateTableHeader(List<String> variableNames, String operationsColumn) {
-        StringBuffer header = new StringBuffer();
-        header.append("<tr class=\"header\">");
-        for (String variableName : variableNames) {
             header.append("<th>").append(variableName).append("</th>");
         }
         if (operationsColumn != null) {
