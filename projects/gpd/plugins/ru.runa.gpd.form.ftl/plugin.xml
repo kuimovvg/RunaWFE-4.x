@@ -582,6 +582,20 @@
             name="%Method.DisplayLinkedLists"
             width="450">
          <param
+               multiple="false"
+               name="%Param.DisplayFormat"
+               type="combo"
+               variableAccess="NONE">
+            <paramValue
+                  name="%Format.Variable.Output"
+                  value="false">
+            </paramValue>
+            <paramValue
+                  name="%Format.Variable.Component"
+                  value="true">
+            </paramValue>
+         </param>
+         <param
                multiple="true"
                name="%Param.ListVariable"
                type="combo"
@@ -604,6 +618,20 @@
             enabled="true"
             id="DisplayLinkedMaps"
             name="%Method.DisplayLinkedMaps">
+         <param
+               multiple="false"
+               name="%Param.DisplayFormat"
+               type="combo"
+               variableAccess="NONE">
+            <paramValue
+                  name="%Format.Variable.Output"
+                  value="false">
+            </paramValue>
+            <paramValue
+                  name="%Format.Variable.Component"
+                  value="true">
+            </paramValue>
+         </param>
          <param
                multiple="true"
                name="%Param.MapVariable"
