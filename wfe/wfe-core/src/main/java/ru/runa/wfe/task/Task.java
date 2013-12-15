@@ -48,6 +48,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.TaskAssignLog;
+import ru.runa.wfe.audit.TaskCancelledLog;
 import ru.runa.wfe.audit.TaskEndBySubstitutorLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskExpiredLog;
@@ -262,6 +263,9 @@ public class Task implements Assignable {
             break;
         case SUBSTITUTOR:
             executionContext.addLog(new TaskEndBySubstitutorLog(this, executor));
+            break;
+        case HANDLER:
+            executionContext.addLog(new TaskCancelledLog(this));
             break;
         default:
             throw new IllegalArgumentException("Unimplemented for " + completionBy);

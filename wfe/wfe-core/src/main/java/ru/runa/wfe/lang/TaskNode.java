@@ -23,9 +23,6 @@ package ru.runa.wfe.lang;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskCompletionBy;
-
-import com.google.common.base.Objects;
 
 /**
  * is a node that relates to one or more tasks. Property <code>signal</code>
@@ -52,15 +49,4 @@ public class TaskNode extends BaseTaskNode {
         }
     }
 
-    @Override
-    public void leave(ExecutionContext executionContext, Transition transition) {
-        if (!async) {
-            for (Task task : executionContext.getToken().getTasks()) {
-                if (Objects.equal(task.getNodeId(), getNodeId())) {
-                    task.end(executionContext, TaskCompletionBy.TIMER, null);
-                }
-            }
-        }
-        super.leave(executionContext, transition);
-    }
 }
