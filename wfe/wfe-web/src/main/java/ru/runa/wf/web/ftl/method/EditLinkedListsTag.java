@@ -83,7 +83,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                 }
                 operationsColumn += "</th>";
             }
-            html.append(ViewUtil.generateTableHeader(variableNames, operationsColumn));
+            html.append(ViewUtil.generateTableHeader(variableNames, variableProvider, operationsColumn));
             for (String variableName : variableNames) {
                 html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class.getName(), rowsCount));
             }
