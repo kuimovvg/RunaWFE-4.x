@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import ru.runa.wfe.var.VariableDefinition;
 
@@ -46,12 +47,13 @@ public class Interaction implements Serializable {
     private byte[] scriptData;
     private byte[] cssData;
     private final List<String> requiredVariableNames = Lists.newArrayList();
+    @XmlTransient
     private final HashMap<String, VariableDefinition> variableDefinitions = Maps.newHashMap();
+    @XmlTransient
     private final HashMap<String, Object> defaultVariableValues = Maps.newHashMap();
 
     protected Interaction() {
     }
-    // TODO quick form template?
 
     public Interaction(String name, String description, String type, byte[] formData, byte[] validationData, boolean useJSValidation,
             byte[] scriptData, byte[] cssData) {

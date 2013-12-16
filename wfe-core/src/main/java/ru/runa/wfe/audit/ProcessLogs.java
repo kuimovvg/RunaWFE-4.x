@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.logging.LogFactory;
 
@@ -23,6 +24,7 @@ public class ProcessLogs implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final List<ProcessLog> logs = Lists.newArrayList();
+    @XmlTransient
     private final HashMap<Long, Long> subprocessToProcessIds = Maps.newHashMap();
 
     public ProcessLogs() {
