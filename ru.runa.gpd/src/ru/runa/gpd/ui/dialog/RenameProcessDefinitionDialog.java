@@ -19,6 +19,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.util.IOUtils;
 
 public class RenameProcessDefinitionDialog extends Dialog {
     private String name;
@@ -77,14 +78,14 @@ public class RenameProcessDefinitionDialog extends Dialog {
     private void updateButtons() {
     	IWorkspace workspace = ResourcesPlugin.getWorkspace();
     	boolean allowCreation = workspace.validateName(name, IResource.FOLDER).isOK();
-    	allowCreation &= !((IFolder) definitionFolder.getParent()).getFolder(name).exists();
+    	allowCreation &= !IOUtils.isChildFolderExists(definitionFolder.getParent(), name);
         getButton(IDialogConstants.OK_ID).setEnabled(allowCreation);
     }
 
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        newShell.setText(Localization.getString("VariableWizard.update.title"));
+        newShell.setText(Localization.getString("RenameProcessDefinitionDialog.title"));
     }
 
     public String getName() {
