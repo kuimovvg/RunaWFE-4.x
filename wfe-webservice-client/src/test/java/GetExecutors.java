@@ -7,7 +7,6 @@ import ru.runa.wfe.webservice.ClassPresentationType;
 import ru.runa.wfe.webservice.ExecutorAPI;
 import ru.runa.wfe.webservice.ExecutorWebService;
 import ru.runa.wfe.webservice.User;
-import ru.runa.wfe.webservice.WfExecutor;
 
 public class GetExecutors {
 
@@ -20,9 +19,9 @@ public class GetExecutors {
             actorsBatchPresentation.setPageNumber(1);
             actorsBatchPresentation.setRangeSize(10);
             actorsBatchPresentation.setType(ClassPresentationType.ACTOR);
-            List<WfExecutor> actors = executorAPI.getExecutors(user, actorsBatchPresentation);
+            List<Object> actors = executorAPI.getExecutors(user, actorsBatchPresentation);
             System.out.println("actors=" + actors.size());
-            List<WfExecutor> executors = executorAPI.getExecutors(user, null);
+            List<Object> executors = executorAPI.getExecutors(user, null);
             System.out.println("executors=" + executors.size());
         } catch (Exception e) {
             e.printStackTrace();

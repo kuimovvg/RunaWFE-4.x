@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "ExecutorWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/runawfe-wfe-service-4.1.0/ExecutorServiceBean?wsdl")
+@WebServiceClient(name = "ExecutorWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/wfe-service-4.1.0/ExecutorWebService/ExecutorAPI?wsdl")
 public class ExecutorWebService
     extends Service
 {
@@ -30,7 +30,7 @@ public class ExecutorWebService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/runawfe-wfe-service-4.1.0/ExecutorServiceBean?wsdl");
+            url = new URL("http://localhost:8080/wfe-service-4.1.0/ExecutorWebService/ExecutorAPI?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
