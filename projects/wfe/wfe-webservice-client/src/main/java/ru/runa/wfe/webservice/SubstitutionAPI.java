@@ -26,20 +26,6 @@ public interface SubstitutionAPI {
 
     /**
      * 
-     * @param user
-     * @param substitutionCriteria
-     */
-    @WebMethod
-    @RequestWrapper(localName = "createCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateCriteria")
-    @ResponseWrapper(localName = "createCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateCriteriaResponse")
-    public void createCriteria(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "substitutionCriteria", targetNamespace = "")
-        SubstitutionCriteria substitutionCriteria);
-
-    /**
-     * 
      * @param substitution
      * @param user
      * @return
@@ -61,9 +47,85 @@ public interface SubstitutionAPI {
      * @param substitutionCriteria
      */
     @WebMethod
+    @RequestWrapper(localName = "createCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateCriteria")
+    @ResponseWrapper(localName = "createCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.CreateCriteriaResponse")
+    public void createCriteria(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "substitutionCriteria", targetNamespace = "")
+        SubstitutionCriteria substitutionCriteria);
+
+    /**
+     * 
+     * @param user
+     * @param substitutionCriteria
+     * @return
+     *     returns java.util.List<ru.runa.wfe.webservice.Substitution>
+     */
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "")
+    @RequestWrapper(localName = "getSubstitutionsByCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitutionsByCriteria")
+    @ResponseWrapper(localName = "getSubstitutionsByCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitutionsByCriteriaResponse")
+    public List<Substitution> getSubstitutionsByCriteria(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "substitutionCriteria", targetNamespace = "")
+        SubstitutionCriteria substitutionCriteria);
+
+    /**
+     * 
+     * @param substitutionId
+     * @param user
+     * @return
+     *     returns ru.runa.wfe.webservice.Substitution
+     */
+    @WebMethod
+    @WebResult(name = "result", targetNamespace = "")
+    @RequestWrapper(localName = "getSubstitution", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitution")
+    @ResponseWrapper(localName = "getSubstitutionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitutionResponse")
+    public Substitution getSubstitution(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "substitutionId", targetNamespace = "")
+        Long substitutionId);
+
+    /**
+     * 
+     * @param user
+     * @param substitutionCriteria
+     */
+    @WebMethod
     @RequestWrapper(localName = "deleteCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteCriteria")
     @ResponseWrapper(localName = "deleteCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteCriteriaResponse")
     public void deleteCriteria(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "substitutionCriteria", targetNamespace = "")
+        SubstitutionCriteria substitutionCriteria);
+
+    /**
+     * 
+     * @param substitutionIds
+     * @param user
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteSubstitutions", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteSubstitutions")
+    @ResponseWrapper(localName = "deleteSubstitutionsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteSubstitutionsResponse")
+    public void deleteSubstitutions(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "substitutionIds", targetNamespace = "")
+        List<Long> substitutionIds);
+
+    /**
+     * 
+     * @param user
+     * @param substitutionCriteria
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateCriteria")
+    @ResponseWrapper(localName = "updateCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateCriteriaResponse")
+    public void updateCriteria(
         @WebParam(name = "user", targetNamespace = "")
         User user,
         @WebParam(name = "substitutionCriteria", targetNamespace = "")
@@ -85,20 +147,6 @@ public interface SubstitutionAPI {
 
     /**
      * 
-     * @param substitutionIds
-     * @param user
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteSubstitutions", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteSubstitutions")
-    @ResponseWrapper(localName = "deleteSubstitutionsResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.DeleteSubstitutionsResponse")
-    public void deleteSubstitutions(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "substitutionIds", targetNamespace = "")
-        List<Long> substitutionIds);
-
-    /**
-     * 
      * @param user
      * @return
      *     returns java.util.List<ru.runa.wfe.webservice.SubstitutionCriteria>
@@ -110,23 +158,6 @@ public interface SubstitutionAPI {
     public List<SubstitutionCriteria> getAllCriterias(
         @WebParam(name = "user", targetNamespace = "")
         User user);
-
-    /**
-     * 
-     * @param user
-     * @param substitutionCriteriaId
-     * @return
-     *     returns ru.runa.wfe.webservice.SubstitutionCriteria
-     */
-    @WebMethod
-    @WebResult(name = "result", targetNamespace = "")
-    @RequestWrapper(localName = "getCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetCriteria")
-    @ResponseWrapper(localName = "getCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetCriteriaResponse")
-    public SubstitutionCriteria getCriteria(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "substitutionCriteriaId", targetNamespace = "")
-        Long substitutionCriteriaId);
 
     /**
      * 
@@ -147,20 +178,34 @@ public interface SubstitutionAPI {
 
     /**
      * 
-     * @param substitutionId
+     * @param substitution
      * @param user
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateSubstitution", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateSubstitution")
+    @ResponseWrapper(localName = "updateSubstitutionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateSubstitutionResponse")
+    public void updateSubstitution(
+        @WebParam(name = "user", targetNamespace = "")
+        User user,
+        @WebParam(name = "substitution", targetNamespace = "")
+        Substitution substitution);
+
+    /**
+     * 
+     * @param user
+     * @param substitutionCriteriaId
      * @return
-     *     returns ru.runa.wfe.webservice.Substitution
+     *     returns ru.runa.wfe.webservice.SubstitutionCriteria
      */
     @WebMethod
     @WebResult(name = "result", targetNamespace = "")
-    @RequestWrapper(localName = "getSubstitution", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitution")
-    @ResponseWrapper(localName = "getSubstitutionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitutionResponse")
-    public Substitution getSubstitution(
+    @RequestWrapper(localName = "getCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetCriteria")
+    @ResponseWrapper(localName = "getCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetCriteriaResponse")
+    public SubstitutionCriteria getCriteria(
         @WebParam(name = "user", targetNamespace = "")
         User user,
-        @WebParam(name = "substitutionId", targetNamespace = "")
-        Long substitutionId);
+        @WebParam(name = "substitutionCriteriaId", targetNamespace = "")
+        Long substitutionCriteriaId);
 
     /**
      * 
@@ -178,50 +223,5 @@ public interface SubstitutionAPI {
         User user,
         @WebParam(name = "actorId", targetNamespace = "")
         Long actorId);
-
-    /**
-     * 
-     * @param user
-     * @param substitutionCriteria
-     * @return
-     *     returns java.util.List<ru.runa.wfe.webservice.Substitution>
-     */
-    @WebMethod
-    @WebResult(name = "result", targetNamespace = "")
-    @RequestWrapper(localName = "getSubstitutionsByCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitutionsByCriteria")
-    @ResponseWrapper(localName = "getSubstitutionsByCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.GetSubstitutionsByCriteriaResponse")
-    public List<Substitution> getSubstitutionsByCriteria(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "substitutionCriteria", targetNamespace = "")
-        SubstitutionCriteria substitutionCriteria);
-
-    /**
-     * 
-     * @param user
-     * @param substitutionCriteria
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateCriteria", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateCriteria")
-    @ResponseWrapper(localName = "updateCriteriaResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateCriteriaResponse")
-    public void updateCriteria(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "substitutionCriteria", targetNamespace = "")
-        SubstitutionCriteria substitutionCriteria);
-
-    /**
-     * 
-     * @param substitution
-     * @param user
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateSubstitution", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateSubstitution")
-    @ResponseWrapper(localName = "updateSubstitutionResponse", targetNamespace = "http://impl.service.wfe.runa.ru/", className = "ru.runa.wfe.webservice.UpdateSubstitutionResponse")
-    public void updateSubstitution(
-        @WebParam(name = "user", targetNamespace = "")
-        User user,
-        @WebParam(name = "substitution", targetNamespace = "")
-        Substitution substitution);
 
 }
