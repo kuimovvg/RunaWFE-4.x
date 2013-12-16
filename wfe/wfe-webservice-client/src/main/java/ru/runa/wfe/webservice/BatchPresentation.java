@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="rangeSize" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="pageNumber" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="fieldsData" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
- *         &lt;element name="fields" type="{http://impl.service.wfe.runa.ru/}fields" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -44,8 +43,7 @@ import javax.xml.bind.annotation.XmlType;
     "active",
     "rangeSize",
     "pageNumber",
-    "fieldsData",
-    "fields"
+    "fieldsData"
 })
 public class BatchPresentation {
 
@@ -58,7 +56,6 @@ public class BatchPresentation {
     protected int rangeSize;
     protected int pageNumber;
     protected byte[] fieldsData;
-    protected Fields fields;
 
     /**
      * Gets the value of the id property.
@@ -248,30 +245,6 @@ public class BatchPresentation {
      */
     public void setFieldsData(byte[] value) {
         this.fieldsData = ((byte[]) value);
-    }
-
-    /**
-     * Gets the value of the fields property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Fields }
-     *     
-     */
-    public Fields getFields() {
-        return fields;
-    }
-
-    /**
-     * Sets the value of the fields property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Fields }
-     *     
-     */
-    public void setFields(Fields value) {
-        this.fields = value;
     }
 
 }

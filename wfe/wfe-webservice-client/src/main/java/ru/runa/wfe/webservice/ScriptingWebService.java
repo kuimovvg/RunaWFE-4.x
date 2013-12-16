@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "ScriptingWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/runawfe-wfe-service-4.1.0/ScriptingServiceBean?wsdl")
+@WebServiceClient(name = "ScriptingWebService", targetNamespace = "http://impl.service.wfe.runa.ru/", wsdlLocation = "http://localhost:8080/wfe-service-4.1.0/ScriptingWebService/ScriptingAPI?wsdl")
 public class ScriptingWebService
     extends Service
 {
@@ -30,7 +30,7 @@ public class ScriptingWebService
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://localhost:8080/runawfe-wfe-service-4.1.0/ScriptingServiceBean?wsdl");
+            url = new URL("http://localhost:8080/wfe-service-4.1.0/ScriptingWebService/ScriptingAPI?wsdl");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }
