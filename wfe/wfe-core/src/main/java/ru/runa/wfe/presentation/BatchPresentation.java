@@ -39,6 +39,7 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,6 +76,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
     private int rangeSize;
     private int pageNumber = 1;
     private byte[] fieldsData;
+    @XmlTransient
+    // TODO: refactor to compatible with WebServices format in jboss7
     private Fields fields;
     /**
      * Helper to hold fields set (such us fields to display, sort and so on).
