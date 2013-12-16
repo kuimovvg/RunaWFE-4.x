@@ -535,4 +535,13 @@ public class IOUtils {
         return null;
     }
 
+    public static boolean isChildFolderExists(IContainer container, String name) {
+        if (container instanceof IFolder) {
+            return ((IFolder) container).getFolder(name).exists();
+        }
+        if (container instanceof IProject) {
+            return ((IProject) container).getFolder(name).exists();
+        }
+        return false;
+    }
 }
