@@ -46,6 +46,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -78,6 +79,7 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
     private Long tokenId;
     private Date date;
     private Severity severity = Severity.DEBUG;
+    @XmlTransient
     private HashMap<String, String> attributes = Maps.newHashMap();
     private byte[] bytes;
     private String nodeId;
