@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FileFormat;
 
 import com.google.common.collect.Lists;
 
@@ -75,11 +73,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
 
     protected String getComponentOutput(String variableName, String componentClassName, Object value, boolean componentView, int row) {
         if (componentView) {
-            if (FileFormat.class.getName().equals(componentClassName)) {
-                return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) value, row, null);
-            } else {
-                return ViewUtil.getComponentOutput(user, variableName, componentClassName, value);
-            }
+            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, value);
         } else {
             return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, value);
         }

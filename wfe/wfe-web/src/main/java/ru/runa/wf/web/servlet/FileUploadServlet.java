@@ -1,9 +1,6 @@
 package ru.runa.wf.web.servlet;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -11,18 +8,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.simple.JSONArray;
+import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
+import ru.runa.wf.web.FormSubmissionUtils;
+
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closer;
 
 public class FileUploadServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private static Map<String, List<FileMeta>> map = Maps.newHashMap();
 
     @Override
     protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,24 +30,18 @@ public class FileUploadServlet extends HttpServlet {
         // files.addAll(MultipartRequestHandler.uploadByJavaServletAPI(request));
 
         // 1. Upload File Using Apache FileUpload
-        List<FileMeta> files = Lists.newArrayList();
-        String name = MultipartRequestHandler.uploadByApacheFileUpload(request, files);
-        map.put(name, files);
+        UploadedFile file = new UploadedFile();
+        String inputId = MultipartRequestHandler.uploadByApacheFileUpload(request, file);
+        FormSubmissionUtils.getUploadedFilesMap(request).put(inputId, file);
 
         // 2. Set response type to json
         response.setContentType("application/json");
         response.setHeader("Access-Control-Allow-Origin", "*");
 
-        // 3. Convert List<FileMeta> into JSON format
-        JSONArray jsonArray = new JSONArray();
-        for (FileMeta f : files) {
-            JSONObject object = new JSONObject();
-            object.put("fileName", f.getFileName());
-            object.put("fileSize", f.getFileSize());
-            object.put("name", name);
-            jsonArray.add(object);
-        }
-        response.getOutputStream().write(jsonArray.toString().getBytes(Charsets.UTF_8));
+        JSONObject object = new JSONObject();
+        object.put("name", file.getName());
+        object.put("size", file.getSize());
+        response.getOutputStream().write(object.toString().getBytes(Charsets.UTF_8));
         response.getOutputStream().flush();
     }
 
@@ -61,26 +49,23 @@ public class FileUploadServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setHeader("Access-Control-Allow-Origin", "*");
         String action = request.getParameter("action");
-        String name = request.getParameter("name");
-        int index = Integer.parseInt(request.getParameter("index"));
-        FileMeta fileMeta = map.get(name).get(index);
+        String inputId = request.getParameter("inputId");
         if ("delete".equals(action)) {
-            map.get(name).remove(fileMeta);
+            FormSubmissionUtils.getUploadedFilesMap(request).remove(inputId);
         }
         if ("view".equals(action)) {
-            response.setContentType(fileMeta.getFileType());
-            response.setHeader("Content-disposition", "attachment; filename=\"" + fileMeta.getFileName() + "\"");
-            response.setHeader("Access-Control-Allow-Origin", "*");
-            Closer closer = Closer.create();
-            try {
-                InputStream in = closer.register(fileMeta.getContent());
-                OutputStream out = closer.register(response.getOutputStream());
-                ByteStreams.copy(in, out);
-            } catch (Throwable e) {
-                throw closer.rethrow(e);
-            } finally {
-                closer.close();
+            Map<String, UploadedFile> map = FormSubmissionUtils.getUploadedFilesMap(request);
+            UploadedFile file = map.get(inputId);
+            if (file == null) {
+                LogFactory.getLog(getClass()).error("No session file found by '" + inputId + "', all files = " + map);
+                return;
             }
+            response.setContentType(file.getMimeType());
+            response.setHeader("Content-disposition", "attachment; filename=\"" + file.getName() + "\"");
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.getOutputStream().write(file.getContent());
+            response.getOutputStream().flush();
+            response.getOutputStream().close();
         }
     }
 }

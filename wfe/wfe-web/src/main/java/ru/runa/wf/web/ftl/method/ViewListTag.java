@@ -49,7 +49,8 @@ public class ViewListTag extends FreemarkerTag {
         for (int row = 0; row < list.size(); row++) {
             Object value = list.get(row);
             html.append("<div row=\"").append(row).append("\">");
-            html.append(ViewUtil.getComponentOutput(user, variableName + "[" + row + "]", elementFormatClassName, value));
+            html.append(ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), 
+                    variableName + "[" + row + "]", elementFormatClassName, value));
             html.append("</div>");
         }
         html.append("</span>");

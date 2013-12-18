@@ -10,6 +10,11 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.common.WebResources;
+import ru.runa.common.web.Commons;
+import ru.runa.common.web.Resources;
+import ru.runa.wf.web.FormSubmissionUtils;
+import ru.runa.wf.web.servlet.UploadedFile;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.WebHelper;
@@ -130,7 +135,7 @@ public class ViewUtil {
         return null;
     }
 
-    public static String getComponentInput(User user, String variableName, String formatClassName, Object value) {
+    public static String getComponentInput(User user, WebHelper webHelper, String variableName, String formatClassName, Object value) {
         String html = "";
         if (StringFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
@@ -155,8 +160,7 @@ public class ViewUtil {
             html += "/>";
         }
         if (FileFormat.class.getName().equals(formatClassName)) {
-            html += "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" ";
-            html += "/>";
+            html += getFileInput(webHelper, variableName);
         }
         if (BooleanFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
@@ -193,7 +197,7 @@ public class ViewUtil {
         return html;
     }
 
-    public static String getComponentOutput(User user, String variableName, String formatClassName, Object value) {
+    public static String getComponentOutput(User user, WebHelper webHelper, Long processId, String variableName, String formatClassName, Object value) {
         String html = "";
         if (StringFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
@@ -218,11 +222,8 @@ public class ViewUtil {
             html += "/>";
         }
         if (FileFormat.class.getName().equals(formatClassName)) {
-            html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
-            if (value instanceof FileVariable) {
-                html += "value=\"" + ((FileVariable) value).getName() + "\" ";
-            }
-            html += "/>";
+            // because component is not usable
+            html += getFileOutput(webHelper, processId, variableName, (FileVariable) value);
         }
         if (BooleanFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" disabled=\"true\" ";
@@ -268,6 +269,9 @@ public class ViewUtil {
         }
         if (DateTimeFormat.class.getName().equals(formatClassName)) {
             return "$('.inputDateTime').datetimepicker({ dateFormat: 'dd.mm.yy' });";
+        }
+        if (FileFormat.class.getName().equals(formatClassName) && WebResources.isAjaxFileInputEnabled()) {
+            return "$('.dropzone').each(function () { initFileInput($(this)) });";
         }
         return "";
     }
@@ -344,6 +348,56 @@ public class ViewUtil {
         }
     }
 
+    public static String getFileInput(WebHelper webHelper, String variableName) {
+        if (!WebResources.isAjaxFileInputEnabled()) {
+            return "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" />";
+        }
+        String attachImageUrl = "";
+        String loadingImageUrl = "";
+        String deleteImageUrl = "";
+        UploadedFile file = null;
+        String uploadFileTitle = "Upload file";
+        String loadingMessage = "Loading ...";
+        if (webHelper !=null) {
+            attachImageUrl = webHelper.getUrl(Resources.IMAGE_ATTACH);
+            loadingImageUrl = webHelper.getUrl(Resources.IMAGE_LOADING);
+            deleteImageUrl = webHelper.getUrl(Resources.IMAGE_DELETE);
+            file = FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).get(variableName);
+            uploadFileTitle = Commons.getMessage("message.upload.file", webHelper.getPageContext());
+            loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
+        }
+        String hideStyle = "style=\"display: none;\"";
+        String html = "";
+        html += "<div class=\"inputFileContainer\">";
+        html += "\n\t<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
+        html += "\n\t\t<div class=\"inputFileAttach\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
+        html += "\n\t\t<input class=\"inputFile\" name=\"" + variableName + "\" type=\"file\" style=\"display: none;\">";
+        html += "\n\t\tDrag & Drop";
+        html += "\n\t</div>";
+        html += "\n\t<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
+        html += "\n\t\t<div class=\"line\" style=\"width: " + (file != null ? "10" : "") + "0%;\"></div>";
+        html += "\n\t\t<div class=\"status\">";
+        html += "\n\t\t\t<img src=\"" + attachImageUrl + "\" />";
+        html += "\n\t\t\t<span class=\"statusText\">";
+        if (file != null && webHelper != null) {
+            String label = file.getName() + "<span style='color: #888'> - " + file.getSize() + "</span>";
+            String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName);
+            html += "<a href='" + viewUrl + "'>" + label + "</a>";
+        } else {
+            html += loadingMessage;
+        }
+        html += "</span>";
+        if (file != null) {
+            html += "\n\t\t\t<img src=\"" + deleteImageUrl + "\" class=\"statusImg inputFileDelete\" inputId=\"" + variableName + "\">";
+        } else {
+            html += "\n\t\t\t<img src=\"" + loadingImageUrl + "\" class=\"statusImg\" inputId=\"" + variableName + "\">";
+        }
+        html += "\n\t\t</div>";
+        html += "\n\t</div>";
+        html += "\n</div>";
+        return html;
+    }
+
     public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value) {
         return getFileOutput(webHelper, processId, variableName, value, null, null);
     }
@@ -401,4 +455,5 @@ public class ViewUtil {
         header.append("</tr>");
         return header.toString();
     }
+    
 }

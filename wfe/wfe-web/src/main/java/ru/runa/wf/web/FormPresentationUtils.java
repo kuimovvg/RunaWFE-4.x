@@ -199,7 +199,11 @@ public class FormPresentationUtils {
                 String typeName = node.getAttribute(TYPE_ATTR);
                 String inputName = node.getAttribute(NAME_ATTR);
                 if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
-                    addRequiredClassAttribute(node);
+                    Element requiredNode = node;
+                    if ("file".equalsIgnoreCase(typeName) && WebResources.isAjaxFileInputEnabled()) {
+                        requiredNode = (Element) node.getParentNode();
+                    }
+                    addRequiredClassAttribute(requiredNode);
                 }
                 handleErrors(userErrors, inputName, pageContext, document, node);
                 String stringValue = getStringValue(inputName, variableProvider, userInput);
@@ -263,8 +267,7 @@ public class FormPresentationUtils {
                 Element node = (Element) selectElements.item(i);
                 String inputName = node.getAttribute(NAME_ATTR);
                 if (WebResources.isHighlightRequiredFields() && requiredVarNames.contains(inputName)) {
-                    Element div = wrapSelectToErrorContainer(document, node, inputName);
-                    addRequiredClassAttribute(div);
+                    wrapSelectToErrorContainer(document, node, inputName, true);
                 }
                 handleErrors(userErrors, inputName, pageContext, document, node);
                 String stringValue = getStringValue(inputName, variableProvider, userInput);
@@ -360,7 +363,7 @@ public class FormPresentationUtils {
             } else {
                 node.setAttribute("title", errorText);
                 if ("select".equalsIgnoreCase(node.getTagName())) {
-                    node = wrapSelectToErrorContainer(document, node, inputName);
+                    node = wrapSelectToErrorContainer(document, node, inputName, false);
                 }
                 addClassAttribute(node, Resources.CLASS_INVALID);
             }
@@ -384,7 +387,7 @@ public class FormPresentationUtils {
         element.setAttribute(CSS_CLASS_ATTR, cssClasses);
     }
 
-    private static Element wrapSelectToErrorContainer(Document document, Node selectNode, String selectName) {
+    private static Element wrapSelectToErrorContainer(Document document, Node selectNode, String selectName, boolean required) {
         Node parentNode = selectNode.getParentNode();
         if (parentNode instanceof Element && ERROR_CONTAINER.equalsIgnoreCase(parentNode.getNodeName())) {
             return (Element) parentNode;
@@ -392,6 +395,9 @@ public class FormPresentationUtils {
         log.debug("Wrapping select[name='" + selectName + "'] to " + ERROR_CONTAINER);
         parentNode.removeChild(selectNode);
         Element div = document.createElement(ERROR_CONTAINER);
+        if (required) {
+            addClassAttribute(div, "requiredWrapper");
+        }
         div.appendChild(selectNode);
         parentNode.appendChild(div);
         return div;

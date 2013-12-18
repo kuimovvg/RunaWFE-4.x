@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
 
+import ru.runa.wf.web.servlet.UploadedFile;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
@@ -35,6 +36,7 @@ public class FormSubmissionUtils {
     private static final Log log = LogFactory.getLog(FormSubmissionUtils.class);
     public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
     public static final String USER_ERRORS = "UserErrors";
+    public static final String UPLOADED_FILES = "UploadedFiles";
 
     /**
      * save in request user input with errors
@@ -95,7 +97,8 @@ public class FormSubmissionUtils {
 
     public static Map<String, Object> extractVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
         List<String> formatErrorsForFields = new ArrayList<String>();
-        Hashtable<String, Object> userInput = actionForm.getMultipartRequestHandler().getAllElements();
+        Map<String, Object> userInput = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
+        userInput.putAll(getUploadedFilesMap(request));
         Map<String, Object> variables = convert(request, userInput, interaction, formatErrorsForFields);
         if (formatErrorsForFields.size() > 0) {
             throw new VariablesFormatException(formatErrorsForFields);
@@ -181,6 +184,9 @@ public class FormSubmissionUtils {
                     }
                     return new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
                 }
+            } else if (value instanceof UploadedFile) {
+                UploadedFile uploadedFile = (UploadedFile) value;
+                return new FileVariable(uploadedFile.getName(), uploadedFile.getContent(), uploadedFile.getMimeType());
             } else if (value instanceof String) {
                 String valueToFormat = (String) value;
                 try {
@@ -201,4 +207,14 @@ public class FormSubmissionUtils {
             throw Throwables.propagate(e);
         }
     }
+    
+    public static Map<String, UploadedFile> getUploadedFilesMap(HttpServletRequest request) {
+        Map<String, UploadedFile> map = (Map<String, UploadedFile>) request.getSession().getAttribute(UPLOADED_FILES);
+        if (map == null) {
+            map = Maps.newHashMap();
+            request.getSession().setAttribute(UPLOADED_FILES, map);
+        }
+        return map;
+    }
+
 }
