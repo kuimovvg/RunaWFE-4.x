@@ -239,13 +239,11 @@ div.multiInstanceBox {
 	font-weight: bold;
 }
 
-input.required, textarea.required, td.required {
-	background-image: url("images/required.png");
-	background-repeat: no-repeat;
-	background-position: top right;
+.required {
+	background: url("images/required.png") top right no-repeat;
 }
 
-div.required::after, span.required::after {
+div.requiredWrapper::after, span.requiredWrapper::after {
 	content: "*" !important;
 	color: #990000 !important;
 	font-weight: bold;

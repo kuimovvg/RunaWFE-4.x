@@ -62,5 +62,8 @@ public class Resources {
     public static final String GROUP_MINUS_ALT = "[-]";
     public static final String GROUP_PLUS_IMAGE = "/images/group_plus.gif";
     public static final String GROUP_MINUS_IMAGE = "/images/group_minus.gif";
+    public static final String IMAGE_ATTACH = "/images/attach.png";
+    public static final String IMAGE_DELETE = "/images/delete.png";
+    public static final String IMAGE_LOADING = "/images/loading.gif";
 
 }

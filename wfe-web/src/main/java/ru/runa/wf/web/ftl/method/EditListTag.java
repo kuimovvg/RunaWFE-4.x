@@ -32,7 +32,7 @@ public class EditListTag extends AjaxFreemarkerTag {
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
         substitutions.put("UNIQUENAME", scriptingVariableName);
-        String inputTag = ViewUtil.getComponentInput(user, variableName + "[]", elementFormatClassName, null);
+        String inputTag = ViewUtil.getComponentInput(user, webHelper, variableName + "[]", elementFormatClassName, null);
         inputTag = inputTag.replaceAll("\"", "'");
         substitutions.put("COMPONENT_INPUT", inputTag);
         substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(elementFormatClassName));
@@ -47,7 +47,7 @@ public class EditListTag extends AjaxFreemarkerTag {
         for (int row = 0; row < list.size(); row++) {
             Object value = list.get(row);
             html.append("<div row=\"").append(row).append("\">");
-            html.append(ViewUtil.getComponentInput(user, variableName + "[" + row + "]", elementFormatClassName, value));
+            html.append(ViewUtil.getComponentInput(user, webHelper, variableName + "[" + row + "]", elementFormatClassName, value));
             html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName).append("(this);\" />");
             html.append("</div>");
         }
