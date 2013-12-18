@@ -31,17 +31,15 @@ public class UpdateSwimlaneNameDialog extends Dialog {
     private Button renameInVarButton;
     private boolean proceedRefactoring;
     private Text scriptingNameField;
+    private String scriptingName;
 
     public UpdateSwimlaneNameDialog(ProcessDefinition definition, Swimlane swimlane) {
         super(Display.getCurrent().getActiveShell());
         this.definition = definition;
-        this.name = definition.getNextSwimlaneName();
+        this.name = swimlane != null ? swimlane.getName() : definition.getNextSwimlaneName();
         this.createMode = swimlane == null;
         this.swimlane = swimlane;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+        this.scriptingName = swimlane != null && swimlane.getScriptingName() != null ? swimlane.getScriptingName() : VariableUtils.generateNameForScripting(definition, name, swimlane);
     }
 
     @Override
@@ -67,13 +65,13 @@ public class UpdateSwimlaneNameDialog extends Dialog {
         nameField.setText(name);
         nameField.addKeyListener(new VariableNameChecker());
         nameField.setLayoutData(nameTextData);
-        // nameField.addKeyListener(new VariableNameChecker(nameField));
         nameField.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
                 name = nameField.getText();
+                scriptingName = VariableUtils.generateNameForScripting(definition, name, swimlane);
                 updateButtons();
-                scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, swimlane));
+                scriptingNameField.setText(scriptingName);
             }
         });
         if (!createMode) {
@@ -95,7 +93,7 @@ public class UpdateSwimlaneNameDialog extends Dialog {
         scriptingNameField = new Text(composite, SWT.BORDER);
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
-        scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, swimlane));
+        scriptingNameField.setText(scriptingName);
         return area;
     }
 
@@ -120,6 +118,10 @@ public class UpdateSwimlaneNameDialog extends Dialog {
         return name;
     }
 
+    public String getScriptingName() {
+        return scriptingName;
+    }
+    
     public boolean isProceedRefactoring() {
         return proceedRefactoring;
     }

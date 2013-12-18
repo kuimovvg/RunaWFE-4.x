@@ -47,7 +47,7 @@ public class VariableWizard extends Wizard {
         String description = null;
         if (namePage != null) {
             name = namePage.getVariableName();
-            scriptingName = VariableUtils.generateNameForScripting(definition, name, null);
+            scriptingName = namePage.getScriptingVariableName();
             description = namePage.getVariableDesc();
         }
         String formatClassName = formatPage.getType().getName();

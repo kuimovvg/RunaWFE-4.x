@@ -127,15 +127,17 @@ public class NodeTypeDefinition {
         }
     }
 
-    public <T extends GraphElement> T createElement(GraphElement parent) {
+    public <T extends GraphElement> T createElement(GraphElement parent, boolean setName) {
         GraphElement element = createExecutableExtension("model");
         element.setParent(parent);
-        String name = "";
-        if (element instanceof Swimlane) {
-            name = element.getProcessDefinition().getNextSwimlaneName();
-        }
-        if (element instanceof NamedGraphElement) {
-            ((NamedGraphElement) element).setName(name);
+        if (setName) {
+            String name = "";
+            if (element instanceof Swimlane) {
+                name = element.getProcessDefinition().getNextSwimlaneName();
+            }
+            if (element instanceof NamedGraphElement) {
+                ((NamedGraphElement) element).setName(name);
+            }
         }
         return (T) element;
     }

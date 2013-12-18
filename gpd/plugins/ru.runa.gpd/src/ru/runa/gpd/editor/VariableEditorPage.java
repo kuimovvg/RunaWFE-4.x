@@ -246,6 +246,7 @@ public class VariableEditorPage extends EditorPartBase {
             }
             Variable oldVariable = new Variable(variable);
             variable.setName(dialog.getName());
+            variable.setScriptingName(dialog.getScriptingName());
             IResource projectRoot = editor.getDefinitionFile().getParent();
             PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), oldVariable, variable);
             boolean useLtk = ref.isUserInteractionNeeded();
@@ -257,6 +258,7 @@ public class VariableEditorPage extends EditorPartBase {
                 if (result != IDialogConstants.OK_ID) {
                     // revert changes
                     variable.setName(oldVariable.getName());
+                    variable.setScriptingName(oldVariable.getScriptingName());
                     return;
                 }
             }

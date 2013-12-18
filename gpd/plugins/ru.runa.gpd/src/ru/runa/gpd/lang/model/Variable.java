@@ -57,7 +57,9 @@ public class Variable extends NamedGraphElement {
             return;
         }
         super.setName(name);
-        setScriptingName(VariableUtils.generateNameForScripting(getProcessDefinition(), name, null));
+//        if (scriptingName == null) {
+//            setScriptingName(VariableUtils.generateNameForScripting(getProcessDefinition(), name, null));
+//        }
     }
 
     public String getFormat() {

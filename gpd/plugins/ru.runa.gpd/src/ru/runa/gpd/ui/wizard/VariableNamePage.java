@@ -20,11 +20,13 @@ public class VariableNamePage extends ContentWizardPage {
     private String variableName;
     private String variableDesc;
     private Text scriptingNameField;
+    private String scriptingVariableName;
 
     public VariableNamePage(ProcessDefinition definition, Variable variable) {
         this.definition = definition;
         this.variableName = variable != null && variable.getName() != null ? variable.getName() : definition.getNextVariableName();
         this.variableDesc = variable != null && variable.getDescription() != null ? variable.getDescription() : "";
+        this.scriptingVariableName = variable != null && variable.getScriptingName() != null ? variable.getScriptingName() : VariableUtils.generateNameForScripting(definition, variableName, variable);
     }
 
     @Override
@@ -42,8 +44,9 @@ public class VariableNamePage extends ContentWizardPage {
             @Override
             protected void onTextChanged(ModifyEvent e) throws Exception {
                 variableName = nameField.getText();
+                scriptingVariableName = VariableUtils.generateNameForScripting(definition, variableName, null);
                 verifyContentIsValid();
-                scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, variableName, null));
+                scriptingNameField.setText(scriptingVariableName);
             }
         });
         Label label = new Label(composite, SWT.NONE);
@@ -51,7 +54,7 @@ public class VariableNamePage extends ContentWizardPage {
         scriptingNameField = new Text(composite, SWT.BORDER);
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
-        scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, variableName, null));
+        scriptingNameField.setText(scriptingVariableName);
         label = new Label(composite, SWT.NONE);
         label.setText(Localization.getString("VariableNamePage.description.label"));
         final Text descriptionField = new Text(composite, SWT.BORDER);
@@ -87,4 +90,9 @@ public class VariableNamePage extends ContentWizardPage {
     public String getVariableDesc() {
         return variableDesc;
     }
+    
+    public String getScriptingVariableName() {
+        return scriptingVariableName;
+    }
+    
 }
