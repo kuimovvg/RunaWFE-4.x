@@ -55,26 +55,6 @@ public class VariableUtils {
         return result;
     }
 
-    // TODO old stuff
-    public static boolean isNameValid(String name) {
-        char[] chars = name.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            if (i == 0) {
-                if (!Character.isJavaIdentifierStart(chars[i])) {
-                    return false;
-                }
-            } else {
-                if (!Character.isJavaIdentifierPart(chars[i])) {
-                    return false;
-                }
-            }
-            if ('$' == chars[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static String generateNameForScripting(ProcessDefinition processDefinition, String variableName, Variable excludedVariable) {
         char[] chars = variableName.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -92,13 +72,10 @@ public class VariableUtils {
             }
         }
         String scriptingName = new String(chars);
-        if (Objects.equal(variableName, scriptingName)) {
+        if (excludedVariable != null && Objects.equal(excludedVariable.getScriptingName(), scriptingName)) {
             return scriptingName;
         }
-        if (excludedVariable != null && Objects.equal(excludedVariable.getName(), scriptingName)) {
-            return scriptingName;
-        }
-        while (processDefinition.getVariable(scriptingName, true) != null) {
+        while (getVariableByScriptingName(processDefinition.getVariables(true), scriptingName) != null) {
             scriptingName += "_";
         }
         return scriptingName;

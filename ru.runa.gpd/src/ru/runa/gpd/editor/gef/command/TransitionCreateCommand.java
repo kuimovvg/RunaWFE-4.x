@@ -20,7 +20,7 @@ public class TransitionCreateCommand extends Command {
     }
 
     private void createTransition() {
-        transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source);
+        transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source, false);
         transition.setName(source.getNextTransitionName());
         transition.setTarget(target);
     }
