@@ -155,4 +155,8 @@ public class WebResources {
         return RESOURCES.getBooleanProperty("synchronization.ldap.create.executors", false);
     }
 
+    public static boolean isAjaxFileInputEnabled() {
+        return RESOURCES.getBooleanProperty("file.input.ajax.enabled", false);
+    }
+
 }

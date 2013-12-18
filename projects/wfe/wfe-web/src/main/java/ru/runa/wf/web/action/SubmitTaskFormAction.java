@@ -30,6 +30,7 @@ import org.apache.struts.action.ActionMessage;
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
+import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.form.ProcessForm;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.form.Interaction;
@@ -68,6 +69,7 @@ public class SubmitTaskFormAction extends BaseProcessFormAction {
         String transitionName = form.getSubmitButton();
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         Delegates.getExecutionService().completeTask(user, taskId, variables, form.getActorId());
+        FormSubmissionUtils.getUploadedFilesMap(request).clear();
         return processId;
     }
 

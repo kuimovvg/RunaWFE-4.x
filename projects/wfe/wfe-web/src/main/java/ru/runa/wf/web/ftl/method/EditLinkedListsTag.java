@@ -119,9 +119,10 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
 
     protected String getComponentInput(String inputName, String componentFormatClassName, Object value, boolean enabled) {
         if (enabled) {
-            return ViewUtil.getComponentInput(user, inputName, componentFormatClassName, value);
+            return ViewUtil.getComponentInput(user, webHelper, inputName, componentFormatClassName, value);
         }
-        String html = ViewUtil.getComponentOutput(user, inputName, componentFormatClassName, value);
+        String html = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), 
+                inputName, componentFormatClassName, value);
         html += ViewUtil.getHiddenInput(inputName, componentFormatClassName, value);
         return html;
     }

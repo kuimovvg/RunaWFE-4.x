@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FileFormat;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -53,12 +51,7 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                     String componentClassName = componentFormatClassNames.get(column);
                     String value;
                     if (componentView) {
-                        if (FileFormat.class.getName().equals(componentClassName)) {
-                            value = ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) o, null,
-                                    entry.getKey());
-                        } else {
-                            value = ViewUtil.getComponentOutput(user, variableName, componentClassName, o);
-                        }
+                        value = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);
                     } else {
                         value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);
                     }

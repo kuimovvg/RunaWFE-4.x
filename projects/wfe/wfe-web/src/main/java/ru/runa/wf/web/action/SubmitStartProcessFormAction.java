@@ -30,6 +30,7 @@ import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
+import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.form.CommonProcessForm;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.dto.WfProcess;
@@ -65,7 +66,9 @@ public class SubmitStartProcessFormAction extends BaseProcessFormAction {
         variables.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
         WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(user, definitionId);
         log.debug(user + " submitted start form for definition " + definition.getName());
-        return Delegates.getExecutionService().startProcess(user, definition.getName(), variables);
+        Long processId = Delegates.getExecutionService().startProcess(user, definition.getName(), variables);
+        FormSubmissionUtils.getUploadedFilesMap(request).clear();
+        return processId;
     }
 
     @Override

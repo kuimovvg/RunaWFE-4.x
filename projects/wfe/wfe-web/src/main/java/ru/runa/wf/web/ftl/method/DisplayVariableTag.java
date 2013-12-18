@@ -19,7 +19,8 @@ public class DisplayVariableTag extends FreemarkerTag {
                 tag.initChained(this);
                 return tag.executeTag();
             }
-            return ViewUtil.getComponentOutput(user, variableName, variable.getFormatClassNameNotNull(), variable.getValue());
+            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, 
+                       variable.getFormatClassNameNotNull(), variable.getValue());
         } else {
             String html = "<span class=\"displayVariable\">";
             html += ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variable);
