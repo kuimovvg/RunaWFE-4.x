@@ -67,7 +67,7 @@ public class CreateElementFeature extends AbstractCreateFeature implements GEFCo
 
     @Override
     public Object[] create(ICreateContext context) {
-        GraphElement graphElement = getNodeDefinition().createElement(getProcessDefinition());
+        GraphElement graphElement = getNodeDefinition().createElement(getProcessDefinition(), true);
         GraphElement parent = (GraphElement) getBusinessObjectForPictogramElement(context.getTargetContainer());
         graphElement.setParentContainer(parent);
         Swimlane swimlane = null;

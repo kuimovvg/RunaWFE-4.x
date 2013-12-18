@@ -25,12 +25,14 @@ public class UpdateVariableNameDialog extends Dialog {
     private final ProcessDefinition definition;
     private final Variable variable;
     private Text scriptingNameField;
+    private String scriptingName;
 
     public UpdateVariableNameDialog(Variable variable) {
         super(Display.getDefault().getActiveShell());
         this.definition = variable.getProcessDefinition();
         this.variable = variable;
         this.name = variable.getName();
+        this.scriptingName = variable.getScriptingName() != null ? variable.getScriptingName() : VariableUtils.generateNameForScripting(definition, name, variable);
     }
 
     @Override
@@ -57,13 +59,13 @@ public class UpdateVariableNameDialog extends Dialog {
         nameField.setText(name);
         nameField.addKeyListener(new VariableNameChecker());
         nameField.setLayoutData(nameTextData);
-        // nameField.addKeyListener(new VariableNameChecker(nameField));
         nameField.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
                 name = nameField.getText();
                 updateButtons();
-                scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, variable));
+                scriptingName = VariableUtils.generateNameForScripting(definition, name, variable);
+                scriptingNameField.setText(scriptingName);
             }
         });
         // 
@@ -71,7 +73,7 @@ public class UpdateVariableNameDialog extends Dialog {
         scriptingNameField = new Text(composite, SWT.BORDER);
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
-        scriptingNameField.setText(VariableUtils.generateNameForScripting(definition, name, variable));
+        scriptingNameField.setText(scriptingName);
         return area;
     }
 
@@ -96,4 +98,9 @@ public class UpdateVariableNameDialog extends Dialog {
     public String getName() {
         return name;
     }
+    
+    public String getScriptingName() {
+        return scriptingName;
+    }
+    
 }

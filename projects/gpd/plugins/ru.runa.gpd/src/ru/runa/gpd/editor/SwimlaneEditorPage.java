@@ -238,7 +238,6 @@ public class SwimlaneEditorPage extends EditorPartBase {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Swimlane swimlane = (Swimlane) selection.getFirstElement();
             UpdateSwimlaneNameDialog renameDialog = new UpdateSwimlaneNameDialog(swimlane.getProcessDefinition(), swimlane);
-            renameDialog.setName(swimlane.getName());
             int result = renameDialog.open();
             String newName = renameDialog.getName();
             boolean useLtk = renameDialog.isProceedRefactoring();
@@ -247,6 +246,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
             }
             Variable oldVariable = new Variable(swimlane);
             swimlane.setName(newName);
+            swimlane.setScriptingName(renameDialog.getScriptingName());
             IResource projectRoot = editor.getDefinitionFile().getParent();
             if (useLtk) {
                 PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), oldVariable, swimlane);
@@ -259,6 +259,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
                     if (result != IDialogConstants.OK_ID) {
                         // revert changes
                         swimlane.setName(oldVariable.getName());
+                        swimlane.setScriptingName(oldVariable.getScriptingName());
                         return;
                     }
                 }
@@ -285,8 +286,9 @@ public class SwimlaneEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             UpdateSwimlaneNameDialog dialog = new UpdateSwimlaneNameDialog(getDefinition(), null);
             if (dialog.open() == IDialogConstants.OK_ID) {
-                Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition());
+                Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition(), false);
                 newSwimlane.setName(dialog.getName());
+                newSwimlane.setScriptingName(dialog.getScriptingName());
                 getDefinition().addSwimlane(newSwimlane);
                 tableViewer.setSelection(new StructuredSelection(newSwimlane));
             }
@@ -325,7 +327,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 boolean add = false;
                 Swimlane newSwimlane = getDefinition().getSwimlaneByName(swimlane.getName());
                 if (newSwimlane == null) {
-                    newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition());
+                    newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition(), false);
                     newSwimlane.setName(swimlane.getName());
                     add = true;
                 }

@@ -49,6 +49,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             if ("true".equals(isSwimlane)) {
                 try {
                     Swimlane swimlane = definition.getSwimlaneByName(variableName);
+                    swimlane.setScriptingName(scriptingName);
                     swimlane.setDescription(description);
                     swimlane.setPublicVisibility(publicVisibility);
                 } catch (Exception e) {

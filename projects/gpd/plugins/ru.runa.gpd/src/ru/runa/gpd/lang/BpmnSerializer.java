@@ -392,7 +392,7 @@ public class BpmnSerializer extends ProcessSerializer {
         } else {
             bpmnElementName = node.getName();
         }
-        GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, bpmnElementName).createElement(parent);
+        GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, bpmnElementName).createElement(parent, false);
         init(element, node, properties);
         if (parent != null) {
             parent.addChild(element);
@@ -616,7 +616,7 @@ public class BpmnSerializer extends ProcessSerializer {
                         " due to missed target node " + transitionElement.attributeValue(TARGET_REF));
                 continue;
             }
-            Transition transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source);
+            Transition transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source, false);
             transition.setId(transitionElement.attributeValue(ID));
             transition.setName(transitionElement.attributeValue(NAME));
             transition.setTarget(target);
