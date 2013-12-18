@@ -373,7 +373,7 @@ public class JpdlSerializer extends ProcessSerializer {
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent, String typeName) {
-        GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.JPDL, typeName).createElement(parent);
+        GraphElement element = NodeRegistry.getNodeTypeDefinition(Language.JPDL, typeName).createElement(parent, false);
         init(element, node);
         if (parent != null) {
             parent.addChild(element);
@@ -425,7 +425,7 @@ public class JpdlSerializer extends ProcessSerializer {
     }
 
     private void parseAction(Element node, GraphElement parent, String eventType) {
-        ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent);
+        ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent, false);
         setDelegableClassName(action, node.attributeValue(CLASS));
         action.setDelegationConfiguration(node.getText());
         action.setId(parent.getId() + "." + parent.getActions().size());

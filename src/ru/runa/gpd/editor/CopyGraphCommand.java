@@ -88,7 +88,7 @@ public class CopyGraphCommand extends Command {
                     definition = NodeRegistry.getNodeTypeDefinition(node.getClass());
                 }
                 if (definition != null) {
-                    Node copy = definition.createElement(targetDefinition);
+                    Node copy = definition.createElement(targetDefinition, false);
                     copy.setName(node.getName());
                     copy.setDescription(node.getDescription());
                     copy.setConstraint(node.getConstraint());
@@ -167,7 +167,7 @@ public class CopyGraphCommand extends Command {
                     Node source = targetNodeMap.get(transition.getSource().getId());
                     Node target = targetNodeMap.get(transition.getTarget().getId());
                     if (source != null && target != null) {
-                        Transition tr = definition.createElement(source);
+                        Transition tr = definition.createElement(source, false);
                         tr.setName(transition.getName());
                         tr.setTarget(target);
                         for (Point bp : transition.getBendpoints()) {
@@ -315,8 +315,9 @@ public class CopyGraphCommand extends Command {
 
         public CopySwimlaneAction(Swimlane sourceSwimlane) {
             super(CopyBuffer.GROUP_SWIMLANES, sourceSwimlane.getName());
-            this.swimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(targetDefinition);
+            this.swimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(targetDefinition, false);
             this.swimlane.setName(sourceSwimlane.getName());
+            this.swimlane.setScriptingName(sourceSwimlane.getScriptingName());
             this.swimlane.setDelegationClassName(sourceSwimlane.getDelegationClassName());
             this.swimlane.setDelegationConfiguration(sourceSwimlane.getDelegationConfiguration());
         }
@@ -384,7 +385,7 @@ public class CopyGraphCommand extends Command {
         public AddActionHandlerAction(Active active, Action action) {
             super(CopyBuffer.GROUP_ACTION_HANDLERS, action.toString());
             this.active = active;
-            this.action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement((GraphElement) active);
+            this.action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement((GraphElement) active, true);
             this.action.setDelegationClassName(action.getDelegationClassName());
             this.action.setDelegationConfiguration(action.getDelegationConfiguration());
         }

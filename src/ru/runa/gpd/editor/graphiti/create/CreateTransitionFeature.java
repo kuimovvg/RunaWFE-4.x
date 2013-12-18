@@ -66,7 +66,7 @@ public class CreateTransitionFeature extends AbstractCreateConnectionFeature {
         Node source = (Node) getBusinessObjectForPictogramElement(context.getSourcePictogramElement());
         Node target = (Node) getBusinessObjectForPictogramElement(context.getTargetPictogramElement());
         // create new business object
-        Transition transition = transitionDefinition.createElement(source);
+        Transition transition = transitionDefinition.createElement(source, false);
         transition.setTarget(target);
         transition.setName(source.getNextTransitionName());
         source.addLeavingTransition(transition);

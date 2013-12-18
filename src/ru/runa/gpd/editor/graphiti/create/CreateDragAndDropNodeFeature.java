@@ -71,7 +71,7 @@ public class CreateDragAndDropNodeFeature extends AbstractCreateConnectionFeatur
         Node source = getNode(context.getSourceAnchor());
         Node target = createTarget(context);
         // create new business object
-        Transition transition = transitionDefinition.createElement(source);
+        Transition transition = transitionDefinition.createElement(source, false);
         transition.setTarget(target);
         transition.setName(source.getNextTransitionName());
         source.addLeavingTransition(transition);
@@ -87,7 +87,7 @@ public class CreateDragAndDropNodeFeature extends AbstractCreateConnectionFeatur
         createContext.setSize(30, 30);
         //createContext.setTargetConnection(targetConnection);
         createContext.setTargetContainer(getDiagram());
-        Node node = NodeRegistry.getNodeTypeDefinition(Decision.class).createElement(processDefinition);
+        Node node = NodeRegistry.getNodeTypeDefinition(Decision.class).createElement(processDefinition, true);
         Object parent = getBusinessObjectForPictogramElement(createContext.getTargetContainer());
         ((Node) parent).addChild(node);
         PictogramElement element = getFeatureProvider().addIfPossible(new AddContext(createContext, node));
