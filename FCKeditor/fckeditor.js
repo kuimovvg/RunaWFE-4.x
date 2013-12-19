@@ -295,15 +295,55 @@ FCKeditor.prototype._HTMLEncode = function( text )
 	}
 })() ;
 
-function FCKeditor_IsCompatibleBrowser()
+function FCKeditor_IsCompatibleBrowser(debug)
 {
-	var sAgent = navigator.userAgent.toLowerCase() ;
-
+	var sAgent = navigator.userAgent.toLowerCase();
+	if (debug) {
+		alert (sAgent);
+	}
 	// Internet Explorer 5.5+
 	if ( /*@cc_on!@*/false && sAgent.indexOf("mac") == -1 )
 	{
-		var sBrowserVersion = navigator.appVersion.match(/MSIE (\d{1,}.\d{1,})/)[1] ;
-		return ( sBrowserVersion >= 5.5 ) ;
+		if (debug) {
+			alert ("Checking as IE");
+		}
+		try {
+			//var sBrowserVersion = navigator.appVersion.match(/MSIE (\d{1,}.\d{1,})/)[1] ;
+			var sBrowserVersion = navigator.appVersion.match(/MSIE ([\d.]+)/)[1];
+			if (debug) {
+				alert ("Defined as IE" + sBrowserVersion);
+			}
+			return ( sBrowserVersion >= 5.5 ) ;
+		} catch (e) {
+			if (debug) {
+				alert(e.message + ", trying as IE > 10");
+			}
+			// IE11
+			try {
+				var re = new RegExp("trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
+				if (re.exec(sAgent) != null) {
+					var rv = parseFloat( RegExp.$1 );
+					if (debug) {
+						alert("Defined as IE" + rv);
+					}
+					return true;
+				}
+			} catch (e) {
+				if (debug) {
+					alert(e.message + ", failed check as IE11");
+				}
+			}
+		}
+	}
+	if (sAgent.indexOf("trident") != -1 ) {
+		var re = new RegExp("trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
+		if (re.exec(sAgent) != null) {
+			var rv = parseFloat( RegExp.$1 );
+			if (debug) {
+				alert("Defined as IE" + rv);
+			}
+			return true;
+		}
 	}
 
 	// Gecko (Opera 9 tries to behave like Gecko at this point).

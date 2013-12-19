@@ -80,7 +80,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     private Timer updateSaveButtonTimer;
     private String savedHTML = "";
     private static WYSIWYGHTMLEditor lastInitializedInstance;
-    private static final boolean DEBUG = "true".equals(System.getProperty("ru.runa.gpd.form.ftl.debug"));
 
     protected synchronized boolean isBrowserLoaded() {
         return browserLoaded;
@@ -194,16 +193,16 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             browser.addProgressListener(new ProgressAdapter() {
                 @Override
                 public void completed(ProgressEvent event) {
-                    if (DEBUG) {
+                    if (WYSIWYGPlugin.DEBUG) {
                         PluginLogger.logInfo("completed " + event);
                     }
                     if (updateSaveButtonTimer == null) {
                         updateSaveButtonTimer = new Timer("updateSaveButtonTimer");
                         updateSaveButtonTimer.schedule(new UpdateSaveButtonTimerTask(), 1000, 1000);
-                        if (DEBUG) {
+                        if (WYSIWYGPlugin.DEBUG) {
                             PluginLogger.logInfo("Started updateSaveButtonTimer");
                         }
-                    } else if (DEBUG) {
+                    } else if (WYSIWYGPlugin.DEBUG) {
                         PluginLogger.logInfo("tried to start timer more than once!");
                     }
                 }
@@ -374,8 +373,8 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     private void syncBrowser2Editor() {
         if (browser != null) {
             boolean result = browser.execute("getHTML(false)");
-            if (DEBUG) {
-                PluginLogger.logInfo("syncBrowser2Editor: " + result);
+            if (WYSIWYGPlugin.DEBUG) {
+                PluginLogger.logInfo("syncBrowser2Editor = " + result);
             }
         }
     }
@@ -399,7 +398,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         html = html.replaceAll("'", "\\\\'");
         if (browser != null) {
             boolean result = browser.execute("setHTML('" + html + "')");
-            if (DEBUG) {
+            if (WYSIWYGPlugin.DEBUG) {
                 PluginLogger.logInfo("syncEditor2Browser = " + result);
             }
         }
@@ -413,7 +412,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 if (matcher.find()) {
                     html = matcher.group(3);
                 }
-                if (DEBUG) {
+                if (WYSIWYGPlugin.DEBUG) {
                     PluginLogger.logInfo("Designer html = " + html);
                 }
                 return html;
@@ -442,7 +441,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                             try {
                                 browser.execute("getHTML(true)");
                             } catch (Throwable e) {
-                                if (DEBUG) {
+                                if (WYSIWYGPlugin.DEBUG) {
                                     PluginLogger.logInfo(e.getMessage());
                                 }
                             }
@@ -450,7 +449,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                     });
                 }
             } catch (Throwable e) {
-                if (DEBUG) {
+                if (WYSIWYGPlugin.DEBUG) {
                     PluginLogger.logInfo(e.getMessage());
                 }
             }
@@ -467,7 +466,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             boolean sync = (Boolean) arguments[0];
             String text = (String) arguments[1];
             if (text.length() == 0) {
-                if (DEBUG) {
+                if (WYSIWYGPlugin.DEBUG) {
                     PluginLogger.logInfo("empty text received in callback for sync=" + sync);
                 }
                 return null;
@@ -481,7 +480,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 if (!oldContent.equals(html)) {
                     sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
                     setDirty(true);
-                } else if (DEBUG) {
+                } else if (WYSIWYGPlugin.DEBUG) {
                     PluginLogger.logInfo("Nothing to change: " + html);
                 }
             } else {
@@ -493,7 +492,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 boolean setDirty = (diff.length() != 0);
                 if (setDirty != isDirty()) {
                     setDirty(setDirty);
-                } else if (DEBUG) {
+                } else if (WYSIWYGPlugin.DEBUG) {
                     PluginLogger.logInfo("Dirty state did not changed: " + setDirty);
                 }
                 if (setDirty) {
