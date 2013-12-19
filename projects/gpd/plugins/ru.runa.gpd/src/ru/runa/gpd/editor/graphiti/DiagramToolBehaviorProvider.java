@@ -48,6 +48,13 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         if (element instanceof Subprocess) {
             return new OpenSubProcessFeature(getFeatureProvider());
         }
+        // TODO 
+//        if (element instanceof Node) {
+//            return new DirectEditNodeNameFeature(getFeatureProvider());
+//        }
+//        if (element instanceof TextAnnotation) {
+//            return new DirectEditDescriptionFeature(getFeatureProvider());
+//        }
         return super.getDoubleClickFeature(context);
     }
 
