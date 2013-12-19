@@ -58,7 +58,7 @@
 	<table class="box">
 		<tr>
 			<td width="15%">
-				<a href="http://wf.runa.ru/About" target="new">
+				<a href="http://runawfe.org" target="new">
 					<img hspace="10" border="0" src="<html:rewrite page="/images/big_logo.png"/>" alt="Runa WFE">
 				</a>
 			</td>

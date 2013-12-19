@@ -26,7 +26,7 @@
 						<table>
 							<tr>
 								<td  align="left" colspan="2" target="new">
-									<a href="http://wf.runa.ru/About">
+									<a href="http://runawfe.org">
 										<img  border="0" src="<html:rewrite page="/images/big_logo.png"/>" alt="Runa WFE">
 									</a>
 								</td>
