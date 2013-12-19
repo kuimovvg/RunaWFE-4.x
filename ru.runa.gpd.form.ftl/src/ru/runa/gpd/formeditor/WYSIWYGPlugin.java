@@ -18,6 +18,7 @@ import org.osgi.framework.BundleContext;
  */
 public class WYSIWYGPlugin extends AbstractUIPlugin {
     private static WYSIWYGPlugin plugin;
+    public static final boolean DEBUG = "true".equals(System.getProperty("ru.runa.gpd.form.ftl.debug"));
 
     public WYSIWYGPlugin() {
         plugin = this;

@@ -52,6 +52,7 @@
 		}
 		function FCKeditor_OnComplete(editor) {
 			try {
+				alert("FCKeditor_OnComplete: " + editor);
 				inited = true;
 				setHTML(bufferedHtml);
 			} catch (e) {
@@ -64,14 +65,15 @@
 		<form method="POST" name="form">
 			<script type="text/javascript">
 			try {
-				if (FCKeditor_IsCompatibleBrowser()) {
+				if (FCKeditor_IsCompatibleBrowser(true)) {
 					var oEditor = new FCKeditor('editor');
 					oEditor.BasePath = "";
 					oEditor.Height   = '100%';
 					oEditor.Value    = '';
 					oEditor.Create();
+					alert("FCKeditor creation in progress, wait for 'FCKeditor_OnComplete' message");
 				} else {
-					alert("Browser is not compatible!");
+					alert("Browser is not compatible: " + FCKeditor_IsCompatibleBrowser);
 				}
 			} catch (e) {
 				alertError(e, "inlined script");

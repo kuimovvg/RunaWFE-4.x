@@ -15,6 +15,7 @@ import org.mortbay.jetty.servlet.WebApplicationContext;
 import org.mortbay.util.InetAddrPort;
 
 import ru.runa.gpd.Activator;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.formeditor.resources.Messages;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.IOUtils;
@@ -45,7 +46,20 @@ public class WebServerUtils {
     }
 
     public static String getEditorURL() {
-        return "http://localhost:" + SERVER_PORT + (useCKEditor3() ? "/ckeditor.html" : "/fckeditor.html");
+        String url = "http://localhost:" + SERVER_PORT;
+        if (useCKEditor3()) {
+            url += "/ckeditor.html";
+        } else {
+            if (WYSIWYGPlugin.DEBUG) {
+                url += "/fckeditor.debug.html";
+            } else {
+                url += "/fckeditor.html";
+            }
+        }
+        if (WYSIWYGPlugin.DEBUG) {
+            PluginLogger.logInfo("Editor url: " + url);
+        }
+        return url;
     }
 
     public static boolean useCKEditor3() {
@@ -66,7 +80,6 @@ public class WebServerUtils {
             fckRootFolder.mkdir();
             int progressForFck = remain - 1;
             copyFolderWithProgress(location, getEditorDirectoryName(), monitor, progressForFck);
-            // monitor.worked(progressForFck);
             remain = 1;
             if (isWebServerStarted()) {
                 server.stop();
@@ -106,11 +119,11 @@ public class WebServerUtils {
         File folder = new File(root.toFile(), path);
         folder.mkdir();
         Enumeration<String> e = WYSIWYGPlugin.getDefault().getBundle().getEntryPaths(path);
-        int filesSize = 0;
+        int filesSize = currentUnitFilesCount;
         while (e != null && e.hasMoreElements()) {
             String child = e.nextElement();
             if (child.endsWith("/")) {
-                filesSize = copyFolder(root, child, monitor, filesForUnitWork, currentUnitFilesCount);
+                filesSize = copyFolder(root, child, monitor, filesForUnitWork, filesSize);
             } else {
                 InputStream in = WYSIWYGPlugin.getDefault().getBundle().getEntry(child).openStream();
                 File targetFile = new File(root.toFile(), child);
