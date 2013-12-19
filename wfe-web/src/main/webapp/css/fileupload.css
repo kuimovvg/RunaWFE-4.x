@@ -2,6 +2,7 @@
 	background: white;
 	height: 35px;
 	line-height: 35px;
+	font-size: 13px;
 }
 .inputFileAttach {
 	border: 1px solid #b9b9b9;
@@ -38,6 +39,7 @@
 	border: 1px solid #b9b9b9;
 	color: #444;
 	position: relative;
+	min-width: 300px;
 }
 .progressbar .line {
 	background-color: #e9f4ff;

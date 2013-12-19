@@ -16,22 +16,24 @@ import com.google.common.io.ByteStreams;
 
 public class MultipartRequestHandler {
 
-//    public static List<UploadedFile> uploadByJavaServletAPI(HttpServletRequest request) throws IOException, ServletException {
-//        List<UploadedFile> files = new LinkedList<UploadedFile>();
-//        Collection<Part> parts = request.getParts();
-//        UploadedFile temp = null;
-//        for (Part part : parts) {
-//            if (part.getContentType() != null) {
-//                temp = new UploadedFile();
-//                temp.setName(getFilename(part));
-//                temp.setSize(part.getSize() / 1024 + " Kb");
-//                temp.setMimeType(part.getContentType());
-//                temp.setContent(part.getInputStream());
-//                files.add(temp);
-//            }
-//        }
-//        return files;
-//    }
+    // public static List<UploadedFile>
+    // uploadByJavaServletAPI(HttpServletRequest request) throws IOException,
+    // ServletException {
+    // List<UploadedFile> files = new LinkedList<UploadedFile>();
+    // Collection<Part> parts = request.getParts();
+    // UploadedFile temp = null;
+    // for (Part part : parts) {
+    // if (part.getContentType() != null) {
+    // temp = new UploadedFile();
+    // temp.setName(getFilename(part));
+    // temp.setSize(part.getSize() / 1024 + " Kb");
+    // temp.setMimeType(part.getContentType());
+    // temp.setContent(part.getInputStream());
+    // files.add(temp);
+    // }
+    // }
+    // return files;
+    // }
 
     public static String uploadByApacheFileUpload(HttpServletRequest request, UploadedFile file) throws IOException {
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
@@ -39,6 +41,7 @@ public class MultipartRequestHandler {
         if (isMultipart) {
             DiskFileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding(Charsets.UTF_8.name());
             try {
                 List<FileItem> items = upload.parseRequest(request);
                 for (FileItem item : items) {
@@ -70,8 +73,8 @@ public class MultipartRequestHandler {
         for (String cd : part.getHeader("content-disposition").split(";")) {
             if (cd.trim().startsWith("filename")) {
                 String filename = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-                //     MSIE fix.
-                return filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1); 
+                // MSIE fix.
+                return filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1);
             }
         }
         return null;
