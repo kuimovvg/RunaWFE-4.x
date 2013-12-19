@@ -23,7 +23,7 @@
 		<downloadSources>true</downloadSources>
 		<downloadJavadocs>true</downloadJavadocs>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.organization.name>wf.runa.ru</project.organization.name>
+		<project.organization.name>runawfe.org</project.organization.name>
 	</properties>
 
 	<profiles>
