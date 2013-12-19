@@ -150,7 +150,10 @@ public class Transition extends NamedGraphElement implements Active {
     }
 
     public String getLabel() {
-        if (getSource() instanceof Decision || getSource() instanceof ExclusiveGateway) {
+        if (getSource() instanceof ExclusiveGateway) {
+            return ((ExclusiveGateway) getSource()).isDecision() ? getName() : "";
+        }
+        if (getSource() instanceof Decision) {
             return getName();
         }
         if (PluginConstants.TIMER_TRANSITION_NAME.equals(getName())) {
