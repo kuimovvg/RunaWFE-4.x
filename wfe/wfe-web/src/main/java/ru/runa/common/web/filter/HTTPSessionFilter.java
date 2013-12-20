@@ -39,7 +39,7 @@ public class HTTPSessionFilter extends HTTPFilterBase {
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String query = request.getRequestURI();
         // TODO TEMP!
-        if (query.endsWith("do") && !query.endsWith("/start.do") && !query.endsWith("login.do") && !query.contains("upload")) {
+        if (query.endsWith("do") && !query.endsWith("/start.do") && !query.endsWith("login.do")) {
             try {
                 Commons.getUser(request.getSession());
             } catch (InvalidSessionException e) {

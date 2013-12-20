@@ -50,7 +50,12 @@ public class MultipartRequestHandler {
                             inputId = item.getString(Charsets.UTF_8.name());
                         }
                     } else {
-                        file.setName(item.getName());
+                        String name = item.getName();
+                        int index = item.getName().lastIndexOf("\\");
+                        if (index != -1) { // for IE
+                            name = name.substring(index + 1);
+                        }
+                        file.setName(name);
                         file.setContent(ByteStreams.toByteArray(item.getInputStream()));
                         file.setMimeType(item.getContentType());
                         String size;

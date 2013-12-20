@@ -35,7 +35,9 @@ public class FileUploadServlet extends HttpServlet {
         FormSubmissionUtils.getUploadedFilesMap(request).put(inputId, file);
 
         // 2. Set response type to json
-        response.setContentType("application/json");
+        // response.setContentType("application/json");
+        response.setContentType("text/html");
+        response.setCharacterEncoding(Charsets.UTF_8.name());
         response.setHeader("Access-Control-Allow-Origin", "*");
 
         JSONObject object = new JSONObject();

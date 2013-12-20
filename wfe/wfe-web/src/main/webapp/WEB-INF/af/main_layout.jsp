@@ -6,7 +6,7 @@
 <%@ page import="ru.runa.common.web.Commons" %>
 <%@ page import="ru.runa.common.WebResources" %>
 <%@ page import="ru.runa.common.Version" %>
-
+<!DOCTYPE HTML>
 <% 
 	String thinInterface = (String)request.getAttribute("runawfe.thin.interface");
 	String thinInterfacePage = (String)request.getAttribute("runawfe.thin.interface.page");
@@ -14,7 +14,6 @@
 		thinInterfacePage="/start.do";
 	}
 %>
-
 <html:html lang="true">
   <head>
   	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
