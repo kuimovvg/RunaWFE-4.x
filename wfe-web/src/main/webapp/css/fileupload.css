@@ -5,6 +5,7 @@
 	font-size: 13px;
 }
 .inputFileAttach {
+	display: block;
 	border: 1px solid #b9b9b9;
 	cursor: pointer;
 	color: black;
@@ -40,6 +41,7 @@
 	color: #444;
 	position: relative;
 	min-width: 300px;
+	overflow: hidden;
 }
 .progressbar .line {
 	background-color: #e9f4ff;
@@ -52,8 +54,8 @@
 	width: 100%;
 }
 .statusImg {
-	float: right; 
-	padding: 10px;
+//	float: right;
+//	padding: 10px;
 }
 .inputFileDelete {
 	cursor: pointer;
