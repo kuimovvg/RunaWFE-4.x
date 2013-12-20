@@ -115,7 +115,7 @@ public final class DrawProperties {
     }
 
     public static boolean isLogsInGraphEnabled() {
-        return resources.getBooleanProperty("logs.enabled", true);
+        return resources.getBooleanProperty("logs.enabled", false);
     }
 
 }

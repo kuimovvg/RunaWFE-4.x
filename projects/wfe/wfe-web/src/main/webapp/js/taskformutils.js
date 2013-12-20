@@ -12,14 +12,14 @@ $(function() {
 	$(".dropzone").bind('dragover', function (e) {
 		$(this).addClass("dropzonehover");
 	});
-
-	$(".inputFileAttach").click(function(e) {
-		$(this).parent().find(".inputFile").click();
-//		$(".inputFile").fileupload("add", {
-//			files: e.target.files || [{name: this.value}],
-//			fileInput: $(this)
-//		});
-	});
+	//if ($.browser.mozilla) {
+	if (window.mozIndexedDB !== undefined) {
+		$(".inputFileAttach").click(function(e) {
+			if(e.currentTarget === this && e.target.nodeName !== 'INPUT') {
+				$(this).find(".inputFile").click();
+			}
+		});
+	}
 	$(document).delegate(".inputFileDelete", "click", function() {
 		deleteFile($(this).attr("inputId"));
 	});
@@ -63,7 +63,7 @@ function initFileInput(dropzone) {
 }
 
 function deleteFile(inputId) {
-	var dropzone = $("input[name='" + inputId + "']").parent();
+	var dropzone = $("input[name='" + inputId + "']").parent().parent();
 	dropzone.show();
 	jQuery.ajax({
 		type: "GET",

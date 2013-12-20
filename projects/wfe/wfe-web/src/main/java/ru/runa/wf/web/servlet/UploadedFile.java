@@ -1,7 +1,5 @@
 package ru.runa.wf.web.servlet;
 
-import java.io.InputStream;
-
 import com.google.common.base.Objects;
 
 public class UploadedFile {
