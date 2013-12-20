@@ -130,7 +130,6 @@ public class SQLActionHandler implements ActionHandler {
                             }
                             first = false;
                         }
-                        out.putAll(extractResults(variableProvider, resultSet, query));
                     }
                 }
             } finally {
