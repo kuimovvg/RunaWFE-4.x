@@ -23,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import javax.mail.internet.MimeUtility;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -90,8 +91,9 @@ public class HTMLUtils {
         }
     }
 
-    public static String encodeFileName(String fileName, String userAgent) {
+    public static String encodeFileName(HttpServletRequest request, String fileName) {
         try {
+            String userAgent = request.getHeader("User-Agent");
             if (userAgent != null) {
                 if (userAgent.indexOf("MSIE") != -1) {
                     // IE

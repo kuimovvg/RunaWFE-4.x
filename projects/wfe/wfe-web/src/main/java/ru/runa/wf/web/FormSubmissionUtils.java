@@ -147,16 +147,18 @@ public class FormSubmissionUtils {
                     }
                 } else {
                     Object value = userInput.get(variableDefinition.getName());
+                    if (value == null) {
+                        // used for processes with dirty validation (checked variable without usage)
+                        continue;
+                    }
                     variableValue = convertComponent(variableDefinition.getName(), format, value, formatErrorsForFields);
                 }
-                if (variableValue != null) {
-                    FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
-                            FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
-                    if (handler != null) {
-                        variableValue = handler.handle(variableValue);
-                    }
-                    variables.put(variableDefinition.getName(), variableValue);
+                FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
+                        FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
+                if (handler != null) {
+                    variableValue = handler.handle(variableValue);
                 }
+                variables.put(variableDefinition.getName(), variableValue);
             }
             return variables;
         } catch (Exception e) {

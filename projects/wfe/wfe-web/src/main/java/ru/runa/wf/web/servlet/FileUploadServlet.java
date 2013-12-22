@@ -11,18 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.wf.web.FormSubmissionUtils;
 
 import com.google.common.base.Charsets;
 
 public class FileUploadServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
-    @Override
-    protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        super.doOptions(request, response);
-        response.setHeader("Access-Control-Allow-Origin", "*");
-    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -38,8 +33,6 @@ public class FileUploadServlet extends HttpServlet {
         // response.setContentType("application/json");
         response.setContentType("text/html");
         response.setCharacterEncoding(Charsets.UTF_8.name());
-        response.setHeader("Access-Control-Allow-Origin", "*");
-
         JSONObject object = new JSONObject();
         object.put("name", file.getName());
         object.put("size", file.getSize());
@@ -49,7 +42,6 @@ public class FileUploadServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");
         String action = request.getParameter("action");
         String inputId = request.getParameter("inputId");
         if ("delete".equals(action)) {
@@ -63,8 +55,8 @@ public class FileUploadServlet extends HttpServlet {
                 return;
             }
             response.setContentType(file.getMimeType());
-            response.setHeader("Content-disposition", "attachment; filename=\"" + file.getName() + "\"");
-            response.setHeader("Access-Control-Allow-Origin", "*");
+            String encodedFileName = HTMLUtils.encodeFileName(request, file.getName());
+            response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
             response.getOutputStream().write(file.getContent());
             response.getOutputStream().flush();
             response.getOutputStream().close();
