@@ -1,14 +1,25 @@
 package ru.runa.wf.web.servlet;
 
+import ru.runa.wfe.var.FileVariable;
+
 import com.google.common.base.Objects;
 
 public class UploadedFile {
     private String name;
     private String size;
     private String mimeType;
-
     private byte[] content;
 
+    public UploadedFile() {
+    }
+    
+    public UploadedFile(FileVariable value) {
+        this.name = value.getName();
+        this.mimeType = value.getContentType();
+        setContent(value.getData());
+    }
+
+    
     public String getName() {
         return name;
     }
@@ -19,10 +30,6 @@ public class UploadedFile {
 
     public String getSize() {
         return size;
-    }
-
-    public void setSize(String fileSize) {
-        this.size = fileSize;
     }
 
     public String getMimeType() {
@@ -39,6 +46,11 @@ public class UploadedFile {
 
     public void setContent(byte[] content) {
         this.content = content;
+        if (content.length > 1024 * 1024) {
+            this.size = content.length / (1024 * 1024) + " Mb";
+        } else {
+            this.size = content.length / 1024 + " Kb";
+        }
     }
 
     @Override

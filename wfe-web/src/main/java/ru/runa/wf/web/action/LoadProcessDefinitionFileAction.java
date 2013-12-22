@@ -51,7 +51,7 @@ abstract class LoadProcessDefinitionFileAction extends ActionBase {
             if (contentType != null) {
                 response.setContentType(contentType);
             }
-            String encodedFileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
+            String encodedFileName = HTMLUtils.encodeFileName(request, fileName);
             response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
             OutputStream os = response.getOutputStream();
             os.write(bytes);

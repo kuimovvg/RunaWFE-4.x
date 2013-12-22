@@ -354,6 +354,13 @@ public class FormPresentationUtils {
     private static void handleErrors(Map<String, String> errors, String inputName, PageContext pageContext, Document document, Element node) {
         if (errors.containsKey(inputName)) {
             String errorText = getErrorText(pageContext, errors, inputName);
+            if ("file".equalsIgnoreCase(node.getAttribute(TYPE_ATTR)) && WebResources.isAjaxFileInputEnabled()) {
+                try {
+                    node = (Element) ((Element) ((Element) node.getParentNode()).getParentNode()).getParentNode();
+                } catch (Exception e) {
+                    log.error("Unexpected file input format", e);
+                }
+            }
             if (WebResources.useImagesForValidationErrors()) {
                 Element errorImg = document.createElement("img");
                 errorImg.setAttribute("title", errorText);

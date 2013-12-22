@@ -52,7 +52,7 @@ public class BotTaskConfigurationDownloadAction extends ActionBase {
             response.setContentType("text/xml");
             response.setHeader("Pragma", "public");
             response.setHeader("Cache-Control", "max-age=0");
-            String encodedFileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
+            String encodedFileName = HTMLUtils.encodeFileName(request, fileName);
             response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
             OutputStream os = response.getOutputStream();
             os.write(configuration);

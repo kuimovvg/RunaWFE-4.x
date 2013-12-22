@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -58,13 +57,6 @@ public class MultipartRequestHandler {
                         file.setName(name);
                         file.setContent(ByteStreams.toByteArray(item.getInputStream()));
                         file.setMimeType(item.getContentType());
-                        String size;
-                        if (item.getSize() > 1024 * 1024) {
-                            size = item.getSize() / (1024 * 1024) + " Mb";
-                        } else {
-                            size = item.getSize() / 1024 + " Kb";
-                        }
-                        file.setSize(size);
                     }
                 }
             } catch (FileUploadException e) {
@@ -74,14 +66,14 @@ public class MultipartRequestHandler {
         return inputId;
     }
 
-    private static String getFilename(Part part) {
-        for (String cd : part.getHeader("content-disposition").split(";")) {
-            if (cd.trim().startsWith("filename")) {
-                String filename = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-                // MSIE fix.
-                return filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1);
-            }
-        }
-        return null;
-    }
+//    private static String getFilename(Part part) {
+//        for (String cd : part.getHeader("content-disposition").split(";")) {
+//            if (cd.trim().startsWith("filename")) {
+//                String filename = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
+//                // MSIE fix.
+//                return filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1);
+//            }
+//        }
+//        return null;
+//    }
 }

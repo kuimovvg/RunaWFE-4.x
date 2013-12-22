@@ -33,7 +33,7 @@ public class EditListTag extends AjaxFreemarkerTag {
         substitutions.put("VARIABLE", variableName);
         substitutions.put("UNIQUENAME", scriptingVariableName);
         String inputTag = ViewUtil.getComponentInput(user, webHelper, variableName + "[]", elementFormatClassName, null);
-        inputTag = inputTag.replaceAll("\"", "'");
+        inputTag = inputTag.replaceAll("\"", "'").replaceAll("\t", "").replaceAll("\n", "");
         substitutions.put("COMPONENT_INPUT", inputTag);
         substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(elementFormatClassName));
         StringBuffer html = new StringBuffer();

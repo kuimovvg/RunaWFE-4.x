@@ -13,13 +13,13 @@ $(function() {
 		$(this).addClass("dropzonehover");
 	});
 	//if ($.browser.mozilla) {
-	if (window.mozIndexedDB !== undefined) {
-		$(".inputFileAttach").click(function(e) {
-			if(e.currentTarget === this && e.target.nodeName !== 'INPUT') {
-				$(this).find(".inputFile").click();
-			}
-		});
-	}
+//	if (window.mozIndexedDB !== undefined) {
+//		$(".inputFileAttach").click(function(e) {
+//			if(e.currentTarget === this && e.target.nodeName !== 'INPUT') {
+//				$(this).find(".inputFile").click();
+//			}
+//		});
+//	}
 	$(document).delegate(".inputFileDelete", "click", function() {
 		deleteFile($(this).attr("inputId"));
 	});
@@ -36,7 +36,7 @@ function initFileInput(dropzone) {
 		fileInput: fileInput,
 		done: function (e, data) {
 			var statusText = progressBar.find(".statusText");
-			var statusImg = progressBar.find(".statusImg");
+			var statusImg = progressBar.find("img");
 			var label = data.result.name + "<span style='color: #888'> - " + data.result.size + "</span>";
 			statusImg.attr("src", "/wfe/images/delete.png");
 			statusImg.addClass("inputFileDelete");
@@ -55,7 +55,7 @@ function initFileInput(dropzone) {
 		progressBar.show();
 	}).bind('fileuploadfail', function (e, data) {
 		var statusText = progressBar.find(".statusText");
-		var statusImg = progressBar.find(".statusImg");
+		var statusImg = progressBar.find("img");
 		statusImg.attr("src", "/wfe/images/error.gif");
 		statusImg.addClass("inputFileDelete");
 		statusText.html(data.textStatus);
@@ -78,7 +78,7 @@ function deleteFile(inputId) {
 			progressBar.hide();
 			var statusText = progressBar.find(".statusText");
 			statusText.html(loadingMessage);
-			var statusImg = progressBar.find(".statusImg");
+			var statusImg = progressBar.find("img");
 			statusImg.attr("src", "/wfe/images/loading.gif");
 			statusImg.removeClass("inputFileDelete");
 			var progressBarLine = progressBar.find(".line");

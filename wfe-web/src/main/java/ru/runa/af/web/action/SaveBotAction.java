@@ -33,7 +33,7 @@ public class SaveBotAction extends ActionBase {
             BotService botService = Delegates.getBotService();
             Bot bot = botService.getBot(getLoggedUser(request), idForm.getId());
             String fileName = bot.getUsername() + ".bot";
-            fileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
+            fileName = HTMLUtils.encodeFileName(request, fileName);
             byte[] archive = botService.exportBot(getLoggedUser(request), bot);
             response.setContentType("application/zip");
             response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
