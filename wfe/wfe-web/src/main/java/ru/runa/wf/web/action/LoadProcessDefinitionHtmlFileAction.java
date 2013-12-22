@@ -64,7 +64,7 @@ public class LoadProcessDefinitionHtmlFileAction extends ActionBase {
                 request.setAttribute("pageHref", fileName);
                 successForward = mapping.findForward(Resources.FORWARD_SUCCESS);
             } else {
-                String encodedFileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
+                String encodedFileName = HTMLUtils.encodeFileName(request, fileName);
                 response.setHeader("Content-disposition", "inline; filename=\"" + encodedFileName + "\"");
                 response.setContentType(fileTypeMap.getContentType(fileName));
                 OutputStream os = response.getOutputStream();

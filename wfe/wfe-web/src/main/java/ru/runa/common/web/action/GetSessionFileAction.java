@@ -34,7 +34,7 @@ public class GetSessionFileAction extends Action {
             } else {
                 throw new InternalApplicationException("Unexpected session object: " + object);
             }
-            String encodedFileName = HTMLUtils.encodeFileName(fileName, request.getHeader("User-Agent"));
+            String encodedFileName = HTMLUtils.encodeFileName(request, fileName);
             response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
             OutputStream os = response.getOutputStream();
             os.write(data);

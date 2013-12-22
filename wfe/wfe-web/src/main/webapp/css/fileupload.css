@@ -1,14 +1,18 @@
+.inputFileContainer {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	width: 100%;
+	min-width: 400px;
+	color: #666666;
+}
 .inputFileContainer, .dropzone, .progressbar, .inputFileAttach {
-	background: white;
 	height: 35px;
 	line-height: 35px;
-	font-size: 13px;
 }
 .inputFileAttach {
 	display: block;
 	border: 1px solid #b9b9b9;
 	cursor: pointer;
-	color: black;
 	width: 170px;
 	font-weight: bold;
 }
@@ -16,14 +20,13 @@
 	background: url("images/required.png") top right no-repeat;
 }
 .inputFileAttach:hover, .dropzone.required .inputFileAttach:hover {
-	background: #e9f4ff;
+	background: #e9e9e9;
 }
 .inputFileContainer img {
 	margin: 0px 10px 0px 10px;
 	vertical-align: middle;
 }
 .dropzone {
-	color: white;
 	border: 3px dotted white;
 	-webkit-transition: all 0.3s ease-out;
 	-moz-transition: all 0.3s ease-out;
@@ -34,17 +37,14 @@
 }
 .dropzonehover {
 	background: #cccccc;
-	color: gray;
 }
 .progressbar {
 	border: 1px solid #b9b9b9;
-	color: #444;
 	position: relative;
-	min-width: 300px;
 	overflow: hidden;
 }
 .progressbar .line {
-	background-color: #e9f4ff;
+	background-color: #e9e9e9;
 	height: 35px;
 }
 .progressbar .status {
@@ -52,10 +52,6 @@
 	top: 0; 
 	left: 0; 
 	width: 100%;
-}
-.statusImg {
-//	float: right;
-//	padding: 10px;
 }
 .inputFileDelete {
 	cursor: pointer;

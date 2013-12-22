@@ -54,7 +54,7 @@ public class VariableDownloaderAction extends ActionBase {
             response.setHeader("Pragma", "public");
             response.setHeader("Cache-Control", "max-age=0");
             // non-ascii filenames (Opera does not support it)
-            String encodedFileName = HTMLUtils.encodeFileName(fileVariable.getName(), request.getHeader("User-Agent"));
+            String encodedFileName = HTMLUtils.encodeFileName(request, fileVariable.getName());
             response.setHeader("Content-Disposition", "attachment; filename=\"" + encodedFileName + "\"");
             OutputStream os = response.getOutputStream();
             os.write(fileVariable.getData());

@@ -160,7 +160,7 @@ public class ViewUtil {
             html += "/>";
         }
         if (FileFormat.class.getName().equals(formatClassName)) {
-            html += getFileInput(webHelper, variableName);
+            html += getFileInput(webHelper, variableName, (FileVariable) value);
         }
         if (BooleanFormat.class.getName().equals(formatClassName)) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
@@ -348,21 +348,27 @@ public class ViewUtil {
         }
     }
 
-    public static String getFileInput(WebHelper webHelper, String variableName) {
+    public static String getFileInput(WebHelper webHelper, String variableName, FileVariable value) {
         if (!WebResources.isAjaxFileInputEnabled()) {
             return "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" />";
+        }
+        UploadedFile file = null;
+        if (webHelper != null) {
+            file = FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).get(variableName);
+            if (value != null && file == null) {
+                file = new UploadedFile(value);
+                FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).put(variableName, file);
+            }
         }
         String attachImageUrl = "";
         String loadingImageUrl = "";
         String deleteImageUrl = "";
-        UploadedFile file = null;
         String uploadFileTitle = "Upload file";
         String loadingMessage = "Loading ...";
         if (webHelper != null) {
             attachImageUrl = webHelper.getUrl(Resources.IMAGE_ATTACH);
             loadingImageUrl = webHelper.getUrl(Resources.IMAGE_LOADING);
             deleteImageUrl = webHelper.getUrl(Resources.IMAGE_DELETE);
-            file = FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).get(variableName);
             uploadFileTitle = Commons.getMessage("message.upload.file", webHelper.getPageContext());
             loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
         }
@@ -370,24 +376,23 @@ public class ViewUtil {
         String html = "";
         html += "<div class=\"inputFileContainer\">";
         html += "\n\t<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
-        html += "\n\t\t<label class=\"inputFileAttach\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle;
-        html += "\n\t\t\t<input class=\"inputFile\" name=\"" + variableName + "\" type=\"file\" style=\"visibility: hidden;\">";
+        html += "\n\t\t<label class=\"inputFileAttach\">";
+        html += "\n\t\t\t<div style=\"float: left;\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
+        html += "\n\t\t\t<input class=\"inputFile\" name=\"" + variableName + "\" type=\"file\" style=\"visibility: hidden; display: block;\">";
         html += "\n\t\t</label>";
-        html += "\n\t\tDrag & Drop";
         html += "\n\t</div>";
         html += "\n\t<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
         html += "\n\t\t<div class=\"line\" style=\"width: " + (file != null ? "10" : "") + "0%;\"></div>";
         html += "\n\t\t<div class=\"status\">";
         if (file != null) {
-            html += "\n\t\t\t<img src=\"" + deleteImageUrl + "\" class=\"statusImg inputFileDelete\" inputId=\"" + variableName + "\">";
+            html += "\n\t\t\t<img src=\"" + deleteImageUrl + "\" class=\"inputFileDelete\" inputId=\"" + variableName + "\">";
         } else {
-            html += "\n\t\t\t<img src=\"" + loadingImageUrl + "\" class=\"statusImg\" inputId=\"" + variableName + "\">";
+            html += "\n\t\t\t<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
         }
         html += "\n\t\t\t<span class=\"statusText\">";
         if (file != null && webHelper != null) {
-            String label = file.getName() + "<span style='color: #888'> - " + file.getSize() + "</span>";
             String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName);
-            html += "<a href='" + viewUrl + "'>" + label + "</a>";
+            html += "<a href='" + viewUrl + "'>" + file.getName() + " - " + file.getSize() + "</a>";
         } else {
             html += loadingMessage;
         }
