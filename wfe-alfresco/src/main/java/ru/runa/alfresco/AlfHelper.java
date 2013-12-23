@@ -282,12 +282,14 @@ public class AlfHelper implements AlfConn {
     public void createObject(AlfObject object, NodeRef folderRef) throws InternalApplicationException {
         AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
         log.debug("Creating new object of type " + object.getClass().getName() + " in " + folderRef);
-        String name = object.getNewObjectName(typeDesc);
-        object.setObjectName(name);
+        if (object.getObjectName() == null) {
+            object.updateObjectName();
+        }
+        object.setObjectName(object.getObjectName());
         Map<QName, Serializable> props = new JavaObjectAccessor(object).getAlfrescoProperties(typeDesc, true, true);
         ChildAssociationRef ref = registry.getNodeService().createNode(folderRef, ContentModel.ASSOC_CONTAINS,
-                QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name), QName.createQName(typeDesc.getAlfrescoTypeNameWithNamespace()),
-                props);
+                QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, object.getObjectName()),
+                QName.createQName(typeDesc.getAlfrescoTypeNameWithNamespace()), props);
         object.setUuidRef(ref.getChildRef().toString());
         object.markPropertiesInitialState(typeDesc);
         object.setLazyLoader(this);

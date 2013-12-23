@@ -69,7 +69,7 @@ public class JavaObjectAccessor {
             }
         }
         if (includeName) {
-            props.put(ContentModel.PROP_NAME, alfObject.getNewObjectName(typeDesc));
+            props.put(ContentModel.PROP_NAME, alfObject.getObjectName());
         }
         return props;
     }
