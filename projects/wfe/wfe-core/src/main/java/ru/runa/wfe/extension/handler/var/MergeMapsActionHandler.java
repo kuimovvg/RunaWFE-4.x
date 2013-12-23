@@ -11,11 +11,11 @@ public class MergeMapsActionHandler extends CommonParamBasedHandler {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Map<?, ?> map1 = handlerData.getInputParam(Map.class, "map1", null);
+        Map<?, ?> map1 = handlerData.getInputParamValue(Map.class, "map1");
         if (map1 == null) {
             map1 = new HashMap();
         }
-        Map<?, ?> map2 = handlerData.getInputParam(Map.class, "map1", null);
+        Map<?, ?> map2 = handlerData.getInputParamValue(Map.class, "map2");
         if (map2 == null) {
             map2 = new HashMap();
         }

@@ -22,14 +22,15 @@ public class AlfGetObjectPropertiesByUuid extends AlfHandler {
     @Override
     protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         Map<String, ParamDef> outputParams = alfHandlerData.getOutputParams();
-        String uuid = alfHandlerData.getInputParam(String.class, "uuid", "").trim();
+        String uuid = alfHandlerData.getInputParamValue(String.class, "uuid");
         if (!Strings.isNullOrEmpty(uuid)) {
+            uuid = uuid.trim();
             NamedValue[] props = session.loadObjectProperties(uuid);
             for (NamedValue namedValue : props) {
                 int index = namedValue.getName().lastIndexOf('}');
                 String keyName = namedValue.getName().substring(index + 1);
                 if (outputParams.containsKey(keyName)) {
-                    String targetClassName = alfHandlerData.getInputParam(String.class, keyName, DEFAULT_FORMAT_CLASS);
+                    String targetClassName = alfHandlerData.getInputParamValue(String.class, keyName, DEFAULT_FORMAT_CLASS);
                     Object value = getProperty(namedValue, null, targetClassName);
                     String outputVarName = alfHandlerData.getOutputParams().get(keyName).getVariableName();
                     alfHandlerData.setOutputVariable(outputVarName, value);

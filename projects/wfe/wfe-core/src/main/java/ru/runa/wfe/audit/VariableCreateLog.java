@@ -46,6 +46,7 @@ public class VariableCreateLog extends VariableLog {
         super(variable);
         addAttribute(ATTR_NEW_VALUE, variable.toString(newValue));
         addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(newValue instanceof FileVariable));
+        // TODO List value to display
         if (variable.getStorableValue() instanceof byte[]) {
             setBytes((byte[]) variable.getStorableValue());
         }

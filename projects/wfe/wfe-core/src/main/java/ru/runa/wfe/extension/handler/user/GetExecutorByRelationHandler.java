@@ -25,10 +25,10 @@ public class GetExecutorByRelationHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        String relationName = handlerData.getInputParam(String.class, "name");
-        Executor parameter = handlerData.getInputParam(Executor.class, "parameter");
-        boolean inversed = handlerData.getInputParam(boolean.class, "inversed");
-        boolean recursively = handlerData.getInputParam(boolean.class, "recursively");
+        String relationName = handlerData.getInputParamValueNotNull(String.class, "name");
+        Executor parameter = handlerData.getInputParamValueNotNull(Executor.class, "parameter");
+        boolean inversed = handlerData.getInputParamValueNotNull(boolean.class, "inversed");
+        boolean recursively = handlerData.getInputParamValueNotNull(boolean.class, "recursively");
         List<Executor> parameters = Lists.newArrayList(parameter);
         if (recursively) {
             parameters.addAll(executorDAO.getExecutorParentsAll(parameter));
@@ -41,7 +41,7 @@ public class GetExecutorByRelationHandler extends CommonParamBasedHandler {
             pairs = relationPairDAO.getExecutorsRelationPairsRight(relation, parameters);
         }
         if (pairs.size() == 0) {
-            String option = handlerData.getInputParam(String.class, "missedCaseOption");
+            String option = handlerData.getInputParamValueNotNull(String.class, "missedCaseOption");
             if ("THROW_ERROR".equals(option)) {
                 throw new Exception("Relation " + (inversed ? "!" : "") + "'" + relationName + "' does not defined for " + parameter.getLabel());
             }
@@ -50,7 +50,7 @@ public class GetExecutorByRelationHandler extends CommonParamBasedHandler {
         }
         if (pairs.size() > 1) {
             log.warn(pairs);
-            String option = handlerData.getInputParam(String.class, "multipleCaseOption");
+            String option = handlerData.getInputParamValueNotNull(String.class, "multipleCaseOption");
             if ("THROW_ERROR".equals(option)) {
                 throw new Exception("Relation " + (inversed ? "!" : "") + "'" + relationName + "' has multiple choice for " + parameter.getLabel());
             }

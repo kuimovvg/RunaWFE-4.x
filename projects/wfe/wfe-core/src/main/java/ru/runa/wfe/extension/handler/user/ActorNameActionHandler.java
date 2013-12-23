@@ -38,9 +38,9 @@ public class ActorNameActionHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Long actorCode = handlerData.getInputParam(Long.class, "actorCode", null);
-        String actorLogin = handlerData.getInputParam(String.class, "actorLogin", null);
-        String format = handlerData.getInputParam("format");
+        Long actorCode = handlerData.getInputParamValue(Long.class, "actorCode");
+        String actorLogin = handlerData.getInputParamValue(String.class, "actorLogin");
+        String format = handlerData.getInputParamValueNotNull("format");
         Actor actor;
         if (actorCode != null) {
             actor = executorDAO.getActorByCode(actorCode);

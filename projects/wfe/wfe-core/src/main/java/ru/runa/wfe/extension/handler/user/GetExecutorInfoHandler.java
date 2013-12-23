@@ -10,8 +10,8 @@ public class GetExecutorInfoHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Executor executor = handlerData.getInputParam(Executor.class, "executor");
-        String format = handlerData.getInputParam("format");
+        Executor executor = handlerData.getInputParamValueNotNull(Executor.class, "executor");
+        String format = handlerData.getInputParamValueNotNull("format");
         Object result = PropertyUtils.getProperty(executor, format);
         handlerData.setOutputParam("result", result);
     }

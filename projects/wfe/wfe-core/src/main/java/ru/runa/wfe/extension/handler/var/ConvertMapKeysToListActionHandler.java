@@ -13,7 +13,7 @@ public class ConvertMapKeysToListActionHandler extends CommonParamBasedHandler {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Map<?, ?> map = handlerData.getInputParam(Map.class, "map", null);
+        Map<?, ?> map = handlerData.getInputParamValue(Map.class, "map");
         if (map == null) {
             map = Maps.newHashMap();
         }

@@ -12,12 +12,12 @@ import com.google.common.collect.Maps;
 public class MapAggregateFunctionActionHandler extends CommonParamBasedHandler {
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Map<?, ?> map = handlerData.getInputParam(Map.class, "map", null);
+        Map<?, ?> map = handlerData.getInputParamValue(Map.class, "map");
         if (map == null) {
             map = Maps.newHashMap();
         }
-        String function = handlerData.getInputParam(String.class, "function");
-        String functionOn = handlerData.getInputParam(String.class, "on");
+        String function = handlerData.getInputParamValueNotNull(String.class, "function");
+        String functionOn = handlerData.getInputParamValueNotNull(String.class, "on");
         Collection<?> collection;
         if ("KEYS".equals(functionOn)) {
             collection = map.keySet();

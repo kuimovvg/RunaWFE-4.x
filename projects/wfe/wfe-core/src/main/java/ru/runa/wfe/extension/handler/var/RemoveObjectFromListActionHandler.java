@@ -10,8 +10,8 @@ public class RemoveObjectFromListActionHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        List<?> list = handlerData.getInputParam(List.class, "list");
-        Object object = handlerData.getInputParam(Object.class, "object");
+        List<?> list = handlerData.getInputParamValueNotNull(List.class, "list");
+        Object object = handlerData.getInputParamValueNotNull(Object.class, "object");
         if (object instanceof Collection) {
             list.removeAll((Collection<?>) object);
         } else {

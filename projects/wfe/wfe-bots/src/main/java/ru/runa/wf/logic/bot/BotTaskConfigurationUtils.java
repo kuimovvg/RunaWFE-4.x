@@ -131,7 +131,7 @@ public class BotTaskConfigurationUtils {
     private static void substituteParameter(ParamDef paramDef, ParamDef taskParamDef) {
         if (!Strings.isNullOrEmpty(taskParamDef.getVariableName())) {
             paramDef.setVariableName(taskParamDef.getVariableName());
-        } else if (!Strings.isNullOrEmpty(taskParamDef.getValue())) {
+        } else if (!Strings.isNullOrEmpty(taskParamDef.getValueAsString())) {
             paramDef.setValue(taskParamDef.getValue());
         } else {
             throw new InternalApplicationException("no replacement found for param " + paramDef);
@@ -174,8 +174,8 @@ public class BotTaskConfigurationUtils {
                 }
                 if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
                     element.addAttribute("variable", paramDef.getVariableName());
-                } else if (!Strings.isNullOrEmpty(paramDef.getValue())) {
-                    element.addAttribute("value", paramDef.getValue());
+                } else if (!Strings.isNullOrEmpty(paramDef.getValueAsString())) {
+                    element.addAttribute("value", paramDef.getValueAsString());
                 }
             }
         }
@@ -191,8 +191,8 @@ public class BotTaskConfigurationUtils {
                 }
                 if (!Strings.isNullOrEmpty(paramDef.getVariableName())) {
                     element.addAttribute("variable", paramDef.getVariableName());
-                } else if (!Strings.isNullOrEmpty(paramDef.getValue())) {
-                    element.addAttribute("value", paramDef.getValue());
+                } else if (!Strings.isNullOrEmpty(paramDef.getValueAsString())) {
+                    element.addAttribute("value", paramDef.getValueAsString());
                 }
             }
         }

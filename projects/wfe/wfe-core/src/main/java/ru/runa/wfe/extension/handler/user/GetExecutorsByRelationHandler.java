@@ -25,10 +25,10 @@ public class GetExecutorsByRelationHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        String relationName = handlerData.getInputParam(String.class, "name");
-        Executor parameter = handlerData.getInputParam(Executor.class, "parameter");
-        boolean inversed = handlerData.getInputParam(boolean.class, "inversed");
-        boolean recursively = handlerData.getInputParam(boolean.class, "recursively");
+        String relationName = handlerData.getInputParamValueNotNull(String.class, "name");
+        Executor parameter = handlerData.getInputParamValueNotNull(Executor.class, "parameter");
+        boolean inversed = handlerData.getInputParamValueNotNull(boolean.class, "inversed");
+        boolean recursively = handlerData.getInputParamValueNotNull(boolean.class, "recursively");
         List<Executor> parameters = Lists.newArrayList(parameter);
         if (recursively) {
             parameters.addAll(executorDAO.getExecutorParentsAll(parameter));
