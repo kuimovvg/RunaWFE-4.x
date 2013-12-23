@@ -102,7 +102,7 @@ public class FreemarkerUtil {
                             PluginLogger.logErrorWithoutDialog("FTL tag problem found for " + tagName + "(" + j + "): '" + params[j] + "'", e);
                         }
                         if (!MethodTag.hasTag(tagName)) {
-                            throw new NullPointerException();
+                            throw new NullPointerException(tagName);
                         }
                         if (surroundWithBrackets) {
                             ftlTag.append("\"");
