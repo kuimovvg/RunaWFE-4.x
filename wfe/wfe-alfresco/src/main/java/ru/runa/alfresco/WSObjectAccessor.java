@@ -72,7 +72,7 @@ public class WSObjectAccessor {
             }
         }
         if (includeName) {
-            NamedValue namedValue = Utils.createNamedValue(Constants.PROP_NAME, alfObject.getNewObjectName(typeDesc));
+            NamedValue namedValue = Utils.createNamedValue(Constants.PROP_NAME, alfObject.getObjectName());
             props.put(namedValue.getName(), namedValue);
         }
         return new ArrayList<NamedValue>(props.values()).toArray(new NamedValue[props.size()]);

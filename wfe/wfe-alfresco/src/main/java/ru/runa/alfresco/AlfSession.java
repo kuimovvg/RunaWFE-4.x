@@ -179,9 +179,11 @@ public class AlfSession implements AlfConn {
             AlfSessionWrapper.sessionStart();
             AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
             String typeName = typeDesc.getAlfrescoTypeNameWithNamespace();
-            String name = object.getNewObjectName(typeDesc);
-            log.info("Creating new object " + name);
-            ParentReference docParent = new ParentReference(getSpacesStore(), folderUUID, null, Constants.ASSOC_CONTAINS, name);
+            if (object.getObjectName() == null) {
+                object.updateObjectName();
+            }
+            log.info("Creating new object " + object.getObjectName());
+            ParentReference docParent = new ParentReference(getSpacesStore(), folderUUID, null, Constants.ASSOC_CONTAINS, object.getObjectName());
             NamedValue[] props = new WSObjectAccessor(object).getAlfrescoProperties(typeDesc, true, true);
             CMLCreate createDoc = new CMLCreate("ref1", docParent, null, null, null, typeName, props);
             CML cml = new CML();
