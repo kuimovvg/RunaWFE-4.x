@@ -9,8 +9,8 @@ public class RemoveObjectFromMapActionHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Map map = handlerData.getInputParam(Map.class, "map");
-        Object object = handlerData.getInputParam(Object.class, "key");
+        Map map = handlerData.getInputParamValueNotNull(Map.class, "map");
+        Object object = handlerData.getInputParamValueNotNull(Object.class, "key");
         if (object instanceof Map) {
             for (Object key : ((Map) object).keySet()) {
                 map.remove(key);

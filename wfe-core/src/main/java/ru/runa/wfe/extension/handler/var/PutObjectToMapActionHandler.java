@@ -11,9 +11,9 @@ public class PutObjectToMapActionHandler extends CommonParamBasedHandler {
     @SuppressWarnings("unchecked")
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Map map = handlerData.getInputParam(Map.class, "map", null);
-        Object key = handlerData.getInputParam("key");
-        Object object = handlerData.getInputParam("object", null);
+        Map map = handlerData.getInputParamValue(Map.class, "map");
+        Object key = handlerData.getInputParamValueNotNull("key");
+        Object object = handlerData.getInputParamValue("object");
         if (map == null) {
             map = new HashMap();
         }

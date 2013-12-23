@@ -12,11 +12,11 @@ public class ListAggregateFunctionActionHandler extends CommonParamBasedHandler 
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        List<?> list = handlerData.getInputParam(List.class, "list", null);
+        List<?> list = handlerData.getInputParamValue(List.class, "list");
         if (list == null) {
             list = Lists.newArrayList();
         }
-        String function = handlerData.getInputParam(String.class, "function");
+        String function = handlerData.getInputParamValueNotNull(String.class, "function");
         Object result;
         if ("SUM".equals(function)) {
             result = getSum(list);

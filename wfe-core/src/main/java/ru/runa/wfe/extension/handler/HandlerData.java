@@ -58,11 +58,19 @@ public class HandlerData {
         return outputVariables;
     }
 
-    public <T> T getInputParam(String name) {
+    /**
+     * @return input parameter value or throws exception (in case of parameter
+     *         is not defined or has <code>null</code> value)
+     */
+    public <T> T getInputParamValueNotNull(String name) {
         return (T) paramsDef.getInputParamValueNotNull(name, variableProvider);
     }
 
-    public <T> T getInputParam(String name, T defaultValue) {
+    /**
+     * @return input parameter value or default value (in case of parameter is
+     *         not defined or has <code>null</code> value)
+     */
+    public <T> T getInputParamValue(String name, T defaultValue) {
         Object result = paramsDef.getInputParamValue(name, variableProvider);
         if (result == null) {
             return defaultValue;
@@ -70,14 +78,39 @@ public class HandlerData {
         return (T) result;
     }
 
-    public <T> T getInputParam(Class<T> clazz, String name) {
-        Object object = getInputParam(name);
+    /**
+     * @return input parameter value or <code>null</code>
+     */
+    public <T> T getInputParamValue(String name) {
+        return (T) getInputParamValue(name, null);
+    }
+
+    /**
+     * @return input parameter value casted to specified class or throws
+     *         exception (in case of parameter is not defined or has
+     *         <code>null</code> value)
+     */
+    public <T> T getInputParamValueNotNull(Class<T> clazz, String name) {
+        Object object = getInputParamValueNotNull(name);
         return TypeConversionUtil.convertTo(clazz, object);
     }
 
-    public <T> T getInputParam(Class<T> clazz, String name, T defaultValue) {
-        Object object = getInputParam(name, defaultValue);
+    /**
+     * @return input parameter value casted to specified class or default value
+     *         (in case of parameter is not defined or has <code>null</code>
+     *         value)
+     */
+    public <T> T getInputParamValue(Class<T> clazz, String name, T defaultValue) {
+        Object object = getInputParamValue(name, defaultValue);
         return TypeConversionUtil.convertTo(clazz, object);
+    }
+
+    /**
+     * @return input parameter value casted to specified class or
+     *         <code>null</code>
+     */
+    public <T> T getInputParamValue(Class<T> clazz, String name) {
+        return getInputParamValue(clazz, name, null);
     }
 
     public IVariableProvider getVariableProvider() {

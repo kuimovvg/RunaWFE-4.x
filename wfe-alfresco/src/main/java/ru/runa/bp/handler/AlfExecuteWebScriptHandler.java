@@ -110,7 +110,7 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
     }
 
     protected String getWebScriptUri(AlfHandlerData alfHandlerData) {
-        return alfHandlerData.getInputParam(String.class, "webScriptUri");
+        return alfHandlerData.getInputParamValueNotNull(String.class, "webScriptUri");
     }
 
     protected boolean throwExceptionOnErrorState() {

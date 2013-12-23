@@ -12,12 +12,12 @@ public class AddObjectToListActionHandler extends CommonParamBasedHandler {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        List list = handlerData.getInputParam(List.class, "list", null);
+        List list = handlerData.getInputParamValue(List.class, "list");
         if (list == null) {
             list = new ArrayList();
         }
-        Integer index = handlerData.getInputParam(Integer.class, "index", null);
-        Object object = handlerData.getInputParam(Object.class, "object");
+        Integer index = handlerData.getInputParamValue(Integer.class, "index");
+        Object object = handlerData.getInputParamValueNotNull(Object.class, "object");
         if (object instanceof Collection) {
             if (index != null) {
                 list.addAll(index, (Collection) object);

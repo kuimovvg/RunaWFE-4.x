@@ -20,7 +20,7 @@ public class ConvertGroupsToUsersHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        List<Executor> executors = handlerData.getInputParam(List.class, "input");
+        List<Executor> executors = handlerData.getInputParamValueNotNull(List.class, "input");
         List<Actor> result = Lists.newArrayList();
         for (Executor executor : executors) {
             toActors(result, executor);

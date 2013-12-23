@@ -17,7 +17,7 @@ public class AlfSetContent extends AlfHandler {
 
     @Override
     protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
-        Object data = alfHandlerData.getInputParam("data", null);
+        Object data = alfHandlerData.getInputParamValue("data");
         if (data == null) {
             log.warn("No data found in process, returning...");
             return;
@@ -28,10 +28,10 @@ public class AlfSetContent extends AlfHandler {
             mimetype = ((FileVariable) data).getContentType();
             content = ((FileVariable) data).getData();
         } else {
-            mimetype = alfHandlerData.getInputParam("mimetype");
+            mimetype = alfHandlerData.getInputParamValueNotNull("mimetype");
             content = data.toString().getBytes(Charsets.UTF_8);
         }
-        AlfObject object = session.loadObjectNotNull(alfHandlerData.getInputParam(String.class, "uuid"));
+        AlfObject object = session.loadObjectNotNull(alfHandlerData.getInputParamValueNotNull(String.class, "uuid"));
         session.setContent(object, content, mimetype);
     }
 

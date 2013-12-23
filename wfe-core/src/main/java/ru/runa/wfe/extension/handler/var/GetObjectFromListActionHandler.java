@@ -11,11 +11,11 @@ public class GetObjectFromListActionHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        List<?> list = handlerData.getInputParam(List.class, "list", null);
+        List<?> list = handlerData.getInputParamValue(List.class, "list");
         if (list == null) {
             list = Lists.newArrayList();
         }
-        int index = handlerData.getInputParam(int.class, "index");
+        int index = handlerData.getInputParamValueNotNull(int.class, "index");
         Object object;
         if (list.size() > index) {
             object = list.get(index);

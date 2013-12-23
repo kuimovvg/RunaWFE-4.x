@@ -11,7 +11,7 @@ public class CreateMyDoc extends AlfHandler {
     protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
         MyDoc myDoc = new MyDoc();
         session.createObject(myDoc);
-        FileVariable var = alfHandlerData.getInputParam(FileVariable.class, "file");
+        FileVariable var = alfHandlerData.getInputParamValueNotNull(FileVariable.class, "file");
         session.setContent(myDoc, var.getData(), var.getContentType());
         alfHandlerData.setOutputParam("uuid", myDoc.getUuidRef());
     }
