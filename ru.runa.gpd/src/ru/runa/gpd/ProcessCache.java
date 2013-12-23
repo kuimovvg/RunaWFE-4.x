@@ -152,11 +152,11 @@ public class ProcessCache {
     public static IFile getFirstProcessDefinitionFile(String name) {
         try {
             for (IFile file : IOUtils.getAllProcessDefinitionFiles()) {
-                String processName = file.getFullPath().segment(3);
-                if (name.equals(processName)) {
+                if (name.equals(file.getParent().getName())) {
                     return file;
                 }
             }
+            PluginLogger.logInfo("No process definition found by name: " + name);
         } catch (Exception e) {
             PluginLogger.logError("Parsing process definition failed: " + name, e);
             return null;
