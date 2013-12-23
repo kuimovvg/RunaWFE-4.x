@@ -255,18 +255,20 @@ public class WorkspaceOperations {
     /**
      * @return process editor or <code>null</code>
      */
-    public static ProcessEditorBase openSubprocessDefinition(Subprocess subprocess) {
+    public static void openSubprocessDefinition(Subprocess subprocess) {
         if (Strings.isNullOrEmpty(subprocess.getSubProcessName())) {
-            return null;
+            return;
         }
         if (subprocess.isEmbedded()) {
             SubprocessDefinition definition = subprocess.getProcessDefinition().getEmbeddedSubprocessByName(subprocess.getSubProcessName());
             String id = definition.getId();
             IFile definitionFile = IOUtils.getFile(id + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
-            return openProcessDefinition(definitionFile);
+            openProcessDefinition(definitionFile);
         } else {
             IFile definitionFile = ProcessCache.getFirstProcessDefinitionFile(subprocess.getSubProcessName());
-            return openProcessDefinition(definitionFile);
+            if (definitionFile != null) {
+                openProcessDefinition(definitionFile);
+            }
         }
     }
 

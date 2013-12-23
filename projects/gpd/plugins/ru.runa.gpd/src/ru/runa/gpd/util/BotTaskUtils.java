@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import ru.runa.gpd.BotCache;
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
@@ -167,14 +168,18 @@ public class BotTaskUtils {
      */
     public static String getBotName(Swimlane swimlane) {
         if (swimlane != null && swimlane.getDelegationConfiguration() != null) {
-            SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(swimlane.getDelegationConfiguration());
-            if (swimlaneInitializer instanceof OrgFunctionSwimlaneInitializer) {
-                OrgFunctionSwimlaneInitializer orgFunctionSwimlaneInitializer = (OrgFunctionSwimlaneInitializer) swimlaneInitializer;
-                if (BotTask.SWIMLANE_DEFINITION_NAME.equals(orgFunctionSwimlaneInitializer.getDefinition().getName())) {
-                    if (orgFunctionSwimlaneInitializer.getParameters().size() > 0) {
-                        return orgFunctionSwimlaneInitializer.getParameters().get(0).getValue();
+            try {
+                SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(swimlane.getDelegationConfiguration());
+                if (swimlaneInitializer instanceof OrgFunctionSwimlaneInitializer) {
+                    OrgFunctionSwimlaneInitializer orgFunctionSwimlaneInitializer = (OrgFunctionSwimlaneInitializer) swimlaneInitializer;
+                    if (BotTask.SWIMLANE_DEFINITION_NAME.equals(orgFunctionSwimlaneInitializer.getDefinition().getName())) {
+                        if (orgFunctionSwimlaneInitializer.getParameters().size() > 0) {
+                            return orgFunctionSwimlaneInitializer.getParameters().get(0).getValue();
+                        }
                     }
                 }
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("Unable to get bot name for " + swimlane, e);
             }
         }
         return null;
