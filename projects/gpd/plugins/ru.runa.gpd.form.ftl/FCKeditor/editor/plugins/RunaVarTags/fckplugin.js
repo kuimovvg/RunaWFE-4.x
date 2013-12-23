@@ -27,7 +27,6 @@ VarTags.Add = function( name, type ) {
 
 VarTags.SetupSpan = function( span, name, type ) {
 	if (this.IsTagHaveImage( type )) {
-		//var imgSrc = FCKPlugins.Items[VAR_TAG_PLUGIN_NAME].Path + 'im/' + this.GetTagImage( type );
 		span.style.backgroundImage = 'url("http://localhost:48780/editor/RunaVarTags.java?method=GetTagImage&type=' + type + '")' ;
 	} else {
 		span.style.backgroundColor = '#ffff00' ;
