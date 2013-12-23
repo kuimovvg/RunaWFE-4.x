@@ -422,12 +422,16 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             }
         } else {
             // bug in closing customtag tag
-            return VarTagUtil.normalizeVarTags(html);
+            return VarTagUtil.fromHtml(html);
         }
     }
 
     private String getSourceDocumentHTML() {
-        return sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).get();
+        String html = sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).get();
+        if (!isFtlFormat()) {
+            return VarTagUtil.toHtml(html);
+        }
+        return html;
     }
 
     private class UpdateSaveButtonTimerTask extends TimerTask {
