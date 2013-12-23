@@ -10,11 +10,11 @@ import com.google.common.collect.Maps;
 public class GetObjectFromMapActionHandler extends CommonParamBasedHandler {
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        Map<?, ?> map = handlerData.getInputParam(Map.class, "map", null);
+        Map<?, ?> map = handlerData.getInputParamValue(Map.class, "map");
         if (map == null) {
             map = Maps.newHashMap();
         }
-        Object object = map.get(handlerData.getInputParam("key"));
+        Object object = map.get(handlerData.getInputParamValueNotNull("key"));
         handlerData.setOutputParam("object", object);
     }
 

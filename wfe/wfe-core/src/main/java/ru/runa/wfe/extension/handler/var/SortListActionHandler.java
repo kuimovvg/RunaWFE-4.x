@@ -11,8 +11,8 @@ public class SortListActionHandler extends CommonParamBasedHandler {
     @SuppressWarnings("rawtypes")
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        List<Comparable> list = handlerData.getInputParam(List.class, "list", null);
-        String mode = handlerData.getInputParam(String.class, "mode");
+        List<Comparable> list = handlerData.getInputParamValue(List.class, "list");
+        String mode = handlerData.getInputParamValueNotNull(String.class, "mode");
         Collections.sort(list);
         if ("desc".equals(mode)) {
             Collections.reverse(list);

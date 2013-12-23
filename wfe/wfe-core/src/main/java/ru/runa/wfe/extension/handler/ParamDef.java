@@ -5,8 +5,19 @@ import org.dom4j.Element;
 public class ParamDef {
     private final String name;
     private String variableName;
-    private String value;
+    private Object value;
     private boolean optional;
+
+    public ParamDef(String name, String variableName, boolean optional) {
+        this.name = name;
+        this.variableName = variableName;
+        this.optional = optional;
+    }
+
+    public ParamDef(String name, Object value) {
+        this.name = name;
+        this.value = value;
+    }
 
     public ParamDef(Element element) {
         name = element.attributeValue("name");
@@ -31,11 +42,18 @@ public class ParamDef {
         this.variableName = variableName;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public String getValueAsString() {
+        if (value == null || value instanceof String) {
+            return (String) value;
+        }
+        return value.toString();
+    }
+
+    public void setValue(Object value) {
         this.value = value;
     }
 

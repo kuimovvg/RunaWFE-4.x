@@ -10,9 +10,9 @@ public class SetObjectToListActionHandler extends CommonParamBasedHandler {
     @SuppressWarnings("unchecked")
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        ArrayList list = handlerData.getInputParam(ArrayList.class, "list", null);
-        Object object = handlerData.getInputParam(Object.class, "object");
-        int index = handlerData.getInputParam(int.class, "index");
+        ArrayList list = handlerData.getInputParamValue(ArrayList.class, "list");
+        Object object = handlerData.getInputParamValueNotNull(Object.class, "object");
+        int index = handlerData.getInputParamValueNotNull(int.class, "index");
         if (list == null) {
             list = new ArrayList();
         }
