@@ -21,8 +21,8 @@ public class ChooseGroupTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String varName = getParameterAs(String.class, 0);
-        String view = getParameterAs(String.class, 1);
+        String varName = getParameterAsString(0);
+        String view = getParameterAsString(1);
         List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());
         if ("raw".equals(view)) {
             return groups;

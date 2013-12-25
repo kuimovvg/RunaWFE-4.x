@@ -35,7 +35,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingName();
         Map<String, String> substitutions = new HashMap<String, String>();
@@ -68,14 +68,14 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     }
 
     private String getDisplayName(Actor actor) throws TemplateModelException {
-        String displayFormat = getParameterAs(String.class, 1);
+        String displayFormat = getParameterAsString(1);
         return "login".equals(displayFormat) ? actor.getName() : actor.getFullName();
     }
 
     @Override
     protected JSONAware processAjaxRequest(HttpServletRequest request) throws Exception {
         JSONArray jsonArray = new JSONArray();
-        String displayFormat = getParameterAs(String.class, 1);
+        String displayFormat = getParameterAsString(1);
         Group group = getParameterAs(Group.class, 2);
         boolean byLogin = "login".equals(displayFormat);
         String hint = request.getParameter("hint");

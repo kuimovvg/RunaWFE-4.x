@@ -38,8 +38,8 @@ public class ChooseExecutorFromRelationTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
-        String relationName = getParameterAs(String.class, 1);
+        String variableName = getParameterAsString(0);
+        String relationName = getParameterAsString(1);
         boolean inversed = getParameterAs(boolean.class, 2);
         BatchPresentation batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createNonPaged();
         List<RelationPair> pairs = Delegates.getRelationService().getRelationPairs(user, relationName, batchPresentation);

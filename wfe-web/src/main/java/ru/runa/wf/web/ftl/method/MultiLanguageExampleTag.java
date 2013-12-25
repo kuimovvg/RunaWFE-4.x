@@ -27,7 +27,7 @@ public class MultiLanguageExampleTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String key = getParameterAs(String.class, 0);
+        String key = getParameterAsString(0);
         return Commons.getMessage(key, webHelper.getPageContext());
     }
 

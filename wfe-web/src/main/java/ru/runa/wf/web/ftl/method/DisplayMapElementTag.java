@@ -12,7 +12,7 @@ public class DisplayMapElementTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         Map<?, ?> map = (Map<?, ?>) variable.getValue();
         Object key = getParameterAs(Object.class, 1);

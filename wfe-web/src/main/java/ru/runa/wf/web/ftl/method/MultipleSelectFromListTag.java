@@ -17,8 +17,8 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
-        List<Object> list = getParameterVariable(List.class, 1, null);
+        String variableName = getParameterAsString(0);
+        List<Object> list = getParameterVariableValue(List.class, 1, null);
         if (list == null) {
             list = Lists.newArrayList();
         }
@@ -37,7 +37,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
                 optionLabel = selectable.getLabel();
             } else if (option instanceof Executor) {
                 Executor executor = (Executor) option;
-                optionValue = "ID"+executor.getId();
+                optionValue = "ID" + executor.getId();
                 optionLabel = executor.getLabel();
             } else {
                 optionValue = String.valueOf(option);
@@ -63,7 +63,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
     public Object handle(Object source) throws TemplateModelException {
         if (source instanceof List) {
             List<String> valuesList = (List<String>) source;
-            List<ISelectable> list = getParameterVariableNotNull(List.class, 1);
+            List<ISelectable> list = getParameterVariableValueNotNull(List.class, 1);
             List<ISelectable> selectedOptions = Lists.newArrayListWithExpectedSize(valuesList.size());
             for (String selectedValue : valuesList) {
                 for (ISelectable option : list) {

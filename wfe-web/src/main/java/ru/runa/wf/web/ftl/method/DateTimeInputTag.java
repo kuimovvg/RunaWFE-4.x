@@ -40,8 +40,8 @@ public class DateTimeInputTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
-        String view = getParameterAs(String.class, 1);
+        String variableName = getParameterAsString(0);
+        String view = getParameterAsString(1);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         Date date = (Date) variable.getValue();
         String html = "";
