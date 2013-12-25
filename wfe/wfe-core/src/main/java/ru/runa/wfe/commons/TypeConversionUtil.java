@@ -87,8 +87,8 @@ public class TypeConversionUtil {
             if (object instanceof String) {
                 String s = (String) object;
                 if (s.length() == 0) {
-                    // ??? treat as null
-                    // return Defaults.defaultValue(classConvertTo);
+                    // treating as null
+                    return Defaults.defaultValue(classConvertTo);
                 }
                 // try to use 'valueOf(String)'
                 try {
@@ -250,7 +250,7 @@ public class TypeConversionUtil {
         }
         return result;
     }
-    
+
     public static <T extends Object> T getNotNullValue(Class<T> clazz) {
         if (List.class.isAssignableFrom(clazz)) {
             return (T) Lists.newArrayList();

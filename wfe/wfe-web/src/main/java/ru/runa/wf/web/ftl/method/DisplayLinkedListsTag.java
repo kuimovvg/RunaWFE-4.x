@@ -18,12 +18,12 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         List<String> variableNames = Lists.newArrayList();
         List<String> componentFormatClassNames = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
-        String firstParameter = getParameterAs(String.class, 0);
+        String firstParameter = getParameterAsString(0);
         boolean componentView = !"false".equals(firstParameter);
         int i = ("false".equals(firstParameter) || "true".equals(firstParameter)) ? 1 : 0;
         int rowsCount = 0;
         while (true) {
-            String variableName = getParameterAs(String.class, i);
+            String variableName = getParameterAsString(i);
             if (variableName == null) {
                 break;
             }
@@ -54,7 +54,8 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         return "-";
     }
 
-    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames, boolean componentView, int row) {
+    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames,
+            boolean componentView, int row) {
         html.append("<tr row=\"").append(row).append("\">");
         for (int column = 0; column < variableNames.size(); column++) {
             Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
@@ -64,7 +65,8 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         html.append("</tr>");
     }
 
-    protected void renderColumn(StringBuffer html, String variableName, String componentClassName, Object value, boolean componentView, int row, int column) {
+    protected void renderColumn(StringBuffer html, String variableName, String componentClassName, Object value, boolean componentView, int row,
+            int column) {
         String inputName = variableName + "[" + row + "]";
         html.append("<td column=\"").append(column).append("\">");
         html.append(getComponentOutput(inputName, componentClassName, value, componentView, row));

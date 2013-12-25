@@ -33,9 +33,8 @@ public class FileTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
-        String view = getParameterAs(String.class, 1);
-
+        String variableName = getParameterAsString(0);
+        String view = getParameterAsString(1);
         FileVariable fileVariable = variableProvider.getValueNotNull(FileVariable.class, variableName);
         if ("content".equals(view)) {
             return new String(fileVariable.getData(), Charsets.UTF_8);

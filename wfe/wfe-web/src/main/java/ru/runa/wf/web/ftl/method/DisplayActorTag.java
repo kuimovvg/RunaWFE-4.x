@@ -39,7 +39,7 @@ public class DisplayActorTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String actorVarName = getParameterAs(String.class, 0);
+        String actorVarName = getParameterAsString(0);
         Object actorIdentity = variableProvider.getValue(actorVarName);
         if (actorIdentity == null) {
             LogFactory.getLog(getClass()).error("No variable " + actorVarName + " in " + variableProvider.getProcessId());
@@ -50,7 +50,7 @@ public class DisplayActorTag extends FreemarkerTag {
             return "<p style='color: blue;'>" + executor.getName() + "</p>";
         }
         Actor actor = (Actor) executor;
-        String view = getParameterAs(String.class, 1);
+        String view = getParameterAsString(1);
         if ("fullname".equals(view)) {
             return actor.getFullName();
         } else if ("shortname".equals(view)) {

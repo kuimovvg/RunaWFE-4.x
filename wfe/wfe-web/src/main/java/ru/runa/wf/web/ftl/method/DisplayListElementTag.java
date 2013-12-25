@@ -14,10 +14,10 @@ public class DisplayListElementTag extends FreemarkerTag {
     @SuppressWarnings("unchecked")
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         List<Object> list = (List<Object>) variable.getValue();
-        int index = getParameterAs(Integer.class, 1);
+        int index = getParameterAs(int.class, 1);
         Object object = null;
         if (index < list.size()) {
             object = list.get(index);

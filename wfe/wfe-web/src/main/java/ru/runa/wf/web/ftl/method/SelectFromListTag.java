@@ -18,8 +18,8 @@ public class SelectFromListTag extends FreemarkerTag implements FtlTagVariableHa
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
-        List<Object> list = getParameterVariable(List.class, 1, null);
+        String variableName = getParameterAsString(0);
+        List<Object> list = getParameterVariableValue(List.class, 1, null);
         if (list == null) {
             list = Lists.newArrayList();
         }
@@ -39,7 +39,7 @@ public class SelectFromListTag extends FreemarkerTag implements FtlTagVariableHa
                 optionLabel = selectable.getLabel();
             } else if (option instanceof Executor) {
                 Executor executor = (Executor) option;
-                optionValue = "ID"+executor.getId();
+                optionValue = "ID" + executor.getId();
                 optionLabel = executor.getLabel();
             } else {
                 optionValue = String.valueOf(option);
@@ -59,7 +59,7 @@ public class SelectFromListTag extends FreemarkerTag implements FtlTagVariableHa
     public Object handle(Object source) throws TemplateModelException {
         if (source instanceof String) {
             String value = (String) source;
-            List<ISelectable> list = getParameterVariableNotNull(List.class, 1);
+            List<ISelectable> list = getParameterVariableValueNotNull(List.class, 1);
             for (ISelectable option : list) {
                 if (Objects.equal(value, option.getValue())) {
                     return option;

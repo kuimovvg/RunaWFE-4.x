@@ -25,7 +25,7 @@ public class EditListTag extends AjaxFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingName();
         String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
