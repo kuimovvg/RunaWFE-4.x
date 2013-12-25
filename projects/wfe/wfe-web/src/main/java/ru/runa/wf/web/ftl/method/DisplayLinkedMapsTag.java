@@ -19,11 +19,11 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
         List<String> variableNames = Lists.newArrayList();
         List<String> componentFormatClassNames = Lists.newArrayList();
         List<Map<?, ?>> maps = Lists.newArrayList();
-        String firstParameter = getParameterAs(String.class, 0);
+        String firstParameter = getParameterAsString(0);
         boolean componentView = "true".equals(firstParameter);
         int i = ("false".equals(firstParameter) || "true".equals(firstParameter)) ? 1 : 0;
         while (true) {
-            String variableName = getParameterAs(String.class, i);
+            String variableName = getParameterAsString(i);
             if (variableName == null) {
                 break;
             }

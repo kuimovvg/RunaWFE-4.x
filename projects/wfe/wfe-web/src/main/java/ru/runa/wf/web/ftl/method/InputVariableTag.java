@@ -14,7 +14,7 @@ public class InputVariableTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String formatClassName = variable.getFormatClassNameNotNull();
         Object value = variableProvider.getValue(variableName);

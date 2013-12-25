@@ -39,7 +39,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         int i = 3;
         int rowsCount = 0;
         while (true) {
-            String variableName = getParameterAs(String.class, i);
+            String variableName = getParameterAsString(i);
             if (variableName == null) {
                 break;
             }
@@ -121,8 +121,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         if (enabled) {
             return ViewUtil.getComponentInput(user, webHelper, inputName, componentFormatClassName, value);
         }
-        String html = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), 
-                inputName, componentFormatClassName, value);
+        String html = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), inputName, componentFormatClassName, value);
         html += ViewUtil.getHiddenInput(inputName, componentFormatClassName, value);
         return html;
     }

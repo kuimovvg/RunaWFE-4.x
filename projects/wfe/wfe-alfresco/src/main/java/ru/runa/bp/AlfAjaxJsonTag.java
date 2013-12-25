@@ -12,6 +12,8 @@ import ru.runa.alfresco.AlfSessionWrapper;
 import ru.runa.alfresco.ConnectionException;
 import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 
+import com.google.common.base.Strings;
+
 /**
  * Base class for RunaWFE ajax freemarker tag to work with JSON format.
  * 
@@ -54,7 +56,7 @@ public abstract class AlfAjaxJsonTag extends AjaxJsonFreemarkerTag {
     }
 
     protected boolean isValid(String varValue) {
-        return varValue != null && varValue.length() > 0;
+        return !Strings.isNullOrEmpty(varValue);
     }
 
 }

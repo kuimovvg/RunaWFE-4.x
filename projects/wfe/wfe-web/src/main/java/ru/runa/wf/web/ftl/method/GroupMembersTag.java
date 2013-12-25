@@ -30,9 +30,9 @@ public class GroupMembersTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         Group group = getParameterAs(Group.class, 1);
-        String view = getParameterAs(String.class, 2);
+        String view = getParameterAsString(2);
         List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, group);
         if ("all".equals(view)) {
             return ViewUtil.createExecutorSelect(variableName, actors, user.getActor(), true, true);

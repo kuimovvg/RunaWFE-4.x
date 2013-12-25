@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.TypeConversionUtil;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
@@ -47,7 +46,7 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
      */
     public String getQualifier() {
         try {
-            return getParameterAs(String.class, 0);
+            return getParameterAsString(0);
         } catch (TemplateModelException e) {
             return null;
         }
@@ -56,32 +55,6 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
     @Override
     protected final Object executeTag() throws Exception {
         return renderRequest();
-    }
-
-    /**
-     * @deprecated use variableProvider.getValue(varName)
-     */
-    @Deprecated
-    protected String getSavedValue(String varName) {
-        return getSavedValue(String.class, varName);
-    }
-
-    /**
-     * @deprecated use variableProvider.getValue(Class<T> clazz, String varName)
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    protected <T extends Object> T getSavedValue(Class<T> clazz, String varName) {
-        Map<String, String[]> map = (Map<String, String[]>) webHelper.getRequest().getAttribute("UserDefinedVariables");
-        Object o = null;
-        if (map != null && map.containsKey(varName)) {
-            if (clazz.isArray()) {
-                o = map.get(varName);
-            } else {
-                o = map.get(varName)[0];
-            }
-        }
-        return TypeConversionUtil.convertTo(clazz, o);
     }
 
     /**

@@ -37,8 +37,8 @@ public class ChooseActorTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String actorVarName = getParameterAs(String.class, 0);
-        String view = getParameterAs(String.class, 1);
+        String actorVarName = getParameterAsString(0);
+        String view = getParameterAsString(1);
         if ("all".equals(view)) {
             WfVariable variable = variableProvider.getVariableNotNull(actorVarName);
             return ViewUtil.createExecutorSelect(user, variable);

@@ -24,7 +24,6 @@ import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
 import freemarker.template.TemplateModelException;
 
-
 /**
  * shared code with {@link DisplayVariableTag}.
  * 
@@ -36,7 +35,7 @@ public class ViewListTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingName();
         String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
@@ -49,8 +48,8 @@ public class ViewListTag extends FreemarkerTag {
         for (int row = 0; row < list.size(); row++) {
             Object value = list.get(row);
             html.append("<div row=\"").append(row).append("\">");
-            html.append(ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), 
-                    variableName + "[" + row + "]", elementFormatClassName, value));
+            html.append(ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName + "[" + row + "]",
+                    elementFormatClassName, value));
             html.append("</div>");
         }
         html.append("</span>");

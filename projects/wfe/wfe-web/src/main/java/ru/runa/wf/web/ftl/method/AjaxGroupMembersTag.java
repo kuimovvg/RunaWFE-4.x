@@ -45,9 +45,9 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
-        String groupVariableName = getParameterAs(String.class, 0);
+        String groupVariableName = getParameterAsString(0);
         String groupScriptingVariableName = variableProvider.getVariableNotNull(groupVariableName).getDefinition().getScriptingName();
-        String userVariableName = getParameterAs(String.class, 1);
+        String userVariableName = getParameterAsString(1);
         String userScriptingVariableName = variableProvider.getVariableNotNull(userVariableName).getDefinition().getScriptingName();
         Map<String, String> substitutions = Maps.newHashMap();
         substitutions.put("groupSelectorId", groupScriptingVariableName);

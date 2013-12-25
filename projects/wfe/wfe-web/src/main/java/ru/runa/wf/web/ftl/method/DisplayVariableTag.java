@@ -10,7 +10,7 @@ public class DisplayVariableTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         boolean componentView = getParameterAs(boolean.class, 1);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         if (componentView) {
@@ -19,8 +19,8 @@ public class DisplayVariableTag extends FreemarkerTag {
                 tag.initChained(this);
                 return tag.executeTag();
             }
-            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, 
-                       variable.getFormatClassNameNotNull(), variable.getValue());
+            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, variable.getFormatClassNameNotNull(),
+                    variable.getValue());
         } else {
             String html = "<span class=\"displayVariable\">";
             html += ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variable);

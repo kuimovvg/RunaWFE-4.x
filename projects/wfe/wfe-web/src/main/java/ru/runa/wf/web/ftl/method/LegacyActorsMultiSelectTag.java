@@ -32,7 +32,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
 
     @Override
     protected String renderRequest() throws TemplateModelException {
-        String variableName = getParameterAs(String.class, 0);
+        String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingName();
         Map<String, String> substitutions = Maps.newHashMap();
@@ -49,9 +49,9 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
 
     @Override
     public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String displayFormat = getParameterAs(String.class, 1);
-        String resultFormat = getParameterAs(String.class, 2);
-        String groupName = getParameterAs(String.class, 3);
+        String displayFormat = getParameterAsString(1);
+        String resultFormat = getParameterAsString(2);
+        String groupName = getParameterAsString(3);
         boolean byLogin = "login".equals(displayFormat);
         StringBuffer json = new StringBuffer("[");
         String hint = request.getParameter("hint");

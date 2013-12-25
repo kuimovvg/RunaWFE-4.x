@@ -43,7 +43,7 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
         try {
             this.arguments = arguments;
             if (targetProcess) {
-                Long targetProcessId = getParameterVariableNotNull(Long.class, 0);
+                Long targetProcessId = getParameterVariableValueNotNull(Long.class, 0);
                 this.arguments.remove(0);
                 this.variableProvider = ((AbstractVariableProvider) variableProvider).getSameProvider(targetProcessId);
             }
@@ -60,6 +60,10 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
 
     protected abstract Object executeTag() throws Exception;
 
+    protected String getParameterAsString(int i) throws TemplateModelException {
+        return getParameterAs(String.class, i);
+    }
+
     protected <T> T getParameterAs(Class<T> clazz, int i) throws TemplateModelException {
         Object paramValue = null;
         if (i < arguments.size()) {
@@ -68,13 +72,13 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
         return TypeConversionUtil.convertTo(clazz, paramValue);
     }
 
-    protected <T> T getParameterVariableNotNull(Class<T> clazz, int i) throws TemplateModelException {
-        String variableName = getParameterAs(String.class, i);
+    protected <T> T getParameterVariableValueNotNull(Class<T> clazz, int i) throws TemplateModelException {
+        String variableName = getParameterAsString(i);
         return variableProvider.getValueNotNull(clazz, variableName);
     }
 
-    protected <T> T getParameterVariable(Class<T> clazz, int i, T defaultValue) throws TemplateModelException {
-        String variableName = getParameterAs(String.class, i);
+    protected <T> T getParameterVariableValue(Class<T> clazz, int i, T defaultValue) throws TemplateModelException {
+        String variableName = getParameterAsString(i);
         T value = variableProvider.getValue(clazz, variableName);
         if (value == null) {
             return defaultValue;
