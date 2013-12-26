@@ -124,16 +124,16 @@ public class Mappings extends Settings {
         typeDesc.setAspect(typeAnn.aspect());
         for (Field field : clazz.getDeclaredFields()) {
             String fieldName = field.getName();
-            AlfSerializerDesc serializer = null;
+            AlfPropertyDesc serializer = null;
             Property propertyAnn = field.getAnnotation(Property.class);
             if (propertyAnn != null) {
                 // {http://www.alfresco.org/model/dictionary/1.0}noderef
                 boolean reference = IAlfObject.class.isAssignableFrom(field.getType());
-                serializer = AlfSerializerDesc.newProp(namespace, fieldName, propertyAnn, reference);
+                serializer = AlfPropertyDesc.newProp(namespace, fieldName, propertyAnn, reference);
             }
             Assoc assocAnn = field.getAnnotation(Assoc.class);
             if (assocAnn != null) {
-                serializer = AlfSerializerDesc.newAssoc(namespace, fieldName, assocAnn);
+                serializer = AlfPropertyDesc.newAssoc(namespace, fieldName, assocAnn);
             }
             if (serializer != null) {
                 typeDesc.addPropertyMapping(serializer);
@@ -155,7 +155,7 @@ public class Mappings extends Settings {
                 if (result == null) {
                     result = typeDesc;
                 } else {
-                    for (AlfSerializerDesc alfPropertyDesc : typeDesc.getAllDescs()) {
+                    for (AlfPropertyDesc alfPropertyDesc : typeDesc.getAllDescs()) {
                         result.addPropertyMapping(alfPropertyDesc);
                     }
                 }
@@ -164,27 +164,27 @@ public class Mappings extends Settings {
         } while (clazz != null);
     }
 
-    public static AlfTypeDesc getMapping(Class<?> clazz, AlfConn alfConn) {
+    public static AlfTypeDesc getMapping(Class<?> clazz, AlfConnection alfConnection) {
         clazz = ClassUtils.getImplClass(clazz);
         loadMappings();
         AlfTypeDesc typeDesc = MAPPINGS_BY_CLASS.get(clazz);
         if (typeDesc == null) {
             throw new InternalApplicationException("No mapping found by " + clazz);
         }
-        if (alfConn != null) {
-            alfConn.initializeTypeDefinition(typeDesc);
+        if (alfConnection != null) {
+            alfConnection.initializeTypeDefinition(typeDesc);
         }
         return typeDesc;
     }
 
-    public static AlfTypeDesc getMapping(String typeName, AlfConn alfConn) {
+    public static AlfTypeDesc getMapping(String typeName, AlfConnection alfConnection) {
         loadMappings();
         AlfTypeDesc typeDesc = MAPPINGS_BY_NAMESPACED_TYPE_NAME.get(typeName);
         if (typeDesc == null) {
             throw new InternalApplicationException("No mapping found by type name " + typeName);
         }
-        if (alfConn != null) {
-            alfConn.initializeTypeDefinition(typeDesc);
+        if (alfConnection != null) {
+            alfConnection.initializeTypeDefinition(typeDesc);
         }
         return typeDesc;
     }

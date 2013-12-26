@@ -7,9 +7,9 @@ import java.util.Map;
 import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.webservice.types.NamedValue;
 
-import ru.runa.alfresco.AlfSerializerDesc;
-import ru.runa.alfresco.AlfSession;
-import ru.runa.alfresco.WSObjectAccessor;
+import ru.runa.alfresco.AlfPropertyDesc;
+import ru.runa.alfresco.RemoteAlfConnection;
+import ru.runa.alfresco.RemoteAlfObjectAccessor;
 import ru.runa.bp.AlfHandler;
 import ru.runa.bp.AlfHandlerData;
 import ru.runa.wfe.commons.CalendarUtil;
@@ -19,7 +19,7 @@ public class AlfGetObjectPropertiesAsStringsByUuid extends AlfHandler {
     private static final String DEFAULT_FORMAT_CLASS = String.class.getName();
 
     @Override
-    protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+    protected void executeAction(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception {
         Map<String, ParamDef> outputParams = alfHandlerData.getOutputParams();
         String uuid = alfHandlerData.getInputParamValue(String.class, "uuid");
         if (uuid != null) {
@@ -40,9 +40,9 @@ public class AlfGetObjectPropertiesAsStringsByUuid extends AlfHandler {
     }
 
     /**
-     * @see WSObjectAccessor
+     * @see RemoteAlfObjectAccessor
      */
-    private Object getProperty(NamedValue prop, AlfSerializerDesc desc, String targetClassName) throws Exception {
+    private Object getProperty(NamedValue prop, AlfPropertyDesc desc, String targetClassName) throws Exception {
         String stringValue = prop.getValue();
         Class<?> targetClass = Class.forName(targetClassName);
         if (stringValue == null) {

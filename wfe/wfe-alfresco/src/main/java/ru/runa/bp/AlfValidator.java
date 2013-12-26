@@ -1,7 +1,7 @@
 package ru.runa.bp;
 
-import ru.runa.alfresco.AlfSession;
-import ru.runa.alfresco.AlfSessionWrapper;
+import ru.runa.alfresco.RemoteAlfConnection;
+import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.wfe.validation.FieldValidator;
 
 /**
@@ -11,15 +11,15 @@ import ru.runa.wfe.validation.FieldValidator;
  */
 public abstract class AlfValidator extends FieldValidator {
 
-    protected abstract void validate(AlfSession session);
+    protected abstract void validate(RemoteAlfConnection session);
 
     @Override
     public final void validate() {
-        new AlfSessionWrapper<Object>() {
+        new RemoteAlfConnector<Object>() {
 
             @Override
             protected Object code() throws Exception {
-                validate(session);
+                validate(alfConnection);
                 return null;
             }
 

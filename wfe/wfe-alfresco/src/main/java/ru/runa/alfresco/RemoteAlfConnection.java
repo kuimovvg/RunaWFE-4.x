@@ -3,6 +3,7 @@ package ru.runa.alfresco;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,10 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.webservice.authoring.VersionResult;
 import org.alfresco.webservice.dictionary.ClassPredicate;
 import org.alfresco.webservice.repository.Association;
@@ -59,15 +63,16 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
- * Connector implementation using Alfresco web services.
+ * Connection implementation using Alfresco web services.
  * 
  * @author dofs
  */
 @SuppressWarnings("unchecked")
-public class AlfSession implements AlfConn {
-    private static Log log = LogFactory.getLog(AlfSession.class);
+public class RemoteAlfConnection implements AlfConnection {
+    private static Log log = LogFactory.getLog(RemoteAlfConnection.class);
     private static CacheManager cacheManager = null;
 
     static {
@@ -121,9 +126,9 @@ public class AlfSession implements AlfConn {
 
     public void addAspect(AlfObject object, String aspectTypeName) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
-            AlfTypeDesc desc = Mappings.getMapping(aspectTypeName, this);
-            NamedValue[] props = new WSObjectAccessor(object).getAlfrescoProperties(desc, true, false);
+            RemoteAlfConnector.sessionStart();
+            AlfTypeDesc typeDesc = Mappings.getMapping(aspectTypeName, this);
+            NamedValue[] props = new RemoteAlfObjectAccessor(typeDesc, object).getProperties(true, false);
             CMLAddAspect addAspect = new CMLAddAspect(aspectTypeName, props, getPredicate(object), null);
             CML cml = new CML();
             cml.setAddAspect(new CMLAddAspect[] { addAspect });
@@ -131,13 +136,13 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
     public void removeAspect(AlfObject object, String aspectTypeName) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             CMLRemoveAspect removeAspect = new CMLRemoveAspect(aspectTypeName, getPredicate(object), null);
             CML cml = new CML();
             cml.setRemoveAspect(new CMLRemoveAspect[] { removeAspect });
@@ -145,13 +150,13 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
     public String createFolder(String rootFolderUUID, String folderName) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             ParentReference docParent = new ParentReference(getSpacesStore(), rootFolderUUID, null, Constants.ASSOC_CONTAINS, folderName);
             NamedValue[] props = new NamedValue[] { Utils.createNamedValue(Constants.PROP_NAME, folderName) };
             CMLCreate createDoc = new CMLCreate("ref1", docParent, null, ContentModel.ASSOC_CONTAINS.toString(), folderName,
@@ -165,10 +170,11 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
+    @Override
     public void createObject(AlfObject object) throws InternalApplicationException {
         String folderUUID = Mappings.getFolderUUID(object.getClass());
         createObject(folderUUID, object);
@@ -176,7 +182,7 @@ public class AlfSession implements AlfConn {
 
     public void createObject(String folderUUID, AlfObject object) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
             String typeName = typeDesc.getAlfrescoTypeNameWithNamespace();
             if (object.getObjectName() == null) {
@@ -184,7 +190,7 @@ public class AlfSession implements AlfConn {
             }
             log.info("Creating new object " + object.getObjectName());
             ParentReference docParent = new ParentReference(getSpacesStore(), folderUUID, null, Constants.ASSOC_CONTAINS, object.getObjectName());
-            NamedValue[] props = new WSObjectAccessor(object).getAlfrescoProperties(typeDesc, true, true);
+            NamedValue[] props = new RemoteAlfObjectAccessor(typeDesc, object).getProperties(true, true);
             CMLCreate createDoc = new CMLCreate("ref1", docParent, null, null, null, typeName, props);
             CML cml = new CML();
             cml.setCreate(new CMLCreate[] { createDoc });
@@ -200,13 +206,13 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
     public void updateVersion(AlfObject object, String comment) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
             NamedValue[] comments = new NamedValue[1];
             comments[0] = new NamedValue("description", false, comment, null);
@@ -216,13 +222,14 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
-    public void addAssociation(AlfObject source, AlfObject target, String associationName) throws InternalApplicationException {
+    public void addAssociation(AlfObject source, AlfObject target, QName associationTypeName) {
         try {
-            AlfSessionWrapper.sessionStart();
+            String associationName = associationTypeName.toString();
+            RemoteAlfConnector.sessionStart();
             CMLCreateAssociation createAssociation = new CMLCreateAssociation(getPredicate(source), null, getPredicate(target), null, associationName);
             CML cml = new CML();
             cml.setCreateAssociation(new CMLCreateAssociation[] { createAssociation });
@@ -231,13 +238,15 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
-    public void addChildAssociation(AlfObject source, AlfObject target, String associationName) throws InternalApplicationException {
+    @Override
+    public void addChildAssociation(AlfObject source, AlfObject target, QName associationTypeName) {
         try {
-            AlfSessionWrapper.sessionStart();
+            String associationName = associationTypeName.toString();
+            RemoteAlfConnector.sessionStart();
             Reference reference = getReference(source);
             ParentReference parentReference = new ParentReference(reference.getStore(), reference.getUuid(), null, associationName, associationName);
 
@@ -253,7 +262,7 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
@@ -273,9 +282,9 @@ public class AlfSession implements AlfConn {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void loadAssociation(String uuidRef, Collection collection, AlfSerializerDesc desc) throws InternalApplicationException {
+    public void loadAssociation(String uuidRef, Collection collection, AlfPropertyDesc desc) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             Reference reference = getReference(uuidRef, null);
             QueryResult queryResult;
             boolean filter = true;
@@ -314,7 +323,7 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
@@ -322,14 +331,14 @@ public class AlfSession implements AlfConn {
     public boolean updateObjectAssociations(AlfObject object) throws InternalApplicationException {
         try {
             boolean updated = false;
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             CML cml = new CML();
             List<CMLRemoveChild> removeChilds = new ArrayList<CMLRemoveChild>();
             List<CMLRemoveAssociation> removeAssociations = new ArrayList<CMLRemoveAssociation>();
             List<CMLAddChild> addChilds = new ArrayList<CMLAddChild>();
             List<CMLCreateAssociation> createAssociations = new ArrayList<CMLCreateAssociation>();
-            Map<AlfSerializerDesc, List<String>> assocToDelete = object.getAssocToDelete();
-            for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToDelete.entrySet()) {
+            Map<AlfPropertyDesc, List<String>> assocToDelete = object.getAssocToDelete();
+            for (Map.Entry<AlfPropertyDesc, List<String>> entry : assocToDelete.entrySet()) {
                 for (String uuidRef : entry.getValue()) {
                     log.debug("Removing assoc " + uuidRef + " from " + object);
                     Predicate where = getPredicate(uuidRef);
@@ -344,8 +353,8 @@ public class AlfSession implements AlfConn {
                     updated = true;
                 }
             }
-            Map<AlfSerializerDesc, List<String>> assocToCreate = object.getAssocToCreate();
-            for (Map.Entry<AlfSerializerDesc, List<String>> entry : assocToCreate.entrySet()) {
+            Map<AlfPropertyDesc, List<String>> assocToCreate = object.getAssocToCreate();
+            for (Map.Entry<AlfPropertyDesc, List<String>> entry : assocToCreate.entrySet()) {
                 for (String uuidRef : entry.getValue()) {
                     Reference reference = getReference(uuidRef, null);
                     AlfObject target = loadObject(reference, true);
@@ -384,7 +393,7 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
@@ -404,7 +413,7 @@ public class AlfSession implements AlfConn {
 
     private <T extends AlfObject> T loadObject(Predicate where, boolean throwError) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             Node node = WebServiceFactory.getRepositoryService().get(where)[0];
             return (T) buildObject(node.getType(), node.getReference(), node.getProperties(), node.getAspects());
         } catch (Exception e) {
@@ -414,13 +423,13 @@ public class AlfSession implements AlfConn {
             }
             return null;
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
     public NamedValue[] loadObjectProperties(String uuidRef) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             Predicate where = getPredicate(uuidRef);
             Node node = WebServiceFactory.getRepositoryService().get(where)[0];
             return node.getProperties();
@@ -429,7 +438,7 @@ public class AlfSession implements AlfConn {
             log.warn("Unable to load object properties " + uuidRef, e);
             return null;
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
@@ -475,7 +484,7 @@ public class AlfSession implements AlfConn {
         return reference.getStore().getScheme() + "://" + reference.getStore().getAddress() + "/" + reference.getUuid();
     }
 
-    public <T extends AlfObject> T buildObject(String typeName, Reference reference, NamedValue[] props, String[] aspects) {
+    public <T extends AlfObject> T buildObject(String typeName, Reference reference, NamedValue[] properties, String[] aspects) {
         try {
             AlfTypeDesc typeDesc = Mappings.getMapping(typeName, this);
             Cache cache = getCache(typeDesc.getJavaClassName());
@@ -486,13 +495,8 @@ public class AlfSession implements AlfConn {
                 }
             }
             T object = (T) AlfObjectFactory.create(typeDesc.getJavaClassName(), this, getUuidRef(reference));
-            WSObjectAccessor accessor = new WSObjectAccessor(object);
-            for (NamedValue prop : props) {
-                AlfSerializerDesc propertyDesc = typeDesc.getPropertyDescByTypeName(prop.getName());
-                if (propertyDesc != null) {
-                    accessor.setProperty(propertyDesc, prop);
-                }
-            }
+            RemoteAlfObjectAccessor accessor = new RemoteAlfObjectAccessor(typeDesc, object);
+            accessor.setProperties(properties);
             object.markPropertiesInitialState(typeDesc);
             if (cache != null) {
                 cache.put(new Element(object.getUuidRef(), object));
@@ -506,7 +510,7 @@ public class AlfSession implements AlfConn {
 
     public <T extends AlfObject> List<T> getVersionedObjects(T object, int limit) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             Predicate where = getPredicate(object);
             VersionHistory history = WebServiceFactory.getAuthoringService().getVersionHistory(where.getNodes()[0]);
             Version[] versions = history.getVersions();
@@ -524,17 +528,17 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
     @Override
     public boolean updateObject(AlfObject object, boolean force) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             AlfTypeDesc typeDesc = Mappings.getMapping(object.getClass(), this);
-            WSObjectAccessor accessor = new WSObjectAccessor(object);
-            NamedValue[] contentProps = accessor.getAlfrescoProperties(typeDesc, force, false);
+            RemoteAlfObjectAccessor accessor = new RemoteAlfObjectAccessor(typeDesc, object);
+            NamedValue[] contentProps = accessor.getProperties(force, false);
             if (contentProps.length == 0) {
                 log.info("Ignored object " + object + " to update (0) fields");
                 return false;
@@ -557,7 +561,7 @@ public class AlfSession implements AlfConn {
             Thread.dumpStack();
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
@@ -571,16 +575,22 @@ public class AlfSession implements AlfConn {
         return updated;
     }
 
-    public void setContent(AlfObject object, byte[] content, String mimetype) throws InternalApplicationException {
+    @Override
+    public void setContent(AlfObject object, String content, String mimetype) {
+        setContent(object, content.getBytes(Charsets.UTF_8), mimetype);
+    }
+
+    @Override
+    public void setContent(AlfObject object, byte[] content, String mimetype) {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             log.info("Setting content to " + object);
             WebServiceFactory.getContentService().write(getReference(object), Constants.PROP_CONTENT, content,
                     new ContentFormat(mimetype, Charsets.UTF_8.name()));
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
@@ -604,7 +614,7 @@ public class AlfSession implements AlfConn {
     public void deleteObject(Reference reference) throws InternalApplicationException {
         if (reference != null) {
             try {
-                AlfSessionWrapper.sessionStart();
+                RemoteAlfConnector.sessionStart();
                 log.info("Deleting object " + reference.getUuid());
                 Predicate predicate = new Predicate(new Reference[] { reference }, reference.getStore(), null);
                 CMLDelete delete = new CMLDelete(predicate);
@@ -614,7 +624,7 @@ public class AlfSession implements AlfConn {
             } catch (Exception e) {
                 throw propagate(e);
             } finally {
-                AlfSessionWrapper.sessionEnd();
+                RemoteAlfConnector.sessionEnd();
             }
         }
     }
@@ -628,9 +638,21 @@ public class AlfSession implements AlfConn {
         return null;
     }
 
+    @Override
+    public <T extends AlfObject> T findUniqueObject(Search search) {
+        List<T> objects = findObjects(search);
+        if (objects.size() > 1) {
+            throw new InternalApplicationException("Search " + search + " returns not unique result: " + objects);
+        }
+        if (objects.size() > 0) {
+            return objects.get(0);
+        }
+        return null;
+    }
+
     private ResultSetRow[] findObjectRows(Store store, Search search) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             String luceneQuery = search.toString();
             Query query = new Query("lucene", luceneQuery);
             QueryResult queryResult = WebServiceFactory.getRepositoryService().query(store, query, false);
@@ -646,13 +668,13 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
     public <T extends AlfObject> List<T> findObjects(Store store, String luceneQuery) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             Query query = new Query("lucene", luceneQuery);
             QueryResult queryResult = WebServiceFactory.getRepositoryService().query(store, query, false);
             ResultSet resultSet = queryResult.getResultSet();
@@ -670,14 +692,14 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 
     @Override
     public <T extends AlfObject> List<T> findObjects(Search search) throws InternalApplicationException {
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             Store store = new Store(search.getStore().getProtocol(), search.getStore().getIdentifier());
             ResultSetRow[] rows = findObjectRows(store, search);
             List<T> result = new ArrayList<T>(rows.length);
@@ -688,8 +710,23 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
+    }
+
+    private static Map<String, Class<?>> DATA_TYPES = Maps.newHashMap();
+    static {
+        DATA_TYPES.put(DataTypeDefinition.ANY.toString(), Object.class);
+        DATA_TYPES.put(DataTypeDefinition.TEXT.toString(), String.class);
+        DATA_TYPES.put(DataTypeDefinition.MLTEXT.toString(), String.class);
+        DATA_TYPES.put(DataTypeDefinition.INT.toString(), Integer.class);
+        DATA_TYPES.put(DataTypeDefinition.LONG.toString(), Long.class);
+        DATA_TYPES.put(DataTypeDefinition.FLOAT.toString(), Float.class);
+        DATA_TYPES.put(DataTypeDefinition.DOUBLE.toString(), Double.class);
+        DATA_TYPES.put(DataTypeDefinition.DATE.toString(), Date.class);
+        DATA_TYPES.put(DataTypeDefinition.DATETIME.toString(), Date.class);
+        DATA_TYPES.put(DataTypeDefinition.BOOLEAN.toString(), Boolean.class);
+        DATA_TYPES.put(DataTypeDefinition.NODE_REF.toString(), NodeRef.class);
     }
 
     @Override
@@ -698,7 +735,7 @@ public class AlfSession implements AlfConn {
             return;
         }
         try {
-            AlfSessionWrapper.sessionStart();
+            RemoteAlfConnector.sessionStart();
             log.info("Loading definition for " + typeDesc.getAlfrescoTypeNameWithPrefix());
             ClassPredicate types;
             ClassPredicate aspects;
@@ -713,10 +750,14 @@ public class AlfSession implements AlfConn {
             typeDesc.setTitle(definition.getTitle());
             PropertyDefinition[] propertyDefinitions = definition.getProperties();
             for (PropertyDefinition propertyDefinition : propertyDefinitions) {
-                AlfSerializerDesc desc = typeDesc.getPropertyDescByTypeName(propertyDefinition.getName());
+                AlfPropertyDesc desc = typeDesc.getPropertyDescByTypeName(propertyDefinition.getName());
                 if (desc != null) {
                     desc.setTitle(propertyDefinition.getTitle());
-                    desc.setDataType(propertyDefinition.getDataType());
+                    Class<?> propertyClass = DATA_TYPES.get(propertyDefinition.getDataType());
+                    if (propertyClass == null) {
+                        throw new InternalApplicationException("Unable to find datatype for " + propertyDefinition.getDataType());
+                    }
+                    desc.setDataType(propertyClass.getName());
                     desc.setDefaultValue(propertyDefinition.getDefaultValue());
                 } else {
                     log.debug("No property found in mapping for " + propertyDefinition.getName());
@@ -724,7 +765,7 @@ public class AlfSession implements AlfConn {
             }
             if (definition.getAssociations() != null) {
                 for (AssociationDefinition associationDefinition : definition.getAssociations()) {
-                    AlfSerializerDesc desc = typeDesc.getPropertyDescByTypeName(associationDefinition.getName());
+                    AlfPropertyDesc desc = typeDesc.getPropertyDescByTypeName(associationDefinition.getName());
                     if (desc != null) {
                         desc.setTitle(associationDefinition.getTitle());
                         desc.setChildAssociation(associationDefinition.isIsChild());
@@ -738,7 +779,7 @@ public class AlfSession implements AlfConn {
         } catch (Exception e) {
             throw propagate(e);
         } finally {
-            AlfSessionWrapper.sessionEnd();
+            RemoteAlfConnector.sessionEnd();
         }
     }
 

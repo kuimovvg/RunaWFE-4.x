@@ -7,13 +7,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Authenticated wrapper for {@link AlfSession}.
+ * Authenticated wrapper for {@link RemoteAlfConnection}.
  * 
  * @author dofs
  */
-public abstract class AlfSessionWrapper<T> {
-    protected static Log log = LogFactory.getLog(AlfSessionWrapper.class);
-    protected final AlfSession session = new AlfSession();
+public abstract class RemoteAlfConnector<T> {
+    protected static Log log = LogFactory.getLog(RemoteAlfConnector.class);
+    protected final RemoteAlfConnection alfConnection = new RemoteAlfConnection();
     private static int sessionIdCounter = 0;
     private static ThreadLocal<SessionData> sessions = new ThreadLocal<SessionData>();
 
@@ -30,7 +30,7 @@ public abstract class AlfSessionWrapper<T> {
         if (sessions.get() == null) {
             AuthenticationUtils.startSession(WSConnectionSettings.getInstance().getLogin(), WSConnectionSettings.getInstance().getPassword());
             sessions.set(new SessionData());
-            log("Started new session");
+            log("Started new alfConnection");
         }
         sessions.get().level++;
     }
@@ -39,7 +39,7 @@ public abstract class AlfSessionWrapper<T> {
         if (sessions.get() != null) {
             sessions.get().level--;
             if (sessions.get().level == 0) {
-                log("Ending session");
+                log("Ending alfConnection");
                 AuthenticationUtils.endSession();
                 sessions.remove();
             }
@@ -54,7 +54,7 @@ public abstract class AlfSessionWrapper<T> {
             if (ConnectionException.MESSAGE.equals(e.getMessage())) {
                 throw new ConnectionException();
             }
-            throw AlfSession.propagate(e);
+            throw RemoteAlfConnection.propagate(e);
         } finally {
             sessionEnd();
         }

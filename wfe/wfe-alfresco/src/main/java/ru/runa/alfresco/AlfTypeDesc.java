@@ -14,8 +14,8 @@ import com.google.common.base.Objects;
  * @author dofs
  */
 public class AlfTypeDesc {
-    private Map<String, AlfSerializerDesc> BY_FIELD_NAME = new HashMap<String, AlfSerializerDesc>();
-    private Map<String, AlfSerializerDesc> BY_NAMESPACED_PROPERTY_NAME = new HashMap<String, AlfSerializerDesc>();
+    private Map<String, AlfPropertyDesc> BY_FIELD_NAME = new HashMap<String, AlfPropertyDesc>();
+    private Map<String, AlfPropertyDesc> BY_NAMESPACED_PROPERTY_NAME = new HashMap<String, AlfPropertyDesc>();
     private final String javaClassName;
     private final String alfrescoTypeName;
     private final String namespace;
@@ -38,20 +38,20 @@ public class AlfTypeDesc {
         namespace = desc.namespace;
     }
 
-    public void addPropertyMapping(AlfSerializerDesc desc) {
+    public void addPropertyMapping(AlfPropertyDesc desc) {
         BY_FIELD_NAME.put(desc.getFieldName(), desc);
         BY_NAMESPACED_PROPERTY_NAME.put(desc.getPropertyNameWithNamespace(), desc);
     }
 
-    public AlfSerializerDesc getPropertyDescByFieldName(String fieldName) {
+    public AlfPropertyDesc getPropertyDescByFieldName(String fieldName) {
         return BY_FIELD_NAME.get(fieldName);
     }
 
-    public AlfSerializerDesc getPropertyDescByTypeName(String propertyName) {
+    public AlfPropertyDesc getPropertyDescByTypeName(String propertyName) {
         return BY_NAMESPACED_PROPERTY_NAME.get(propertyName);
     }
 
-    public Collection<AlfSerializerDesc> getAllDescs() {
+    public Collection<AlfPropertyDesc> getAllDescs() {
         return BY_FIELD_NAME.values();
     }
 
