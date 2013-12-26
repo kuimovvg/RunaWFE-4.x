@@ -114,6 +114,7 @@ public class FormSubmissionUtils {
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
                 VariableFormat format = FormatCommons.create(variableDefinition);
                 Object variableValue = null;
+                boolean forceSetVariableValue = false;
                 if (format instanceof ListFormat) {
                     String sizeInputName = variableDefinition.getName() + ".size";
                     ListFormat listFormat = (ListFormat) format;
@@ -147,18 +148,19 @@ public class FormSubmissionUtils {
                     }
                 } else {
                     Object value = userInput.get(variableDefinition.getName());
-                    if (value == null) {
-                        // used for processes with dirty validation (checked variable without usage)
-                        continue;
+                    if (value != null) {
+                        forceSetVariableValue = true;
                     }
                     variableValue = convertComponent(variableDefinition.getName(), format, value, formatErrorsForFields);
                 }
-                FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
-                        FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
-                if (handler != null) {
-                    variableValue = handler.handle(variableValue);
+                if (variableValue != null || forceSetVariableValue) {
+                    FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
+                            FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
+                    if (handler != null) {
+                        variableValue = handler.handle(variableValue);
+                    }
+                    variables.put(variableDefinition.getName(), variableValue);
                 }
-                variables.put(variableDefinition.getName(), variableValue);
             }
             return variables;
         } catch (Exception e) {
@@ -209,7 +211,7 @@ public class FormSubmissionUtils {
             throw Throwables.propagate(e);
         }
     }
-    
+
     public static Map<String, UploadedFile> getUploadedFilesMap(HttpServletRequest request) {
         Map<String, UploadedFile> map = (Map<String, UploadedFile>) request.getSession().getAttribute(UPLOADED_FILES);
         if (map == null) {
