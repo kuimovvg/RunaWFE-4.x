@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ import com.google.common.collect.Maps;
 public class AlfObject implements IAlfObject, Serializable {
     private final static long serialVersionUID = 197L;
 
-    protected transient AlfConn conn;
+    protected transient AlfConnection conn;
     private String uuidRef;
     private transient final Map<String, Object> initialFieldValues = Maps.newHashMap();
     private Map<String, String> referenceFieldUuids = Maps.newHashMap();
@@ -44,12 +45,12 @@ public class AlfObject implements IAlfObject, Serializable {
     @Property(name = "modified", readOnly = true)
     private Calendar lastUpdated;
 
-    public void setLazyLoader(AlfConn lazyLoader) {
+    public void setLazyLoader(AlfConnection lazyLoader) {
         conn = lazyLoader;
     }
 
     protected void markPropertiesInitialState(AlfTypeDesc mapping) {
-        for (AlfSerializerDesc desc : mapping.getAllDescs()) {
+        for (AlfPropertyDesc desc : mapping.getAllDescs()) {
             if (desc.getProperty() == null || desc.getProperty().readOnly()) {
                 continue;
             }
@@ -68,6 +69,8 @@ public class AlfObject implements IAlfObject, Serializable {
                     initialFieldValues.put(fieldName, object);
                 } else if (object instanceof Calendar) {
                     initialFieldValues.put(fieldName, CalendarUtil.clone((Calendar) object));
+                } else if (object instanceof Date) {
+                    initialFieldValues.put(fieldName, ((Date) object).clone());
                 } else if (object.getClass().isArray()) {
                     // arrays are immutable
                 } else if (List.class.isAssignableFrom(object.getClass())) {
@@ -106,7 +109,7 @@ public class AlfObject implements IAlfObject, Serializable {
 
     public Set<String> getDirtyFieldNames(AlfTypeDesc mapping) {
         Set<String> dirtyFieldNames = new HashSet<String>();
-        for (AlfSerializerDesc desc : mapping.getAllDescs()) {
+        for (AlfPropertyDesc desc : mapping.getAllDescs()) {
             if (desc.getProperty() == null || desc.getProperty().readOnly()) {
                 continue;
             }
@@ -157,7 +160,7 @@ public class AlfObject implements IAlfObject, Serializable {
                 return referenceUuid;
             }
             if (acquireProperty) {
-                AlfSerializerDesc desc = Mappings.getMapping(getClass(), conn).getPropertyDescByFieldName(fieldName);
+                AlfPropertyDesc desc = Mappings.getMapping(getClass(), conn).getPropertyDescByFieldName(fieldName);
                 AlfObject reference = (AlfObject) ClassUtils.getFieldValue(this, desc);
                 if (reference != null) {
                     return reference.getUuidRef() != null ? reference.getUuidRef() : null;
@@ -183,7 +186,7 @@ public class AlfObject implements IAlfObject, Serializable {
 
     protected void markCollectionsInitialState() {
         AlfTypeDesc typeDesc = Mappings.getMapping(getClass(), conn);
-        for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
+        for (AlfPropertyDesc desc : typeDesc.getAllDescs()) {
             if (desc.getAssoc() != null) {
                 Collection<AlfObject> collection = (Collection<AlfObject>) ClassUtils.getFieldValue(this, desc);
                 markCollectionInitialState(desc, collection);
@@ -191,7 +194,7 @@ public class AlfObject implements IAlfObject, Serializable {
         }
     }
 
-    private void markCollectionInitialState(AlfSerializerDesc desc, Collection<AlfObject> collection) {
+    private void markCollectionInitialState(AlfPropertyDesc desc, Collection<AlfObject> collection) {
         List<String> assocIds = Lists.newArrayList();
         for (AlfObject collObject : collection) {
             assocIds.add(collObject.getUuidRef());
@@ -199,17 +202,17 @@ public class AlfObject implements IAlfObject, Serializable {
         initialFieldValues.put(desc.getFieldName(), assocIds);
     }
 
-    protected void loadCollection(AlfSerializerDesc desc, Collection<AlfObject> collection) {
+    protected void loadCollection(AlfPropertyDesc desc, Collection<AlfObject> collection) {
         if (!initialFieldValues.containsKey(desc.getFieldName())) {
             conn.loadAssociation(getUuidRef(), collection, desc);
             markCollectionInitialState(desc, collection);
         }
     }
 
-    public Map<AlfSerializerDesc, List<String>> getAssocToCreate() {
+    public Map<AlfPropertyDesc, List<String>> getAssocToCreate() {
         AlfTypeDesc typeDesc = Mappings.getMapping(getClass(), conn);
-        Map<AlfSerializerDesc, List<String>> result = Maps.newHashMap();
-        for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
+        Map<AlfPropertyDesc, List<String>> result = Maps.newHashMap();
+        for (AlfPropertyDesc desc : typeDesc.getAllDescs()) {
             if (desc.getAssoc() == null) {
                 continue;
             }
@@ -235,10 +238,10 @@ public class AlfObject implements IAlfObject, Serializable {
         return result;
     }
 
-    public Map<AlfSerializerDesc, List<String>> getAssocToDelete() {
+    public Map<AlfPropertyDesc, List<String>> getAssocToDelete() {
         AlfTypeDesc typeDesc = Mappings.getMapping(getClass(), conn);
-        Map<AlfSerializerDesc, List<String>> result = Maps.newHashMap();
-        for (AlfSerializerDesc desc : typeDesc.getAllDescs()) {
+        Map<AlfPropertyDesc, List<String>> result = Maps.newHashMap();
+        for (AlfPropertyDesc desc : typeDesc.getAllDescs()) {
             if (desc.getAssoc() == null) {
                 continue;
             }

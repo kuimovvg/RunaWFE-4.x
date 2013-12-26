@@ -7,8 +7,8 @@ import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONAware;
 
 import ru.runa.Messages;
-import ru.runa.alfresco.AlfSession;
-import ru.runa.alfresco.AlfSessionWrapper;
+import ru.runa.alfresco.RemoteAlfConnection;
+import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.alfresco.ConnectionException;
 import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 
@@ -23,17 +23,17 @@ public abstract class AlfAjaxJsonTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
     protected Log log = LogFactory.getLog(getClass());
 
-    protected abstract String renderRequest(AlfSession session) throws Exception;
+    protected abstract String renderRequest(RemoteAlfConnection session) throws Exception;
 
-    protected abstract JSONAware processAjaxRequest(AlfSession session, HttpServletRequest request) throws Exception;
+    protected abstract JSONAware processAjaxRequest(RemoteAlfConnection session, HttpServletRequest request) throws Exception;
 
     @Override
     protected String renderRequest() throws Exception {
         try {
-            return new AlfSessionWrapper<String>() {
+            return new RemoteAlfConnector<String>() {
                 @Override
                 protected String code() throws Exception {
-                    return renderRequest(session);
+                    return renderRequest(alfConnection);
                 }
             }.runInSession();
         } catch (Exception e) {
@@ -47,10 +47,10 @@ public abstract class AlfAjaxJsonTag extends AjaxJsonFreemarkerTag {
 
     @Override
     public JSONAware processAjaxRequest(final HttpServletRequest request) throws Exception {
-        return new AlfSessionWrapper<JSONAware>() {
+        return new RemoteAlfConnector<JSONAware>() {
             @Override
             protected JSONAware code() throws Exception {
-                return processAjaxRequest(session, request);
+                return processAjaxRequest(alfConnection, request);
             }
         }.runInSession();
     }

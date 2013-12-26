@@ -9,7 +9,7 @@ import ru.runa.wfe.InternalApplicationException;
  */
 public class ConnectionException extends InternalApplicationException {
     private static final long serialVersionUID = 1L;
-    public static final String MESSAGE = "Error starting session.";
+    public static final String MESSAGE = "Error starting alfConnection.";
 
     public ConnectionException() {
         super(MESSAGE);

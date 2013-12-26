@@ -24,40 +24,40 @@ import com.google.common.collect.Maps;
 public class AlfObjectFactory {
     private static Map<Class<? extends AlfObject>, Enhancer> ENHANCERS = Maps.newHashMap();
 
-    public static synchronized AlfObject create(String javaClassName, AlfConn alfConn, String uuidRef) {
+    public static synchronized AlfObject create(String javaClassName, AlfConnection connection, String uuidRef) {
         Class<AlfObject> clazz = (Class<AlfObject>) ClassLoaderUtil.loadClass(javaClassName);
-        return create(clazz, alfConn, uuidRef);
+        return create(clazz, connection, uuidRef);
     }
 
-    public static synchronized <T extends AlfObject> T create(Class<T> clazz, AlfConn alfConn, String uuidRef) {
+    public static synchronized <T extends AlfObject> T create(Class<T> clazz, AlfConnection alfConnection, String uuidRef) {
         if (!ENHANCERS.containsKey(clazz)) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(clazz);
-            enhancer.setCallbackFilter(new AlfObjectCallbackFilter(clazz, alfConn));
+            enhancer.setCallbackFilter(new AlfObjectCallbackFilter(clazz, alfConnection));
             enhancer.setCallbacks(new Callback[] { NoOp.INSTANCE, new GetAlfObjectInterceptor(), new SetAlfObjectInterceptor(),
                     new GetAlfObjectsCollectionInterceptor() });
             ENHANCERS.put(clazz, enhancer);
         }
         T alfObject = (T) ENHANCERS.get(clazz).create();
-        alfObject.setLazyLoader(alfConn);
+        alfObject.setLazyLoader(alfConnection);
         alfObject.setUuidRef(uuidRef);
         return alfObject;
     }
 
     public static class AlfObjectCallbackFilter implements CallbackFilter {
         private final Class<? extends AlfObject> alfObjectClass;
-        private final AlfConn alfConn;
+        private final AlfConnection alfConnection;
 
-        public AlfObjectCallbackFilter(Class<? extends AlfObject> alfObjectClass, AlfConn alfConn) {
+        public AlfObjectCallbackFilter(Class<? extends AlfObject> alfObjectClass, AlfConnection alfConnection) {
             this.alfObjectClass = alfObjectClass;
-            this.alfConn = alfConn;
+            this.alfConnection = alfConnection;
         }
 
         @Override
         public int accept(Method method) {
             try {
                 String propertyName = getFieldName(method.getName());
-                AlfSerializerDesc desc = Mappings.getMapping(alfObjectClass, alfConn).getPropertyDescByFieldName(propertyName);
+                AlfPropertyDesc desc = Mappings.getMapping(alfObjectClass, alfConnection).getPropertyDescByFieldName(propertyName);
                 if (desc == null) {
                     return 0;
                 }
@@ -132,7 +132,7 @@ public class AlfObjectFactory {
                 AlfObject alfObject = (AlfObject) object;
                 String fieldName = getFieldName(method.getName());
                 AlfTypeDesc typeDesc = Mappings.getMapping(alfObject.getClass(), alfObject.conn);
-                AlfSerializerDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
+                AlfPropertyDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
                 if (desc == null) {
                     throw new NullPointerException("No association defined for " + fieldName);
                 }

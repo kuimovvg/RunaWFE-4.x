@@ -5,8 +5,8 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.alfresco.AlfSession;
-import ru.runa.alfresco.AlfSessionWrapper;
+import ru.runa.alfresco.RemoteAlfConnection;
+import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
@@ -35,36 +35,36 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
     /**
      * Do work in Alfresco.
      * 
-     * @param session
+     * @param alfConnection
      *            alfresco connection
      * @param alfHandlerData
      *            parsed handler configuration
      * @throws Exception
      *             if error occurs
      */
-    protected abstract void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception;
+    protected abstract void executeAction(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception;
 
     /**
      * Do rollback in Alfresco on transaction rollback.
      * 
-     * @param session
+     * @param alfConnection
      *            alfresco connection
      * @param alfHandlerData
      *            parsed handler configuration
      * @throws Exception
      *             if error occurs TODO unsed yet in 4.x (move to wfe bots ?)
      */
-    protected void onRollback(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+    protected void onRollback(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception {
         log.debug("onRollback in " + alfHandlerData.getProcessId());
     }
 
     @Override
     public void onRollback(final User user, final IVariableProvider variableProvider, final WfTask task) throws Exception {
-        new AlfSessionWrapper<Object>() {
+        new RemoteAlfConnector<Object>() {
             @Override
             protected Object code() throws Exception {
                 AlfHandlerData alfHandlerData = new AlfHandlerData(paramsDef, user, variableProvider, task);
-                onRollback(session, alfHandlerData);
+                onRollback(alfConnection, alfHandlerData);
                 return null;
             }
         }.runInSession();
@@ -76,10 +76,10 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
         TimeMeasurer timeMeasurer = new TimeMeasurer(log);
         try {
             timeMeasurer.jobStarted();
-            new AlfSessionWrapper<Object>() {
+            new RemoteAlfConnector<Object>() {
                 @Override
                 protected Object code() throws Exception {
-                    executeAction(session, handlerData);
+                    executeAction(alfConnection, handlerData);
                     return null;
                 }
             }.runInSession();
@@ -95,14 +95,14 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
 
     @Override
     public Map<String, Object> handle(final User user, final IVariableProvider variableProvider, final WfTask task) throws Exception {
-        return new AlfSessionWrapper<Map<String, Object>>() {
+        return new RemoteAlfConnector<Map<String, Object>>() {
             @Override
             protected Map<String, Object> code() throws Exception {
                 AlfHandlerData handlerData = new AlfHandlerData(paramsDef, user, variableProvider, task);
                 TimeMeasurer timeMeasurer = new TimeMeasurer(log);
                 try {
                     timeMeasurer.jobStarted();
-                    executeAction(session, handlerData);
+                    executeAction(alfConnection, handlerData);
                     timeMeasurer.jobEnded("Execution of " + handlerData.getTaskName());
                 } catch (Throwable th) {
                     if (handlerData.isFailOnError()) {

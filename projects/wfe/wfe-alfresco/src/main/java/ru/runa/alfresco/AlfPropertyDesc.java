@@ -12,7 +12,7 @@ import com.google.common.base.Objects;
  * 
  * @author dofs
  */
-public class AlfSerializerDesc {
+public class AlfPropertyDesc {
     protected final String fieldName;
     protected String propertyName;
     protected final String namespace;
@@ -25,7 +25,7 @@ public class AlfSerializerDesc {
     private boolean childAssociation;
     private boolean sourceAssociation;
 
-    private AlfSerializerDesc(String namespace, String javaPropertyName, Assoc assoc, Property property, boolean referencedProperty) {
+    private AlfPropertyDesc(String namespace, String javaPropertyName, Assoc assoc, Property property, boolean referencedProperty) {
         this.namespace = namespace;
         fieldName = javaPropertyName;
         this.property = property;
@@ -39,12 +39,12 @@ public class AlfSerializerDesc {
         this.referencedProperty = referencedProperty;
     }
 
-    public static AlfSerializerDesc newProp(String namespace, String javaPropertyName, Property property, boolean referencedProperty) {
-        return new AlfSerializerDesc(namespace, javaPropertyName, null, property, referencedProperty);
+    public static AlfPropertyDesc newProp(String namespace, String javaPropertyName, Property property, boolean referencedProperty) {
+        return new AlfPropertyDesc(namespace, javaPropertyName, null, property, referencedProperty);
     }
 
-    public static AlfSerializerDesc newAssoc(String namespace, String javaPropertyName, Assoc assoc) {
-        return new AlfSerializerDesc(namespace, javaPropertyName, assoc, null, false);
+    public static AlfPropertyDesc newAssoc(String namespace, String javaPropertyName, Assoc assoc) {
+        return new AlfPropertyDesc(namespace, javaPropertyName, assoc, null, false);
     }
 
     public String getPropertyNameWithNamespace() {

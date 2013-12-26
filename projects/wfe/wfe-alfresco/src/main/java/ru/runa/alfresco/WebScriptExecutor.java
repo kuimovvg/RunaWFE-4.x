@@ -88,7 +88,7 @@ public class WebScriptExecutor {
             } else {
                 request = formHttpGetRequest(alfBaseUrl);
             }
-            return new AlfSessionWrapper<ByteArrayOutputStream>() {
+            return new RemoteAlfConnector<ByteArrayOutputStream>() {
 
                 @Override
                 protected ByteArrayOutputStream code() throws Exception {

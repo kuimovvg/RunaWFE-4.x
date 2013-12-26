@@ -5,7 +5,7 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import ru.runa.alfresco.AlfObject;
-import ru.runa.alfresco.AlfSession;
+import ru.runa.alfresco.RemoteAlfConnection;
 import ru.runa.alfresco.WSConnectionSettings;
 import ru.runa.bp.AlfAjaxTag;
 
@@ -19,7 +19,7 @@ public class AlfDownloadContentTag extends AlfAjaxTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected String renderRequest(AlfSession session) throws Exception {
+    protected String renderRequest(RemoteAlfConnection session) throws Exception {
         List<String> uuids = getParameterAs(List.class, 0);
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < uuids.size(); i++) {
