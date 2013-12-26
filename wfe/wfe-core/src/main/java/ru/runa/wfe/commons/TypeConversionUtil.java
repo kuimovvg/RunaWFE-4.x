@@ -19,7 +19,6 @@ package ru.runa.wfe.commons;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -125,18 +124,7 @@ public class TypeConversionUtil {
                 return (T) array;
             }
             if (List.class.isAssignableFrom(classConvertTo)) {
-                List<Object> result = new ArrayList<Object>();
-                if (object.getClass().isArray()) {
-                    int len = Array.getLength(object);
-                    for (int i = 0; i < len; i++) {
-                        result.add(Array.get(object, i));
-                    }
-                } else if (object instanceof Collection<?>) {
-                    result.addAll((Collection<?>) object);
-                } else {
-                    result.add(object);
-                }
-                return (T) result;
+                return (T) convertToList(Object.class, object, preConvertor, postConvertor);
             }
             if (object instanceof Date && classConvertTo == Calendar.class) {
                 return (T) CalendarUtil.dateToCalendar((Date) object);
@@ -186,6 +174,24 @@ public class TypeConversionUtil {
             throw Throwables.propagate(e);
         }
         throw new InternalApplicationException("No conversion found between '" + object.getClass() + "' and '" + classConvertTo + "'");
+    }
+
+    public static <T> List<T> convertToList(Class<T> componentClass, Object object, ITypeConvertor preConvertor, ITypeConvertor postConvertor) {
+        List<T> result = Lists.newArrayList();
+        if (object == null) {
+        } else if (object.getClass().isArray()) {
+            int len = Array.getLength(object);
+            for (int i = 0; i < len; i++) {
+                result.add(convertTo(componentClass, Array.get(object, i), preConvertor, postConvertor));
+            }
+        } else if (object instanceof Collection<?>) {
+            for (Object component : (Collection<?>) object) {
+                result.add(convertTo(componentClass, component, preConvertor, postConvertor));
+            }
+        } else {
+            result.add(convertTo(componentClass, object, preConvertor, postConvertor));
+        }
+        return result;
     }
 
     public static int getArraySize(Object value) {
