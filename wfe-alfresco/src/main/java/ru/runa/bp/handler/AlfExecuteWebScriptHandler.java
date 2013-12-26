@@ -16,7 +16,7 @@ import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import ru.runa.alfresco.AlfSession;
+import ru.runa.alfresco.RemoteAlfConnection;
 import ru.runa.alfresco.WSConnectionSettings;
 import ru.runa.bp.AlfHandler;
 import ru.runa.bp.AlfHandlerData;
@@ -34,13 +34,13 @@ import com.google.common.io.ByteStreams;
 public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
 
     @Override
-    protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+    protected void executeAction(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception {
         byte[] response = getResponse(session, alfHandlerData);
         log.debug(new String(response, Charsets.UTF_8.name()));
         handleResponse(alfHandlerData, response);
     }
 
-    protected byte[] getResponse(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+    protected byte[] getResponse(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception {
         DefaultHttpClient httpClient = new DefaultHttpClient();
         httpClient.getCredentialsProvider().setCredentials(new AuthScope(null, -1, null),
                 new UsernamePasswordCredentials(WSConnectionSettings.getInstance().getLogin(), WSConnectionSettings.getInstance().getPassword()));

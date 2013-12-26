@@ -3,14 +3,24 @@ package ru.runa.alfresco;
 import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.service.namespace.QName;
+
 import ru.runa.alfresco.search.Search;
 
 /**
- * Connector interface to Alfresco repository.
+ * Alfresco repository connection interface.
  * 
  * @author dofs
  */
-public interface AlfConn {
+public interface AlfConnection {
+
+    public void createObject(AlfObject object);
+
+    /**
+     * Recommended way of working with associations is fill collections and
+     * execute updateAssociations().
+     */
+    public void addChildAssociation(AlfObject source, AlfObject target, QName associationTypeName);
 
     /**
      * Initializes type definition if not initialized yet. Initialization means
@@ -56,7 +66,7 @@ public interface AlfConn {
      *            descriptor.
      */
     @SuppressWarnings("rawtypes")
-    public void loadAssociation(String uuidRef, Collection collection, AlfSerializerDesc desc);
+    public void loadAssociation(String uuidRef, Collection collection, AlfPropertyDesc desc);
 
     /**
      * Finds object in Alfresco repository.
@@ -70,6 +80,18 @@ public interface AlfConn {
     public <T extends AlfObject> T findObject(Search search);
 
     /**
+     * Finds object in Alfresco repository. Throws exception if found more than
+     * 1 object by specified search.
+     * 
+     * @param <T>
+     *            result type
+     * @param search
+     *            valid Lucene query in object presentation.
+     * @return found object or <code>null</code>
+     */
+    public <T extends AlfObject> T findUniqueObject(Search search);
+
+    /**
      * Finds objects in Alfresco repository.
      * 
      * @param <T>
@@ -79,6 +101,16 @@ public interface AlfConn {
      * @return list of found objects
      */
     public <T extends AlfObject> List<T> findObjects(Search search);
+
+    /**
+     * Sets binary content to alfresco object.
+     */
+    public void setContent(AlfObject object, String content, String mimetype);
+
+    /**
+     * Sets binary content to alfresco object.
+     */
+    public void setContent(AlfObject object, byte[] data, String mimetype);
 
     /**
      * Updates object in Alfresco without creation new version.

@@ -1,7 +1,7 @@
 package ru.runa.bp.handler;
 
 import ru.runa.alfresco.AlfObject;
-import ru.runa.alfresco.AlfSession;
+import ru.runa.alfresco.RemoteAlfConnection;
 import ru.runa.bp.AlfHandler;
 import ru.runa.bp.AlfHandlerData;
 import ru.runa.wfe.var.FileVariable;
@@ -16,7 +16,7 @@ import com.google.common.base.Charsets;
 public class AlfSetContent extends AlfHandler {
 
     @Override
-    protected void executeAction(AlfSession session, AlfHandlerData alfHandlerData) throws Exception {
+    protected void executeAction(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception {
         Object data = alfHandlerData.getInputParamValue("data");
         if (data == null) {
             log.warn("No data found in process, returning...");

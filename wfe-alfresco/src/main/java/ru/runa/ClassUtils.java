@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import net.sf.cglib.proxy.Enhancer;
-import ru.runa.alfresco.AlfSerializerDesc;
+import ru.runa.alfresco.AlfPropertyDesc;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Objects;
@@ -20,7 +20,7 @@ public class ClassUtils {
         return implOrProxyClass;
     }
 
-    public static Object getFieldValue(Object object, AlfSerializerDesc desc) {
+    public static Object getFieldValue(Object object, AlfPropertyDesc desc) {
         String key = object.getClass().getSimpleName() + "." + desc.getFieldName();
         try {
             if (!FIELDS_CACHE.containsKey(key)) {
