@@ -7,6 +7,7 @@ import java.util.Map;
 import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.webservice.types.NamedValue;
 
+import ru.runa.alfresco.AlfConnection;
 import ru.runa.alfresco.AlfPropertyDesc;
 import ru.runa.alfresco.RemoteAlfConnection;
 import ru.runa.alfresco.RemoteAlfObjectAccessor;
@@ -20,12 +21,12 @@ public class AlfGetObjectPropertiesByUuid extends AlfHandler {
     private static final String DEFAULT_FORMAT_CLASS = String.class.getName();
 
     @Override
-    protected void executeAction(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception {
+    protected void executeAction(AlfConnection alfConnection, AlfHandlerData alfHandlerData) throws Exception {
         Map<String, ParamDef> outputParams = alfHandlerData.getOutputParams();
         String uuid = alfHandlerData.getInputParamValue(String.class, "uuid");
         if (!Strings.isNullOrEmpty(uuid)) {
             uuid = uuid.trim();
-            NamedValue[] props = session.loadObjectProperties(uuid);
+            NamedValue[] props = ((RemoteAlfConnection) alfConnection).loadObjectProperties(uuid);
             for (NamedValue namedValue : props) {
                 int index = namedValue.getName().lastIndexOf('}');
                 String keyName = namedValue.getName().substring(index + 1);

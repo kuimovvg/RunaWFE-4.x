@@ -61,6 +61,7 @@ public class LocalAlfConnection implements AlfConnection {
         return new NodeRef(object.getUuidRef());
     }
 
+    @Override
     public void addAspect(AlfObject object, QName aspectTypeName) {
         AlfTypeDesc typeDesc = Mappings.getMapping(aspectTypeName.toString(), this);
         Map<QName, Serializable> props = new LocalAlfObjectAccessor(typeDesc, object).getProperties(true, false);

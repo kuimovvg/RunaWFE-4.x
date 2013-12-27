@@ -5,7 +5,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.alfresco.RemoteAlfConnection;
+import ru.runa.alfresco.AlfConnection;
 import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -42,7 +42,7 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
      * @throws Exception
      *             if error occurs
      */
-    protected abstract void executeAction(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception;
+    protected abstract void executeAction(AlfConnection alfConnection, AlfHandlerData alfHandlerData) throws Exception;
 
     /**
      * Do rollback in Alfresco on transaction rollback.
@@ -54,7 +54,7 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
      * @throws Exception
      *             if error occurs TODO unsed yet in 4.x (move to wfe bots ?)
      */
-    protected void onRollback(RemoteAlfConnection session, AlfHandlerData alfHandlerData) throws Exception {
+    protected void onRollback(AlfConnection alfConnection, AlfHandlerData alfHandlerData) throws Exception {
         log.debug("onRollback in " + alfHandlerData.getProcessId());
     }
 
