@@ -124,12 +124,14 @@ public class RemoteAlfConnection implements AlfConnection {
         return new Reference(store, id, null);
     }
 
-    public void addAspect(AlfObject object, String aspectTypeName) throws InternalApplicationException {
+    @Override
+    public void addAspect(AlfObject object, QName aspectTypeName) throws InternalApplicationException {
         try {
+            String aspectName = aspectTypeName.toString();
             RemoteAlfConnector.sessionStart();
-            AlfTypeDesc typeDesc = Mappings.getMapping(aspectTypeName, this);
+            AlfTypeDesc typeDesc = Mappings.getMapping(aspectName, this);
             NamedValue[] props = new RemoteAlfObjectAccessor(typeDesc, object).getProperties(true, false);
-            CMLAddAspect addAspect = new CMLAddAspect(aspectTypeName, props, getPredicate(object), null);
+            CMLAddAspect addAspect = new CMLAddAspect(aspectName, props, getPredicate(object), null);
             CML cml = new CML();
             cml.setAddAspect(new CMLAddAspect[] { addAspect });
             WebServiceFactory.getRepositoryService().update(cml);

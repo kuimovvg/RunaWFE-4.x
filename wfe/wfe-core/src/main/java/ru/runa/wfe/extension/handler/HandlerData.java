@@ -117,6 +117,10 @@ public class HandlerData {
         return variableProvider;
     }
 
+    public ParamsDef getParamsDef() {
+        return paramsDef;
+    }
+
     public Map<String, ParamDef> getInputParams() {
         return paramsDef.getInputParams();
     }
