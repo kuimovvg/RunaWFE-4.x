@@ -2,9 +2,6 @@ package ru.runa.wfe.extension.handler;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
@@ -20,7 +17,6 @@ import com.google.common.base.Throwables;
  * @author dofs[197@gmail.com]
  */
 public abstract class CommonParamBasedHandler extends TaskHandlerBase implements ActionHandler {
-    protected Log log = LogFactory.getLog(getClass());
     private ParamsDef paramsDef;
 
     @Override

@@ -5,15 +5,9 @@ import java.util.Map;
 import ru.runa.wfe.commons.GroovyScriptExecutor;
 import ru.runa.wfe.commons.IScriptExecutor;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 
-public class GroovyActionHandler implements ActionHandler {
-    private String configuration;
-
-    @Override
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
-    }
+public class GroovyActionHandler extends ActionHandlerBase {
 
     protected IScriptExecutor getScriptExecutor() {
         return new GroovyScriptExecutor();

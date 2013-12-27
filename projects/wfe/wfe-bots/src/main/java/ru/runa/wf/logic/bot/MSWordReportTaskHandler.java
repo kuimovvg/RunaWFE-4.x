@@ -21,9 +21,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilder;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilderFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportTaskSettings;
@@ -34,7 +31,6 @@ import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 
 /**
  * 
@@ -45,7 +41,6 @@ import com.google.common.io.Closeables;
  * 
  */
 public class MSWordReportTaskHandler extends CommonHandler {
-    private static final Log log = LogFactory.getLog(MSWordReportTaskHandler.class);
     private static final String CONTENT_TYPE = "application/vnd.ms-word";
 
     private MSWordReportTaskSettings settings;
@@ -71,7 +66,9 @@ public class MSWordReportTaskHandler extends CommonHandler {
             result.put(settings.getReportVariableName(), fileVariable);
             return result;
         } finally {
-            Closeables.closeQuietly(reportFileInputStream);
+            if (reportFileInputStream != null) {
+                reportFileInputStream.close();
+            }
             if (reportTemporaryFile != null) {
                 if (!reportTemporaryFile.delete()) {
                     log.warn("Unable to delete " + reportTemporaryFile.getAbsolutePath());

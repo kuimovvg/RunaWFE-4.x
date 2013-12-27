@@ -2,9 +2,6 @@ package ru.runa.wfe.extension.handler;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -15,7 +12,6 @@ import ru.runa.wfe.var.IVariableProvider;
  * @author Dofs
  */
 public class DebugHandler extends CommonHandler {
-    private static final Log log = LogFactory.getLog(DebugHandler.class);
     private String configuration;
 
     @Override

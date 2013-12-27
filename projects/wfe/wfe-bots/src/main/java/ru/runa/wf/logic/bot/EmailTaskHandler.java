@@ -19,9 +19,6 @@ package ru.runa.wf.logic.bot;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
@@ -38,8 +35,6 @@ import ru.runa.wfe.var.IVariableProvider;
  * 
  */
 public class EmailTaskHandler extends TaskHandlerBase {
-    private static final Log log = LogFactory.getLog(EmailTaskHandler.class);
-
     protected EmailConfig config;
 
     @Override

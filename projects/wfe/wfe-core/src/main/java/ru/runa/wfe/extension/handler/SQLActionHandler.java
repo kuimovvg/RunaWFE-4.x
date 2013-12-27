@@ -38,8 +38,6 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.SQLCommons;
@@ -53,7 +51,7 @@ import ru.runa.wfe.commons.sqltask.StoredProcedureQuery;
 import ru.runa.wfe.commons.sqltask.SwimlaneParameter;
 import ru.runa.wfe.commons.sqltask.SwimlaneResult;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.FileVariable;
@@ -67,17 +65,9 @@ import com.google.common.collect.Maps;
  * 
  * @author dofs[197@gmail.com]
  */
-public class SQLActionHandler implements ActionHandler {
-    private static final Log log = LogFactory.getLog(SQLActionHandler.class);
-
-    private String configuration;
+public class SQLActionHandler extends ActionHandlerBase {
     @Autowired
     private ExecutorDAO executorDAO;
-
-    @Override
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
-    }
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {

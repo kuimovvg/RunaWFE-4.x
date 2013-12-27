@@ -20,14 +20,11 @@ package ru.runa.wfe.extension.handler.var;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.extension.function.Function;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
@@ -36,12 +33,9 @@ import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
 
-public class FormulaActionHandler implements ActionHandler {
-    private static final Log log = LogFactory.getLog(FormulaActionHandler.class);
-
+public class FormulaActionHandler extends ActionHandlerBase {
     private ExecutionContext context;
     private final FormulaActionHandlerOperations actions = new FormulaActionHandlerOperations();
-    private String inputData = null;
     private char[] formula = null;
     private int nowPosition = 0;
     private final String oneSymbolTokens = "=()+-*/!<>&|^'\",\n;";
@@ -130,11 +124,11 @@ public class FormulaActionHandler implements ActionHandler {
     public void execute(ExecutionContext context) {
         this.context = context;
         idsuf = " (process id = " + context.getProcess().getId() + ")";
-        if (inputData == null) {
+        if (configuration == null) {
             log.error("Configuration not found in " + idsuf);
             return;
         }
-        formula = inputData.toCharArray();
+        formula = configuration.toCharArray();
         nowPosition = 0;
         stringVariableToken = false;
         nextToken = null;
@@ -151,7 +145,7 @@ public class FormulaActionHandler implements ActionHandler {
                     nowPosition = ip;
                     stringVariableToken = b;
                     nextToken = nt;
-                    formula = inputData.toCharArray();
+                    formula = configuration.toCharArray();
                     nf = "";
                 }
             } else {
@@ -789,11 +783,6 @@ public class FormulaActionHandler implements ActionHandler {
         if (message != null) {
             log.warn(" - " + message);
         }
-    }
-
-    @Override
-    public void setConfiguration(String configurationName) {
-        inputData = configurationName;
     }
 
 }

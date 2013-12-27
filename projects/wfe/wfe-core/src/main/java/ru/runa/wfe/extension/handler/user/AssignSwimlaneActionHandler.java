@@ -26,14 +26,14 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Preconditions;
 
-public class AssignSwimlaneActionHandler implements ActionHandler {
+public class AssignSwimlaneActionHandler extends ActionHandlerBase {
     private static final String SWIMLANE_INITITALIZER = "swimlaneInititalizer";
     private static final String SWIMLANE = "swimlaneName";
 
@@ -44,6 +44,7 @@ public class AssignSwimlaneActionHandler implements ActionHandler {
 
     @Override
     public void setConfiguration(String configuration) {
+        super.setConfiguration(configuration);
         Element root = XmlUtils.parseWithoutValidation(configuration).getRootElement();
         swimlaneName = root.attributeValue(SWIMLANE);
         if (swimlaneName == null) {

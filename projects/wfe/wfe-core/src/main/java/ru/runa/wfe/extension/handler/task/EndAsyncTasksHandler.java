@@ -2,11 +2,8 @@ package ru.runa.wfe.extension.handler.task;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.extension.handler.ParamsDef;
 import ru.runa.wfe.lang.BaseTaskNode;
 import ru.runa.wfe.task.Task;
@@ -16,12 +13,12 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public class EndAsyncTasksHandler implements ActionHandler {
-    private static Log log = LogFactory.getLog(EndAsyncTasksHandler.class);
+public class EndAsyncTasksHandler extends ActionHandlerBase {
     private ParamsDef paramsDef;
 
     @Override
-    public void setConfiguration(String configuration) throws Exception {
+    public void setConfiguration(String configuration) {
+        super.setConfiguration(configuration);
         paramsDef = ParamsDef.parse(configuration);
     }
 
@@ -31,7 +28,7 @@ public class EndAsyncTasksHandler implements ActionHandler {
         Preconditions.checkNotNull(nodeId, "nodeId is not set");
         BaseTaskNode taskNode = (BaseTaskNode) context.getProcessDefinition().getNodeNotNull(nodeId);
         if (!taskNode.isAsync()) {
-             throw new IllegalArgumentException("This handler can end only async tasks");
+            throw new IllegalArgumentException("This handler can end only async tasks");
         }
         List<Task> tasks = Lists.newArrayList();
         for (Task task : context.getProcess().getTasks()) {

@@ -19,12 +19,9 @@ package ru.runa.wfe.service.handler;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -35,14 +32,7 @@ import com.google.common.base.Strings;
  * 
  * @since 2.0
  */
-public class BotInvokerActionHandler implements ActionHandler {
-    private static final Log log = LogFactory.getLog(BotInvokerActionHandler.class);
-    private String configuration;
-
-    @Override
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
-    }
+public class BotInvokerActionHandler extends ActionHandlerBase {
 
     @Override
     public void execute(ExecutionContext executionContext) {

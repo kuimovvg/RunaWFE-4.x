@@ -25,14 +25,22 @@ public class StopProcessHandler extends TaskHandlerBase implements ActionHandler
     public void execute(ExecutionContext executionContext) throws Exception {
         ProcessDAO processDAO = ApplicationContextFactory.getProcessDAO();
         Long processId = (Long) paramsDef.getInputParamValueNotNull("processId", executionContext.getVariableProvider());
-        ru.runa.wfe.execution.Process process = processDAO.get(processId);
-        process.end(executionContext, null);
+        if (processId > 0) {
+            ru.runa.wfe.execution.Process process = processDAO.get(processId);
+            process.end(executionContext, null);
+        } else {
+            log.warn("ProcessID = " + processId + ", don't stopping process");
+        }
     }
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         Long processId = (Long) paramsDef.getInputParamValueNotNull("processId", variableProvider);
-        Delegates.getExecutionService().cancelProcess(user, processId);
+        if (processId > 0) {
+            Delegates.getExecutionService().cancelProcess(user, processId);
+        } else {
+            log.warn("ProcessID = " + processId + ", don't stopping process");
+        }
         return null;
     }
 }

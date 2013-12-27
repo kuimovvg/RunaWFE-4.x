@@ -7,18 +7,12 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.base.Objects;
 
-public class JavaScriptActionHandler implements ActionHandler {
-    private String configuration;
-
-    @Override
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
-    }
+public class JavaScriptActionHandler extends ActionHandlerBase {
 
     @Override
     public void execute(ExecutionContext executionContext) throws ScriptException {

@@ -280,19 +280,11 @@ public class CalendarUtil {
     }
 
     public static int countMinutesFromMillis(long millis) {
-        int result = (int) (millis / 60000);
-        if (millis % 60000 > 30000) {
-            result++;
-        }
-        return result;
+        return (int) Math.round((double) millis / 60000);
     }
 
     public static int countSecondsFromMillis(long millis) {
-        int result = (int) (millis / 1000);
-        if (millis % 1000 > 500) {
-            result++;
-        }
-        return result;
+        return (int) Math.round((double) millis / 1000);
     }
 
     public static int countCalendarIntervalsLength(List<CalendarInterval> calendarIntervals) {
