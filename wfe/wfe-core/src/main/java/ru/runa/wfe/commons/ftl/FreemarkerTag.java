@@ -3,6 +3,7 @@ package ru.runa.wfe.commons.ftl;
 import java.io.Serializable;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -18,6 +19,7 @@ import freemarker.template.TemplateModelException;
 @SuppressWarnings("unchecked")
 public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializable {
     private static final long serialVersionUID = 1L;
+    protected Log log = LogFactory.getLog(getClass());
     public static final String TARGET_PROCESS_PREFIX = "TargetProcess";
     protected User user;
     protected IVariableProvider variableProvider;

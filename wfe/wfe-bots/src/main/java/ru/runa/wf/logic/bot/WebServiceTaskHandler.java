@@ -39,8 +39,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wf.logic.bot.webservice.ErrorResponseProcessingResult;
 import ru.runa.wf.logic.bot.webservice.Interaction;
@@ -58,7 +56,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Maps;
-import com.google.common.io.NullOutputStream;
+import com.google.common.io.ByteStreams;
 
 /**
  * Web service task handler. Making web requests to web services and receiving
@@ -67,10 +65,6 @@ import com.google.common.io.NullOutputStream;
  * fill some variables, or can be stored completely in variables.
  */
 public class WebServiceTaskHandler extends TaskHandlerBase {
-    /**
-     * Logging support.
-     */
-    private static final Log log = LogFactory.getLog(WebServiceTaskHandler.class);
     /**
      * XSLT transformation applied in bot thread, so
      * {@link WebServiceTaskHandlerXSLTHelper} to process tag is stored in
@@ -292,7 +286,7 @@ public class WebServiceTaskHandler extends TaskHandlerBase {
         if (interaction.responseXSLT != null) {
             Transformer transformer = TransformerFactory.newInstance().newTransformer(
                     new StreamSource(new ByteArrayInputStream(interaction.responseXSLT.getBytes(settings.encoding))));
-            transformer.transform(new StreamSource(inputStream), new StreamResult(new NullOutputStream()));
+            transformer.transform(new StreamSource(inputStream), new StreamResult(ByteStreams.nullOutputStream()));
         }
     }
 

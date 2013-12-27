@@ -240,7 +240,7 @@ div.multiInstanceBox {
 }
 
 .required {
-	background: url("images/required.png") top right no-repeat;
+	background: url("images/required.png") top right no-repeat white;
 }
 
 div.requiredWrapper::after, span.requiredWrapper::after {

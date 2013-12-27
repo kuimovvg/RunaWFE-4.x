@@ -28,7 +28,7 @@ import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.auth.UserHolder;
@@ -39,6 +39,7 @@ import ru.runa.wfe.user.dao.ExecutorDAO;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -47,7 +48,7 @@ import com.google.common.io.ByteStreams;
  * @author A. Shautsou
  * @version 1.0 Initial version
  */
-public class EmailTaskNotifierActionHandler implements ActionHandler {
+public class EmailTaskNotifierActionHandler extends ActionHandlerBase {
     @Autowired
     private ExecutorDAO executorDAO;
     @Autowired
@@ -55,9 +56,14 @@ public class EmailTaskNotifierActionHandler implements ActionHandler {
     private byte[] configBytes;
 
     @Override
-    public void setConfiguration(String path) throws IOException {
+    public void setConfiguration(String path) {
+        super.setConfiguration(path);
         InputStream in = ClassLoaderUtil.getAsStreamNotNull(path, getClass());
-        configBytes = ByteStreams.toByteArray(in);
+        try {
+            configBytes = ByteStreams.toByteArray(in);
+        } catch (IOException e) {
+            Throwables.propagate(e);
+        }
     }
 
     @Override

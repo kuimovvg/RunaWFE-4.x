@@ -17,14 +17,11 @@
  */
 package ru.runa.wfe.extension.handler;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.Task;
@@ -34,14 +31,7 @@ import ru.runa.wfe.task.Task;
  * 
  * @author dofs[197@gmail.com]
  */
-public class SendEmailActionHandler implements ActionHandler {
-    private static final Log log = LogFactory.getLog(SendEmailActionHandler.class);
-    private String configuration;
-
-    @Override
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
-    }
+public class SendEmailActionHandler extends ActionHandlerBase {
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {

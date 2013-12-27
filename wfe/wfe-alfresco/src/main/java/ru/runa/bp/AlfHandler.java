@@ -2,9 +2,6 @@ package ru.runa.bp;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.alfresco.AlfConnection;
 import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.wfe.commons.TimeMeasurer;
@@ -24,7 +21,6 @@ import com.google.common.base.Throwables;
  * @author dofs
  */
 public abstract class AlfHandler extends TaskHandlerBase implements ActionHandler {
-    protected Log log = LogFactory.getLog(getClass());
     private ParamsDef paramsDef;
 
     @Override

@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -31,7 +29,7 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.TaskNode;
 import ru.runa.wfe.task.Task;
@@ -44,8 +42,7 @@ import ru.runa.wfe.user.logic.ExecutorLogic;
 
 import com.google.common.base.Strings;
 
-public class EscalationActionHandler implements ActionHandler {
-    private static final Log log = LogFactory.getLog(EscalationActionHandler.class);
+public class EscalationActionHandler extends ActionHandlerBase {
     @Autowired
     @Value(value = "${escalation.enabled}")
     private boolean escalationEnabled;
@@ -60,6 +57,7 @@ public class EscalationActionHandler implements ActionHandler {
 
     @Override
     public void setConfiguration(String configuration) {
+        super.setConfiguration(configuration);
         orgFunctionClassName = Strings.isNullOrEmpty(configuration) ? defaultOrgFunctionClassName : configuration;
         ClassLoaderUtil.instantiate(orgFunctionClassName);
     }
