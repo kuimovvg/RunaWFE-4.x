@@ -1,0 +1,5 @@
+<config>
+  <output>
+    <param name="processId" formatFilter="java.lang.Long" label.key="Param.ProcessId" />
+  </output>
+</config>
