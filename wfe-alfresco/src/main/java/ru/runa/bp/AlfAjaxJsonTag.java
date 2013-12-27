@@ -2,14 +2,12 @@ package ru.runa.bp;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONAware;
 
 import ru.runa.Messages;
 import ru.runa.alfresco.AlfConnection;
-import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.alfresco.ConnectionException;
+import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 
 import com.google.common.base.Strings;
@@ -21,7 +19,6 @@ import com.google.common.base.Strings;
  */
 public abstract class AlfAjaxJsonTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
-    protected Log log = LogFactory.getLog(getClass());
 
     protected abstract String renderRequest(AlfConnection alfConnection) throws Exception;
 

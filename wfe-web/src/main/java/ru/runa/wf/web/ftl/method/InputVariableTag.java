@@ -1,8 +1,5 @@
 package ru.runa.wf.web.ftl.method;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.ListFormat;
@@ -10,7 +7,6 @@ import freemarker.template.TemplateModelException;
 
 public class InputVariableTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(InputVariableTag.class);
 
     @Override
     protected Object executeTag() throws TemplateModelException {

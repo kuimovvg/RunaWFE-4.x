@@ -9,17 +9,11 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.extension.ActionHandler;
+import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.FormatCommons;
 
-public class RhinoJSActionHandler implements ActionHandler {
-    private String configuration;
-
-    @Override
-    public void setConfiguration(String configuration) {
-        this.configuration = configuration;
-    }
+public class RhinoJSActionHandler extends ActionHandlerBase {
 
     @Override
     public void execute(ExecutionContext executionContext) throws ScriptException {

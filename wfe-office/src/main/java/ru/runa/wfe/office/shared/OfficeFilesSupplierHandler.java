@@ -2,9 +2,6 @@ package ru.runa.wfe.office.shared;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
@@ -15,7 +12,6 @@ import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
 public abstract class OfficeFilesSupplierHandler<T extends FilesSupplierConfig> extends TaskHandlerBase implements ActionHandler {
-    protected static Log log = LogFactory.getLog(OfficeFilesSupplierHandler.class);
 
     protected T config;
 

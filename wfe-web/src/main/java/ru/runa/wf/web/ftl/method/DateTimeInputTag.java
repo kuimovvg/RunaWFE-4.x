@@ -19,9 +19,6 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.Date;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -36,7 +33,6 @@ import freemarker.template.TemplateModelException;
 @Deprecated
 public class DateTimeInputTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
-    private static final Log log = LogFactory.getLog(DateTimeInputTag.class);
 
     @Override
     protected Object executeTag() throws TemplateModelException {

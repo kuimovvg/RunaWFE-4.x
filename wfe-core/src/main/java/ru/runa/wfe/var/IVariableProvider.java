@@ -18,6 +18,8 @@ public interface IVariableProvider {
      */
     Long getProcessId();
 
+    // TODO add String getVariableDefinition();
+
     /**
      * Access to variable value.
      * 
