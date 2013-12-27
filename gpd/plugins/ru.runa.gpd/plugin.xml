@@ -1397,6 +1397,16 @@
             enabled="true"
             label="%ru.runa.wfe.extension.handler.user.ConvertGroupsToUsersHandler">
       </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wf.logic.bot.StopProcessHandler"
+            decisionHandler="false"
+            enabled="true"
+            label="%ru.runa.wf.logic.bot.StopProcessHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
