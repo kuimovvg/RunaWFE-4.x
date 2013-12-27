@@ -37,6 +37,19 @@ public class RemoteAlfConnectionProxy implements AlfConnection {
     }
 
     @Override
+    public void addAspect(final AlfObject object, final QName aspectTypeName) {
+        new RemoteAlfConnector<Object>() {
+
+            @Override
+            protected Object code() throws Exception {
+                alfConnection.addAspect(object, aspectTypeName);
+                return null;
+            }
+
+        }.runInSession();
+    }
+
+    @Override
     public void addChildAssociation(final AlfObject source, final AlfObject target, final QName associationTypeName) {
         new RemoteAlfConnector<Object>() {
 

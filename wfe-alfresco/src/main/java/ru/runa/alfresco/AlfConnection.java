@@ -16,6 +16,8 @@ public interface AlfConnection {
 
     public void createObject(AlfObject object);
 
+    public void addAspect(AlfObject object, QName aspectTypeName);
+
     /**
      * Recommended way of working with associations is fill collections and
      * execute updateAssociations().
