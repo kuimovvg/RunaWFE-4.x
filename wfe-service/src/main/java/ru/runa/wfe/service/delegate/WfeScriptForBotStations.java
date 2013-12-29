@@ -27,6 +27,7 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.XmlUtils;
+import ru.runa.wfe.script.AdminScriptConstants;
 import ru.runa.wfe.script.AdminScriptRunner;
 import ru.runa.wfe.service.utils.AdminScriptUtils;
 import ru.runa.wfe.user.User;
@@ -55,26 +56,26 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
         Document script = AdminScriptUtils.createScriptDocument();
         Element root = script.getRootElement();
         Element createBotElement = root.addElement("createBot", XmlUtils.RUNA_NAMESPACE);
-        createBotElement.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
-        createBotElement.addAttribute(PASSWORD_ATTRIBUTE_NAME, "");
+        createBotElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, bot.getUsername());
+        createBotElement.addAttribute(AdminScriptConstants.PASSWORD_ATTRIBUTE_NAME, "");
         // createBotElement.addAttribute(STARTTIMEOUT_ATTRIBUTE_NAME, "" +
         // bot.getStartTimeout());
 
         if (tasks.size() > 0) {
             Element removeTasks = root.addElement("removeConfigurationsFromBot", XmlUtils.RUNA_NAMESPACE);
-            removeTasks.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
+            removeTasks.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
                 Element taskElement = removeTasks.addElement("botConfiguration");
-                taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
+                taskElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, task.getName());
             }
             Element addTasks = root.addElement("addConfigurationsToBot", XmlUtils.RUNA_NAMESPACE);
-            addTasks.addAttribute(NAME_ATTRIBUTE_NAME, bot.getUsername());
+            addTasks.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, bot.getUsername());
             for (BotTask task : tasks) {
                 Element taskElement = addTasks.addElement("botConfiguration");
-                taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
-                taskElement.addAttribute(HANDLER_ATTRIBUTE_NAME, task.getTaskHandlerClassName());
+                taskElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, task.getName());
+                taskElement.addAttribute(AdminScriptConstants.HANDLER_ATTRIBUTE_NAME, task.getTaskHandlerClassName());
                 if (task.getConfiguration() != null) {
-                    taskElement.addAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
+                    taskElement.addAttribute(AdminScriptConstants.CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
                 }
             }
         }

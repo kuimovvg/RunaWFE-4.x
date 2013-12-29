@@ -299,6 +299,7 @@
 									<xs:restriction base="xs:string">
 										<xs:enumeration value="permission.read"/>
 										<xs:enumeration value="permission.update_permissions"/>
+										<xs:enumeration value="permission.update_relation"/>
 									</xs:restriction>
 								</xs:simpleType>
 							</xs:attribute>
