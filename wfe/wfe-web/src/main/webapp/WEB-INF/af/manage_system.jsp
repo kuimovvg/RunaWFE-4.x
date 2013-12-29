@@ -121,6 +121,10 @@
 	</div>
 </td></tr></table>
 
+<wf:exportDataFile />
+
+<wf:importDataFile />
+
 <table class='box'><tr><th class='box'><bean:message key="title.errors" /></th></tr>
 <tr><td class='box'>
 	<div>

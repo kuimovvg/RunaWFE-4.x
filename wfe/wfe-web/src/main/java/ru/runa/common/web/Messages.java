@@ -277,6 +277,9 @@ public class Messages {
 
     public static final String LABEL_SHOW_GANTT_DIAGRAM = "label.show_gantt_diagram";
 
+    public static final String TITLE_IMPORT_DATAFILE = "managesystem.datafile.import.title";
+    public static final String TITLE_EXPORT_DATAFILE = "managesystem.datafile.export.title";
+
     private Messages() {
     }
 

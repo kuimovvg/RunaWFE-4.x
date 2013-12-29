@@ -5335,5 +5335,14 @@
       <tag-class>ru.runa.wf.web.tag.ShowBotTaskErrorsTag</tag-class>
       <body-content>JSP</body-content>
    </tag>
-
+   <tag>
+   	  <name>exportDataFile</name>
+   	  <tag-class>ru.runa.wf.web.tag.ExportDataFileTag</tag-class>
+   	  <body-content>JSP</body-content>
+   </tag>
+	<tag>
+   	  <name>importDataFile</name>
+   	  <tag-class>ru.runa.wf.web.tag.ImportDataFileTag</tag-class>
+   	  <body-content>JSP</body-content>
+   </tag>
 </taglib>
