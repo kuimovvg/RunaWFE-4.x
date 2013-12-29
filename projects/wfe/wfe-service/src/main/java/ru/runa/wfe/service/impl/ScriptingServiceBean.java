@@ -19,6 +19,9 @@ package ru.runa.wfe.service.impl;
 
 import groovy.lang.GroovyShell;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
@@ -28,11 +31,15 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
+import org.dom4j.Document;
+import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.xml.XmlUtils;
+import ru.runa.wfe.script.AdminScriptException;
 import ru.runa.wfe.script.AdminScriptRunner;
 import ru.runa.wfe.service.ScriptingService;
 import ru.runa.wfe.service.interceptors.CacheReloader;
@@ -58,6 +65,26 @@ public class ScriptingServiceBean implements ScriptingService {
         runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
         runner.runScript(configData);
+    }
+
+    @Override
+    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes) {
+        runner.setUser(user);
+        runner.setProcessDefinitionsBytes(processDefinitionsBytes);
+        runner.init();
+
+        Document document = XmlUtils.parseWithXSDValidation(configData, "workflowScript.xsd");
+        Element scriptElement = document.getRootElement();
+        List<Element> elements = scriptElement.elements();
+        List<String> errors = new ArrayList<String>();
+        for (Element element : elements) {
+            try {
+                runner.handleElement(element);
+            } catch (AdminScriptException e) {
+                errors.add(e.getMessage());
+            }
+        }
+        return errors;
     }
 
     @Override

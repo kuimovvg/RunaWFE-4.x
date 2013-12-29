@@ -1,5 +1,7 @@
 package ru.runa.wfe.service;
 
+import java.util.List;
+
 import javax.ejb.Remote;
 
 import ru.runa.wfe.script.AdminScriptException;
@@ -26,6 +28,8 @@ public interface ScriptingService {
      *             if script execution fails
      */
     public void executeAdminScript(User user, byte[] scriptData, byte[][] processDefinitionsBytes) throws AdminScriptException;
+
+    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes);
 
     /**
      * Executes Groovy script.

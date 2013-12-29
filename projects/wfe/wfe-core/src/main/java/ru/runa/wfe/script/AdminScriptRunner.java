@@ -90,41 +90,6 @@ import com.google.common.io.Files;
 @SuppressWarnings("unchecked")
 public class AdminScriptRunner {
     private final static Log log = LogFactory.getLog(AdminScriptRunner.class);
-    private final static String EXECUTOR_ELEMENT_NAME = "executor";
-    private final static String IDENTITY_ELEMENT_NAME = "identity";
-    private final static String NAMED_IDENTITY_ELEMENT_NAME = "namedIdentitySet";
-    private final static String PERMISSION_ELEMENT_NAME = "permission";
-    private final static String BOT_CONFIGURATION_ELEMENT_NAME = "botConfiguration";
-    protected final static String NAME_ATTRIBUTE_NAME = "name";
-    private final static String NEW_NAME_ATTRIBUTE_NAME = "newName";
-    private final static String FULL_NAME_ATTRIBUTE_NAME = "fullName";
-    private final static String DESCRIPTION_ATTRIBUTE_NAME = "description";
-    protected final static String PASSWORD_ATTRIBUTE_NAME = "password";
-    protected final static String CODE_ATTRIBUTE_NAME = "code";
-    protected final static String EMAIL_ATTRIBUTE_NAME = "email";
-    protected final static String PHONE_ATTRIBUTE_NAME = "phone";
-    private final static String EXECUTOR_ATTRIBUTE_NAME = "executor";
-    private final static String ADDRESS_ATTRIBUTE_NAME = "address";
-    private final static String BOTSTATION_ATTRIBUTE_NAME = "botStation";
-    private final static String NEW_BOTSTATION_ATTRIBUTE_NAME = "newBotStation";
-    protected final static String STARTTIMEOUT_ATTRIBUTE_NAME = "startTimeout";
-    protected final static String HANDLER_ATTRIBUTE_NAME = "handler";
-    protected final static String TYPE_ATTRIBUTE_NAME = "type";
-    protected final static String FILE_ATTRIBUTE_NAME = "file";
-    protected final static String DEFINITION_ID_ATTRIBUTE_NAME = "definitionId";
-    protected final static String CONFIGURATION_STRING_ATTRIBUTE_NAME = "configuration";
-    protected final static String CONFIGURATION_CONTENT_ATTRIBUTE_NAME = "configurationContent";
-    protected final static String ID_ATTRIBUTE_NAME = "id";
-    protected final static String ID_FROM_ATTRIBUTE_NAME = "idFrom";
-    protected final static String ID_TO_ATTRIBUTE_NAME = "idTo";
-    protected final static String ONLY_FINISHED_ATTRIBUTE_NAME = "onlyFinished";
-    protected final static String START_DATE_FROM_ATTRIBUTE_NAME = "startDateFrom";
-    protected final static String START_DATE_TO_ATTRIBUTE_NAME = "startDateTo";
-    protected final static String END_DATE_FROM_ATTRIBUTE_NAME = "endDateFrom";
-    protected final static String END_DATE_TO_ATTRIBUTE_NAME = "endDateTo";
-    protected final static String VERSION_ATTRIBUTE_NAME = "version";
-    protected final static String VERSION_FROM_ATTRIBUTE_NAME = "versionFrom";
-    protected final static String VERSION_TO_ATTRIBUTE_NAME = "versionTo";
     @Autowired
     private ExecutorLogic executorLogic;
     @Autowired
@@ -156,9 +121,7 @@ public class AdminScriptRunner {
     }
 
     public void runScript(byte[] scriptXml) throws AdminScriptException {
-        processDeployed = 0;
-        namedProcessDefinitionIdentities.clear();
-        namedExecutorIdentities.clear();
+        init();
         Document document = XmlUtils.parseWithXSDValidation(scriptXml, "workflowScript.xsd");
         Element scriptElement = document.getRootElement();
         List<Element> elements = scriptElement.elements();
@@ -167,7 +130,13 @@ public class AdminScriptRunner {
         }
     }
 
-    private void handleElement(Element element) throws AdminScriptException {
+    public void init() {
+        processDeployed = 0;
+        namedProcessDefinitionIdentities.clear();
+        namedExecutorIdentities.clear();
+    }
+
+    public void handleElement(Element element) throws AdminScriptException {
         try {
             String name = element.getName();
             log.info("Processing element " + name + ".");
@@ -198,11 +167,11 @@ public class AdminScriptRunner {
             storage = namedExecutorIdentities;
         }
         String name = element.attributeValue("name");
-        List<Element> identities = element.elements(IDENTITY_ELEMENT_NAME);
+        List<Element> identities = element.elements(AdminScriptConstants.IDENTITY_ELEMENT_NAME);
         for (Element e : identities) {
             result.add(e.attributeValue("name"));
         }
-        List<Element> nestedSet = element.elements(NAMED_IDENTITY_ELEMENT_NAME);
+        List<Element> nestedSet = element.elements(AdminScriptConstants.NAMED_IDENTITY_ELEMENT_NAME);
         for (Element e : nestedSet) {
             if (!e.attributeValue("type").equals(element.attributeValue("type"))) {
                 throw new InternalApplicationException("Nested nameIdentitySet type is differs from parent type (For element " + name + " and type "
@@ -224,20 +193,20 @@ public class AdminScriptRunner {
     }
 
     public void setActorInactive(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         Actor actor = executorLogic.getActor(user, name);
         executorLogic.setStatus(user, actor, false, true);
     }
 
     public void createActor(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String fullName = element.attributeValue(FULL_NAME_ATTRIBUTE_NAME);
-        String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
-        String password = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
-        String email = element.attributeValue(EMAIL_ATTRIBUTE_NAME);
-        String phone = element.attributeValue(PHONE_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String fullName = element.attributeValue(AdminScriptConstants.FULL_NAME_ATTRIBUTE_NAME);
+        String description = element.attributeValue(AdminScriptConstants.DESCRIPTION_ATTRIBUTE_NAME);
+        String password = element.attributeValue(AdminScriptConstants.PASSWORD_ATTRIBUTE_NAME);
+        String email = element.attributeValue(AdminScriptConstants.EMAIL_ATTRIBUTE_NAME);
+        String phone = element.attributeValue(AdminScriptConstants.PHONE_ATTRIBUTE_NAME);
         Actor actor = new Actor(name, description, fullName, null, email, phone);
-        String codeString = element.attributeValue(CODE_ATTRIBUTE_NAME);
+        String codeString = element.attributeValue(AdminScriptConstants.CODE_ATTRIBUTE_NAME);
         if (codeString != null) {
             actor.setCode(Long.valueOf(codeString));
         }
@@ -248,8 +217,8 @@ public class AdminScriptRunner {
     }
 
     public void createGroup(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String description = element.attributeValue(AdminScriptConstants.DESCRIPTION_ATTRIBUTE_NAME);
         Group newGroup = new Group(name, description);
         executorLogic.create(user, newGroup);
     }
@@ -261,20 +230,20 @@ public class AdminScriptRunner {
             if (!Objects.equal(e.getName(), "deleteExecutor")) {
                 continue;
             }
-            String name = e.attributeValue(NAME_ATTRIBUTE_NAME);
+            String name = e.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             idsList.add(executorLogic.getExecutor(user, name).getId());
         }
         executorLogic.remove(user, idsList);
     }
 
     public void deleteExecutor(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         executorLogic.remove(user, Lists.newArrayList(executorLogic.getExecutor(user, name).getId()));
     }
 
     private List<Executor> getExecutors(Element element) {
         List<Executor> result = Lists.newArrayList();
-        List<Element> processDefSet = element.elements(NAMED_IDENTITY_ELEMENT_NAME);
+        List<Element> processDefSet = element.elements(AdminScriptConstants.NAMED_IDENTITY_ELEMENT_NAME);
         for (Element setElement : processDefSet) {
             if (!"Executor".equals(setElement.attributeValue("type"))) {
                 continue;
@@ -289,22 +258,22 @@ public class AdminScriptRunner {
                 }
             }
         }
-        List<Element> executorNodeList = element.elements(EXECUTOR_ELEMENT_NAME);
+        List<Element> executorNodeList = element.elements(AdminScriptConstants.EXECUTOR_ELEMENT_NAME);
         for (Element executorElement : executorNodeList) {
-            String executorName = executorElement.attributeValue(NAME_ATTRIBUTE_NAME);
+            String executorName = executorElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             result.add(executorLogic.getExecutor(user, executorName));
         }
         return result;
     }
 
     public void addExecutorsToGroup(Element element) {
-        String groupName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String groupName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         List<Executor> executors = getExecutors(element);
         executorLogic.addExecutorsToGroup(user, executors, executorLogic.getGroup(user, groupName));
     }
 
     public void removeExecutorsFromGroup(Element element) {
-        String groupName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String groupName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         List<Executor> executors = getExecutors(element);
         executorLogic.removeExecutorsFromGroup(user, executors, executorLogic.getGroup(user, groupName));
     }
@@ -328,12 +297,12 @@ public class AdminScriptRunner {
     }
 
     private Set<String> getNestedNamedIdentityNames(Element element, String identityType, Map<String, Set<String>> storage) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         Set<String> result = new HashSet<String>();
         if (name != null && !name.equals("")) {
             result.add(name);
         }
-        List<Element> identitySet = element.elements(NAMED_IDENTITY_ELEMENT_NAME);
+        List<Element> identitySet = element.elements(AdminScriptConstants.NAMED_IDENTITY_ELEMENT_NAME);
         for (Element setElement : identitySet) {
             if (!identityType.equals(setElement.attributeValue("type"))) {
                 continue;
@@ -410,7 +379,7 @@ public class AdminScriptRunner {
     public void addPermissionsOnProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
-            log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
+            log.warn("Process " + element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME) + "doesn't exist");
         }
         for (WfProcess pi : list) {
             addPermissionOnIdentifiable(element, pi);
@@ -420,7 +389,7 @@ public class AdminScriptRunner {
     public void setPermissionsOnProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
-            log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
+            log.warn("Process " + element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME) + "doesn't exist");
         }
         for (WfProcess pi : list) {
             setPermissionOnIdentifiable(element, pi);
@@ -430,7 +399,7 @@ public class AdminScriptRunner {
     public void removePermissionsOnProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
-            log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
+            log.warn("Process " + element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME) + "doesn't exist");
         }
         for (WfProcess pi : list) {
             removePermissionOnIdentifiable(element, pi);
@@ -438,7 +407,7 @@ public class AdminScriptRunner {
     }
 
     private List<WfProcess> getProcesses(Element element) {
-        String processName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String processName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         return executionLogic.getProcessesForDefinitionName(user, processName);
     }
 
@@ -469,7 +438,7 @@ public class AdminScriptRunner {
     }
 
     public void deployProcessDefinition(Element element) {
-        String type = element.attributeValue(TYPE_ATTRIBUTE_NAME);
+        String type = element.attributeValue(AdminScriptConstants.TYPE_ATTRIBUTE_NAME);
         List<String> parsedType = Lists.newArrayList();
         if (type == null || type.equals("")) {
             parsedType.add("Script");
@@ -489,15 +458,15 @@ public class AdminScriptRunner {
     }
 
     public void redeployProcessDefinition(Element element) {
-        String file = element.attributeValue(FILE_ATTRIBUTE_NAME);
-        String type = element.attributeValue(TYPE_ATTRIBUTE_NAME);
-        String definitionName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String file = element.attributeValue(AdminScriptConstants.FILE_ATTRIBUTE_NAME);
+        String type = element.attributeValue(AdminScriptConstants.TYPE_ATTRIBUTE_NAME);
+        String definitionName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         Long definitionId;
         if (definitionName != null) {
             definitionId = ApplicationContextFactory.getDeploymentDAO().findLatestDeployment(definitionName).getId();
         } else {
-            String id = element.attributeValue(DEFINITION_ID_ATTRIBUTE_NAME);
-            Preconditions.checkNotNull(id, DEFINITION_ID_ATTRIBUTE_NAME);
+            String id = element.attributeValue(AdminScriptConstants.DEFINITION_ID_ATTRIBUTE_NAME);
+            Preconditions.checkNotNull(id, AdminScriptConstants.DEFINITION_ID_ATTRIBUTE_NAME);
             definitionId = Long.parseLong(id);
         }
         List<String> parsedType = null;
@@ -555,7 +524,7 @@ public class AdminScriptRunner {
     public void removeAllPermissionsFromProcesses(Element element) {
         List<WfProcess> list = getProcesses(element);
         if (list.size() == 0) {
-            log.warn("Process " + element.attributeValue(NAME_ATTRIBUTE_NAME) + "doesn't exist");
+            log.warn("Process " + element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME) + "doesn't exist");
         }
         for (WfProcess pi : list) {
             removeAllPermissionOnIdentifiable(pi);
@@ -563,7 +532,7 @@ public class AdminScriptRunner {
     }
 
     public void removeAllPermissionsFromExecutor(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         Executor executor = executorLogic.getExecutor(user, name);
         removeAllPermissionOnIdentifiable(executor);
     }
@@ -573,7 +542,7 @@ public class AdminScriptRunner {
     }
 
     private void addPermissionOnIdentifiable(Element element, Identifiable identifiable) {
-        Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
+        Executor executor = executorLogic.getExecutor(user, element.attributeValue(AdminScriptConstants.EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
         List<Permission> ownPermissions = authorizationLogic.getIssuedPermissions(user, executor, identifiable);
         permissions = Permission.mergePermissions(permissions, ownPermissions);
@@ -581,13 +550,13 @@ public class AdminScriptRunner {
     }
 
     private void setPermissionOnIdentifiable(Element element, Identifiable identifiable) {
-        Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
+        Executor executor = executorLogic.getExecutor(user, element.attributeValue(AdminScriptConstants.EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
         authorizationLogic.setPermissions(user, executor, permissions, identifiable);
     }
 
     private void removePermissionOnIdentifiable(Element element, Identifiable identifiable) {
-        Executor executor = executorLogic.getExecutor(user, element.attributeValue(EXECUTOR_ATTRIBUTE_NAME));
+        Executor executor = executorLogic.getExecutor(user, element.attributeValue(AdminScriptConstants.EXECUTOR_ATTRIBUTE_NAME));
         Collection<Permission> permissions = getPermissions(element, identifiable);
         List<Permission> ownPermissions = authorizationLogic.getIssuedPermissions(user, executor, identifiable);
         permissions = Permission.subtractPermissions(ownPermissions, permissions);
@@ -606,10 +575,10 @@ public class AdminScriptRunner {
 
     private Collection<Permission> getPermissions(Element element, Identifiable identifiable) {
         Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
-        List<Element> permissionElements = element.elements(PERMISSION_ELEMENT_NAME);
+        List<Element> permissionElements = element.elements(AdminScriptConstants.PERMISSION_ELEMENT_NAME);
         Set<Permission> permissions = Sets.newHashSet();
         for (Element permissionElement : permissionElements) {
-            String permissionName = permissionElement.attributeValue(NAME_ATTRIBUTE_NAME);
+            String permissionName = permissionElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             Permission permission = noPermission.getPermission(permissionName);
             permissions.add(permission);
         }
@@ -733,7 +702,7 @@ public class AdminScriptRunner {
         BatchPresentation srcBatch = null;
         Set<BatchPresentation> replaceableBatchPresentations = new HashSet<BatchPresentation>();
         for (Element batchElement : batchPresentations) {
-            String name = batchElement.attributeValue(NAME_ATTRIBUTE_NAME);
+            String name = batchElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             if (name.equals("source")) {
                 if (srcBatch != null) {
                     throw new AdminScriptException("Only one source batchPresentation is allowed inside replicateBatchPresentation.");
@@ -762,7 +731,7 @@ public class AdminScriptRunner {
 
     private Set<Actor> getActors(Element element) {
         Set<Actor> retVal = new HashSet<Actor>();
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         Executor executor = executorLogic.getExecutor(user, name);
         if (executor instanceof Actor) {
             retVal.add((Actor) executor);
@@ -871,7 +840,7 @@ public class AdminScriptRunner {
 
     public void changeSubstitutions(Element element) {
         Set<Actor> actors = new HashSet<Actor>();
-        List<Element> executorsElements = element.elements(EXECUTOR_ELEMENT_NAME);
+        List<Element> executorsElements = element.elements(AdminScriptConstants.EXECUTOR_ELEMENT_NAME);
         for (Element e : executorsElements) {
             actors.addAll(getActors(e));
         }
@@ -881,13 +850,13 @@ public class AdminScriptRunner {
     }
 
     public void createBotStation(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String addr = element.attributeValue(ADDRESS_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String addr = element.attributeValue(AdminScriptConstants.ADDRESS_ATTRIBUTE_NAME);
         botLogic.createBotStation(user, new BotStation(name, addr));
     }
 
     public void createBot(Element element) throws Exception {
-        String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
+        String botStationName = element.attributeValue(AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
         if (botStationName == null || botStationName.length() == 0) {
             log.warn("BotStation name doesn`t specified");
             return;
@@ -897,8 +866,8 @@ public class AdminScriptRunner {
     }
 
     protected void createBotCommon(Element element, BotStation botStation) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String pass = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String pass = element.attributeValue(AdminScriptConstants.PASSWORD_ATTRIBUTE_NAME);
         // String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
         if (!executorLogic.isExecutorExist(user, name)) {
             Actor actor = new Actor(name, "bot");
@@ -919,10 +888,10 @@ public class AdminScriptRunner {
     }
 
     public void updateBot(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String newName = element.attributeValue(NEW_NAME_ATTRIBUTE_NAME);
-        String pass = element.attributeValue(PASSWORD_ATTRIBUTE_NAME);
-        String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String newName = element.attributeValue(AdminScriptConstants.NEW_NAME_ATTRIBUTE_NAME);
+        String pass = element.attributeValue(AdminScriptConstants.PASSWORD_ATTRIBUTE_NAME);
+        String botStationName = element.attributeValue(AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
         // String timeout = element.attributeValue(STARTTIMEOUT_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), name);
         if (!Strings.isNullOrEmpty(newName)) {
@@ -934,7 +903,7 @@ public class AdminScriptRunner {
         // if (!Strings.isNullOrEmpty(timeout)) {
         // bot.setStartTimeout(Long.parseLong(timeout));
         // }
-        String newBotStationName = element.attributeValue(NEW_BOTSTATION_ATTRIBUTE_NAME);
+        String newBotStationName = element.attributeValue(AdminScriptConstants.NEW_BOTSTATION_ATTRIBUTE_NAME);
         if (newBotStationName != null) {
             bot.getBotStation().setName(newBotStationName);
         }
@@ -942,9 +911,9 @@ public class AdminScriptRunner {
     }
 
     public void updateBotStation(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String newName = element.attributeValue(NEW_NAME_ATTRIBUTE_NAME);
-        String address = element.attributeValue(ADDRESS_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String newName = element.attributeValue(AdminScriptConstants.NEW_NAME_ATTRIBUTE_NAME);
+        String address = element.attributeValue(AdminScriptConstants.ADDRESS_ATTRIBUTE_NAME);
         BotStation station = botLogic.getBotStationNotNull(name);
         if (!Strings.isNullOrEmpty(newName)) {
             station.setName(newName);
@@ -956,14 +925,14 @@ public class AdminScriptRunner {
     }
 
     public void deleteBotStation(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         BotStation botStation = botLogic.getBotStationNotNull(name);
         botLogic.removeBotStation(user, botStation.getId());
     }
 
     public void deleteBot(Element element) {
-        String name = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
+        String name = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String botStationName = element.attributeValue(AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), name);
         botLogic.removeBot(user, bot.getId());
     }
@@ -981,27 +950,27 @@ public class AdminScriptRunner {
     }
 
     protected void addConfigurationsToBotCommon(Element element, BotStation botStation) {
-        String botName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String botName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botStation.getId(), botName);
-        List<Element> taskNodeList = element.elements(BOT_CONFIGURATION_ELEMENT_NAME);
+        List<Element> taskNodeList = element.elements(AdminScriptConstants.BOT_CONFIGURATION_ELEMENT_NAME);
         for (Element taskElement : taskNodeList) {
-            String name = taskElement.attributeValue(NAME_ATTRIBUTE_NAME);
-            String handler = taskElement.attributeValue(HANDLER_ATTRIBUTE_NAME, "");
+            String name = taskElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+            String handler = taskElement.attributeValue(AdminScriptConstants.HANDLER_ATTRIBUTE_NAME, "");
             BotTask task = new BotTask();
             task.setBot(bot);
             task.setName(name);
             task.setTaskHandlerClassName(handler);
-            String config = taskElement.attributeValue(CONFIGURATION_STRING_ATTRIBUTE_NAME);
+            String config = taskElement.attributeValue(AdminScriptConstants.CONFIGURATION_STRING_ATTRIBUTE_NAME);
             byte[] configuration;
             if (Strings.isNullOrEmpty(config)) {
-                String configContent = taskElement.attributeValue(CONFIGURATION_CONTENT_ATTRIBUTE_NAME);
+                String configContent = taskElement.attributeValue(AdminScriptConstants.CONFIGURATION_CONTENT_ATTRIBUTE_NAME);
                 if (configContent == null) {
-                	List<Element> children = taskElement.elements();
-                	if (children.size()!=0){
-                		configContent=XmlUtils.toString(children.get(0));
-                	} else {
-                		configContent = taskElement.getTextTrim();
-                	}
+                    List<Element> children = taskElement.elements();
+                    if (children.size() != 0) {
+                        configContent = XmlUtils.toString(children.get(0));
+                    } else {
+                        configContent = taskElement.getTextTrim();
+                    }
                 }
                 if (configContent != null) {
                     configuration = configContent.trim().getBytes(Charsets.UTF_8);
@@ -1026,25 +995,25 @@ public class AdminScriptRunner {
     }
 
     public void addConfigurationsToBot(Element element) {
-        String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
-        Preconditions.checkNotNull(botStationName, BOTSTATION_ATTRIBUTE_NAME);
+        String botStationName = element.attributeValue(AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
+        Preconditions.checkNotNull(botStationName, AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = botLogic.getBotStationNotNull(botStationName);
         addConfigurationsToBotCommon(element, bs);
     }
 
     public void removeConfigurationsFromBot(Element element) {
-        String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
-        Preconditions.checkNotNull(botStationName, BOTSTATION_ATTRIBUTE_NAME);
+        String botStationName = element.attributeValue(AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
+        Preconditions.checkNotNull(botStationName, AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
         BotStation bs = botLogic.getBotStationNotNull(botStationName);
         removeConfigurationsFromBotCommon(element, bs);
     }
 
     public void removeConfigurationsFromBotCommon(Element element, BotStation botStation) {
-        String botName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String botName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botStation.getId(), botName);
-        List<Element> taskNodeList = element.elements(BOT_CONFIGURATION_ELEMENT_NAME);
+        List<Element> taskNodeList = element.elements(AdminScriptConstants.BOT_CONFIGURATION_ELEMENT_NAME);
         for (Element taskElement : taskNodeList) {
-            String name = taskElement.attributeValue(NAME_ATTRIBUTE_NAME);
+            String name = taskElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             BotTask botTask = botLogic.getBotTask(user, bot.getId(), name);
             if (botTask != null) {
                 botLogic.removeBotTask(user, botTask.getId());
@@ -1053,8 +1022,8 @@ public class AdminScriptRunner {
     }
 
     public void removeAllConfigurationsFromBot(Element element) {
-        String botName = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String botStationName = element.attributeValue(BOTSTATION_ATTRIBUTE_NAME);
+        String botName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String botStationName = element.attributeValue(AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME);
         Bot bot = botLogic.getBotNotNull(user, botLogic.getBotStationNotNull(botStationName).getId(), botName);
         for (BotTask task : botLogic.getBotTasks(user, bot.getId())) {
             botLogic.removeBotTask(user, task.getId());
@@ -1063,44 +1032,44 @@ public class AdminScriptRunner {
 
     private ProcessFilter createProcessFilter(Element element) {
         ProcessFilter filter = new ProcessFilter();
-        String finishedOnlyString = element.attributeValue(ONLY_FINISHED_ATTRIBUTE_NAME);
+        String finishedOnlyString = element.attributeValue(AdminScriptConstants.ONLY_FINISHED_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(finishedOnlyString)) {
             filter.setFinishedOnly(Boolean.parseBoolean(finishedOnlyString));
         }
-        String definitionName = element.attributeValue(NAME_ATTRIBUTE_NAME);
+        String definitionName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(definitionName)) {
             filter.setDefinitionName(definitionName);
         }
-        String definitionVersionString = element.attributeValue(VERSION_ATTRIBUTE_NAME);
+        String definitionVersionString = element.attributeValue(AdminScriptConstants.VERSION_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(definitionVersionString)) {
             filter.setDefinitionVersion(Long.parseLong(definitionVersionString));
         }
-        String idString = element.attributeValue(ID_ATTRIBUTE_NAME);
+        String idString = element.attributeValue(AdminScriptConstants.ID_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(idString)) {
             filter.setId(Long.parseLong(idString));
         } else {
-            String idFromString = element.attributeValue(ID_FROM_ATTRIBUTE_NAME);
+            String idFromString = element.attributeValue(AdminScriptConstants.ID_FROM_ATTRIBUTE_NAME);
             if (!Strings.isNullOrEmpty(idFromString)) {
                 filter.setIdFrom(Long.parseLong(idFromString));
             }
-            String idToString = element.attributeValue(ID_TO_ATTRIBUTE_NAME);
+            String idToString = element.attributeValue(AdminScriptConstants.ID_TO_ATTRIBUTE_NAME);
             if (!Strings.isNullOrEmpty(idToString)) {
                 filter.setIdTo(Long.parseLong(idToString));
             }
         }
-        String startDateFromString = element.attributeValue(START_DATE_FROM_ATTRIBUTE_NAME);
+        String startDateFromString = element.attributeValue(AdminScriptConstants.START_DATE_FROM_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(startDateFromString)) {
             filter.setStartDateFrom(CalendarUtil.convertToDate(startDateFromString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
         }
-        String startDateToString = element.attributeValue(START_DATE_TO_ATTRIBUTE_NAME);
+        String startDateToString = element.attributeValue(AdminScriptConstants.START_DATE_TO_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(startDateToString)) {
             filter.setStartDateTo(CalendarUtil.convertToDate(startDateToString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
         }
-        String endDateFromString = element.attributeValue(END_DATE_FROM_ATTRIBUTE_NAME);
+        String endDateFromString = element.attributeValue(AdminScriptConstants.END_DATE_FROM_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(endDateFromString)) {
             filter.setStartDateFrom(CalendarUtil.convertToDate(endDateFromString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
         }
-        String endDateToString = element.attributeValue(END_DATE_TO_ATTRIBUTE_NAME);
+        String endDateToString = element.attributeValue(AdminScriptConstants.END_DATE_TO_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(endDateToString)) {
             filter.setEndDateTo(CalendarUtil.convertToDate(endDateToString, CalendarUtil.DATE_WITHOUT_TIME_FORMAT));
         }
@@ -1135,8 +1104,8 @@ public class AdminScriptRunner {
     }
 
     public void relation(Element element) {
-        String relationName = element.attributeValue(NAME_ATTRIBUTE_NAME);
-        String relationDescription = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
+        String relationName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+        String relationDescription = element.attributeValue(AdminScriptConstants.DESCRIPTION_ATTRIBUTE_NAME);
         Relation relation;
         try {
             relation = relationLogic.getRelation(user, relationName);
@@ -1156,7 +1125,7 @@ public class AdminScriptRunner {
     }
 
     public void stopProcess(Element element) {
-        String id = element.attributeValue(ID_ATTRIBUTE_NAME);
+        String id = element.attributeValue(AdminScriptConstants.ID_ATTRIBUTE_NAME);
         Long processId = Strings.isNullOrEmpty(id) ? null : Long.parseLong(id);
         executionLogic.cancelProcess(user, processId);
     }

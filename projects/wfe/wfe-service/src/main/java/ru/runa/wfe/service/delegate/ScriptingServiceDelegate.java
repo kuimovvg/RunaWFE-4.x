@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.service.delegate;
 
+import java.util.List;
+
 import ru.runa.wfe.service.ScriptingService;
 import ru.runa.wfe.user.User;
 
@@ -28,6 +30,15 @@ public class ScriptingServiceDelegate extends EJB3Delegate implements ScriptingS
 
     private ScriptingService getScriptingService() {
         return getService();
+    }
+
+    @Override
+    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processFiles) {
+        try {
+            return getScriptingService().executeAdminScriptSkipError(user, configData, processFiles);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
     }
 
     @Override
