@@ -16,7 +16,6 @@ import org.alfresco.webservice.util.Utils;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ITypeConvertor;
 import ru.runa.wfe.commons.TypeConversionUtil;
 
@@ -29,8 +28,8 @@ import ru.runa.wfe.commons.TypeConversionUtil;
  */
 @SuppressWarnings("unchecked")
 public class RemoteAlfObjectAccessor extends AlfObjectAccessor<NamedValue[]> {
-    private static final FromStringDateConverter FROM_STRING_DATE_CONVERTER = new FromStringDateConverter();
-    private static final ToStringDateConverter TO_STRING_DATE_CONVERTER = new ToStringDateConverter();
+    public static final FromStringDateConverter FROM_STRING_DATE_CONVERTER = new FromStringDateConverter();
+    public static final ToStringDateConverter TO_STRING_DATE_CONVERTER = new ToStringDateConverter();
 
     public RemoteAlfObjectAccessor(AlfTypeDesc typeDesc, AlfObject alfObject) {
         super(typeDesc, alfObject);
@@ -104,7 +103,7 @@ public class RemoteAlfObjectAccessor extends AlfObjectAccessor<NamedValue[]> {
             }
             Object javaValue;
             if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                Class<?> componentClass = ClassLoaderUtil.loadClass(propertyDesc.getDataType());
+                Class<?> componentClass = propertyDesc.getPropertyClassNotNull();
                 javaValue = TypeConversionUtil.convertToList(componentClass, prop.getValues(), FROM_STRING_DATE_CONVERTER, null);
             } else {
                 Object alfrescoValue = prop.getIsMultiValue() ? prop.getValues() : prop.getValue();
@@ -116,7 +115,7 @@ public class RemoteAlfObjectAccessor extends AlfObjectAccessor<NamedValue[]> {
         }
     }
 
-    private static class FromStringDateConverter implements ITypeConvertor {
+    public static class FromStringDateConverter implements ITypeConvertor {
 
         @Override
         public <T> T convertTo(Object object, Class<T> classConvertTo) {
@@ -138,7 +137,7 @@ public class RemoteAlfObjectAccessor extends AlfObjectAccessor<NamedValue[]> {
 
     }
 
-    private static class ToStringDateConverter implements ITypeConvertor {
+    public static class ToStringDateConverter implements ITypeConvertor {
 
         @Override
         public <T> T convertTo(Object object, Class<T> classConvertTo) {

@@ -79,7 +79,7 @@ public interface AlfConnection {
      *            valid Lucene query in object presentation.
      * @return found object or <code>null</code>
      */
-    public <T extends AlfObject> T findObject(Search search);
+    public <T extends AlfObject> T findFirstObject(Search search);
 
     /**
      * Finds object in Alfresco repository. Throws exception if found more than
@@ -92,6 +92,18 @@ public interface AlfConnection {
      * @return found object or <code>null</code>
      */
     public <T extends AlfObject> T findUniqueObject(Search search);
+
+    /**
+     * Finds object in Alfresco repository. Throws exception if found more than
+     * 1 object by specified search.
+     * 
+     * @param <T>
+     *            result type
+     * @param search
+     *            valid Lucene query in object presentation.
+     * @return found object or throws Exception
+     */
+    public <T extends AlfObject> T findUniqueObjectNotNull(Search search);
 
     /**
      * Finds objects in Alfresco repository.

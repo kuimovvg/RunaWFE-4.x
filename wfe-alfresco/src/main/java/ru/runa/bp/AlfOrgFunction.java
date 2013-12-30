@@ -2,7 +2,7 @@ package ru.runa.bp;
 
 import java.util.List;
 
-import ru.runa.alfresco.RemoteAlfConnection;
+import ru.runa.alfresco.AlfConnection;
 import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.wfe.extension.OrgFunctionException;
 import ru.runa.wfe.extension.orgfunction.GetActorsOrgFunctionBase;
@@ -28,6 +28,6 @@ public abstract class AlfOrgFunction extends GetActorsOrgFunctionBase {
         }
     }
 
-    public abstract List<Long> getExecutorCodes(RemoteAlfConnection session, Object[] parameters) throws Exception;
+    public abstract List<Long> getExecutorCodes(AlfConnection alfConnection, Object[] parameters) throws Exception;
 
 }

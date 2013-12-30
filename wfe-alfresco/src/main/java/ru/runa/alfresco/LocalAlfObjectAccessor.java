@@ -14,7 +14,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 
 /**
@@ -61,7 +60,7 @@ public class LocalAlfObjectAccessor extends AlfObjectAccessor<Map<QName, Seriali
             }
             Object javaValue = PropertyUtils.getProperty(alfObject, fieldName);
             // if (propertyDesc.getDataType() != null) {
-            Class<? extends Serializable> alfrescoType = (Class<? extends Serializable>) ClassLoaderUtil.loadClass(propertyDesc.getDataType());
+            Class<? extends Serializable> alfrescoType = (Class<? extends Serializable>) propertyDesc.getPropertyClassNotNull();
             if (javaValue != null) {
                 if (javaValue.getClass().isArray() || javaValue instanceof Collection) {
                     return (Serializable) TypeConversionUtil.convertToList(alfrescoType, javaValue, null, null);
@@ -99,7 +98,7 @@ public class LocalAlfObjectAccessor extends AlfObjectAccessor<Map<QName, Seriali
             }
             Object javaValue;
             if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                Class<?> componentClass = ClassLoaderUtil.loadClass(propertyDesc.getDataType());
+                Class<?> componentClass = propertyDesc.getPropertyClassNotNull();
                 javaValue = TypeConversionUtil.convertToList(componentClass, alfrescoValue, null, null);
             } else {
                 javaValue = TypeConversionUtil.convertTo(propertyDescriptor.getPropertyType(), alfrescoValue);

@@ -155,6 +155,7 @@ public class Mappings extends Settings {
                 if (result == null) {
                     result = typeDesc;
                 } else {
+                    result.getSuperTypes().add(typeDesc);
                     for (AlfPropertyDesc alfPropertyDesc : typeDesc.getAllDescs()) {
                         result.addPropertyMapping(alfPropertyDesc);
                     }
