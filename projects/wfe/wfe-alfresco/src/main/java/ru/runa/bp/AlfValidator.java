@@ -11,7 +11,7 @@ import ru.runa.wfe.validation.FieldValidator;
  */
 public abstract class AlfValidator extends FieldValidator {
 
-    protected abstract void validate(RemoteAlfConnection session);
+    protected abstract void validate(RemoteAlfConnection alfConnection);
 
     @Override
     public final void validate() {

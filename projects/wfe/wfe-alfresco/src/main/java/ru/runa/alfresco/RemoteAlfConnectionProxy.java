@@ -100,12 +100,12 @@ public class RemoteAlfConnectionProxy implements AlfConnection {
     }
 
     @Override
-    public <T extends AlfObject> T findObject(final Search search) {
+    public <T extends AlfObject> T findFirstObject(final Search search) {
         return (T) new RemoteAlfConnector<AlfObject>() {
 
             @Override
             protected AlfObject code() throws Exception {
-                return alfConnection.findObject(search);
+                return alfConnection.findFirstObject(search);
             }
 
         }.runInSession();
@@ -130,6 +130,18 @@ public class RemoteAlfConnectionProxy implements AlfConnection {
             @Override
             protected AlfObject code() throws Exception {
                 return alfConnection.findUniqueObject(search);
+            }
+
+        }.runInSession();
+    }
+
+    @Override
+    public <T extends AlfObject> T findUniqueObjectNotNull(final Search search) {
+        return (T) new RemoteAlfConnector<AlfObject>() {
+
+            @Override
+            protected AlfObject code() throws Exception {
+                return alfConnection.findUniqueObjectNotNull(search);
             }
 
         }.runInSession();

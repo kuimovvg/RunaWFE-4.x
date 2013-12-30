@@ -2,11 +2,13 @@ package ru.runa.alfresco;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.namespace.QName;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * Descriptor for Alfresco type mapping.
@@ -23,19 +25,13 @@ public class AlfTypeDesc {
     private boolean aspect = false;
     private boolean classDefinitionLoaded = false;
     private String title;
+    private List<AlfTypeDesc> superTypes = Lists.newArrayList();
 
     public AlfTypeDesc(String prefix, String namespace, String javaClassName, String alfrescoTypeName) {
         this.javaClassName = javaClassName;
         this.alfrescoTypeName = alfrescoTypeName;
         this.prefix = prefix;
         this.namespace = namespace;
-    }
-
-    public AlfTypeDesc(AlfTypeDesc desc) {
-        javaClassName = desc.javaClassName;
-        alfrescoTypeName = desc.alfrescoTypeName;
-        prefix = desc.prefix;
-        namespace = desc.namespace;
     }
 
     public void addPropertyMapping(AlfPropertyDesc desc) {
@@ -61,6 +57,10 @@ public class AlfTypeDesc {
 
     public String getAlfrescoTypeNameWithPrefix() {
         return prefix + ":" + alfrescoTypeName;
+    }
+
+    public List<AlfTypeDesc> getSuperTypes() {
+        return superTypes;
     }
 
     public String getAlfrescoTypeNameWithNamespace() {
