@@ -6,6 +6,8 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
 
+import ru.runa.alfresco.LocalAlfConnection;
+
 import com.google.common.base.Objects;
 
 /**
@@ -50,6 +52,12 @@ public class Search extends Group {
         return limit;
     }
 
+    /**
+     * Limit results. Note that this implemented correctly only in
+     * {@link LocalAlfConnection}.
+     * 
+     * @param limit
+     */
     public void setLimit(int limit) {
         this.limit = limit;
     }

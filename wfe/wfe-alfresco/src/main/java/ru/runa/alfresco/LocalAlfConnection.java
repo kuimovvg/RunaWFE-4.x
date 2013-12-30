@@ -32,6 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.alfresco.search.Search;
 import ru.runa.alfresco.search.Search.Sorting;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
@@ -117,37 +118,32 @@ public class LocalAlfConnection implements AlfConnection {
     @Override
     public <T extends AlfObject> T findUniqueObject(Search search) throws InternalApplicationException {
         List<T> objects = findObjects(search);
-        search.setLimit(1);
         if (objects.size() > 1) {
-            List<NodeRef> noderefs = new ArrayList<NodeRef>(objects.size());
-            for (T t : objects) {
-                noderefs.add(getNodeRef(t));
-            }
-            throw new InternalApplicationException("Search " + search + " returns not unique result: " + noderefs);
+            throw new InternalApplicationException("Search " + search + " returned not unique result: " + objects);
         }
-        if (objects.size() == 1) {
+        if (objects.size() > 0) {
             return objects.get(0);
         }
         return null;
     }
 
     @Override
-    public <T extends AlfObject> T findObject(Search search) throws InternalApplicationException {
-        ResultSet resultSet = null;
-        try {
-            resultSet = find(search);
-            for (int i = 0; i < resultSet.length(); i++) {
-                T t = (T) loadObject(resultSet.getNodeRef(i));
-                if (t != null) {
-                    return t;
-                }
-            }
-            return null;
-        } finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
+    public <T extends AlfObject> T findUniqueObjectNotNull(Search search) {
+        T object = (T) findUniqueObject(search);
+        if (object == null) {
+            throw new InternalApplicationException("Search " + search + " returned empty result");
         }
+        return object;
+    }
+
+    @Override
+    public <T extends AlfObject> T findFirstObject(Search search) {
+        search.setLimit(1);
+        List<T> objects = findObjects(search);
+        if (objects.size() > 0) {
+            return objects.get(0);
+        }
+        return null;
     }
 
     public List<AlfObject> loadObjects(List<NodeRef> refs) throws InternalApplicationException {
@@ -379,11 +375,7 @@ public class LocalAlfConnection implements AlfConnection {
                     throw new InternalApplicationException("No property found in Alfresco for " + desc + " of type " + typeDesc);
                 }
                 desc.setTitle(propertyDefinition.getTitle());
-                // if (propertyDefinition.isMultiValued()) {
-                // desc.setDataType(List.class.getName());
-                // } else {
-                desc.setDataType(propertyDefinition.getDataType().getJavaClassName());
-                // }
+                desc.setPropertyClass(ClassLoaderUtil.loadClass(propertyDefinition.getDataType().getJavaClassName()));
                 desc.setDefaultValue(propertyDefinition.getDefaultValue());
             }
             if (desc.getAssoc() != null) {

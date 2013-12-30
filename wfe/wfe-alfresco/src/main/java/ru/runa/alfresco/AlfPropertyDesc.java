@@ -4,6 +4,7 @@ import org.alfresco.service.namespace.QName;
 
 import ru.runa.alfresco.anno.Assoc;
 import ru.runa.alfresco.anno.Property;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Objects;
 
@@ -17,7 +18,7 @@ public class AlfPropertyDesc {
     protected String propertyName;
     protected final String namespace;
     protected String title;
-    protected String dataType;
+    protected Class<?> propertyClass;
     protected String defaultValue;
     protected final Assoc assoc;
     protected final Property property;
@@ -104,12 +105,15 @@ public class AlfPropertyDesc {
         this.title = title;
     }
 
-    public String getDataType() {
-        return dataType;
+    public Class<?> getPropertyClassNotNull() {
+        if (propertyClass == null) {
+            throw new InternalApplicationException("Property class is null in " + propertyName);
+        }
+        return propertyClass;
     }
 
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
+    public void setPropertyClass(Class<?> propertyClass) {
+        this.propertyClass = propertyClass;
     }
 
     public String getDefaultValue() {
@@ -122,6 +126,6 @@ public class AlfPropertyDesc {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("alf", propertyName).add("java", fieldName).add("type", dataType).toString();
+        return Objects.toStringHelper(this).add("alf", propertyName).add("java", fieldName).add("type", propertyClass).toString();
     }
 }

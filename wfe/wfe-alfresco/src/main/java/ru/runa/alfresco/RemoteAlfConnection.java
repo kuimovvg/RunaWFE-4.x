@@ -3,6 +3,8 @@ package ru.runa.alfresco;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +59,9 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.ClassUtils;
 import ru.runa.alfresco.search.Search;
+import ru.runa.alfresco.search.Search.Sorting;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.TypeConversionUtil;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
@@ -632,7 +636,7 @@ public class RemoteAlfConnection implements AlfConnection {
     }
 
     @Override
-    public <T extends AlfObject> T findObject(Search search) throws InternalApplicationException {
+    public <T extends AlfObject> T findFirstObject(Search search) throws InternalApplicationException {
         List<T> objects = findObjects(search);
         if (objects.size() > 0) {
             return objects.get(0);
@@ -644,7 +648,7 @@ public class RemoteAlfConnection implements AlfConnection {
     public <T extends AlfObject> T findUniqueObject(Search search) {
         List<T> objects = findObjects(search);
         if (objects.size() > 1) {
-            throw new InternalApplicationException("Search " + search + " returns not unique result: " + objects);
+            throw new InternalApplicationException("Search " + search + " returned not unique result: " + objects);
         }
         if (objects.size() > 0) {
             return objects.get(0);
@@ -652,25 +656,86 @@ public class RemoteAlfConnection implements AlfConnection {
         return null;
     }
 
-    private ResultSetRow[] findObjectRows(Store store, Search search) throws InternalApplicationException {
+    @Override
+    public <T extends AlfObject> T findUniqueObjectNotNull(Search search) {
+        T object = (T) findUniqueObject(search);
+        if (object == null) {
+            throw new InternalApplicationException("Search " + search + " returned empty result");
+        }
+        return object;
+    }
+
+    private List<ResultSetRow> findObjectRows(Store store, Search search) throws InternalApplicationException {
         try {
             RemoteAlfConnector.sessionStart();
             String luceneQuery = search.toString();
             Query query = new Query("lucene", luceneQuery);
             QueryResult queryResult = WebServiceFactory.getRepositoryService().query(store, query, false);
             ResultSet resultSet = queryResult.getResultSet();
-            ResultSetRow[] rows;
+            List<ResultSetRow> rows;
             if (resultSet.getTotalRowCount() > 0) {
-                rows = resultSet.getRows();
+                rows = Lists.newArrayList(resultSet.getRows());
             } else {
-                rows = new ResultSetRow[0];
+                rows = Lists.newArrayList();
             }
-            log.debug("Search " + query.getStatement() + " returns " + rows.length);
+            if (search.hasSorting() && rows.size() > 0) {
+                AlfTypeDesc typeDesc = Mappings.getMapping(rows.get(0).getNode().getType(), this);
+                Collections.sort(rows, new ResultSetRowComparator(typeDesc, search.getSortings()));
+            }
+            if (search.getLimit() != 0 && rows.size() > search.getLimit()) {
+                log.debug("Search " + query.getStatement() + " returns " + rows.size() + " but clipping to defined limit " + search.getLimit());
+                return rows.subList(0, search.getLimit());
+            }
+            log.debug("Search " + query.getStatement() + " returns " + rows.size());
             return rows;
         } catch (Exception e) {
             throw propagate(e);
         } finally {
             RemoteAlfConnector.sessionEnd();
+        }
+    }
+
+    private class ResultSetRowComparator implements Comparator<ResultSetRow> {
+        private final AlfTypeDesc typeDesc;
+        private final List<Sorting> sortings;
+
+        private ResultSetRowComparator(AlfTypeDesc typeDesc, List<Sorting> sortings) {
+            this.sortings = sortings;
+            this.typeDesc = typeDesc;
+        }
+
+        @Override
+        public int compare(ResultSetRow row1, ResultSetRow row2) {
+            for (Sorting sorting : sortings) {
+                String propertyName = sorting.getName().toString();
+                AlfPropertyDesc propertyDesc = typeDesc.getPropertyDescByTypeName(propertyName);
+                Class<Comparable> propertyClass = (Class<Comparable>) (propertyDesc != null ? propertyDesc.getPropertyClassNotNull() : String.class);
+                Comparable value1 = TypeConversionUtil.convertTo(propertyClass, findValue(row1, propertyName),
+                        RemoteAlfObjectAccessor.FROM_STRING_DATE_CONVERTER, null);
+                Comparable value2 = TypeConversionUtil.convertTo(propertyClass, findValue(row2, propertyName),
+                        RemoteAlfObjectAccessor.FROM_STRING_DATE_CONVERTER, null);
+                if (value1 == null && value2 != null) {
+                    return sorting.isAscending() ? -1 : 1;
+                }
+                int r = value1.compareTo(value2);
+                if (r == 0) {
+                    continue;
+                }
+                return sorting.isAscending() ? r : -1 * r;
+            }
+            return 0;
+        }
+
+        private String findValue(ResultSetRow row, String propertyName) {
+            for (NamedValue namedValue : row.getColumns()) {
+                if (Objects.equal(propertyName, namedValue.getName())) {
+                    if (namedValue.getIsMultiValue()) {
+                        return null;
+                    }
+                    return namedValue.getValue();
+                }
+            }
+            return null;
         }
     }
 
@@ -703,8 +768,8 @@ public class RemoteAlfConnection implements AlfConnection {
         try {
             RemoteAlfConnector.sessionStart();
             Store store = new Store(search.getStore().getProtocol(), search.getStore().getIdentifier());
-            ResultSetRow[] rows = findObjectRows(store, search);
-            List<T> result = new ArrayList<T>(rows.length);
+            List<ResultSetRow> rows = findObjectRows(store, search);
+            List<T> result = new ArrayList<T>(rows.size());
             for (ResultSetRow row : rows) {
                 result.add((T) loadObject(store, row, true));
             }
@@ -737,43 +802,36 @@ public class RemoteAlfConnection implements AlfConnection {
             return;
         }
         try {
+            log.info("Initializing class definition " + typeDesc.getJavaClassName());
             RemoteAlfConnector.sessionStart();
-            log.info("Loading definition for " + typeDesc.getAlfrescoTypeNameWithPrefix());
-            ClassPredicate types;
-            ClassPredicate aspects;
-            if (typeDesc.isAspect()) {
-                types = new ClassPredicate(new String[] {}, false, false);
-                aspects = new ClassPredicate(new String[] { typeDesc.getAlfrescoTypeNameWithPrefix() }, false, false);
-            } else {
-                types = new ClassPredicate(new String[] { typeDesc.getAlfrescoTypeNameWithPrefix() }, false, false);
-                aspects = new ClassPredicate(new String[] {}, false, false);
-            }
-            ClassDefinition definition = WebServiceFactory.getDictionaryService().getClasses(types, aspects)[0];
-            typeDesc.setTitle(definition.getTitle());
-            PropertyDefinition[] propertyDefinitions = definition.getProperties();
-            for (PropertyDefinition propertyDefinition : propertyDefinitions) {
-                AlfPropertyDesc desc = typeDesc.getPropertyDescByTypeName(propertyDefinition.getName());
-                if (desc != null) {
-                    desc.setTitle(propertyDefinition.getTitle());
-                    Class<?> propertyClass = DATA_TYPES.get(propertyDefinition.getDataType());
-                    if (propertyClass == null) {
-                        throw new InternalApplicationException("Unable to find datatype for " + propertyDefinition.getDataType());
-                    }
-                    desc.setDataType(propertyClass.getName());
-                    desc.setDefaultValue(propertyDefinition.getDefaultValue());
-                } else {
-                    log.debug("No property found in mapping for " + propertyDefinition.getName());
-                }
-            }
-            if (definition.getAssociations() != null) {
-                for (AssociationDefinition associationDefinition : definition.getAssociations()) {
-                    AlfPropertyDesc desc = typeDesc.getPropertyDescByTypeName(associationDefinition.getName());
+            List<ClassDefinition> classDefinitions = loadClassDefinitions(typeDesc);
+            typeDesc.setTitle(classDefinitions.get(0).getTitle());
+            for (ClassDefinition classDefinition : classDefinitions) {
+                PropertyDefinition[] propertyDefinitions = classDefinition.getProperties();
+                for (PropertyDefinition propertyDefinition : propertyDefinitions) {
+                    AlfPropertyDesc desc = typeDesc.getPropertyDescByTypeName(propertyDefinition.getName());
                     if (desc != null) {
-                        desc.setTitle(associationDefinition.getTitle());
-                        desc.setChildAssociation(associationDefinition.isIsChild());
-                        desc.setSourceAssociation(!Objects.equal(associationDefinition.getTargetClass(), definition.getName()));
+                        desc.setTitle(propertyDefinition.getTitle());
+                        Class<?> propertyClass = DATA_TYPES.get(propertyDefinition.getDataType());
+                        if (propertyClass == null) {
+                            throw new InternalApplicationException("Unable to find datatype for " + propertyDefinition.getDataType());
+                        }
+                        desc.setPropertyClass(propertyClass);
+                        desc.setDefaultValue(propertyDefinition.getDefaultValue());
                     } else {
-                        log.debug("No property found in mapping for " + associationDefinition.getName());
+                        log.debug("No property found in mapping for " + propertyDefinition.getName());
+                    }
+                }
+                if (classDefinition.getAssociations() != null) {
+                    for (AssociationDefinition associationDefinition : classDefinition.getAssociations()) {
+                        AlfPropertyDesc desc = typeDesc.getPropertyDescByTypeName(associationDefinition.getName());
+                        if (desc != null) {
+                            desc.setTitle(associationDefinition.getTitle());
+                            desc.setChildAssociation(associationDefinition.isIsChild());
+                            desc.setSourceAssociation(!Objects.equal(associationDefinition.getTargetClass(), classDefinition.getName()));
+                        } else {
+                            log.debug("No property found in mapping for " + associationDefinition.getName());
+                        }
                     }
                 }
             }
@@ -783,6 +841,28 @@ public class RemoteAlfConnection implements AlfConnection {
         } finally {
             RemoteAlfConnector.sessionEnd();
         }
+    }
+
+    private List<ClassDefinition> loadClassDefinitions(AlfTypeDesc typeDesc) throws Exception {
+        List<ClassDefinition> list = Lists.newArrayList();
+        list.add(loadClassDefinition(typeDesc));
+        for (AlfTypeDesc superTypeDesc : typeDesc.getSuperTypes()) {
+            list.add(loadClassDefinition(superTypeDesc));
+        }
+        return list;
+    }
+
+    private ClassDefinition loadClassDefinition(AlfTypeDesc typeDesc) throws Exception {
+        ClassPredicate types;
+        ClassPredicate aspects;
+        if (typeDesc.isAspect()) {
+            types = new ClassPredicate(new String[] {}, false, false);
+            aspects = new ClassPredicate(new String[] { typeDesc.getAlfrescoTypeNameWithPrefix() }, false, false);
+        } else {
+            types = new ClassPredicate(new String[] { typeDesc.getAlfrescoTypeNameWithPrefix() }, false, false);
+            aspects = new ClassPredicate(new String[] {}, false, false);
+        }
+        return WebServiceFactory.getDictionaryService().getClasses(types, aspects)[0];
     }
 
     public static RuntimeException propagate(Exception exception) {
