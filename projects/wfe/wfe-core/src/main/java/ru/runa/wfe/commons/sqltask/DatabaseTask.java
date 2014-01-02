@@ -24,7 +24,7 @@ package ru.runa.wfe.commons.sqltask;
  * @author Gordienko_m
  */
 public class DatabaseTask {
-    public final static String INSTANCE_ID_VARIABLE_NAME = "instanceId"; // TODO DELETE THIS
+    public final static String INSTANCE_ID_VARIABLE_NAME = "instanceId";
     public final static String CURRENT_DATE_VARIABLE_NAME = "currentDate";
     private final String datasourceName;
     private final AbstractQuery[] queries;
