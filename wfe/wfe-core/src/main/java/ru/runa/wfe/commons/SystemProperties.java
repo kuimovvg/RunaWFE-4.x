@@ -107,7 +107,7 @@ public class SystemProperties {
     }
 
     public static boolean isVariableAutoCastingEnabled() {
-        return RESOURCES.getBooleanProperty("variables.autocast.enabled", false);
+        return RESOURCES.getBooleanProperty("variables.autocast.enabled", true);
     }
 
 }
