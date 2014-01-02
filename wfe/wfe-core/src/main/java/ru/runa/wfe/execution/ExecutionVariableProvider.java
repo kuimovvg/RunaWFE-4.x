@@ -1,5 +1,6 @@
 package ru.runa.wfe.execution;
 
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
@@ -33,6 +34,10 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
         if (variableDefinition != null) {
             return new WfVariable(variableDefinition, variableValue);
         }
-        return new WfVariable(variableName, variableValue);
+        if (variableValue != null && 
+                (SystemProperties.isV3CompatibilityMode() || SystemProperties.isAllowedNotDefinedVariables())) {
+            return new WfVariable(variableName, variableValue);
+        }
+        return null;
     }
 }

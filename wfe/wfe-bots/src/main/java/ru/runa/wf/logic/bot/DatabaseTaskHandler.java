@@ -65,8 +65,12 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
         Map<String, Object> outputVariables = Maps.newHashMap();
-        outputVariables.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, task.getProcessId());
-        outputVariables.put(DatabaseTask.CURRENT_DATE_VARIABLE_NAME, new Date());
+        if (variableProvider.getVariable(DatabaseTask.INSTANCE_ID_VARIABLE_NAME) != null) {
+            outputVariables.put(DatabaseTask.INSTANCE_ID_VARIABLE_NAME, task.getProcessId());
+        }
+        if (variableProvider.getVariable(DatabaseTask.CURRENT_DATE_VARIABLE_NAME) != null) {
+            outputVariables.put(DatabaseTask.CURRENT_DATE_VARIABLE_NAME, new Date());
+        }
         DatabaseTask[] databaseTasks = DatabaseTaskXmlParser.parse(configuration, variableProvider);
         Context context = new InitialContext();
         for (int i = 0; i < databaseTasks.length; i++) {
@@ -87,7 +91,7 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                             String unknownQueryClassName = (query == null ? "null" : query.getClass().getName());
                             throw new Exception("Unknown query type:" + unknownQueryClassName);
                         }
-                        fillQueryParameters(user, ps, variableProvider, query);
+                        fillQueryParameters(user, ps, variableProvider, query, task);
                         if (ps.execute()) {
                             ResultSet resultSet = ps.getResultSet();
                             if (!resultSet.next()) {
@@ -129,18 +133,24 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                 String fieldName = result.getFieldName();
                 PropertyUtils.setProperty(variableValue, fieldName, newValue);
                 newValue = variableValue;
-                // } else if (newValue instanceof Integer){
-                // newValue = (new Long(((Integer)newValue).intValue()));
             }
             outputVariables.put(result.getVariableName(), newValue);
         }
         return outputVariables;
     }
 
-    private void fillQueryParameters(User user, PreparedStatement ps, IVariableProvider variableProvider, AbstractQuery query) throws Exception {
+    private void fillQueryParameters(User user, PreparedStatement ps, IVariableProvider variableProvider, AbstractQuery query, WfTask task) throws Exception {
         for (int i = 0; i < query.getParameterCount(); i++) {
             Parameter parameter = query.getParameter(i);
             Object value = variableProvider.getValue(parameter.getVariableName());
+            if (value == null) {
+                if (DatabaseTask.INSTANCE_ID_VARIABLE_NAME.equals(parameter.getVariableName())) {
+                    value = task.getProcessId();
+                }
+                if (DatabaseTask.CURRENT_DATE_VARIABLE_NAME.equals(parameter.getVariableName())) {
+                    value = new Date();
+                }
+            }
             if (parameter instanceof SwimlaneParameter) {
                 Actor actor = TypeConversionUtil.convertToExecutor(value, new DelegateExecutorLoader(user));
                 value = PropertyUtils.getProperty(actor, ((SwimlaneParameter) parameter).getFieldName());
