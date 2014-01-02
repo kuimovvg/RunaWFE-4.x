@@ -4,10 +4,7 @@ import java.util.Map;
 
 import ru.runa.wfe.var.dto.WfVariable;
 
-import com.google.common.collect.Maps;
-
 public class MapDelegableVariableProvider extends DelegableVariableProvider {
-    private final Map<String, WfVariable> variables = Maps.newHashMap();
     private final Map<String, Object> values;
 
     // TODO remove 1-st parameter from constructor
@@ -16,40 +13,35 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
         this.values = (Map<String, Object>) variables;
     }
 
-    public void addValue(String variableName, Object object) {
+    public void add(String variableName, Object object) {
         values.put(variableName, object);
     }
 
-    public Object removeValue(String variableName) {
+    public void add(WfVariable variable) {
+        values.put(variable.getDefinition().getName(), variable);
+    }
+
+    public Object remove(String variableName) {
         return values.remove(variableName);
-    }
-
-    public void addVariable(WfVariable variable) {
-        variables.put(variable.getDefinition().getName(), variable);
-    }
-
-    public Object removeVariable(String variableName) {
-        return variables.remove(variableName);
     }
 
     @Override
     public Object getValue(String variableName) {
         Object object = values.get(variableName);
+        if (object instanceof WfVariable) {
+            return ((WfVariable) object).getValue();
+        }
         if (object != null) {
             return object;
-        }
-        WfVariable variable = variables.get(variableName);
-        if (variable != null) {
-            return variable.getValue();
         }
         return super.getValue(variableName);
     }
 
     @Override
     public WfVariable getVariable(String variableName) {
-        WfVariable variable = variables.get(variableName);
-        if (variable != null) {
-            return variable;
+        Object object = values.get(variableName);
+        if (object instanceof WfVariable) {
+            return (WfVariable) object;
         }
         return super.getVariable(variableName);
     }
@@ -58,7 +50,7 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
     public AbstractVariableProvider getSameProvider(Long processId) {
         if (delegate instanceof AbstractVariableProvider) {
             AbstractVariableProvider same = ((AbstractVariableProvider) delegate).getSameProvider(processId);
-            return new MapDelegableVariableProvider(variables, same);
+            return new MapDelegableVariableProvider(values, same);
         }
         return super.getSameProvider(processId);
     }

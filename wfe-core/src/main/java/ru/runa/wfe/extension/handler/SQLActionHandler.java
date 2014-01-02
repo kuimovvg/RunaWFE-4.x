@@ -152,7 +152,7 @@ public class SQLActionHandler extends ActionHandlerBase {
                 if (variableValue == null) {
                     if ("name".equals(result.getFieldName()) || "data".equals(result.getFieldName()) || "contentType".equals(result.getFieldName())) {
                         variableValue = new FileVariable("file", "application/octet-stream");
-                        in.addValue(result.getVariableName(), variableValue);
+                        in.add(result.getVariableName(), variableValue);
                     }
                 }
                 PropertyUtils.setProperty(variableValue, fieldName, newValue);
@@ -167,7 +167,7 @@ public class SQLActionHandler extends ActionHandlerBase {
                 ObjectInputStream ois = new ObjectInputStream(bais);
                 newValue = ois.readObject();
             }
-            in.addValue(result.getVariableName(), newValue);
+            in.add(result.getVariableName(), newValue);
             out.put(result.getVariableName(), newValue);
         }
         return out;

@@ -212,7 +212,7 @@ public class DocxUtils {
                         }
                         while (iterator.hasNext()) {
                             Object iteratorValue = iterator.next();
-                            variableProvider.addVariable(loopOperation.getIteratorVariable(iteratorValue));
+                            variableProvider.add(loopOperation.getIteratorVariable(iteratorValue));
                             for (XWPFParagraph templateParagraph : loopOperation.getBodyParagraphs()) {
                                 XmlCursor cursor = document.getDocument().getBody().getPArray(insertPosition).newCursor();
                                 XWPFParagraph newParagraph = document.insertNewParagraph(cursor);
@@ -230,14 +230,14 @@ public class DocxUtils {
                             }
                         }
                         if (iteratorValue0 != null) {
-                            variableProvider.addVariable(loopOperation.getIteratorVariable(iteratorValue0));
+                            variableProvider.add(loopOperation.getIteratorVariable(iteratorValue0));
                             for (XWPFParagraph templateParagraph : loopOperation.getBodyParagraphs()) {
                                 replaceInParagraph(config, variableProvider, templateParagraph);
                             }
                         }
                         document.removeBodyElement(document.getPosOfParagraph(loopOperation.getHeaderParagraph()));
                         document.removeBodyElement(document.getPosOfParagraph(paragraph));
-                        variableProvider.removeVariable(loopOperation.getIteratorVariableName());
+                        variableProvider.remove(loopOperation.getIteratorVariableName());
                         continue;
                     }
                     ((LoopOperation) operations.peek()).getBodyParagraphs().add(paragraph);
