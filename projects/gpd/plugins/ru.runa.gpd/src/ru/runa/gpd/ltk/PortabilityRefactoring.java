@@ -23,6 +23,7 @@ import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.ScriptTask;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
@@ -80,6 +81,10 @@ public class PortabilityRefactoring extends Refactoring {
                 List<Action> actions = definition.getChildrenRecursive(Action.class);
                 for (Action action : actions) {
                     cache.add(new DelegablePresentation(action, action.getLabel()));
+                }
+                List<ScriptTask> scriptTasks = definition.getChildrenRecursive(ScriptTask.class);
+                for (ScriptTask scriptTask : scriptTasks) {
+                    cache.add(new DelegablePresentation(scriptTask, scriptTask.getLabel()));
                 }
                 List<Decision> decisions = definition.getChildren(Decision.class);
                 for (Decision decision : decisions) {
