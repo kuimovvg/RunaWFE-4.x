@@ -13,6 +13,7 @@ CKEDITOR.editorConfig = function( config )
 	config.skin = "v2";
 	
 	config.contentsCss = "form.css";
+	config.bodyClass = "taskform";
 
 	config.height = "500px";
 
