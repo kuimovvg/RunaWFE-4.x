@@ -24,15 +24,15 @@ import com.google.common.base.Objects;
 public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDelegate {
     private String selectedVariable;
     private ProcessDefinition currentDefinition;
-    private MultiTaskState currentNode;
+    private MultiTaskState multiTaskState;
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (action.isEnabled()) {
-            currentNode = getSelection();
-            selectedVariable = currentNode.getExecutorsVariableName();
-            currentDefinition = currentNode.getProcessDefinition();
+        multiTaskState = getSelection();
+        if (multiTaskState != null) {
+            selectedVariable = multiTaskState.getExecutorsVariableName();
+            currentDefinition = multiTaskState.getProcessDefinition();
         }
     }
 
@@ -80,7 +80,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
     }
 
     private void setVariableName(String variableName) {
-        currentNode.setExecutorsVariableName(variableName);
+        multiTaskState.setExecutorsVariableName(variableName);
     }
 
     public class SetVariableAction extends Action {

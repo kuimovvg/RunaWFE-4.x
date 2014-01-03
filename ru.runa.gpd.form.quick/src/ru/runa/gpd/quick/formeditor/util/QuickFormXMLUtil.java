@@ -53,7 +53,7 @@ public class QuickFormXMLUtil {
 		//save in new file 
 		saveTemplateToProcessDefinition(folder, form);
 		
-		for(QuickFormGpdVariable templatedVariableDef : form.getQuickFormGpdVariable()) {
+		for(QuickFormGpdVariable templatedVariableDef : form.getVariables()) {
 			populateQuickFormVariable(document.getRootElement().addElement(TEMPLATE_VARIABLE), templatedVariableDef);
 		}
 		
@@ -110,7 +110,7 @@ public class QuickFormXMLUtil {
                 		templatedVariableDef.setParams(params.toArray(new String[0]));
                 	}
                 	
-                	quickForm.getQuickFormGpdVariable().add(templatedVariableDef);
+                	quickForm.getVariables().add(templatedVariableDef);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

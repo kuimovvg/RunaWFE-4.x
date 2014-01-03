@@ -18,6 +18,8 @@ import org.eclipse.ui.IWorkbench;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
+import ru.runa.gpd.form.FormCSSTemplate;
+import ru.runa.gpd.form.FormCSSTemplateRegistry;
 import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ProcessSerializer;
@@ -29,6 +31,7 @@ import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
@@ -109,6 +112,12 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                 Document document = language.getSerializer().getInitialProcessDefinitionDocument(processName, properties);
                 byte[] bytes = XmlUtil.writeXml(document);
                 definitionFile.create(new ByteArrayInputStream(bytes), true, null);
+                String cssTemplateName = page.getFormCSSTemplateName();
+                if (cssTemplateName != null) {
+                    FormCSSTemplate template = FormCSSTemplateRegistry.getTemplateNotNull(cssTemplateName);
+                    IFile cssFile = IOUtils.getAdjacentFile(definitionFile, ParContentProvider.FORM_CSS_FILE_NAME);
+                    IOUtils.createFileSafely(cssFile, template.getContentAsStream());
+                }
                 monitor.worked(1);
                 ProcessCache.newProcessDefinitionWasCreated(definitionFile);
                 WorkspaceOperations.openProcessDefinition(definitionFile);

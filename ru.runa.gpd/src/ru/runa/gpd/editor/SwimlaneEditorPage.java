@@ -122,7 +122,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         enableAction(changeButton, selected.size() == 1);
         enableAction(moveUpButton, selected.size() == 1 && swimlanes.indexOf(selected.get(0)) > 0);
         enableAction(moveDownButton, selected.size() == 1 && swimlanes.indexOf(selected.get(0)) < swimlanes.size() - 1);
-        enableAction(deleteButton, selected.size() == 1);
+        enableAction(deleteButton, selected.size() > 0);
         enableAction(renameButton, selected.size() == 1);
         enableAction(copyButton, selected.size() > 0);
         boolean pasteEnabled = false;
@@ -187,6 +187,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
     }
 
     private void delete(Swimlane swimlane) {
+        boolean confirmationRequired = false;
         StringBuffer message = new StringBuffer(Localization.getString("Swimlane.UsedInStates")).append("\n");
         StringBuffer stateNames = new StringBuffer();
         for (SwimlanedNode node : getDefinition().getChildren(SwimlanedNode.class)) {
@@ -195,6 +196,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
             }
         }
         if (stateNames.length() > 0) {
+            confirmationRequired = true;
             message.append(stateNames);
         } else {
             message.append(Localization.getString("Swimlane.NotUsed"));
@@ -203,6 +205,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), swimlane);
         message.append(Localization.getString("Variable.ExistInForms")).append("\n");
         if (nodesWithVar.size() > 0) {
+            confirmationRequired = true;
             for (FormNode node : nodesWithVar) {
                 message.append(" - ").append(node.getName()).append("\n");
             }
@@ -210,7 +213,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         } else {
             message.append(Localization.getString("Variable.NoFormsUsed"));
         }
-        if (Dialogs.confirm(Localization.getString("confirm.delete"), message.toString())) {
+        if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), message.toString())) {
             // remove variable from form validations
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane);
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();

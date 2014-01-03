@@ -10,6 +10,7 @@
    <extension-point id="swimlaneElements" name="Swimlane elements" schema="schema/swimlaneElements.exsd"/>
    <extension-point id="validators" name="Variable validators" schema="schema/validators.exsd"/>
    <extension-point id="wfeConnectors" name="wfeConnectors" schema="schema/wfeConnectors.exsd"/>
+   <extension-point id="cssTemplates" name="form CSS templates" schema="schema/cssTemplates.exsd"/>
 
   <extension point = "org.eclipse.ui.editors">
     <editor
@@ -284,16 +285,76 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="process"
+          id="processdefinition"
           objectClass="ru.runa.gpd.lang.model.ProcessDefinition">
        <action
              class="ru.runa.gpd.lang.action.OpenDescriptionEditorDelegate"
              id="editDescription"
-             label="%label.action.editDescription"/>
+             label="%label.action.editDescription">
+       </action>
+       <menu
+             id="formCss"
+             label="%label.action.formCSS"
+             path="additions">
+          <separator
+                name="formCssSeparator1">
+          </separator>
+          <separator
+                name="formCssSeparator2">
+          </separator>
+       </menu>
        <action
-             class="ru.runa.gpd.lang.action.OpenFormCSSDelegate"
+             class="ru.runa.gpd.lang.action.OpenFormCSSAction"
              id="editFormCSS"
-             label="%label.action.editFormCSS">
+             label="%label.action.edit"
+             menubarPath="formCss/formCssSeparator1">
+          <enablement>
+             <objectState
+                   name="hasFormCSS"
+                   value="true">
+             </objectState>
+          </enablement>
+       </action>
+       <action
+             class="ru.runa.gpd.lang.action.OpenFormCSSAction"
+             id="createFormCSS"
+             label="%label.action.create"
+             menubarPath="formCss/formCssSeparator1">
+          <enablement>
+             <objectState
+                   name="hasFormCSS"
+                   value="false">
+             </objectState>
+          </enablement>
+       </action>
+       <action
+             class="ru.runa.gpd.lang.action.CreateTemplatedFormCSSAction"
+             id="createFormCSSUsingTemplate"
+             label="%label.action.createUsingTemplate"
+             menubarPath="formCss/formCssSeparator1">
+          <enablement>
+             <objectState
+                   name="hasFormCSS"
+                   value="false">
+             </objectState>
+          </enablement>
+       </action>
+       <action
+             class="ru.runa.gpd.lang.action.DeleteFormCSSAction"
+             id="deleteFormCSS"
+             label="%label.action.delete"
+             menubarPath="formCss/formCssSeparator2">
+          <enablement>
+             <and>
+                <objectClass
+                      name="ru.runa.gpd.lang.model.ProcessDefinition">
+                </objectClass>
+                <objectState
+                      name="hasFormCSS"
+                      value="true">
+                </objectState>
+             </and>
+          </enablement>
        </action>
     </objectContribution>
     <objectContribution
@@ -2295,6 +2356,17 @@
              class="ru.runa.gpd.ProcessProjectNature">
        </run>
     </runtime>
+ </extension>
+ <extension
+       point="ru.runa.gpd.cssTemplates">
+    <template
+          path="/template/classic.css"
+          label="classic style">
+    </template>
+    <template
+          path="/template/runa.css"
+          label="runa style">
+    </template>
  </extension>	
 
 
