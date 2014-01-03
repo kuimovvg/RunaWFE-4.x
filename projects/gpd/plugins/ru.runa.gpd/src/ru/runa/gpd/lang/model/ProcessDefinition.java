@@ -13,14 +13,18 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ValidationError;
+import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
 import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
@@ -52,6 +56,20 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         return accessType;
     }
     
+    @Override
+    public boolean testAttribute(Object target, String name, String value) {
+        if ("hasFormCSS".equals(name)) {
+            try {
+                IFile file = IOUtils.getAdjacentFile(ProcessCache.getProcessDefinitionFile(this), ParContentProvider.FORM_CSS_FILE_NAME);
+                return Objects.equal(value, String.valueOf(file.exists()));
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("testAttribute: hasFormCSS", e);
+                return false;
+            }
+        }
+        return super.testAttribute(target, name, value);
+    }
+
     public void setAccessType(ProcessDefinitionAccessType accessType) {
         this.accessType = accessType;
         firePropertyChange(PROPERTY_ACCESS_TYPE, null, accessType);

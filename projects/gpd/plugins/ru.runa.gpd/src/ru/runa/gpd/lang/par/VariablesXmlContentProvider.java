@@ -5,6 +5,8 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import com.google.common.base.Strings;
+
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
@@ -41,6 +43,10 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             String format = element.attributeValue(FORMAT_ATTRIBUTE_NAME);
             format = BackCompatibilityClassNames.getClassName(format);
             String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
+            if ("false".equals(description)) {
+                // remove old comments due to some bug
+                description = null;
+            }
             String isSwimlane = element.attributeValue(SWIMLANE_ATTRIBUTE_NAME);
             String publicVisibilityStr = element.attributeValue(PUBLUC_ATTRIBUTE_NAME);
             boolean publicVisibility = "true".equals(publicVisibilityStr);
@@ -75,10 +81,10 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             if (variable.isPublicVisibility()) {
                 element.addAttribute(PUBLUC_ATTRIBUTE_NAME, "true");
             }
-            if (variable.getDescription() != null) {
+            if (!Strings.isNullOrEmpty(variable.getDescription())) {
                 element.addAttribute(DESCRIPTION_ATTRIBUTE_NAME, variable.getDescription());
             }
-            if (variable.getDefaultValue() != null && variable.getDefaultValue().length() > 0) {
+            if (!Strings.isNullOrEmpty(variable.getDefaultValue())) {
                 element.addAttribute(DEFAULT_VALUE_ATTRIBUTE_NAME, variable.getDefaultValue());
             }
             element.addAttribute(SWIMLANE_ATTRIBUTE_NAME, String.valueOf(variable instanceof Swimlane));

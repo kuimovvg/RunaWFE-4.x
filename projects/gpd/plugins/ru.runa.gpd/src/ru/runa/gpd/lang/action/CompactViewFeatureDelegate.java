@@ -10,7 +10,7 @@ public class CompactViewFeatureDelegate extends BaseModelActionDelegate {
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
         Node node = getSelection();
-        if (action.isEnabled()) {
+        if (node != null) {
             action.setChecked(node.isMinimizedView());
         }
     }

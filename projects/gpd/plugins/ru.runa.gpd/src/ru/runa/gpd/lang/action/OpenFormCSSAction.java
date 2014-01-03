@@ -8,7 +8,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 
-public class OpenFormCSSDelegate extends BaseModelActionDelegate {
+public class OpenFormCSSAction extends BaseModelActionDelegate {
     private static final String EDITOR_ID = "tk.eclipse.plugin.csseditor.editors.CSSEditor";
 
     @Override

@@ -9,8 +9,8 @@ public class EscalationTaskFeatureDelegate extends BaseModelActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (action.isEnabled()) {
-            TaskState taskState = getSelection();
+        TaskState taskState = getSelection();
+        if (taskState != null) {
             action.setChecked(taskState.isUseEscalation());
         }
     }

@@ -23,6 +23,8 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.form.FormCSSTemplate;
+import ru.runa.gpd.form.FormCSSTemplateRegistry;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.PrefConstants;
@@ -34,6 +36,7 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
     private Text processText;
     private Combo languageCombo;
     private Combo bpmnDisplaySwimlaneCombo;
+    private Combo cssTemplateCombo;
     private final IContainer initialSelection;
     private final List<IContainer> processContainers;
     private ProcessDefinition parentProcessDefinition;
@@ -60,6 +63,7 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         createProcessNameField(composite);
         createLanguageCombo(composite);
         createBpmnDisplaySwimlaneCombo(composite);
+        createCssTemplateCombo(composite);
         setControl(composite);
         Dialog.applyDialogFont(composite);
         setPageComplete(false);
@@ -143,6 +147,24 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         }
     }
 
+    private void createCssTemplateCombo(Composite parent) {
+        Label label = new Label(parent, SWT.NONE);
+        label.setText(Localization.getString("label.form.css.template"));
+        cssTemplateCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
+        cssTemplateCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        if (parentProcessDefinition != null) {
+            cssTemplateCombo.add(Localization.getString("inherited"));
+            cssTemplateCombo.select(0);
+            cssTemplateCombo.setEnabled(false);
+        } else {
+            cssTemplateCombo.add(Localization.getString("no"));
+            for (FormCSSTemplate template : FormCSSTemplateRegistry.getTemplates()) {
+                cssTemplateCombo.add(template.getName());
+            }
+            cssTemplateCombo.select(1);
+        }
+    }
+
     private void verifyContentsValid() {
         if (projectCombo.getText().length() == 0) {
             setErrorMessage(Localization.getString("error.choose_project"));
@@ -182,6 +204,13 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
         return SwimlaneDisplayMode.values()[bpmnDisplaySwimlaneCombo.getSelectionIndex()];
     }
 
+    public String getFormCSSTemplateName() {
+        if (cssTemplateCombo.getSelectionIndex() == 0) {
+            return null;
+        }
+        return cssTemplateCombo.getText();
+    }
+    
     public IFolder getProcessFolder() {
         IContainer container = processContainers.get(projectCombo.getSelectionIndex());
         if (parentProcessDefinition != null) {

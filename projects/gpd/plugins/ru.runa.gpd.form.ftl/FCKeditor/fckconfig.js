@@ -202,7 +202,7 @@ FCKConfig.ProtectedTags = '' ;
 
 // This will be applied to the body element of the editor
 FCKConfig.BodyId = '' ;
-FCKConfig.BodyClass = '' ;
+FCKConfig.BodyClass = 'taskform' ;
 
 FCKConfig.DefaultStyleLabel = '' ;
 FCKConfig.DefaultFontFormatLabel = '' ;

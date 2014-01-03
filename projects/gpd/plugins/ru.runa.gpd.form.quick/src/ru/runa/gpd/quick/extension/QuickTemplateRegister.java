@@ -35,7 +35,7 @@ public class QuickTemplateRegister extends ArtifactRegistry<QuickTemplateArtifac
 
     @Override
     protected void loadDefaults(List<QuickTemplateArtifact> list) {
-        IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.form.quick.quickTemplates").getExtensions();
+        IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.form.quick.templates").getExtensions();
         for (IExtension extension : extensions) {
             Bundle bundle = Platform.getBundle(extension.getNamespaceIdentifier());
             IConfigurationElement[] configElements = extension.getConfigurationElements();

@@ -204,15 +204,19 @@ public class VariableEditorPage extends EditorPartBase {
     private void delete(Variable variable) {
         List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), variable);
         StringBuffer formNames = new StringBuffer(Localization.getString("Variable.ExistInForms")).append("\n");
+        boolean delete = false;
         if (nodesWithVar.size() > 0) {
             for (FormNode node : nodesWithVar) {
                 formNames.append(" - ").append(node.getName()).append("\n");
             }
             formNames.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
+            if (Dialogs.confirm(Localization.getString("confirm.delete"), formNames.toString())) {
+                delete = true;
+            }
         } else {
-            formNames.append(Localization.getString("Variable.NoFormsUsed"));
+            delete = true;
         }
-        if (Dialogs.confirm(Localization.getString("confirm.delete"), formNames.toString())) {
+        if (delete) {
             // remove variable from form validations
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable);
             // remove variable from definition

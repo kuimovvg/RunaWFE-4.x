@@ -12,16 +12,6 @@
                name="*">
          </export>
       </library>
-      <library name="lib/nekohtml.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/xercesImpl.jar">
-         <export
-               name="*">
-         </export>
-      </library>
       <library name="."/>
    </runtime>
    <requires>
@@ -32,7 +22,7 @@
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="ru.runa.gpd.form.ftl"/>
    </requires>
-    	<extension-point id="quickTemplates" name="Quick templates" schema="schema/quickTemplate.exsd"/>
+    	<extension-point id="templates" name="Quick templates" schema="schema/templates.exsd"/>
    
    	<extension
          point="org.eclipse.ui.editors">
@@ -51,13 +41,7 @@
             type="quick"/>
    	</extension>
    	<extension
-         point="ru.runa.gpd.form.quick.quickTemplates">
-      <template
-            enabled="true"
-            filename="table2ColumnsLayoutWideGrayed.ftl"
-            label="%template.table2ColumnsLayoutWideGrayed"
-            name="table2ColumnsLayoutWideGrayed">
-      </template>
+         point="ru.runa.gpd.form.quick.templates">
       <template
             enabled="true"
             filename="table2ColumnsLayout.ftl"
