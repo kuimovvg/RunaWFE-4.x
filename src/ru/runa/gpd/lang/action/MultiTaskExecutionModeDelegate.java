@@ -14,14 +14,14 @@ import com.google.common.base.Objects;
 
 public class MultiTaskExecutionModeDelegate extends BaseModelDropDownActionDelegate {
     private TaskExecutionMode selectedMode;
-    private MultiTaskState currentNode;
+    private MultiTaskState multiTaskState;
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (action.isEnabled()) {
-            currentNode = getSelection();
-            selectedMode = currentNode.getTaskExecutionMode();
+        multiTaskState = getSelection();
+        if (multiTaskState != null) {
+            selectedMode = multiTaskState.getTaskExecutionMode();
         }
     }
 
@@ -53,7 +53,7 @@ public class MultiTaskExecutionModeDelegate extends BaseModelDropDownActionDeleg
 
         @Override
         public void run() {
-            currentNode.setTaskExecutionMode(mode);
+            multiTaskState.setTaskExecutionMode(mode);
         }
     }
 }

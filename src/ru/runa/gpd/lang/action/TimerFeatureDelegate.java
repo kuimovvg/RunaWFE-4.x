@@ -10,10 +10,9 @@ public class TimerFeatureDelegate extends BaseModelActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (action.isEnabled()) {
-            ITimed timed = (ITimed) getSelection();
-            Timer timer = timed.getTimer();
-            action.setChecked(timer != null);
+        ITimed timed = (ITimed) getSelection();
+        if (timed != null) {
+            action.setChecked(timed.getTimer() != null);
         }
     }
 

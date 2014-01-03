@@ -9,8 +9,8 @@ public class AsyncFeatureDelegate extends BaseModelActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (action.isEnabled()) {
-            Synchronizable synchronizable = (Synchronizable) getSelection();
+        Synchronizable synchronizable = (Synchronizable) getSelection();
+        if (synchronizable != null) {
             action.setChecked(synchronizable.isAsync());
         }
     }

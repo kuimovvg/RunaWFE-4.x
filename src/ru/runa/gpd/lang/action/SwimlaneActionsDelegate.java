@@ -30,15 +30,15 @@ import com.google.common.base.Objects;
 public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
     private Swimlane selectedSwimlane;
     private ProcessDefinition definition;
-    private SwimlanedNode node;
+    private SwimlanedNode swimlanedNode;
 
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (action.isEnabled()) {
-            node = getSelection();
-            selectedSwimlane = node.getSwimlane();
-            definition = node.getProcessDefinition();
+        swimlanedNode = getSelection();
+        if (swimlanedNode != null) {
+            selectedSwimlane = swimlanedNode.getSwimlane();
+            definition = swimlanedNode.getProcessDefinition();
         }
     }
 
@@ -68,21 +68,21 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
         action.setEnabled(!(definition instanceof SubprocessDefinition));
         item = new ActionContributionItem(action);
         item.fill(menu, -1);
-        if (node instanceof StartState && selectedSwimlane == null && definition.getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
+        if (swimlanedNode instanceof StartState && selectedSwimlane == null && definition.getSwimlaneDisplayMode() == SwimlaneDisplayMode.none) {
             action = new CreateSwimlaneAction();
             action.setEnabled(!(definition instanceof SubprocessDefinition));
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
-        if (node instanceof TaskState) {
+        if (swimlanedNode instanceof TaskState) {
             if (selectedSwimlane != null) {
                 action = new EnableReassignmentAction();
-                action.setChecked(((TaskState) node).isReassignmentEnabled());
+                action.setChecked(((TaskState) swimlanedNode).isReassignmentEnabled());
                 item = new ActionContributionItem(action);
                 item.fill(menu, -1);
             }
             action = new IgnoreSubstitutionAction();
-            action.setChecked(((TaskState) node).isIgnoreSubstitutionRules());
+            action.setChecked(((TaskState) swimlanedNode).isIgnoreSubstitutionRules());
             item = new ActionContributionItem(action);
             item.fill(menu, -1);
         }
@@ -107,17 +107,17 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
     private void setSwimlane(String swimlaneName) {
         if (swimlaneName != null) {
             Swimlane swimlane = definition.getSwimlaneByName(swimlaneName);
-            node.setSwimlane(swimlane);
+            swimlanedNode.setSwimlane(swimlane);
         } else {
-            node.setSwimlane(null);
+            swimlanedNode.setSwimlane(null);
         }
     }
 
     private void editSwimlane() {
         ProcessEditorBase editor = getActiveDesignerEditor();
         editor.openPage(1);
-        if (node.getSwimlane() != null) {
-            editor.select(node.getSwimlane());
+        if (swimlanedNode.getSwimlane() != null) {
+            editor.select(swimlanedNode.getSwimlane());
         }
     }
 
@@ -168,7 +168,7 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
 
         @Override
         public void run() {
-            EnableReassignmentCommand command = new EnableReassignmentCommand((TaskState) node);
+            EnableReassignmentCommand command = new EnableReassignmentCommand((TaskState) swimlanedNode);
             executeCommand(command);
         }
     }
@@ -180,7 +180,7 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
 
         @Override
         public void run() {
-            IgnoreSubstitutionCommand command = new IgnoreSubstitutionCommand((TaskState) node);
+            IgnoreSubstitutionCommand command = new IgnoreSubstitutionCommand((TaskState) swimlanedNode);
             executeCommand(command);
         }
     }
