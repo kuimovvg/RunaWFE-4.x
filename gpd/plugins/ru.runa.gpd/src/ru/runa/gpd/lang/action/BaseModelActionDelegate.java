@@ -49,7 +49,6 @@ public abstract class BaseModelActionDelegate implements IObjectActionDelegate {
                 selectedElement = (GraphElement) object;
             }
         }
-        action.setEnabled(selectedElement != null);
     }
 
     protected void executeCommand(Command command) {

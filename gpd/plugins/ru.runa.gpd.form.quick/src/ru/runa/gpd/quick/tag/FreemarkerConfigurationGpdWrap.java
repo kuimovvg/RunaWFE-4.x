@@ -20,7 +20,6 @@ import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class FreemarkerConfigurationGpdWrap {
-    private Log log = LogFactory.getLog(FreemarkerConfigurationGpdWrap.class);
     private static final String CONFIG = "ftl.form.tags.xml";
     private static final String TAG_ELEMENT = "ftltag";
     private static final String NAME_ATTR = "name";
@@ -59,7 +58,6 @@ public class FreemarkerConfigurationGpdWrap {
             is = ClassLoaderUtil.getAsStream(fileName, getClass());
         }*/
         if (is != null) {
-            log.info("Using " + is);
             Document document = XmlUtils.parseWithoutValidation(is);
             Element root = document.getRootElement();
             List<Element> tagElements = root.elements(TAG_ELEMENT);
@@ -70,7 +68,7 @@ public class FreemarkerConfigurationGpdWrap {
                     Class<? extends FreemarkerTagGpdWrap> tagClass = (Class<? extends FreemarkerTagGpdWrap>) bundle.loadClass(className);
                     addTag(name, tagClass);
                 } catch (Throwable e) {
-                    log.warn("Unable to create freemarker tag " + name, e);
+                    LogFactory.getLog(getClass()).warn("Unable to create freemarker tag " + name, e);
                 }
             }
         }
@@ -78,7 +76,6 @@ public class FreemarkerConfigurationGpdWrap {
 
     private void addTag(String name, Class<? extends FreemarkerTagGpdWrap> tagClass) {
         tags.put(name, tagClass);
-        log.debug("Registered tag " + name + " as " + tagClass);
     }
 
     public FreemarkerTagGpdWrap getTag(String name) throws InstantiationException, IllegalAccessException {

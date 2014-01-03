@@ -19,8 +19,8 @@ public class EnableJSValidationDelegate extends BaseModelActionDelegate {
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (action.isEnabled()) {
-            FormNode formNode = getSelection();
+        FormNode formNode = getSelection();
+        if (formNode != null) {
             action.setEnabled(formNode.hasFormValidation());
             action.setChecked(formNode.isUseJSValidation());
         }
