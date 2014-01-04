@@ -111,6 +111,9 @@
                   <fileset dir="../../rtn/target">
                     <include name="*.jar"/>
                   </fileset>
+                  <fileset dir="../../rtn/src/main/assembly">
+                    <include name="*"/>
+                  </fileset>
                 </copy>
 
                 <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">

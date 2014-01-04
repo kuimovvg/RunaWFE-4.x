@@ -70,7 +70,7 @@ UninstPage uninstconfirm un.installBrandingImage
 UninstPage instFiles
 
 !macro AllSectionFunctionCall PREFIX SUFFIX
-;  call ${PREFIX}ComponentRTN${SUFFIX}
+  call ${PREFIX}ComponentRTN${SUFFIX}
   call ${PREFIX}ComponentWEB${SUFFIX}
   call ${PREFIX}ComponentGPD${SUFFIX}
   call ${PREFIX}ComponentSIM${SUFFIX}
@@ -79,7 +79,7 @@ UninstPage instFiles
   call ${PREFIX}ComponentBOT${SUFFIX}
 !macroend
 !macro AllSectionMacroCall MacroName
-;  !insertmacro "${MacroName}" "ComponentRTN"
+  !insertmacro "${MacroName}" "ComponentRTN"
   !insertmacro "${MacroName}" "ComponentWEB"
   !insertmacro "${MacroName}" "ComponentGPD"
   !insertmacro "${MacroName}" "ComponentSIM"
@@ -95,7 +95,7 @@ SectionEnd
 
 !insertmacro generateSection ComponentGPD installGPDSeq defaultUninstallSeq defaultUninstallSeq GpdCustomizableMacro ${RUNA_CLIENT}
 !insertmacro generateSection ComponentSIM installSimSeq defaultUninstallSeq uninstallSimSeq SimCustomizableMacro ${RUNA_CLIENT}
-;!insertmacro generateOptionalSection ComponentRTN installRTNSeq defaultUninstallSeq defaultUninstallSeq RtnWebBotCustomizableMacro ${RUNA_CLIENT}
+!insertmacro generateOptionalSection ComponentRTN installRTNSeq defaultUninstallSeq defaultUninstallSeq RtnWebBotCustomizableMacro ${RUNA_CLIENT}
 !insertmacro generateOptionalSection ComponentWEB installWebSeq defaultUninstallSeq defaultUninstallSeq RtnWebBotCustomizableMacro ${RUNA_CLIENT}
 !insertmacro generateOptionalSection ComponentDOC installDocSeq defaultUninstallSeq defaultUninstallSeq DefaultCustomizableMacro ${RUNA_CLIENT}
 
@@ -104,7 +104,7 @@ SectionEnd
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentGPD}" $(ComponentGPD_Desc)
-;  !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentRTN}" $(ComponentRTN_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentRTN}" $(ComponentRTN_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentWEB}" $(ComponentWEB_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentDOC}" $(ComponentDOC_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT "${${ID_PREFIX}ComponentSIM}" $(ComponentSIM_Desc)
@@ -261,7 +261,7 @@ Function checkJDKinit_My
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSIM}" installJDK 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSRV}" installJDK 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentBOT}" installJDK 0
-;  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" installJava 0
+  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" installJava 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentGPD}" installJava 0
   Abort
   installJDK:
@@ -275,7 +275,7 @@ Function setJavaHomeInit_My
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSIM}" installJAVAPATH 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSRV}" installJAVAPATH 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentBOT}" installJAVAPATH 0
-;  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" installJAVAPATH 0
+  !insertmacro isSectionSelected "${${ID_PREFIX}ComponentRTN}" installJAVAPATH 0
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentGPD}" installJAVAPATH 0
   Abort
   installJAVAPATH:
@@ -289,7 +289,7 @@ Function getHostAndPort
   ${if} $installationType == ${RUNA_CLIENT}
     Push $R0
     !insertmacro isSectionSelected ${${ID_PREFIX}ComponentWEB} show 0
-;    !insertmacro isSectionSelected ${${ID_PREFIX}ComponentRTN} show 0
+    !insertmacro isSectionSelected ${${ID_PREFIX}ComponentRTN} show 0
     pop $R0
     Abort
     show:
