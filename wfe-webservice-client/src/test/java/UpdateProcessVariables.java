@@ -6,7 +6,7 @@ import ru.runa.wfe.webservice.AuthenticationWebService;
 import ru.runa.wfe.webservice.ExecutionAPI;
 import ru.runa.wfe.webservice.ExecutionWebService;
 import ru.runa.wfe.webservice.User;
-import ru.runa.wfe.webservice.WfVariable;
+import ru.runa.wfe.webservice.Variable;
 
 public class UpdateProcessVariables {
 
@@ -15,9 +15,9 @@ public class UpdateProcessVariables {
             AuthenticationAPI authenticationAPI = new AuthenticationWebService().getAuthenticationAPIPort();
             User user = authenticationAPI.authenticateByLoginPassword("Administrator", "wf");
             ExecutionAPI executionAPI = new ExecutionWebService().getExecutionAPIPort();
-            List<WfVariable> variables = new ArrayList<WfVariable>();
+            List<Variable> variables = new ArrayList<Variable>();
 
-            WfVariable variable2 = new WfVariable();
+            Variable variable2 = new Variable();
             variable2.setName("selected row id");
             variable2.setStringValue("—“–Œ ¿");
             variables.add(variable2);
