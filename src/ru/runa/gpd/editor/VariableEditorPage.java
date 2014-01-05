@@ -43,6 +43,7 @@ import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveVariablesCommand;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
@@ -53,6 +54,7 @@ import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
+import ru.runa.gpd.util.VariableUtils;
 
 @SuppressWarnings("unchecked")
 public class VariableEditorPage extends EditorPartBase {
@@ -78,13 +80,11 @@ public class VariableEditorPage extends EditorPartBase {
 
     @Override
     public void createPartControl(Composite parent) {
-        SashForm sashForm = createToolkit(parent, "DesignerVariableEditorPage.label.variables");
+        SashForm sashForm = createSashForm(parent, SWT.VERTICAL, "DesignerVariableEditorPage.label.variables");
         Composite allVariablesComposite = createSection(sashForm, "DesignerVariableEditorPage.label.all_variables");
         tableViewer = new TableViewer(allVariablesComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
-        toolkit.adapt(tableViewer.getControl(), false, false);
-        GridData gridData = new GridData(GridData.FILL_BOTH);
-        gridData.minimumWidth = 100;
-        tableViewer.getControl().setLayoutData(gridData);
+        getToolkit().adapt(tableViewer.getControl(), false, false);
+        tableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
         tableViewer.setLabelProvider(new TableViewerLabelProvider());
         tableViewer.setContentProvider(new ArrayContentProvider());
         createContextMenu(tableViewer.getControl());
@@ -101,9 +101,9 @@ public class VariableEditorPage extends EditorPartBase {
             tableColumn.setText(columnNames[i]);
             tableColumn.setWidth(columnWidths[i]);
         }
-        Composite buttonsBar = toolkit.createComposite(allVariablesComposite);
+        Composite buttonsBar = getToolkit().createComposite(allVariablesComposite);
         buttonsBar.setLayout(new GridLayout(1, false));
-        gridData = new GridData();
+        GridData gridData = new GridData();
         gridData.horizontalAlignment = SWT.LEFT;
         gridData.verticalAlignment = SWT.TOP;
         buttonsBar.setLayoutData(gridData);
@@ -157,7 +157,7 @@ public class VariableEditorPage extends EditorPartBase {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         String type = evt.getPropertyName();
-        if (PropertyNames.NODE_CHILDS_CHANGED.equals(type)) {
+        if (PropertyNames.PROPERTY_CHILDS_CHANGED.equals(type)) {
             fillViewer();
         } else if (evt.getSource() instanceof Variable) {
             if (PropertyNames.PROPERTY_NAME.equals(type) || PropertyNames.PROPERTY_FORMAT.equals(type) || PropertyNames.PROPERTY_DEFAULT_VALUE.equals(type)) {
@@ -167,17 +167,17 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private void fillViewer() {
-        List<Variable> variables = getDefinition().getVariables(false);
+        List<Variable> variables = getDefinition().getVariables(false, false);
         tableViewer.setInput(variables);
-        for (Variable var : variables) {
-            var.addPropertyChangeListener(this);
+        for (Variable variable : variables) {
+            variable.addPropertyChangeListener(this);
         }
         updateButtons();
     }
 
     @Override
     public void dispose() {
-        for (Variable variable : getDefinition().getVariables(false)) {
+        for (Variable variable : getDefinition().getVariables(false, false)) {
             variable.removePropertyChangeListener(this);
         }
         super.dispose();
@@ -194,9 +194,9 @@ public class VariableEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Variable variable = (Variable) selection.getFirstElement();
-            List<Variable> children = getDefinition().getVariables(false);
-            int index = children.indexOf(variable);
-            getDefinition().swapChilds(variable, up ? children.get(index - 1) : children.get(index + 1));
+            List<Variable> variables = getDefinition().getVariables(false, false);
+            int index = variables.indexOf(variable);
+            getDefinition().swapChilds(variable, up ? variables.get(index - 1) : variables.get(index + 1));
             tableViewer.setSelection(selection);
         }
     }
@@ -290,7 +290,7 @@ public class VariableEditorPage extends EditorPartBase {
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
                 Variable variable = wizard.getVariable();
-                getDefinition().addVariable(variable);
+                getDefinition().addChild(variable);
                 IStructuredSelection selection = new StructuredSelection(variable);
                 tableViewer.setSelection(selection);
             }
@@ -306,6 +306,9 @@ public class VariableEditorPage extends EditorPartBase {
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
                 variable.setFormat(wizard.getVariable().getFormat());
+                if (wizard.getVariable().getUserType() != null) {
+                    variable.setUserType(wizard.getVariable().getUserType());
+                }
                 variable.setPublicVisibility(wizard.getVariable().isPublicVisibility());
                 variable.setDefaultValue(wizard.getVariable().getDefaultValue());
                 tableViewer.setSelection(selection);
@@ -326,12 +329,17 @@ public class VariableEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             List<Variable> newVariables = (List<Variable>) Clipboard.getDefault().getContents();
             for (Variable variable : newVariables) {
-                Variable newVariable = getDefinition().getVariable(variable.getName(), false);
+                Variable newVariable = VariableUtils.getVariableByName(getDefinition(), variable.getName());
                 if (newVariable == null) {
                     newVariable = new Variable(variable);
-                    getDefinition().addVariable(newVariable);
+                    getDefinition().addChild(newVariable);
                 } else {
                     newVariable.setFormat(variable.getFormat());
+                }
+                if (newVariable.isComplex() && !getDefinition().getVariableUserTypes().contains(variable.getUserType())) {
+                    VariableUserType userType = newVariable.getUserType().getCopy();
+                    getDefinition().addVariableUserType(userType);
+                    newVariable.setUserType(userType);
                 }
             }
         }
@@ -391,7 +399,7 @@ public class VariableEditorPage extends EditorPartBase {
 
         @Override
         public void drop(DropTargetEvent event) {
-            Variable variable1 = getDefinition().getVariable((String) event.data, false);
+            Variable variable1 = VariableUtils.getVariableByName(getDefinition(), (String) event.data);
             Variable beforeVariable = (Variable) determineTarget(event);
             getDefinition().changeChildIndex(variable1, beforeVariable);
             super.drop(event);

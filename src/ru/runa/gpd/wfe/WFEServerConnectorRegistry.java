@@ -22,7 +22,7 @@ public class WFEServerConnectorRegistry implements PrefConstants {
     private static final List<Entry> entries = Lists.newArrayList();
     static {
         try {
-            entries.add(new Entry("stub", Localization.getString("pref.connection.wfe.type.stub"), "", ""));
+            entries.add(new Entry("stub", Localization.getString("none"), "", ""));
             IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.wfeConnectors").getExtensions();
             for (IExtension extension : extensions) {
                 IConfigurationElement[] configElements = extension.getConfigurationElements();

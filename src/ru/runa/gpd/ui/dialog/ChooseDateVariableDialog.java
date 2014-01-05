@@ -24,7 +24,7 @@ public class ChooseDateVariableDialog extends ChooseItemDialog {
         try {
             List<String> dateVariableNames = new ArrayList<String>();
             dateVariableNames.add(noneItemValue);
-            for (Variable variable : definition.getVariables(false, Date.class.getName())) {
+            for (Variable variable : definition.getVariables(true, false, Date.class.getName())) {
                 dateVariableNames.add(variable.getName());
             }
             setItems(dateVariableNames);

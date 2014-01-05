@@ -10,6 +10,7 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.ValidationError;
+import ru.runa.gpd.util.VariableUtils;
 
 public abstract class SwimlanedNode extends Node implements PropertyChangeListener {
     private Swimlane swimlane;
@@ -70,7 +71,7 @@ public abstract class SwimlanedNode extends Node implements PropertyChangeListen
     @Override
     protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
-        List<String> swimlaneNames = getProcessDefinition().getSwimlaneNames();
+        List<String> swimlaneNames = VariableUtils.getVariableNames(getProcessDefinition().getSwimlanes());
         String[] array = swimlaneNames.toArray(new String[swimlaneNames.size()]);
         list.add(new ComboBoxPropertyDescriptor(PROPERTY_SWIMLANE, Localization.getString("SwimlanedNode.property.swimlane"), array));
         return list;

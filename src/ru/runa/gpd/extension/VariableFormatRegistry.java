@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.lang.model.Variable;
 
 import com.google.common.base.Objects;
@@ -66,6 +67,9 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
     }
 
     public static boolean isApplicable(Variable variable, String classNameFilter) {
+    	if (variable.isComplex() && Objects.equal(variable.getUserType().getName(), classNameFilter)) {
+    		return true;
+    	}
         return isAssignableFrom(classNameFilter, variable.getJavaClassName());
     }
 

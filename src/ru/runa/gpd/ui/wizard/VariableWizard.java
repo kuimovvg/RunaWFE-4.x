@@ -5,24 +5,33 @@ import org.eclipse.jface.wizard.Wizard;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.lang.model.VariableContainer;
+import ru.runa.gpd.lang.model.VariableUserType;
 
 public class VariableWizard extends Wizard {
-    private final ProcessDefinition definition;
     private VariableNamePage namePage;
     private VariableFormatPage formatPage;
     private VariableDefaultValuePage defaultValuePage;
     private VariableAccessPage accessPage;
     private Variable variable;
 
-    public VariableWizard(ProcessDefinition definition, Variable variable, boolean showNamePage, boolean editFormat) {
-        this.definition = definition;
+    public VariableWizard(ProcessDefinition processDefinition, Variable variable, boolean showNamePage, boolean editFormat) {
+    	this(processDefinition, processDefinition, variable, showNamePage, editFormat, true);
+    }
+    
+    public VariableWizard(ProcessDefinition processDefinition, VariableContainer variableContainer, Variable variable, boolean showNamePage, boolean editFormat, boolean showAccessPage) {
         if (showNamePage) {
-            namePage = new VariableNamePage(definition, variable);
+            namePage = new VariableNamePage(variableContainer, variable);
         }
-        formatPage = new VariableFormatPage(variable, editFormat);
+        String excludedUserTypeName = null;
+        if (variableContainer instanceof VariableUserType) {
+        	excludedUserTypeName = ((VariableUserType) variableContainer).getName();
+        }
+        formatPage = new VariableFormatPage(processDefinition, variable, editFormat, excludedUserTypeName);
         defaultValuePage = new VariableDefaultValuePage(variable);
-        accessPage = new VariableAccessPage(variable);
+        if (showAccessPage) {
+        	accessPage = new VariableAccessPage(variable);
+        }
         setWindowTitle(showNamePage ? Localization.getString("VariableWizard.create") : Localization.getString("VariableWizard.edit"));
     }
 
@@ -33,7 +42,9 @@ public class VariableWizard extends Wizard {
         }
         addPage(formatPage);
         addPage(defaultValuePage);
-        addPage(accessPage);
+        if (accessPage != null) {
+        	addPage(accessPage);
+        }
     }
 
     public Variable getVariable() {
@@ -63,9 +74,12 @@ public class VariableWizard extends Wizard {
             format += Variable.FORMAT_COMPONENT_TYPE_END;
         }
         String defaultValue = defaultValuePage.getDefaultValue();
-        boolean publicVisibility = accessPage.isPublicVisibility();
+        boolean publicVisibility = accessPage != null ? accessPage.isPublicVisibility() : false;
         variable = new Variable(name, scriptingName, format, publicVisibility, defaultValue);
         variable.setDescription(description);
+        if (formatPage.getUserType() != null) {
+            variable.setUserType(formatPage.getUserType());
+        }
         return true;
     }
 }

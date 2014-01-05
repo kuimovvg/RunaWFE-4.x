@@ -26,6 +26,8 @@ import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
+import ru.runa.gpd.util.VariableUtils;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 import com.google.common.base.Objects;
@@ -33,7 +35,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
-public class ProcessDefinition extends NamedGraphElement implements Active, Describable, ITimeOut {
+public class ProcessDefinition extends NamedGraphElement implements Active, Describable, ITimeOut, VariableContainer {
     private Language language;
     private Dimension dimension;
     private final SwimlaneGUIConfiguration swimlaneGUIConfiguration = new SwimlaneGUIConfiguration();
@@ -48,6 +50,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private SwimlaneDisplayMode swimlaneDisplayMode = SwimlaneDisplayMode.none;
     private Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
     private ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
+    private List<VariableUserType> types = Lists.newArrayList();
 
     public ProcessDefinition() {
     }
@@ -245,20 +248,21 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         }
     }
 
-    public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
-        List<String> result = Lists.newArrayList();
-        for (Variable variable : getVariables(includeSwimlanes, typeClassNameFilters)) {
-            result.add(variable.getName());
-        }
-        return result;
+    public List<String> getVariableNames(boolean expandComplexTypes, boolean includeSwimlanes, String... typeClassNameFilters) {
+        return VariableUtils.getVariableNames(getVariables(expandComplexTypes, includeSwimlanes, typeClassNameFilters));
     }
-
-    public List<Variable> getVariables(boolean includeSwimlanes, String... typeClassNameFilters) {
+        
+    public List<Variable> getVariables(boolean expandComplexTypes, boolean includeSwimlanes, String... typeClassNameFilters) {
         List<Variable> variables = getChildren(Variable.class);
         if (!includeSwimlanes) {
-            for (Swimlane swimlane : getSwimlanes()) {
-                variables.remove(swimlane);
-            }
+            variables.removeAll(getSwimlanes());
+        }
+        if (expandComplexTypes) {
+        	for (Variable variable : Lists.newArrayList(variables)) {
+            	if (variable.isComplex()) {
+           	        variables.addAll(expandComplexVariable(variable, variable));
+            	}
+			}
         }
         List<Variable> result = Lists.newArrayList();
         for (Variable variable : variables) {
@@ -272,50 +276,25 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                 }
             }
             if (applicable) {
-                result.add(variable);
+          		result.add(variable);
             }
         }
         return result;
     }
-
-    public Variable getVariable(String name, boolean searchInSwimlanes) {
-        for (Variable variable : getVariables(false)) {
-            if (Objects.equal(variable.getName(), name)) {
-                return variable;
+    
+    private List<Variable> expandComplexVariable(Variable superVariable, Variable complexVariable) {
+        List<Variable> result = Lists.newArrayList();
+        for (Variable attribute : complexVariable.getUserType().getAttributes()) {
+            String name = superVariable.getName() + VariableUserType.DELIM + attribute.getName();
+            String scriptingName = superVariable.getScriptingName() + VariableUserType.DELIM + attribute.getScriptingName();
+            Variable variable = new Variable(name, scriptingName, attribute);
+            variable.setUserType(attribute.getUserType());
+            result.add(variable);
+            if (variable.isComplex()) {
+                result.addAll(expandComplexVariable(variable, attribute));
             }
         }
-        if (searchInSwimlanes) {
-            return getSwimlaneByName(name);
-        }
-        return null;
-    }
-
-    public void addVariable(Variable variable) {
-        addChild(variable);
-    }
-
-    public void removeVariable(Variable variable) {
-        removeChild(variable);
-    }
-
-    public String getNextVariableName() {
-        List<String> variableNameSet = getVariableNames(true);
-        int runner = 1;
-        while (true) {
-            String candidate = Localization.getString("default.variable.name") + runner;
-            if (!variableNameSet.contains(candidate)) {
-                return candidate;
-            }
-            runner++;
-        }
-    }
-
-    public List<String> getSwimlaneNames() {
-        List<String> names = new ArrayList<String>();
-        for (Swimlane swimlane : getSwimlanes()) {
-            names.add(swimlane.getName());
-        }
-        return names;
+        return result;
     }
 
     public List<Swimlane> getSwimlanes() {
@@ -344,16 +323,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
             }
             runner++;
         }
-    }
-
-    public void addSwimlane(Swimlane swimlane) {
-        addChild(swimlane);
-        firePropertyChange(ELEMENT_SWIMLANE_ADDED, null, swimlane);
-    }
-
-    public void removeSwimlane(Swimlane swimlane) {
-        removeChild(swimlane);
-        firePropertyChange(ELEMENT_SWIMLANE_REMOVED, null, swimlane);
     }
 
     public <T extends GraphElement> T getGraphElementById(String nodeId) {
@@ -480,4 +449,37 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public void setTimeOutDelay(Duration duration) {
         this.timeOutDelay = duration;
     }
+    
+    public List<VariableUserType> getVariableUserTypes() {
+		return types;
+	}
+    
+    public void addVariableUserType(VariableUserType type) {
+        type.setProcessDefinition(this);
+        types.add(type);
+        firePropertyChange(PROPERTY_USER_TYPES_CHANGED, null, type);
+    }
+
+    public void removeVariableUserType(VariableUserType type) {
+        types.remove(type);
+        firePropertyChange(PROPERTY_USER_TYPES_CHANGED, null, type);
+    }
+
+    public VariableUserType getVariableUserType(String name) {
+    	for (VariableUserType type : types) {
+			if (Objects.equal(name, type.getName())) {
+				return type;
+			}
+		}
+		return null;
+	}
+
+    public VariableUserType getVariableUserTypeNotNull(String name) {
+        VariableUserType type = getVariableUserType(name);
+        if (type == null) {
+            throw new InternalApplicationException("Type not found by name '"+name+"'");
+        }
+        return type;
+    }
+
 }

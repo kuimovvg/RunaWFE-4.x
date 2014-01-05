@@ -59,6 +59,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     protected GraphicalEditor graphPage;
     protected SwimlaneEditorPage swimlanePage;
     protected VariableEditorPage variablePage;
+    protected VariableTypeEditorPage variableTypeEditorPage;
     protected TextEditor sourcePage;
     private OutlineViewer outlineViewer;
 
@@ -149,23 +150,23 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     @Override
     protected void createPages() {
         try {
-            int pageIndex = 0;
+            int pageIndex;
             graphPage = createGraphPage();
-            addPage(pageIndex, graphPage, getEditorInput());
+            pageIndex = addPage(graphPage, getEditorInput());
             setPageText(pageIndex, Localization.getString("DesignerEditor.title.diagram"));
             if (!(definition instanceof SubprocessDefinition)) {
-                pageIndex++;
                 swimlanePage = new SwimlaneEditorPage(this);
-                addPage(pageIndex, swimlanePage, getEditorInput());
+                pageIndex = addPage(swimlanePage, getEditorInput());
                 setPageText(pageIndex, Localization.getString("DesignerEditor.title.swimlanes"));
-                pageIndex++;
                 variablePage = new VariableEditorPage(this);
-                addPage(pageIndex, variablePage, getEditorInput());
+                pageIndex = addPage(variablePage, getEditorInput());
                 setPageText(pageIndex, Localization.getString("DesignerEditor.title.variables"));
+                variableTypeEditorPage = new VariableTypeEditorPage(this);
+                pageIndex = addPage(variableTypeEditorPage, getEditorInput());
+                setPageText(pageIndex, Localization.getString("VariableUserType.collection"));
             }
-            pageIndex++;
             sourcePage = new TextEditor();
-            addPage(pageIndex, sourcePage, getEditorInput());
+            pageIndex = addPage(sourcePage, getEditorInput());
             setPageText(pageIndex, Localization.getString("DesignerEditor.title.source"));
             ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
         } catch (PartInitException e) {

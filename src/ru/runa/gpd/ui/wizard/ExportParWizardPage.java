@@ -240,7 +240,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 }
             } catch (Throwable th) {
                 PluginLogger.logErrorWithoutDialog(Localization.getString("ExportParWizardPage.error.export"), th);
-                setErrorMessage(Throwables.getRootCause(th).getMessage());
+                setErrorMessage(Throwables.getRootCause(th).toString());
                 return false;
             }
         }
