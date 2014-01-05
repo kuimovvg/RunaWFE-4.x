@@ -44,7 +44,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
      */
     @Override
     protected void fillMenu(Menu menu) {
-        for (Variable variable : currentDefinition.getVariables(false, List.class.getName())) {
+        for (Variable variable : currentDefinition.getVariables(true, false, List.class.getName())) {
             Action action = new SetVariableAction();
             action.setText(variable.getName());
             if (Objects.equal(selectedVariable, variable.getName())) {
@@ -74,7 +74,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
         if (dialog.open() == Window.OK) {
             Variable variable = wizard.getVariable();
-            currentDefinition.addVariable(variable);
+            currentDefinition.addChild(variable);
             setVariableName(variable.getName());
         }
     }

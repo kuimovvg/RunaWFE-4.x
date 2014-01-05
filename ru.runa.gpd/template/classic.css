@@ -8,7 +8,7 @@
 	border: 2px solid #aaa;
 	width: 100%;
 }
-.taskform th {
+.taskform th, .taskform caption {
 	background-color: #990000;
 	color: white;
 	text-align: left;
@@ -16,10 +16,9 @@
 	font-size: 11pt;
 	padding: 0px 10px;
 }
-.taskform th, .taskform td {
+.taskform td {
 	border: 1px solid #aaaaaa;
 	padding: 2px 5px 2px 5px;
-	border-width: 1pt;
 }
 .taskform td.label {
 	vertical-align: top;

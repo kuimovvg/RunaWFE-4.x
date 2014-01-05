@@ -136,7 +136,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             // This is because earlier access from web page (not user request)
             return new HashMap<String, Variable>();
         }
-        List<Variable> variables = formNode.getProcessDefinition().getVariables(true);
+        List<Variable> variables = formNode.getProcessDefinition().getVariables(true, true);
         if (cachedForVariablesCount != variables.size()) {
             cachedForVariablesCount = variables.size();
             cachedVariables.clear();

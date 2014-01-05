@@ -159,7 +159,7 @@ public class TransitionGraphicalEditPart extends AbstractConnectionEditPart impl
                 getFigure().setLabelText(timer != null ? timer.getDelay().toString() : "");
                 refreshVisuals();
             }
-        } else if (NODE_CHILDS_CHANGED.equals(messageId)) {
+        } else if (PROPERTY_CHILDS_CHANGED.equals(messageId)) {
             refreshChildren();
         }
     }

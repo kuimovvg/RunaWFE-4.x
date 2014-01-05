@@ -30,9 +30,7 @@ public interface PropertyNames {
     public static final String PROPERTY_IGNORE_SUBSTITUTION_RULES = "ignoreSubstitutionRules";
     public static final String PROPERTY_SUBPROCESS = "subprocess";
     public static final String NODE_REMOVED = "NODE_REMOVED";
-    public static final String NODE_CHILDS_CHANGED = "NODE_CHILDS_CHANGED";
-    public static final String ELEMENT_SWIMLANE_ADDED = "SWIMLANE_ADDED";
-    public static final String ELEMENT_SWIMLANE_REMOVED = "SWIMLANE_REMOVED";
+    public static final String PROPERTY_CHILDS_CHANGED = "NODE_CHILDS_CHANGED";
     public static final String NODE_LEAVING_TRANSITION_ADDED = "LEAVING_TRANSITION_ADDED";
     public static final String NODE_LEAVING_TRANSITION_REMOVED = "LEAVING_TRANSITION_REMOVED";
     public static final String NODE_ARRIVING_TRANSITION_ADDED = "ARRIVING_TRANSITION_ADDED";
@@ -53,4 +51,5 @@ public interface PropertyNames {
     public static final String PROPERTY_TTL = "ttl";
     public static final String VALUE = "value";
     public static final String PROPERTY_ACCESS_TYPE = "accesstype";
+    public static final String PROPERTY_USER_TYPES_CHANGED = "userTypesChanged";
 }

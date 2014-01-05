@@ -70,10 +70,10 @@ public class SwimlaneEditorPage extends EditorPartBase {
 
     @Override
     public void createPartControl(Composite parent) {
-        SashForm sashForm = createToolkit(parent, "DesignerSwimlaneEditorPage.label.swimlanes");
+        SashForm sashForm = createSashForm(parent, SWT.VERTICAL, "DesignerSwimlaneEditorPage.label.swimlanes");
         Composite allSwimlanesComposite = createSection(sashForm, "DesignerSwimlaneEditorPage.label.all_swimlanes");
         tableViewer = new TableViewer(allSwimlanesComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
-        toolkit.adapt(tableViewer.getControl(), false, false);
+        getToolkit().adapt(tableViewer.getControl(), false, false);
         tableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
         tableViewer.setLabelProvider(new TableViewerLabelProvider());
         tableViewer.setContentProvider(new ArrayContentProvider());
@@ -90,7 +90,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
             tableColumn.setText(columnNames[i]);
             tableColumn.setWidth(columnWidths[i]);
         }
-        Composite buttonsBar = toolkit.createComposite(allSwimlanesComposite);
+        Composite buttonsBar = getToolkit().createComposite(allSwimlanesComposite);
         buttonsBar.setLayout(new GridLayout(1, false));
         GridData gridData = new GridData();
         gridData.horizontalAlignment = SWT.LEFT;
@@ -142,7 +142,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         String type = event.getPropertyName();
-        if (PropertyNames.NODE_CHILDS_CHANGED.equals(type)) {
+        if (PropertyNames.PROPERTY_CHILDS_CHANGED.equals(type)) {
             fillViewer();
         } else if (event.getSource() instanceof Swimlane) {
             if (PropertyNames.PROPERTY_NAME.equals(type) || PropertyNames.PROPERTY_CONFIGURATION.equals(type)) {
@@ -292,7 +292,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition(), false);
                 newSwimlane.setName(dialog.getName());
                 newSwimlane.setScriptingName(dialog.getScriptingName());
-                getDefinition().addSwimlane(newSwimlane);
+                getDefinition().addChild(newSwimlane);
                 tableViewer.setSelection(new StructuredSelection(newSwimlane));
             }
         }
@@ -337,7 +337,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 newSwimlane.setDelegationClassName(swimlane.getDelegationClassName());
                 newSwimlane.setDelegationConfiguration(swimlane.getDelegationConfiguration());
                 if (add) {
-                    getDefinition().addSwimlane(newSwimlane);
+                    getDefinition().addChild(newSwimlane);
                 }
             }
         }

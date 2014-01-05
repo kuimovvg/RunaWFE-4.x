@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorInput;
@@ -27,7 +28,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 
 public abstract class EditorPartBase extends EditorPart implements PropertyChangeListener {
     protected final ProcessEditorBase editor;
-    protected FormToolkit toolkit;
+    private FormToolkit toolkit;
 
     public EditorPartBase(ProcessEditorBase editor) {
         this.editor = editor;
@@ -95,31 +96,40 @@ public abstract class EditorPartBase extends EditorPart implements PropertyChang
 
     protected void enableAction(Button button, boolean enabled) {
         button.setEnabled(enabled);
-        ((MenuItem) button.getData("menuItem")).setEnabled(enabled);
+        MenuItem menuItem = ((MenuItem) button.getData("menuItem"));
+        if (menuItem != null) {
+        	menuItem.setEnabled(enabled);
+        }
     }
+    
+    public FormToolkit getToolkit() {
+    	if (toolkit == null) {
+            toolkit = new FormToolkit(Display.getDefault());
+    	}
+		return toolkit;
+	}
 
-    protected SashForm createToolkit(Composite parent, String titleKey) {
-        toolkit = new FormToolkit(parent.getDisplay());
-        Form form = toolkit.createForm(parent);
+    protected SashForm createSashForm(Composite parent, int style, String titleKey) {
+        Form form = getToolkit().createForm(parent);
         form.setText(Localization.getString(titleKey));
         GridLayout layout = new GridLayout();
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         form.getBody().setLayout(layout);
-        SashForm sashForm = new SashForm(form.getBody(), SWT.NULL);
-        toolkit.adapt(sashForm, false, false);
+        SashForm sashForm = new SashForm(form.getBody(), style);
+        getToolkit().adapt(sashForm, false, false);
         sashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
         return sashForm;
     }
 
     protected Composite createSection(SashForm sashForm, String sectionTitleKey) {
-        Section section = toolkit.createSection(sashForm, ExpandableComposite.TITLE_BAR);
+        Section section = getToolkit().createSection(sashForm, ExpandableComposite.TITLE_BAR);
         section.marginHeight = 5;
         section.marginWidth = 5;
         section.setText(Localization.getString(sectionTitleKey));
-        Composite clientArea = toolkit.createComposite(section);
+        Composite clientArea = getToolkit().createComposite(section);
         section.setClient(clientArea);
-        toolkit.paintBordersFor(clientArea);
+        getToolkit().paintBordersFor(clientArea);
         GridLayout layoutRight = new GridLayout();
         layoutRight.marginWidth = 2;
         layoutRight.marginHeight = 2;

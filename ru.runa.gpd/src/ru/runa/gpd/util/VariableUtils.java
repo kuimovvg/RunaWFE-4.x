@@ -3,23 +3,15 @@ package ru.runa.gpd.util;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.VariableContainer;
+import ru.runa.gpd.lang.model.VariableUserType;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class VariableUtils {
-    // unused
-    public static boolean isVariableExists(List<Variable> variables, String variableName) {
-        for (Variable variable : variables) {
-            if (Objects.equal(variableName, variable.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Filtering by whitespace, etc...
@@ -55,7 +47,7 @@ public class VariableUtils {
         return result;
     }
 
-    public static String generateNameForScripting(ProcessDefinition processDefinition, String variableName, Variable excludedVariable) {
+    public static String generateNameForScripting(VariableContainer variableContainer, String variableName, Variable excludedVariable) {
         char[] chars = variableName.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == 0) {
@@ -75,7 +67,7 @@ public class VariableUtils {
         if (excludedVariable != null && Objects.equal(excludedVariable.getScriptingName(), scriptingName)) {
             return scriptingName;
         }
-        while (getVariableByScriptingName(processDefinition.getVariables(true), scriptingName) != null) {
+        while (getVariableByScriptingName(variableContainer.getVariables(false, true), scriptingName) != null) {
             scriptingName += "_";
         }
         return scriptingName;
@@ -89,6 +81,14 @@ public class VariableUtils {
         return result;
     }
 
+    public static List<String> getVariableNames(List<? extends Variable> variables) {
+        List<String> result = Lists.newArrayList();
+        for (Variable variable : variables) {
+            result.add(variable.getName());
+        }
+        return result;
+    }
+
     /**
      * @return variable or <code>null</code>
      */
@@ -96,6 +96,44 @@ public class VariableUtils {
         for (Variable variable : variables) {
             if (Objects.equal(variable.getScriptingName(), name)) {
                 return variable;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return variable or <code>null</code>
+     */
+    public static Variable getVariableByName(VariableContainer variableContainer, String name) {
+        List<Variable> variables = variableContainer.getVariables(false, true);
+        for (Variable variable : variables) {
+            if (Objects.equal(variable.getName(), name)) {
+                return variable;
+            }
+        }
+        if (name.contains(VariableUserType.DELIM)) {
+            int index = name.indexOf(VariableUserType.DELIM);
+            String complexVariableName = name.substring(0, index);
+            Variable complexVariable = getVariableByName(variableContainer, complexVariableName);
+            if (complexVariable == null) {
+                return null;
+            }
+            String scriptingName = complexVariable.getScriptingName();
+            String attributeName = name.substring(index + 1);
+            while (attributeName.contains(VariableUserType.DELIM)) {
+                index = attributeName.indexOf(VariableUserType.DELIM);
+                complexVariableName = attributeName.substring(0, index);
+                complexVariable = getVariableByName(complexVariable.getUserType(), complexVariableName);
+                if (complexVariable == null) {
+                    return null;
+                }
+                scriptingName += VariableUserType.DELIM + complexVariable.getScriptingName();
+                attributeName = attributeName.substring(index + 1);
+            }
+            Variable attribute = getVariableByName(complexVariable.getUserType(), attributeName);
+            if (attribute != null) {
+                scriptingName += VariableUserType.DELIM + attribute.getScriptingName();
+                return new Variable(name, scriptingName, attribute);
             }
         }
         return null;

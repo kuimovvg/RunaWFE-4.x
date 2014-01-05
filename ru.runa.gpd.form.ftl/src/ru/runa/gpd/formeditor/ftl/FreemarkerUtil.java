@@ -31,6 +31,7 @@ import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
 import ru.runa.gpd.formeditor.ftl.MethodTag.VariableAccess;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.collect.Maps;
 
@@ -331,7 +332,7 @@ public class FreemarkerUtil {
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
             // add output variables / read access
-            Variable variable = definition.getVariable(key, true);
+            Variable variable = VariableUtils.getVariableByName(definition, key);
             if (variable != null) {
                 if (!usedVariables.containsKey(key)) {
                     usedVariables.put(key, FormVariableAccess.READ);
