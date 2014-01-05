@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.collect.Lists;
 
@@ -31,7 +33,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         boolean allowToChangeElements = getParameterAs(boolean.class, 1);
         boolean allowToDeleteElements = getParameterAs(boolean.class, 2);
         List<String> variableNames = Lists.newArrayList();
-        List<String> componentFormatClassNames = Lists.newArrayList();
+        List<VariableFormat> componentFormats = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
         StringBuffer rowTemplate = new StringBuffer();
         StringBuffer jsHandlers = new StringBuffer();
@@ -44,7 +46,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                 break;
             }
             WfVariable variable = variableProvider.getVariable(variableName);
-            String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
+            VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
             List<Object> list = variableProvider.getValue(List.class, variableName);
             if (list == null) {
                 list = new ArrayList<Object>();
@@ -54,11 +56,11 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             }
             jsVariableNamesArray.append("\"").append(variableName).append("\"");
             variableNames.add(variableName);
-            componentFormatClassNames.add(elementFormatClassName);
+            componentFormats.add(componentFormat);
             lists.add(list);
-            jsHandlers.append(ViewUtil.getComponentJSFunction(elementFormatClassName));
+            jsHandlers.append(ViewUtil.getComponentJSFunction(componentFormat));
             rowTemplate.append("<td>");
-            String inputTag = getComponentInput(variableName + "[]", elementFormatClassName, null, true);
+            String inputTag = getComponentInput(variableName + "[]", componentFormat, null, true);
             inputTag = inputTag.replaceAll("\"", "'");
             rowTemplate.append(inputTag);
             rowTemplate.append("</td>");
@@ -85,10 +87,10 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             }
             html.append(ViewUtil.generateTableHeader(variableNames, variableProvider, operationsColumn));
             for (String variableName : variableNames) {
-                html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class.getName(), rowsCount));
+                html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class, rowsCount));
             }
             for (int row = 0; row < rowsCount; row++) {
-                renderRow(html, variableNames, lists, componentFormatClassNames, row, allowToChangeElements, allowToDeleteElements);
+                renderRow(html, variableNames, lists, componentFormats, row, allowToChangeElements, allowToDeleteElements);
             }
             html.append("</table>");
             return html.toString();
@@ -96,13 +98,13 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         return "-";
     }
 
-    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames, int row,
+    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<VariableFormat> componentFormats, int row,
             boolean allowToChangeElements, boolean allowToDeleteElements) {
         html.append("<tr row=\"").append(row).append("\">");
         for (int column = 0; column < variableNames.size(); column++) {
             Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
-            String componentFormatClassName = componentFormatClassNames.get(column);
-            renderColumn(html, variableNames.get(column), componentFormatClassName, o, row, column, allowToChangeElements);
+            VariableFormat componentFormat = componentFormats.get(column);
+            renderColumn(html, variableNames.get(column), componentFormat, o, row, column, allowToChangeElements);
         }
         if (allowToDeleteElements) {
             html.append("<td><input type='button' value=' - ' onclick=\"removeRow(this);\" /></td>");
@@ -110,19 +112,19 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         html.append("</tr>");
     }
 
-    protected void renderColumn(StringBuffer html, String variableName, String format, Object value, int row, int column, boolean enabled) {
+    protected void renderColumn(StringBuffer html, String variableName, VariableFormat componentFormat, Object value, int row, int column, boolean enabled) {
         String inputName = variableName + "[" + row + "]";
         html.append("<td column=\"").append(column).append("\">");
-        html.append(getComponentInput(inputName, format, value, enabled));
+        html.append(getComponentInput(inputName, componentFormat, value, enabled));
         html.append("</td>");
     }
 
-    protected String getComponentInput(String inputName, String componentFormatClassName, Object value, boolean enabled) {
+    protected String getComponentInput(String inputName, VariableFormat componentFormat, Object value, boolean enabled) {
         if (enabled) {
-            return ViewUtil.getComponentInput(user, webHelper, inputName, componentFormatClassName, value);
+            return ViewUtil.getComponentInput(user, webHelper, inputName, componentFormat, value);
         }
-        String html = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), inputName, componentFormatClassName, value);
-        html += ViewUtil.getHiddenInput(inputName, componentFormatClassName, value);
+        String html = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), inputName, componentFormat, value);
+        html += ViewUtil.getHiddenInput(inputName, componentFormat.getClass(), value);
         return html;
     }
 

@@ -23,6 +23,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
@@ -40,9 +41,12 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.decl.DefinitionServiceLocal;
 import ru.runa.wfe.service.decl.DefinitionServiceRemote;
+import ru.runa.wfe.service.decl.DefinitionServiceRemoteWS;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.service.interceptors.PerformanceObserver;
+import ru.runa.wfe.service.jaxb.Variable;
+import ru.runa.wfe.service.jaxb.VariableConverter;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
@@ -53,7 +57,7 @@ import com.google.common.base.Preconditions;
 @Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "DefinitionAPI", serviceName = "DefinitionWebService")
 @SOAPBinding
-public class DefinitionServiceBean implements DefinitionServiceLocal, DefinitionServiceRemote {
+public class DefinitionServiceBean implements DefinitionServiceLocal, DefinitionServiceRemote, DefinitionServiceRemoteWS {
     @Autowired
     private DefinitionLogic definitionLogic;
 
@@ -162,8 +166,8 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     }
 
     @Override
-    @WebResult(name = "result")
-    public List<VariableDefinition> getVariableDefinitions(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
+    @WebMethod(exclude = true)
+    public List<VariableDefinition> getVariableDefinitions(User user, Long definitionId) {
         return definitionLogic.getProcessDefinitionVariables(user, definitionId);
     }
 
@@ -183,4 +187,12 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
         Preconditions.checkArgument(name != null);
         return definitionLogic.getProcessDefinitionHistory(user, name);
     }
+    
+    @Override
+    @WebResult(name = "result")
+    public List<Variable> getVariableDefinitionsWS(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
+        List<VariableDefinition> variableDefinitions = getVariableDefinitions(user, definitionId);
+        return VariableConverter.marshalDefinitions(variableDefinitions);
+    }
+
 }

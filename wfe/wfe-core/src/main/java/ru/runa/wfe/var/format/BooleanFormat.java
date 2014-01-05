@@ -28,6 +28,11 @@ public class BooleanFormat implements VariableFormat {
     }
 
     @Override
+    public String getName() {
+        return "boolean";
+    }
+
+    @Override
     public Boolean parse(String source) {
         if (source == null) {
             return null;

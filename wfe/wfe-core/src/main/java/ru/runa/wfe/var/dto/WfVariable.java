@@ -5,20 +5,18 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.VariableFormat;
-import ru.runa.wfe.var.jaxb.VariableAdapter;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 @XmlType(namespace = "http://stub.service.wfe.runa.ru/", name = "wfVariableStub")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlJavaTypeAdapter(VariableAdapter.class)
+//@XmlJavaTypeAdapter(VariableAdapter.class)
 public class WfVariable implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +29,7 @@ public class WfVariable implements Serializable {
 
     public WfVariable(String name, Object value) {
         Preconditions.checkNotNull(name);
-        definition = new VariableDefinition(true, name, StringFormat.class.getName(), name);
+        definition = new VariableDefinition(true, name, name, StringFormat.class.getName());
         this.value = value;
     }
 
@@ -47,13 +45,6 @@ public class WfVariable implements Serializable {
 
     public VariableFormat getFormatNotNull() {
         return FormatCommons.create(getDefinition());
-    }
-
-    public String getFormatClassNameNotNull() {
-        if (definition != null && definition.getFormatClassName() != null) {
-            return definition.getFormatClassName();
-        }
-        return StringFormat.class.getName();
     }
 
     public Object getValue() {

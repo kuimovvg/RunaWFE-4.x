@@ -83,7 +83,7 @@ public class TaskLogic extends WFCommonLogic {
             }
             IVariableProvider validationVariableProvider = new MapDelegableVariableProvider(transitionMap, executionContext.getVariableProvider());
             validateVariables(user, processDefinition, task.getNodeId(), variables, validationVariableProvider);
-            executionContext.setVariables(variables);
+            executionContext.setVariableValues(variables);
             Transition transition;
             InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
             if (transitionName != null) {

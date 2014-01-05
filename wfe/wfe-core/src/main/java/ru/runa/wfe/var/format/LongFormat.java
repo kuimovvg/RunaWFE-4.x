@@ -31,6 +31,11 @@ public class LongFormat implements VariableFormat {
     }
 
     @Override
+    public String getName() {
+        return "integer";
+    }
+
+    @Override
     public Number parse(String source) throws ParseException {
         if (source != null) {
             return Long.valueOf(source);

@@ -35,8 +35,7 @@ import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
 
 public class ProcessVariablesRowBuilder implements RowBuilder {
-
-    private int idx = 0;
+    private int index = 0;
     private final List<WfVariable> variables;
     private final PageContext pageContext;
     private final Long processId;
@@ -49,12 +48,12 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
 
     @Override
     public boolean hasNext() {
-        return idx < variables.size();
+        return index < variables.size();
     }
 
     @Override
     public TR buildNext() {
-        WfVariable variable = variables.get(idx);
+        WfVariable variable = variables.get(index);
         Object value = variable.getValue();
         TR tr = new TR();
         TD nameTd = new TD(variable.getDefinition().getName());
@@ -76,8 +75,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
             formattedValue = ViewUtil.getOutput(user, new StrutsWebHelper(pageContext), processId, variable);
         }
         tr.addElement(new TD(formattedValue).setClass(Resources.CLASS_LIST_TABLE_TD));
-
-        idx++;
+        index++;
         return tr;
     }
 

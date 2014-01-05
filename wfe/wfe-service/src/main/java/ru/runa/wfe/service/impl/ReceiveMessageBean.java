@@ -108,7 +108,7 @@ public class ReceiveMessageBean implements MessageListener {
                     for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
                         if (!variableMapping.isPropertySelector() && map.containsKey(variableMapping.getMappedName())) {
                             Object value = map.get(variableMapping.getMappedName());
-                            executionContext.setVariable(variableMapping.getName(), value);
+                            executionContext.setVariableValue(variableMapping.getName(), value);
                         }
                     }
                     executionContext.addLog(new ReceiveMessageLog(receiveMessage, JMSUtil.toString(objectMessage, true)));

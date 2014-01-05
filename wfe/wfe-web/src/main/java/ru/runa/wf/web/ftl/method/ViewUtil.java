@@ -36,6 +36,7 @@ import ru.runa.wfe.var.format.DateTimeFormat;
 import ru.runa.wfe.var.format.DoubleFormat;
 import ru.runa.wfe.var.format.ExecutorFormat;
 import ru.runa.wfe.var.format.FileFormat;
+import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.GroupFormat;
 import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.LongFormat;
@@ -44,7 +45,6 @@ import ru.runa.wfe.var.format.TextFormat;
 import ru.runa.wfe.var.format.TimeFormat;
 import ru.runa.wfe.var.format.VariableDisplaySupport;
 import ru.runa.wfe.var.format.VariableFormat;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -53,23 +53,23 @@ public class ViewUtil {
     private static final Log log = LogFactory.getLog(ViewUtil.class);
 
     public static String createExecutorSelect(User user, WfVariable variable) {
-        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getFormatClassNameNotNull(), variable.getValue(), true);
+        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getFormatNotNull(), variable.getValue(), true);
     }
 
-    private static String createExecutorSelect(User user, String variableName, String formatClassName, Object value, boolean enabled) {
+    private static String createExecutorSelect(User user, String variableName, VariableFormat variableFormat, Object value, boolean enabled) {
         BatchPresentation batchPresentation;
         int sortColumn = 0;
         boolean javaSort = false;
-        if (ActorFormat.class.getName().equals(formatClassName)) {
+        if (ActorFormat.class == variableFormat.getClass()) {
             batchPresentation = BatchPresentationFactory.ACTORS.createNonPaged();
             sortColumn = 1;
-        } else if (ExecutorFormat.class.getName().equals(formatClassName)) {
+        } else if (ExecutorFormat.class == variableFormat.getClass()) {
             batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
             javaSort = true;
-        } else if (GroupFormat.class.getName().equals(formatClassName)) {
+        } else if (GroupFormat.class == variableFormat.getClass()) {
             batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         } else {
-            throw new InternalApplicationException("Unexpected format " + formatClassName);
+            throw new InternalApplicationException("Unexpected format " + variableFormat);
         }
         batchPresentation.setFieldsToSort(new int[] { sortColumn }, new boolean[] { true });
         List<Executor> executors = (List<Executor>) Delegates.getExecutorService().getExecutors(user, batchPresentation);
@@ -97,9 +97,9 @@ public class ViewUtil {
         return html;
     }
 
-    public static String getHiddenInput(String variableName, String formatClassName, Object value) {
+    public static String getHiddenInput(String variableName, Class<? extends VariableFormat> formatClass, Object value) {
         if (value != null) {
-            String stringValue = getStringValue(variableName, formatClassName, value);
+            String stringValue = getStringValue(variableName, formatClass, value);
             if (stringValue != null) {
                 return "<input type=\"hidden\" name=\"" + variableName + "\" value=\"" + stringValue + "\" />";
             }
@@ -107,23 +107,23 @@ public class ViewUtil {
         return "";
     }
 
-    public static String getStringValue(String variableName, String formatClassName, Object value) {
+    private static String getStringValue(String variableName, Class<? extends VariableFormat> formatClass, Object value) {
         if (value != null) {
             String stringValue = "";
-            if (DateFormat.class.getName().equals(formatClassName)) {
+            if (DateFormat.class == formatClass) {
                 if (value instanceof Date) {
                     stringValue = CalendarUtil.formatDate((Date) value);
                 }
-            } else if (TimeFormat.class.getName().equals(formatClassName)) {
+            } else if (TimeFormat.class == formatClass) {
                 if (value instanceof Date) {
                     stringValue = CalendarUtil.formatTime((Date) value);
                 }
-            } else if (DateTimeFormat.class.getName().equals(formatClassName)) {
+            } else if (DateTimeFormat.class == formatClass) {
                 if (value instanceof Date) {
                     stringValue = CalendarUtil.formatDateTime((Date) value);
                 }
-            } else if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
-                    || GroupFormat.class.getName().equals(formatClassName)) {
+            } else if (ActorFormat.class == formatClass || ExecutorFormat.class == formatClass
+                    || GroupFormat.class == formatClass) {
                 if (value instanceof Executor) {
                     stringValue = "ID" + ((Executor) value).getId();
                 }
@@ -135,149 +135,147 @@ public class ViewUtil {
         return null;
     }
 
-    public static String getComponentInput(User user, WebHelper webHelper, String variableName, String formatClassName, Object value) {
+    public static String getComponentInput(User user, WebHelper webHelper, String variableName, VariableFormat variableFormat, Object value) {
         String html = "";
-        if (StringFormat.class.getName().equals(formatClassName)) {
+        if (StringFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
             if (value != null) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
         }
-        if (TextFormat.class.getName().equals(formatClassName)) {
+        if (TextFormat.class == variableFormat.getClass()) {
             html += "<textarea name=\"" + variableName + "\" class=\"inputText\">";
             if (value != null) {
                 html += value;
             }
             html += "</textarea>";
         }
-        if (LongFormat.class.getName().equals(formatClassName) || DoubleFormat.class.getName().equals(formatClassName)
-                || BigDecimalFormat.class.getName().equals(formatClassName)) {
+        if (LongFormat.class == variableFormat.getClass() || DoubleFormat.class == variableFormat.getClass()
+                || BigDecimalFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputNumber\" ";
             if (value instanceof Number) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
         }
-        if (FileFormat.class.getName().equals(formatClassName)) {
+        if (FileFormat.class == variableFormat.getClass()) {
             html += getFileInput(webHelper, variableName, (FileVariable) value);
         }
-        if (BooleanFormat.class.getName().equals(formatClassName)) {
+        if (BooleanFormat.class == variableFormat.getClass()) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
             if (value instanceof Boolean && ((Boolean) value)) {
                 html += "checked=\"checked\" ";
             }
             html += "/>";
         }
-        if (DateFormat.class.getName().equals(formatClassName)) {
+        if (DateFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDate\" style=\"width: 100px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDate((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (TimeFormat.class.getName().equals(formatClassName)) {
+        if (TimeFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputTime\" style=\"width: 50px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatTime((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (DateTimeFormat.class.getName().equals(formatClassName)) {
+        if (DateTimeFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDateTime\" style=\"width: 150px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDateTime((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
-                || GroupFormat.class.getName().equals(formatClassName)) {
-            html = ViewUtil.createExecutorSelect(user, variableName, formatClassName, value, true);
+        if (variableFormat instanceof ExecutorFormat) {
+            html = ViewUtil.createExecutorSelect(user, variableName, variableFormat, value, true);
         }
         return html;
     }
 
-    public static String getComponentOutput(User user, WebHelper webHelper, Long processId, String variableName, String formatClassName, Object value) {
+    public static String getComponentOutput(User user, WebHelper webHelper, Long processId, String variableName, VariableFormat variableFormat, Object value) {
         String html = "";
-        if (StringFormat.class.getName().equals(formatClassName)) {
+        if (StringFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
             if (value != null) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
         }
-        if (TextFormat.class.getName().equals(formatClassName)) {
+        if (TextFormat.class == variableFormat.getClass()) {
             html += "<textarea name=\"" + variableName + "\" class=\"inputText\" disabled=\"true\">";
             if (value != null) {
                 html += value;
             }
             html += "</textarea>";
         }
-        if (LongFormat.class.getName().equals(formatClassName) || DoubleFormat.class.getName().equals(formatClassName)
-                || BigDecimalFormat.class.getName().equals(formatClassName)) {
+        if (LongFormat.class == variableFormat.getClass() || DoubleFormat.class == variableFormat.getClass()
+                || BigDecimalFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputNumber\" disabled=\"true\" ";
             if (value instanceof Number) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
         }
-        if (FileFormat.class.getName().equals(formatClassName)) {
+        if (FileFormat.class == variableFormat.getClass()) {
             // because component is not usable
             html += getFileOutput(webHelper, processId, variableName, (FileVariable) value);
         }
-        if (BooleanFormat.class.getName().equals(formatClassName)) {
+        if (BooleanFormat.class == variableFormat.getClass()) {
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" disabled=\"true\" ";
             if (value instanceof Boolean && ((Boolean) value)) {
                 html += "checked=\"checked\" ";
             }
             html += "/>";
         }
-        if (DateFormat.class.getName().equals(formatClassName)) {
+        if (DateFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDate\" style=\"width: 100px;\" disabled=\"true\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDate((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (TimeFormat.class.getName().equals(formatClassName)) {
+        if (TimeFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputTime\" style=\"width: 50px;\" disabled=\"true\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatTime((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (DateTimeFormat.class.getName().equals(formatClassName)) {
+        if (DateTimeFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDateTime\" style=\"width: 150px;\" disabled=\"true\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDateTime((Date) value) + "\" ";
             }
             html += "/>";
         }
-        if (ActorFormat.class.getName().equals(formatClassName) || ExecutorFormat.class.getName().equals(formatClassName)
-                || GroupFormat.class.getName().equals(formatClassName)) {
-            html = ViewUtil.createExecutorSelect(user, variableName, formatClassName, value, false);
+        if (variableFormat instanceof ExecutorFormat) {
+            html = ViewUtil.createExecutorSelect(user, variableName, variableFormat, value, false);
         }
         return html;
     }
 
-    public static String getComponentJSFunction(String formatClassName) {
-        if (DateFormat.class.getName().equals(formatClassName)) {
+    public static String getComponentJSFunction(VariableFormat variableFormat) {
+        if (DateFormat.class == variableFormat.getClass()) {
             return "$('.inputDate').datepicker({ dateFormat: 'dd.mm.yy', buttonImage: '/wfe/images/calendar.gif' });";
         }
-        if (TimeFormat.class.getName().equals(formatClassName)) {
+        if (TimeFormat.class == variableFormat.getClass()) {
             return "$('.inputTime').timepicker({ ampm: false, seconds: false });";
         }
-        if (DateTimeFormat.class.getName().equals(formatClassName)) {
+        if (DateTimeFormat.class == variableFormat.getClass()) {
             return "$('.inputDateTime').datetimepicker({ dateFormat: 'dd.mm.yy' });";
         }
-        if (FileFormat.class.getName().equals(formatClassName) && WebResources.isAjaxFileInputEnabled()) {
+        if (FileFormat.class == variableFormat.getClass() && WebResources.isAjaxFileInputEnabled()) {
             return "$('.dropzone').each(function () { initFileInput($(this)) });";
         }
         return "";
     }
 
-    public static String getOutput(User user, WebHelper webHelper, Long processId, String variableName, String formatClassName, Object value) {
-        VariableDefinition definition = new VariableDefinition(true, variableName, formatClassName, variableName);
+    public static String getOutput(User user, WebHelper webHelper, Long processId, String variableName, VariableFormat componentFormat, Object value) {
+        VariableDefinition definition = new VariableDefinition(true, variableName, variableName, componentFormat.getClass().getName());
         WfVariable variable = new WfVariable(definition, value);
         return getOutput(user, webHelper, processId, variable);
     }
@@ -304,7 +302,7 @@ public class ViewUtil {
             }
             if (format instanceof ListFormat) {
                 List<Object> list = (List<Object>) variable.getValue();
-                String elementFormatClassName = getElementFormatClassName(variable, 0);
+                VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
                 StringBuffer html = new StringBuffer();
                 html.append("[");
                 for (int i = 0; i < list.size(); i++) {
@@ -313,10 +311,10 @@ public class ViewUtil {
                     }
                     Object o = list.get(i);
                     String value;
-                    if (FileFormat.class.getName().equals(elementFormatClassName)) {
-                        value = ViewUtil.getFileOutput(webHelper, processId, variable.getDefinition().getName(), (FileVariable) o, i, null);
+                    if (componentFormat instanceof FileFormat) {
+                        value = getFileOutput(webHelper, processId, variable.getDefinition().getName(), (FileVariable) o, i, null);
                     } else {
-                        value = ViewUtil.getOutput(user, webHelper, processId, variable.getDefinition().getName(), elementFormatClassName, o);
+                        value = getOutput(user, webHelper, processId, variable.getDefinition().getName(), componentFormat, o);
                     }
                     html.append(value);
                 }
@@ -432,16 +430,6 @@ public class ViewUtil {
     private static String getFileOutput(WebHelper webHelper, Map<String, Object> params, String fileName) {
         String href = webHelper.getActionUrl("/variableDownloader", params);
         return "<a href=\"" + href + "\">" + fileName + "</>";
-    }
-
-    public static String getElementFormatClassName(WfVariable variable, int index) {
-        if (variable != null) {
-            VariableFormat format = variable.getFormatNotNull();
-            if (format instanceof VariableFormatContainer) {
-                return ((VariableFormatContainer) format).getComponentClassName(index);
-            }
-        }
-        return StringFormat.class.getName();
     }
 
     public static String generateTableHeader(List<String> variableNames, IVariableProvider variableProvider, String operationsColumn) {

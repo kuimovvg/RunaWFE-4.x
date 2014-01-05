@@ -16,6 +16,11 @@ public class BigDecimalFormat implements VariableFormat {
     }
 
     @Override
+    public String getName() {
+        return "bigdecimal";
+    }
+
+    @Override
     public BigDecimal parse(String source) throws Exception {
         if (source == null) {
             return null;

@@ -118,7 +118,7 @@ public class FormSubmissionUtils {
                 if (format instanceof ListFormat) {
                     String sizeInputName = variableDefinition.getName() + ".size";
                     ListFormat listFormat = (ListFormat) format;
-                    VariableFormat componentFormat = FormatCommons.create(listFormat.getComponentClassName(0));
+                    VariableFormat componentFormat = FormatCommons.createComponent(listFormat, 0);
                     if (userInput.containsKey(sizeInputName)) {
                         // js dynamic way
                         String[] strings = (String[]) userInput.get(sizeInputName);

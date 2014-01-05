@@ -33,7 +33,7 @@ public abstract class CommonParamBasedHandler extends TaskHandlerBase implements
         try {
             timeMeasurer.jobStarted();
             executeAction(handlerData);
-            context.setVariables(handlerData.getOutputVariables());
+            context.setVariableValues(handlerData.getOutputVariables());
             timeMeasurer.jobEnded(handlerData.getTaskName());
         } catch (Throwable th) {
             if (handlerData.isFailOnError()) {

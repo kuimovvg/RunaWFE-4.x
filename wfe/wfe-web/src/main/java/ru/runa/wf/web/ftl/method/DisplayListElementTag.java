@@ -6,6 +6,8 @@ import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FileFormat;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
 import freemarker.template.TemplateModelException;
 
 public class DisplayListElementTag extends FreemarkerTag {
@@ -22,11 +24,11 @@ public class DisplayListElementTag extends FreemarkerTag {
         if (index < list.size()) {
             object = list.get(index);
         }
-        String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
-        if (FileFormat.class.getName().equals(elementFormatClassName)) {
+        VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
+        if (componentFormat instanceof FileFormat) {
             return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, index, null);
         } else {
-            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, elementFormatClassName, object);
+            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, object);
         }
     }
 

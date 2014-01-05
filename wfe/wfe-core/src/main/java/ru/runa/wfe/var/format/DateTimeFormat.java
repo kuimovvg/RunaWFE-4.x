@@ -29,4 +29,9 @@ public class DateTimeFormat extends AbstractDateFormat {
         super(CalendarUtil.DATE_WITH_HOUR_MINUTES_FORMAT);
     }
 
+    @Override
+    public String getName() {
+        return "datetime";
+    }
+
 }
