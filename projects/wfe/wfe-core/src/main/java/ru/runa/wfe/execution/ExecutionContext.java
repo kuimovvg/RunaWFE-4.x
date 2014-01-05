@@ -42,6 +42,7 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.VariableCreator;
@@ -137,7 +138,7 @@ public class ExecutionContext {
     /**
      * @return the variable value with the given name.
      */
-    public Object getVariable(String name) {
+    public Object getVariableValue(String name) {
         Variable<?> variable = variableDAO.get(getProcess(), name);
         if (variable != null) {
             return variable.getValue();
@@ -149,7 +150,7 @@ public class ExecutionContext {
         return null;
     }
 
-    public void setVariable(String name, Object value) {
+    public void setVariableValue(String name, Object value) {
         Preconditions.checkNotNull(name, "name is null");
         SwimlaneDefinition swimlaneDefinition = getProcessDefinition().getSwimlane(name);
         if (swimlaneDefinition != null) {
@@ -175,6 +176,11 @@ public class ExecutionContext {
                     }
                 }
             }
+        }
+        if (value instanceof ComplexVariable) {
+            ComplexVariable complexVariable = (ComplexVariable) value;
+            setVariableValues(complexVariable);
+            return;
         }
         Variable<?> variable = variableDAO.get(getProcess(), name);
         // if there is exist variable and it doesn't support the current type
@@ -202,9 +208,9 @@ public class ExecutionContext {
      * Adds all the given variables. It doesn't remove any existing variables
      * unless they are overwritten by the given variables.
      */
-    public void setVariables(Map<String, Object> variables) {
+    public void setVariableValues(Map<String, Object> variables) {
         for (Map.Entry<String, Object> entry : variables.entrySet()) {
-            setVariable(entry.getKey(), entry.getValue());
+            setVariableValue(entry.getKey(), entry.getValue());
         }
     }
 

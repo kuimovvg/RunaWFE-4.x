@@ -26,7 +26,7 @@ public class ExpressionEvaluator {
         String durationString = null;
         if (expression != null && expression.startsWith("#")) {
             String baseDateVariableName = expression.substring(2, expression.indexOf("}"));
-            Object o = executionContext.getVariable(baseDateVariableName);
+            Object o = executionContext.getVariableValue(baseDateVariableName);
             baseDate = TypeConversionUtil.convertTo(Date.class, o);
             if (baseDate == null) {
                 throw new InternalApplicationException("Invalid base date, not defined by name '" + baseDateVariableName + "'");

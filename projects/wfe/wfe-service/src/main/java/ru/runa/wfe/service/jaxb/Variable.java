@@ -1,15 +1,16 @@
 package ru.runa.wfe.service.jaxb;
 
+import com.google.common.base.Objects;
+
 public class Variable {
     public String name;
-    public Object value;
+    public String scriptingName;
+    public String format;
+    public String value;
 
-    public Variable() {
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return Objects.toStringHelper(getClass()).add("name", name).add("value", value).toString();
     }
-
-    public Variable(String name, Object value) {
-        this.name = name;
-        this.value = value;
-    }
-
 }

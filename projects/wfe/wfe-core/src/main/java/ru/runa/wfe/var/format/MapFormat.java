@@ -8,17 +8,29 @@ import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.VariableDefinitionAware;
+
 import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class MapFormat implements VariableFormat, VariableFormatContainer {
+public class MapFormat implements VariableFormat, VariableFormatContainer, VariableDefinitionAware {
     private static final Log log = LogFactory.getLog(MapFormat.class);
     private String keyFormatClassName;
     private String valueFormatClassName;
+    private VariableDefinition variableDefinition;
 
     @Override
     public Class<?> getJavaClass() {
         return Map.class;
+    }
+
+    @Override
+    public String getName() {
+        VariableFormat keyFormat = FormatCommons.createComponent(this, 0);
+        VariableFormat valueFormat = FormatCommons.createComponent(this, 1);
+        return "map(" + keyFormat.getName() + ", " + valueFormat.getName() + ")";
     }
 
     @Override
@@ -48,22 +60,45 @@ public class MapFormat implements VariableFormat, VariableFormatContainer {
         JSONParser parser = new JSONParser();
         JSONObject object = (JSONObject) parser.parse(json);
         Map result = Maps.newHashMapWithExpectedSize(object.size());
-        VariableFormat keyFormat = FormatCommons.create(keyFormatClassName);
-        VariableFormat valueFormat = FormatCommons.create(valueFormatClassName);
-        for (Map.Entry<String, String> entry : (Set<Map.Entry<String, String>>) object.entrySet()) {
-            try {
-                result.put(keyFormat.parse(entry.getKey()), valueFormat.parse(entry.getValue()));
-            } catch (Exception e) {
-                log.warn(entry.toString(), e);
-            }
+        VariableFormat keyFormat = FormatCommons.createComponent(this, 0);
+        VariableFormat valueFormat = FormatCommons.createComponent(this, 1);
+        for (Map.Entry<Object, Object> entry : (Set<Map.Entry<Object, Object>>) object.entrySet()) {
+            result.put(convert(keyFormat, entry.getKey()), convert(valueFormat, entry.getValue()));
         }
         return result;
+    }
+    
+    private Object convert(VariableFormat format, Object source) throws Exception {
+        if (format instanceof UserTypeFormat) {
+            return ((UserTypeFormat) format).parse((JSONObject) source);
+        } else {
+            return format.parse((String) source);
+        }
     }
 
     @Override
     public String format(Object map) {
-        JSONObject object = new JSONObject((Map<?, ?>) map);
-        return object.toJSONString();
+        if (map == null) {
+            return null;
+        }
+        JSONObject object = new JSONObject();
+        VariableFormat keyFormat = FormatCommons.createComponent(this, 0);
+        VariableFormat valueFormat = FormatCommons.createComponent(this, 1);
+        for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) map).entrySet()) {
+            Object keyValue = TypeConversionUtil.convertTo(keyFormat.getJavaClass(), entry.getKey());
+            Object valueValue = TypeConversionUtil.convertTo(valueFormat.getJavaClass(), entry.getValue());
+            object.put(keyFormat.format(keyValue), valueFormat.format(valueValue));
+        }
+        return object.toString();
     }
 
+    @Override
+    public VariableDefinition getVariableDefinition() {
+        return variableDefinition;
+    }
+    
+    @Override
+    public void setVariableDefinition(VariableDefinition variableDefinition) {
+        this.variableDefinition = variableDefinition;
+    }
 }

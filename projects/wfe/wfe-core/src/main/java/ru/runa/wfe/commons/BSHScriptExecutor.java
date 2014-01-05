@@ -1,13 +1,8 @@
 package ru.runa.wfe.commons;
 
-import groovy.lang.Binding;
-
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -15,8 +10,6 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.IVariableProvider;
 
 public class BSHScriptExecutor extends GroovyScriptExecutor {
-
-    private static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
 
     @Override
     public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
@@ -46,7 +39,7 @@ public class BSHScriptExecutor extends GroovyScriptExecutor {
     }
 
     @Override
-    protected Binding createBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
+    protected GroovyScriptBinding createBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
         if (SystemProperties.isV3CompatibilityMode()) {
             return new BackCompatibilityBinding(processDefinition, variableProvider);
         }

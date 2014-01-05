@@ -5,6 +5,8 @@ import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -17,7 +19,7 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         List<String> variableNames = Lists.newArrayList();
-        List<String> componentFormatClassNames = Lists.newArrayList();
+        List<VariableFormat> componentFormats = Lists.newArrayList();
         List<Map<?, ?>> maps = Lists.newArrayList();
         String firstParameter = getParameterAsString(0);
         boolean componentView = "true".equals(firstParameter);
@@ -28,13 +30,13 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                 break;
             }
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
-            String valueFormatClassName = ViewUtil.getElementFormatClassName(variable, 1);
+            VariableFormat componentFormat = FormatCommons.createComponent(variable, 1);
             Map<?, ?> map = (Map<?, ?>) variableProvider.getValue(variableName);
             if (map == null) {
                 map = Maps.newHashMap();
             }
             variableNames.add(variableName);
-            componentFormatClassNames.add(valueFormatClassName);
+            componentFormats.add(componentFormat);
             maps.add(map);
             i++;
         }
@@ -48,12 +50,12 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                     Map<?, ?> map = maps.get(column);
                     Object o = map.get(entry.getKey());
                     String variableName = variableNames.get(column);
-                    String componentClassName = componentFormatClassNames.get(column);
+                    VariableFormat componentFormat = componentFormats.get(column);
                     String value;
                     if (componentView) {
-                        value = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);
+                        value = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, o);
                     } else {
-                        value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, o);
+                        value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, o);
                     }
                     html.append("<td>").append(value).append("</td>");
                 }

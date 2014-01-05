@@ -79,7 +79,7 @@ public abstract class AlfHandler extends TaskHandlerBase implements ActionHandle
                     return null;
                 }
             }.runInSession();
-            context.setVariables(handlerData.getOutputVariables());
+            context.setVariableValues(handlerData.getOutputVariables());
             timeMeasurer.jobEnded(handlerData.getTaskName());
         } catch (Throwable th) {
             if (handlerData.isFailOnError()) {

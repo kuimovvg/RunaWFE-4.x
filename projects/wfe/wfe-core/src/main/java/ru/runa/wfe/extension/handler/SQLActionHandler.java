@@ -127,7 +127,7 @@ public class SQLActionHandler extends ActionHandlerBase {
             }
         }
         // write variables
-        executionContext.setVariables(out);
+        executionContext.setVariableValues(out);
     }
 
     private Map<String, Object> extractResults(MapDelegableVariableProvider in, ResultSet resultSet, AbstractQuery query) throws Exception {

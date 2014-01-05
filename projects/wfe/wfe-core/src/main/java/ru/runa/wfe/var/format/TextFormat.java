@@ -8,4 +8,9 @@ package ru.runa.wfe.var.format;
  */
 public class TextFormat extends StringFormat {
 
+    @Override
+    public String getName() {
+        return "text";
+    }
+
 }

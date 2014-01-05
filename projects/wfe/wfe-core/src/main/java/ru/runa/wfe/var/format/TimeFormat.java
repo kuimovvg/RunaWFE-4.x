@@ -28,4 +28,10 @@ public class TimeFormat extends AbstractDateFormat {
     public TimeFormat() {
         super(CalendarUtil.HOURS_MINUTES_FORMAT);
     }
+    
+    @Override
+    public String getName() {
+        return "time";
+    }
+
 }

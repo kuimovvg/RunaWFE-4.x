@@ -74,6 +74,6 @@ public class SwimlaneDefinition extends GraphElement {
     }
 
     public VariableDefinition toVariableDefinition() {
-        return new VariableDefinition(true, name, ExecutorFormat.class.getName(), scriptingName);
+        return new VariableDefinition(true, name, scriptingName, ExecutorFormat.class.getName());
     }
 }

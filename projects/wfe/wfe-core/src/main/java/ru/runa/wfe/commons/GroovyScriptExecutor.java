@@ -15,22 +15,22 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.VariableUserType;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class GroovyScriptExecutor implements IScriptExecutor {
-    private static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
-
+    protected static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
+    
     @Override
     public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
-            Binding binding = createBinding(processDefinition, variableProvider);
+            GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(binding);
             shell.evaluate(script);
-            return adjustVariables(processDefinition, binding.getVariables());
+            return binding.getAdjustedVariables();
         } catch (Exception e) {
             log.error("Groovy execution failed, script=" + script, e);
             if (e instanceof GroovyExceptionInterface) {
@@ -43,7 +43,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     @Override
     public Object evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
-            Binding binding = createBinding(processDefinition, variableProvider);
+            GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(binding);
             return shell.evaluate(script);
         } catch (Exception e) {
@@ -55,17 +55,36 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         }
     }
 
-    protected Binding createBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
+    protected GroovyScriptBinding createBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
         return new GroovyScriptBinding(processDefinition, variableProvider);
     }
 
     public static class GroovyScriptBinding extends Binding {
-        protected final ProcessDefinition processDefinition;
-        protected final IVariableProvider variableProvider;
+        private final IVariableProvider variableProvider;
+        private final Map<String, String> variableScriptingNameToNameMap = Maps.newHashMap();
 
         public GroovyScriptBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
-            this.processDefinition = processDefinition;
             this.variableProvider = variableProvider;
+            if (processDefinition != null) {
+                for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
+                    fillConversionMap(variableDefinition.getName(), variableDefinition.getScriptingName(), variableDefinition.getUserType());
+                }
+                for (SwimlaneDefinition swimlaneDefinition : processDefinition.getSwimlanes().values()) {
+                    variableScriptingNameToNameMap.put(swimlaneDefinition.getScriptingName(), swimlaneDefinition.getName());
+                }
+            }
+        }
+        
+        private void fillConversionMap(String name, String scriptingName, VariableUserType userType) {
+            if (userType != null) {
+                for (VariableDefinition attributeDefinition : userType.getAttributes()) {
+                    String fullScriptingName = scriptingName + VariableUserType.DELIM + attributeDefinition.getScriptingName();
+                    String fullName = name + VariableUserType.DELIM + attributeDefinition.getName();
+                    fillConversionMap(fullName, fullScriptingName, attributeDefinition.getUserType());
+                }
+            } else {
+                variableScriptingNameToNameMap.put(scriptingName, name);
+            }
         }
 
         @Override
@@ -76,27 +95,18 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 return getVariableFromProcess(name);
             }
         }
+        
+        private String getVariableNameByScriptingName(String name) {
+            String variableName = variableScriptingNameToNameMap.get(name);
+            if (variableName == null) {
+                log.warn("No variable name found by scripting name '" + name + "'");
+                return name;
+            }
+            return variableName;
+        }
 
         protected Object getVariableFromProcess(String name) {
-            if (processDefinition != null) {
-                boolean found = false;
-                for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
-                    if (Objects.equal(name, variableDefinition.getScriptingName())) {
-                        name = variableDefinition.getName();
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    for (SwimlaneDefinition swimlaneDefinition : processDefinition.getSwimlanes().values()) {
-                        if (Objects.equal(name, swimlaneDefinition.getScriptingName())) {
-                            name = swimlaneDefinition.getName();
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            }
+            name = getVariableNameByScriptingName(name);
             Object value = variableProvider.getValue(name);
             if (value == null) {
                 log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
@@ -109,31 +119,15 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             throw new UnsupportedOperationException("Implement if will be used");
         }
 
+        public Map<String, Object> getAdjustedVariables() {
+            Map<String, Object> scriptingVariables = getVariables();
+            Map<String, Object> result = Maps.newHashMapWithExpectedSize(scriptingVariables.size());
+            for (Map.Entry<String, Object> scriptingEntry : scriptingVariables.entrySet()) {
+                String variableName = getVariableNameByScriptingName(scriptingEntry.getKey());
+                result.put(variableName, scriptingEntry.getValue());
+            }
+            return result;
+        }
     }
 
-    private Map<String, Object> adjustVariables(ProcessDefinition processDefinition, Map<String, Object> map) {
-        Map<String, Object> result = Maps.newHashMap();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            String variableName = entry.getKey();
-            boolean found = false;
-            for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
-                if (Objects.equal(variableName, variableDefinition.getScriptingName())) {
-                    variableName = variableDefinition.getName();
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                for (SwimlaneDefinition swimlaneDefinition : processDefinition.getSwimlanes().values()) {
-                    if (Objects.equal(variableName, swimlaneDefinition.getScriptingName())) {
-                        variableName = swimlaneDefinition.getName();
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            result.put(variableName, entry.getValue());
-        }
-        return result;
-    }
 }

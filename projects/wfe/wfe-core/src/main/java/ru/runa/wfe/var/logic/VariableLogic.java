@@ -86,7 +86,7 @@ public class VariableLogic extends WFCommonLogic {
         checkPermissionAllowed(user, process, ProcessPermission.READ);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
-        executionContext.setVariables(variables);
+        executionContext.setVariableValues(variables);
     }
 
 }

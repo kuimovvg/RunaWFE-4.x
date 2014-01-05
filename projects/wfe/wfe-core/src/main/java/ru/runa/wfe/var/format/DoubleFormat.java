@@ -27,6 +27,11 @@ public class DoubleFormat implements VariableFormat {
     }
 
     @Override
+    public String getName() {
+        return "double";
+    }
+
+    @Override
     public Number parse(String source) throws ParseException {
         if (source != null) {
             return Double.valueOf(source);

@@ -7,6 +7,7 @@ import org.dom4j.Element;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.office.doc.DocxConfig.TableConfig;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
+import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -45,8 +46,9 @@ public class DocxConfigParser extends FilesSupplierConfigParser<DocxConfig> {
             String formatClassName = hintElement.attributeValue("type");
             Preconditions.checkNotNull(formatClassName, "Missed 'type' attribute in table element");
             formatClassName = BackCompatibilityClassNames.getClassName(formatClassName);
-            VariableFormat webFormat = FormatCommons.create(formatClassName);
-            config.getTypeHints().put(variableName, webFormat);
+            VariableDefinition variableDefinition = new VariableDefinition(true, variableName, variableName, formatClassName);
+            VariableFormat variableFormat = FormatCommons.create(variableDefinition);
+            config.getTypeHints().put(variableName, variableFormat);
         }
     }
 

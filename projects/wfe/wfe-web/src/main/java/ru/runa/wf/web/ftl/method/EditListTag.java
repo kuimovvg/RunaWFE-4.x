@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.VariableFormat;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -28,14 +30,14 @@ public class EditListTag extends AjaxFreemarkerTag {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingName();
-        String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
+        VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
         substitutions.put("UNIQUENAME", scriptingVariableName);
-        String inputTag = ViewUtil.getComponentInput(user, webHelper, variableName + "[]", elementFormatClassName, null);
+        String inputTag = ViewUtil.getComponentInput(user, webHelper, variableName + "[]", componentFormat, null);
         inputTag = inputTag.replaceAll("\"", "'").replaceAll("\t", "").replaceAll("\n", "");
         substitutions.put("COMPONENT_INPUT", inputTag);
-        substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(elementFormatClassName));
+        substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(componentFormat));
         StringBuffer html = new StringBuffer();
         html.append(exportScript("scripts/EditListTag.js", substitutions, false));
         List<Object> list = variableProvider.getValue(List.class, variableName);
@@ -43,11 +45,11 @@ public class EditListTag extends AjaxFreemarkerTag {
             list = new ArrayList<Object>();
         }
         html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
-        html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class.getName(), list.size()));
+        html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class, list.size()));
         for (int row = 0; row < list.size(); row++) {
             Object value = list.get(row);
             html.append("<div row=\"").append(row).append("\">");
-            html.append(ViewUtil.getComponentInput(user, webHelper, variableName + "[" + row + "]", elementFormatClassName, value));
+            html.append(ViewUtil.getComponentInput(user, webHelper, variableName + "[" + row + "]", componentFormat, value));
             html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName).append("(this);\" />");
             html.append("</div>");
         }

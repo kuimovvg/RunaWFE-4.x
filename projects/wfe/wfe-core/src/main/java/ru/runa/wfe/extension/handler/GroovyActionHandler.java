@@ -17,7 +17,7 @@ public class GroovyActionHandler extends ActionHandlerBase {
     public void execute(ExecutionContext executionContext) {
         Map<String, Object> outVariables = getScriptExecutor().executeScript(executionContext.getProcessDefinition(),
                 executionContext.getVariableProvider(), configuration);
-        executionContext.setVariables(outVariables);
+        executionContext.setVariableValues(outVariables);
     }
 
 }

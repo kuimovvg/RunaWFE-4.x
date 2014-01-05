@@ -5,6 +5,8 @@ import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.collect.Lists;
 
@@ -16,7 +18,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         List<String> variableNames = Lists.newArrayList();
-        List<String> componentFormatClassNames = Lists.newArrayList();
+        List<VariableFormat> componentFormats = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
         String firstParameter = getParameterAsString(0);
         boolean componentView = !"false".equals(firstParameter);
@@ -28,13 +30,13 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
                 break;
             }
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
-            String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
+            VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
             List<Object> list = (List<Object>) variable.getValue();
             if (list == null) {
                 list = new ArrayList<Object>();
             }
             variableNames.add(variableName);
-            componentFormatClassNames.add(elementFormatClassName);
+            componentFormats.add(componentFormat);
             lists.add(list);
             if (list.size() > rowsCount) {
                 rowsCount = list.size();
@@ -46,7 +48,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
             html.append("<table class=\"displayLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
             html.append(ViewUtil.generateTableHeader(variableNames, variableProvider, null));
             for (int row = 0; row < rowsCount; row++) {
-                renderRow(html, variableNames, lists, componentFormatClassNames, componentView, row);
+                renderRow(html, variableNames, lists, componentFormats, componentView, row);
             }
             html.append("</table>");
             return html.toString();
@@ -54,30 +56,30 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         return "-";
     }
 
-    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<String> componentFormatClassNames,
+    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<VariableFormat> componentFormats,
             boolean componentView, int row) {
         html.append("<tr row=\"").append(row).append("\">");
         for (int column = 0; column < variableNames.size(); column++) {
             Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
-            String componentClassName = componentFormatClassNames.get(column);
-            renderColumn(html, variableNames.get(column), componentClassName, o, componentView, row, column);
+            VariableFormat componentFormat = componentFormats.get(column);
+            renderColumn(html, variableNames.get(column), componentFormat, o, componentView, row, column);
         }
         html.append("</tr>");
     }
 
-    protected void renderColumn(StringBuffer html, String variableName, String componentClassName, Object value, boolean componentView, int row,
+    protected void renderColumn(StringBuffer html, String variableName, VariableFormat componentFormat, Object value, boolean componentView, int row,
             int column) {
         String inputName = variableName + "[" + row + "]";
         html.append("<td column=\"").append(column).append("\">");
-        html.append(getComponentOutput(inputName, componentClassName, value, componentView, row));
+        html.append(getComponentOutput(inputName, componentFormat, value, componentView, row));
         html.append("</td>");
     }
 
-    protected String getComponentOutput(String variableName, String componentClassName, Object value, boolean componentView, int row) {
+    protected String getComponentOutput(String variableName, VariableFormat componentFormat, Object value, boolean componentView, int row) {
         if (componentView) {
-            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, value);
+            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, value);
         } else {
-            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentClassName, value);
+            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, value);
         }
     }
 

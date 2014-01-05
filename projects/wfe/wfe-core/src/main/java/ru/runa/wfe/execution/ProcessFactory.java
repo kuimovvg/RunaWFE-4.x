@@ -144,7 +144,7 @@ public class ProcessFactory {
         if (actor != null) {
             executionContext.addLog(new ProcessStartLog(actor));
         }
-        executionContext.setVariables(variables);
+        executionContext.setVariableValues(variables);
         if (actor != null) {
             SwimlaneDefinition swimlaneDefinition = processDefinition.getStartStateNotNull().getFirstTaskNotNull().getSwimlane();
             Swimlane swimlane = process.getSwimlaneNotNull(swimlaneDefinition);

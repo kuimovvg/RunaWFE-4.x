@@ -221,7 +221,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             FileVariable fileVariable = (FileVariable) value;
             value = new FileVariable(fileVariable);
         }
-        context.setVariable(variableName, value);
+        context.setVariableValue(variableName, value);
     }
 
     private Object parsePriority0() {
@@ -414,7 +414,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
         if ("(".equals(nextToken)) {
             return tryParseFunction(s);
         }
-        Object answer = context.getVariable(s);
+        Object answer = context.getVariableValue(s);
         if (answer != null) {
             return answer;
         }
