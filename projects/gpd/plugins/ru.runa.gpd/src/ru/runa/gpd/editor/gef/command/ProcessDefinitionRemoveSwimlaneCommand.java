@@ -20,11 +20,11 @@ public class ProcessDefinitionRemoveSwimlaneCommand extends Command {
 
     @Override
     public void execute() {
-        definition.removeSwimlane(swimlane);
+        definition.removeChild(swimlane);
     }
 
     @Override
     public void undo() {
-        definition.addSwimlane(swimlane);
+        definition.addChild(swimlane);
     }
 }

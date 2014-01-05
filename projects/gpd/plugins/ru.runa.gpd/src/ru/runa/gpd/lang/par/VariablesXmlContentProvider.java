@@ -11,19 +11,22 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
+import ru.runa.wfe.var.format.StringFormat;
 
 public class VariablesXmlContentProvider extends AuxContentProvider {
     private static final String XML_FILE_NAME = "variables.xml";
-    private static final String FORMAT_ATTRIBUTE_NAME = "format";
-    private static final String SWIMLANE_ATTRIBUTE_NAME = "swimlane";
-    private static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
-    private static final String VARIABLE_ELEMENT_NAME = "variable";
-    private static final String VARIABLES_ELEMENT_NAME = "variables";
-    private static final String PUBLUC_ATTRIBUTE_NAME = "public";
-    private static final String DEFAULT_VALUE_ATTRIBUTE_NAME = "defaultValue";
-    private static final String SCRIPTING_NAME_ATTRIBUTE_NAME = "scriptingName";
+    private static final String FORMAT = "format";
+    private static final String SWIMLANE = "swimlane";
+    private static final String DESCRIPTION = "description";
+    private static final String VARIABLE = "variable";
+    private static final String VARIABLES = "variables";
+    private static final String PUBLIC = "public";
+    private static final String DEFAULT_VALUE = "defaultValue";
+    private static final String SCRIPTING_NAME = "scriptingName";
+    private static final String USER_TYPE = "usertype";
 
     @Override
     public boolean isSupportedForEmbeddedSubprocess() {
@@ -37,58 +40,116 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
     
     @Override
     public void read(Document document, ProcessDefinition definition) throws Exception {
-        List<Element> elementsList = document.getRootElement().elements(VARIABLE_ELEMENT_NAME);
-        for (Element element : elementsList) {
-            String variableName = element.attributeValue(NAME_ATTRIBUTE_NAME);
-            String format = element.attributeValue(FORMAT_ATTRIBUTE_NAME);
-            format = BackCompatibilityClassNames.getClassName(format);
-            String description = element.attributeValue(DESCRIPTION_ATTRIBUTE_NAME);
-            if ("false".equals(description)) {
-                // remove old comments due to some bug
-                description = null;
+        List<Element> typeElements = document.getRootElement().elements(USER_TYPE);
+        for (Element typeElement : typeElements) {
+            VariableUserType type = new VariableUserType();
+            type.setName(typeElement.attributeValue(NAME));
+            definition.addVariableUserType(type);
+        }
+        for (Element typeElement : typeElements) {
+            VariableUserType type = definition.getVariableUserTypeNotNull(typeElement.attributeValue(NAME));
+            List<Element> attributeElements = typeElement.elements(VARIABLE);
+            for (Element attributeElement : attributeElements) {
+                Variable variable = parse(attributeElement, definition);
+                type.addAttribute(variable);
             }
-            String isSwimlane = element.attributeValue(SWIMLANE_ATTRIBUTE_NAME);
-            String publicVisibilityStr = element.attributeValue(PUBLUC_ATTRIBUTE_NAME);
-            boolean publicVisibility = "true".equals(publicVisibilityStr);
-            String defaultValue = element.attributeValue(DEFAULT_VALUE_ATTRIBUTE_NAME);
-            String scriptingName = element.attributeValue(SCRIPTING_NAME_ATTRIBUTE_NAME, variableName);
-            if ("true".equals(isSwimlane)) {
+        }
+        List<Element> elementsList = document.getRootElement().elements(VARIABLE);
+        for (Element element : elementsList) {
+            if ("true".equals(element.attributeValue(SWIMLANE, "false"))) {
+                String variableName = element.attributeValue(NAME);
+                String scriptingName = element.attributeValue(SCRIPTING_NAME, variableName);
                 try {
+                    String publicVisibilityStr = element.attributeValue(PUBLIC);
+                    boolean publicVisibility = "true".equals(publicVisibilityStr);
+                    String description = element.attributeValue(DESCRIPTION);
+                    if ("false".equals(description)) {
+                        // remove old comments due to some bug
+                        description = null;
+                    }
                     Swimlane swimlane = definition.getSwimlaneByName(variableName);
                     swimlane.setScriptingName(scriptingName);
                     swimlane.setDescription(description);
                     swimlane.setPublicVisibility(publicVisibility);
+                    swimlane.setScriptingName(element.attributeValue(SCRIPTING_NAME, variableName));
                 } catch (Exception e) {
                     PluginLogger.logErrorWithoutDialog("No swimlane found for " + variableName, e);
                 }
                 continue;
             }
-            Variable variable = new Variable(variableName, scriptingName, format, publicVisibility, defaultValue);
-            variable.setDescription(description);
-            definition.addVariable(variable);
+            Variable variable = parse(element, definition);
+            definition.addChild(variable);
         }
     }
 
+    private Variable parse(Element element, ProcessDefinition processDefinition) {
+        String variableName = element.attributeValue(NAME);
+        String format;
+        String userTypeName = element.attributeValue(USER_TYPE);
+        VariableUserType userType = null;
+        if (userTypeName != null) {
+            // TODO ComplexVariable ObjectFormat
+            format = StringFormat.class.getName();
+            userType = processDefinition.getVariableUserTypeNotNull(userTypeName);
+        } else {
+            format = element.attributeValue(FORMAT);
+            format = BackCompatibilityClassNames.getClassName(format);
+        }
+        boolean publicVisibility = "true".equals(element.attributeValue(PUBLIC));
+        String defaultValue = element.attributeValue(DEFAULT_VALUE);
+        String scriptingName = element.attributeValue(SCRIPTING_NAME, variableName);
+        String description = element.attributeValue(DESCRIPTION);
+        if ("false".equals(description)) {
+            // remove old comments due to some bug
+            description = null;
+        }
+        Variable variable = new Variable(variableName, scriptingName, format, publicVisibility, defaultValue);
+        variable.setDescription(description);
+        if (userType != null) {
+            variable.setUserType(userType);
+        }
+        return variable;
+    }
+    
     @Override
     public Document save(ProcessDefinition definition) throws Exception {
-        Document document = XmlUtil.createDocument(VARIABLES_ELEMENT_NAME);
+        Document document = XmlUtil.createDocument(VARIABLES);
         Element root = document.getRootElement();
-        for (Variable variable : definition.getVariables(true)) {
-            Element element = root.addElement(VARIABLE_ELEMENT_NAME);
-            element.addAttribute(NAME_ATTRIBUTE_NAME, variable.getName());
-            element.addAttribute(SCRIPTING_NAME_ATTRIBUTE_NAME, variable.getScriptingName());
-            element.addAttribute(FORMAT_ATTRIBUTE_NAME, variable.getFormat());
-            if (variable.isPublicVisibility()) {
-                element.addAttribute(PUBLUC_ATTRIBUTE_NAME, "true");
+        for (VariableUserType type : definition.getVariableUserTypes()) {
+            Element typeElement = root.addElement(USER_TYPE);
+            typeElement.addAttribute(NAME, type.getName());
+            for (Variable variable : type.getAttributes()) {
+                writeVariable(typeElement, variable);
             }
-            if (!Strings.isNullOrEmpty(variable.getDescription())) {
-                element.addAttribute(DESCRIPTION_ATTRIBUTE_NAME, variable.getDescription());
-            }
-            if (!Strings.isNullOrEmpty(variable.getDefaultValue())) {
-                element.addAttribute(DEFAULT_VALUE_ATTRIBUTE_NAME, variable.getDefaultValue());
-            }
-            element.addAttribute(SWIMLANE_ATTRIBUTE_NAME, String.valueOf(variable instanceof Swimlane));
+        }
+        for (Variable variable : definition.getVariables(false, true)) {
+            writeVariable(root, variable);
         }
         return document;
     }
+    
+    private Element writeVariable(Element root, Variable variable) {
+        Element element = root.addElement(VARIABLE);
+        element.addAttribute(NAME, variable.getName());
+        element.addAttribute(SCRIPTING_NAME, variable.getScriptingName());
+        if (variable.getUserType() != null) {
+            element.addAttribute(USER_TYPE, variable.getUserType().getName());
+        } else {
+            element.addAttribute(FORMAT, variable.getFormat());
+        }
+        if (variable.isPublicVisibility()) {
+            element.addAttribute(PUBLIC, "true");
+        }
+        if (!Strings.isNullOrEmpty(variable.getDescription())) {
+            element.addAttribute(DESCRIPTION, variable.getDescription());
+        }
+        if (!Strings.isNullOrEmpty(variable.getDefaultValue())) {
+            element.addAttribute(DEFAULT_VALUE, variable.getDefaultValue());
+        }
+        if (variable instanceof Swimlane) {
+            element.addAttribute(SWIMLANE, Boolean.TRUE.toString());
+        }
+        return element;
+    }
+
 }

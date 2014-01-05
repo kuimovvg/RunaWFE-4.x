@@ -79,8 +79,12 @@ public class VariableDefaultValuePage extends DynaContentWizardPage {
     protected void verifyContentIsValid() {
         try {
             if (useDefaultValueButton != null && useDefaultValueButton.getSelection()) {
-                VariableFormatArtifact type = ((VariableFormatPage) getWizard().getPage(VariableFormatPage.class.getSimpleName())).getType();
-                TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(type.getJavaClassName()), defaultValue);
+                VariableFormatPage formatPage = (VariableFormatPage) getWizard().getPage(VariableFormatPage.class.getSimpleName());
+                if (formatPage.getUserType() != null) {
+                    setErrorMessage(Localization.getString("VariableDefaultValuePage.error.userType"));
+                    return;
+                }
+                TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(formatPage.getType().getJavaClassName()), defaultValue);
             }
             setErrorMessage(null);
         } catch (Exception e) {

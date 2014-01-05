@@ -65,7 +65,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
 
     protected GlobalValidatorsWizardPage(ProcessDefinition processDefinition) {
         super("Global validators");
-        this.variables = processDefinition.getVariables(true);
+        this.variables = processDefinition.getVariables(true, true);
         for (Variable variable : variables) {
             variableNames.add(variable.getScriptingName());
         }

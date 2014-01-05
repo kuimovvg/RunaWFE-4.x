@@ -7,11 +7,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
+
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.extension.VariableFormatRegistry;
-import ru.runa.gpd.util.VariableUtils;
 
 public class Variable extends NamedGraphElement {
     public static final String FORMAT_COMPONENT_TYPE_START = "(";
@@ -21,6 +23,7 @@ public class Variable extends NamedGraphElement {
     private String format;
     private boolean publicVisibility;
     private String defaultValue;
+    private VariableUserType userType;
 
     protected Variable(String format, boolean publicVisibility, String defaultValue) {
         this(null, null, format, publicVisibility, defaultValue);
@@ -36,6 +39,21 @@ public class Variable extends NamedGraphElement {
 
     public Variable(Variable variable) {
         this(variable.getName(), variable.getScriptingName(), variable.getFormat(), variable.isPublicVisibility(), variable.getDefaultValue());
+    }
+
+    public Variable(String name, String scriptingName, Variable variable) {
+        this(name, scriptingName, variable.getFormat(), variable.isPublicVisibility(), variable.getDefaultValue());
+    }
+
+    public VariableUserType getUserType() {
+        return userType;
+    }
+    
+    public void setUserType(VariableUserType userType) {
+        this.userType = userType;
+        if (userType != null) {
+            setFormat(VariableUserType.PREFIX + userType.getName());
+        }
     }
 
     @Override
@@ -57,9 +75,6 @@ public class Variable extends NamedGraphElement {
             return;
         }
         super.setName(name);
-//        if (scriptingName == null) {
-//            setScriptingName(VariableUtils.generateNameForScripting(getProcessDefinition(), name, null));
-//        }
     }
 
     public String getFormat() {
@@ -84,6 +99,9 @@ public class Variable extends NamedGraphElement {
     }
 
     public String getFormatLabel() {
+        if (isComplex()) {
+            return getUserType().getName();
+        }
         if (format.contains(FORMAT_COMPONENT_TYPE_START)) {
             String label = LocalizationRegistry.getLabel(getFormatClassName()) + FORMAT_COMPONENT_TYPE_START;
             String[] componentClassNames = getFormatComponentClassNames();
@@ -97,8 +115,15 @@ public class Variable extends NamedGraphElement {
         }
         return LocalizationRegistry.getLabel(format);
     }
+    
+    public boolean isComplex() {
+    	return userType != null;
+    }
 
     public String getJavaClassName() {
+    	if (isComplex()) {
+    		return Object.class.getName();
+    	}
         return VariableFormatRegistry.getInstance().getArtifactNotNull(getFormatClassName()).getJavaClassName();
     }
 
@@ -155,4 +180,30 @@ public class Variable extends NamedGraphElement {
     public Image getEntryImage() {
         return SharedImages.getImage("icons/obj/variable.gif");
     }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getName(), getFormat());
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Variable)) {
+            return false;
+        }
+        Variable v = (Variable) obj;
+        return Objects.equal(getName(), v.getName()) && Objects.equal(getFormat(), v.getFormat());
+    }
+
+    @Override
+    public String toString() {
+        ToStringHelper helper = Objects.toStringHelper(getClass()).add("name", getName());
+        if (isComplex()) {
+            helper.add("type", userType);
+        } else {
+            helper.add("format", format);
+        }
+        return helper.toString();
+    }
+
 }

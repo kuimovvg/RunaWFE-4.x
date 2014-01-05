@@ -157,7 +157,7 @@ public class NewProcessDefinitionWizardPage extends WizardPage {
             cssTemplateCombo.select(0);
             cssTemplateCombo.setEnabled(false);
         } else {
-            cssTemplateCombo.add(Localization.getString("no"));
+            cssTemplateCombo.add(Localization.getString("none"));
             for (FormCSSTemplate template : FormCSSTemplateRegistry.getTemplates()) {
                 cssTemplateCombo.add(template.getName());
             }

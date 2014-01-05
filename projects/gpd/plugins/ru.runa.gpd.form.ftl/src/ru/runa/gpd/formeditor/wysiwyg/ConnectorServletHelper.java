@@ -14,7 +14,7 @@ import ru.runa.gpd.util.IOUtils;
 
 public class ConnectorServletHelper {
     private static String baseDir;
-    private static List<String> syncronizations = new ArrayList<String>();
+    private static List<String> synchronizations = new ArrayList<String>();
 
     public static void sync() {
         try {
@@ -24,9 +24,9 @@ public class ConnectorServletHelper {
             File dir = new File(baseDir);
             File[] resourceFiles = dir.listFiles(new ConnectorServletHelper.FileExtensionFilter());
             for (File file : resourceFiles) {
-                if (!file.isDirectory() && !syncronizations.contains(file.getAbsolutePath())) {
+                if (!file.isDirectory() && !synchronizations.contains(file.getAbsolutePath())) {
                     IOUtils.copyFileToDir(file, WebServerUtils.getEditorDirectory());
-                    syncronizations.add(file.getAbsolutePath());
+                    synchronizations.add(file.getAbsolutePath());
                 }
             }
             File formCssFile = new File(WebServerUtils.getEditorDirectory(), ParContentProvider.FORM_CSS_FILE_NAME);

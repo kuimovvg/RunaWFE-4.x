@@ -29,10 +29,10 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
     }
 
     @Override
-    protected boolean isCompatibleTypes(String javaClassName1, String javaClassName2) {
-        if (List.class.getName().equals(javaClassName1)) {
+    protected boolean isCompatibleVariables(Variable variable1, Variable variable2) {
+        if (List.class.getName().equals(variable1.getJavaClassName())) {
             return true;
         }
-        return super.isCompatibleTypes(javaClassName1, javaClassName2);
+        return super.isCompatibleVariables(variable1, variable2);
     }
 }

@@ -12,7 +12,9 @@ import ru.runa.gpd.extension.VariableFormatArtifact;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.gpd.util.VariableUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public class Subprocess extends Node implements Active {
@@ -44,17 +46,17 @@ public class Subprocess extends Node implements Active {
             if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(mapping.getUsage())) {
                 continue;
             }
-            Variable processVariable = getProcessDefinition().getVariable(mapping.getProcessVariableName(), true);
+            Variable processVariable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getProcessVariableName());
             if (processVariable == null) {
                 errors.add(ValidationError.createLocalizedError(this, "subprocess.processVariableDoesNotExist", mapping.getProcessVariableName()));
                 continue;
             }
-            Variable subprocessVariable = subprocessDefinition.getVariable(mapping.getSubprocessVariableName(), true);
+            Variable subprocessVariable = VariableUtils.getVariableByName(subprocessDefinition, mapping.getSubprocessVariableName());
             if (subprocessVariable == null) {
                 errors.add(ValidationError.createLocalizedError(this, "subprocess.subProcessVariableDoesNotExist", mapping.getSubprocessVariableName()));
                 continue;
             }
-            if (!isCompatibleTypes(processVariable.getJavaClassName(), subprocessVariable.getJavaClassName())) {
+            if (!isCompatibleVariables(processVariable, subprocessVariable)) {
                 VariableFormatArtifact artifact1 = VariableFormatRegistry.getInstance().getArtifactNotNull(processVariable.getFormatClassName());
                 VariableFormatArtifact artifact2 = VariableFormatRegistry.getInstance().getArtifactNotNull(subprocessVariable.getFormatClassName());
                 errors.add(ValidationError.createLocalizedError(this, "subprocess.variableMappingIncompatibleTypes", 
@@ -63,9 +65,14 @@ public class Subprocess extends Node implements Active {
         }
     }
 
-    protected boolean isCompatibleTypes(String javaClassName1, String javaClassName2) {
-        return VariableFormatRegistry.isAssignableFrom(javaClassName1, javaClassName2)
-                || VariableFormatRegistry.isAssignableFrom(javaClassName2, javaClassName1);
+    protected boolean isCompatibleVariables(Variable variable1, Variable variable2) {
+        if (Objects.equal(variable1.getUserType(), variable2.getUserType())) {
+            return true;
+        }
+        if (VariableFormatRegistry.isAssignableFrom(variable1.getJavaClassName(), variable2.getJavaClassName())) {
+            return true;
+        }
+        return VariableFormatRegistry.isAssignableFrom(variable2.getJavaClassName(), variable1.getJavaClassName());
     }
 
     public List<VariableMapping> getVariableMappings() {

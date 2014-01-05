@@ -1,7 +1,6 @@
 package ru.runa.gpd;
 
 public interface PluginConstants {
-    public static final String NON_GUI_THREAD_NAME = "nonGui";
     public static final String DISABLE_ANTIALIASING = "PluginConstants.DISABLE_ANTIALIASING";
     public static final String TIMER_TRANSITION_NAME = "time-out-transition";
     // marker keys for validation

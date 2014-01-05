@@ -32,7 +32,7 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
             throw new IllegalArgumentException("For action handler only");
         }
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
-        return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariables(true));
+        return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariables(true, true));
     }
 
     private static class ConfigurationDialog extends DelegableConfigurationDialog {

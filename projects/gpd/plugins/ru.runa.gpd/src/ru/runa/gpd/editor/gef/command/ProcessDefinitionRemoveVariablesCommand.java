@@ -13,12 +13,12 @@ public class ProcessDefinitionRemoveVariablesCommand extends Command {
 
     @Override
     public void execute() {
-        definition.removeVariable(variable);
+        definition.removeChild(variable);
     }
 
     @Override
     public void undo() {
-        definition.addVariable(variable);
+        definition.addChild(variable);
     }
 
     public void setVariable(Variable variable) {

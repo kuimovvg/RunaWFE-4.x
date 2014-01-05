@@ -80,43 +80,43 @@ public class SubprocessDefinition extends ProcessDefinition {
     }
 
     @Override
-    public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
-        return getParent().getVariableNames(includeSwimlanes, typeClassNameFilters);
-    }
-
-    @Override
-    public List<Variable> getVariables(boolean includeSwimlanes, String... typeClassNameFilters) {
-        return getParent().getVariables(includeSwimlanes, typeClassNameFilters);
-    }
-
-    @Override
-    public Variable getVariable(String name, boolean searchInSwimlanes) {
-        return getParent().getVariable(name, searchInSwimlanes);
-    }
-
-    @Override
-    public void addVariable(Variable variable) {
-        getParent().addVariable(variable);
-    }
-
-    @Override
-    public void removeVariable(Variable variable) {
-        getParent().removeVariable(variable);
-    }
-
-    @Override
-    public String getNextVariableName() {
-        return getParent().getNextVariableName();
-    }
-
-    @Override
-    public List<String> getSwimlaneNames() {
-        return getParent().getSwimlaneNames();
-    }
-
-    @Override
     public List<Swimlane> getSwimlanes() {
         return getParent().getSwimlanes();
+    }
+
+    @Override
+    public List<String> getVariableNames(boolean expandComplexTypes, boolean includeSwimlanes, String... typeClassNameFilters) {
+        return getParent().getVariableNames(expandComplexTypes, includeSwimlanes, typeClassNameFilters);
+    }
+
+    @Override
+    public List<Variable> getVariables(boolean expandComplexTypes, boolean includeSwimlanes, String... typeClassNameFilters) {
+        return getParent().getVariables(expandComplexTypes, includeSwimlanes, typeClassNameFilters);
+    }
+
+    @Override
+    public List<VariableUserType> getVariableUserTypes() {
+        return getParent().getVariableUserTypes();
+    }
+
+    @Override
+    public void addVariableUserType(VariableUserType type) {
+        getParent().addVariableUserType(type);
+    }
+
+    @Override
+    public void removeVariableUserType(VariableUserType type) {
+        getParent().removeVariableUserType(type);
+    }
+
+    @Override
+    public VariableUserType getVariableUserType(String name) {
+        return getParent().getVariableUserType(name);
+    }
+
+    @Override
+    public VariableUserType getVariableUserTypeNotNull(String name) {
+        return getParent().getVariableUserTypeNotNull(name);
     }
 
     @Override
@@ -130,15 +130,23 @@ public class SubprocessDefinition extends ProcessDefinition {
     }
 
     @Override
-    public void addSwimlane(Swimlane swimlane) {
-        getParent().addSwimlane(swimlane);
+    public void addChild(GraphElement child, int index) {
+        if (child instanceof Variable || child instanceof Swimlane) {
+            getParent().addChild(child, index);
+            return;
+        }
+        super.addChild(child, index);
     }
-
+    
     @Override
-    public void removeSwimlane(Swimlane swimlane) {
-        getParent().removeSwimlane(swimlane);
+    public void removeChild(GraphElement child) {
+        if (child instanceof Variable || child instanceof Swimlane) {
+            getParent().removeChild(child);
+            return;
+        }
+        super.removeChild(child);
     }
-
+    
     @Override
     public TimerAction getTimeOutAction() {
         return getParent().getTimeOutAction();

@@ -1,7 +1,6 @@
 package ru.runa.gpd.lang.model;
 
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,13 +27,13 @@ import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
 import ru.runa.gpd.property.DelegableConfPropertyDescriptor;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 @SuppressWarnings("unchecked")
-public abstract class GraphElement implements IPropertySource, PropertyNames, IActionFilter {
-    protected PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+public abstract class GraphElement extends EventSupport implements IPropertySource, PropertyNames, IActionFilter {
     private PropertyChangeListener delegatedListener;
     private GraphElement parent;
     private GraphElement parentContainer;
@@ -159,7 +158,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         }
         childs.remove(child);
         firePropertyChange(NODE_REMOVED, child, null);
-        firePropertyChange(NODE_CHILDS_CHANGED, null, null);
+        firePropertyChange(PROPERTY_CHILDS_CHANGED, null, null);
         if (child.delegatedListener != null) {
             child.removePropertyChangeListener(child.delegatedListener);
         }
@@ -179,7 +178,7 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
         childs.add(index, child);
         child.setParent(this);
         child.setDelegatedListener(delegatedListener);
-        firePropertyChange(NODE_CHILDS_CHANGED, null, 1);
+        firePropertyChange(PROPERTY_CHILDS_CHANGED, null, 1);
         String nodeId = child.getId();
         if (nodeId == null) {
             nodeId = getProcessDefinition().getNextNodeId();
@@ -201,14 +200,14 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
 
     public void swapChilds(GraphElement child1, GraphElement child2) {
         Collections.swap(childs, childs.indexOf(child1), childs.indexOf(child2));
-        firePropertyChange(PropertyNames.NODE_CHILDS_CHANGED, null, null);
+        firePropertyChange(PROPERTY_CHILDS_CHANGED, null, null);
     }
 
     public void changeChildIndex(GraphElement child, GraphElement insertBefore) {
         if (insertBefore != null && child != null) {
             childs.remove(child);
             childs.add(childs.indexOf(insertBefore), child);
-            firePropertyChange(PropertyNames.NODE_CHILDS_CHANGED, null, null);
+            firePropertyChange(PROPERTY_CHILDS_CHANGED, null, null);
         }
     }
 
@@ -309,33 +308,17 @@ public abstract class GraphElement implements IPropertySource, PropertyNames, IA
     }
     
     public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
-        return getProcessDefinition().getVariableNames(includeSwimlanes, typeClassNameFilters);
+        return VariableUtils.getVariableNames(getProcessDefinition().getVariables(true, includeSwimlanes, typeClassNameFilters));
     }
 
-    // IPropertySource
+    @Override
     protected void firePropertyChange(String propName, Object old, Object newValue) {
-        if (!PluginConstants.NON_GUI_THREAD_NAME.equals(Thread.currentThread().getName())) {
-            listeners.firePropertyChange(propName, old, newValue);
-        }
+        super.firePropertyChange(propName, old, newValue);
         if (!PROPERTY_DIRTY.equals(propName)) {
             if (!Objects.equal(old, newValue)) {
                 setDirty();
             }
         }
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        // duplicates
-        removePropertyChangeListener(listener);
-        listeners.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        listeners.removePropertyChangeListener(listener);
-    }
-
-    protected void removeAllPropertyChangeListeners() {
-        listeners = new PropertyChangeSupport(this);
     }
 
     @Override

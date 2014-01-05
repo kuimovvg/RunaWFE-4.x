@@ -8,8 +8,8 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import com.google.common.base.Strings;
 
 public abstract class AuxContentProvider {
-    protected static final String ID_ATTRIBUTE_NAME = "id";
-    protected static final String NAME_ATTRIBUTE_NAME = "name";
+    protected static final String ID = "id";
+    protected static final String NAME = "name";
     
     public boolean isSupportedForEmbeddedSubprocess() {
         return true;

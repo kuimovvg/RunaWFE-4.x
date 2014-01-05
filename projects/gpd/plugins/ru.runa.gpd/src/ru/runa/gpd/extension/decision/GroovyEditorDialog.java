@@ -58,7 +58,7 @@ public class GroovyEditorDialog extends Dialog {
         setShellStyle(getShellStyle() | SWT.RESIZE);
         this.initValue = initValue;
         this.transitionNames = transitionNames;
-        this.variables = definition.getVariables(true);
+        this.variables = definition.getVariables(true, true);
         this.variableNames = VariableUtils.getVariableNamesForScripting(variables);
         if (this.initValue.length() > 0) {
             try {
