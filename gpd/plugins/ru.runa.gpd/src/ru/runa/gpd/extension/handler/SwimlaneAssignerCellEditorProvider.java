@@ -30,6 +30,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
@@ -41,7 +42,7 @@ public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
             throw new IllegalArgumentException("For action handler only");
         }
         definition = ((GraphElement) delegable).getProcessDefinition();
-        return new SwimlaneAssignerConfigurationDialog(delegable.getDelegationConfiguration(), definition.getSwimlaneNames());
+        return new SwimlaneAssignerConfigurationDialog(delegable.getDelegationConfiguration(), definition.getSwimlanes());
     }
 
     @Override
@@ -55,9 +56,9 @@ public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
         private Text swimlaneInitializerText;
         private Button swimlaneInitializerButton;
 
-        public SwimlaneAssignerConfigurationDialog(String initialValue, List<String> swimlaneNames) {
+        public SwimlaneAssignerConfigurationDialog(String initialValue, List<Swimlane> swimlanes) {
             super(initialValue);
-            this.swimlaneNames = swimlaneNames;
+            this.swimlaneNames = VariableUtils.getVariableNames(swimlanes);
         }
 
         @Override

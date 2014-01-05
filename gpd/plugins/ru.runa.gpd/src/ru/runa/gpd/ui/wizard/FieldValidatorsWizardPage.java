@@ -54,7 +54,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
 
     protected FieldValidatorsWizardPage(ProcessDefinition processDefinition) {
         super("Field validators");
-        this.variables = processDefinition.getVariables(false);
+        this.variables = processDefinition.getVariables(true, false);
         this.swimlanes = processDefinition.getSwimlanes();
         setTitle(Localization.getString("ValidatorWizardPage.fieldpage.title"));
         setDescription(Localization.getString("ValidatorWizardPage.fieldpage.description"));

@@ -40,6 +40,7 @@ import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.dialog.CopyGraphRewriteDialog;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -99,7 +100,7 @@ public class CopyGraphCommand extends Command {
                             copyTimer.setDelay(new Duration(timer.getDelay()));
                             String variableName = timer.getDelay().getVariableName();
                             if (variableName != null) {
-                                Variable variable = copyBuffer.getSourceDefinition().getVariable(variableName, false);
+                                Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), variableName);
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
                                 elements.add(copyAction);
                             }
@@ -116,7 +117,7 @@ public class CopyGraphCommand extends Command {
                         List<VariableMapping> variables = ((Subprocess) node).getVariableMappings();
                         ((Subprocess) copy).setVariableMappings(variables);
                         for (VariableMapping varMapping : variables) {
-                            Variable variable = copyBuffer.getSourceDefinition().getVariable(varMapping.getProcessVariableName(), false);
+                            Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), varMapping.getProcessVariableName());
                             if (variable != null) {
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
                                 elements.add(copyAction);
@@ -136,7 +137,7 @@ public class CopyGraphCommand extends Command {
                         }
                         Map<String, FormVariableAccess> variables = formNode.getFormVariables(copyBuffer.getSourceFolder());
                         for (String varName : variables.keySet()) {
-                            Variable variable = copyBuffer.getSourceDefinition().getVariable(varName, false);
+                            Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), varName);
                             if (variable != null) {
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
                                 elements.add(copyAction);
@@ -331,17 +332,17 @@ public class CopyGraphCommand extends Command {
         public void execute() {
             oldSwimlane = targetDefinition.getSwimlaneByName(getName());
             if (oldSwimlane != null) {
-                targetDefinition.removeSwimlane(oldSwimlane);
+                targetDefinition.removeChild(oldSwimlane);
                 swimlane.setName(getName());
             }
-            targetDefinition.addSwimlane(swimlane);
+            targetDefinition.addChild(swimlane);
         }
 
         @Override
         public void undo() {
-            targetDefinition.removeSwimlane(swimlane);
+            targetDefinition.removeChild(swimlane);
             if (oldSwimlane != null) {
-                targetDefinition.addSwimlane(oldSwimlane);
+                targetDefinition.addChild(oldSwimlane);
             }
         }
     }
@@ -353,6 +354,9 @@ public class CopyGraphCommand extends Command {
         public CopyVariableAction(Variable sourceVariable) {
             super(CopyBuffer.GROUP_VARIABLES, sourceVariable.getName());
             this.variable = new Variable(sourceVariable);
+            if (sourceVariable.isComplex()) {
+                variable.setUserType(sourceVariable.getUserType().getCopy());
+            }
         }
 
         @Override
@@ -362,18 +366,24 @@ public class CopyGraphCommand extends Command {
 
         @Override
         public void execute() {
-            this.oldVariable = targetDefinition.getVariable(variable.getName(), false);
+            this.oldVariable = VariableUtils.getVariableByName(targetDefinition, variable.getName());
             if (oldVariable != null) {
-                targetDefinition.removeVariable(oldVariable);
+                targetDefinition.removeChild(oldVariable);
             }
-            targetDefinition.addVariable(variable);
+            targetDefinition.addChild(variable);
+            if (variable.isComplex()) {
+                targetDefinition.addVariableUserType(variable.getUserType());
+            }
         }
 
         @Override
         public void undo() {
-            targetDefinition.removeVariable(variable);
+            targetDefinition.removeChild(variable);
+            if (variable.isComplex()) {
+                targetDefinition.removeVariableUserType(variable.getUserType());
+            }
             if (oldVariable != null) {
-                targetDefinition.addVariable(oldVariable);
+                targetDefinition.addChild(oldVariable);
             }
         }
     }

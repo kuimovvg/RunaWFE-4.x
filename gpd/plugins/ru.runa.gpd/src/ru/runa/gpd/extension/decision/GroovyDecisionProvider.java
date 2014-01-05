@@ -63,7 +63,7 @@ public class GroovyDecisionProvider extends DelegableProvider implements IDecisi
     @Override
     public Set<String> getTransitionNames(Decision decision) {
         try {
-            List<Variable> variables = decision.getProcessDefinition().getVariables(true);
+            List<Variable> variables = decision.getProcessDefinition().getVariables(true, true);
             GroovyDecisionModel model = new GroovyDecisionModel(decision.getDelegationConfiguration(), variables);
             return new HashSet<String>(model.getTransitionNames());
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class GroovyDecisionProvider extends DelegableProvider implements IDecisi
     @Override
     public String getDefaultTransitionName(Decision decision) {
         try {
-            List<Variable> variables = decision.getProcessDefinition().getVariables(true);
+            List<Variable> variables = decision.getProcessDefinition().getVariables(true, true);
             GroovyDecisionModel model = new GroovyDecisionModel(decision.getDelegationConfiguration(), variables);
             return model.getDefaultTransitionName();
         } catch (Exception e) {

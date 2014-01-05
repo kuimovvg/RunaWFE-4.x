@@ -37,6 +37,7 @@ import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.collect.Lists;
 
@@ -263,7 +264,7 @@ public class SubprocessDialog extends Dialog {
     private boolean isListVariable(String name, String variableName) {
         ProcessDefinition definition = ProcessCache.getFirstProcessDefinition(name);
         if (definition != null) {
-            Variable variable = definition.getVariable(variableName, false);
+            Variable variable = VariableUtils.getVariableByName(definition, variableName);
             if (variable != null) {
                 return List.class.getName().equals(variable.getJavaClassName());
             }

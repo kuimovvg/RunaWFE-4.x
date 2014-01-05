@@ -14,11 +14,11 @@ import com.google.common.base.Strings;
 
 public class BotsXmlContentProvider extends AuxContentProvider {
     private static final String XML_FILE_NAME = "bots.xml";
-    private static final String TASK_ELEMENT_NAME = "task";
-    private static final String BOTTASKS_ELEMENT_NAME = "bottasks";
-    private static final String CLASS_ATTRIBUTE_NAME = "class";
+    private static final String TASK = "task";
+    private static final String BOT_TASKS = "bottasks";
+    private static final String CLASS = "class";
     private static final String BOT_TASK_NAME = "botTaskName";
-    private static final String CONFIG_ELEMENT_NAME = "config";
+    private static final String CONFIG = "config";
 
     @Override
     public String getFileName() {
@@ -27,12 +27,12 @@ public class BotsXmlContentProvider extends AuxContentProvider {
     
     @Override
     public void read(Document document, ProcessDefinition definition) throws Exception {
-        List<Element> elements = document.getRootElement().elements(TASK_ELEMENT_NAME);
+        List<Element> elements = document.getRootElement().elements(TASK);
         for (Element element : elements) {
-            String taskId = element.attributeValue(ID_ATTRIBUTE_NAME, element.attributeValue(NAME_ATTRIBUTE_NAME));
-            String className = element.attributeValue(CLASS_ATTRIBUTE_NAME);
+            String taskId = element.attributeValue(ID, element.attributeValue(NAME));
+            String className = element.attributeValue(CLASS);
             String botTaskName = element.attributeValue(BOT_TASK_NAME);
-            Element configElement = element.element(CONFIG_ELEMENT_NAME);
+            Element configElement = element.element(CONFIG);
             String configuration = configElement != null ? XmlUtil.toString(configElement) : null;
             TaskState taskState = definition.getGraphElementByIdNotNull(taskId);
             BotTaskLink botTaskLink = new BotTaskLink();
@@ -45,15 +45,15 @@ public class BotsXmlContentProvider extends AuxContentProvider {
 
     @Override
     public Document save(ProcessDefinition definition) throws Exception {
-        Document document = XmlUtil.createDocument(BOTTASKS_ELEMENT_NAME);
+        Document document = XmlUtil.createDocument(BOT_TASKS);
         int botTasksCount = 0;
         for (TaskState taskState : definition.getChildren(TaskState.class)) {
             BotTaskLink botTaskLink = taskState.getBotTaskLink();
             if (botTaskLink != null) {
                 botTasksCount++;
-                Element element = document.getRootElement().addElement(TASK_ELEMENT_NAME);
-                element.addAttribute(ID_ATTRIBUTE_NAME, taskState.getId());
-                element.addAttribute(CLASS_ATTRIBUTE_NAME, botTaskLink.getDelegationClassName());
+                Element element = document.getRootElement().addElement(TASK);
+                element.addAttribute(ID, taskState.getId());
+                element.addAttribute(CLASS, botTaskLink.getDelegationClassName());
                 element.addAttribute(BOT_TASK_NAME, botTaskLink.getBotTaskName());
                 if (!Strings.isNullOrEmpty(botTaskLink.getDelegationConfiguration())) {
                     Document confDocument = XmlUtil.parseWithoutValidation(botTaskLink.getDelegationConfiguration());

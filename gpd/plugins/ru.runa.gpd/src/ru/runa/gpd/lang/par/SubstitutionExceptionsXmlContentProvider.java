@@ -26,7 +26,7 @@ public class SubstitutionExceptionsXmlContentProvider extends AuxContentProvider
     public void read(Document document, ProcessDefinition definition) throws Exception {
         List<Element> elementsList = document.getRootElement().elements(TASK_ELEMENT_NAME);
         for (Element element : elementsList) {
-            String taskId = element.attributeValue(NAME_ATTRIBUTE_NAME);
+            String taskId = element.attributeValue(NAME);
             try {
                 TaskState taskState = definition.getGraphElementByIdNotNull(taskId);
                 taskState.setIgnoreSubstitutionRules(true);

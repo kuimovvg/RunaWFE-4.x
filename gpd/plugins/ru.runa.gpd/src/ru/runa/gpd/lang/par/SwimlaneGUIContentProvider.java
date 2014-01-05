@@ -11,9 +11,9 @@ import ru.runa.gpd.util.XmlUtil;
 
 public class SwimlaneGUIContentProvider extends AuxContentProvider {
     public static final String XML_FILE_NAME = "swimlaneGUIconfig.xml";
-    private static final String PATH_ATTRIBUTE_NAME = "guiElementPath";
-    private static final String SWIMLANE_ELEMENT_NAME = "swimlane";
-    private static final String SWIMLANES_ELEMENT_NAME = "swimlanes";
+    private static final String PATH = "guiElementPath";
+    private static final String SWIMLANE = "swimlane";
+    private static final String SWIMLANES = "swimlanes";
 
     @Override
     public boolean isSupportedForEmbeddedSubprocess() {
@@ -27,10 +27,10 @@ public class SwimlaneGUIContentProvider extends AuxContentProvider {
 
     @Override
     public void read(Document document, ProcessDefinition definition) throws Exception {
-        List<Element> elementsList = document.getRootElement().elements(SWIMLANE_ELEMENT_NAME);
+        List<Element> elementsList = document.getRootElement().elements(SWIMLANE);
         for (Element element : elementsList) {
-            String swimlaneName = element.attributeValue(NAME_ATTRIBUTE_NAME);
-            String path = element.attributeValue(PATH_ATTRIBUTE_NAME);
+            String swimlaneName = element.attributeValue(NAME);
+            String path = element.attributeValue(PATH);
             definition.getSwimlaneGUIConfiguration().putSwimlanePath(swimlaneName, path);
         }
     }
@@ -39,12 +39,12 @@ public class SwimlaneGUIContentProvider extends AuxContentProvider {
     public Document save(ProcessDefinition definition) throws Exception {
         Map<String, String> swimlanePaths = definition.getSwimlaneGUIConfiguration().getSwimlanePaths();
         if (swimlanePaths.size() > 0) {
-            Document document = XmlUtil.createDocument(SWIMLANES_ELEMENT_NAME);
+            Document document = XmlUtil.createDocument(SWIMLANES);
             Element root = document.getRootElement();
             for (String swimlaneName : swimlanePaths.keySet()) {
-                Element element = root.addElement(SWIMLANE_ELEMENT_NAME);
-                element.addAttribute(NAME_ATTRIBUTE_NAME, swimlaneName);
-                element.addAttribute(PATH_ATTRIBUTE_NAME, swimlanePaths.get(swimlaneName));
+                Element element = root.addElement(SWIMLANE);
+                element.addAttribute(NAME, swimlaneName);
+                element.addAttribute(PATH, swimlanePaths.get(swimlaneName));
             }
             return document;
         }

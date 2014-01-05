@@ -9,12 +9,14 @@
 	border: 2px solid #aaa;
 	width: 100%;
 }
-.taskform th {
+.taskform th, .taskform caption {
 	background: #fbb040;
 }
-.taskform th, .taskform td {
-	border: 1px solid white;
+.taskform th, .taskform td, .taskform caption {
 	padding: 10px;
+}
+.taskform td {
+	border: 1px solid white;
 }
 .taskform td.label {
 	vertical-align: top;

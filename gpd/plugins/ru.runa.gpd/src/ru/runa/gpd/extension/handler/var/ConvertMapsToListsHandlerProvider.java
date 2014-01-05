@@ -89,7 +89,7 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
             createStrokeComposite(this, Localization.getString("ConvertMapsToListsConfig.sorting"), null);
             {
                 final Combo combo = new Combo(this, SWT.READ_ONLY);
-                combo.add(Localization.getString("ConvertMapsToListsConfig.sorting." + Sorting.NONE));
+                combo.add(Localization.getString("none"));
                 combo.add(Localization.getString("ConvertMapsToListsConfig.sorting." + Sorting.KEYS));
                 for (ConvertMapToListOperation operation : model.getOperations()) {
                     combo.add(Localization.getString("ConvertMapsToListsConfig.sorting." + Sorting.VALUES) + " " + operation.getMapVariableName());

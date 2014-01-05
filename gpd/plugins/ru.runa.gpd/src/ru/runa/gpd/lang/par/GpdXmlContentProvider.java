@@ -26,20 +26,20 @@ import com.google.common.collect.Lists;
  */
 public class GpdXmlContentProvider extends AuxContentProvider {
     public static final String XML_FILE_NAME = "gpd.xml";
-    private static final String Y_ATTRIBUTE_NAME = "y";
-    private static final String X_ATTRIBUTE_NAME = "x";
-    private static final String NOTATION_ATTRIBUTE_NAME = "notation";
-    private static final String RENDERED_ATTRIBUTE_NAME = "rendered";
-    private static final String HEIGHT_ATTRIBUTE_NAME = "height";
-    private static final String WIDTH_ATTRIBUTE_NAME = "width";
-    private static final String MIN_VIEW_ATTRIBUTE_NAME = "minimizedView";
-    private static final String SHOW_ACTIONS_NAME = "showActions";
-    private static final String SHOW_GRID_NAME = "showGrid";
-    private static final String PROCESS_DIAGRAM_ELEMENT_NAME = "process-diagram";
-    private static final String NODE_ELEMENT_NAME = "node";
-    private static final String TRANSITION_ELEMENT_NAME = "transition";
-    private static final String BENDPOINT_ELEMENT_NAME = "bendpoint";
-    private static final String LABEL_ELEMENT_NAME = "label";
+    private static final String Y = "y";
+    private static final String X = "x";
+    private static final String NOTATION = "notation";
+    private static final String RENDERED = "rendered";
+    private static final String HEIGHT = "height";
+    private static final String WIDTH = "width";
+    private static final String MIN_VIEW = "minimizedView";
+    private static final String SHOW_ACTIONS = "showActions";
+    private static final String SHOW_GRID = "showGrid";
+    private static final String PROCESS_DIAGRAM = "process-diagram";
+    private static final String NODE = "node";
+    private static final String TRANSITION = "transition";
+    private static final String BENDPOINT = "bendpoint";
+    private static final String LABEL = "label";
 
     @Override
     public String getFileName() {
@@ -50,37 +50,37 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     public void read(Document document, ProcessDefinition definition) throws Exception {
         Element processDiagramInfo = document.getRootElement();
         addProcessDiagramInfo(definition, processDiagramInfo);
-        List<Element> children = processDiagramInfo.elements(NODE_ELEMENT_NAME);
+        List<Element> children = processDiagramInfo.elements(NODE);
         for (Element element : children) {
-            String nodeId = element.attributeValue(NAME_ATTRIBUTE_NAME);
+            String nodeId = element.attributeValue(NAME);
             GraphElement graphElement = definition.getGraphElementByIdNotNull(nodeId);
             Rectangle constraint = new Rectangle();
-            constraint.x = getIntAttribute(element, X_ATTRIBUTE_NAME, 0);
-            constraint.y = getIntAttribute(element, Y_ATTRIBUTE_NAME, 0);
-            constraint.width = getIntAttribute(element, WIDTH_ATTRIBUTE_NAME, 0);
-            constraint.height = getIntAttribute(element, HEIGHT_ATTRIBUTE_NAME, 0);
-            boolean minimizedView = getBooleanAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, false);
+            constraint.x = getIntAttribute(element, X, 0);
+            constraint.y = getIntAttribute(element, Y, 0);
+            constraint.width = getIntAttribute(element, WIDTH, 0);
+            constraint.height = getIntAttribute(element, HEIGHT, 0);
+            boolean minimizedView = getBooleanAttribute(element, MIN_VIEW, false);
             graphElement.setConstraint(constraint);
             if (graphElement instanceof Node) {
                 ((Node) graphElement).setMinimizedView(minimizedView);
                 List<Transition> leavingTransitions = ((Node) graphElement).getLeavingTransitions();
-                List<Element> transitionInfoList = element.elements(TRANSITION_ELEMENT_NAME);
+                List<Element> transitionInfoList = element.elements(TRANSITION);
                 for (int i = 0; i < leavingTransitions.size(); i++) {
                     Element transitionElement = transitionInfoList.get(i);
-                    String transitionName = transitionElement.attributeValue(NAME_ATTRIBUTE_NAME);
+                    String transitionName = transitionElement.attributeValue(NAME);
                     for (Transition transition : leavingTransitions) {
                         if (transition.getName().equals(transitionName)) {
                             List<Point> bendpoints = Lists.newArrayList();
-                            Element labelElement = transitionElement.element(LABEL_ELEMENT_NAME);
+                            Element labelElement = transitionElement.element(LABEL);
                             if (labelElement != null) {
-                                int x = getIntAttribute(labelElement, X_ATTRIBUTE_NAME, 0);
-                                int y = getIntAttribute(labelElement, Y_ATTRIBUTE_NAME, 0);
+                                int x = getIntAttribute(labelElement, X, 0);
+                                int y = getIntAttribute(labelElement, Y, 0);
                                 transition.setLabelLocation(new Point(x, y));
                             }
-                            List<Element> bendpointInfoList = transitionElement.elements(BENDPOINT_ELEMENT_NAME);
+                            List<Element> bendpointInfoList = transitionElement.elements(BENDPOINT);
                             for (Element bendpointElement : bendpointInfoList) {
-                                int x = getIntAttribute(bendpointElement, X_ATTRIBUTE_NAME, 0);
-                                int y = getIntAttribute(bendpointElement, Y_ATTRIBUTE_NAME, 0);
+                                int x = getIntAttribute(bendpointElement, X, 0);
+                                int y = getIntAttribute(bendpointElement, Y, 0);
                                 bendpoints.add(new Point(x, y));
                             }
                             transition.setBendpoints(bendpoints);
@@ -103,18 +103,18 @@ public class GpdXmlContentProvider extends AuxContentProvider {
 
     @Override
     public Document save(ProcessDefinition definition) throws Exception {
-        Document document = XmlUtil.createDocument(PROCESS_DIAGRAM_ELEMENT_NAME);
+        Document document = XmlUtil.createDocument(PROCESS_DIAGRAM);
         Element root = document.getRootElement();
-        addAttribute(root, NAME_ATTRIBUTE_NAME, definition.getName());
-        addAttribute(root, NOTATION_ATTRIBUTE_NAME, definition.getLanguage().getNotation());
+        addAttribute(root, NAME, definition.getName());
+        addAttribute(root, NOTATION, definition.getLanguage().getNotation());
         if (definition.getLanguage() == Language.BPMN) {
-            addAttribute(root, RENDERED_ATTRIBUTE_NAME, "graphiti");
+            addAttribute(root, RENDERED, "graphiti");
         }
         Dimension dimension = definition.getDimension();
-        addAttribute(root, WIDTH_ATTRIBUTE_NAME, String.valueOf(dimension.width));
-        addAttribute(root, HEIGHT_ATTRIBUTE_NAME, String.valueOf(dimension.height));
-        addAttribute(root, SHOW_ACTIONS_NAME, String.valueOf(definition.isShowActions()));
-        addAttribute(root, SHOW_GRID_NAME, String.valueOf(definition.isShowGrid()));
+        addAttribute(root, WIDTH, String.valueOf(dimension.width));
+        addAttribute(root, HEIGHT, String.valueOf(dimension.height));
+        addAttribute(root, SHOW_ACTIONS, String.valueOf(definition.isShowActions()));
+        addAttribute(root, SHOW_GRID, String.valueOf(definition.isShowGrid()));
         int xOffset = 0;
         int yOffset = 0;
         int canvasShift = 0;
@@ -151,8 +151,8 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             if (graphElement.getConstraint() == null) {
                 continue;
             }
-            Element element = root.addElement(NODE_ELEMENT_NAME);
-            addAttribute(element, NAME_ATTRIBUTE_NAME, graphElement.getId());
+            Element element = root.addElement(NODE);
+            addAttribute(element, NAME, graphElement.getId());
             Rectangle constraint = graphElement.getConstraint().getCopy();
             GraphElement parentGraphElement = graphElement.getParentContainer();
             Rectangle parentConstraint = null;
@@ -164,32 +164,32 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             if (constraint.isEmpty()) {
                 throw new Exception("Invalid figure size: " + constraint.getSize());
             }
-            addAttribute(element, X_ATTRIBUTE_NAME, String.valueOf(constraint.x - xOffset));
-            addAttribute(element, Y_ATTRIBUTE_NAME, String.valueOf(constraint.y - yOffset));
-            addAttribute(element, WIDTH_ATTRIBUTE_NAME, String.valueOf(constraint.width));
-            addAttribute(element, HEIGHT_ATTRIBUTE_NAME, String.valueOf(constraint.height));
+            addAttribute(element, X, String.valueOf(constraint.x - xOffset));
+            addAttribute(element, Y, String.valueOf(constraint.y - yOffset));
+            addAttribute(element, WIDTH, String.valueOf(constraint.width));
+            addAttribute(element, HEIGHT, String.valueOf(constraint.height));
             if (graphElement instanceof Node) {
                 Node node = (Node) graphElement;
                 if (node.isMinimizedView()) {
-                    addAttribute(element, MIN_VIEW_ATTRIBUTE_NAME, "true");
+                    addAttribute(element, MIN_VIEW, "true");
                 }
                 for (Transition transition : node.getLeavingTransitions()) {
-                    Element transitionElement = element.addElement(TRANSITION_ELEMENT_NAME);
+                    Element transitionElement = element.addElement(TRANSITION);
                     String name = transition.getName();
                     if (name != null) {
-                        addAttribute(transitionElement, NAME_ATTRIBUTE_NAME, name);
+                        addAttribute(transitionElement, NAME, name);
                     }
                     if (transition.getLabelLocation() != null) {
-                        Element labelElement = transitionElement.addElement(LABEL_ELEMENT_NAME);
-                        addAttribute(labelElement, X_ATTRIBUTE_NAME, String.valueOf(transition.getLabelLocation().x));
-                        addAttribute(labelElement, Y_ATTRIBUTE_NAME, String.valueOf(transition.getLabelLocation().y));
+                        Element labelElement = transitionElement.addElement(LABEL);
+                        addAttribute(labelElement, X, String.valueOf(transition.getLabelLocation().x));
+                        addAttribute(labelElement, Y, String.valueOf(transition.getLabelLocation().y));
                     }
                     for (Point bendpoint : transition.getBendpoints()) {
-                        Element bendpointElement = transitionElement.addElement(BENDPOINT_ELEMENT_NAME);
+                        Element bendpointElement = transitionElement.addElement(BENDPOINT);
                         int x = bendpoint.x - xOffset;
                         int y = bendpoint.y - yOffset;
-                        addAttribute(bendpointElement, X_ATTRIBUTE_NAME, String.valueOf(x));
-                        addAttribute(bendpointElement, Y_ATTRIBUTE_NAME, String.valueOf(y));
+                        addAttribute(bendpointElement, X, String.valueOf(x));
+                        addAttribute(bendpointElement, Y, String.valueOf(y));
                     }
                 }
             }
@@ -198,12 +198,12 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     }
 
     private void addProcessDiagramInfo(ProcessDefinition definition, Element processDiagramInfo) {
-        int width = getIntAttribute(processDiagramInfo, WIDTH_ATTRIBUTE_NAME, 0);
-        int height = getIntAttribute(processDiagramInfo, HEIGHT_ATTRIBUTE_NAME, 0);
+        int width = getIntAttribute(processDiagramInfo, WIDTH, 0);
+        int height = getIntAttribute(processDiagramInfo, HEIGHT, 0);
         definition.setDimension(new Dimension(width, height));
         if (!(definition instanceof SubprocessDefinition)) {
-            definition.setShowActions(getBooleanAttribute(processDiagramInfo, SHOW_ACTIONS_NAME, false));
-            definition.setShowGrid(getBooleanAttribute(processDiagramInfo, SHOW_GRID_NAME, false));
+            definition.setShowActions(getBooleanAttribute(processDiagramInfo, SHOW_ACTIONS, false));
+            definition.setShowGrid(getBooleanAttribute(processDiagramInfo, SHOW_GRID, false));
         }
     }
 }
