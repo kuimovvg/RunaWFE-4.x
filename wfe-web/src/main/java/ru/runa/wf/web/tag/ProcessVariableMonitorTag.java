@@ -30,7 +30,6 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.wf.web.html.ProcessVariablesRowBuilder;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -61,8 +60,7 @@ public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
         }
         headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_VALUE, pageContext));
         HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
-        ExecutionService executionService = Delegates.getExecutionService();
-        List<WfVariable> variables = executionService.getVariables(getUser(), getIdentifiableId());
+        List<WfVariable> variables = Delegates.getExecutionService().getVariables(getUser(), getIdentifiableId());
         RowBuilder rowBuilder = new ProcessVariablesRowBuilder(getIdentifiableId(), variables, pageContext);
         tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }

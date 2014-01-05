@@ -31,6 +31,11 @@ public class StringFormat implements VariableFormat {
     }
 
     @Override
+    public String getName() {
+        return "string";
+    }
+
+    @Override
     public String parse(String source) {
         return source;
     }

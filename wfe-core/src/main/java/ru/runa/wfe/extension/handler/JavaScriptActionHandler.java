@@ -19,7 +19,7 @@ public class JavaScriptActionHandler extends ActionHandlerBase {
         ScriptEngineManager mgr = new ScriptEngineManager();
         ScriptEngine engine = mgr.getEngineByName("JavaScript");
         for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
-            Object value = executionContext.getVariable(definition.getName());
+            Object value = executionContext.getVariableValue(definition.getName());
             if (value != null) {
                 engine.put(definition.getScriptingName(), value);
             }
@@ -28,9 +28,9 @@ public class JavaScriptActionHandler extends ActionHandlerBase {
         Bindings bindings = engine.getBindings(ScriptContext.GLOBAL_SCOPE);
         for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
             Object value = bindings.get(definition.getScriptingName());
-            Object currentValue = executionContext.getVariable(definition.getName());
+            Object currentValue = executionContext.getVariableValue(definition.getName());
             if (!Objects.equal(value, currentValue)) {
-                executionContext.setVariable(definition.getName(), value);
+                executionContext.setVariableValue(definition.getName(), value);
             }
         }
     }

@@ -22,6 +22,8 @@ import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -38,7 +40,7 @@ public class ViewListTag extends FreemarkerTag {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingName();
-        String elementFormatClassName = ViewUtil.getElementFormatClassName(variable, 0);
+        VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
         StringBuffer html = new StringBuffer();
         List<Object> list = variableProvider.getValue(List.class, variableName);
         if (list == null) {
@@ -49,7 +51,7 @@ public class ViewListTag extends FreemarkerTag {
             Object value = list.get(row);
             html.append("<div row=\"").append(row).append("\">");
             html.append(ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName + "[" + row + "]",
-                    elementFormatClassName, value));
+                    componentFormat, value));
             html.append("</div>");
         }
         html.append("</span>");

@@ -11,6 +11,8 @@ public interface VariableFormat {
 
     public Class<?> getJavaClass();
 
+    public String getName();
+
     /**
      * Parses variable object from strings. Array of strings here due to
      * conversation from html form.

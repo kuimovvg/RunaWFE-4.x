@@ -30,8 +30,6 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
@@ -41,11 +39,14 @@ import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.client.FileVariableProxy;
@@ -55,20 +56,17 @@ import ru.runa.wfe.service.decl.ExecutionServiceRemoteWS;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.service.interceptors.PerformanceObserver;
+import ru.runa.wfe.service.jaxb.Variable;
+import ru.runa.wfe.service.jaxb.VariableConverter;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.logic.TaskLogic;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
-import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.jaxb.VariableAdapter;
 import ru.runa.wfe.var.logic.VariableLogic;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @Stateless(name = "ExecutionServiceBean")
 @TransactionManagement(TransactionManagementType.BEAN)
@@ -76,7 +74,8 @@ import com.google.common.collect.Maps;
 @WebService(name = "ExecutionAPI", serviceName = "ExecutionWebService")
 @SOAPBinding
 public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionServiceRemote, ExecutionServiceRemoteWS {
-    private static final Log log = LogFactory.getLog(ExecutionServiceBean.class);
+    @Autowired
+    private DefinitionLogic definitionLogic;
     @Autowired
     private ExecutionLogic executionLogic;
     @Autowired
@@ -227,7 +226,8 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     @WebResult(name = "result")
     public byte[] getProcessDiagram(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
-            @WebParam(name = "taskId") Long taskId, @WebParam(name = "childProcessId") Long childProcessId, @WebParam(name = "subprocessId") String subprocessId) {
+            @WebParam(name = "taskId") Long taskId, @WebParam(name = "childProcessId") Long childProcessId,
+            @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(processId != null);
         return executionLogic.getProcessDiagram(user, processId, taskId, childProcessId, subprocessId);
@@ -243,16 +243,16 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     @WebResult(name = "result")
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
-            @WebParam(name = "taskId") Long taskId) {
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(@WebParam(name = "user") User user,
+            @WebParam(name = "processId") Long processId, @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
         return executionLogic.getProcessHistoryDiagramElements(user, processId, taskId);
     }
 
     @Override
     @WebResult(name = "result")
-    public List<GraphElementPresentation> getProcessGraphElements(@WebParam(name = "user") User user, 
-            @WebParam(name = "processId") Long processId, @WebParam(name = "subprocessId") String subprocessId) {
+    public List<GraphElementPresentation> getProcessGraphElements(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
+            @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
         return executionLogic.getProcessGraphElements(user, processId, subprocessId);
     }
@@ -333,66 +333,36 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     @WebResult(name = "result")
-    public List<ru.runa.wfe.var.jaxb.WfVariable> getVariablesWS(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
-        List<WfVariable> list = getVariables(user, processId);
-        List<ru.runa.wfe.var.jaxb.WfVariable> result = Lists.newArrayListWithExpectedSize(list.size());
-        VariableAdapter adapter = new VariableAdapter();
-        for (WfVariable variable : list) {
-            result.add(adapter.marshal(variable));
-        }
-        return result;
+    public List<Variable> getVariablesWS(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
+        List<WfVariable> variables = getVariables(user, processId);
+        return VariableConverter.marshal(variables);
     }
 
     @Override
     @WebResult(name = "result")
     public Long startProcessWS(@WebParam(name = "user") User user, @WebParam(name = "definitionName") String definitionName,
-            @WebParam(name = "variables") List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
-        return startProcess(user, definitionName, toVariablesMap(variables));
+            @WebParam(name = "variables") List<Variable> variables) {
+        WfDefinition definition = definitionLogic.getLatestProcessDefinition(user, definitionName);
+        ProcessDefinition processDefinition = executionLogic.getDefinition(definition.getId());
+        return startProcess(user, definitionName, VariableConverter.unmarshal(processDefinition, variables));
     }
 
     @Override
     @WebResult(name = "result")
     public void completeTaskWS(@WebParam(name = "user") User user, @WebParam(name = "taskId") Long taskId,
-            @WebParam(name = "variables") List<ru.runa.wfe.var.jaxb.WfVariable> variables, @WebParam(name = "swimlaneActorId") Long swimlaneActorId) {
-        completeTask(user, taskId, toVariablesMap(variables), swimlaneActorId);
+            @WebParam(name = "variables") List<Variable> variables, @WebParam(name = "swimlaneActorId") Long swimlaneActorId) {
+        WfTask task = taskLogic.getTask(user, taskId);
+        ProcessDefinition processDefinition = executionLogic.getDefinition(task.getDefinitionId());
+        completeTask(user, taskId, VariableConverter.unmarshal(processDefinition, variables), swimlaneActorId);
     }
 
     @Override
     @WebResult(name = "result")
     public void updateVariablesWS(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
-            @WebParam(name = "variables") List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
-        updateVariables(user, processId, toVariablesMap(variables));
-    }
-
-    private Map<String, Object> toVariablesMap(List<ru.runa.wfe.var.jaxb.WfVariable> variables) {
-        Map<String, Object> map = Maps.newHashMap();
-        if (variables != null) {
-            for (ru.runa.wfe.var.jaxb.WfVariable wsVariable : variables) {
-                VariableAdapter adapter = new VariableAdapter();
-                WfVariable wfVariable = adapter.unmarshal(wsVariable);
-                Preconditions.checkNotNull(wfVariable.getDefinition(), "variable.definition");
-                Object value = wfVariable.getValue();
-                if (value instanceof byte[]) {
-                    log.debug("Variable '" + wfVariable.getDefinition().getName() + "': reverting from bytes");
-                    value = new SerializableToByteArrayConverter().revert(value);
-                }
-                if (wfVariable.getDefinition().getFormatClassName() != null) {
-                    try {
-                        if (value == null) {
-                            log.debug("Variable '" + wfVariable.getDefinition().getName() + "' value is null");
-                        } else {
-                            log.debug("Variable '" + wfVariable.getDefinition().getName() + "' value is type of "
-                                    + (value != null ? value.getClass() : "null"));
-                            value = wfVariable.getFormatNotNull().parse(value.toString());
-                        }
-                    } catch (Exception e) {
-                        throw Throwables.propagate(e);
-                    }
-                }
-                map.put(wfVariable.getDefinition().getName(), value);
-            }
-        }
-        return map;
+            @WebParam(name = "variables") List<Variable> variables) {
+        WfProcess process = executionLogic.getProcess(user, processId);
+        ProcessDefinition processDefinition = executionLogic.getDefinition(process.getDefinitionId());
+        updateVariables(user, processId, VariableConverter.unmarshal(processDefinition, variables));
     }
 
 }

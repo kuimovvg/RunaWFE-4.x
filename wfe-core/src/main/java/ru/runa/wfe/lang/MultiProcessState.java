@@ -94,7 +94,7 @@ public class MultiProcessState extends SubProcessState {
         Object discriminatorValue = null;
         if (miDiscriminatorType != null) {
             if ("variable".equals(miDiscriminatorType) && miVarName != null) {
-                discriminatorValue = executionContext.getVariable(miVarName);
+                discriminatorValue = executionContext.getVariableValue(miVarName);
             } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
                 Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
                 Group group = TypeConversionUtil.convertTo(Group.class, miVar);
@@ -110,7 +110,7 @@ public class MultiProcessState extends SubProcessState {
             for (VariableMapping variableMapping : variableMappings) {
                 if (variableMapping.isMultiinstanceLink() && variableMapping.isReadable()) {
                     String variableName = variableMapping.getName();
-                    discriminatorValue = executionContext.getVariable(variableName);
+                    discriminatorValue = executionContext.getVariableValue(variableName);
                     if (discriminatorValue != null) {
                         miVarSubName = variableMapping.getMappedName();
                         break;
@@ -134,7 +134,7 @@ public class MultiProcessState extends SubProcessState {
                 // if this variable access is readable
                 if (variableMapping.isReadable()) {
                     String variableName = variableMapping.getName();
-                    Object value = executionContext.getVariable(variableName);
+                    Object value = executionContext.getVariableValue(variableName);
                     String mappedName = variableMapping.getMappedName();
                     if (value != null) {
                         log.debug("copying super process var '" + variableName + "' to sub process var '" + mappedName + "': " + value);
@@ -203,19 +203,19 @@ public class MultiProcessState extends SubProcessState {
                     String subprocessVariableName = variableMapping.getMappedName();
                     String processVariableName = variableMapping.getName();
                     WfVariable variable = executionContext.getVariableProvider().getVariable(processVariableName);
-                    if (variable == null || ListFormat.class.getName().equals(variable.getFormatClassNameNotNull())) {
+                    if (variable == null || variable.getFormatNotNull() instanceof ListFormat) {
                         List<Object> value = new ArrayList<Object>();
                         for (Process subprocess : subprocesses) {
                             ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
-                            value.add(subExecutionContext.getVariable(subprocessVariableName));
+                            value.add(subExecutionContext.getVariableValue(subprocessVariableName));
                         }
                         log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': " + value);
-                        executionContext.setVariable(processVariableName, value);
+                        executionContext.setVariableValue(processVariableName, value);
                     } else {
                         ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocesses.get(0));
-                        Object value = subExecutionContext.getVariable(subprocessVariableName);
+                        Object value = subExecutionContext.getVariableValue(subprocessVariableName);
                         log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': " + value);
-                        executionContext.setVariable(processVariableName, value);
+                        executionContext.setVariableValue(processVariableName, value);
                     }
                 }
             }

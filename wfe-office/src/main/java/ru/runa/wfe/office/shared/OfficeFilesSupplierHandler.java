@@ -29,7 +29,7 @@ public abstract class OfficeFilesSupplierHandler<T extends FilesSupplierConfig> 
     public void execute(ExecutionContext context) throws Exception {
         Map<String, Object> result = executeAction(context.getVariableProvider(), context.getProcessDefinition());
         if (result != null) {
-            context.setVariables(result);
+            context.setVariableValues(result);
         }
     }
 

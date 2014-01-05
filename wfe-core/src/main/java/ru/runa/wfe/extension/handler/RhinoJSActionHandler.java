@@ -21,7 +21,7 @@ public class RhinoJSActionHandler extends ActionHandlerBase {
             Context context = Context.enter();
             Scriptable scope = context.initStandardObjects();
             for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
-                Object value = executionContext.getVariable(definition.getName());
+                Object value = executionContext.getVariableValue(definition.getName());
                 if (value != null) {
                     Object js = javaToJs(context, scope, value);
                     ScriptableObject.putProperty(scope, definition.getScriptingName(), js);
@@ -33,7 +33,7 @@ public class RhinoJSActionHandler extends ActionHandlerBase {
                 if (js != Scriptable.NOT_FOUND) {
                     Object newValue = Context.jsToJava(js, FormatCommons.create(definition).getJavaClass());
                     if (newValue != null) {
-                        executionContext.setVariable(definition.getName(), newValue);
+                        executionContext.setVariableValue(definition.getName(), newValue);
                     }
                 }
             }

@@ -29,6 +29,7 @@ import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionPermission;
+import ru.runa.wfe.definition.DefinitionVariableProvider;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.NodeProcess;
 import ru.runa.wfe.execution.Process;
@@ -54,6 +55,7 @@ import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -172,7 +174,8 @@ public class ExecutionLogic extends WFCommonLogic {
                 variables.put(entry.getKey(), entry.getValue());
             }
         }
-        validateVariables(user, processDefinition, processDefinition.getStartStateNotNull().getNodeId(), variables, null);
+        IVariableProvider variableProvider = new DefinitionVariableProvider(processDefinition);
+        validateVariables(user, processDefinition, processDefinition.getStartStateNotNull().getNodeId(), variables, variableProvider);
         String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
         Process process = processFactory.startProcess(processDefinition, variables, user.getActor(), transitionName);
         SwimlaneDefinition startTaskSwimlaneDefinition = processDefinition.getStartStateNotNull().getFirstTaskNotNull().getSwimlane();

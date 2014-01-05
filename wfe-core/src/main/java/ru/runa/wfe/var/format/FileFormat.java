@@ -17,6 +17,12 @@
  */
 package ru.runa.wfe.var.format;
 
+import javax.xml.bind.DatatypeConverter;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.FileVariable;
 
 /**
@@ -30,13 +36,41 @@ public class FileFormat implements VariableFormat {
     }
 
     @Override
-    public String format(Object object) {
-        return ((FileVariable) object).getName();
+    public String getName() {
+        return "file";
     }
 
     @Override
-    public FileVariable parse(String strings) {
-        throw new UnsupportedOperationException("file variable cannot be deserializes from string");
+    public String format(Object object) {
+        if (object == null) {
+            return null;
+        }
+        FileVariable fileVariable = (FileVariable) object;
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("fileName", fileVariable.getName());
+        jsonObject.put("contentType", fileVariable.getContentType());
+        jsonObject.put("data", DatatypeConverter.printBase64Binary(fileVariable.getData()));
+        return jsonObject.toString();
+        //return ((FileVariable) object).getName();
+    }
+
+    @Override
+    public FileVariable parse(String string) throws Exception {
+        JSONParser parser = new JSONParser();
+        JSONObject object = (JSONObject) parser.parse(string);
+        String fileName = (String) object.get("fileName");
+        if (fileName == null) {
+            throw new InternalApplicationException("Attribute 'fileName' is not set in " + string);
+        }
+        String contentType = (String) object.get("contentType");
+        if (contentType == null) {
+            throw new InternalApplicationException("Attribute 'contentType' is not set in " + string);
+        }
+        String data = (String) object.get("data");
+        if (data == null) {
+            throw new InternalApplicationException("Attribute 'data' is not set in " + string);
+        }
+        return new FileVariable(fileName, DatatypeConverter.parseBase64Binary(data), contentType);
     }
 
 }

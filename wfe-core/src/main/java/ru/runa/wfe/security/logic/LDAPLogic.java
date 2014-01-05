@@ -130,14 +130,14 @@ public class LDAPLogic {
                 wfeImportFromLdapGroup = executorDAO.getGroup(wfeImportFromLdapGroup.getName());
             }
             DirContext dirContext = getContext();
-            Map<String, Actor> actorsByDistinguishedName = syncronizeActors(dirContext, wfeImportFromLdapGroup, createExecutors);
+            Map<String, Actor> actorsByDistinguishedName = synchronizeActors(dirContext, wfeImportFromLdapGroup, createExecutors);
             synchronizeGroups(dirContext, wfeImportFromLdapGroup, actorsByDistinguishedName, createExecutors);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    private Map<String, Actor> syncronizeActors(DirContext dirContext, Group wfeImportFromLdapGroup, boolean createExecutors) throws Exception {
+    private Map<String, Actor> synchronizeActors(DirContext dirContext, Group wfeImportFromLdapGroup, boolean createExecutors) throws Exception {
         List<Actor> existingActorsList = executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged());
         Map<String, Actor> existingActorsMap = Maps.newHashMap();
         for (Actor actor : existingActorsList) {

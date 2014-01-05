@@ -38,6 +38,7 @@ public class VariableDefinition implements Serializable {
     private String defaultValue;
     private String scriptingName;
     private String formatLabel;
+    private VariableUserType userType;
 
     public VariableDefinition() {
     }
@@ -48,21 +49,16 @@ public class VariableDefinition implements Serializable {
         this.scriptingName = scriptingName;
     }
 
-    public VariableDefinition(boolean syntetic, String name, String format, String scriptingName) {
+    public VariableDefinition(boolean syntetic, String name, String scriptingName, String format) {
         this(syntetic, name, scriptingName);
-        this.format = format;
+        setFormat(format);
     }
-
     public boolean isSyntetic() {
         return syntetic;
     }
 
     public String getName() {
         return name;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
     }
 
     public String getScriptingName() {
@@ -75,6 +71,14 @@ public class VariableDefinition implements Serializable {
             return format.substring(0, index);
         }
         return format;
+    }
+    
+    public String getFormat() {
+        return format;
+    }
+    
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public String[] getFormatComponentClassNames() {
@@ -106,11 +110,26 @@ public class VariableDefinition implements Serializable {
         if (formatLabel != null) {
             return formatLabel;
         }
+        if (userType != null) {
+            return userType.getName();
+        }
         return format;
     }
 
     public void setFormatLabel(String formatLabel) {
         this.formatLabel = formatLabel;
+    }
+    
+    public boolean isComplex() {
+        return userType != null;
+    }
+    
+    public VariableUserType getUserType() {
+        return userType;
+    }
+    
+    public void setUserType(VariableUserType userType) {
+        this.userType = userType;
     }
 
     @Override
