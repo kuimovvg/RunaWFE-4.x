@@ -67,7 +67,7 @@
                   <arg value="/C"/>
                   <arg value="mvn clean install -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
                 </exec>
-                <get src="http://localhost:8080/wfe/admin_scripts.do?action=executeUploadedScript&amp;fileName=deploy-samples-script.xml" dest="target/artifacts/jboss/tmp"/>
+                <get src="http://localhost:8080/wfe/login.do?login=Administrator&amp;password=wf&amp;forwardUrl=/admin_scripts.do?action=executeUploadedScript&amp;fileName=deploy-samples-script.xml" dest="target/artifacts/jboss/tmp"/>
 
 		<exec executable="cmd" dir="target/artifacts/jboss/bin" spawn="true">
 			<arg value="/C" />
