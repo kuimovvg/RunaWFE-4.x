@@ -19,7 +19,7 @@ public class UpdateProcessVariables {
 
             Variable variable2 = new Variable();
             variable2.setName("selected row id");
-            variable2.setStringValue("岩形世");
+            variable2.setValue("岩形世");
             variables.add(variable2);
 
             executionAPI.updateVariablesWS(user, 6L, variables);
