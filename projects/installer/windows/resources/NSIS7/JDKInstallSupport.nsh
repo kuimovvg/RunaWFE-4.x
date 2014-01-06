@@ -107,6 +107,7 @@ Function DetectJava64
     SetRegView 64
   ${else}
     SetRegView 32
+    Goto DetectJava64_32
   ${endif}
   StrCpy $JdkArch "64"
   Push "${JAVA_VERSION}"
