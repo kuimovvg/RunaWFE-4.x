@@ -32,6 +32,9 @@
 .taskform input, .taskform select {
 	width: 95%;
 }
+.taskform .inputBoolean {
+	width: 20px;
+}
 .taskform .warning {
 	font-size: 9pt;
 	color: red;

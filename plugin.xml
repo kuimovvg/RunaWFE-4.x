@@ -2341,6 +2341,12 @@
             label="%ru.runa.wfe.var.format.GroupFormat"
             javaClassName="ru.runa.wfe.user.Group">
       </format>
+      <format
+            className="ru.runa.wfe.var.format.UserTypeFormat"
+            enabled="true"
+            javaClassName="ru.runa.wfe.var.ComplexVariable"
+            label="%ru.runa.wfe.var.format.UserTypeFormat">
+      </format>
    </extension>
 	<extension id="botStationNature" name="specific nature for bot station project" point="org.eclipse.core.resources.natures">
 	      <runtime>

@@ -5,8 +5,6 @@ import java.util.List;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import com.google.common.base.Strings;
-
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
@@ -14,7 +12,9 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
-import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.UserTypeFormat;
+
+import com.google.common.base.Strings;
 
 public class VariablesXmlContentProvider extends AuxContentProvider {
     private static final String XML_FILE_NAME = "variables.xml";
@@ -88,8 +88,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         String userTypeName = element.attributeValue(USER_TYPE);
         VariableUserType userType = null;
         if (userTypeName != null) {
-            // TODO ComplexVariable ObjectFormat
-            format = StringFormat.class.getName();
+            format = UserTypeFormat.class.getName();
             userType = processDefinition.getVariableUserTypeNotNull(userTypeName);
         } else {
             format = element.attributeValue(FORMAT);
