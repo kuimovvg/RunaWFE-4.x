@@ -28,7 +28,9 @@ import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
@@ -47,17 +49,44 @@ public class VariableLogic extends WFCommonLogic {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         checkPermissionAllowed(user, process, ProcessPermission.READ);
-        Map<String, Object> variables = variableDAO.getAll(process);
+        Map<String, Object> values = variableDAO.getAll(process);
         for (VariableDefinition variableDefinition : processDefinition.getVariables()) {
-            Object value = variables.remove(variableDefinition.getName());
+            Object value;
+            if (variableDefinition.isComplex()) {
+                value = buildComplexVariable(variableDefinition, values, variableDefinition.getName());
+            } else {
+                value = values.remove(variableDefinition.getName());
+            }
             if (value != null) {
                 result.add(new WfVariable(variableDefinition, value));
             }
         }
-        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
             result.add(new WfVariable(entry.getKey(), entry.getValue()));
         }
         return result;
+    }
+    
+    private ComplexVariable buildComplexVariable(VariableDefinition variableDefinition, Map<String, Object> values, String prefix) {
+        ComplexVariable variable = new ComplexVariable();
+        for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
+            String variableName = prefix + VariableUserType.DELIM + attributeDefinition.getName();
+            if (attributeDefinition.isComplex()) {
+                ComplexVariable complexVariable = buildComplexVariable(attributeDefinition, values, variableName);
+                if (complexVariable != null) {
+                    variable.put(attributeDefinition.getName(), complexVariable);
+                }
+            } else {
+                Object value = values.remove(variableName);
+                if (value != null) {
+                    variable.put(attributeDefinition.getName(), value);
+                }
+            }
+        }
+//        if (variable.isEmpty()) {
+//            return null;
+//        }
+        return variable;
     }
 
     public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException {

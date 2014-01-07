@@ -34,6 +34,7 @@ import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -120,13 +121,35 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
 
     public VariableDefinition getVariable(String name, boolean searchInSwimlanes) {
         VariableDefinition variableDefinition = variablesMap.get(name);
-        if (variableDefinition == null) {
+        if (variableDefinition != null) {
+            return variableDefinition;
+        }
+        if (searchInSwimlanes) {
             SwimlaneDefinition swimlaneDefinition = getSwimlane(name);
             if (swimlaneDefinition != null) {
-                variableDefinition = swimlaneDefinition.toVariableDefinition();
+                return swimlaneDefinition.toVariableDefinition();
             }
         }
-        return variableDefinition;
+        return buildVariable(name);
+    }
+    
+    private VariableDefinition buildVariable(String name) {
+        int dotIndex = name.indexOf(VariableUserType.DELIM);
+        if (dotIndex != -1) {
+            String parentName = name.substring(0, dotIndex);
+            String attributeName = name.substring(dotIndex + 1);
+            VariableDefinition parentDefinition = variablesMap.get(parentName);
+            if (parentDefinition == null) {
+                throw new InternalApplicationException("No variable found by name '" + parentName + 
+                        "' when building user type attribute descriptor");
+            }
+            if (!parentDefinition.isComplex()) {
+                throw new InternalApplicationException(parentDefinition + " is not user defined type");
+            }
+            VariableDefinition attributeDefinition = parentDefinition.getUserType().getAttributeNotNull(attributeName);
+            return new VariableDefinition(name, attributeDefinition);
+        }
+        return null;
     }
 
     public VariableDefinition getVariableNotNull(String name, boolean searchInSwimlanes) {

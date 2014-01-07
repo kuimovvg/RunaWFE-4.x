@@ -34,7 +34,11 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
 
     @Override
     public Object getValue(String variableName) {
-        return getVariableNotNull(variableName).getValue();
+        WfVariable variable = getVariable(variableName);
+        if (variable != null) {
+            return variable.getValue();
+        }
+        return null;
     }
 
     @Override

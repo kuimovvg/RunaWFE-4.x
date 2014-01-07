@@ -1,13 +1,21 @@
 package ru.runa.wfe.var.format;
 
+import java.util.HashMap;
+
+import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
-public class ExecutorFormat implements VariableFormat {
+import com.google.common.collect.Maps;
+
+public class ExecutorFormat extends VariableFormat implements VariableDisplaySupport {
 
     @Override
     public Class<? extends Executor> getJavaClass() {
@@ -18,48 +26,55 @@ public class ExecutorFormat implements VariableFormat {
     public String getName() {
         return "executor";
     }
-    
+
     @Override
-    public Executor parse(String source) throws Exception {
-        if (source != null && source.startsWith("{")) {
-            JSONParser parser = new JSONParser();
-            JSONObject object = (JSONObject) parser.parse(source);
-            if (object.containsKey("name")) {
-                return TypeConversionUtil.convertTo(Executor.class, object.get("name"));
-            }
-            if (object.containsKey("id")) {
-                return TypeConversionUtil.convertTo(Executor.class, "ID" + object.get("id"));
-            }
-            throw new InternalApplicationException("Neither 'id' or 'name' attribute found in " + source);
-        }
+    protected Executor convertFromStringValue(String source) {
         return TypeConversionUtil.convertTo(Executor.class, source);
     }
 
     @Override
-    public String format(Object object) {
-        if (object == null) {
-            return null;
+    protected String convertToStringValue(Object object) {
+        return ((Executor) object).getName();
+    }
+
+    @Override
+    protected Object convertFromJSONValue(Object jsonValue) {
+        JSONObject object = (JSONObject) jsonValue;
+        if (object.containsKey("name")) {
+            return TypeConversionUtil.convertTo(Executor.class, object.get("name"));
         }
-        Executor executor = (Executor) object;
+        if (object.containsKey("id")) {
+            return TypeConversionUtil.convertTo(Executor.class, "ID" + object.get("id"));
+        }
+        throw new InternalApplicationException("Neither 'id' or 'name' attribute found in " + object);
+    }
+
+    @Override
+    protected Object convertToJSONValue(Object value) {
+        Executor executor = (Executor) value;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", executor.getId());
         jsonObject.put("name", executor.getName());
         jsonObject.put("fullName", executor.getFullName());
-        return jsonObject.toString();
-        //return ((Executor) object).getName();
+        return jsonObject;
     }
 
-    public static void main(String[] args) {
-        String json = "{\"test\":55,\"fileName\": \"sample.doc\"}";
+    @Override
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object, Object context) {
+        Executor executor = (Executor) object;
+        boolean link = false;
         try {
-            JSONParser parser = new JSONParser();
-            Object object = parser.parse(json);
-            System.out.println(object.getClass());
-            System.out.println(object);
+            link = ApplicationContextFactory.getExecutorLogic().isPermissionAllowed(user, executor, Permission.READ);
         } catch (Exception e) {
-            System.out.println("Unable to parse '" + json + "'");
-            e.printStackTrace();
+            LogFactory.getLog(getClass()).warn("Unable to determine permission", e);
         }
-
+        if (link) {
+            HashMap<String, Object> params = Maps.newHashMap();
+            params.put("id", executor.getId());
+            String href = webHelper.getActionUrl("/manage_executor", params);
+            return "<a href=\"" + href + "\">" + executor.getLabel() + "</a>";
+        } else {
+            return executor.getLabel();
+        }
     }
 }

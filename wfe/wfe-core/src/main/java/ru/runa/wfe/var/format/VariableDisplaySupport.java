@@ -9,11 +9,11 @@ import ru.runa.wfe.user.User;
  * 
  * @author Dofs
  */
-public interface VariableDisplaySupport<T> {
+public interface VariableDisplaySupport {
 
     /**
      * Generates HTML for variable value display.
      */
-    public String getHtml(User user, WebHelper webHelper, Long processId, String name, T value);
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object, Object context);
 
 }

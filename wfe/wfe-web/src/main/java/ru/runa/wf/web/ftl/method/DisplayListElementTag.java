@@ -26,7 +26,7 @@ public class DisplayListElementTag extends FreemarkerTag {
         }
         VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
         if (componentFormat instanceof FileFormat) {
-            return ViewUtil.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, index, null);
+            return FormatCommons.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, index, null);
         } else {
             return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, object);
         }

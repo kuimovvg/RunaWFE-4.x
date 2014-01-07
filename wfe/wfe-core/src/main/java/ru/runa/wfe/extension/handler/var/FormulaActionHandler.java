@@ -20,6 +20,7 @@ package ru.runa.wfe.extension.handler.var;
 import java.util.Date;
 import java.util.List;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -723,12 +724,17 @@ public class FormulaActionHandler extends ActionHandlerBase {
         }
         Function<? extends Object> function = FormulaActionHandlerOperations.getFunction(s);
         if (function != null) {
-            List<Object> parameters = Lists.newArrayList();
-            do {
-                Object param = parsePriority0();
-                parameters.add(param);
-            } while (!nextToken().equals(")"));
-            return function.execute(parameters.toArray(new Object[parameters.size()]));
+            try {
+                List<Object> parameters = Lists.newArrayList();
+                do {
+                    Object param = parsePriority0();
+                    parameters.add(param);
+                } while (!nextToken().equals(")"));
+                return function.execute(parameters.toArray(new Object[parameters.size()]));
+            } catch (Exception e) {
+                log.error(function, e);
+                throw new InternalApplicationException("Unable to parse function " + function + " parameters from configuration: " + configuration);
+            }
         }
         return null;
     }

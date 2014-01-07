@@ -1,12 +1,15 @@
 package ru.runa.wfe.extension.handler;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.script.ScriptException;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
+
+import com.google.common.collect.Lists;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandlerBase;
@@ -18,9 +21,17 @@ public class RhinoJSActionHandler extends ActionHandlerBase {
     @Override
     public void execute(ExecutionContext executionContext) throws ScriptException {
         try {
+            List<VariableDefinition> rawDefinitions = Lists.newArrayList();
+            for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
+                if (definition.isComplex()) {
+                    rawDefinitions.addAll(definition.expandComplexVariable());
+                } else {
+                    rawDefinitions.add(definition);
+                }
+            }
             Context context = Context.enter();
             Scriptable scope = context.initStandardObjects();
-            for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
+            for (VariableDefinition definition : rawDefinitions) {
                 Object value = executionContext.getVariableValue(definition.getName());
                 if (value != null) {
                     Object js = javaToJs(context, scope, value);
@@ -28,7 +39,7 @@ public class RhinoJSActionHandler extends ActionHandlerBase {
                 }
             }
             context.evaluateString(scope, configuration, "<cmd>", 1, null);
-            for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
+            for (VariableDefinition definition : rawDefinitions) {
                 Object js = scope.get(definition.getScriptingName(), scope);
                 if (js != Scriptable.NOT_FOUND) {
                     Object newValue = Context.jsToJava(js, FormatCommons.create(definition).getJavaClass());
