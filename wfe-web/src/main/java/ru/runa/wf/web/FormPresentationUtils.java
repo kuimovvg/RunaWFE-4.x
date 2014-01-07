@@ -333,6 +333,9 @@ public class FormPresentationUtils {
         if (userInput != null && userInput.get(name) != null && userInput.get(name).length == 1 && userInput.get(name)[0].length() < 1000) {
             return userInput.get(name)[0];
         }
+        if (name.endsWith(FormSubmissionUtils.SIZE_SUFFIX)) {
+            return null;
+        }
         Object value = variableProvider.getValue(name);
         if (value instanceof String || value instanceof Number || value instanceof Boolean) {
             return String.valueOf(value);
