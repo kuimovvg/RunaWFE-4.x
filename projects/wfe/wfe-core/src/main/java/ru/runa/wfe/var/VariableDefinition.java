@@ -18,11 +18,13 @@
 package ru.runa.wfe.var;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VariableDefinition implements Serializable {
@@ -53,6 +55,11 @@ public class VariableDefinition implements Serializable {
         this(syntetic, name, scriptingName);
         setFormat(format);
     }
+
+    public VariableDefinition(String name, VariableDefinition attributeDefinition) {
+        this(true, name, name, attributeDefinition.getFormat());
+    }
+    
     public boolean isSyntetic() {
         return syntetic;
     }
@@ -130,6 +137,26 @@ public class VariableDefinition implements Serializable {
     
     public void setUserType(VariableUserType userType) {
         this.userType = userType;
+    }
+
+    public List<VariableDefinition> expandComplexVariable() {
+        return expandComplexVariable(this, this);
+    }
+
+    private List<VariableDefinition> expandComplexVariable(VariableDefinition superVariable, VariableDefinition complexVariable) {
+        List<VariableDefinition> result = Lists.newArrayList();
+        for (VariableDefinition attributeDefinition : complexVariable.getUserType().getAttributes()) {
+            String name = superVariable.getName() + VariableUserType.DELIM + attributeDefinition.getName();
+            String scriptingName = superVariable.getScriptingName() + VariableUserType.DELIM + attributeDefinition.getScriptingName();
+            VariableDefinition variable = new VariableDefinition(true, name, scriptingName, attributeDefinition.getFormat());
+            variable.setUserType(attributeDefinition.getUserType());
+            if (variable.isComplex()) {
+                result.addAll(expandComplexVariable(variable, attributeDefinition));
+            } else {
+                result.add(variable);
+            }
+        }
+        return result;
     }
 
     @Override

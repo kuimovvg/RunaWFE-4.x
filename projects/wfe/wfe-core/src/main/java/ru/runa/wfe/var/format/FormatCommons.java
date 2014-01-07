@@ -18,19 +18,17 @@
 
 package ru.runa.wfe.var.format;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableDefinitionAware;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -71,40 +69,29 @@ public class FormatCommons {
         return createComponent(formatContainer, index).format(value);
     }
     
-    public static Object parseJSON(VariableFormat format, Object source) throws Exception {
-        // TODO VariableFormat.json; parse and format move here
-        if (source instanceof JSONObject) {
-            if (format instanceof UserTypeFormat) {
-                return ((UserTypeFormat) format).parse((JSONObject) source);
-            }
-            if (format instanceof MapFormat) {
-                // TODO ComplexVariable as for list
-                return Maps.newHashMap((JSONObject) source);
-            }
-            throw new InternalApplicationException("JSONObject is not expected for " + format);
+    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value) {
+        return getFileOutput(webHelper, processId, variableName, value, null, null);
+    }
+
+    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value, Integer listIndex, Object mapKey) {
+        if (value == null) {
+            return "&nbsp;";
         }
-        if (source instanceof JSONArray) {
-            JSONArray array = (JSONArray) source;
-            if (format instanceof ListFormat) {
-                List<Object> result = Lists.newArrayListWithExpectedSize(array.size());
-                VariableFormat componentFormat = FormatCommons.createComponent((VariableFormatContainer) format, 0);
-                for (Object object : array) {
-                    try {
-                        if (object instanceof String) {
-                            result.add(componentFormat.parse((String) object));
-                        } else {
-                            result.add(TypeConversionUtil.convertTo(componentFormat.getJavaClass(), object));
-                        }
-                    } catch (Exception e) {
-                        log.warn("Value = " + object, e);
-                        result.add(null);
-                    }
-                }
-                return result;
-            }
-            throw new InternalApplicationException("JSONArray is not expected for " + format);
+        HashMap<String, Object> params = Maps.newHashMap();
+        params.put("id", processId);
+        params.put("variableName", variableName);
+        if (listIndex != null) {
+            params.put("listIndex", String.valueOf(listIndex));
         }
-        return source;
+        if (mapKey != null) {
+            params.put("mapKey", String.valueOf(mapKey));
+        }
+        return getFileOutput(webHelper, params, value.getName());
+    }
+
+    public static String getFileOutput(WebHelper webHelper, Map<String, Object> params, String fileName) {
+        String href = webHelper.getActionUrl("/variableDownloader", params);
+        return "<a href=\"" + href + "\">" + fileName + "</>";
     }
 
 }

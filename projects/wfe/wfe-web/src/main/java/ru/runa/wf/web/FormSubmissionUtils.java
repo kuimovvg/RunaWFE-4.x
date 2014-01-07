@@ -33,6 +33,7 @@ import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class FormSubmissionUtils {
+    public static final String SIZE_SUFFIX = ".size";
     private static final Log log = LogFactory.getLog(FormSubmissionUtils.class);
     public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
     public static final String USER_ERRORS = "UserErrors";
@@ -116,7 +117,7 @@ public class FormSubmissionUtils {
                 Object variableValue = null;
                 boolean forceSetVariableValue = false;
                 if (format instanceof ListFormat) {
-                    String sizeInputName = variableDefinition.getName() + ".size";
+                    String sizeInputName = variableDefinition.getName() + SIZE_SUFFIX;
                     ListFormat listFormat = (ListFormat) format;
                     VariableFormat componentFormat = FormatCommons.createComponent(listFormat, 0);
                     if (userInput.containsKey(sizeInputName)) {

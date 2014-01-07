@@ -23,7 +23,7 @@ package ru.runa.wfe.var.format;
  * Created on 24.11.2006
  * 
  */
-public class StringFormat implements VariableFormat {
+public class StringFormat extends VariableFormat {
 
     @Override
     public Class<? extends String> getJavaClass() {
@@ -36,12 +36,17 @@ public class StringFormat implements VariableFormat {
     }
 
     @Override
-    public String parse(String source) {
+    protected String convertFromStringValue(String source) {
         return source;
     }
 
     @Override
-    public String format(Object obj) {
+    protected String convertToStringValue(Object obj) {
         return String.valueOf(obj);
+    }
+
+    @Override
+    public Object parseJSON(String json) {
+        return json;
     }
 }

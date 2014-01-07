@@ -3,10 +3,9 @@ package ru.runa.wfe.service.jaxb;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
@@ -23,7 +22,7 @@ public class VariableConverter {
         variable.scriptingName = variableDefinition.getScriptingName();
         VariableFormat variableFormat = FormatCommons.create(variableDefinition);
         variable.format = variableFormat.getName();
-        variable.value = variableFormat.format(value);
+        variable.value = variableFormat.formatJSON(value);
         return variable;
     }
     
@@ -44,13 +43,13 @@ public class VariableConverter {
         return result;
     }
 
-    public static Object unmarshal(ProcessDefinition processDefinition, Variable variable) {
+    private static Object unmarshal(ProcessDefinition processDefinition, Variable variable) {
         try {
             VariableDefinition variableDefinition = processDefinition.getVariableNotNull(variable.name, true);
-            Object value = FormatCommons.create(variableDefinition).parse(variable.value);
+            Object value = FormatCommons.create(variableDefinition).parseJSON(variable.value);
             return value;
         } catch (Exception e) {
-            throw new InternalApplicationException("Unable to parse " + variable, e);
+            throw new InternalApplicationException("Unable unmarshal " + variable, e);
         }
     }
 
@@ -58,7 +57,12 @@ public class VariableConverter {
         Map<String, Object> map = Maps.newHashMap();
         if (variables != null) {
             for (Variable variable : variables) {
-                map.put(variable.name, unmarshal(processDefinition, variable));
+                Object object = unmarshal(processDefinition, variable);
+                if (object instanceof ComplexVariable) {
+                    map.putAll(((ComplexVariable) object).expand(variable.name));
+                } else {
+                    map.put(variable.name, object);
+                }
             }
         }
         return map;

@@ -17,18 +17,24 @@
  */
 package ru.runa.wfe.var.format;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.bind.DatatypeConverter;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+
+import com.google.common.base.Objects;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
 
 /**
  * This class is marker class for validation.
  */
-public class FileFormat implements VariableFormat {
+public class FileFormat extends VariableFormat implements VariableDisplaySupport {
 
     @Override
     public Class<? extends FileVariable> getJavaClass() {
@@ -41,36 +47,59 @@ public class FileFormat implements VariableFormat {
     }
 
     @Override
-    public String format(Object object) {
-        if (object == null) {
-            return null;
-        }
-        FileVariable fileVariable = (FileVariable) object;
+    public String convertToStringValue(Object object) {
+        return ((FileVariable) object).getName();
+    }
+
+    @Override
+    public FileVariable convertFromStringValue(String string) throws Exception {
+        throw new UnsupportedOperationException("file variable cannot be deserializes from string");
+    }
+
+    @Override
+    protected Object convertToJSONValue(Object value) {
+        FileVariable fileVariable = (FileVariable) value;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileName", fileVariable.getName());
         jsonObject.put("contentType", fileVariable.getContentType());
         jsonObject.put("data", DatatypeConverter.printBase64Binary(fileVariable.getData()));
-        return jsonObject.toString();
-        //return ((FileVariable) object).getName();
+        return jsonObject;
     }
-
+    
     @Override
-    public FileVariable parse(String string) throws Exception {
-        JSONParser parser = new JSONParser();
-        JSONObject object = (JSONObject) parser.parse(string);
+    protected Object convertFromJSONValue(Object jsonValue) {
+        JSONObject object = (JSONObject) jsonValue;
         String fileName = (String) object.get("fileName");
         if (fileName == null) {
-            throw new InternalApplicationException("Attribute 'fileName' is not set in " + string);
+            throw new InternalApplicationException("Attribute 'fileName' is not set in " + object);
         }
         String contentType = (String) object.get("contentType");
         if (contentType == null) {
-            throw new InternalApplicationException("Attribute 'contentType' is not set in " + string);
+            throw new InternalApplicationException("Attribute 'contentType' is not set in " + object);
         }
         String data = (String) object.get("data");
         if (data == null) {
-            throw new InternalApplicationException("Attribute 'data' is not set in " + string);
+            throw new InternalApplicationException("Attribute 'data' is not set in " + object);
         }
         return new FileVariable(fileName, DatatypeConverter.parseBase64Binary(data), contentType);
     }
 
+    @Override
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object, Object context) {
+        Integer index = null;
+        Object key = null;
+        if (context instanceof List) {
+            index = ((List) context).indexOf(object);
+        }
+        if (context instanceof Map) {
+            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) context).entrySet()) {
+                if (Objects.equal(object, entry.getValue())) {
+                    key = entry.getKey();
+                    break;
+                }
+            }
+        }
+        return FormatCommons.getFileOutput(webHelper, processId, name, (FileVariable) object, index, key);
+    }
+    
 }

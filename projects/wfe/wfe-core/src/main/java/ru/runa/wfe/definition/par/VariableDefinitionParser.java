@@ -16,7 +16,6 @@ import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.format.UserTypeFormat;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
@@ -69,14 +68,14 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
                 processDefinition.addVariable(variable.getName(), variable);
             }
         }
-        for (VariableDefinition variableDefinition : Lists.newArrayList(processDefinition.getVariables())) {
-            if (variableDefinition.isComplex()) {
-                List<VariableDefinition> children = expandComplexVariable(variableDefinition, variableDefinition);
-                for (VariableDefinition child : children) {
-                    processDefinition.addVariable(child.getName(), child);
-                }
-            }
-        }
+//        for (VariableDefinition variableDefinition : Lists.newArrayList(processDefinition.getVariables())) {
+//            if (variableDefinition.isComplex()) {
+//                List<VariableDefinition> children = variableDefinition.expandComplexVariable();
+//                for (VariableDefinition child : children) {
+//                    processDefinition.addVariable(child.getName(), child);
+//                }
+//            }
+//        }
     }
     
     private VariableDefinition parse(Element element, Map<String, VariableUserType> userTypes) {
@@ -111,21 +110,6 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
         variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue(PUBLIC, "false")));
         variable.setDefaultValue(element.attributeValue(DEFAULT_VALUE));
         return variable;
-    }
-
-    private List<VariableDefinition> expandComplexVariable(VariableDefinition superVariable, VariableDefinition complexVariable) {
-        List<VariableDefinition> result = Lists.newArrayList();
-        for (VariableDefinition attributeDefinition : complexVariable.getUserType().getAttributes()) {
-            String name = superVariable.getName() + VariableUserType.DELIM + attributeDefinition.getName();
-            String scriptingName = superVariable.getScriptingName() + VariableUserType.DELIM + attributeDefinition.getScriptingName();
-            VariableDefinition variable = new VariableDefinition(false, name, scriptingName, attributeDefinition.getFormat());
-            variable.setUserType(attributeDefinition.getUserType());
-            result.add(variable);
-            if (variable.isComplex()) {
-                result.addAll(expandComplexVariable(variable, attributeDefinition));
-            }
-        }
-        return result;
     }
 
 }

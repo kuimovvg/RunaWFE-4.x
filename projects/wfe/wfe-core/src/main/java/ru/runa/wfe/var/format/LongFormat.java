@@ -17,13 +17,12 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.text.ParseException;
 
 /**
  * Created on 22.05.2006
  * 
  */
-public class LongFormat implements VariableFormat {
+public class LongFormat extends VariableFormat {
 
     @Override
     public Class<? extends Number> getJavaClass() {
@@ -36,15 +35,12 @@ public class LongFormat implements VariableFormat {
     }
 
     @Override
-    public Number parse(String source) throws ParseException {
-        if (source != null) {
-            return Long.valueOf(source);
-        }
-        return null;
+    protected Long convertFromStringValue(String source) {
+        return Long.valueOf(source);
     }
 
     @Override
-    public String format(Object obj) {
-        return obj != null ? obj.toString() : null;
+    protected String convertToStringValue(Object obj) {
+        return obj.toString();
     }
 }

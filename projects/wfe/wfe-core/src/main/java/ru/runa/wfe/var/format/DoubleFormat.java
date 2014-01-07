@@ -17,9 +17,8 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.text.ParseException;
 
-public class DoubleFormat implements VariableFormat {
+public class DoubleFormat extends VariableFormat {
 
     @Override
     public Class<Double> getJavaClass() {
@@ -32,15 +31,12 @@ public class DoubleFormat implements VariableFormat {
     }
 
     @Override
-    public Number parse(String source) throws ParseException {
-        if (source != null) {
-            return Double.valueOf(source);
-        }
-        return null;
+    protected Double convertFromStringValue(String source) {
+        return Double.valueOf(source);
     }
 
     @Override
-    public String format(Object obj) {
-        return obj != null ? obj.toString() : null;
+    protected String convertToStringValue(Object obj) {
+        return obj.toString();
     }
 }

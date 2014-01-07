@@ -17,12 +17,11 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.text.ParseException;
 import java.util.Date;
 
 import ru.runa.wfe.commons.CalendarUtil;
 
-public abstract class AbstractDateFormat implements VariableFormat {
+public abstract class AbstractDateFormat extends VariableFormat {
     private final java.text.DateFormat dateTimeFormat;
 
     public AbstractDateFormat(java.text.DateFormat dateTimeFormat) {
@@ -35,15 +34,23 @@ public abstract class AbstractDateFormat implements VariableFormat {
     }
 
     @Override
-    public String format(Object object) {
+    protected String convertToStringValue(Object object) {
         return CalendarUtil.format((Date) object, dateTimeFormat);
     }
 
     @Override
-    public Date parse(String source) throws ParseException {
-        if (source != null) {
-            return CalendarUtil.convertToDate(source, dateTimeFormat);
-        }
-        return null;
+    protected Date convertFromStringValue(String source) {
+        return CalendarUtil.convertToDate(source, dateTimeFormat);
     }
+
+    @Override
+    public Object parseJSON(String json) {
+        return convertFromStringValue(json);
+    }
+
+    @Override
+    protected Object convertToJSONValue(Object value) {
+        return convertToStringValue(value);
+    }
+    
 }

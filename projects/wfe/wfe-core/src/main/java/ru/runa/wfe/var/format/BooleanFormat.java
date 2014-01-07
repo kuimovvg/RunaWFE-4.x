@@ -20,7 +20,7 @@ package ru.runa.wfe.var.format;
 /**
  * Created on 30.11.2004
  */
-public class BooleanFormat implements VariableFormat {
+public class BooleanFormat extends VariableFormat {
 
     @Override
     public Class<Boolean> getJavaClass() {
@@ -33,16 +33,13 @@ public class BooleanFormat implements VariableFormat {
     }
 
     @Override
-    public Boolean parse(String source) {
-        if (source == null) {
-            return null;
-        }
+    protected Boolean convertFromStringValue(String source) {
         return "true".equalsIgnoreCase(source) || "on".equalsIgnoreCase(source);
-
     }
 
     @Override
-    public String format(Object obj) {
-        return obj != null ? obj.toString() : null;
+    protected String convertToStringValue(Object obj) {
+        return obj.toString();
     }
+
 }

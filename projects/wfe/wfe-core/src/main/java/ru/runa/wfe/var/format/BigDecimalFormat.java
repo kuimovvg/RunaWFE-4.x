@@ -8,7 +8,7 @@ import java.math.BigDecimal;
  * @author dofs
  * @since 4.0
  */
-public class BigDecimalFormat implements VariableFormat {
+public class BigDecimalFormat extends VariableFormat {
 
     @Override
     public Class<BigDecimal> getJavaClass() {
@@ -21,16 +21,13 @@ public class BigDecimalFormat implements VariableFormat {
     }
 
     @Override
-    public BigDecimal parse(String source) throws Exception {
-        if (source == null) {
-            return null;
-        }
+    protected BigDecimal convertFromStringValue(String source) {
         return new BigDecimal(source);
     }
 
     @Override
-    public String format(Object object) {
-        return object != null ? object.toString() : null;
+    protected String convertToStringValue(Object obj) {
+        return obj.toString();
     }
 
 }

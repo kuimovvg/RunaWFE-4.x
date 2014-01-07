@@ -76,14 +76,13 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         }
         
         private void fillConversionMap(String name, String scriptingName, VariableUserType userType) {
+            variableScriptingNameToNameMap.put(scriptingName, name);
             if (userType != null) {
                 for (VariableDefinition attributeDefinition : userType.getAttributes()) {
                     String fullScriptingName = scriptingName + VariableUserType.DELIM + attributeDefinition.getScriptingName();
                     String fullName = name + VariableUserType.DELIM + attributeDefinition.getName();
                     fillConversionMap(fullName, fullScriptingName, attributeDefinition.getUserType());
                 }
-            } else {
-                variableScriptingNameToNameMap.put(scriptingName, name);
             }
         }
 
