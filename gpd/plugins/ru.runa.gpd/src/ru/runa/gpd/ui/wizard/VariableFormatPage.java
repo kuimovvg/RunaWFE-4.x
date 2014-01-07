@@ -22,6 +22,7 @@ import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.MapFormat;
 import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.UserTypeFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -46,8 +47,7 @@ public class VariableFormatPage extends DynaContentWizardPage {
         if (variable != null) {
             if (variable.getUserType() != null) {
                 this.userType = variable.getUserType();
-                // TODO ComplexVariable ObjectFormat
-                setTypeByFormatClassName(StringFormat.class.getName());
+                setTypeByFormatClassName(UserTypeFormat.class.getName());
             } else {
                 setTypeByFormatClassName(variable.getFormatClassName());
             }
@@ -82,8 +82,7 @@ public class VariableFormatPage extends DynaContentWizardPage {
             	String label = combo.getText();
             	userType = processDefinition.getVariableUserType(label);
             	if (userType != null) {
-            	    // TODO ComplexVariable ObjectFormat
-            	    type = VariableFormatRegistry.getInstance().getArtifactNotNull(StringFormat.class.getName());
+            	    type = VariableFormatRegistry.getInstance().getArtifactNotNull(UserTypeFormat.class.getName());
             	} else {
             		type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(label);
             	}

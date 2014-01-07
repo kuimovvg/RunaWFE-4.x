@@ -15,7 +15,7 @@ public class InputVariableTag extends FreemarkerTagGpdWrap {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAs(String.class, 0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String formatClassName = variable.getFormatClassNameNotNull();
+        String formatClassName = variable.getDefinition().getFormatClassName();
         Object value = variableProvider.getValue(variableName);
         String html;
         if (ListFormat.class.getName().equals(formatClassName)) {
