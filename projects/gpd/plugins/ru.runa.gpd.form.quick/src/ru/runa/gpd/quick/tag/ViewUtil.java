@@ -46,7 +46,7 @@ public class ViewUtil {
     private static final Log log = LogFactory.getLog(ViewUtil.class);
 
     public static String createExecutorSelect(User user, WfVariable variable) {
-        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getFormatClassNameNotNull(), variable.getValue(), true);
+        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getDefinition().getFormatClassName(), variable.getValue(), true);
     }
 
     private static String createExecutorSelect(User user, String variableName, String formatClassName, Object value, boolean enabled) {
@@ -318,8 +318,8 @@ public class ViewUtil {
                 return html.toString();
             }
             if (format instanceof VariableDisplaySupport) {
-                VariableDisplaySupport<Object> displaySupport = (VariableDisplaySupport<Object>) format;
-                return displaySupport.getHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
+                VariableDisplaySupport displaySupport = (VariableDisplaySupport) format;
+                return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue(), null);
             } else {
                 return format.format(variable.getValue());
             }

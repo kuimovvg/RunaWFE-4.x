@@ -425,7 +425,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                         VariableDefinition variableDefinition = new VariableDefinition(false, quickFormGpdVariable.getName(), quickFormGpdVariable.getName());
                         variableDefinition.setFormat(quickFormGpdVariable.getFormat());
                         WfVariable wfVariable = new WfVariable(variableDefinition, value);
-                        variableProvider.addVariable(wfVariable);
+                        variableProvider.add(wfVariable);
                     }
 
                     model = new FormHashModelGpdWrap(null, variableProvider, null);

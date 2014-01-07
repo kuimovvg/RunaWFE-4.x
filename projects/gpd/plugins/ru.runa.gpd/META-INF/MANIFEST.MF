@@ -321,7 +321,6 @@ Export-Package: antlr,
  ru.runa.wfe.var.dto,
  ru.runa.wfe.var.format,
  ru.runa.wfe.var.impl,
- ru.runa.wfe.var.jaxb,
  ru.runa.wfe.var.logic,
  ru.runa.wfe.var.matcher
 
