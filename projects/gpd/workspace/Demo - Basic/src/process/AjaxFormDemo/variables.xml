@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <variables>
-  <variable name="group" format="ru.runa.wfe.var.format.GroupFormat"/>
-  <variable name="user" format="ru.runa.wfe.var.format.ActorFormat"/>
-  <variable name="Swimlane" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="Swimlane" scriptingName="Swimlane" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="group" scriptingName="group" format="ru.runa.wfe.var.format.GroupFormat" swimlane="false"/>
+  <variable name="user" scriptingName="user" format="ru.runa.wfe.var.format.ActorFormat" swimlane="false"/>
 </variables>

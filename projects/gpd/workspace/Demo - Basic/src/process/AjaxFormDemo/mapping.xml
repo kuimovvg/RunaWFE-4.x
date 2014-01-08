@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typesMapping xmlns="http://runa.ru/xml"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml mapping.xsd">
+  <mapping
+    format="ru.runa.wfe.bp.commons.EmployeeOrRequestorWithTPSpecificFunction"
+    hidden="0" name="сотрудник-или-подавший-заявку-или-секретарь"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.ExecutorByCodeFunction"
+    hidden="0" name="исполнитель-по-табельному-номеру"/>
+  <mapping format="ru.runa.af.organizationfunction.ChiefFunction"
+    hidden="0" name="руководитель"/>
+  <mapping format="ru.runa.wf.web.forms.format.BooleanFormat" hidden="0" name="логический"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.AddEmployeeAndChiefEmailActionHandler"
+    hidden="0" name="добавить e-mail'ы"/>
+  <mapping format="ru.runa.wf.web.forms.format.DateFormat" hidden="0" name="дата"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.InOutVariablesAdditionActionHandler"
+    hidden="0" name="добавление-переменных-входа-выхода"/>
+  <mapping format="ru.runa.wf.web.forms.format.LongFormat" hidden="0" name="длинное-целое-число"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.AddCurrentDateTimeActionHandler"
+    hidden="0" name="добавление текущей даты-времени"/>
+  <mapping format="ru.runa.wfe.bp.commons.EmployeeOrRequestorFunction"
+    hidden="0" name="сотрудник-или-подавший-заявку-функция"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.AddHoursToDateTimeActionHandler"
+    hidden="0" name="добавление-часов"/>
+  <mapping format="ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler"
+    hidden="0" name="формула"/>
+  <mapping format="ru.runa.af.organizationfunction.DemoChiefFunction"
+    hidden="0" name="руководитель-демо-версия"/>
+  <mapping format="ru.runa.wfe.bp.commons.DepartamentChiefFunction"
+    hidden="0" name="DepartamentChiefFunction"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.ActorAllNamesVariableAdditionActionHandler"
+    hidden="0" name="добавление-всех-имен-пользователя"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.AddInOutDateTimesActionHandler"
+    hidden="0" name="добавление-времени-входа-выхода"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.CancelInOutVariablesAdditionActionHandler"
+    hidden="0" name="отменить-добавление-входа-выхода"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.CurrentDateTimeVariableAdditionActionHandler"
+    hidden="0" name="добавить-текущие-дату-время"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.ExecutorByNameFunction"
+    hidden="0" name="исполнитель-по-имени"/>
+  <mapping
+    format="ru.runa.wf.jbpm.delegation.decision.BSFDecisionHandler"
+    hidden="0" name="BSF-обработчик-узла-выбора"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.ChiefRecursiveFunction"
+    hidden="0" name="руководитель-по-иерархии"/>
+  <mapping format="ru.runa.wf.SQLActionHandler" hidden="0" name="SQLActionHandler"/>
+  <mapping format="ru.runa.wf.web.forms.format.TimeFormat" hidden="0" name="время"/>
+  <mapping format="ru.runa.wf.web.forms.format.FileFormat" hidden="0" name="файл"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.AddHoursAndMinutesToDateTimeActionHandler"
+    hidden="0" name="добавление-часов-и-минут"/>
+  <mapping format="ru.runa.wf.web.forms.format.DateTimeFormat"
+    hidden="0" name="дата-время"/>
+  <mapping format="org.jbpm.web.formgen.format.DefaultFormat" hidden="0" name="По умолчанию"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.ProcessNumberVariableAdditionActionHandler"
+    hidden="0" name="добавление-id-процесса"/>
+  <mapping format="ru.runa.af.organizationfunction.DirectorFunction"
+    hidden="0" name="директор"/>
+  <mapping
+    format="ru.runa.wf.jbpm.delegation.action.BotInvokerActionHandler"
+    hidden="0" name="оповестить ботов"/>
+  <mapping format="ru.runa.wfe.bp.commons.SendEmailActionHandler"
+    hidden="0" name="SendEmailActionHandler"/>
+  <mapping format="org.jbpm.web.formgen.format.DoubleFormat" hidden="0" name="вещественное число"/>
+  <mapping
+    format="ru.runa.wfe.bp.commons.ActorFullNameVariableAdditionActionHandler"
+    hidden="0" name="добавление-имени-сотрудника"/>
+  <mapping format="ru.runa.wfe.bp.commons.CopyDateActionHandler"
+    hidden="0" name="копирование даты в другую переменную"/>
+  <mapping format="ru.runa.wfe.bp.commons.CreateDurationActionHandler"
+    hidden="0" name="создать-интервал-времени"/>
+  <mapping format="ru.runa.wf.web.forms.format.StringFormat" hidden="0" name="Строка"/>
+  <mapping format="ru.runa.af.organizationfunction.SQLFunction"
+    hidden="0" name="SQLFunction"/>
+  <mapping format="java.text.SimpleDateFormat" hidden="1" name="java.text.SimpleDateFormat"/>
+  <mapping format="org.jbpm.delegation.action.CancelJobActionHandler"
+    hidden="1" name="org.jbpm.delegation.action.CancelJobActionHandler"/>
+  <mapping
+    format="org.jbpm.delegation.action.ClearMilestoneActionHandler"
+    hidden="1" name="org.jbpm.delegation.action.ClearMilestoneActionHandler"/>
+  <mapping format="ru.runa.wfe.bp.commons.EmployeeOrRequestor"
+    hidden="1" name="ru.runa.wfe.bp.commons.EmployeeOrRequestor"/>
+  <mapping format="org.jbpm.delegation.UndoableActionHandler" hidden="1" name="org.jbpm.delegation.UndoableActionHandler"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.SubordinateRecursiveFunction"
+    hidden="1" name="ru.runa.af.organizationfunction.SubordinateRecursiveFunction"/>
+  <mapping format="java.text.ChoiceFormat" hidden="1" name="java.text.ChoiceFormat"/>
+  <mapping format="org.jbpm.delegation.action.ScheduleJobActionHandler"
+    hidden="1" name="org.jbpm.delegation.action.ScheduleJobActionHandler"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.BaseOrganizationHierarchyFunction"
+    hidden="1" name="ru.runa.af.organizationfunction.BaseOrganizationHierarchyFunction"/>
+  <mapping
+    format="org.jbpm.delegation.decision.ExpressionDecisionHandler"
+    hidden="1" name="org.jbpm.delegation.decision.ExpressionDecisionHandler"/>
+  <mapping
+    format="ru.runa.af.organizationfunction.TableSubstitutionFunction"
+    hidden="1" name="ru.runa.af.organizationfunction.TableSubstitutionFunction"/>
+  <mapping format="org.jbpm.delegation.action.TimerTriggerActionHandler"
+    hidden="1" name="org.jbpm.delegation.action.TimerTriggerActionHandler"/>
+  <mapping format="java.text.MessageFormat" hidden="1" name="java.text.MessageFormat"/>
+  <mapping format="org.jbpm.delegation.action.CreateTimerActionHandler"
+    hidden="1" name="org.jbpm.delegation.action.CreateTimerActionHandler"/>
+  <mapping format="java.text.DecimalFormat" hidden="1" name="java.text.DecimalFormat"/>
+  <mapping
+    format="org.jbpm.delegation.action.MilestoneReachedActionHandler"
+    hidden="1" name="org.jbpm.delegation.action.MilestoneReachedActionHandler"/>
+  <mapping format="org.jbpm.delegation.action.CancelTimerActionHandler"
+    hidden="1" name="org.jbpm.delegation.action.CancelTimerActionHandler"/>
+  <mapping format="ru.runa.af.organizationfunction.SubordinateFunction"
+    hidden="1" name="ru.runa.af.organizationfunction.SubordinateFunction"/>
+  <mapping format="java.text.DateFormat" hidden="1" name="java.text.DateFormat"/>
+  <mapping format="ru.runa.af.organizationfunction.GroupFunction"
+    hidden="1" name="ru.runa.af.organizationfunction.GroupFunction"/>
+  <mapping format="java.text.NumberFormat" hidden="1" name="java.text.NumberFormat"/>
+</typesMapping>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition name="Hello World">
+<process-definition name="Hello World" version="4.0.5">
   <description><![CDATA[This is the simpliest process]]></description>
-  <swimlane id="requester" name="requester">
+  <swimlane id="ID4" name="requester">
     <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
-  <start-state id="start" name="start">
+  <start-state id="ID1" name="start">
     <task name="start" swimlane="requester"/>
-    <transition id="tr1" name="tr1" to="end"/>
+    <transition id="ID3" name="tr1" to="ID2"/>
   </start-state>
-  <end-state id="end" name="end"/>
+  <end-state id="ID2" name="end"/>
 </process-definition>

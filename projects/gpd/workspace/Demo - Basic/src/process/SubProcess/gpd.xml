@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-diagram name="SubProcess" notation="uml" width="621" height="385" showActions="true" showGrid="false">
+<process-diagram name="SubProcess" notation="uml" width="480" height="422" showActions="true" showGrid="false">
   <node name="start" x="156" y="36" width="72" height="60">
     <transition name="tr1"/>
   </node>
-  <node name="state1" x="72" y="180" width="108" height="72" minimizedView="false">
+  <node name="state1" x="72" y="180" width="132" height="84">
     <transition name="tr1"/>
   </node>
-  <node name="state2" x="216" y="180" width="108" height="72" minimizedView="false">
+  <node name="state2" x="216" y="180" width="132" height="84">
     <transition name="tr1"/>
   </node>
   <node name="fork1" x="84" y="144" width="240" height="5">

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <forms>
-  <form state="after bot activity" file="after bot activity.ftl" type="ftl" validationFile="after bot activity.validation.xml" jsValidation="false"/>
-  <form state="before bot activity" file="before bot activity.ftl" type="ftl" validationFile="before bot activity.validation.xml" jsValidation="false"/>
+  <form state="ID2" file="ID2.ftl" type="ftl" validationFile="ID2.validation.xml" jsValidation="false"/>
+  <form state="ID4" file="ID4.ftl" type="ftl" validationFile="ID4.validation.xml" jsValidation="false"/>
 </forms>

@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition name="WebService - who is">
+<process-definition name="WebService - who is" version="4.0.5">
   <description><![CDATA[Enter domain name and WebService bot resolve this name using whois service.]]></description>
-  <swimlane id="ID0" name="requester">
+  <swimlane id="ID8" name="requester">
     <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
-  <swimlane id="ID1" name="WebServiceBot">
+  <swimlane id="ID9" name="WebServiceBot">
     <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction(WebServiceBot)]]></assignment>
   </swimlane>
-  <start-state id="Start" name="Start">
+  <start-state id="ID1" name="Start">
     <task name="Start" swimlane="requester"/>
-    <transition id="ID2" name="tr1" to="Load whois information"/>
+    <transition id="ID4" name="tr1" to="ID2"/>
   </start-state>
-  <task-node id="Load whois information" name="Load whois information" async="false">
+  <task-node id="ID2" name="Load whois information">
     <task name="Load whois information" swimlane="WebServiceBot">
       <event type="task-create">
         <action class="ru.runa.wfe.service.handler.BotInvokerActionHandler"><![CDATA[]]></action>
       </event>
     </task>
-    <transition id="ID3" name="tr1" to="Read DNS address information"/>
+    <transition id="ID5" name="tr1" to="ID3"/>
   </task-node>
-  <task-node id="Read DNS address information" name="Read DNS address information" async="false">
+  <task-node id="ID3" name="Read DNS address information">
     <task name="Read DNS address information" swimlane="requester"/>
-    <transition id="ID5" name="tr1" to="End"/>
+    <transition id="ID7" name="tr1" to="ID6"/>
   </task-node>
-  <end-state id="End" name="End"/>
+  <end-state id="ID6" name="End"/>
 </process-definition>

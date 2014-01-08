@@ -24,19 +24,19 @@
     hidden="0" name="RemoveObjectFromMapActionHandler"/>
   <mapping format="ru.runa.wf.var.RemoveObjectFromListActionHandler"
     hidden="0" name="RemoveObjectFromListActionHandler"/>
-  <mapping format="org.jbpm.mail.Mail" hidden="0" name="Mail"/>
-  <mapping format="org.jbpm.scheduler.def.CreateTimerAction" hidden="0" name="CreateTimerAction"/>
   <mapping format="ru.runa.wf.var.GetObjectFromListActionHandler"
     hidden="0" name="GetObjectFromListActionHandler"/>
+  <mapping format="org.jbpm.mail.Mail" hidden="0" name="Mail"/>
+  <mapping format="org.jbpm.scheduler.def.CreateTimerAction" hidden="0" name="CreateTimerAction"/>
   <mapping
     format="org.jbpm.delegation.assignment.PreviousAssignmentHandler"
     hidden="0" name="PreviousAssignmentHandler"/>
   <mapping format="org.jbpm.delegation.action.CreateTimerActionHandler"
     hidden="0" name="CreateTimerActionHandler"/>
-  <mapping format="ru.runa.wf.swimlane.AssignSwimlaneActionHandler"
-    hidden="0" name="AssignSwimlaneActionHandler"/>
   <mapping format="ru.runa.wfe.bp.commons.ExecuteFormulaActionHandler"
     hidden="0" name="ExecuteFormulaActionHandler"/>
+  <mapping format="ru.runa.wf.swimlane.AssignSwimlaneActionHandler"
+    hidden="0" name="AssignSwimlaneActionHandler"/>
   <mapping format="ru.runa.af.organizationfunction.DemoChiefFunction"
     hidden="0" name="DemoChiefFunction"/>
   <mapping
@@ -61,7 +61,7 @@
     hidden="0" name="AdvancedSwimlaneAssignerTaskHandler"/>
   <mapping format="ru.runa.wf.web.forms.format.DateTimeFormat"
     hidden="0" name="DateTimeFormat"/>
-  <mapping format="ru.runa.wf.office.doc.DocxHandler" hidden="0" name="Обработчик файов Docx"/>
+  <mapping format="ru.runa.wf.office.doc.DocxHandler" hidden="0" name="Word: Формирование документа DOCX используя шаблон"/>
   <mapping format="ru.runa.af.organizationfunction.DirectorFunction"
     hidden="0" name="DirectorFunction"/>
   <mapping format="ru.runa.wf.BSHActionHandler" hidden="0" name="BSHActionHandler"/>
@@ -74,19 +74,21 @@
     hidden="0" name="AddObjectToListActionHandler"/>
   <mapping format="ru.runa.wf.web.forms.format.StringFormat" hidden="0" name="StringFormat"/>
   <mapping format="org.jbpm.graph.node.MilestoneEvent" hidden="0" name="MilestoneEvent"/>
+  <mapping format="ru.runa.wf.var.CreateCalendarActionHandler"
+    hidden="0" name="CreateCalendarActionHandler"/>
   <mapping
     format="ru.runa.wfe.bp.commons.EmailTaskNotifierActionHandler"
     hidden="0" name="EmailTaskNotifierActionHandler"/>
   <mapping format="ru.runa.wf.office.excel.handlers.SaveHandler"
     hidden="0" name="Excel: Сохранить данные в файл"/>
   <mapping
+    format="org.jbpm.identity.assignment.ExpressionAssignmentHandler"
+    hidden="0" name="ExpressionAssignmentHandler"/>
+  <mapping
     format="ru.runa.wf.jbpm.delegation.action.SetSubProcessPermissionsActionHandler"
     hidden="0" name="SetSubProcessPermissionsActionHandler"/>
   <mapping format="org.jbpm.delegation.action.CancelTimerActionHandler"
     hidden="0" name="CancelTimerActionHandler"/>
-  <mapping
-    format="org.jbpm.identity.assignment.ExpressionAssignmentHandler"
-    hidden="0" name="ExpressionAssignmentHandler"/>
   <mapping format="ru.runa.af.organizationfunction.SQLFunction"
     hidden="0" name="SQLFunction"/>
   <mapping format="ru.runa.wf.logic.bot.cr.JcrRepositoryTaskHandler"
@@ -130,6 +132,7 @@
     hidden="0" name="CancelThisProcessInstanceTaskHandler"/>
   <mapping format="ru.runa.wf.var.ConvertMapKeysToListActionHandler"
     hidden="0" name="ConvertMapKeysToListActionHandler"/>
+  <mapping format="ru.runa.wf.var.ConvertMapsToListsHandler" hidden="0" name="ConvertMapsToListsHandler"/>
   <mapping format="ru.runa.wf.users.GetProcessStarterActorCode"
     hidden="0" name="GetProcessStarterActorCode"/>
   <mapping format="ru.runa.wf.office.excel.handlers.ReadHandler"

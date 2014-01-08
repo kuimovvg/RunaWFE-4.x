@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <variables>
-  <variable name="DNS_name" format="ru.runa.wfe.var.format.StringFormat" description=""/>
-  <variable name="DNS_information" format="ru.runa.wfe.var.format.StringFormat" description=""/>
-  <variable name="requester" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true" description=""/>
-  <variable name="WebServiceBot" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true" description=""/>
+  <variable name="requester" scriptingName="requester" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="WebServiceBot" scriptingName="WebServiceBot" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="DNS_name" scriptingName="DNS_name" format="ru.runa.wfe.var.format.StringFormat" description="" swimlane="false"/>
+  <variable name="DNS_information" scriptingName="DNS_information" format="ru.runa.wfe.var.format.TextFormat" description="" swimlane="false"/>
 </variables>

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <variables>
-  <variable name="resultTextFile" format="ru.runa.wfe.var.format.FileFormat" description=""/>
-  <variable name="header" format="ru.runa.wfe.var.format.StringFormat" description=""/>
-  <variable name="mainText" format="ru.runa.wfe.var.format.StringFormat" description=""/>
-  <variable name="date" format="ru.runa.wfe.var.format.DateFormat" description=""/>
-  <variable name="number" format="ru.runa.wfe.var.format.LongFormat" description=""/>
-  <variable name="bot" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true" description=""/>
-  <variable name="user" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true" description=""/>
+  <variable name="bot" scriptingName="bot" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="user" scriptingName="user" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="resultTextFile" scriptingName="resultTextFile" format="ru.runa.wfe.var.format.FileFormat" description="" swimlane="false"/>
+  <variable name="header" scriptingName="header" format="ru.runa.wfe.var.format.StringFormat" description="" swimlane="false"/>
+  <variable name="mainText" scriptingName="mainText" format="ru.runa.wfe.var.format.TextFormat" description="" swimlane="false"/>
+  <variable name="date" scriptingName="date" format="ru.runa.wfe.var.format.DateFormat" description="" swimlane="false"/>
+  <variable name="number" scriptingName="number" format="ru.runa.wfe.var.format.LongFormat" description="" swimlane="false"/>
 </variables>

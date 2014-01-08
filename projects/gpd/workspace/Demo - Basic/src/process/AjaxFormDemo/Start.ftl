@@ -1,1 +1,1 @@
-<P>Choose user from group ${AjaxGroupMembers("group", "user")}</P>
+<P>${AjaxGroupMembers("group", "user")}</P>
