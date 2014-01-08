@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<process-diagram height="541" name="MSWordReport" notation="uml"
-  showActions="false" showGrid="false" width="1069">
-  <node height="60" name="Submit Report Data" width="168" x="84" y="24">
+
+<process-diagram name="MSWordReport" notation="bpmn" rendered="graphiti" width="680" height="447" showActions="true" showGrid="false">
+  <node name="ID1" x="130" y="40" width="48" height="48">
     <transition name="tr1"/>
   </node>
-  <node height="72" minimizedView="false" name="Read Report" width="180"
-    x="72" y="204">
+  <node name="ID2" x="88" y="130" width="132" height="91">
     <transition name="tr1"/>
   </node>
-  <node height="72" minimizedView="false" name="Generate MS Word Report"
-    width="180" x="72" y="108">
+  <node name="ID3" x="88" y="260" width="132" height="84">
     <transition name="tr1"/>
   </node>
-  <node height="48" name="end" width="168" x="84" y="300"/>
+  <node name="ID4" x="130" y="390" width="48" height="48"/>
 </process-diagram>

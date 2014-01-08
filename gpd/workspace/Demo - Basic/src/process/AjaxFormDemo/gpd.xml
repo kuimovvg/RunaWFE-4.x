@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-diagram name="AjaxFormDemo" notation="uml" width="458" height="385" showActions="false" showGrid="false">
+<process-diagram name="AjaxFormDemo" notation="uml" width="681" height="412" showActions="false" showGrid="false">
   <node name="Start" x="84" y="24" width="120" height="72">
     <transition name="tr1"/>
   </node>
-  <node name="Display user input" x="60" y="156" width="156" height="96" minimizedView="false">
+  <node name="Display user input" x="72" y="132" width="132" height="60">
     <transition name="tr1"/>
   </node>
-  <node name="End" x="84" y="312" width="120" height="72"/>
+  <node name="End" x="84" y="216" width="120" height="72"/>
 </process-diagram>

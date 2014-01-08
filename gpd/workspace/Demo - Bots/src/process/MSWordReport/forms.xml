@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<forms xmlns="http://runa.ru/xml"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml forms.xsd">
-  <form file="Submit Report Data.ftl" jsValidation="false"
-    state="Submit Report Data" type="ftl" validationFile="Submit Report Data.validation.xml"/>
-  <form file="Read Report.ftl" jsValidation="false" state="Read Report"
-    type="ftl" validationFile="Read Report.validation.xml"/>
+
+<forms>
+  <form state="ID1" file="ID1.ftl" type="ftl" validationFile="ID1.validation.xml" jsValidation="false"/>
+  <form state="ID3" file="ID3.ftl" type="ftl" validationFile="ID3.validation.xml" jsValidation="false"/>
 </forms>

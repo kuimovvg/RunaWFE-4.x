@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition name="FileUpload">
+<process-definition name="FileUpload" version="4.0.5">
   <description><![CDATA[This is sample workflow process demonstrates work with file]]></description>
-  <swimlane id="user" name="user">
+  <swimlane id="ID6" name="user">
     <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
-  <start-state id="upload" name="upload">
+  <start-state id="ID1" name="upload">
     <description><![CDATA[User uploads file]]></description>
     <task name="upload" swimlane="user"/>
-    <transition id="tr1" name="tr1" to="download"/>
+    <transition id="ID4" name="tr1" to="ID2"/>
   </start-state>
-  <task-node id="download" name="download" async="false">
+  <task-node id="ID2" name="download">
     <description><![CDATA[User downloads file]]></description>
     <task name="download" swimlane="user"/>
-    <transition id="tr1" name="tr1" to="end"/>
+    <transition id="ID5" name="tr1" to="ID3"/>
   </task-node>
-  <end-state id="end" name="end"/>
+  <end-state id="ID3" name="end"/>
 </process-definition>

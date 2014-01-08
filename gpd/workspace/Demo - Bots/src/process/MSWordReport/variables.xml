@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <variables>
-  <variable format="ru.runa.wf.web.forms.format.DateTimeFormat" name="date"/>
-  <variable format="org.jbpm.web.formgen.format.DoubleFormat" name="double"/>
-  <variable format="ru.runa.wf.web.forms.format.StringFormat" name="string"/>
-  <variable format="ru.runa.wf.web.forms.format.FileFormat" name="resultWord"/>
-  <variable description=""
-    format="ru.runa.wf.web.forms.format.StringFormat" name="bot" swimlane="true"/>
-  <variable description=""
-    format="ru.runa.wf.web.forms.format.StringFormat" name="requester" swimlane="true"/>
+  <variable name="bot" scriptingName="bot" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="requester" scriptingName="requester" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
+  <variable name="date" scriptingName="date" format="ru.runa.wfe.var.format.DateTimeFormat" description="" swimlane="false"/>
+  <variable name="double" scriptingName="double" format="ru.runa.wfe.var.format.DoubleFormat" description="" swimlane="false"/>
+  <variable name="string" scriptingName="string" format="ru.runa.wfe.var.format.StringFormat" description="" swimlane="false"/>
+  <variable name="resultWord" scriptingName="resultWord" format="ru.runa.wfe.var.format.FileFormat" description="" swimlane="false"/>
 </variables>

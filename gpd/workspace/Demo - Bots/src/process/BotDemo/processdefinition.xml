@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<process-definition name="BotDemo">
+<process-definition name="BotDemo" version="4.0.5">
   <description><![CDATA[Bot demo process (no start form provided)]]></description>
-  <swimlane id="ID0" name="bot">
+  <swimlane id="ID5" name="bot">
     <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction(UniversalBot)]]></assignment>
   </swimlane>
-  <swimlane id="ID1" name="user">
+  <swimlane id="ID6" name="user">
     <assignment class="ru.runa.wfe.extension.assign.DefaultAssignmentHandler"><![CDATA[]]></assignment>
   </swimlane>
-  <start-state id="start" name="start">
+  <start-state id="ID1" name="start">
     <task name="start" swimlane="user"/>
-    <transition id="ID2" name="tr1" to="before bot activity"/>
+    <transition id="ID7" name="tr1" to="ID2"/>
   </start-state>
-  <task-node id="DoNothing" name="DoNothing" async="false">
-    <description><![CDATA[Bot executes a task]]></description>
-    <task name="DoNothing" swimlane="bot"/>
-    <transition id="ID3" name="tr1" to="after bot activity"/>
-  </task-node>
-  <task-node id="after bot activity" name="after bot activity" async="false">
-    <description><![CDATA[after bot activity]]></description>
-    <task name="after bot activity" swimlane="user"/>
-    <transition id="ID4" name="tr1" to="end"/>
-  </task-node>
-  <task-node id="before bot activity" name="before bot activity" async="false">
-    <description><![CDATA[before bot activity]]></description>
+  <task-node id="ID2" name="before bot activity">
     <task name="before bot activity" swimlane="user"/>
-    <transition id="ID5" name="tr1" to="DoNothing">
+    <transition id="ID8" name="tr1" to="ID3">
       <action class="ru.runa.wfe.service.handler.BotInvokerActionHandler"><![CDATA[]]></action>
     </transition>
   </task-node>
-  <end-state id="end" name="end"/>
+  <task-node id="ID3" name="DoNothing">
+    <task name="DoNothing" swimlane="bot"/>
+    <transition id="ID9" name="tr1" to="ID4"/>
+  </task-node>
+  <task-node id="ID4" name="after bot activity">
+    <task name="after bot activity" swimlane="user"/>
+    <transition id="ID11" name="tr1" to="ID10"/>
+  </task-node>
+  <end-state id="ID10" name="end"/>
 </process-definition>
