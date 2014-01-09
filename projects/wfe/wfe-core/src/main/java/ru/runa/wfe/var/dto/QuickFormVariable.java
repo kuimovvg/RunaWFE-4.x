@@ -6,8 +6,6 @@ public class QuickFormVariable {
     private String tagName;
     private String name;
     private String[] params;
-    private String format;
-    private String description;
 
     public QuickFormVariable() {
     }
@@ -44,21 +42,5 @@ public class QuickFormVariable {
 
     public void setTagName(String tagName) {
         this.tagName = tagName;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
