@@ -55,6 +55,7 @@ import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.quick.Messages;
 import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
@@ -70,6 +71,7 @@ import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
@@ -103,12 +105,6 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         definitionFolder = (IFolder) quickFormFile.getParent();
         IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
         this.processDefinition = ProcessCache.getProcessDefinition(definitionFile);
-        quickForm = QuickFormXMLUtil.getQuickFormFromXML(quickFormFile, processDefinition);
-        if (quickFormFile.getName().startsWith(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX)) {
-            String subprocessId = quickFormFile.getName().substring(0, quickFormFile.getName().indexOf("."));
-            processDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
-            Preconditions.checkNotNull(processDefinition, "embedded subpocess");
-        }
         for (FormNode formNode : processDefinition.getChildren(FormNode.class)) {
             if (input.getName().equals(formNode.getFormFileName())) {
                 this.formNode = formNode;
@@ -116,6 +112,12 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 break;
             }
         }
+        quickForm = QuickFormXMLUtil.getQuickFormFromXML(quickFormFile, processDefinition, formNode.getTemplateFileName());
+        if (quickFormFile.getName().startsWith(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX)) {
+            String subprocessId = quickFormFile.getName().substring(0, quickFormFile.getName().indexOf("."));
+            processDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
+            Preconditions.checkNotNull(processDefinition, "embedded subpocess");
+        }        
 
         getSite().getPage().addSelectionListener(this);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
@@ -145,7 +147,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
     @Override
     public void doSave(IProgressMonitor monitor) {
         try {
-            byte[] contentBytes = QuickFormXMLUtil.convertQuickFormToXML(definitionFolder, quickForm);
+            byte[] contentBytes = QuickFormXMLUtil.convertQuickFormToXML(definitionFolder, quickForm, formNode.getTemplateFileName());
             InputStream content = new ByteArrayInputStream(contentBytes);
 //            if (!quickFormFile.exists()) {
 //                quickFormFile.create(content, true, null);
@@ -215,7 +217,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 if (filename != null && filename.trim().length() > 0) {
                     Bundle bundle = QuickTemplateRegister.getBundle(filename);
                     String templateHtml = QuickFormXMLUtil.getTemplateFromRegister(bundle, filename);
-                    quickForm.setDelegationClassName(filename);
+                    formNode.setTemplateFileName(filename);
                     quickForm.setDelegationConfiguration(templateHtml);
                 }
 
@@ -233,9 +235,9 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             }
         });
         selectTemplateCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        if (!Strings.isNullOrEmpty(quickForm.getDelegationClassName())) {
+        if (!Strings.isNullOrEmpty(formNode.getTemplateFileName())) {
             for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
-                if (artifact.isEnabled() && artifact.getFileName().equals(quickForm.getDelegationClassName())) {
+                if (artifact.isEnabled() && artifact.getFileName().equals(formNode.getTemplateFileName())) {
                     selectTemplateCombo.setText(artifact.getLabel());
                     prevTemplateFileName = artifact.getFileName();
                     break;
@@ -416,14 +418,16 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     variableProvider = new MapDelegableVariableProvider(variables, null);
 
                     for (QuickFormGpdVariable quickFormGpdVariable : quickForm.getVariables()) {
-                        String defaultValue = PresentationVariableUtils.getPresentationValue(quickFormGpdVariable.getFormat());
+                    	Variable variable = VariableUtils.getVariableByName(processDefinition, quickFormGpdVariable.getName());
+                        
+                        String defaultValue = PresentationVariableUtils.getPresentationValue(variable.getFormat());
                         Object value = null;
                         if (defaultValue != null) {
-                            value = TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(quickFormGpdVariable.getJavaClassName()), defaultValue);
+                            value = TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(variable.getJavaClassName()), defaultValue);
                         }
                         variables.put(quickFormGpdVariable.getName(), value);
                         VariableDefinition variableDefinition = new VariableDefinition(false, quickFormGpdVariable.getName(), quickFormGpdVariable.getName());
-                        variableDefinition.setFormat(quickFormGpdVariable.getFormat());
+                        variableDefinition.setFormat(variable.getFormat());
                         WfVariable wfVariable = new WfVariable(variableDefinition, value);
                         variableProvider.add(wfVariable);
                     }
@@ -472,8 +476,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     continue;
                 }
 
-                IFile file = definitionFolder.getFile(localFormNode.getFormFileName());
-                String templateName = QuickFormXMLUtil.getQuickFormTemplateName(file);
+                String templateName = formNode.getTemplateFileName();
                 if (prevTemplateFileName.equals(templateName)) {
                     isUsing = true;
                     break;

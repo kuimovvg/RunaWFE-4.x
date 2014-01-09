@@ -22,6 +22,7 @@ public class FormsXmlContentProvider extends AuxContentProvider {
     private static final String STATE_ATTRIBUTE_NAME = "state";
     private static final String FORM_ELEMENT_NAME = "form";
     private static final String FORMS_ELEMENT_NAME = "forms";
+    private static final String TEMPLATE_FILE_NAME = "templateFileName";
 
     @Override
     public String getFileName() {
@@ -56,6 +57,10 @@ public class FormsXmlContentProvider extends AuxContentProvider {
             if (!Strings.isNullOrEmpty(scriptFileName)) {
                 formNode.setScriptFileName(scriptFileName);
             }
+            String templateFileName = formElement.attributeValue(TEMPLATE_FILE_NAME);
+            if (!Strings.isNullOrEmpty(templateFileName)) {
+                formNode.setTemplateFileName(templateFileName);
+            }
         }
     }
 
@@ -79,6 +84,9 @@ public class FormsXmlContentProvider extends AuxContentProvider {
                     }
                     if (formNode.hasFormScript()) {
                         formElement.addAttribute(SCRIPT_FILE_ATTRIBUTE_NAME, formNode.getScriptFileName());
+                    }
+                    if (formNode.hasFormTemplate()) {
+                        formElement.addAttribute(TEMPLATE_FILE_NAME, formNode.getTemplateFileName());
                     }
                 }
             }

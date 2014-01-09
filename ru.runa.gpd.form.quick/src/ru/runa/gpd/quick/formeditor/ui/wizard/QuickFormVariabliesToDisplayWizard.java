@@ -42,10 +42,7 @@ public class QuickFormVariabliesToDisplayWizard extends Wizard implements INewWi
             Variable variable = VariableUtils.getVariableByName(processDefinition, name);
             variableDef.setTagName(QuickFormType.READ_TAG);
             variableDef.setName(variable.getName());
-            variableDef.setFormat(variable.getFormat());
             variableDef.setFormatLabel(variable.getFormatLabel());
-            variableDef.setJavaClassName(variable.getJavaClassName());
-            variableDef.setDescription(variable.getDescription());
             variableDef.setParams(new String[] { "false" });
             quickFormVariableDefs.add(variableDef);
         }
