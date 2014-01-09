@@ -190,6 +190,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             browser = new Browser(getContainer(), SWT.NULL);
             browser.addOpenWindowListener(new BrowserWindowHelper(getContainer().getDisplay()));
             new GetHTMLCallbackFunction(browser);
+            new OnLoadCallbackFunction(browser);
             browser.addProgressListener(new ProgressAdapter() {
                 @Override
                 public void completed(ProgressEvent event) {
@@ -503,6 +504,21 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                     sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
                 }
             }
+            return null;
+        }
+    }
+
+    private class OnLoadCallbackFunction extends BrowserFunction {
+        public OnLoadCallbackFunction(Browser browser) {
+            super(browser, "onLoadCallback");
+        }
+
+        @Override
+        public Object function(Object[] arguments) {
+            if (WYSIWYGPlugin.DEBUG) {
+                PluginLogger.logInfo("Invoked OnLoadCallbackFunction");
+            }
+            setBrowserLoaded(true);
             return null;
         }
     }

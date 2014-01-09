@@ -1,4 +1,4 @@
-var VAR_TAG = 'customtag' ;
+var VAR_TAG = "customtag";
 var NAME_ATTR = 'var' ;
 var TYPE_ATTR = 'delegation' ;
 
@@ -6,7 +6,7 @@ CKEDITOR.dialog.add(
 	VAR_TAG,
 	function(editor){
 		return{
-			title:		editor.lang.RunaVarTags.VarTagDlgTitle,
+			title:		editor.lang.FreemarkerTags.MethodTitle,
 			minWidth:	350,
 			minHeight:	150,
 			contents:[{
