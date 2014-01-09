@@ -67,7 +67,7 @@ public final class DrawProperties {
         if (string.startsWith("0x")) {
             string = string.substring(2);
         }
-        return string;
+        return "#" + string;
     }
 
     public static Color getAlarmColor() {

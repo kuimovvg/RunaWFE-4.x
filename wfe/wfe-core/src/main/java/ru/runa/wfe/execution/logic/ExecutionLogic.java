@@ -264,7 +264,7 @@ public class ExecutionLogic extends WFCommonLogic {
         }
     }
 
-    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId, String subprocessId) {
+    public List<GraphElementPresentation> getProcessDiagramElements(User user, Long processId, String subprocessId) {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition definition = getDefinition(process.getDeployment().getId());
         if (subprocessId != null) {

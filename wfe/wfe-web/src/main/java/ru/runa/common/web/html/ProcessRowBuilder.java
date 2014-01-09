@@ -28,11 +28,10 @@ import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.FieldDescriptor;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 public class ProcessRowBuilder extends ReflectionRowBuilder {
-    private List<WfProcess> allWfProcessItems;
+    private List<WfProcess> allProcesses;
 
     public ProcessRowBuilder(List<? extends Object> items, BatchPresentation batchPresentation, PageContext pageContext, String actionUrl,
             String returnAction, ItemUrlStrategy itemUrlStrategy, TDBuilder[] builders) {
@@ -63,16 +62,15 @@ public class ProcessRowBuilder extends ReflectionRowBuilder {
         FieldDescriptor[] fieldsToDisplayNames = batchPresentation.getAllFields();
         List<TR> result = new ArrayList<TR>();
         Object item = items.get(currentState.getItemIndex());
-        ExecutionService executionService = Delegates.getExecutionService();
-        List<WfProcess> listSubProcessInstance = executionService.getSubprocesses(Commons.getUser(pageContext.getSession()),
-                ((WfProcess) item).getId(), true);
+        List<WfProcess> subrocesses = Delegates.getExecutionService().getSubprocesses(
+                Commons.getUser(pageContext.getSession()), ((WfProcess) item).getId(), true);
         if (currentState.isGroupHeader()
                 && fieldsToDisplayNames[currentState.getCurrentGrouppedColumnIdx()].displayName.startsWith(ClassPresentation.filterable_prefix)) {
-            result.add(buildGroupHeader(listSubProcessInstance));
+            result.add(buildGroupHeader(subrocesses));
         } else if (currentState.isGroupHeader()) {
             result.add(super.buildGroupHeader());
         } else {
-            result.addAll(buildItemRows(listSubProcessInstance));
+            result.addAll(buildItemRows(subrocesses));
         }
 
         return result;
@@ -177,17 +175,16 @@ public class ProcessRowBuilder extends ReflectionRowBuilder {
 
     @Override
     protected List<? extends Object> getItems() {
-        if (allWfProcessItems == null) {
-            allWfProcessItems = new ArrayList<WfProcess>();
-            ExecutionService executionService = Delegates.getExecutionService();
+        if (allProcesses == null) {
+            allProcesses = new ArrayList<WfProcess>();
             for (Object item : items) {
-                List<WfProcess> listSubProcessInstance = executionService.getSubprocesses(Commons.getUser(pageContext.getSession()),
-                        ((WfProcess) item).getId(), true);
-                allWfProcessItems.add((WfProcess) item);
-                allWfProcessItems.addAll(listSubProcessInstance);
+                List<WfProcess> listSubProcessInstance = Delegates.getExecutionService().getSubprocesses(
+                        Commons.getUser(pageContext.getSession()), ((WfProcess) item).getId(), true);
+                allProcesses.add((WfProcess) item);
+                allProcesses.addAll(listSubProcessInstance);
             }
         }
 
-        return allWfProcessItems;
+        return allProcesses;
     }
 }

@@ -86,7 +86,7 @@ public class NodeProcessDAO extends GenericDAO<NodeProcess> {
         return result;
     }
 
-    public List<Process> getActiveSubprocesses(Process process, String nodeId, Token parentToken, Boolean active) {
+    public List<Process> getSubprocesses(Process process, String nodeId, Token parentToken, Boolean active) {
         List<NodeProcess> nodeProcesses = getNodeProcesses(process, parentToken, nodeId, active);
         List<Process> result = Lists.newArrayListWithExpectedSize(nodeProcesses.size());
         for (NodeProcess nodeProcess : nodeProcesses) {

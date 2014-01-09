@@ -40,6 +40,7 @@ import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
+import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
 import ru.runa.wfe.commons.dbpatch.impl.ExpandDescriptionsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
 import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
@@ -106,6 +107,7 @@ public class InitializerLogic {
         // 4.1.0
         dbPatches.add(TaskOpenedByExecutorsPatch.class);
         dbPatches.add(AddNodeIdToProcessLogPatch.class);
+        dbPatches.add(AddSubProcessIndexColumn.class);
     };
 
     @Autowired

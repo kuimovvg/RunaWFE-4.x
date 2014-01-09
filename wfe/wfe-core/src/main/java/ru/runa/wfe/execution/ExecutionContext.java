@@ -98,7 +98,7 @@ public class ExecutionContext {
     }
 
     public Node getNode() {
-        return getToken().getNode(getProcessDefinition());
+        return getToken().getNodeNotNull(getProcessDefinition());
     }
 
     public ProcessDefinition getProcessDefinition() {
@@ -124,11 +124,7 @@ public class ExecutionContext {
     }
 
     public List<Process> getActiveSubprocesses() {
-        return nodeProcessDAO.getActiveSubprocesses(getProcess(), getToken().getNodeId(), getToken(), true);
-    }
-
-    public List<Process> getAllSubprocesses() {
-        return nodeProcessDAO.getActiveSubprocesses(getProcess(), getToken().getNodeId(), getToken(), null);
+        return nodeProcessDAO.getSubprocesses(getProcess(), getToken().getNodeId(), getToken(), true);
     }
 
     public List<Process> getSubprocessesRecursively() {

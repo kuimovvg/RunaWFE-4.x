@@ -245,7 +245,7 @@ public class Token implements Serializable {
         this.ableToReactivateParent = ableToReactivateParent;
     }
 
-    public Node getNode(ProcessDefinition processDefinition) {
+    public Node getNodeNotNull(ProcessDefinition processDefinition) {
         return processDefinition.getNodeNotNull(nodeId);
     }
 
@@ -264,8 +264,16 @@ public class Token implements Serializable {
 
     public void signal(ExecutionContext executionContext, Transition transition) {
         if (!hasEnded()) {
-            Node node = getNode(executionContext.getProcessDefinition());
-            node.leave(executionContext, transition);
+            executionContext.getNode().leave(executionContext, transition);
+        }
+    }
+
+    public void signalInSubprocess(ExecutionContext subExecutionContext) {
+        if (!hasEnded()) {
+            NodeProcess parentNodeProcess = subExecutionContext.getParentNodeProcess();
+            Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
+            ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
+            getNodeNotNull(superDefinition).leave(subExecutionContext, null);
         }
     }
 

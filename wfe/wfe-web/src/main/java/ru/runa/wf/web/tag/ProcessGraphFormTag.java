@@ -93,7 +93,7 @@ public class ProcessGraphFormTag extends ProcessBaseFormTag {
         img.setID("graph");
         img.setSrc(href);
         img.setBorder(0);
-        List<GraphElementPresentation> elements = Delegates.getExecutionService().getProcessGraphElements(getUser(), getIdentifiableId(), subprocessId);
+        List<GraphElementPresentation> elements = Delegates.getExecutionService().getProcessDiagramElements(getUser(), getIdentifiableId(), subprocessId);
         ProcessGraphElementPresentationVisitor visitor = new ProcessGraphElementPresentationVisitor(getUser(), pageContext, td, subprocessId);
         visitor.visit(elements);
         if (!visitor.getPresentationHelper().getMap().isEmpty()) {

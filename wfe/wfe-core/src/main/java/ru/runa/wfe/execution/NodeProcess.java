@@ -27,15 +27,17 @@ public class NodeProcess {
     private Token parentToken;
     private String nodeId;
     private Process subProcess;
+    private Integer index;
 
     protected NodeProcess() {
     }
 
-    public NodeProcess(Node processStateNode, Token parentToken, Process subProcess) {
-        process = parentToken.getProcess();
+    public NodeProcess(Node processStateNode, Token parentToken, Process subProcess, Integer index) {
+        this.process = parentToken.getProcess();
         this.parentToken = parentToken;
-        nodeId = processStateNode.getNodeId();
+        this.nodeId = processStateNode.getNodeId();
         this.subProcess = subProcess;
+        this.index = index;
     }
 
     @Id
@@ -94,4 +96,13 @@ public class NodeProcess {
         this.nodeId = nodeId;
     }
 
+    @Column(name = "SUBPROCESS_INDEX")
+    public Integer getIndex() {
+        return index;
+    }
+    
+    public void setIndex(Integer order) {
+        this.index = order;
+    }
+    
 }
