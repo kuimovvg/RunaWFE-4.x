@@ -35,7 +35,7 @@ public class EndToken extends Node {
             Set<Join> joins = Sets.newHashSet();
             for (Token childToken : parentToken.getChildren()) {
                 if (childToken.getNodeType() == NodeType.JOIN) {
-                    joins.add((Join) childToken.getNode(executionContext.getProcessDefinition()));
+                    joins.add((Join) childToken.getNodeNotNull(executionContext.getProcessDefinition()));
                 }
             }
             for (Join join : joins) {

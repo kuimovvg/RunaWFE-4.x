@@ -75,7 +75,7 @@ public class ReceiveMessageBean implements MessageListener {
             List<Token> tokens = tokenDAO.findActiveTokens(NodeType.RECEIVE_MESSAGE);
             for (Token token : tokens) {
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDeployment().getId());
-                ReceiveMessage receiveMessage = (ReceiveMessage) token.getNode(processDefinition);
+                ReceiveMessage receiveMessage = (ReceiveMessage) token.getNodeNotNull(processDefinition);
                 ExecutionContext executionContext = new ExecutionContext(processDefinition, token);
                 boolean suitable = true;
                 for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {

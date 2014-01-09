@@ -96,7 +96,7 @@ public class ProcessFactory {
         }
     }
 
-    public Process createSubprocess(ExecutionContext parentExecutionContext, ProcessDefinition processDefinition, Map<String, Object> variables) {
+    public Process createSubprocess(ExecutionContext parentExecutionContext, ProcessDefinition processDefinition, Map<String, Object> variables, int index) {
         Process parentProcess = parentExecutionContext.getProcess();
         Node subProcessNode = parentExecutionContext.getNode();
         Map<String, Object> defaultValues = processDefinition.getDefaultVariableValues();
@@ -106,7 +106,7 @@ public class ProcessFactory {
             }
         }
         Process subProcess = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchySubProcess());
-        nodeProcessDAO.create(new NodeProcess(subProcessNode, parentExecutionContext.getToken(), subProcess));
+        nodeProcessDAO.create(new NodeProcess(subProcessNode, parentExecutionContext.getToken(), subProcess, index));
         return subProcess;
     }
 

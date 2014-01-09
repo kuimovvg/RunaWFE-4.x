@@ -1,6 +1,5 @@
 package ru.runa.wfe.lang;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +8,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.SubprocessEndLog;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.execution.NodeProcess;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessFactory;
 import ru.runa.wfe.var.VariableMapping;
@@ -87,38 +87,41 @@ public class SubProcessState extends VariableContainerNode {
             }
         }
         ProcessDefinition subProcessDefinition = getSubProcessDefinition();
-        Process subProcess = processFactory.createSubprocess(executionContext, subProcessDefinition, variables);
+        Process subProcess = processFactory.createSubprocess(executionContext, subProcessDefinition, variables, 0);
         processFactory.startSubprocess(executionContext, new ExecutionContext(subProcessDefinition, subProcess));
     }
 
     @Override
-    public void leave(ExecutionContext executionContext, Transition transition) {
-        performLeave(executionContext);
-        super.leave(executionContext, transition);
-    }
-
-    protected void performLeave(ExecutionContext executionContext) {
-        List<Process> subprocesses = executionContext.getAllSubprocesses();
-        if (subprocesses.size() == 0) {
-            throw new InternalApplicationException("SubProcessState has 0 subprocesses at leave stage!");
-        }
-        Process subProcess = subprocesses.get(subprocesses.size() - 1);
-        ExecutionContext subExecutionContext = new ExecutionContext(getSubProcessDefinition(), subProcess);
-        for (VariableMapping variableMapping : variableMappings) {
-            // if this variable access is writable
-            if (variableMapping.isWritable()) {
-                // the variable is copied from the sub process mapped name
-                // to the super process variable name
-                String mappedName = variableMapping.getMappedName();
-                Object value = subExecutionContext.getVariableValue(mappedName);
-                if (value != null) {
-                    String variableName = variableMapping.getName();
-                    log.debug("copying sub process var '" + mappedName + "' to super process var '" + variableName + "': " + value);
-                    executionContext.setVariableValue(variableName, value);
+    public void leave(ExecutionContext subExecutionContext, Transition transition) {
+        if (getClass() == SubProcessState.class) {
+            Process subProcess = subExecutionContext.getProcess();
+            ExecutionContext executionContext = getParentExecutionContext(subExecutionContext);
+            for (VariableMapping variableMapping : variableMappings) {
+                // if this variable access is writable
+                if (variableMapping.isWritable()) {
+                    // the variable is copied from the sub process mapped name
+                    // to the super process variable name
+                    String mappedName = variableMapping.getMappedName();
+                    Object value = subExecutionContext.getVariableValue(mappedName);
+                    if (value != null) {
+                        String variableName = variableMapping.getName();
+                        log.debug("copying sub process var '" + mappedName + "' to super process var '" + variableName + "': " + value);
+                        executionContext.setVariableValue(variableName, value);
+                    }
                 }
             }
+            executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), subProcess));
+            super.leave(executionContext, transition);
+        } else {
+            super.leave(subExecutionContext, transition);
         }
-        executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), subProcess));
+    }
+
+    protected ExecutionContext getParentExecutionContext(ExecutionContext subExecutionContext) {
+        NodeProcess parentNodeProcess = subExecutionContext.getParentNodeProcess();
+        Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
+        ProcessDefinition superDefinition = processDefinitionLoader.getDefinition(superDefinitionId);
+        return new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
     }
 
 }
