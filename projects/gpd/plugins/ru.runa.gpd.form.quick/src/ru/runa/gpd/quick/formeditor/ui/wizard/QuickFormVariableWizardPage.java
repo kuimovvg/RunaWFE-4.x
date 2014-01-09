@@ -53,10 +53,7 @@ public class QuickFormVariableWizardPage extends WizardPage {
         if (variableDef != null) {
             this.variableDef.setTagName(variableDef.getTagName());
             this.variableDef.setName(variableDef.getName());
-            this.variableDef.setFormat(variableDef.getFormat());
             this.variableDef.setFormatLabel(variableDef.getFormatLabel());
-            this.variableDef.setJavaClassName(variableDef.getJavaClassName());
-            this.variableDef.setDescription(variableDef.getDescription());
             this.variableDef.setParams(variableDef.getParams());
         }
     }

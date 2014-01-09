@@ -32,6 +32,7 @@ public abstract class FormNode extends SwimlanedNode {
     private String validationFileName;
     private boolean useJSValidation;
     private String scriptFileName;
+    private String templateFileName;
 
     @Override
     public boolean testAttribute(Object target, String name, String value) {
@@ -192,5 +193,17 @@ public abstract class FormNode extends SwimlanedNode {
     @Override
     public boolean isExclusive() {
         return true;
+    }
+
+	public String getTemplateFileName() {
+		return templateFileName;
+	}
+
+	public void setTemplateFileName(String templateFileName) {
+		this.templateFileName = templateFileName;
+	}
+	
+	public boolean hasFormTemplate() {
+        return templateFileName != null && templateFileName.length() > 0;
     }
 }

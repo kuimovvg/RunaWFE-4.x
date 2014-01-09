@@ -28,15 +28,11 @@ import com.google.common.base.Strings;
 
 public class QuickFormXMLUtil {
     private static final String TEMPLATE_PATH = "/template/";
-    public static final String TEMPLATE = "template";
-    public static final String TEMPLATE_NAME = "name";
-    public static final String TEMPLATE_VARIABLE = "variables";
-
     public static final String ATTRIBUTE_NAME = "name";
-    public static final String ATTRIBUTE_TAG = "tag";
-    public static final String ATTRIBUTE_FORMAT = "format";
-    public static final String ATTRIBUTE_DESCRIPTION = "description";
-    public static final String ATTRIBUTE_PARAM = "param";
+    public static final String ELEMENT_FORM = "form";
+    public static final String ELEMENT_PARAM = "param";
+    public static final String ELEMENT_TAG = "tag";
+    public static final String ELEMENT_TAGS = "tags";
 
     public static String getTemplateFromRegister(Bundle bundle, String templateName) {
         String path = TEMPLATE_PATH + templateName;
@@ -48,14 +44,15 @@ public class QuickFormXMLUtil {
         }
     }
 
-    public static final byte[] convertQuickFormToXML(IFolder folder, QuickForm form) throws UnsupportedEncodingException, CoreException {
-        Document document = XmlUtil.createDocument(TEMPLATE);
-        document.getRootElement().addAttribute(TEMPLATE_NAME, form.getDelegationClassName());
-        // save in new file
-        saveTemplateToProcessDefinition(folder, form);
+    public static final byte[] convertQuickFormToXML(IFolder folder, QuickForm form, String templateFileName) throws UnsupportedEncodingException, CoreException {
+        Document document = XmlUtil.createDocument(ELEMENT_FORM);
+        
+        saveTemplateToProcessDefinition(folder, form, templateFileName);
 
+        Element tagsElement = document.getRootElement().addElement(ELEMENT_TAGS);
+        
         for (QuickFormGpdVariable templatedVariableDef : form.getVariables()) {
-            populateQuickFormVariable(document.getRootElement().addElement(TEMPLATE_VARIABLE), templatedVariableDef);
+            populateQuickFormVariable(tagsElement.addElement(ELEMENT_TAG), templatedVariableDef);
         }
 
         byte[] bytes = XmlUtil.writeXml(document, OutputFormat.createPrettyPrint());
@@ -64,13 +61,11 @@ public class QuickFormXMLUtil {
     }
 
     private static void populateQuickFormVariable(Element element, QuickFormGpdVariable templatedVariableDef) {
-        element.addElement(ATTRIBUTE_NAME).addText(getNotNullValue(templatedVariableDef.getName()));
-        element.addElement(ATTRIBUTE_TAG).addText(getNotNullValue(templatedVariableDef.getTagName().toString()));
-        element.addElement(ATTRIBUTE_FORMAT).addText(getNotNullValue(templatedVariableDef.getFormat()));
-        element.addElement(ATTRIBUTE_DESCRIPTION).addText(getNotNullValue(templatedVariableDef.getDescription()));
+        element.addElement(ATTRIBUTE_NAME).addText(getNotNullValue(templatedVariableDef.getTagName().toString()));
+        element.addElement(ELEMENT_PARAM).addText(templatedVariableDef.getName());
         if (templatedVariableDef.getParams() != null) {
             for (String param : templatedVariableDef.getParams()) {
-                element.addElement(ATTRIBUTE_PARAM).addText(param);
+                element.addElement(ELEMENT_PARAM).addText(param);
             }
         }
     }
@@ -80,36 +75,41 @@ public class QuickFormXMLUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static final QuickForm getQuickFormFromXML(IFile file, ProcessDefinition processDefinition) {
+    public static final QuickForm getQuickFormFromXML(IFile file, ProcessDefinition processDefinition, String templateFileName) {
         QuickForm quickForm = new QuickForm();
         if (file.exists() && getContentLenght(file.getLocation().toString()) != 0) {
             try {
                 Document document = XmlUtil.parseWithoutValidation(file.getContents());
-                quickForm.setDelegationClassName(document.getRootElement().attributeValue(TEMPLATE_NAME));
-                IFile confFile = ((IFolder) file.getParent()).getFile(quickForm.getDelegationClassName());
+                IFile confFile = ((IFolder) file.getParent()).getFile(templateFileName);
                 if (confFile.exists()) {
                     String configuration = IOUtils.readStream(confFile.getContents());
                     quickForm.setDelegationConfiguration(configuration);
                 }
-                List<Element> varElementsList = document.getRootElement().elements(TEMPLATE_VARIABLE);
+                Element tagsElement = document.getRootElement().element(ELEMENT_TAGS);
+                List<Element> varElementsList = tagsElement.elements(ELEMENT_TAG);
                 for (Element varElement : varElementsList) {
                     QuickFormGpdVariable templatedVariableDef = new QuickFormGpdVariable();
-                    templatedVariableDef.setTagName(varElement.elementText(ATTRIBUTE_TAG));
-                    templatedVariableDef.setName(varElement.elementText(ATTRIBUTE_NAME));
-                    templatedVariableDef.setFormat(varElement.elementText(ATTRIBUTE_FORMAT));
-                    Variable variable = VariableUtils.getVariableByName(processDefinition, templatedVariableDef.getName());
-                    if (variable == null) {
-                        continue;
-                    }
-                    templatedVariableDef.setFormatLabel(variable.getFormatLabel());
-                    templatedVariableDef.setJavaClassName(variable.getJavaClassName());
-                    templatedVariableDef.setDescription(varElement.elementText(ATTRIBUTE_DESCRIPTION));
-                    List<Element> paramElements = varElement.elements(ATTRIBUTE_PARAM);
+                    templatedVariableDef.setTagName(varElement.elementText(ATTRIBUTE_NAME));
+                    
+                    List<Element> paramElements = varElement.elements(ELEMENT_PARAM);
                     if (paramElements != null && paramElements.size() > 0) {
                         List<String> params = new ArrayList<String>();
+                        int index = 0;
                         for (Element paramElement : paramElements) {
-                            params.add(paramElement.getText());
+                        	if(index == 0) {
+                        		templatedVariableDef.setName(paramElement.getText());
+                        		Variable variable = VariableUtils.getVariableByName(processDefinition, templatedVariableDef.getName());
+                                if (variable == null) {
+                                    continue;
+                                }
+                                templatedVariableDef.setFormatLabel(variable.getFormatLabel());                              
+                        	} else {
+                        		params.add(paramElement.getText());
+                        	}
+                            
+                            index++;
                         }
+                        
                         templatedVariableDef.setParams(params.toArray(new String[0]));
                     }
 
@@ -122,22 +122,9 @@ public class QuickFormXMLUtil {
         return quickForm;
     }
 
-    public static final String getQuickFormTemplateName(IFile file) {
-        if (file.exists() && getContentLenght(file.getLocation().toString()) != 0) {
-            try {
-                Document document = XmlUtil.parseWithoutValidation(file.getContents());
-                return document.getRootElement().attributeValue(TEMPLATE_NAME);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return null;
-    }
-
-    private static void saveTemplateToProcessDefinition(IFolder folder, QuickForm quickForm) throws CoreException {
+    private static void saveTemplateToProcessDefinition(IFolder folder, QuickForm quickForm, String templateFileName) throws CoreException {
         if (!Strings.isNullOrEmpty(quickForm.getDelegationConfiguration())) {
-            String configurationFileName = quickForm.getDelegationClassName();
+            String configurationFileName = templateFileName;
             IFile configurationFile = folder.getFile(configurationFileName);
             ByteArrayInputStream stream = new ByteArrayInputStream(quickForm.getDelegationConfiguration().getBytes(Charsets.UTF_8));
             if (configurationFile.exists()) {
