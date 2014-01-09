@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script type="text/javascript" src="ckeditor.js"></script>
+		<script type="text/javascript">
+		var inited = false;
+		var bufferedHtml = "";
+		var displayedErrors = new Object();
+		function alertError(e, method) {
+			if (displayedErrors[e.message] == undefined) {
+				displayedErrors[e.message] = true;
+				var errorInfo = "Message: " + e.message + "\n";
+				errorInfo += "Name: " + e.name + "\n";
+				errorInfo += "Description: " + e.description + "\n";
+				errorInfo += "Number: " + e.number + "\n";
+				errorInfo += "On method: " + method + "\n";
+				errorInfo += "-------\n";
+				errorInfo += "Stack: " + e.stack + "\n";
+				alert(errorInfo);
+			}
+		}
+		function getHTML(sync) {
+			try {
+				if (inited) {
+					var editor = CKEDITOR.instances.editor;
+					getHTMLCallback(sync, editor.getData());
+				}
+			} catch (e) {
+				alertError(e, "getHTML");
+			}
+		}
+		function setHTML(html){
+			try {
+				bufferedHtml = html;
+				CKEDITOR.instances.editor.setData(bufferedHtml);
+			} catch (e) {
+				alertError(e, "setHTML");
+			}
+		}
+		</script>
+	</head>
+	<body style="margin: 0px; padding: 0px;" class="taskform" onload="javascript:onLoadCallback();">
+		<textarea id="editor"></textarea>
+		<!--div id="editor"/-->
+		<script type="text/javascript">
+		try {
+			CKEDITOR.replace("editor");
+			inited = true;
+		} catch (e) {
+			alertError(e, "CKEDITOR.replace");
+		}
+		</script>
+	</body>
+</html>
