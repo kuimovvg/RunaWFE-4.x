@@ -136,8 +136,8 @@ public class MultiProcessState extends SubProcessState {
             Map<String, Object> variables = Maps.newHashMap();
             for (VariableMapping variableMapping : variableMappings) {
                 // if this variable access is readable
+                String variableName = variableMapping.getName();
                 if (variableMapping.isReadable()) {
-                    String variableName = variableMapping.getName();
                     Object value = executionContext.getVariableValue(variableName);
                     String mappedName = variableMapping.getMappedName();
                     if (value != null) {
@@ -158,6 +158,10 @@ public class MultiProcessState extends SubProcessState {
                 }
                 log.debug("setting discriminator var '" + miVarName + "' to sub process var '" + miVarSubName + "': " + value);
                 variables.put(miVarSubName, value);
+                if (variableMapping.isWritable()) {
+                    log.debug("setting to null writable var '" + variableName);
+                    executionContext.setVariableValue(variableName, null);
+                }
             }
             Process subProcess = processFactory.createSubprocess(executionContext, subProcessDefinition, variables, index);
             subProcesses.add(subProcess);
