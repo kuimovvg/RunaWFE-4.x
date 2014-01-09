@@ -36,11 +36,17 @@ public class QuickFormType extends FormType {
         InputStream contentStream = formFile.getContents(true);
         if(contentStream != null && contentStream.available() != 0) {
         	Document document = XmlUtil.parseWithoutValidation(contentStream);
-            List<Element> varElementsList = document.getRootElement().elements(QuickFormXMLUtil.TEMPLATE_VARIABLE);
+        	Element tagsElement = document.getRootElement().element(QuickFormXMLUtil.ELEMENT_TAGS);
+            List<Element> varElementsList = tagsElement.elements(QuickFormXMLUtil.ELEMENT_TAG);
             for (Element varElement : varElementsList) {
-                String name = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_NAME);
-                String tag = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_TAG);
-                variableNames.put(name, READ_TAG.equals(tag) ? FormVariableAccess.READ : FormVariableAccess.WRITE);
+                String tag = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_NAME);
+                List<Element> paramElements = varElement.elements(QuickFormXMLUtil.ELEMENT_PARAM);
+                if (paramElements != null && paramElements.size() > 0) {
+                    for (Element paramElement : paramElements) {
+                    	variableNames.put(paramElement.getText(), READ_TAG.equals(tag) ? FormVariableAccess.READ : FormVariableAccess.WRITE);
+                    	break;
+                    }
+                }
             }
         }
         

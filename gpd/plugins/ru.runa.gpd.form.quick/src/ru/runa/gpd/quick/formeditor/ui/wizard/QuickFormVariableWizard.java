@@ -54,10 +54,7 @@ public class QuickFormVariableWizard extends Wizard implements INewWizard {
         Variable variable = page.getVariable();
         Preconditions.checkNotNull(variable, "Variable is null");
         variableDef.setName(variable.getName());
-        variableDef.setFormat(variable.getFormat());
         variableDef.setFormatLabel(variable.getFormatLabel());
-        variableDef.setJavaClassName(variable.getJavaClassName());
-        variableDef.setDescription(variable.getDescription());
         if (page.getParamValue() != null && !page.getParamValue().isEmpty()) {
             List<String> param = new ArrayList<String>();
             param.add(page.getParamValue());

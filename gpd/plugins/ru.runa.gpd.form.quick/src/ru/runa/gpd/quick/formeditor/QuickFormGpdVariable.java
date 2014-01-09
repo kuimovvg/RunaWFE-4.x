@@ -13,7 +13,6 @@ public class QuickFormGpdVariable extends QuickFormVariable {
 
     private String validationRule;
     private String formatLabel;
-    private String javaClassName;
 
     public String getFormatLabel() {
         return formatLabel;
@@ -30,13 +29,4 @@ public class QuickFormGpdVariable extends QuickFormVariable {
     public void setValidationRule(String validationRule) {
         this.validationRule = validationRule;
     }
-
-    public String getJavaClassName() {
-        return javaClassName;
-    }
-
-    public void setJavaClassName(String javaClassName) {
-        this.javaClassName = javaClassName;
-    }
-
 }
