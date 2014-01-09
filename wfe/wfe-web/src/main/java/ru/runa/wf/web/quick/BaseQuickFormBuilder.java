@@ -19,7 +19,6 @@ import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.commons.ftl.FreemarkerProcessor;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.form.Interaction;
-import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
@@ -28,37 +27,45 @@ import ru.runa.wfe.var.dto.QuickFormVariable;
 import com.google.common.base.Charsets;
 
 public abstract class BaseQuickFormBuilder {
-
-    private static final String TEMPLATE_VARIABLE = "variables";
-    private static final String TEMPLATE_NAME = "name";
-
+    private static final String ELEMENT_TAGS = "tags";
     private static final String ATTRIBUTE_NAME = "name";
-    private static final String ATTRIBUTE_TAG = "tag";
-    private static final String ATTRIBUTE_PARAM = "param";
+    private static final String ELEMENT_TAG = "tag";
+    private static final String ELEMENT_PARAM = "param";
 
     public String build(User user, PageContext pageContext, Interaction interaction, Long definitionId, IVariableProvider variableProvider) {
         if (interaction.hasForm()) {
             String formTemplate = new String(interaction.getFormData(), Charsets.UTF_8);
             List<QuickFormVariable> templateVariables = new ArrayList<QuickFormVariable>();
             Document document = XmlUtils.parseWithoutValidation(formTemplate);
-            String templateName = document.getRootElement().attributeValue(TEMPLATE_NAME);
-            List<Element> varElementsList = document.getRootElement().elements(TEMPLATE_VARIABLE);
+
+            Element tagsElement = document.getRootElement().element(ELEMENT_TAGS);
+            List<Element> varElementsList = tagsElement.elements(ELEMENT_TAG);
+
             for (Element varElement : varElementsList) {
-                String tag = varElement.elementText(ATTRIBUTE_TAG);
+                String tag = varElement.elementText(ATTRIBUTE_NAME);
                 QuickFormVariable quickFormVariable = new QuickFormVariable();
                 quickFormVariable.setTagName(tag);
-                quickFormVariable.setName(varElement.elementText(ATTRIBUTE_NAME));
-                List<Element> paramElements = varElement.elements(ATTRIBUTE_PARAM);
+
+                List<Element> paramElements = varElement.elements(ELEMENT_PARAM);
                 if (paramElements != null && paramElements.size() > 0) {
                     List<String> params = new ArrayList<String>();
+
+                    int index = 0;
                     for (Element paramElement : paramElements) {
-                        params.add(paramElement.getText());
+                        if (index == 0) {
+                            quickFormVariable.setName(paramElement.getText());
+                        } else {
+                            params.add(paramElement.getText());
+                        }
+
+                        index++;
                     }
+
                     quickFormVariable.setParams(params.toArray(new String[0]));
                 }
                 templateVariables.add(quickFormVariable);
             }
-            String out = quickTemplateProcess(user, pageContext, definitionId, templateName, templateVariables);
+            String out = quickTemplateProcess(user, pageContext, definitionId, interaction.getTemplateData(), templateVariables);
             if (out == null) {
                 String message = "Form template does not exist";
                 if (pageContext != null) {
@@ -76,17 +83,17 @@ public abstract class BaseQuickFormBuilder {
         }
     }
 
-    private String quickTemplateProcess(User user, PageContext pageContext, Long definitionId, String templateName,
+    private String quickTemplateProcess(User user, PageContext pageContext, Long definitionId, byte[] templateData,
             List<QuickFormVariable> templateVariables) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("variables", templateVariables);
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
         FormHashModel model = new FormHashModel(user, variableProvider, new StrutsWebHelper(pageContext));
-        byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(user, definitionId, templateName);
-        if (bytes == null) {
+
+        if (templateData == null) {
             return null;
         }
-        return FreemarkerProcessor.process(new String(bytes, Charsets.UTF_8), model);
+        return FreemarkerProcessor.process(new String(templateData, Charsets.UTF_8), model);
     }
 
     private String ftlTemplateProcess(User user, PageContext pageContext, Long definitionId, IVariableProvider variableProvider,
