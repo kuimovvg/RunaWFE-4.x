@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 
+import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.var.VariableDefinition;
 
 import com.google.common.collect.Lists;
@@ -37,7 +38,7 @@ import com.google.common.collect.Maps;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Interaction implements Serializable {
     private static final long serialVersionUID = 1L;
-
+    private String nodeId;
     private String name;
     private String description;
     private String type;
@@ -55,16 +56,20 @@ public class Interaction implements Serializable {
     protected Interaction() {
     }
 
-    public Interaction(String name, String description, String type, byte[] formData, byte[] validationData, boolean useJSValidation,
-            byte[] scriptData, byte[] cssData) {
-        this.name = name;
-        this.description = description != null ? description : "";
+    public Interaction(Node node, String type, byte[] formData, byte[] validationData, boolean useJSValidation, byte[] scriptData, byte[] cssData) {
+        this.nodeId = node.getNodeId();
+        this.name = node.getName();
+        this.description = node.getDescription() != null ? node.getDescription() : "";
         this.type = type;
         this.formData = formData;
         this.validationData = validationData;
         this.useJSValidation = useJSValidation;
         this.scriptData = scriptData;
         this.cssData = cssData;
+    }
+
+    public String getNodeId() {
+        return nodeId;
     }
 
     public String getName() {
