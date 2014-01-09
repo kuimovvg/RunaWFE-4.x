@@ -53,11 +53,11 @@ public class FreemarkerUtil {
     public static final String IMAGE_DIR = "/editor/plugins/FreemarkerTags/im/";
 
     private static String METHOD_ELEMENT_NAME() {
-        return WebServerUtils.useCKEditor3() ? "ftl_element" : "img";
+        return WebServerUtils.useCKEditor() ? "ftl_element" : "img";
     }
 
     private static String OUTPUT_ELEMENT_NAME() {
-        return WebServerUtils.useCKEditor3() ? "ftl_element_output" : "img";
+        return WebServerUtils.useCKEditor() ? "ftl_element_output" : "img";
     }
 
     private static final String ATTR_FTL_TAG_FORMAT = "ftltagformat";

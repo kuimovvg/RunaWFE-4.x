@@ -29,12 +29,19 @@ public class WebServerUtils {
      * The FCKeditor directory name.
      */
     private static String getEditorDirectoryName() {
-        return useCKEditor3() ? "CKEditor" : "FCKeditor";
+        String pref = Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR);
+        if (PrefConstants.FORM_CK_EDITOR3.equals(pref)) {
+            return "CKEditor";
+        } else if (PrefConstants.FORM_CK_EDITOR4.equals(pref)) {
+            return "CKeditor4";
+        } else {
+            return "FCKeditor";
+        }
     }
 
     public static File getEditorDirectory() {
         File result;
-        if (useCKEditor3()) {
+        if (useCKEditor()) {
             result = new File(getStateLocation().toFile(), getEditorDirectoryName());
         } else {
             result = new File(new File(getStateLocation().toFile(), getEditorDirectoryName()), "editor");
@@ -47,8 +54,11 @@ public class WebServerUtils {
 
     public static String getEditorURL() {
         String url = "http://localhost:" + SERVER_PORT;
-        if (useCKEditor3()) {
+        String pref = Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR);
+        if (PrefConstants.FORM_CK_EDITOR3.equals(pref)) {
             url += "/ckeditor.html";
+        } else if (PrefConstants.FORM_CK_EDITOR4.equals(pref)) {
+            url += "/editor.html";
         } else {
             if (WYSIWYGPlugin.DEBUG) {
                 url += "/fckeditor.debug.html";
@@ -62,8 +72,9 @@ public class WebServerUtils {
         return url;
     }
 
-    public static boolean useCKEditor3() {
-        return PrefConstants.FORM_CK_EDITOR.equals(Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR));
+    public static boolean useCKEditor() {
+        String pref = Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR);
+        return PrefConstants.FORM_CK_EDITOR3.equals(pref) || PrefConstants.FORM_CK_EDITOR4.equals(pref);
     }
     
     private static IPath getStateLocation() {
