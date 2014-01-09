@@ -47,6 +47,7 @@ public class Interaction implements Serializable {
     private boolean useJSValidation;
     private byte[] scriptData;
     private byte[] cssData;
+    private byte[] templateData;
     private final List<String> requiredVariableNames = Lists.newArrayList();
     @XmlTransient
     private final HashMap<String, VariableDefinition> variableDefinitions = Maps.newHashMap();
@@ -56,7 +57,8 @@ public class Interaction implements Serializable {
     protected Interaction() {
     }
 
-    public Interaction(Node node, String type, byte[] formData, byte[] validationData, boolean useJSValidation, byte[] scriptData, byte[] cssData) {
+    public Interaction(Node node, String type, byte[] formData, byte[] validationData, boolean useJSValidation, byte[] scriptData, byte[] cssData,
+            byte[] templateData) {
         this.nodeId = node.getNodeId();
         this.name = node.getName();
         this.description = node.getDescription() != null ? node.getDescription() : "";
@@ -66,6 +68,7 @@ public class Interaction implements Serializable {
         this.useJSValidation = useJSValidation;
         this.scriptData = scriptData;
         this.cssData = cssData;
+        this.templateData = templateData;
     }
 
     public String getNodeId() {
@@ -109,6 +112,10 @@ public class Interaction implements Serializable {
 
     public byte[] getCssData() {
         return cssData;
+    }
+
+    public byte[] getTemplateData() {
+        return templateData;
     }
 
     public List<String> getRequiredVariableNames() {

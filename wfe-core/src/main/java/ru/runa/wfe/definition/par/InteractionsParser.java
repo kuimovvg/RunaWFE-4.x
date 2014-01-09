@@ -46,6 +46,7 @@ public class InteractionsParser implements ProcessArchiveParser {
     private static final String SCRIPT_FILE_ATTRIBUTE_NAME = "scriptFile";
     private static final String JS_VALIDATION_ATTRIBUTE_NAME = "jsValidation";
     private final static String TYPE_ATTRIBUTE_NAME = "type";
+    private static final String TEMPLATE_FILE_NAME = "templateFileName";
 
     @Override
     public boolean isApplicableToEmbeddedSubprocess() {
@@ -73,6 +74,7 @@ public class InteractionsParser implements ProcessArchiveParser {
                 String validationFileName = formElement.attributeValue(VALIDATION_FILE_ATTRIBUTE_NAME);
                 boolean jsValidationEnabled = Boolean.parseBoolean(formElement.attributeValue(JS_VALIDATION_ATTRIBUTE_NAME));
                 String scriptFileName = formElement.attributeValue(SCRIPT_FILE_ATTRIBUTE_NAME);
+                String templateFileName = formElement.attributeValue(TEMPLATE_FILE_NAME);
 
                 byte[] formCode = null;
                 if (!Strings.isNullOrEmpty(fileName)) {
@@ -87,7 +89,11 @@ public class InteractionsParser implements ProcessArchiveParser {
                     scriptJs = archive.getFileDataNotNull(scriptFileName);
                 }
                 byte[] css = archive.getFileData(IFileDataProvider.FORM_CSS_FILE_NAME);
-                Interaction interaction = new Interaction(node, typeName, formCode, validationXml, jsValidationEnabled, scriptJs, css);
+                byte[] template = null;
+                if (!Strings.isNullOrEmpty(templateFileName)) {
+                    template = archive.getFileDataNotNull(templateFileName);
+                }
+                Interaction interaction = new Interaction(node, typeName, formCode, validationXml, jsValidationEnabled, scriptJs, css, template);
                 if (validationXml != null) {
                     List<String> variableNames = ValidationXmlParser.readVariableNames(processDefinition, validationFileName, validationXml);
                     List<String> requiredVarNames = ValidationXmlParser.readRequiredVariableNames(processDefinition, validationXml);
