@@ -202,7 +202,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
             message.append(Localization.getString("Swimlane.NotUsed"));
         }
         message.append("\n");
-        List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), swimlane);
+        List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), swimlane.getName());
         message.append(Localization.getString("Variable.ExistInForms")).append("\n");
         if (nodesWithVar.size() > 0) {
             confirmationRequired = true;
@@ -215,7 +215,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         }
         if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), message.toString())) {
             // remove variable from form validations
-            ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane);
+            ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane.getName());
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
             command.setProcessDefinition(getDefinition());
             command.setSwimlane(swimlane);
