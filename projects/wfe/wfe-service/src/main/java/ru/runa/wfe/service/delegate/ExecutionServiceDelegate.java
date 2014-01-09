@@ -219,9 +219,9 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId, String subprocessId) {
+    public List<GraphElementPresentation> getProcessDiagramElements(User user, Long processId, String subprocessId) {
         try {
-            return getExecutionService().getProcessGraphElements(user, processId, subprocessId);
+            return getExecutionService().getProcessDiagramElements(user, processId, subprocessId);
         } catch (Exception e) {
             throw handleException(e);
         }

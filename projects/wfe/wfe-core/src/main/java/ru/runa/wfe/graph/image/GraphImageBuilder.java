@@ -127,8 +127,8 @@ public class GraphImageBuilder {
         for (Token childToken : token.getActiveChildren()) {
             fillActiveSubprocesses(childToken);
         }
-        if (processDefinition.getNode(token.getNodeId()) != null && token.getNode(processDefinition) instanceof SubProcessState) {
-            AbstractFigure node = allNodeFigures.get(token.getNode(processDefinition).getNodeId());
+        if (processDefinition.getNode(token.getNodeId()) != null && token.getNodeNotNull(processDefinition) instanceof SubProcessState) {
+            AbstractFigure node = allNodeFigures.get(token.getNodeNotNull(processDefinition).getNodeId());
             Color color;
             if (highlightedToken != null && Objects.equal(highlightedToken.getId(), token.getId())) {
                 color = DrawProperties.getHighlightColor();

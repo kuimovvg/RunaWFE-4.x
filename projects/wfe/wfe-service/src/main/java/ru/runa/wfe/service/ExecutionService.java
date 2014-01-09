@@ -306,7 +306,7 @@ public interface ExecutionService {
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public List<GraphElementPresentation> getProcessGraphElements(User user, Long processId, String subprocessId) 
+    public List<GraphElementPresentation> getProcessDiagramElements(User user, Long processId, String subprocessId) 
             throws ProcessDoesNotExistException;
 
     /**

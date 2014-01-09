@@ -56,7 +56,6 @@ import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.AssignmentHandler;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Node;
-import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Synchronizable;
 import ru.runa.wfe.security.IdentifiableBase;
@@ -271,11 +270,8 @@ public class Process extends IdentifiableBase {
         // process
         NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
         if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
-            Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
-            ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
-            ExecutionContext superExecutionContext = new ExecutionContext(superDefinition, parentNodeProcess.getParentToken());
             log.info("Signalling to parent " + parentNodeProcess.getProcess());
-            parentNodeProcess.getParentToken().signal(superExecutionContext);
+            parentNodeProcess.getParentToken().signalInSubprocess(executionContext);
         }
 
         // make sure all the timers for this process are canceled
