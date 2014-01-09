@@ -196,8 +196,6 @@ public class MultiProcessState extends SubProcessState {
             // pre AddSubProcessIndexColumn mode
             leaveBackCompatiblePre410(executionContext, transition);
         } else {
-            List<Process> subprocesses = nodeProcessDAO.getSubprocesses(executionContext.getProcess(), executionContext.getToken().getNodeId(),
-                    executionContext.getToken(), null);
             for (VariableMapping variableMapping : variableMappings) {
                 // if this variable access is writable
                 if (variableMapping.isWritable()) {
@@ -243,22 +241,23 @@ public class MultiProcessState extends SubProcessState {
                         String subprocessVariableName = variableMapping.getMappedName();
                         String processVariableName = variableMapping.getName();
                         WfVariable variable = executionContext.getVariableProvider().getVariable(processVariableName);
+                        Object value;
                         if (variable == null || variable.getFormatNotNull() instanceof ListFormat) {
-                            List<Object> value = new ArrayList<Object>();
+                            value = new ArrayList<Object>();
                             for (Process subprocess : subprocesses) {
                                 ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
-                                value.add(subExecutionContext.getVariableValue(subprocessVariableName));
+                                ((List<Object>) value).add(subExecutionContext.getVariableValue(subprocessVariableName));
                             }
-                            log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': "
-                                    + value);
-                            executionContext.setVariableValue(processVariableName, value);
                         } else {
-                            ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocesses.get(0));
-                            Object value = subExecutionContext.getVariableValue(subprocessVariableName);
-                            log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': "
-                                    + value);
-                            executionContext.setVariableValue(processVariableName, value);
+                            if (subprocesses.size() > 0) {
+                                ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocesses.get(0));
+                                value = subExecutionContext.getVariableValue(subprocessVariableName);
+                            } else {
+                                value = null;
+                            }
                         }
+                        log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': " + value);
+                        executionContext.setVariableValue(processVariableName, value);
                     }
                 }
             }
