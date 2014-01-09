@@ -15,7 +15,6 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
@@ -96,14 +95,14 @@ public class ParContentProvider {
         }
     }
 
-    public static List<FormNode> getFormsWhereVariableUsed(IFile definitionFile, ProcessDefinition definition, Variable variable) {
+    public static List<FormNode> getFormsWhereVariableUsed(IFile definitionFile, ProcessDefinition definition, String variableName) {
         List<FormNode> result = new ArrayList<FormNode>();
         List<FormNode> allNodes = definition.getChildren(FormNode.class);
         for (FormNode formNode : allNodes) {
             if (formNode.hasFormValidation()) {
                 IFile validationFile = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
                 Map<String, Map<String, ValidatorConfig>> config = ValidatorParser.parseValidatorConfigs(validationFile);
-                if (config.containsKey(variable.getName())) {
+                if (config.containsKey(variableName)) {
                     result.add(formNode);
                 }
             }
@@ -111,11 +110,11 @@ public class ParContentProvider {
         return result;
     }
 
-    public static void rewriteFormValidationsRemoveVariable(IFile definitionFile, List<FormNode> formNodes, Variable variable) {
+    public static void rewriteFormValidationsRemoveVariable(IFile definitionFile, List<FormNode> formNodes, String variableName) {
         for (FormNode formNode : formNodes) {
             IFile validationFile = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
             Map<String, Map<String, ValidatorConfig>> fieldConfigs = ValidatorParser.parseValidatorConfigs(validationFile);
-            fieldConfigs.remove(variable.getName());
+            fieldConfigs.remove(variableName);
             ValidatorParser.writeValidatorXml(validationFile, fieldConfigs);
         }
     }
