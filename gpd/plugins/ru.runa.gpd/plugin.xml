@@ -2373,6 +2373,10 @@
           path="/template/runa.css"
           label="runa style">
     </template>
+    <template
+          label="demo processes style (based on div container)"
+          path="/template/divContainer.css">
+    </template>
  </extension>	
 
 

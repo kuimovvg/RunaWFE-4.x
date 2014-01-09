@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import com.google.common.collect.Lists;
+
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.PropertyNames;
@@ -299,7 +301,13 @@ public class VariableTypeEditorPage extends EditorPartBase {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
             Variable attribute = getAttributeSelection();
-            List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), attribute);
+            List<FormNode> nodesWithVar = Lists.newArrayList();
+            String suffix = getTypeSelection().getName() + VariableUserType.DELIM + attribute;
+            // TODO recursion will not work
+            for (Variable variable : getDefinition().getVariables(false, false, getTypeSelection().getName())) {
+                String name = variable.getName() + VariableUserType.DELIM + suffix;
+                nodesWithVar.addAll(ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), name));
+            }
             StringBuffer formNames = new StringBuffer(Localization.getString("Variable.ExistInForms")).append("\n");
             if (nodesWithVar.size() > 0) {
                 for (FormNode node : nodesWithVar) {
@@ -311,7 +319,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
             }
             if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), formNames.toString())) {
                 // remove variable from form validations
-                ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, attribute);
+                // FIXME ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, attribute);
                 // remove variable from definition
                 getTypeSelection().removeAttribute(attribute);
             }
