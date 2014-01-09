@@ -218,6 +218,12 @@ public class CalendarUtil {
         return merged.get(0);
     }
 
+    public static CalendarInterval coverIntervalsNotOrdered(CalendarInterval interval1, CalendarInterval interval2) {
+        Calendar from = CalendarUtil.findMinCalendar(interval1.getFrom(), interval2.getFrom());
+        Calendar to = CalendarUtil.findMaxCalendar(interval1.getTo(), interval2.getTo());
+        return new CalendarInterval(from, to);
+    }
+
     public static List<Calendar> subtract(Calendar oneStart, Calendar oneEnd, Calendar twoStart, Calendar twoEnd) {
         ArrayList<Calendar> result = new ArrayList<Calendar>(4);
         if (!isIntersectionStrong(oneStart, oneEnd, twoStart, twoEnd)) {
