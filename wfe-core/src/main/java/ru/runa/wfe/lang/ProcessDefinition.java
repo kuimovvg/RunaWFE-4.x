@@ -132,7 +132,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         }
         return buildVariable(name);
     }
-    
+
     private VariableDefinition buildVariable(String name) {
         int dotIndex = name.indexOf(VariableUserType.DELIM);
         if (dotIndex != -1) {
@@ -140,8 +140,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
             String attributeName = name.substring(dotIndex + 1);
             VariableDefinition parentDefinition = variablesMap.get(parentName);
             if (parentDefinition == null) {
-                throw new InternalApplicationException("No variable found by name '" + parentName + 
-                        "' when building user type attribute descriptor");
+                throw new InternalApplicationException("No variable found by name '" + parentName + "' when building user type attribute descriptor");
             }
             if (!parentDefinition.isComplex()) {
                 throw new InternalApplicationException(parentDefinition + " is not user defined type");
@@ -168,7 +167,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         Interaction interaction = interactions.get(nodeId);
         if (interaction == null) {
             InteractionNode node = (InteractionNode) getNodeNotNull(nodeId);
-            interaction = new Interaction(node.getName(), node.getDescription(), null, null, null, false, null, null);
+            interaction = new Interaction(node, null, null, null, false, null, null);
         }
         return interaction;
     }
