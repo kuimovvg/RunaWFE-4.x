@@ -202,7 +202,7 @@ public class VariableEditorPage extends EditorPartBase {
     }
 
     private void delete(Variable variable) {
-        List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), variable);
+        List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), variable.getName());
         StringBuffer formNames = new StringBuffer(Localization.getString("Variable.ExistInForms")).append("\n");
         boolean delete = false;
         if (nodesWithVar.size() > 0) {
@@ -218,7 +218,7 @@ public class VariableEditorPage extends EditorPartBase {
         }
         if (delete) {
             // remove variable from form validations
-            ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable);
+            ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable.getName());
             // remove variable from definition
             ProcessDefinitionRemoveVariablesCommand command = new ProcessDefinitionRemoveVariablesCommand();
             command.setProcessDefinition(getDefinition());

@@ -14,6 +14,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.extension.VariableFormatRegistry;
+import ru.runa.wfe.var.ComplexVariable;
 
 public class Variable extends NamedGraphElement {
     public static final String FORMAT_COMPONENT_TYPE_START = "(";
@@ -122,7 +123,7 @@ public class Variable extends NamedGraphElement {
 
     public String getJavaClassName() {
     	if (isComplex()) {
-    		return Object.class.getName();
+    		return ComplexVariable.class.getName();
     	}
         return VariableFormatRegistry.getInstance().getArtifactNotNull(getFormatClassName()).getJavaClassName();
     }

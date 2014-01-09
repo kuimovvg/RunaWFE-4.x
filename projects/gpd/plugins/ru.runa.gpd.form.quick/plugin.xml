@@ -48,5 +48,11 @@
             label="%template.table2ColumnsLayout"
             name="table2ColumnsLayout">
       </template>
+      <template
+            enabled="true"
+            filename="divContainerLayout.ftl"
+            label="div container layout (for demo processes)"
+            name="divContainerLayout">
+      </template>
    	</extension>
 </plugin>
