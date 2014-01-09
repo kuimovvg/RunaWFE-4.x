@@ -724,17 +724,18 @@ public class FormulaActionHandler extends ActionHandlerBase {
         }
         Function<? extends Object> function = FormulaActionHandlerOperations.getFunction(s);
         if (function != null) {
-            try {
-                List<Object> parameters = Lists.newArrayList();
-                do {
-                    Object param = parsePriority0();
-                    parameters.add(param);
-                } while (!nextToken().equals(")"));
-                return function.execute(parameters.toArray(new Object[parameters.size()]));
-            } catch (Exception e) {
-                log.error(function, e);
-                throw new InternalApplicationException("Unable to parse function " + function + " parameters from configuration: " + configuration);
-            }
+            List<Object> parameters = Lists.newArrayList();
+            String token;
+            do {
+                Object param = parsePriority0();
+                parameters.add(param);
+                token = nextToken();
+                if (token == null) {
+                    throw new InternalApplicationException("Unable to parse function " + function + " parameters from configuration: "
+                            + configuration);
+                }
+            } while (!token.equals(")"));
+            return function.execute(parameters.toArray(new Object[parameters.size()]));
         }
         return null;
     }
