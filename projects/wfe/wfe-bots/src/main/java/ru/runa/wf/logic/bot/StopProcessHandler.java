@@ -3,6 +3,7 @@ package ru.runa.wf.logic.bot;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.extension.ActionHandler;
@@ -24,7 +25,8 @@ public class StopProcessHandler extends TaskHandlerBase implements ActionHandler
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
         ProcessDAO processDAO = ApplicationContextFactory.getProcessDAO();
-        Long processId = (Long) paramsDef.getInputParamValueNotNull("processId", executionContext.getVariableProvider());
+        Long processId = TypeConversionUtil.convertTo(Long.class,
+                paramsDef.getInputParamValueNotNull("processId", executionContext.getVariableProvider()));
         if (processId > 0) {
             ru.runa.wfe.execution.Process process = processDAO.get(processId);
             process.end(executionContext, null);
@@ -35,7 +37,7 @@ public class StopProcessHandler extends TaskHandlerBase implements ActionHandler
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
-        Long processId = (Long) paramsDef.getInputParamValueNotNull("processId", variableProvider);
+        Long processId = TypeConversionUtil.convertTo(Long.class, paramsDef.getInputParamValueNotNull("processId", variableProvider));
         if (processId > 0) {
             Delegates.getExecutionService().cancelProcess(user, processId);
         } else {
