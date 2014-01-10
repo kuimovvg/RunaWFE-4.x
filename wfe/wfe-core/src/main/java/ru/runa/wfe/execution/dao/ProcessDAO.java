@@ -54,11 +54,11 @@ public class ProcessDAO extends GenericDAO<Process> {
                 List<String> conditions = Lists.newArrayList();
                 Map<String, Object> parameters = Maps.newHashMap();
                 if (filter.getDefinitionName() != null) {
-                    conditions.add("deployment.name=:definitionName");
+                    conditions.add("deployment.name = :definitionName");
                     parameters.put("definitionName", filter.getDefinitionName());
                 }
                 if (filter.getDefinitionVersion() != null) {
-                    conditions.add("definition.version=:definitionVersion");
+                    conditions.add("definition.version = :definitionVersion");
                     parameters.put("definitionVersion", filter.getDefinitionVersion());
                 }
                 if (filter.getId() != null) {

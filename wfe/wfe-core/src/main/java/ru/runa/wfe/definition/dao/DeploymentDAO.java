@@ -71,6 +71,14 @@ public class DeploymentDAO extends GenericDAO<Deployment> {
         return deployment;
     }
 
+    public Deployment findDeployment(String name, Long version) {
+        Deployment deployment = findFirstOrNull("from Deployment where name=? and version=?", name, version);
+        if (deployment == null) {
+            throw new DefinitionDoesNotExistException(name);
+        }
+        return deployment;
+    }
+
     /**
      * queries the database for the latest version of each process definition.
      * Process definitions are distinct by name.

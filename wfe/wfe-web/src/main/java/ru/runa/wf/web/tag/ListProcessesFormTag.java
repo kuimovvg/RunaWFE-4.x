@@ -55,7 +55,7 @@ public class ListProcessesFormTag extends BatchReturningTitledFormTag {
         BatchPresentation batchPresentation = getBatchPresentation();
         ExecutionService executionService = Delegates.getExecutionService();
 
-        int instanceCount = executionService.getAllProcessesCount(getUser(), batchPresentation);
+        int instanceCount = executionService.getProcessesCount(getUser(), batchPresentation);
         // we must call getProcesses before obtaining current page number
         // since it can be changed after getProcesses call
         List<WfProcess> processes = executionService.getProcesses(getUser(), batchPresentation);

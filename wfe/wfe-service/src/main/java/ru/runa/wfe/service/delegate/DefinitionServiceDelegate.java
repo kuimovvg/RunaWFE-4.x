@@ -87,18 +87,9 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public void undeployProcessDefinition(User user, String processName) {
+    public void undeployProcessDefinition(User user, String definitionName, Long version) {
         try {
-            getDefinitionService().undeployProcessDefinition(user, processName);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    @Override
-    public void removeProcessDefinition(User user, String definitionName, int version) {
-        try {
-            getDefinitionService().removeProcessDefinition(user, definitionName, version);
+            getDefinitionService().undeployProcessDefinition(user, definitionName, version);
         } catch (Exception e) {
             throw handleException(e);
         }

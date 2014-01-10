@@ -109,18 +109,11 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
 
     @Override
     @WebResult(name = "result")
-    public void undeployProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "processName") String processName) {
+    public void undeployProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "definitionName") String definitionName,
+            @WebParam(name = "version") Long version) {
         Preconditions.checkArgument(user != null);
-        Preconditions.checkArgument(processName != null);
-        definitionLogic.undeployProcessDefinition(user, processName);
-    }
-
-    @Override
-    @WebResult(name = "result")
-    public void removeProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "definitionName") String definitionName,
-            @WebParam(name = "version") int version) {
-        Preconditions.checkArgument(user != null);
-        throw new RuntimeException("not impl");
+        Preconditions.checkArgument(definitionName != null);
+        definitionLogic.undeployProcessDefinition(user, definitionName, version);
     }
 
     @Override
@@ -187,7 +180,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
         Preconditions.checkArgument(name != null);
         return definitionLogic.getProcessDefinitionHistory(user, name);
     }
-    
+
     @Override
     @WebResult(name = "result")
     public List<Variable> getVariableDefinitionsWS(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
