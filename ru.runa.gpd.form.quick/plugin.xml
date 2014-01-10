@@ -44,13 +44,13 @@
          point="ru.runa.gpd.form.quick.templates">
       <template
             enabled="true"
-            filename="table2ColumnsLayout.ftl"
+            filename="table2ColumnsLayout.ftl.template"
             label="%template.table2ColumnsLayout"
             name="table2ColumnsLayout">
       </template>
       <template
             enabled="true"
-            filename="divContainerLayout.ftl"
+            filename="divContainerLayout.ftl.template"
             label="div container layout (for demo processes)"
             name="divContainerLayout">
       </template>
