@@ -9,7 +9,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.audit.SubprocessEndLog;
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -96,21 +95,20 @@ public class MultiProcessState extends SubProcessState {
         }
 
         Object discriminatorValue = null;
-        if (miDiscriminatorType != null) {
-            if ("variable".equals(miDiscriminatorType) && miVarName != null) {
-                discriminatorValue = executionContext.getVariableValue(miVarName);
-            } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
-                Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
-                Group group = TypeConversionUtil.convertTo(Group.class, miVar);
-                discriminatorValue = Lists.newArrayList(executorDAO.getGroupActors(group));
-            } else if ("relation".equals(miDiscriminatorType) && miVarName != null && miRelationDiscriminatorTypeParam != null) {
-                String relationName = (String) ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
-                Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(),
-                        miRelationDiscriminatorTypeParam);
-                Executor rightExecutor = TypeConversionUtil.convertTo(Executor.class, relationParam);
-                discriminatorValue = getActorsByRelation(relationName, rightExecutor);
-            }
-        } else {
+        if ("variable".equals(miDiscriminatorType) && miVarName != null) {
+            discriminatorValue = executionContext.getVariableValue(miVarName);
+        } else if ("group".equals(miDiscriminatorType) && miVarName != null) {
+            Object miVar = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
+            Group group = TypeConversionUtil.convertTo(Group.class, miVar);
+            discriminatorValue = Lists.newArrayList(executorDAO.getGroupActors(group));
+        } else if ("relation".equals(miDiscriminatorType) && miVarName != null && miRelationDiscriminatorTypeParam != null) {
+            String relationName = (String) ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(), miVarName);
+            Object relationParam = ExpressionEvaluator.evaluateVariableNotNull(executionContext.getVariableProvider(),
+                    miRelationDiscriminatorTypeParam);
+            Executor rightExecutor = TypeConversionUtil.convertTo(Executor.class, relationParam);
+            discriminatorValue = getActorsByRelation(relationName, rightExecutor);
+        }
+        if (discriminatorValue == null) {
             for (VariableMapping variableMapping : variableMappings) {
                 if (variableMapping.isMultiinstanceLink() && variableMapping.isReadable()) {
                     String variableName = variableMapping.getName();
@@ -123,11 +121,11 @@ public class MultiProcessState extends SubProcessState {
             }
         }
         if (discriminatorValue == null) {
-            if (SystemProperties.isV3CompatibilityMode()) {
-                discriminatorValue = new ArrayList<Object>();
-            } else {
-                throw new RuntimeException("discriminatorValue == null");
-            }
+            // if (SystemProperties.isV3CompatibilityMode()) {
+            // discriminatorValue = new ArrayList<Object>();
+            // } else {
+            throw new RuntimeException("discriminatorValue == null");
+            // }
         }
         int subprocessesCount = TypeConversionUtil.getArraySize(discriminatorValue);
         List<Process> subProcesses = Lists.newArrayList();
@@ -171,7 +169,8 @@ public class MultiProcessState extends SubProcessState {
             processFactory.startSubprocess(executionContext, subExecutionContext);
         }
         if (subProcesses.size() == 0) {
-            leave(executionContext);
+            log.debug("Leaving multisubprocess state due to 0 subprocesses");
+            super.leave(executionContext, null);
         }
     }
 

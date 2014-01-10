@@ -244,8 +244,7 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public byte[] getFile(User user, Long definitionId, String fileName) {
         ProcessDefinition definition = getDefinition(definitionId);
-        // TODO temporary solution for quick form templates access
-        if (!ProcessArchive.UNSECURED_FILE_NAMES.contains(fileName) && !fileName.endsWith("ftl")) {
+        if (!ProcessArchive.UNSECURED_FILE_NAMES.contains(fileName)) {
             checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         }
         if (ProcessArchive.PAR_FILE.equals(fileName)) {
