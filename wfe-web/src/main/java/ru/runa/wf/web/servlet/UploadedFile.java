@@ -4,6 +4,16 @@ import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.base.Objects;
 
+// TODO s:
+/*
+ * Options not implemented: acceptFileTypes, maxFileSize
+ * 
+ * Validation error breaks on next line
+ * 
+ * Remove buttons in EditListTag break on next lines
+ * 
+ * IE file removal does not remove it on server-side eventually
+ */
 public class UploadedFile {
     private String name;
     private String size;
@@ -12,14 +22,13 @@ public class UploadedFile {
 
     public UploadedFile() {
     }
-    
+
     public UploadedFile(FileVariable value) {
         this.name = value.getName();
         this.mimeType = value.getContentType();
         setContent(value.getData());
     }
 
-    
     public String getName() {
         return name;
     }

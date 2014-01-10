@@ -408,7 +408,9 @@ public class AdminScriptRunner {
 
     private List<WfProcess> getProcesses(Element element) {
         String processName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
-        return executionLogic.getProcessesForDefinitionName(user, processName);
+        ProcessFilter filter = new ProcessFilter();
+        filter.setDefinitionName(processName);
+        return executionLogic.getProcesses(user, filter);
     }
 
     public void addPermissionsOnDefinition(Element element) {

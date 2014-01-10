@@ -92,7 +92,7 @@ public class ImportDataFileAction extends ActionBase {
             List<WfDefinition> definitions = Delegates.getDefinitionService().getLatestProcessDefinitions(getLoggedUser(request),
                     BatchPresentationFactory.DEFINITIONS.createDefault());
             for (WfDefinition definition : definitions) {
-                Delegates.getDefinitionService().undeployProcessDefinition(getLoggedUser(request), definition.getName());
+                Delegates.getDefinitionService().undeployProcessDefinition(getLoggedUser(request), definition.getName(), null);
             }
 
             List<BotStation> botStations = Delegates.getBotService().getBotStations();
