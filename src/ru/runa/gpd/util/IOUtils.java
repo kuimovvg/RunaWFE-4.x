@@ -55,6 +55,9 @@ public class IOUtils {
     }
 
     public static boolean looksLikeFormFile(String fileName) {
+        if (fileName.endsWith("index.html")) {
+            return false;
+        }
         String ext = getExtension(fileName);
         if (ext.length() == 0) {
             return true;
