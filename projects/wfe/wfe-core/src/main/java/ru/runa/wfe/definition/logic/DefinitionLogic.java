@@ -180,13 +180,11 @@ public class DefinitionLogic extends WFCommonLogic {
         return result;
     }
 
-    public void undeployProcessDefinition(User user, String definitionName) {
+    public void undeployProcessDefinition(User user, String definitionName, Long version) {
         Preconditions.checkNotNull(definitionName, "definitionName must be specified.");
-        Deployment deployment = deploymentDAO.findLatestDeployment(definitionName);
-        checkPermissionAllowed(user, deployment, DefinitionPermission.UNDEPLOY_DEFINITION);
-        permissionDAO.deleteAllPermissions(deployment);
         ProcessFilter filter = new ProcessFilter();
         filter.setDefinitionName(definitionName);
+        filter.setDefinitionVersion(version);
         List<Process> processes = processDAO.getProcesses(filter);
         for (Process process : processes) {
             if (nodeProcessDAO.getNodeProcessByChild(process.getId()) != null) {
@@ -194,24 +192,29 @@ public class DefinitionLogic extends WFCommonLogic {
                         .getDeployment().getName());
             }
         }
-        deleteProcessDefinitionsByName(user, definitionName);
-        log.debug("Process definition " + deployment + " was undeployed");
+        if (version == null) {
+            Deployment latestDeployment = deploymentDAO.findLatestDeployment(definitionName);
+            checkPermissionAllowed(user, latestDeployment, DefinitionPermission.UNDEPLOY_DEFINITION);
+            permissionDAO.deleteAllPermissions(latestDeployment);
+            List<Deployment> deployments = deploymentDAO.findAllDeploymentVersions(definitionName);
+            for (Deployment deployment : deployments) {
+                removeDeployment(user, deployment);
+            }
+            log.info("Process definition " + latestDeployment + " successfully undeployed");
+        } else {
+            Deployment deployment = deploymentDAO.findDeployment(definitionName, version);
+            removeDeployment(user, deployment);
+            log.info("Process definition " + deployment + " successfully undeployed");
+        }
     }
 
-    /**
-     * Deletes all Process Definitions from the database
-     */
-    private void deleteProcessDefinitionsByName(User user, String definitionName) {
-        List<Deployment> deployments = deploymentDAO.findAllDeploymentVersions(definitionName);
-        for (Deployment deployment : deployments) {
-            // delete all the processes of this definition
-            List<Process> processes = processDAO.findAllProcesses(deployment.getId());
-            for (Process process : processes) {
-                deleteProcess(process);
-            }
-            deploymentDAO.delete(deployment);
-            systemLogDAO.create(new ProcessDefinitionDeleteLog(user.getActor().getId(), definitionName, deployment.getVersion()));
+    private void removeDeployment(User user, Deployment deployment) {
+        List<Process> processes = processDAO.findAllProcesses(deployment.getId());
+        for (Process process : processes) {
+            deleteProcess(process);
         }
+        deploymentDAO.delete(deployment);
+        systemLogDAO.create(new ProcessDefinitionDeleteLog(user.getActor().getId(), deployment.getName(), deployment.getVersion()));
     }
 
     public Interaction getInteraction(User user, Long taskId) {

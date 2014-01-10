@@ -95,7 +95,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     @WebResult(name = "result")
-    public int getAllProcessesCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
+    public int getProcessesCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
@@ -111,6 +111,14 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
             batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
         }
         return executionLogic.getProcesses(user, batchPresentation);
+    }
+
+    @Override
+    @WebResult(name = "result")
+    public List<WfProcess> getProcessesByFilter(@WebParam(name = "user") User user, @WebParam(name = "filter") ProcessFilter filter) {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(filter != null);
+        return executionLogic.getProcesses(user, filter);
     }
 
     @Override

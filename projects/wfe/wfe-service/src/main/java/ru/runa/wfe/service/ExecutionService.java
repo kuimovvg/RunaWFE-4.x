@@ -71,7 +71,7 @@ public interface ExecutionService {
      * @param batchPresentation
      * @return not <code>null</code>
      */
-    public int getAllProcessesCount(User user, BatchPresentation batchPresentation);
+    public int getProcessesCount(User user, BatchPresentation batchPresentation);
 
     /**
      * Gets processes for {@link BatchPresentation}.
@@ -82,6 +82,17 @@ public interface ExecutionService {
      * @return not <code>null</code>
      */
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation);
+
+    /**
+     * Gets processes for {@link ProcessFilter}.
+     * 
+     * @param user
+     *            authorized user
+     * @param filter
+     *            search criterias
+     * @return not <code>null</code>
+     */
+    public List<WfProcess> getProcessesByFilter(User user, ProcessFilter filter);
 
     /**
      * Gets process by id.
@@ -284,14 +295,14 @@ public interface ExecutionService {
      *            process id
      * @param taskId
      *            active task id, can be <code>null</code>
-     * @param childProcessId 
+     * @param childProcessId
      *            active subprocess state, can be <code>null</code>
      * @param subprocessId
-     *            embedded subprocess id, can be <code>null</code> 
+     *            embedded subprocess id, can be <code>null</code>
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId, String subprocessId) 
+    public byte[] getProcessDiagram(User user, Long processId, Long taskId, Long childProcessId, String subprocessId)
             throws ProcessDoesNotExistException;
 
     /**
@@ -306,7 +317,7 @@ public interface ExecutionService {
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public List<GraphElementPresentation> getProcessDiagramElements(User user, Long processId, String subprocessId) 
+    public List<GraphElementPresentation> getProcessDiagramElements(User user, Long processId, String subprocessId)
             throws ProcessDoesNotExistException;
 
     /**
@@ -321,7 +332,8 @@ public interface ExecutionService {
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId) throws ProcessDoesNotExistException;
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId)
+            throws ProcessDoesNotExistException;
 
     /**
      * Gets process history graphical diagram PNG image.
@@ -373,7 +385,7 @@ public interface ExecutionService {
     /**
      * Removes processes by filter criterias.
      */
-    public void removeProcesses(User user, ProcessFilter filter) throws ProcessDoesNotExistException, ParentProcessExistsException;
+    public void removeProcesses(User user, ProcessFilter filter) throws ParentProcessExistsException;
 
     /**
      * Gets system logs for {@link BatchPresentation}.

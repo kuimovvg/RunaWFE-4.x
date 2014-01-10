@@ -50,7 +50,7 @@ public class UndeployProcessDefinitionAction extends ActionBase {
         for (Long id : idsForm.getIds()) {
             try {
                 WfDefinition definition = Delegates.getDefinitionService().getProcessDefinition(getLoggedUser(request), id);
-                Delegates.getDefinitionService().undeployProcessDefinition(getLoggedUser(request), definition.getName());
+                Delegates.getDefinitionService().undeployProcessDefinition(getLoggedUser(request), definition.getName(), null);
             } catch (Exception e) {
                 addError(request, e);
             }

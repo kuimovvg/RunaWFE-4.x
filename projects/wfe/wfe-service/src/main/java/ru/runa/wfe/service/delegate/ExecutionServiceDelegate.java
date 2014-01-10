@@ -66,9 +66,9 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public int getAllProcessesCount(User user, BatchPresentation batchPresentation) {
+    public int getProcessesCount(User user, BatchPresentation batchPresentation) {
         try {
-            return getExecutionService().getAllProcessesCount(user, batchPresentation);
+            return getExecutionService().getProcessesCount(user, batchPresentation);
         } catch (Exception e) {
             throw handleException(e);
         }
@@ -78,6 +78,15 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
         try {
             return getExecutionService().getProcesses(user, batchPresentation);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public List<WfProcess> getProcessesByFilter(User user, ProcessFilter filter) {
+        try {
+            return getExecutionService().getProcessesByFilter(user, filter);
         } catch (Exception e) {
             throw handleException(e);
         }

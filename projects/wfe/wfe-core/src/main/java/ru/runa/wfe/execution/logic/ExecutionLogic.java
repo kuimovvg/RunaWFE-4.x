@@ -89,20 +89,11 @@ public class ExecutionLogic extends WFCommonLogic {
     private static final SecuredObjectType[] PROCESS_EXECUTION_CLASSES = { SecuredObjectType.PROCESS };
 
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
-        // Uncomment for WFDEMO (default ordering in processes is decrease time
-        // start)
-        /*
-         * if(batchPresentation.isDefault()){
-         * batchPresentation.setFieldsToSort(new int[]{2}, new
-         * boolean[]{false}); }
-         */
         List<Process> list = getPersistentObjects(user, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES, true);
         return getProcesses(list);
     }
 
-    public List<WfProcess> getProcessesForDefinitionName(User user, String processDefinitionName) {
-        ProcessFilter filter = new ProcessFilter();
-        filter.setDefinitionName(processDefinitionName);
+    public List<WfProcess> getProcesses(User user, ProcessFilter filter) {
         List<Process> process = processDAO.getProcesses(filter);
         process = filterIdentifiable(user, process, ProcessPermission.READ);
         return getProcesses(process);

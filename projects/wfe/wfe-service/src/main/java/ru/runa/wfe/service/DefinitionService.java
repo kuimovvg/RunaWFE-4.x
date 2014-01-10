@@ -116,28 +116,19 @@ public interface DefinitionService {
     public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException, DefinitionDoesNotExistException;
 
     /**
-     * Deletes process definition by name with all versions and all processes.
-     * 
-     * @param user
-     *            authorized user
-     * @param definitionName
-     *            process definition name
-     * @throws DefinitionDoesNotExistException
-     * @throws ParentProcessExistsException
-     */
-    public void undeployProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException, ParentProcessExistsException;
-
-    /**
-     * Deletes process definition by name of specified version.
+     * Deletes process definition by name. If version is not specified all
+     * versions will be deleted.
      * 
      * @param user
      *            authorized user
      * @param definitionName
      *            process definition name
      * @param version
+     *            version or <code>null</code>
      * @throws DefinitionDoesNotExistException
      */
-    public void removeProcessDefinition(User user, String definitionName, int version) throws DefinitionDoesNotExistException;
+    public void undeployProcessDefinition(User user, String definitionName, Long version) throws DefinitionDoesNotExistException,
+            ParentProcessExistsException;
 
     /**
      * Retrieves file data from process definition archive.
