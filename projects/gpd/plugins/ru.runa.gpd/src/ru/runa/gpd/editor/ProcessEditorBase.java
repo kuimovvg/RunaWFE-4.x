@@ -2,12 +2,17 @@ package ru.runa.gpd.editor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.draw2d.IFigure;
@@ -40,6 +45,7 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.gef.GEFImageHelper;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.gef.part.graph.ElementGraphicalEditPart;
+import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
@@ -278,30 +284,39 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
         } catch (Exception e) {
             PluginLogger.logError(e);
         }
-        // TODO this is nor working with embedded subprocesses
-//        try {
-//            Set<String> usedFormFiles = new HashSet<String>();
-//            usedFormFiles.add("index.html");
-//            List<FormNode> formNodes = definition.getChildren(FormNode.class);
-//            for (FormNode formNode : formNodes) {
-//                if (formNode.hasForm()) {
-//                    usedFormFiles.add(formNode.getFormFileName());
-//                }
-//                if (formNode.hasFormValidation()) {
-//                    usedFormFiles.add(formNode.getValidationFileName());
-//                }
-//            }
-//            IFolder folder = (IFolder) definitionFile.getParent();
-//            IResource[] children = folder.members(true);
-//            for (IResource resource : children) {
-//                boolean interested = IOUtils.looksLikeFormFile(resource.getName());
-//                if (interested && !usedFormFiles.contains(resource.getName())) {
-//                    resource.delete(true, null);
-//                }
-//            }
-//        } catch (CoreException e) {
-//            PluginLogger.logError("Cleaning unused form files", e);
-//        }
+        ProcessDefinition mainProcessDefinition = definition;
+        while (mainProcessDefinition instanceof SubprocessDefinition) {
+            mainProcessDefinition = (ProcessDefinition) mainProcessDefinition.getParent();
+        }
+        try {
+            Set<String> usedFormFiles = new HashSet<String>();
+            fetchUsedFormFiles(usedFormFiles, mainProcessDefinition);
+            for (SubprocessDefinition subprocessDefinition : mainProcessDefinition.getEmbeddedSubprocesses().values()) {
+                fetchUsedFormFiles(usedFormFiles, subprocessDefinition);
+            }
+            IFolder folder = (IFolder) definitionFile.getParent();
+            IResource[] children = folder.members(true);
+            for (IResource resource : children) {
+                boolean interested = IOUtils.looksLikeFormFile(resource.getName());
+                if (interested && !usedFormFiles.contains(resource.getName())) {
+                    resource.delete(true, null);
+                }
+            }
+        } catch (CoreException e) {
+            PluginLogger.logError("Cleaning unused form files", e);
+        }
+    }
+    
+    private void fetchUsedFormFiles(Set<String> usedFormFiles, ProcessDefinition processDefinition) {
+        List<FormNode> formNodes = processDefinition.getChildren(FormNode.class);
+        for (FormNode formNode : formNodes) {
+            if (formNode.hasForm()) {
+                usedFormFiles.add(formNode.getFormFileName());
+            }
+            if (formNode.hasFormValidation()) {
+                usedFormFiles.add(formNode.getValidationFileName());
+            }
+        }
     }
 
     public IFile getDefinitionFile() {
