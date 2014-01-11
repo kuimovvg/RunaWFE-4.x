@@ -117,7 +117,7 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        testHelper.getDefinitionService().undeployProcessDefinition(testHelper.getAdminUser(), PROCESS_NAME);
+        testHelper.getDefinitionService().undeployProcessDefinition(testHelper.getAdminUser(), PROCESS_NAME, null);
         testHelper.releaseResources();
         testHelper.removeSubstitutionCriteria(substitutionCriteria_always);
         testHelper.removeSubstitutionCriteria(substitutionCriteria_requester);
