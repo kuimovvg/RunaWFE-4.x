@@ -95,7 +95,7 @@ public class GetTaskListTest extends ServletTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        th.getDefinitionService().undeployProcessDefinition(th.getAuthorizedPerformerUser(), PROCESS_NAME);
+        th.getDefinitionService().undeployProcessDefinition(th.getAuthorizedPerformerUser(), PROCESS_NAME, null);
         parBytes = null;
         th.releaseResources();
         th = null;

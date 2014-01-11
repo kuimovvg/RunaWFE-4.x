@@ -237,7 +237,7 @@ public class WfServiceTestHelper extends ServiceTestHelper {
     public void undeployValidProcessDefinition() throws InternalApplicationException {
         Collection<Permission> undeployPermissions = Lists.newArrayList(DefinitionPermission.UNDEPLOY_DEFINITION);
         setPermissionsToAuthorizedPerformerOnDefinitionByName(undeployPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
-        definitionService.undeployProcessDefinition(getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
+        definitionService.undeployProcessDefinition(getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
     }
 
     public void deployValidProcessDefinition(String parResourceName) throws IOException {
@@ -251,7 +251,7 @@ public class WfServiceTestHelper extends ServiceTestHelper {
              {
         Collection<Permission> undeployPermissions = Lists.newArrayList(DefinitionPermission.UNDEPLOY_DEFINITION);
         setPermissionsToAuthorizedPerformerOnDefinitionByName(undeployPermissions, parDefinitionName);
-        definitionService.undeployProcessDefinition(getAuthorizedPerformerUser(), parDefinitionName);
+        definitionService.undeployProcessDefinition(getAuthorizedPerformerUser(), parDefinitionName, null);
     }
 
     private void createDelegates() {
