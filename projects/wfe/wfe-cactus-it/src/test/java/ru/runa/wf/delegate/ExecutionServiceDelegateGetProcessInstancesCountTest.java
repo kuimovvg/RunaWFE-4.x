@@ -67,26 +67,26 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
     }
 
     public void testGetProcessInstanceCountByAuthorizedSubject() throws Exception {
-        int processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        int processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", 0, processesCount);
         int expectedCount = 4;
         startInstances(expectedCount);
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
     }
 
     public void testGetProcessInstanceCountByUnauthorizedSubject() throws Exception {
-        int processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        int processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", 0, processesCount);
         int expectedCount = 4;
         startInstances(expectedCount);
-        processesCount = executionService.getAllProcessesCount(helper.getUnauthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getUnauthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", 0, processesCount);
     }
 
     public void testGetProcessInstanceCountByFakeSubject() throws Exception {
         try {
-            executionService.getAllProcessesCount(helper.getFakeUser(), batchPresentation);
+            executionService.getProcessesCount(helper.getFakeUser(), batchPresentation);
             fail("testGetAllProcessInstanceStubsByFakeSubject, no AuthenticationException");
         } catch (AuthenticationException e) {
         }
@@ -94,18 +94,18 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
 
     public void testGetProcessInstanceCountByNullSubject() throws Exception {
         try {
-            executionService.getAllProcessesCount(null, batchPresentation);
+            executionService.getProcessesCount(null, batchPresentation);
             fail("testGetAllProcessInstanceStubsByNullSubject, no IllegalArgumentException");
         } catch (IllegalArgumentException e) {
         }
     }
 
     public void testGetProcessInstanceCountByAuthorizedSubjectWithoutREADPermission() throws Exception {
-        int processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        int processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", 0, processesCount);
         int expectedCount = 4;
         startInstances(expectedCount);
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
 
         List<WfProcess> processInstanceStubs = executionService.getProcesses(helper.getAuthorizedPerformerUser(), batchPresentation);
@@ -116,43 +116,43 @@ public class ExecutionServiceDelegateGetProcessInstancesCountTest extends Servle
             helper.setPermissionsToAuthorizedPerformerOnProcessInstance(nullPermissions, processInstanceStubs.get(i));
         }
 
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount - withoutPermCount, processesCount);
     }
 
     public void testGetProcessInstanceCountWithSorting() throws Exception {
-        int processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        int processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", 0, processesCount);
         int expectedCount = 20;
         startInstances(expectedCount);
         batchPresentation.setFieldsToSort(new int[] { 0 }, new boolean[] { true });
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
 
         batchPresentation.setFieldsToSort(new int[] { 0 }, new boolean[] { false });
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
 
         batchPresentation.setFieldsToSort(new int[] { 0, 1, 2, 3 }, new boolean[] { true, false, true, false });
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
     }
 
     public void testGetProcessInstanceCountWithGrouping() throws Exception {
-        int processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        int processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", 0, processesCount);
         int expectedCount = 20;
         startInstances(expectedCount);
         batchPresentation.setFieldsToGroup(new int[] { 0 });
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
 
         batchPresentation.setFieldsToGroup(new int[] { 0, 1 });
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
 
         batchPresentation.setFieldsToGroup(new int[] { 0, 1, 2, 3 });
-        processesCount = executionService.getAllProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
+        processesCount = executionService.getProcessesCount(helper.getAuthorizedPerformerUser(), batchPresentation);
         assertEquals("Incorrect processes array", expectedCount, processesCount);
     }
 

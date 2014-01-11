@@ -93,6 +93,9 @@
                 <version>3.0</version>
                     <configuration>
                         <includes>
+                            <include>ru/runa/junit/*.java</include>
+                            <include>ru/runa/af/service/*.java</include>
+                            <include>ru/runa/wf/service/*.java</include>
                             <include>ru/runa/af/delegate/*.java</include>
                             <include>ru/runa/af/PermissionTest.java</include>
                             <include>ru/runa/wf/concurrent/*.java</include>
@@ -101,6 +104,9 @@
                             <include>ru/runa/wf/jpdl/*Test.java</include>
                         </includes>
                         <testIncludes>
+                            <testInclude>ru/runa/junit/*.java</testInclude>
+                            <testInclude>ru/runa/af/service/*.java</testInclude>
+                            <testInclude>ru/runa/wf/service/*.java</testInclude>
                             <testInclude>ru/runa/af/delegate/*.java</testInclude>
                             <testInclude>ru/runa/af/PermissionTest</testInclude>
                             <testInclude>ru/runa/wf/concurrent/*.java</testInclude>

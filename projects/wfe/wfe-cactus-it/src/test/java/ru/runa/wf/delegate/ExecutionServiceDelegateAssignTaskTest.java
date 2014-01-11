@@ -104,7 +104,7 @@ public class ExecutionServiceDelegateAssignTaskTest extends ServletTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        testHelper.getDefinitionService().undeployProcessDefinition(testHelper.getAdminUser(), PROCESS_NAME);
+        testHelper.getDefinitionService().undeployProcessDefinition(testHelper.getAdminUser(), PROCESS_NAME, null);
         testHelper.releaseResources();
         super.tearDown();
     }

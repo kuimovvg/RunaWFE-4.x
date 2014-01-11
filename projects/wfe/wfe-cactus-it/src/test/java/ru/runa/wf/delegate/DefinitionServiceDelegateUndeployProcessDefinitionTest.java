@@ -66,7 +66,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
     }
 
     public void testUndeployProcessByAuthorizedPerformer() throws Exception {
-        definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
+        definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
         List<WfDefinition> deployedProcesses = definitionService.getLatestProcessDefinitions(helper.getAuthorizedPerformerUser(),
                 helper.getProcessDefinitionBatchPresentation());
 
@@ -75,7 +75,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
         }
 
         try {
-            definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
+            definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
             fail("testUndeployProcessByAuthorizedPerformer allows undeploy process definition after undeployment");
         } catch (DefinitionDoesNotExistException e) {
         }
@@ -87,7 +87,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
             helper.setPermissionsToAuthorizedPerformerOnDefinitionByName(undeployPermissions, WfServiceTestHelper.VALID_PROCESS_NAME);
 
             try {
-                definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
+                definitionService.undeployProcessDefinition(helper.getAuthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
                 fail("testUndeployProcessByAuthorizedPerformerWithoutUNDEPLOYPermission, no AuthorizationException");
             } catch (AuthorizationException e1) {
             }
@@ -98,7 +98,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
     public void testUndeployProcessByUnauthorizedPerformer() throws Exception {
         try {
-            definitionService.undeployProcessDefinition(helper.getUnauthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
+            definitionService.undeployProcessDefinition(helper.getUnauthorizedPerformerUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
             fail("testUndeployProcessByUnauthorizedPerformer, no AuthorizationException");
         } catch (AuthorizationException e1) {
         } finally {
@@ -108,7 +108,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
     public void testUndeployProcessByFakePerformer() throws Exception {
         try {
-            definitionService.undeployProcessDefinition(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME);
+            definitionService.undeployProcessDefinition(helper.getFakeUser(), WfServiceTestHelper.VALID_PROCESS_NAME, null);
             fail("testUndeployProcessByFakePerformer, no AuthenticationException");
         } catch (AuthenticationException e1) {
         } finally {
@@ -118,7 +118,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
     public void testUndeployProcessByNullPerformer() throws Exception {
         try {
-            definitionService.undeployProcessDefinition(null, WfServiceTestHelper.VALID_PROCESS_NAME);
+            definitionService.undeployProcessDefinition(null, WfServiceTestHelper.VALID_PROCESS_NAME, null);
             fail("testUndeployProcessByNullPerformer, no IllegalArgumentException");
         } catch (IllegalArgumentException e1) {
         } finally {
@@ -129,7 +129,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
     public void testUndeployProcessWithNullProcessName() throws Exception {
         try {
-            definitionService.undeployProcessDefinition(helper.getUnauthorizedPerformerUser(), null);
+            definitionService.undeployProcessDefinition(helper.getUnauthorizedPerformerUser(), null, null);
             fail("testUndeployProcessWithNullProcessName allows undeploy process definition with NULL name");
         } catch (IllegalArgumentException e) {
         } finally {
@@ -139,7 +139,7 @@ public class DefinitionServiceDelegateUndeployProcessDefinitionTest extends Serv
 
     public void testUndeployProcessWithUnexistentProcessName() throws Exception {
         try {
-            definitionService.undeployProcessDefinition(helper.getUnauthorizedPerformerUser(), "Unexistent_Process_definition_Name_000");
+            definitionService.undeployProcessDefinition(helper.getUnauthorizedPerformerUser(), "Unexistent_Process_definition_Name_000", null);
             fail("testUndeployProcessWithNullProcessName allows undeploy process definition with unexistent name");
         } catch (DefinitionDoesNotExistException e) {
         } finally {

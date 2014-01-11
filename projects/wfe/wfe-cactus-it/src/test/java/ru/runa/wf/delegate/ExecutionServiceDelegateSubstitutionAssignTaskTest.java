@@ -105,7 +105,7 @@ public class ExecutionServiceDelegateSubstitutionAssignTaskTest extends ServletT
 
     @Override
     protected void tearDown() throws Exception {
-        testHelper.getDefinitionService().undeployProcessDefinition(testHelper.getAdminUser(), PROCESS_NAME);
+        testHelper.getDefinitionService().undeployProcessDefinition(testHelper.getAdminUser(), PROCESS_NAME, null);
         testHelper.releaseResources();
         testHelper.removeSubstitutionCriteria(substitutionCriteria_always);
         super.tearDown();
