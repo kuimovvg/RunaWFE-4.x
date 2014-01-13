@@ -7,6 +7,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -80,11 +81,15 @@ public class QuickFormXMLUtil {
         if (file.exists() && getContentLenght(file.getLocation().toString()) != 0) {
             try {
                 Document document = XmlUtil.parseWithoutValidation(file.getContents());
-                IFile confFile = ((IFolder) file.getParent()).getFile(templateFileName);
-                if (confFile.exists()) {
-                    String configuration = IOUtils.readStream(confFile.getContents());
-                    quickForm.setDelegationConfiguration(configuration);
+                
+                if(StringUtils.isNotEmpty(templateFileName)) {
+                	IFile confFile = ((IFolder) file.getParent()).getFile(templateFileName);
+                    if (confFile.exists()) {
+                        String configuration = IOUtils.readStream(confFile.getContents());
+                        quickForm.setDelegationConfiguration(configuration);
+                    }
                 }
+                
                 Element tagsElement = document.getRootElement().element(ELEMENT_TAGS);
                 List<Element> varElementsList = tagsElement.elements(ELEMENT_TAG);
                 for (Element varElement : varElementsList) {
