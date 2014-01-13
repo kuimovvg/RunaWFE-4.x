@@ -454,6 +454,10 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         addButton(buttonsBar, "editor.button.converting", new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
+            	if(StringUtils.isEmpty(formNode.getTemplateFileName())) {
+            		return;
+            	}
+            	
             	QuickFormConvertor.convertQuickFormToSimple(new ConverterSource() {					
 					@Override
 					public IFile getQuickFormFile() {
