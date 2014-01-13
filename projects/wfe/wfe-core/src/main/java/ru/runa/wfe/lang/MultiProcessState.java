@@ -156,13 +156,15 @@ public class MultiProcessState extends SubProcessState {
                 }
                 log.debug("setting discriminator var '" + miVarName + "' to sub process var '" + miVarSubName + "': " + value);
                 variables.put(miVarSubName, value);
-                if (variableMapping.isWritable()) {
-                    log.debug("setting to null writable var '" + variableName);
-                    executionContext.setVariableValue(variableName, null);
-                }
             }
             Process subProcess = processFactory.createSubprocess(executionContext, subProcessDefinition, variables, index);
             subProcesses.add(subProcess);
+        }
+        for (VariableMapping variableMapping : variableMappings) {
+            if (variableMapping.isMultiinstanceLink() && variableMapping.isWritable()) {
+                log.debug("setting to null writable var '" + variableMapping.getName());
+                executionContext.setVariableValue(variableMapping.getName(), null);
+            }
         }
         for (Process subprocess : subProcesses) {
             ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
@@ -206,7 +208,7 @@ public class MultiProcessState extends SubProcessState {
                     String processVariableName = variableMapping.getName();
                     WfVariable variable = executionContext.getVariableProvider().getVariableNotNull(processVariableName);
                     Object value;
-                    if (variable.getFormatNotNull() instanceof ListFormat) {
+                    if (variableMapping.isMultiinstanceLink()) {
                         value = TypeConversionUtil.convertTo(List.class, variable.getValue());
                         if (value == null) {
                             value = Lists.newArrayList();
