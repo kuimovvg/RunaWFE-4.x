@@ -308,29 +308,39 @@ function FCKeditor_IsCompatibleBrowser(debug)
 			alert ("Checking as IE");
 		}
 		try {
-			//var sBrowserVersion = navigator.appVersion.match(/MSIE (\d{1,}.\d{1,})/)[1] ;
-			var sBrowserVersion = navigator.appVersion.match(/MSIE ([\d.]+)/)[1];
+			var sBrowserVersion = navigator.appVersion.match(/MSIE (\d{1,}.\d{1,})/)[1] ;
 			if (debug) {
-				alert ("Defined as IE" + sBrowserVersion);
+				alert ("1. Defined as IE" + sBrowserVersion);
 			}
-			return ( sBrowserVersion >= 5.5 ) ;
+			return sBrowserVersion >= 5.5;
 		} catch (e) {
 			if (debug) {
-				alert(e.message + ", trying as IE > 10");
+				alert(e.message + ", trying second pattern");
 			}
-			// IE11
 			try {
-				var re = new RegExp("trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
-				if (re.exec(sAgent) != null) {
-					var rv = parseFloat( RegExp.$1 );
-					if (debug) {
-						alert("Defined as IE" + rv);
-					}
-					return true;
+				var sBrowserVersion = navigator.appVersion.match(/MSIE ([\d.]+)/)[1];
+				if (debug) {
+					alert ("2. Defined as IE" + sBrowserVersion);
 				}
+				return sBrowserVersion >= 5.5;
 			} catch (e) {
 				if (debug) {
-					alert(e.message + ", failed check as IE11");
+					alert(e.message + ", trying as IE > 10");
+				}
+				// IE11
+				try {
+					var re = new RegExp("trident/.*rv:([0-9]{1,}[\.0-9]{0,})");
+					if (re.exec(sAgent) != null) {
+						var rv = parseFloat( RegExp.$1 );
+						if (debug) {
+							alert("3. Defined as IE" + rv);
+						}
+						return true;
+					}
+				} catch (e) {
+					if (debug) {
+						alert(e.message + ", failed check as IE11");
+					}
 				}
 			}
 		}
@@ -340,7 +350,7 @@ function FCKeditor_IsCompatibleBrowser(debug)
 		if (re.exec(sAgent) != null) {
 			var rv = parseFloat( RegExp.$1 );
 			if (debug) {
-				alert("Defined as IE" + rv);
+				alert("4. Defined as IE" + rv);
 			}
 			return true;
 		}
