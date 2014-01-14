@@ -21,11 +21,13 @@ import groovy.lang.GroovyShell;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
@@ -68,9 +70,11 @@ public class ScriptingServiceBean implements ScriptingService {
     }
 
     @Override
-    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes) {
+    @WebMethod(exclude = true)
+    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes, Map<String, byte[]> configs) {
         runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
+        runner.setConfigs(configs);
         runner.init();
 
         Document document = XmlUtils.parseWithXSDValidation(configData, "workflowScript.xsd");

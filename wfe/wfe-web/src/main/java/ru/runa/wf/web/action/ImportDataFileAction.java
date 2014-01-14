@@ -69,10 +69,15 @@ public class ImportDataFileAction extends ActionBase {
 
         ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(archive));
         Map<String, byte[]> files = new HashMap<String, byte[]>();
+        Map<String, byte[]> configs = new HashMap<String, byte[]>();
         ZipEntry entry;
         while ((entry = zin.getNextEntry()) != null) {
             byte[] bytes = ByteStreams.toByteArray(zin);
-            files.put(entry.getName(), bytes);
+            if (entry.getName().endsWith(".conf")) {
+                configs.put(entry.getName().substring(DataFileBuilder.PATH_TO_BOTTASK.length(), entry.getName().length()), bytes);
+            } else {
+                files.put(entry.getName(), bytes);
+            }
         }
         byte[] scriptXml = files.remove(DataFileBuilder.PATH_TO_XML);
 
@@ -131,7 +136,8 @@ public class ImportDataFileAction extends ActionBase {
             Delegates.getExecutorService().remove(getLoggedUser(request), ids);
         }
 
-        List<String> errors = Delegates.getScriptingService().executeAdminScriptSkipError(getLoggedUser(request), scriptXml, processDefinitionsBytes);
+        List<String> errors = Delegates.getScriptingService().executeAdminScriptSkipError(getLoggedUser(request), scriptXml, processDefinitionsBytes,
+                configs);
         if (errors != null && errors.size() > 0) {
             for (String error : errors) {
                 addError(request, new Exception(error));
