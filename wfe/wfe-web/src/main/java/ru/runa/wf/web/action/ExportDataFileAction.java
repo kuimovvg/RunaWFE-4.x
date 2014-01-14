@@ -46,7 +46,7 @@ public class ExportDataFileAction extends ActionBase {
             DataFileCreator dataFileCreator = new DataFileCreator(zos, scriptDocument, getLoggedUser(request));
             dataFileCreator.process();
 
-            ZipEntry zipEntry = new ZipEntry("scripts/deploy-archive-script.xml");
+            ZipEntry zipEntry = new ZipEntry(DataFileBuilder.PATH_TO_XML);
             zos.putNextEntry(zipEntry);
             byte[] documentInBytes = XmlUtils.save(scriptDocument);
             zos.write(documentInBytes, 0, documentInBytes.length);

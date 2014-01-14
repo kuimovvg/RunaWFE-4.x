@@ -34,7 +34,7 @@ public class DataFileCreator {
         builders.add(new RelationDataFileBuilder(user));
     }
 
-    public void process() {
+    public void process() throws Exception {
         for (DataFileBuilder builder : builders) {
             builder.build(zos, script);
         }

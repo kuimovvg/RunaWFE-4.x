@@ -42,13 +42,13 @@ public class DefinitionDataFileBuilder implements DataFileBuilder {
             for (WfDefinition definition : definitions) {
                 String fileName = definition.getName() + "." + IFileDataProvider.PAR_FILE;
                 byte[] definitionPar = definitionService.getProcessDefinitionFile(user, definition.getId(), IFileDataProvider.PAR_FILE);
-                ZipEntry zipEntry = new ZipEntry("samples/" + fileName);
+                ZipEntry zipEntry = new ZipEntry(PATH_TO_PROCESS_DEF + fileName);
                 zos.putNextEntry(zipEntry);
                 zos.write(definitionPar, 0, definitionPar.length);
                 zos.closeEntry();
 
                 Element element = script.getRootElement().addElement("deployProcessDefinition", XmlUtils.RUNA_NAMESPACE);
-                element.addAttribute("file", "samples/" + fileName);
+                element.addAttribute("file", PATH_TO_PROCESS_DEF + fileName);
             }
 
             new PermissionsDataFileBuilder(new ArrayList<Identifiable>(definitions), "addPermissionsOnDefinition", user).build(zos, script);
