@@ -128,7 +128,7 @@ public abstract class EJB3Delegate {
     }
 
     protected RuntimeException handleException(Exception e) {
-        if (e instanceof EJBException) {
+        if (e instanceof EJBException && e.getCause() != null) {
             return Throwables.propagate(e.getCause());
         }
         return Throwables.propagate(e);
