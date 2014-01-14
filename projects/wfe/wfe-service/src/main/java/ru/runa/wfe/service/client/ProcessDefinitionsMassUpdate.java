@@ -48,6 +48,7 @@ public class ProcessDefinitionsMassUpdate {
             byte[] scriptBytes = script.getBytes(Charsets.UTF_8);
             User user = Delegates.getAuthenticationService().authenticateByLoginPassword(args[1], args[2]);
             Delegates.getScriptingService().executeAdminScript(user, scriptBytes, null);
+            System.out.println("Finished");
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(-1);
