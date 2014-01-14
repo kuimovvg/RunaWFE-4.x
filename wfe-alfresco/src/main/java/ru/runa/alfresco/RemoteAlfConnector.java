@@ -20,6 +20,7 @@ public abstract class RemoteAlfConnector<T> {
     static {
         WebServiceFactory.setEndpointAddress(WSConnectionSettings.getInstance().getEndpointAddress());
         WebServiceFactory.setTimeoutMilliseconds(7 * 60000);
+        System.out.println("Using " + WSConnectionSettings.getInstance().getEndpointAddress());
     }
 
     protected static void log(String message) {
