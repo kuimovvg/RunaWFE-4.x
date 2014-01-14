@@ -83,7 +83,7 @@ public class BotDataFileBuilder implements DataFileBuilder {
             subElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, botTask.getName());
         }
         if (botTask.getConfiguration() != null && botTask.getConfiguration().length > 0) {
-            subElement.addAttribute(AdminScriptConstants.CONFIGURATION_CONTENT_ATTRIBUTE_NAME, botTask.getName() + ".conf");
+            subElement.addAttribute(AdminScriptConstants.CONFIGURATION_STRING_ATTRIBUTE_NAME, botTask.getName() + ".conf");
         }
     }
 }

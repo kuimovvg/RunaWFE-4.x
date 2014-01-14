@@ -1,6 +1,7 @@
 package ru.runa.wfe.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Remote;
 
@@ -29,7 +30,7 @@ public interface ScriptingService {
      */
     public void executeAdminScript(User user, byte[] scriptData, byte[][] processDefinitionsBytes) throws AdminScriptException;
 
-    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes);
+    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes, Map<String, byte[]> configs);
 
     /**
      * Executes Groovy script.
