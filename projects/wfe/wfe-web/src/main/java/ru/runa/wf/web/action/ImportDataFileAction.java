@@ -22,6 +22,7 @@ import org.dom4j.Element;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.FileForm;
+import ru.runa.wf.web.datafile.builder.DataFileBuilder;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
@@ -73,7 +74,7 @@ public class ImportDataFileAction extends ActionBase {
             byte[] bytes = ByteStreams.toByteArray(zin);
             files.put(entry.getName(), bytes);
         }
-        byte[] scriptXml = files.remove("scripts/deploy-archive-script.xml");
+        byte[] scriptXml = files.remove(DataFileBuilder.PATH_TO_XML);
 
         InputStream scriptInputStream = new ByteArrayInputStream(scriptXml);
         Document allDocument = XmlUtils.parseWithXSDValidation(scriptInputStream, "workflowScript.xsd");

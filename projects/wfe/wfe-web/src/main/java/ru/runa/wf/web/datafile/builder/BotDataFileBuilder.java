@@ -2,6 +2,7 @@ package ru.runa.wf.web.datafile.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,8 +18,6 @@ import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
-import com.google.common.base.Charsets;
-
 public class BotDataFileBuilder implements DataFileBuilder {
     private final User user;
 
@@ -27,7 +26,7 @@ public class BotDataFileBuilder implements DataFileBuilder {
     }
 
     @Override
-    public void build(ZipOutputStream zos, Document script) {
+    public void build(ZipOutputStream zos, Document script) throws Exception {
         List<BotStation> botStations = Delegates.getBotService().getBotStations();
         for (BotStation botStation : botStations) {
             populateBotStation(script, botStation);
@@ -37,6 +36,12 @@ public class BotDataFileBuilder implements DataFileBuilder {
                 List<BotTask> botTasks = Delegates.getBotService().getBotTasks(user, bot.getId());
                 for (BotTask botTask : botTasks) {
                     populateBotTask(script, botTask, botStation.getName(), bot.getUsername());
+                    byte[] conf = botTask.getConfiguration();
+                    if (conf == null || conf.length == 0) {
+                        continue;
+                    }
+                    zos.putNextEntry(new ZipEntry(PATH_TO_BOTTASK + botTask.getName() + ".conf"));
+                    zos.write(conf);
                 }
             }
         }
@@ -77,9 +82,8 @@ public class BotDataFileBuilder implements DataFileBuilder {
         if (StringUtils.isNotEmpty(botTask.getName())) {
             subElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, botTask.getName());
         }
-        if (botTask.getConfiguration() != null) {
-            subElement
-                    .addAttribute(AdminScriptConstants.CONFIGURATION_CONTENT_ATTRIBUTE_NAME, new String(botTask.getConfiguration(), Charsets.UTF_8));
+        if (botTask.getConfiguration() != null && botTask.getConfiguration().length > 0) {
+            subElement.addAttribute(AdminScriptConstants.CONFIGURATION_CONTENT_ATTRIBUTE_NAME, botTask.getName() + ".conf");
         }
     }
 }
