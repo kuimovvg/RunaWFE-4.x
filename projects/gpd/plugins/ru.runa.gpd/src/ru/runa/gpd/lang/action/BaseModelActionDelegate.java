@@ -36,6 +36,13 @@ public abstract class BaseModelActionDelegate implements IObjectActionDelegate {
         return (T) selectedElement;
     }
 
+    protected <T extends GraphElement> T getSelectionNotNull() {
+        if (selectedElement == null) {
+            throw new RuntimeException("selection is null");
+        }
+        return (T) selectedElement;
+    }
+
     protected IWorkbenchPage getWorkbenchPage() {
         return getActiveEditor().getEditorSite().getPage();
     }
