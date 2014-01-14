@@ -2,8 +2,6 @@ package ru.runa.gpd.lang.action;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -15,13 +13,6 @@ import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.Active;
 
 public class ActiveActionsDelegate extends BaseModelDropDownActionDelegate {
-    private Active active;
-
-    @Override
-    public void selectionChanged(IAction action, ISelection selection) {
-        super.selectionChanged(action, selection);
-        active = (Active) getSelection();
-    }
 
     /**
      * Fills the menu with applicable launch shortcuts
@@ -31,6 +22,7 @@ public class ActiveActionsDelegate extends BaseModelDropDownActionDelegate {
      */
     @Override
     protected void fillMenu(Menu menu) {
+        Active active = (Active) getSelectionNotNull();
         boolean createSeparator = false;
         for (ru.runa.gpd.lang.model.Action action : active.getActions()) {
             Action menuAction = new ShowAction(action);
@@ -42,13 +34,16 @@ public class ActiveActionsDelegate extends BaseModelDropDownActionDelegate {
         if (createSeparator) {
             new MenuItem(menu, SWT.SEPARATOR);
         }
-        Action menuAction = new AddActionAction();
+        Action menuAction = new AddActionAction(active);
         ActionContributionItem item = new ActionContributionItem(menuAction);
         item.fill(menu, -1);
     }
 
     public class AddActionAction extends Action {
-        public AddActionAction() {
+        private final Active active;
+        
+        public AddActionAction(Active active) {
+            this.active = active;
             setText(Localization.getString("button.create"));
         }
 
