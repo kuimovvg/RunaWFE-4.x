@@ -29,7 +29,9 @@ public abstract class BaseModelDropDownActionDelegate extends BaseModelActionDel
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        action.setMenuCreator(this);
+        if (getSelection() != null) {
+            action.setMenuCreator(this);
+        }
     }
 
     @Override
