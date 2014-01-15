@@ -108,6 +108,7 @@ public class AdminScriptRunner {
     private BotLogic botLogic;
     private User user;
     private byte[][] processDefinitionsBytes;
+    private Map<String, byte[]> configs;
     private final Map<String, Set<String>> namedProcessDefinitionIdentities = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> namedExecutorIdentities = new HashMap<String, Set<String>>();
     private int processDeployed;
@@ -118,6 +119,10 @@ public class AdminScriptRunner {
 
     public void setProcessDefinitionsBytes(byte[][] processDefinitionsBytes) {
         this.processDefinitionsBytes = processDefinitionsBytes;
+    }
+
+    public void setConfigs(Map<String, byte[]> configs) {
+        this.configs = configs;
     }
 
     public void runScript(byte[] scriptXml) throws AdminScriptException {
@@ -990,6 +995,13 @@ public class AdminScriptRunner {
 
     protected byte[] getBotTaskConfiguration(String config) {
         try {
+	    if(configs != null) {
+		byte[] byteConfig = configs.get(config);
+		if(byteConfig != null) {
+		    return byteConfig;
+		}
+	    }
+
             return ByteStreams.toByteArray(ClassLoaderUtil.getAsStreamNotNull(config, getClass()));
         } catch (IOException e) {
             throw Throwables.propagate(e);
