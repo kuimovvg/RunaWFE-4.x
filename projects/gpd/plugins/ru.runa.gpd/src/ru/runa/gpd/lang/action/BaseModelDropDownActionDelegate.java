@@ -29,9 +29,7 @@ public abstract class BaseModelDropDownActionDelegate extends BaseModelActionDel
     @Override
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
-        if (getSelection() != null) {
-            action.setMenuCreator(this);
-        }
+        action.setMenuCreator(this);
     }
 
     @Override
@@ -51,7 +49,9 @@ public abstract class BaseModelDropDownActionDelegate extends BaseModelActionDel
                     for (int i = 0; i < items.length; i++) {
                         items[i].dispose();
                     }
-                    fillMenu(m);
+                    if (getSelection() != null) {
+                        fillMenu(m);
+                    }
                 } catch (Exception ex) {
                     PluginLogger.logError(ex);
                 }
