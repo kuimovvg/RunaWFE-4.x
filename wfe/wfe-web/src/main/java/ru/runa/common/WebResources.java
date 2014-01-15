@@ -68,10 +68,6 @@ public class WebResources {
         return RESOURCES.getStringPropertyNotNull("task.form.builder." + formFileType);
     }
 
-    public static String getStartFormBuilderClassName(String formFileType) {
-        return RESOURCES.getStringPropertyNotNull("task.form.builder.start." + formFileType);
-    }
-
     public static boolean isHighlightRequiredFields() {
         return RESOURCES.getBooleanProperty("task.form.highlightRequiredFields", false);
     }
