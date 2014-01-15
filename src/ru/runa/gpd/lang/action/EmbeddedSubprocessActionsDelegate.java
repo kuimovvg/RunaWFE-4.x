@@ -35,11 +35,16 @@ public class EmbeddedSubprocessActionsDelegate extends BaseModelDropDownActionDe
     public void selectionChanged(IAction action, ISelection selection) {
         super.selectionChanged(action, selection);
         subprocess = getSelection();
-        if (subprocess != null && subprocess.getClass() == Subprocess.class) {
-            definition = subprocess.getProcessDefinition();
-            selectedName = subprocess.getSubProcessName();
-            action.setChecked(subprocess.isEmbedded());
-            definitionFile = ((FileEditorInput) getActiveEditor().getEditorInput()).getFile();
+        if (subprocess != null) {
+            if (subprocess.getClass() == Subprocess.class) {
+                definition = subprocess.getProcessDefinition();
+                selectedName = subprocess.getSubProcessName();
+                action.setChecked(subprocess.isEmbedded());
+                definitionFile = ((FileEditorInput) getActiveEditor().getEditorInput()).getFile();
+                action.setEnabled(true);
+            } else {
+                action.setEnabled(false);
+            }
         }
     }
 
