@@ -110,7 +110,7 @@ public class Subprocess extends Node implements Active {
     @Override
     public Object getPropertyValue(Object id) {
         if (PROPERTY_SUBPROCESS.equals(id)) {
-            return ProcessCache.getAllProcessDefinitionNames().indexOf(subProcessName);
+            return subProcessName;
         }
         return super.getPropertyValue(id);
     }
