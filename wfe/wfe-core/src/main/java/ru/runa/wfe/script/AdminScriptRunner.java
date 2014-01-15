@@ -995,12 +995,12 @@ public class AdminScriptRunner {
 
     protected byte[] getBotTaskConfiguration(String config) {
         try {
-	    if(configs != null) {
-		byte[] byteConfig = configs.get(config);
-		if(byteConfig != null) {
-		    return byteConfig;
-		}
-	    }
+            if (configs != null && configs.size() > 0) {
+                byte[] bytes = configs.get(config);
+                if (bytes != null) {
+                    return bytes;
+                }
+            }
 
             return ByteStreams.toByteArray(ClassLoaderUtil.getAsStreamNotNull(config, getClass()));
         } catch (IOException e) {
