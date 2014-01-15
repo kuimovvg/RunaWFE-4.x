@@ -25,8 +25,8 @@ import org.apache.ecs.html.TD;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.form.IdForm;
-import ru.runa.wf.web.StartFormBuilder;
-import ru.runa.wf.web.html.FormBuilderFactory;
+import ru.runa.wf.web.TaskFormBuilder;
+import ru.runa.wf.web.TaskFormBuilderFactory;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -54,8 +54,8 @@ public class StartFormTag extends WFFormTag {
 
     @Override
     protected String buildForm(Interaction interaction) {
-        StartFormBuilder startFormBuilder = FormBuilderFactory.createStartFormBuilder(interaction.getType());
-        return startFormBuilder.build(getUser(), getDefinitionId(), pageContext, interaction);
+        TaskFormBuilder startFormBuilder = TaskFormBuilderFactory.createTaskFormBuilder(getUser(), pageContext, interaction);
+        return startFormBuilder.build(getDefinitionId());
     }
 
     @Override

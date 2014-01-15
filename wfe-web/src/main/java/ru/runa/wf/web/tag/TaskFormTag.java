@@ -26,8 +26,8 @@ import ru.runa.common.WebResources;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.TaskFormBuilder;
+import ru.runa.wf.web.TaskFormBuilderFactory;
 import ru.runa.wf.web.form.ProcessForm;
-import ru.runa.wf.web.html.FormBuilderFactory;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
@@ -92,9 +92,9 @@ public class TaskFormTag extends WFFormTag {
 
     @Override
     protected String buildForm(Interaction interaction) {
-        TaskFormBuilder taskFormBuilder = FormBuilderFactory.createTaskFormBuilder(interaction.getType());
+        TaskFormBuilder taskFormBuilder = TaskFormBuilderFactory.createTaskFormBuilder(getUser(), pageContext, interaction);
         WfTask task = Delegates.getExecutionService().getTask(getUser(), taskId);
-        return taskFormBuilder.build(getUser(), pageContext, interaction, task);
+        return taskFormBuilder.build(task);
     }
 
     @Override
