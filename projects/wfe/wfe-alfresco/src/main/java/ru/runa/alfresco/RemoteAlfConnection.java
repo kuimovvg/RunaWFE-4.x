@@ -714,8 +714,11 @@ public class RemoteAlfConnection implements AlfConnection {
                         RemoteAlfObjectAccessor.FROM_STRING_DATE_CONVERTER, null);
                 Comparable value2 = TypeConversionUtil.convertTo(propertyClass, findValue(row2, propertyName),
                         RemoteAlfObjectAccessor.FROM_STRING_DATE_CONVERTER, null);
-                if (value1 == null && value2 != null) {
-                    return sorting.isAscending() ? -1 : 1;
+                if (value1 == null) {
+                    if (value2 != null) {
+                        return sorting.isAscending() ? -1 : 1;
+                    }
+                    return 0;
                 }
                 int r = value1.compareTo(value2);
                 if (r == 0) {
