@@ -23,7 +23,7 @@ import com.google.common.collect.Maps;
 @SuppressWarnings("unchecked")
 public class GroovyScriptExecutor implements IScriptExecutor {
     protected static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
-    
+
     @Override
     public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
@@ -74,7 +74,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 }
             }
         }
-        
+
         private void fillConversionMap(String name, String scriptingName, VariableUserType userType) {
             variableScriptingNameToNameMap.put(scriptingName, name);
             if (userType != null) {
@@ -94,7 +94,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 return getVariableFromProcess(name);
             }
         }
-        
+
         private String getVariableNameByScriptingName(String name) {
             String variableName = variableScriptingNameToNameMap.get(name);
             if (variableName == null) {
@@ -110,6 +110,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             if (value == null) {
                 log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
             }
+            log.debug("Passing to script '" + name + "' as '" + value + "'" + (value != null ? " of " + value.getClass() : ""));
             return value;
         }
 

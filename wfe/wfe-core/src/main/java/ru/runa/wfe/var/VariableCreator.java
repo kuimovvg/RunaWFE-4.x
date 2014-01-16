@@ -51,7 +51,8 @@ public class VariableCreator {
      * @return variable
      */
     public Variable<?> create(ExecutionContext executionContext, String name, Object value) {
-        log.debug("create variable '" + name + "' in '" + executionContext + "' with value '" + value + "'");
+        log.debug("Creating variable '" + name + "' in '" + executionContext.getProcess() + "' with value '" + value + "'"
+                + (value != null ? " of " + value.getClass() : ""));
         Variable<?> variable;
         if (value == null) {
             variable = new NullVariable();

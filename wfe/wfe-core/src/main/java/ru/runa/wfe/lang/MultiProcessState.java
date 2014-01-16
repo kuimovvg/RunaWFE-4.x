@@ -139,7 +139,8 @@ public class MultiProcessState extends SubProcessState {
                     Object value = executionContext.getVariableValue(variableName);
                     String mappedName = variableMapping.getMappedName();
                     if (value != null) {
-                        log.debug("copying super process var '" + variableName + "' to sub process var '" + mappedName + "': " + value);
+                        log.debug("copying super process var '" + variableName + "' to sub process var '" + mappedName + "': " + value + " of "
+                                + value.getClass());
                     } else {
                         log.warn("super process var '" + variableName + "' is null (ignored mapping to '" + mappedName + "')");
                         continue;
