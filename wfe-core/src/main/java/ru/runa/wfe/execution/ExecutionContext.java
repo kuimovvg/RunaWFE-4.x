@@ -195,7 +195,8 @@ public class ExecutionContext {
             if (Objects.equal(variable.getValue(), value)) {
                 return;
             }
-            log.debug("Updating variable '" + name + "' in '" + this + "' to value '" + value + "'");
+            log.debug("Updating variable '" + name + "' in '" + getProcess() + "' to '" + value + "'"
+                    + (value != null ? " of " + value.getClass() : ""));
             variable.setValue(this, value);
         }
     }
