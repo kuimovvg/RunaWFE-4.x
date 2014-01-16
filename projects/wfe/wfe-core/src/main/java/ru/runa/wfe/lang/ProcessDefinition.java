@@ -399,7 +399,9 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
                     SubprocessDefinition subprocessDefinition = getEmbeddedSubprocessByName(subProcessState.getSubProcessName());
                     Preconditions.checkNotNull(subprocessDefinition, "subprocessDefinition");
                     EmbeddedSubprocessStartNode startNode = subprocessDefinition.getStartStateNotNull();
-                    startNode.addArrivingTransition(subProcessState.getArrivingTransitions().get(0));
+                    for (Transition transition : subProcessState.getArrivingTransitions()) {
+                        startNode.addArrivingTransition(transition);
+                    }
                     startNode.setSubProcessState(subProcessState);
                     for (EmbeddedSubprocessEndNode endNode : subprocessDefinition.getEndNodes()) {
                         endNode.addLeavingTransition(subProcessState.getLeavingTransitions().get(0));
