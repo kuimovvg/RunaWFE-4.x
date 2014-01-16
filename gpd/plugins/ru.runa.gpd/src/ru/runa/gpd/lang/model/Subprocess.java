@@ -30,9 +30,6 @@ public class Subprocess extends Node implements Active {
             return;
         }
         if (embedded) {
-            if (getArrivingTransitions().size() != 1) {
-                errors.add(ValidationError.createLocalizedError(this, "subprocess.embedded.required1arrivingtransition"));
-            }
             if (getLeavingTransitions().size() != 1) {
                 errors.add(ValidationError.createLocalizedError(this, "subprocess.embedded.required1leavingtransition"));
             }
