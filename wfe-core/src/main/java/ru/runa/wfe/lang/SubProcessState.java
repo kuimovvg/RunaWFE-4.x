@@ -36,9 +36,6 @@ public class SubProcessState extends VariableContainerNode {
         super.validate();
         Preconditions.checkNotNull(subProcessName, "subProcessName in " + this);
         if (isEmbedded()) {
-            if (getArrivingTransitions().size() != 1) {
-                throw new InternalApplicationException("Subprocess state for embedded subprocess should have 1 arriving transition");
-            }
             if (getLeavingTransitions().size() != 1) {
                 throw new InternalApplicationException("Subprocess state for embedded subprocess should have 1 leaving transition");
             }
