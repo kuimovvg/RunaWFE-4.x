@@ -37,15 +37,24 @@ public class AjaxFreemarkerTagServlet extends HttpServlet {
     private static final Log log = LogFactory.getLog(AjaxFreemarkerTagServlet.class);
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
+        processRequest(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException {
         try {
-            log.debug("Got ajax request: " + req.getQueryString());
+            log.debug("Got ajax request: " + request.getQueryString());
             long startTime = System.currentTimeMillis();
             try {
-                String tagId = req.getParameter("tag");
+                String tagId = request.getParameter("tag");
                 String sessionKey = AjaxFreemarkerTag.TAG_SESSION_PREFIX + tagId;
-                String qualifier = req.getParameter("qualifier");
-                List<AjaxFreemarkerTag> tags = (List<AjaxFreemarkerTag>) req.getSession().getAttribute(sessionKey);
+                String qualifier = request.getParameter("qualifier");
+                List<AjaxFreemarkerTag> tags = (List<AjaxFreemarkerTag>) request.getSession().getAttribute(sessionKey);
                 if (tags == null || tags.size() < 1) {
                     throw new NullPointerException("No tags found in session by " + sessionKey);
                 }
@@ -63,7 +72,7 @@ public class AjaxFreemarkerTagServlet extends HttpServlet {
                 } else {
                     ajaxTag = tags.get(0);
                 }
-                ajaxTag.processAjaxRequest(req, resp);
+                ajaxTag.processAjaxRequest(request, response);
             } catch (Exception e) {
                 log.error("", e);
                 throw new ServletException(e);
@@ -74,10 +83,5 @@ public class AjaxFreemarkerTagServlet extends HttpServlet {
             log.error("ajax", e);
             throw new ServletException(e);
         }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.warn("ajax post request will not be processed");
     }
 }
