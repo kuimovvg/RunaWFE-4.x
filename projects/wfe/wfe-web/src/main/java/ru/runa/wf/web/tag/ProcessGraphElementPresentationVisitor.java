@@ -58,7 +58,8 @@ import ru.runa.wfe.user.User;
 import com.google.common.collect.Maps;
 
 /**
- * Operation to create links to subprocesses and tool tips to minimized elements.
+ * Operation to create links to subprocesses and tool tips to minimized
+ * elements.
  */
 public class ProcessGraphElementPresentationVisitor extends GraphElementPresentationVisitor {
     /**
@@ -73,7 +74,8 @@ public class ProcessGraphElementPresentationVisitor extends GraphElementPresenta
     private final TD td;
 
     /**
-     * Creates operation to create links to subprocesses and tool tips to minimized elements.
+     * Creates operation to create links to subprocesses and tool tips to
+     * minimized elements.
      * 
      * @param taskId
      *            Current task identity.
@@ -93,10 +95,12 @@ public class ProcessGraphElementPresentationVisitor extends GraphElementPresenta
     protected void visit(GraphElementPresentation element) {
         Area area = null;
         if (element.getNodeType() == NodeType.SUBPROCESS) {
-            area = presentationHelper.createSubprocessLink((SubprocessGraphElementPresentation) element, ShowGraphModeHelper.getManageProcessAction());
+            area = presentationHelper
+                    .createSubprocessLink((SubprocessGraphElementPresentation) element, ShowGraphModeHelper.getManageProcessAction());
         }
         if (element.getNodeType() == NodeType.MULTI_SUBPROCESS) {
-            td.addElement(presentationHelper.createMultiSubprocessLinks((MultiinstanceGraphElementPresentation) element, ShowGraphModeHelper.getManageProcessAction()));
+            td.addElement(presentationHelper.createMultiSubprocessLinks((MultiinstanceGraphElementPresentation) element,
+                    ShowGraphModeHelper.getManageProcessAction()));
         }
         if (element.getNodeType() == NodeType.TASK_STATE) {
             area = presentationHelper.createTaskTooltip((TaskGraphElementPresentation) element);
