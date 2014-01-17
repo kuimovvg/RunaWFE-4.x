@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 import ru.runa.gpd.Localization;
@@ -44,6 +43,7 @@ import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.util.WorkspaceOperations;
 
 import com.google.common.base.Objects;
 
@@ -95,8 +95,8 @@ public class ValidationErrorsView extends ViewPart implements ISelectionChangedL
             return;
         }
         try {
-            IFile resource = (IFile) marker.getResource();
-            ProcessEditorBase editor = (ProcessEditorBase) IDE.openEditor(getSite().getPage(), resource);
+            IFile definitionFile = (IFile) marker.getResource();
+            ProcessEditorBase editor = WorkspaceOperations.openProcessDefinition(definitionFile);
             GraphElement graphElement = null;
             String elementId = marker.getAttribute(PluginConstants.SELECTION_LINK_KEY, null);
             if (elementId != null) {
