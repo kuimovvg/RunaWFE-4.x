@@ -26,6 +26,7 @@ import ru.runa.gpd.lang.model.ScriptTask;
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
@@ -137,14 +138,16 @@ public class BpmnSerializer extends ProcessSerializer {
             processProperties.put(DOCUMENTATION, definition.getDescription());
         }
         writeExtensionElements(process, processProperties);
-        Element laneSetElement = process.addElement(LANE_SET).addAttribute(ID, "laneSet1");
-        List<Swimlane> swimlanes = definition.getSwimlanes();
-        for (Swimlane swimlane : swimlanes) {
-            Element swimlaneElement = writeElement(laneSetElement, swimlane);
-            writeDelegation(swimlaneElement, swimlane);
-            List<GraphElement> swimlaneElements = definition.getContainerElements(swimlane);
-            for (GraphElement child : swimlaneElements) {
-                swimlaneElement.addElement(FLOW_NODE_REF).addText(child.getId());
+        if (definition.getClass() != SubprocessDefinition.class) {
+            Element laneSetElement = process.addElement(LANE_SET).addAttribute(ID, "laneSet1");
+            List<Swimlane> swimlanes = definition.getSwimlanes();
+            for (Swimlane swimlane : swimlanes) {
+                Element swimlaneElement = writeElement(laneSetElement, swimlane);
+                writeDelegation(swimlaneElement, swimlane);
+                List<GraphElement> swimlaneElements = definition.getContainerElements(swimlane);
+                for (GraphElement child : swimlaneElements) {
+                    swimlaneElement.addElement(FLOW_NODE_REF).addText(child.getId());
+                }
             }
         }
         StartState startState = definition.getFirstChild(StartState.class);

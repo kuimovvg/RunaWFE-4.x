@@ -25,6 +25,7 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.Match;
 
 import ru.runa.gpd.BotCache;
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.form.FormVariableAccess;
@@ -37,7 +38,9 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.NamedGraphElement;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
@@ -45,6 +48,7 @@ import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableMapping;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 public class VariableSearchVisitor {
     private final VariableSearchQuery query;
@@ -68,11 +72,18 @@ public class VariableSearchVisitor {
         }
         this.matcherWithBrackets = Pattern.compile(Pattern.quote("\"" + query.getSearchText() + "\"")).matcher("");
     }
-
+    
     public IStatus search(SearchResult searchResult, IProgressMonitor monitor) {
+        Map<ProcessDefinition, IFile> map = Maps.newHashMap();
+        map.put(query.getMainProcessDefinition(), query.getMainProcessdefinitionFile());
+        numberOfElementsToScan = query.getMainProcessDefinition().getChildrenRecursive(GraphElement.class).size();
+        for (SubprocessDefinition subprocessDefinition : query.getMainProcessDefinition().getEmbeddedSubprocesses().values()) {
+            IFile subprocessDefinitionFile = ProcessCache.getProcessDefinitionFile(subprocessDefinition);
+            map.put(subprocessDefinition, subprocessDefinitionFile);
+            numberOfElementsToScan = subprocessDefinition.getChildrenRecursive(GraphElement.class).size();
+        }
         progressMonitor = monitor == null ? new NullProgressMonitor() : monitor;
         numberOfScannedElements = 0;
-        numberOfElementsToScan = query.getProcessDefinition().getChildrenRecursive(GraphElement.class).size();
         Job monitorUpdateJob = new Job(SearchMessages.TextSearchVisitor_progress_updating_job) {
             private int lastNumberOfScannedElements = 0;
 
@@ -102,11 +113,13 @@ public class VariableSearchVisitor {
             monitorUpdateJob.setSystem(true);
             monitorUpdateJob.schedule();
             try {
-                List<GraphElement> children = query.getProcessDefinition().getChildrenRecursive(GraphElement.class);
-                for (GraphElement child : children) {
-                    processNode(query.getDefinitionFile(), child);
-                    if (progressMonitor.isCanceled()) {
-                        throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+                for (Map.Entry<ProcessDefinition, IFile> entry : map.entrySet()) {
+                    List<GraphElement> children = entry.getKey().getChildrenRecursive(GraphElement.class);
+                    for (GraphElement child : children) {
+                        processNode(entry.getValue(), child);
+                        if (progressMonitor.isCanceled()) {
+                            throw new OperationCanceledException(SearchMessages.TextSearchVisitor_canceled);
+                        }
                     }
                 }
                 return status;
@@ -180,6 +193,11 @@ public class VariableSearchVisitor {
         int matchesCount = 0;
         for (VariableMapping mapping : mappings) {
             if (mapping.getProcessVariableName().equals(query.getSearchText())) {
+                matchesCount++;
+            }
+            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
+                    mapping.getSubprocessVariableName().equals(query.getSearchText())) {
+                // MultiSubprocess selector variable
                 matchesCount++;
             }
         }

@@ -38,7 +38,7 @@ public class VariableNamePage extends ContentWizardPage {
             List<String> variableNames = VariableUtils.getVariableNames(variableContainer.getVariables(false, true));
             int runner = 1;
             while (true) {
-                String candidate = Localization.getString("default.variable.name") + runner;
+                String candidate = Localization.getString("default.variable.name") + " " + runner;
                 if (!variableNames.contains(candidate)) {
                     this.variableName = candidate;
                     break;

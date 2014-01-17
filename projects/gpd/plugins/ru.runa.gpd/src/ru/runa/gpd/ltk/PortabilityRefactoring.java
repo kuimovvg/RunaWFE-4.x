@@ -25,6 +25,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.ScriptTask;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
@@ -33,14 +34,14 @@ import ru.runa.gpd.lang.model.Variable;
 @SuppressWarnings("unchecked")
 public class PortabilityRefactoring extends Refactoring {
     private final List<VariableRenameProvider<?>> cache = new ArrayList<VariableRenameProvider<?>>();
-    private final IFile definitionFile;
-    private final ProcessDefinition definition;
+    private final IFolder definitionFolder;
+    private final ProcessDefinition mainProcessDefinition;
     private final Variable oldVariable;
     private final Variable newVariable;
 
     public PortabilityRefactoring(IFile definitionFile, ProcessDefinition definition, Variable oldVariable, Variable newVariable) {
-        this.definitionFile = definitionFile;
-        this.definition = definition;
+        this.definitionFolder = (IFolder) definitionFile.getParent();
+        this.mainProcessDefinition = definition.getMainProcessDefinition();
         this.oldVariable = oldVariable;
         this.newVariable = newVariable;
     }
@@ -50,62 +51,9 @@ public class PortabilityRefactoring extends Refactoring {
         RefactoringStatus result = new RefactoringStatus();
         try {
             if (cache.size() == 0) {
-                IFolder folder = (IFolder) definitionFile.getParent();
-                List<FormNode> formNodes = definition.getChildren(FormNode.class);
-                for (FormNode formNode : formNodes) {
-                    cache.add(new FormNodePresentation(folder, formNode));
-                }
-                List<TaskState> stateNodes = definition.getChildren(TaskState.class);
-                for (TaskState taskState : stateNodes) {
-                    cache.add(new TimedPresentation(taskState));
-                }
-                List<Timer> timers = definition.getChildren(Timer.class);
-                for (Timer timer : timers) {
-                    cache.add(new TimerPresentation(timer));
-                }
-                List<TaskState> taskStates = definition.getChildren(TaskState.class);
-                for (TaskState taskState : taskStates) {
-                    if (taskState.getBotTaskLink() != null) {
-                        cache.add(new BotTaskLinkParametersRenameProvider(taskState.getBotTaskLink()));
-                    } else {
-                        String botName = taskState.getSwimlaneBotName();
-                        if (botName != null) {
-                            // if bot task exists with same as task name
-                            BotTask botTask = BotCache.getBotTask(botName, taskState.getName());
-                            if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
-                                cache.add(new BotTaskConfigRenameProvider(botTask));
-                            }
-                        }
-                    }
-                }
-                List<Action> actions = definition.getChildrenRecursive(Action.class);
-                for (Action action : actions) {
-                    cache.add(new DelegablePresentation(action, action.getLabel()));
-                }
-                List<ScriptTask> scriptTasks = definition.getChildrenRecursive(ScriptTask.class);
-                for (ScriptTask scriptTask : scriptTasks) {
-                    cache.add(new DelegablePresentation(scriptTask, scriptTask.getLabel()));
-                }
-                List<Decision> decisions = definition.getChildren(Decision.class);
-                for (Decision decision : decisions) {
-                    cache.add(new DelegablePresentation(decision, decision.getName()));
-                }
-                List<Subprocess> subprocesses = definition.getChildren(Subprocess.class);
-                for (Subprocess subprocess : subprocesses) {
-                    cache.add(new SubprocessPresentation(subprocess));
-                }
-                List<Swimlane> swimlaneNodes = definition.getChildren(Swimlane.class);
-                for (Swimlane swimlaneNode : swimlaneNodes) {
-                    cache.add(new SwimlanePresentation(swimlaneNode));
-                }
-                List<NodeTypeDefinition> typesWithProvider = NodeRegistry.getTypesWithVariableRenameProvider();
-                for (NodeTypeDefinition elementTypeDefinition : typesWithProvider) {
-                    List<? extends GraphElement> list = definition.getChildren(elementTypeDefinition.getModelClass());
-                    for (GraphElement graphElement : list) {
-                        VariableRenameProvider provider = elementTypeDefinition.createVariableRenameProvider();
-                        provider.setElement(graphElement);
-                        cache.add(provider);
-                    }
+                init(mainProcessDefinition);
+                for (SubprocessDefinition subprocessDefinition : mainProcessDefinition.getEmbeddedSubprocesses().values()) {
+                    init(subprocessDefinition);
                 }
             }
         } catch (Exception e) {
@@ -113,6 +61,65 @@ public class PortabilityRefactoring extends Refactoring {
             result.addFatalError(Localization.getString("UnhandledException"));
         }
         return result;
+    }
+
+    private void init(ProcessDefinition processDefinition) {
+        List<FormNode> formNodes = processDefinition.getChildren(FormNode.class);
+        for (FormNode formNode : formNodes) {
+            cache.add(new FormNodePresentation(definitionFolder, formNode));
+        }
+        List<TaskState> stateNodes = processDefinition.getChildren(TaskState.class);
+        for (TaskState taskState : stateNodes) {
+            cache.add(new TimedPresentation(taskState));
+        }
+        List<Timer> timers = processDefinition.getChildren(Timer.class);
+        for (Timer timer : timers) {
+            cache.add(new TimerPresentation(timer));
+        }
+        List<TaskState> taskStates = processDefinition.getChildren(TaskState.class);
+        for (TaskState taskState : taskStates) {
+            if (taskState.getBotTaskLink() != null) {
+                cache.add(new BotTaskLinkParametersRenameProvider(taskState.getBotTaskLink()));
+            } else {
+                String botName = taskState.getSwimlaneBotName();
+                if (botName != null) {
+                    // if bot task exists with same as task name
+                    BotTask botTask = BotCache.getBotTask(botName, taskState.getName());
+                    if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
+                        cache.add(new BotTaskConfigRenameProvider(botTask));
+                    }
+                }
+            }
+        }
+        List<Action> actions = processDefinition.getChildrenRecursive(Action.class);
+        for (Action action : actions) {
+            cache.add(new DelegablePresentation(action, action.getLabel()));
+        }
+        List<ScriptTask> scriptTasks = processDefinition.getChildrenRecursive(ScriptTask.class);
+        for (ScriptTask scriptTask : scriptTasks) {
+            cache.add(new DelegablePresentation(scriptTask, scriptTask.getLabel()));
+        }
+        List<Decision> decisions = processDefinition.getChildren(Decision.class);
+        for (Decision decision : decisions) {
+            cache.add(new DelegablePresentation(decision, decision.getName()));
+        }
+        List<Subprocess> subprocesses = processDefinition.getChildren(Subprocess.class);
+        for (Subprocess subprocess : subprocesses) {
+            cache.add(new SubprocessPresentation(subprocess));
+        }
+        List<Swimlane> swimlaneNodes = processDefinition.getChildren(Swimlane.class);
+        for (Swimlane swimlaneNode : swimlaneNodes) {
+            cache.add(new SwimlanePresentation(swimlaneNode));
+        }
+        List<NodeTypeDefinition> typesWithProvider = NodeRegistry.getTypesWithVariableRenameProvider();
+        for (NodeTypeDefinition elementTypeDefinition : typesWithProvider) {
+            List<? extends GraphElement> list = processDefinition.getChildren(elementTypeDefinition.getModelClass());
+            for (GraphElement graphElement : list) {
+                VariableRenameProvider provider = elementTypeDefinition.createVariableRenameProvider();
+                provider.setElement(graphElement);
+                cache.add(provider);
+            }
+        }
     }
 
     @Override
@@ -145,6 +152,6 @@ public class PortabilityRefactoring extends Refactoring {
 
     @Override
     public String getName() {
-        return definition.getName();
+        return mainProcessDefinition.getName();
     }
 }

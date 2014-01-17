@@ -177,16 +177,16 @@ public abstract class FormNode extends SwimlanedNode {
         if (!hasFormValidation()) {
             return new HashSet<String>();
         }
-        IFile validationFile = IOUtils.getAdjacentFile(processFolder, this.validationFileName);
+        IFile validationFile = IOUtils.getFile(processFolder, this.validationFileName);
         return ValidatorParser.parseValidatorConfigs(validationFile).keySet();
     }
 
-    public Map<String, FormVariableAccess> getFormVariables(IFolder definitionFile) throws Exception {
+    public Map<String, FormVariableAccess> getFormVariables(IFolder processFolder) throws Exception {
         if (!hasForm()) {
             return Maps.newHashMap();
         }
         FormType formType = FormTypeProvider.getFormType(this.formType);
-        IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);
+        IFile formFile = IOUtils.getFile(processFolder, this.formFileName);
         return formType.getFormVariableNames(formFile, this);
     }
 

@@ -22,6 +22,10 @@ public class SubprocessDefinition extends ProcessDefinition {
         setAccessType(ProcessDefinitionAccessType.EmbeddedSubprocess);
     }
 
+    public ProcessDefinition getMainProcessDefinition() {
+        return getParent().getMainProcessDefinition();
+    };
+    
     @Override
     public Duration getDefaultTaskTimeoutDelay() {
         return getParent().getDefaultTaskTimeoutDelay();
