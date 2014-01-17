@@ -104,6 +104,9 @@ public class TypedUserInputCombo extends Combo {
             for (String booleanValue : booleanValues) {
                 add(booleanValue);
             }
+            if (userInputValue != null) {
+                setText(userInputValue);
+            }
             return;
         }
         if (userInputValue != null) {
