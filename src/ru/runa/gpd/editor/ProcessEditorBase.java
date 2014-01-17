@@ -284,10 +284,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
         } catch (Exception e) {
             PluginLogger.logError(e);
         }
-        ProcessDefinition mainProcessDefinition = definition;
-        while (mainProcessDefinition instanceof SubprocessDefinition) {
-            mainProcessDefinition = (ProcessDefinition) mainProcessDefinition.getParent();
-        }
+        ProcessDefinition mainProcessDefinition = definition.getMainProcessDefinition();
         try {
             Set<String> usedFormFiles = new HashSet<String>();
             fetchUsedFormFiles(usedFormFiles, mainProcessDefinition);

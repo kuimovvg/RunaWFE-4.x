@@ -260,10 +260,12 @@ public class WorkspaceOperations {
             return;
         }
         if (subprocess.isEmbedded()) {
-            SubprocessDefinition definition = subprocess.getProcessDefinition().getEmbeddedSubprocessByName(subprocess.getSubProcessName());
-            String id = definition.getId();
-            IFile definitionFile = IOUtils.getFile(id + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
-            openProcessDefinition(definitionFile);
+            SubprocessDefinition definition = subprocess.getEmbeddedSubprocess();
+            if (definition != null) {
+                String id = definition.getId();
+                IFile definitionFile = IOUtils.getFile(id + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                openProcessDefinition(definitionFile);
+            }
         } else {
             IFile definitionFile = ProcessCache.getFirstProcessDefinitionFile(subprocess.getSubProcessName());
             if (definitionFile != null) {

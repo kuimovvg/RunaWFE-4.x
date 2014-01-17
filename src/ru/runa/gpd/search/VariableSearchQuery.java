@@ -6,25 +6,27 @@ import org.eclipse.core.runtime.IStatus;
 
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.par.ParContentProvider;
+import ru.runa.gpd.util.IOUtils;
 
 public class VariableSearchQuery extends BaseSearchQuery {
-    private final IFile definitionFile;
-    private final ProcessDefinition definition;
+    private final IFile mainProcessdefinitionFile;
+    private final ProcessDefinition mainProcessDefinition;
     private final Variable variable;
 
     public VariableSearchQuery(IFile definitionFile, ProcessDefinition definition, Variable variable) {
         super(variable.getName(), definition.getName());
-        this.definitionFile = definitionFile;
-        this.definition = definition;
+        this.mainProcessdefinitionFile = IOUtils.getAdjacentFile(definitionFile, ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+        this.mainProcessDefinition = definition.getMainProcessDefinition();
         this.variable = variable;
     }
 
-    public ProcessDefinition getProcessDefinition() {
-        return definition;
+    public ProcessDefinition getMainProcessDefinition() {
+        return mainProcessDefinition;
     }
 
-    public IFile getDefinitionFile() {
-        return definitionFile;
+    public IFile getMainProcessdefinitionFile() {
+        return mainProcessdefinitionFile;
     }
 
     public Variable getVariable() {

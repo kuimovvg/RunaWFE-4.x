@@ -35,6 +35,7 @@ import ru.runa.gpd.lang.model.ReceiveMessageNode;
 import ru.runa.gpd.lang.model.SendMessageNode;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Synchronizable;
@@ -132,10 +133,12 @@ public class JpdlSerializer extends ProcessSerializer {
             Element desc = root.addElement(DESCRIPTION);
             setNodeValue(desc, definition.getDescription());
         }
-        List<Swimlane> swimlanes = definition.getSwimlanes();
-        for (Swimlane swimlane : swimlanes) {
-            Element swimlaneElement = writeElement(root, swimlane);
-            writeDelegation(swimlaneElement, ASSIGNMENT, swimlane);
+        if (definition.getClass() != SubprocessDefinition.class) {
+            List<Swimlane> swimlanes = definition.getSwimlanes();
+            for (Swimlane swimlane : swimlanes) {
+                Element swimlaneElement = writeElement(root, swimlane);
+                writeDelegation(swimlaneElement, ASSIGNMENT, swimlane);
+            }
         }
         StartState startState = definition.getFirstChild(StartState.class);
         if (startState != null) {
