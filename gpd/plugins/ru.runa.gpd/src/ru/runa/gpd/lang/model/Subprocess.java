@@ -91,6 +91,10 @@ public class Subprocess extends Node implements Active {
     public String getSubProcessName() {
         return subProcessName;
     }
+    
+    public SubprocessDefinition getEmbeddedSubprocess() {
+         return getProcessDefinition().getEmbeddedSubprocessByName(getSubProcessName());
+    }
 
     @Override
     protected boolean allowLeavingTransition(List<Transition> transitions) {

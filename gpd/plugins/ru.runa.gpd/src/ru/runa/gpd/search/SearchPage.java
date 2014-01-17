@@ -24,10 +24,8 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.lang.action.OpenFormValidationDelegate;
-import ru.runa.gpd.lang.action.SubprocessDelegate;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
@@ -48,9 +46,6 @@ public class SearchPage extends AbstractTextSearchViewPage {
         for (IContributionItem contributionItem : items) {
             if (contributionItem instanceof ActionContributionItem) {
                 ActionContributionItem aci = (ActionContributionItem) contributionItem;
-                //                        if ("SearchHistoryDropDownAction".equals(aci.getAction().getClass().getSimpleName())) {
-                //                            toolBarManager.getParent().remove(contributionItem);
-                //                        }
                 if ("PinSearchViewAction".equals(aci.getAction().getClass().getSimpleName())) {
                     toolBarManager.getParent().remove(contributionItem);
                 }
@@ -103,9 +98,9 @@ public class SearchPage extends AbstractTextSearchViewPage {
             if (newConfig != null) {
                 delegable.setDelegationConfiguration(newConfig);
             }
-        } else if (elementMatch.getGraphElement() instanceof Subprocess) {
-            SubprocessDelegate delegate = new SubprocessDelegate();
-            delegate.openDetails((Subprocess) elementMatch.getGraphElement());
+//        } else if (elementMatch.getGraphElement() instanceof Subprocess) {
+//            SubprocessDelegate delegate = new SubprocessDelegate();
+//            delegate.openDetails((Subprocess) elementMatch.getGraphElement());
         } else if (elementMatch.getGraphElement() != null) {
             ProcessEditorBase processEditor = WorkspaceOperations.openProcessDefinition(elementMatch.getFile());
             if (processEditor != null) {

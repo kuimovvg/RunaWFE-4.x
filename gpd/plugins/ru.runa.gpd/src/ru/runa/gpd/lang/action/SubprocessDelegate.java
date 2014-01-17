@@ -17,6 +17,7 @@ public class SubprocessDelegate extends BaseModelActionDelegate {
         Subprocess subprocess = getSelection();
         if (subprocess != null) {
             action.setChecked(!subprocess.isEmbedded());
+            action.setEnabled(!subprocess.isEmbedded() || subprocess.getEmbeddedSubprocess() == null);
         }
     }
     

@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
@@ -41,6 +42,8 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
+import ru.runa.gpd.search.ElementMatch;
+import ru.runa.gpd.search.SearchResult;
 import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
@@ -188,7 +191,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
 
     private void delete(Swimlane swimlane) {
         boolean confirmationRequired = false;
-        StringBuffer message = new StringBuffer(Localization.getString("Swimlane.UsedInStates")).append("\n");
+        StringBuffer confirmationInfo = new StringBuffer();
         StringBuffer stateNames = new StringBuffer();
         for (SwimlanedNode node : getDefinition().getChildren(SwimlanedNode.class)) {
             if (node.getSwimlaneName() != null && swimlane.getName().equals(node.getSwimlaneName())) {
@@ -196,24 +199,30 @@ public class SwimlaneEditorPage extends EditorPartBase {
             }
         }
         if (stateNames.length() > 0) {
+            confirmationInfo.append(Localization.getString("Swimlane.UsedInStates")).append("\n");
+            confirmationInfo.append(stateNames).append("\n\n");
             confirmationRequired = true;
-            message.append(stateNames);
-        } else {
-            message.append(Localization.getString("Swimlane.NotUsed"));
         }
-        message.append("\n");
         List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), swimlane.getName());
-        message.append(Localization.getString("Variable.ExistInForms")).append("\n");
         if (nodesWithVar.size() > 0) {
-            confirmationRequired = true;
+            confirmationInfo.append(Localization.getString("Swimlane.ExistInForms")).append("\n");
             for (FormNode node : nodesWithVar) {
-                message.append(" - ").append(node.getName()).append("\n");
+                confirmationInfo.append(" - ").append(node.getName()).append("\n");
             }
-            message.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
-        } else {
-            message.append(Localization.getString("Variable.NoFormsUsed"));
+            confirmationInfo.append(Localization.getString("Variable.WillBeRemovedFromFormAuto")).append("\n\n");
+            confirmationRequired = true;
         }
-        if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), message.toString())) {
+        VariableSearchQuery query = new VariableSearchQuery(editor.getDefinitionFile(), getDefinition(), swimlane);
+        NewSearchUI.runQueryInForeground(PlatformUI.getWorkbench().getActiveWorkbenchWindow(), query);
+        SearchResult searchResult = query.getSearchResult();
+        if (searchResult.getMatchCount() > 0) {
+            confirmationInfo.append(Localization.getString("Swimlane.ExistInProcess")).append("\n");
+            for (Object element : searchResult.getElements()) {
+                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element).append("\n");
+            }
+            confirmationRequired = true;
+        }
+        if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), confirmationInfo.toString())) {
             // remove variable from form validations
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane.getName());
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
