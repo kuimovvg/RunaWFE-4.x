@@ -1,13 +1,14 @@
 package ru.runa.gpd.util;
 
 public class VariableMapping {
-
     public static final String USAGE_READ = "read";
     public static final String USAGE_WRITE = "write";
     public static final String USAGE_MULTIINSTANCE_LINK = "multiinstancelink";
     public static final String USAGE_MULTIINSTANCE_VARS = "multiinstance-vars";
     public static final String USAGE_SELECTOR = "selector";
 
+    public static final String MULTISUBPROCESS_VARIABLE_PLACEHOLDER = "tabVariableProcessVariable";
+    
     private String processVariableName;
     private String subprocessVariableName;
     private String usage;

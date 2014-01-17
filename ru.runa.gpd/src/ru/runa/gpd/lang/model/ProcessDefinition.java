@@ -82,6 +82,10 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         embeddedSubprocesses.put(subprocessDefinition.getId(), subprocessDefinition);
     }
     
+    public ProcessDefinition getMainProcessDefinition() {
+        return this;
+    }
+    
     public SubprocessDefinition getEmbeddedSubprocessByName(String name) {
         for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
             if (Objects.equal(subprocessDefinition.getName(), name)) {
@@ -317,7 +321,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public String getNextSwimlaneName() {
         int runner = 1;
         while (true) {
-            String candidate = Localization.getString("default.swimlane.name") + runner;
+            String candidate = Localization.getString("default.swimlane.name") + " " + runner;
             if (getSwimlaneByName(candidate) == null) {
                 return candidate;
             }

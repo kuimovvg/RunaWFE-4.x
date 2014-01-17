@@ -55,7 +55,7 @@ public class MultiInstanceDialog extends SubprocessDialog {
         while (iterator.hasNext()) {
             VariableMapping mapping = iterator.next();
             if (mapping.getUsage().equals("multiinstance-vars")) {
-                if (mapping.getProcessVariableName().equals("tabVariableProcessVariable")) {
+                if (mapping.getProcessVariableName().equals(VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER)) {
                     tabVariableProcessVariable = mapping.getSubprocessVariableName();
                 } else if (mapping.getProcessVariableName().equals("tabVariableSubProcessVariable")) {
                     tabVariableSubProcessVariable = mapping.getSubprocessVariableName();
@@ -346,7 +346,7 @@ public class MultiInstanceDialog extends SubprocessDialog {
             if (tabVariableProcessVariable.length() != 0) {
                 VariableMapping mapping = new VariableMapping();
                 mapping.setUsage("multiinstance-vars");
-                mapping.setProcessVariableName("tabVariableProcessVariable");
+                mapping.setProcessVariableName(VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER);
                 mapping.setSubprocessVariableName(tabVariableProcessVariable);
                 variableMappings.add(mapping);
             }

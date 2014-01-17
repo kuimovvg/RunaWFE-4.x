@@ -24,9 +24,11 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
         for (VariableMapping mapping : element.getVariableMappings()) {
             if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
                 mappingsToChange.add(mapping);
-                // TODO MultiSubprocess selector variables does not renamed automatically
-                //            } else if ("tabVariableProcessVariable".equals(mapping.getProcessVariable()) && mapping.getSubprocessVariable().equals(oldVariable)) {
-                //                
+            }
+            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
+                    mapping.getSubprocessVariableName().equals(oldVariable.getName())) {
+                // MultiSubprocess selector variable
+                mappingsToChange.add(mapping);
             }
         }
         List<Change> changes = new ArrayList<Change>();
@@ -47,7 +49,13 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
         @Override
         public Change perform(IProgressMonitor pm) throws CoreException {
             for (VariableMapping mapping : mappingsToChange) {
-                mapping.setProcessVariableName(replacementVariableName);
+                if (currentVariableName.equals(mapping.getProcessVariableName())) {
+                    mapping.setProcessVariableName(replacementVariableName);
+                }
+                if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
+                        currentVariableName.equals(mapping.getSubprocessVariableName())) {
+                    mapping.setSubprocessVariableName(replacementVariableName);
+                }
             }
             return new NullChange("Subprocess");
         }
@@ -56,8 +64,15 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
         protected String toPreviewContent(String variableName) {
             StringBuffer buffer = new StringBuffer();
             for (VariableMapping mapping : mappingsToChange) {
-                buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variableName);
-                buffer.append("\" name=\"").append(mapping.getSubprocessVariableName()).append("\" />").append("\n");
+                if (currentVariableName.equals(mapping.getProcessVariableName())) {
+                    buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variableName);
+                    buffer.append("\" name=\"").append(mapping.getSubprocessVariableName()).append("\" />").append("\n");
+                }
+                if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
+                        currentVariableName.equals(mapping.getSubprocessVariableName())) {
+                    buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(mapping.getProcessVariableName());
+                    buffer.append("\" name=\"").append(variableName).append("\" />").append("\n");
+                }
             }
             return buffer.toString();
         }

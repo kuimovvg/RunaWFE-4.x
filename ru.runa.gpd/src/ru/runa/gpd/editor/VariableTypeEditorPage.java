@@ -314,8 +314,6 @@ public class VariableTypeEditorPage extends EditorPartBase {
                     formNames.append(" - ").append(node.getName()).append("\n");
                 }
                 formNames.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
-            } else {
-                formNames.append(Localization.getString("Variable.NoFormsUsed"));
             }
             if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), formNames.toString())) {
                 // remove variable from form validations

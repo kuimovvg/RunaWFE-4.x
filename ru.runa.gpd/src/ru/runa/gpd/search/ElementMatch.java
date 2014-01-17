@@ -1,8 +1,12 @@
 package ru.runa.gpd.search;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IFile;
 
+import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.NamedGraphElement;
 
 import com.google.common.base.Objects;
 
@@ -83,5 +87,48 @@ public class ElementMatch {
     @Override
     public int hashCode() {
         return Objects.hashCode(graphElement, context);
+    }
+    
+    public String toString(SearchResult searchResult) {
+        String text;
+        if (ElementMatch.CONTEXT_FORM.equals(context)) {
+            text = Localization.getString("Search.formNode.form");
+        } else if (ElementMatch.CONTEXT_FORM_VALIDATION.equals(context)) {
+            text = Localization.getString("Search.formNode.validation");
+        } else if (ElementMatch.CONTEXT_BOT_TASK.equals(context)) {
+            text = Localization.getString("Search.taskNode.botTask");
+        } else if (ElementMatch.CONTEXT_BOT_TASK_LINK.equals(context)) {
+            text = Localization.getString("Search.taskNode.botTaskLink");
+        } else if (graphElement instanceof NamedGraphElement) {
+            text = ((NamedGraphElement) graphElement).getName();
+        } else {
+            text = graphElement.toString();
+        }
+        if (ElementMatch.CONTEXT_TIMED_VARIABLE.equals(context)) {
+            text += " [" + Localization.getString("Timer.baseDate") + "]";
+        }
+        if (ElementMatch.CONTEXT_SWIMLANE.equals(context) && matchesCount > 0) {
+            text += " [" + Localization.getString("default.swimlane.name") + "]";
+        }
+        int strictMatchCount = 0;
+        int potentialMatchCount = 0;
+        if (searchResult != null) {
+            strictMatchCount = searchResult.getStrictMatchCount(this);
+            potentialMatchCount = searchResult.getPotentialMatchCount(this) - strictMatchCount;
+        }
+        if (strictMatchCount == 0 && potentialMatchCount == 0) {
+            return text;
+        }
+        String format;
+        if (strictMatchCount > 0 && potentialMatchCount > 0) {
+            format = "{0} (" + Localization.getString("Search.matches") + ": {1}, " + Localization.getString("Search.potentialMatches") + ": {2})";
+            return MessageFormat.format(format, new Object[] { text, strictMatchCount, potentialMatchCount });
+        } else if (strictMatchCount == 0) {
+            format = "{0} (" + Localization.getString("Search.potentialMatches") + ": {1})";
+            return MessageFormat.format(format, new Object[] { text, potentialMatchCount });
+        } else {
+            format = "{0} (" + Localization.getString("Search.matches") + ": {1})";
+            return MessageFormat.format(format, new Object[] { text, strictMatchCount });
+        }
     }
 }

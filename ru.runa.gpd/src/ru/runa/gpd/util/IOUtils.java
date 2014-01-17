@@ -99,6 +99,7 @@ public class IOUtils {
                 destinationFile.setContents(source, true, false, null);
             } else {
                 destinationFile.create(source, true, null);
+                destinationFile.setCharset(Charsets.UTF_8.name(), null);
             }
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("Unable to copy to file " + destinationFile, e);
@@ -142,10 +143,10 @@ public class IOUtils {
         if (file == null) {
             return null;
         }
-        return getAdjacentFile((IFolder) file.getParent(), fileName);
+        return getFile((IFolder) file.getParent(), fileName);
     }
 
-    public static IFile getAdjacentFile(IFolder folder, String fileName) {
+    public static IFile getFile(IFolder folder, String fileName) {
         IFile file = folder.getFile(fileName);
         try {
             file.refreshLocal(IResource.DEPTH_ONE, null);
