@@ -175,7 +175,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
         Preconditions.checkArgument(user != null);
-        Map<Long, WfVariable> map = variableLogic.getVariableValueFromProcesses(user, processIds, variableName);
+        Map<Long, WfVariable> map = variableLogic.getVariablesFromProcesses(user, processIds, variableName);
         for (Map.Entry<Long, WfVariable> entry : map.entrySet()) {
             convertValueToProxy(user, entry.getKey(), entry.getValue());
         }
