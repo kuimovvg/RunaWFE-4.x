@@ -79,16 +79,16 @@ function openConfirmPopup(element, cookieName, message, confirmMessage, cancelBu
 	}
 }
 
-function openSubstitutionCriteriasConfirmPopup(formId, message, allMethod, allButton, onlyMethod, onlyButton, cancelButton) {
+function openSubstitutionCriteriasConfirmPopup(message, allMethod, allButton, onlyMethod, onlyButton, cancelButton) {
 	$.confirmDialog.html("<p>" + message + "</p>");
-	var form = $("#formId");
+	var form = $("#substitutionCriteriasForm");
 	var buttons = {};
 	buttons[onlyButton] = function() {
-		form.removeMethod.value = onlyMethod;
+		$("input[name='removeMethod']").val(onlyMethod);
 		form.submit();
 	};
 	buttons[allButton] = function() {
-		form.removeMethod.value = allMethod;
+		$("input[name='removeMethod']").val(allMethod);
 		form.submit();
 	};
 	buttons[cancelButton] = function() {
