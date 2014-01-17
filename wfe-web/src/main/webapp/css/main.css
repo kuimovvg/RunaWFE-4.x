@@ -211,16 +211,17 @@ th.empty20, td.empty20 {
 	text-decoration: none;
 }
 
-div.multiInstanceContainer {
+.multiInstanceContainer {
 	position: relative; 
 	z-index: 9; 
 	background-color: white;
 }
 
-div.multiInstanceBox {
+.multiInstanceBox {
 	border: 1px solid gray; 
 	display: inline; 
 	text-align: center;
+	cursor: pointer;
 }
 
 #alfBlockArea {

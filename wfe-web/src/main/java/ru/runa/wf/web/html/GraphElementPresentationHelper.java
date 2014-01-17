@@ -75,11 +75,11 @@ public class GraphElementPresentationHelper {
     public String getMapName() {
         return mapName;
     }
-    
+
     public org.apache.ecs.html.Map getMap() {
         return map;
     }
-    
+
     /**
      * Creates links to subprocesses, forked in given multiple instance graph
      * element.
@@ -110,13 +110,10 @@ public class GraphElementPresentationHelper {
                 buf.append("background-color: ").append(DrawProperties.getHighlightColorString()).append("; ");
             }
             buf.append("width: ").append(mlSize).append("px; height: ").append(mlSize).append("px;\"");
-            buf.append(">");
             if (element.isSubprocessAccessible(i)) {
-                buf.append("<a href=\"").append(getSubprocessUrl(action, subprocessId)).append("\">&nbsp;").append(i + 1).append("&nbsp;</a>");
-            } else {
-                buf.append("&nbsp;").append(i + 1).append("&nbsp;");
+                buf.append(" onclick=\"window.location='").append(getSubprocessUrl(action, subprocessId)).append("';\"");
             }
-            buf.append("</div>");
+            buf.append(">&nbsp;").append(i + 1).append("&nbsp;</div>");
             if ((i + 1) % maxItemsPerLine == 0) {
                 buf.append("\n");
             }
@@ -138,9 +135,8 @@ public class GraphElementPresentationHelper {
         }
         String url;
         if (element.isEmbedded()) {
-            url = "javascript:showEmbeddedSubprocess(" + 
-                    element.getSubprocessId() + ", '" + element.getEmbeddedSubprocessId() + "', " + 
-                    element.getEmbeddedSubprocessGraphWidth() + ", " + element.getEmbeddedSubprocessGraphHeight() + ");";
+            url = "javascript:showEmbeddedSubprocess(" + element.getSubprocessId() + ", '" + element.getEmbeddedSubprocessId() + "', "
+                    + element.getEmbeddedSubprocessGraphWidth() + ", " + element.getEmbeddedSubprocessGraphHeight() + ");";
         } else {
             url = getSubprocessUrl(action, element.getSubprocessId());
         }
@@ -163,16 +159,15 @@ public class GraphElementPresentationHelper {
         params.put(IdForm.ID_INPUT_NAME, id);
         return Commons.getActionUrl(action, params, pageContext, PortletUrlType.Render);
     }
-    
+
     public Area createSubprocessDefinitionLink(SubprocessGraphElementPresentation element) {
         if (!element.isSubprocessAccessible()) {
             return null;
         }
         String url;
         if (element.isEmbedded()) {
-            url = "javascript:showEmbeddedSubprocessDefinition(" + 
-                    element.getSubprocessId() + ", '" + element.getEmbeddedSubprocessId() + "', " + 
-                    element.getEmbeddedSubprocessGraphWidth() + ", " + element.getEmbeddedSubprocessGraphHeight() + ");";
+            url = "javascript:showEmbeddedSubprocessDefinition(" + element.getSubprocessId() + ", '" + element.getEmbeddedSubprocessId() + "', "
+                    + element.getEmbeddedSubprocessGraphWidth() + ", " + element.getEmbeddedSubprocessGraphHeight() + ");";
         } else {
             url = getSubprocessUrl(WebResources.ACTION_MAPPING_MANAGE_DEFINITION, element.getSubprocessId());
         }
