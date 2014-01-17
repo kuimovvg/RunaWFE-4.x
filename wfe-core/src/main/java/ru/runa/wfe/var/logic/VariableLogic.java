@@ -66,7 +66,7 @@ public class VariableLogic extends WFCommonLogic {
         }
         return result;
     }
-    
+
     private ComplexVariable buildComplexVariable(VariableDefinition variableDefinition, Map<String, Object> values, String prefix) {
         ComplexVariable variable = new ComplexVariable();
         for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
@@ -83,9 +83,9 @@ public class VariableLogic extends WFCommonLogic {
                 }
             }
         }
-//        if (variable.isEmpty()) {
-//            return null;
-//        }
+        // if (variable.isEmpty()) {
+        // return null;
+        // }
         return variable;
     }
 
@@ -96,12 +96,15 @@ public class VariableLogic extends WFCommonLogic {
         return executionContext.getVariableProvider().getVariable(variableName);
     }
 
-    public HashMap<Long, WfVariable> getVariableValueFromProcesses(User user, List<Long> processIds, String variableName) {
+    public HashMap<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
         // TODO potential performance bottleneck
         HashMap<Long, WfVariable> map = Maps.newHashMapWithExpectedSize(processIds.size());
         for (Long processId : processIds) {
             try {
-                map.put(processId, getVariable(user, processId, variableName));
+                WfVariable variable = getVariable(user, processId, variableName);
+                if (variable != null) {
+                    map.put(processId, variable);
+                }
             } catch (Exception e) {
                 log.error("Unable to get variable '" + variableName + "' from process " + processId, e);
             }
