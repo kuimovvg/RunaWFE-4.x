@@ -25,11 +25,11 @@ public class MoveElementFeature extends DefaultMoveShapeFeature {
         if (element instanceof Timer && element.getParent() instanceof ITimed) {
             return false;
         }
+        Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
         if (element instanceof Swimlane) {
-            Object parentObject = getBusinessObjectForPictogramElement(context.getTargetContainer());
             return parentObject instanceof ProcessDefinition;
         }
-        return element != null;
+        return parentObject instanceof Swimlane || parentObject instanceof ProcessDefinition;
     }
 
     @Override
