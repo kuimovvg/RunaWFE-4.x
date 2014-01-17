@@ -374,6 +374,14 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return null;
     }
 
+    public String getEmbeddedSubprocessNodeIdNotNull(String subprocessName) {
+        String subprocessNodeId = getEmbeddedSubprocessNodeId(subprocessName);
+        if (subprocessNodeId == null) {
+            throw new NullPointerException("No subprocess state found by subprocess name '" + subprocessName + "' in " + this);
+        }
+        return subprocessNodeId;
+    }
+
     public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
         return embeddedSubprocesses;
     }

@@ -22,8 +22,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.audit.NodeEnterLog;
-import ru.runa.wfe.audit.NodeLeaveLog;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -57,7 +55,6 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -196,57 +193,15 @@ public class ExecutionLogic extends WFCommonLogic {
             if (childProcessId != null) {
                 highlightedToken = nodeProcessDAO.getNodeProcessByChild(childProcessId).getParentToken();
             }
-            ProcessLogs processLogs = new ProcessLogs(processId);
-            List<ProcessLog> logs = processLogDAO.getAll(processId);
             if (subprocessId != null) {
                 SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
                 if (subprocessDefinition == null) {
                     throw new NullPointerException("No subprocess found by '" + subprocessId + "' in " + processDefinition);
                 }
-                String subprocessNodeId = processDefinition.getEmbeddedSubprocessNodeId(subprocessDefinition.getName());
-                if (subprocessNodeId == null) {
-                    throw new NullPointerException("No subprocess state found by subprocess name '" + subprocessDefinition.getName() + "' in "
-                            + processDefinition);
-                }
-                boolean embeddedSubprocessLogs = false;
-                boolean childSubprocessLogs = false;
-                List<String> childSubprocessNodeIds = subprocessDefinition.getEmbeddedSubprocessNodeIds();
-                for (ProcessLog log : Lists.newArrayList(logs)) {
-                    if (log instanceof NodeLeaveLog && Objects.equal(subprocessNodeId, log.getNodeId())) {
-                        embeddedSubprocessLogs = false;
-                    }
-                    if (log instanceof NodeLeaveLog && childSubprocessNodeIds.contains(log.getNodeId())) {
-                        childSubprocessLogs = false;
-                    }
-                    if (!embeddedSubprocessLogs || childSubprocessLogs) {
-                        logs.remove(log);
-                    }
-                    if (log instanceof NodeEnterLog && childSubprocessNodeIds.contains(log.getNodeId())) {
-                        childSubprocessLogs = true;
-                    }
-                    if (log instanceof NodeEnterLog && Objects.equal(subprocessNodeId, log.getNodeId())) {
-                        embeddedSubprocessLogs = true;
-                    }
-                }
                 processDefinition = subprocessDefinition;
-            } else {
-                List<String> embeddedSubprocessNodeIds = processDefinition.getEmbeddedSubprocessNodeIds();
-                if (embeddedSubprocessNodeIds.size() > 0) {
-                    boolean embeddedSubprocessLogs = false;
-                    for (ProcessLog log : Lists.newArrayList(logs)) {
-                        if (log instanceof NodeLeaveLog && embeddedSubprocessNodeIds.contains(log.getNodeId())) {
-                            embeddedSubprocessLogs = false;
-                        }
-                        if (embeddedSubprocessLogs) {
-                            logs.remove(log);
-                        }
-                        if (log instanceof NodeEnterLog && embeddedSubprocessNodeIds.contains(log.getNodeId())) {
-                            embeddedSubprocessLogs = true;
-                        }
-                    }
-                }
             }
-            processLogs.addLogs(logs, false);
+            ProcessLogs processLogs = new ProcessLogs(processId);
+            processLogs.addLogs(processLogDAO.get(processId, processDefinition), false);
             GraphImageBuilder builder = new GraphImageBuilder(taskObjectFactory, processDefinition);
             builder.setHighlightedToken(highlightedToken);
             return builder.createDiagram(process, processLogs);
