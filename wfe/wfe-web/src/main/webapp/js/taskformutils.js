@@ -12,13 +12,23 @@ $(function() {
 	$(".dropzone").bind('dragover', function (e) {
 		$(this).addClass("dropzonehover");
 	});
-	//if ($.browser.mozilla) {
+//	if ($.browser.mozilla) {
 //	if (window.mozIndexedDB !== undefined) {
 //		$(".inputFileAttach").click(function(e) {
 //			if(e.currentTarget === this && e.target.nodeName !== 'INPUT') {
 //				$(this).find(".inputFile").click();
 //			}
 //		});
+//	}
+//	if ($.browser.msie) {
+//		alert ($.browser.version);
+//		if ($.browser.version < 9) {
+//			$(".inputFileAttach").click(function(e) {
+//				if(e.currentTarget === this && e.target.nodeName !== 'INPUT') {
+//					$(this).find(".inputFile").click();
+//				}
+//			});
+//		}
 //	}
 	$(document).delegate(".inputFileDelete", "click", function() {
 		deleteFile($(this).attr("inputId"));

@@ -102,8 +102,8 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             }
             message += "</ul>" + Messages.getMessage(Messages.CONF_POPUP_REMOVE_SUBSTITUTION_CRITERIA, pageContext);
             getForm().addAttribute("id", "substitutionCriteriasForm");
-            tdFormElement.addElement("<script>" + "onload = function() {" + "openSubstitutionCriteriasConfirmPopup('substitutionCriteriasForm', '"
-                    + message + "', '" + SubstitutionCriteriasForm.REMOVE_METHOD_ALL + "', '"
+            tdFormElement.addElement("<script>" + "onload = function() {" + "openSubstitutionCriteriasConfirmPopup('" + message + "', '"
+                    + SubstitutionCriteriasForm.REMOVE_METHOD_ALL + "', '"
                     + Messages.getMessage(Messages.CONF_POPUP_SUBSTITUTION_CRITERIA_BUTTON_ALL, pageContext) + "', '"
                     + SubstitutionCriteriasForm.REMOVE_METHOD_ONLY + "', '"
                     + Messages.getMessage(Messages.CONF_POPUP_SUBSTITUTION_CRITERIA_BUTTON_ONLY, pageContext) + "', '"
