@@ -23,6 +23,10 @@ public class SubprocessDefinition extends ProcessDefinition {
         this.parentProcessDefinition = parentProcessDefinition;
     }
 
+    public ProcessDefinition getParentProcessDefinition() {
+        return parentProcessDefinition;
+    }
+
     @Override
     public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
         return parentProcessDefinition.getEmbeddedSubprocesses();
