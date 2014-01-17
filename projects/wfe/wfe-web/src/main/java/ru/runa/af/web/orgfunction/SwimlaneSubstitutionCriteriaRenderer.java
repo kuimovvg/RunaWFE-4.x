@@ -20,6 +20,8 @@ package ru.runa.af.web.orgfunction;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.extension.orgfunction.ParamRenderer;
 import ru.runa.wfe.lang.SwimlaneDefinition;
@@ -41,10 +43,14 @@ public class SwimlaneSubstitutionCriteriaRenderer implements ParamRenderer {
         DefinitionService definitionService = Delegates.getDefinitionService();
         List<WfDefinition> definitions = definitionService.getLatestProcessDefinitions(user, BatchPresentationFactory.DEFINITIONS.createDefault());
         for (WfDefinition definition : definitions) {
-            List<SwimlaneDefinition> swimlanes = definitionService.getSwimlaneDefinitions(user, definition.getId());
-            for (SwimlaneDefinition swimlaneDefinition : swimlanes) {
-                String swimlaneName = definition.getName() + "." + swimlaneDefinition.getName();
-                result.add(new String[] { swimlaneName, swimlaneName });
+            try {
+                List<SwimlaneDefinition> swimlanes = definitionService.getSwimlaneDefinitions(user, definition.getId());
+                for (SwimlaneDefinition swimlaneDefinition : swimlanes) {
+                    String swimlaneName = definition.getName() + "." + swimlaneDefinition.getName();
+                    result.add(new String[] { swimlaneName, swimlaneName });
+                }
+            } catch (Exception e) {
+                LogFactory.getLog(getClass()).debug(e);
             }
         }
         return result;

@@ -120,8 +120,7 @@ public class ViewUtil {
                 if (value instanceof Date) {
                     stringValue = CalendarUtil.formatDateTime((Date) value);
                 }
-            } else if (ActorFormat.class == formatClass || ExecutorFormat.class == formatClass
-                    || GroupFormat.class == formatClass) {
+            } else if (ActorFormat.class == formatClass || ExecutorFormat.class == formatClass || GroupFormat.class == formatClass) {
                 if (value instanceof Executor) {
                     stringValue = "ID" + ((Executor) value).getId();
                 }
@@ -194,7 +193,8 @@ public class ViewUtil {
         return html;
     }
 
-    public static String getComponentOutput(User user, WebHelper webHelper, Long processId, String variableName, VariableFormat variableFormat, Object value) {
+    public static String getComponentOutput(User user, WebHelper webHelper, Long processId, String variableName, VariableFormat variableFormat,
+            Object value) {
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
             if (value != null) {
@@ -344,7 +344,7 @@ public class ViewUtil {
         html += "\n\t<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
         html += "\n\t\t<label class=\"inputFileAttach\">";
         html += "\n\t\t\t<div style=\"float: left;\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
-        html += "\n\t\t\t<input class=\"inputFile\" name=\"" + variableName + "\" type=\"file\" style=\"visibility: hidden; display: block;\">";
+        html += "\n\t\t\t<input class=\"inputFile inputFileAjax\" name=\"" + variableName + "\" type=\"file\">";
         html += "\n\t\t</label>";
         html += "\n\t</div>";
         html += "\n\t<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
@@ -369,7 +369,6 @@ public class ViewUtil {
         return html;
     }
 
-
     public static String generateTableHeader(List<String> variableNames, IVariableProvider variableProvider, String operationsColumn) {
         StringBuffer header = new StringBuffer();
         header.append("<tr class=\"header\">");
@@ -392,6 +391,5 @@ public class ViewUtil {
         params.put("logId", logId);
         return FormatCommons.getFileOutput(webHelper, params, fileName);
     }
-
 
 }

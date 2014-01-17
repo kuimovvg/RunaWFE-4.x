@@ -272,3 +272,10 @@ div.requiredWrapper::after, span.requiredWrapper::after {
 .ui-datepicker-prev, .ui-datepicker-next {
 	background-color: white;
 }
+
+.inputFileAjax {
+	//visibility: hidden; 
+	display: block;
+	position: absolute; 
+	clip: rect(0,0,0,0);
+}
