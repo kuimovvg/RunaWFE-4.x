@@ -155,7 +155,15 @@ var simulationWebLinks
   !insertmacro Runa_SetOutPath "$INSTDIR\Icons"
   File "${BuildRoot}\Icons\T_20x20_256.ico"
   !insertmacro Runa_SetOutPath "$INSTDIR\rtn"
-  File /r "${BuildRoot}\rtn-${AppVersion}\*"
+  ${if} ${RunningX64} 
+    ${if} "$JdkArch" == "64"
+      File /r "${BuildRoot}\rtn-${AppVersion}\64\*"
+    ${else}
+      File /r "${BuildRoot}\rtn-${AppVersion}\32\*"
+    ${endif}
+  ${else}
+    File /r "${BuildRoot}\rtn-${AppVersion}\32\*"
+  ${endif}
 
   Push "wfe_server"                            #text to be replaced
   Push $WFEServerAddress                       #replace with
@@ -192,19 +200,19 @@ var simulationWebLinks
   Push "$INSTDIR\rtn\application_ru.properties" #file to replace in
   Call AdvReplaceInFile                        #call find and replace function
 
-  Call DetectJava64
-  Push "swt-win32.jar"                         #text to be replaced
-  ${if} ${RunningX64} 
-    ${if} "$JdkArch" == "64"
-      Push "swt-win64.jar"                     #replace with
-    ${else}
-      Push "swt-win32.jar"                     #replace with
-    ${endif}
-  ${else}
-    Push "swt-win32.jar"                       #replace with
-  ${endif}
-  Push "$INSTDIR\rtn\run.bat"                  #file to replace in
-  Call AdvReplaceInFile                        #call find and replace function
+;  Call DetectJava64
+;  Push "swt-win32.jar"                         #text to be replaced
+;  ${if} ${RunningX64} 
+;    ${if} "$JdkArch" == "64"
+;      Push "swt-win64.jar"                     #replace with
+;    ${else}
+;      Push "swt-win32.jar"                     #replace with
+;    ${endif}
+;  ${else}
+;    Push "swt-win32.jar"                       #replace with
+;  ${endif}
+;  Push "$INSTDIR\rtn\run.bat"                  #file to replace in
+;  Call AdvReplaceInFile                        #call find and replace function
 
   !insertmacro createMenuShortcut "Task notifier.lnk" "$INSTDIR\rtn\run.bat" "" "$INSTDIR\rtn" "$INSTDIR\Icons\T_20x20_256.ico" "$(ShortcutDesc_RTN)"
 !macroend
