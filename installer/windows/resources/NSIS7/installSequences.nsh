@@ -317,7 +317,9 @@ var simulationWebLinks
   !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\${rootDir}\bin"
   File /r "${BuildRoot}\jboss-native\*"
   ${if} ${RunningX64} 
-    CopyFiles /SILENT "$INSTDIR\${rootDir}\bin\64\*" "$INSTDIR\${rootDir}\bin"
+    ${if} "$JdkArch" == "64"
+      CopyFiles /SILENT "$INSTDIR\${rootDir}\bin\64\*" "$INSTDIR\${rootDir}\bin"
+    ${endif}
   ${endif}
 !macroend
 
