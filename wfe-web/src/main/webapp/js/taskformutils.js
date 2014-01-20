@@ -80,7 +80,8 @@ function deleteFile(inputId) {
 		url: "/wfe/upload",
 		data: {
 			action: "delete", 
-		    	inputId: inputId
+	    	inputId: inputId,
+	    	timestamp: new Date().getTime()
 		},
 		dataType: "html",
 		success: function(msg) {
