@@ -28,7 +28,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -43,7 +42,7 @@ import com.google.common.base.Objects;
  * Criterion for applying substitution rule.
  */
 @Entity
-@Table(name = "SUBSTITUTION_CRITERIA", uniqueConstraints = @UniqueConstraint(columnNames = { "DISCRIMINATOR", "CONF" }))
+@Table(name = "SUBSTITUTION_CRITERIA")
 @DiscriminatorColumn(name = "DISCRIMINATOR", discriminatorType = DiscriminatorType.STRING)
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class SubstitutionCriteria implements Serializable {
