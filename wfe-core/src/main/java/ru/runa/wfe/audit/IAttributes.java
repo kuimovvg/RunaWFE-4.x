@@ -8,6 +8,7 @@ public interface IAttributes {
     static final String ATTR_NODE_ID_TO = "nodeIdTo";
     static final String ATTR_TRANSITION_ID = "transitionId";
     static final String ATTR_MESSAGE = "message";
+    static final String ATTR_INFO = "info";
     static final String ATTR_PROCESS_ID = "processId";
     static final String ATTR_TOKEN_ID = "tokenId";
     static final String ATTR_ACTOR_NAME = "actorName";

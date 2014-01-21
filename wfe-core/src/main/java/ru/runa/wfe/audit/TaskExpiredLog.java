@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.TaskCompletionInfo;
 
 /**
  * Logging task completion by timer.
@@ -19,14 +20,8 @@ public class TaskExpiredLog extends TaskEndLog {
     public TaskExpiredLog() {
     }
 
-    public TaskExpiredLog(Task task) {
-        super(task, null);
-    }
-
-    @Override
-    @Transient
-    public String getActorName() {
-        return "";
+    public TaskExpiredLog(Task task, TaskCompletionInfo completionInfo) {
+        super(task, completionInfo);
     }
 
     @Override
