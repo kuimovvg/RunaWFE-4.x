@@ -2,14 +2,12 @@ package ru.runa.gpd.editor.graphiti;
 
 import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.ui.actions.ActionRegistry;
-import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.graphiti.dt.IDiagramTypeProvider;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.ui.editor.DiagramEditor;
 import org.eclipse.graphiti.ui.editor.DiagramEditorContextMenuProvider;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 
 import ru.runa.gpd.editor.StructuredSelectionProvider;
@@ -42,8 +40,8 @@ public class DiagramContextMenuProvider extends DiagramEditorContextMenuProvider
 
     @Override
     protected void addDefaultMenuGroupEdit(IMenuManager manager) {
-        addActionToMenuIfAvailable(manager, ActionFactory.COPY.getId(), GEFActionConstants.GROUP_EDIT);
-        addActionToMenuIfAvailable(manager, ActionFactory.PASTE.getId(), GEFActionConstants.GROUP_EDIT);
+        //addActionToMenuIfAvailable(manager, ActionFactory.COPY.getId(), GEFActionConstants.GROUP_EDIT);
+        //addActionToMenuIfAvailable(manager, ActionFactory.PASTE.getId(), GEFActionConstants.GROUP_EDIT);
     }
 
     @Override
