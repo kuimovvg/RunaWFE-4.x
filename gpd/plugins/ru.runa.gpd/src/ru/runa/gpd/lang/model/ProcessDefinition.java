@@ -486,4 +486,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         return type;
     }
 
+    @Override
+    public ProcessDefinition getCopy(GraphElement parent) {
+        throw new UnsupportedOperationException();
+    }
 }

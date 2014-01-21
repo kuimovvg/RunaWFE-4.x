@@ -51,4 +51,12 @@ public class TimerAction extends Action {
         buffer.append(repeatDelay.hasDuration() ? repeatDelay : Localization.getString("duration.norepeat"));
         return buffer.toString();
     }
+    
+    @Override
+    public TimerAction getCopy(GraphElement parent) {
+        TimerAction copy = (TimerAction) super.getCopy(parent);
+        copy.setRepeatDuration(getRepeatDelay().getDuration());
+        return copy;
+    }
+
 }

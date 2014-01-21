@@ -127,6 +127,10 @@ public abstract class Node extends NamedGraphElement implements Describable {
         if (renameAfterAddition) {
             transition.setName(getNextTransitionName());
         }
+        onLeavingTransitionAdded(transition);
+    }
+
+    public void onLeavingTransitionAdded(Transition transition) {
         firePropertyChange(NODE_LEAVING_TRANSITION_ADDED, null, transition);
         Node target = transition.getTarget();
         if (target != null) {
@@ -209,4 +213,20 @@ public abstract class Node extends NamedGraphElement implements Describable {
     public boolean isExclusive() {
         return false;
     }
+    
+    @Override
+    public Node getCopy(GraphElement parent) {
+        Node copy = (Node) super.getCopy(parent);
+        copy.setMinimizedView(isMinimizedView());
+        if (this instanceof ITimed) {
+            Timer timer = ((ITimed) this).getTimer();
+            if (timer != null) {
+                Timer copyTimer = new Timer();
+                copyTimer.setDelay(new Duration(timer.getDelay()));
+                copy.addChild(copyTimer);
+            }
+        }
+        return copy;
+    }
+
 }

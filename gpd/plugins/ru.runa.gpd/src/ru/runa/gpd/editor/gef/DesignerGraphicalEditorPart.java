@@ -103,7 +103,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             }
         });
         KeyHandler keyHandler = new GraphicalViewerKeyHandler(getGraphicalViewer());
-        keyHandler.setParent(((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).getKeyHandler(getActionRegistry()));
+        keyHandler.setParent(((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).createKeyHandler(getActionRegistry()));
         getGraphicalViewer().setKeyHandler(keyHandler);
         getGraphicalViewer().setContextMenu(createContextMenu());
         getSite().setSelectionProvider(getGraphicalViewer());

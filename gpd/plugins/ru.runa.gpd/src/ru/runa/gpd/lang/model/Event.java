@@ -23,4 +23,8 @@ public class Event extends GraphElement {
         return type;
     }
     
+    public void setType(String type) {
+        this.type = type;
+    }
+    
 }

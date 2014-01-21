@@ -29,7 +29,6 @@ import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Strings;
 
 @SuppressWarnings("unchecked")
 public abstract class GraphElement extends EventSupport implements IPropertySource, PropertyNames, IActionFilter {
@@ -184,16 +183,6 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
             child.setId(nodeId);
         } else {
             getProcessDefinition().setNextNodeIdIfApplicable(nodeId);
-        }
-        if (child instanceof NamedGraphElement) {
-            NamedGraphElement namedGraphElement = (NamedGraphElement) child;
-            if (Strings.isNullOrEmpty(namedGraphElement.getName())) {
-                String name = child.getTypeDefinition().getLabel();
-                if (!(child instanceof EndState) && !(child instanceof StartState)) {
-                    name += " " + (getChildren(child.getClass()).size() + 1);
-                }
-                namedGraphElement.setName(name);
-            }
         }
     }
 
@@ -408,5 +397,29 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
 
     public Image getEntryImage() {
         return getTypeDefinition().getImage(getProcessDefinition().getLanguage().getNotation());
+    }
+    
+    public GraphElement getCopy(GraphElement parent) {
+        GraphElement copy = getTypeDefinition().createElement(parent, false);
+        if (this instanceof Describable) {
+            copy.setDescription(getDescription());
+        }
+        if (this instanceof Delegable) {
+            copy.setDelegationClassName(getDelegationClassName());
+            copy.setDelegationConfiguration(getDelegationConfiguration());
+        }
+        if (this instanceof Active) {
+            List<? extends Action> actions = ((Active) this).getActions();
+            for (Action action : actions) {
+                copy.addAction(action.getCopy(copy), -1);
+            }
+        }
+        copy.setConstraint(getConstraint());
+        fillCopyCustomFields(copy);
+        parent.addChild(copy);
+        return copy;
+    }
+    
+    protected void fillCopyCustomFields(GraphElement copy) {
     }
 }

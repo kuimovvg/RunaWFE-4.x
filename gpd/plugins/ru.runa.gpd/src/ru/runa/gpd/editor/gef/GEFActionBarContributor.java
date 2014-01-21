@@ -22,7 +22,7 @@ import ru.runa.gpd.editor.SelectAllAction;
 public class GEFActionBarContributor extends ProcessEditorContributor {
 
     @Override
-    protected KeyHandler createKeyHandler(ActionRegistry registry) {
+    public KeyHandler createKeyHandler(ActionRegistry registry) {
         KeyHandler keyHandler = super.createKeyHandler(registry);
         keyHandler.put(KeyStroke.getPressed((char) 26, 'z', SWT.CTRL), registry.getAction(ActionFactory.UNDO.getId()));
         keyHandler.put(KeyStroke.getPressed((char) 25, 'y', SWT.CTRL), registry.getAction(ActionFactory.REDO.getId()));
