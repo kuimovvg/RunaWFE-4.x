@@ -125,4 +125,16 @@ public class Subprocess extends Node implements Active {
         this.embedded = embedded;
         firePropertyChange(PROPERTY_SUBPROCESS, old, this.embedded);
     }
+    
+    @Override
+    public Subprocess getCopy(GraphElement parent) {
+        Subprocess copy = (Subprocess) super.getCopy(parent);
+        copy.setSubProcessName(getSubProcessName());
+        for (VariableMapping mapping : getVariableMappings()) {
+            copy.getVariableMappings().add(mapping.getCopy());
+        }
+        copy.setEmbedded(isEmbedded());
+        return copy;
+    }
+
 }

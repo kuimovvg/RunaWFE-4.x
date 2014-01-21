@@ -11,8 +11,10 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.gef.GefEntry;
 import ru.runa.gpd.editor.graphiti.GraphitiEntry;
+import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.NamedGraphElement;
+import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.ltk.VariableRenameProvider;
 
@@ -131,9 +133,14 @@ public class NodeTypeDefinition {
         GraphElement element = createExecutableExtension("model");
         element.setParent(parent);
         if (setName) {
-            String name = "";
+            String name;
             if (element instanceof Swimlane) {
                 name = element.getProcessDefinition().getNextSwimlaneName();
+            } else {
+                name = getLabel();
+                if (!(element instanceof EndState) && !(element instanceof StartState)) {
+                    name += " " + (parent.getChildren(element.getClass()).size() + 1);
+                }
             }
             if (element instanceof NamedGraphElement) {
                 ((NamedGraphElement) element).setName(name);

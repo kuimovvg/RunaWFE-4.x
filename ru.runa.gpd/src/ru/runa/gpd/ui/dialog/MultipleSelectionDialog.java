@@ -15,16 +15,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 
-import ru.runa.gpd.Localization;
-import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
+import ru.runa.gpd.util.SelectionItem;
 
-public class CopyGraphRewriteDialog extends Dialog {
-    private final List<ExtraCopyAction> actions;
+public class MultipleSelectionDialog extends Dialog {
+    private final String title;
+    private final List<? extends SelectionItem> items;
 
-    public CopyGraphRewriteDialog(List<ExtraCopyAction> actions) {
+    public MultipleSelectionDialog(String title, List<? extends SelectionItem> items) {
         super(Display.getCurrent().getActiveShell());
+        this.title = title;
         setShellStyle(getShellStyle() | SWT.RESIZE);
-        this.actions = actions;
+        this.items = items;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class CopyGraphRewriteDialog extends Dialog {
 
     @Override
     protected Control createDialogArea(Composite parent) {
-        getShell().setText(Localization.getString("CopyGraphRewriteDialog.title"));
+        getShell().setText(title);
 
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -51,15 +52,15 @@ public class CopyGraphRewriteDialog extends Dialog {
 
         scrolledComposite.setContent(clientArea);
 
-        for (ExtraCopyAction copyAction : actions) {
+        for (SelectionItem selectionItem : items) {
             final Button button = new Button(clientArea, SWT.CHECK);
-            button.setText(copyAction.getLabel());
-            button.setSelection(copyAction.isEnabled());
-            button.setData(copyAction);
+            button.setText(selectionItem.getLabel());
+            button.setSelection(selectionItem.isEnabled());
+            button.setData(selectionItem);
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ((ExtraCopyAction) button.getData()).setEnabled(button.getSelection());
+                    ((SelectionItem) button.getData()).setEnabled(button.getSelection());
                 }
             });
             button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));

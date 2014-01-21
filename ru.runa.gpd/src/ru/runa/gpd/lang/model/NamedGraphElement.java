@@ -53,4 +53,11 @@ public abstract class NamedGraphElement extends GraphElement implements Comparab
         }
         return name.compareTo(o.name);
     }
+    
+    @Override
+    public NamedGraphElement getCopy(GraphElement parent) {
+        NamedGraphElement copy = (NamedGraphElement) super.getCopy(parent);
+        copy.setName(getName());
+        return copy;
+    }
 }

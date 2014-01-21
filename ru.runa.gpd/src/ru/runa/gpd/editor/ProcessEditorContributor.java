@@ -14,17 +14,8 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
 
 public class ProcessEditorContributor extends ActionBarContributor {
-    private KeyHandler keyHandler;
 
-    public final KeyHandler getKeyHandler(ActionRegistry registry) {
-        if (keyHandler != null) {
-            return keyHandler;
-        }
-        keyHandler = createKeyHandler(registry);
-        return keyHandler;
-    }
-
-    protected KeyHandler createKeyHandler(ActionRegistry registry) {
+    public KeyHandler createKeyHandler(ActionRegistry registry) {
         KeyHandler keyHandler = new KeyHandler();
         keyHandler.put(KeyStroke.getPressed(SWT.DEL, 127, 0), registry.getAction(ActionFactory.DELETE.getId()));
         keyHandler.put(KeyStroke.getPressed(SWT.F2, 0), registry.getAction(GEFActionConstants.DIRECT_EDIT));

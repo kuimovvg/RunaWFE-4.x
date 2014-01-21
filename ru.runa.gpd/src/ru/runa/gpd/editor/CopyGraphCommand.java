@@ -2,6 +2,7 @@ package ru.runa.gpd.editor;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,22 +11,15 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.gef.commands.Command;
+import org.eclipse.jface.dialogs.IDialogConstants;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
 import ru.runa.gpd.form.FormVariableAccess;
-import ru.runa.gpd.lang.NodeRegistry;
-import ru.runa.gpd.lang.NodeTypeDefinition;
-import ru.runa.gpd.lang.model.Action;
-import ru.runa.gpd.lang.model.ActionImpl;
-import ru.runa.gpd.lang.model.Active;
-import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -36,13 +30,14 @@ import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.ui.custom.Dialogs;
-import ru.runa.gpd.ui.dialog.CopyGraphRewriteDialog;
-import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.ui.dialog.MultipleSelectionDialog;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -51,7 +46,7 @@ public class CopyGraphCommand extends Command {
     private final IFolder targetFolder;
     private final CopyBuffer copyBuffer;
     private final Map<String, Node> targetNodeMap = Maps.newHashMap();
-    private final List<ExtraCopyAction> executedActionsList = Lists.newArrayList();
+    private final List<ExtraCopyAction> executedCopyActions = Lists.newArrayList();
 
     public CopyGraphCommand(ProcessDefinition targetDefinition, IFolder targetFolder) {
         this.targetDefinition = targetDefinition;
@@ -61,7 +56,7 @@ public class CopyGraphCommand extends Command {
 
     @Override
     public boolean canExecute() {
-        return copyBuffer.isValid();
+        return copyBuffer.isValid() && !copyBuffer.getSourceDefinition().equals(targetDefinition);
     }
 
     @Override
@@ -76,114 +71,85 @@ public class CopyGraphCommand extends Command {
                 Dialogs.warning(Localization.getString("CopyBuffer.DifferentVersion.warning"));
                 return;
             }
-            Set<ExtraCopyAction> elements = new HashSet<ExtraCopyAction>();
+            Set<ExtraCopyAction> copyActions = new HashSet<ExtraCopyAction>();
             List<Node> sourceNodeList = copyBuffer.getSourceNodes();
             // add nodes
             for (Node node : sourceNodeList) {
-                NodeTypeDefinition definition = null;
-                if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() == 0) {
-                    definition = NodeRegistry.getNodeTypeDefinition(StartState.class);
-                } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() == 0) {
-                    definition = NodeRegistry.getNodeTypeDefinition(EndState.class);
-                } else if (targetDefinition.getGraphElementById(node.getId()) == null) {
-                    definition = NodeRegistry.getNodeTypeDefinition(node.getClass());
+                if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() != 0) {
+                    continue;
+                } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() != 0) {
+                    continue;
                 }
-                if (definition != null) {
-                    Node copy = definition.createElement(targetDefinition, false);
-                    copy.setName(node.getName());
-                    copy.setDescription(node.getDescription());
-                    copy.setConstraint(node.getConstraint());
-                    if (node instanceof ITimed) {
-                        Timer timer = ((ITimed) node).getTimer();
-                        if (timer != null) {
-                            Timer copyTimer = new Timer();
-                            copyTimer.setDelay(new Duration(timer.getDelay()));
-                            String variableName = timer.getDelay().getVariableName();
-                            if (variableName != null) {
-                                Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), variableName);
-                                CopyVariableAction copyAction = new CopyVariableAction(variable);
-                                elements.add(copyAction);
-                            }
-                            copy.addChild(copyTimer);
+                Node copy = node.getCopy(targetDefinition);
+                if (node instanceof ITimed) {
+                    Timer timer = ((ITimed) node).getTimer();
+                    if (timer != null) {
+                        String variableName = timer.getDelay().getVariableName();
+                        if (variableName != null) {
+                            Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), variableName);
+                            CopyVariableAction copyAction = new CopyVariableAction(variable);
+                            copyActions.add(copyAction);
                         }
                     }
-                    node.setMinimizedView(node.isMinimizedView());
-                    if (node instanceof Decision) {
-                        copy.setDelegationConfiguration(node.getDelegationConfiguration());
-                        copy.setDelegationClassName(node.getDelegationClassName());
-                    }
-                    if (node instanceof Subprocess) {
-                        ((Subprocess) copy).setSubProcessName(((Subprocess) node).getSubProcessName());
-                        List<VariableMapping> variables = ((Subprocess) node).getVariableMappings();
-                        ((Subprocess) copy).setVariableMappings(variables);
-                        for (VariableMapping varMapping : variables) {
-                            Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), varMapping.getProcessVariableName());
+                }
+                if (node instanceof Subprocess) {
+                    for (VariableMapping mapping : ((Subprocess) node).getVariableMappings()) {
+                        Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), mapping.getProcessVariableName());
+                        if (variable != null) {
+                            CopyVariableAction copyAction = new CopyVariableAction(variable);
+                            copyActions.add(copyAction);
+                        }
+                        if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName())) {
+                            variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), mapping.getSubprocessVariableName());
                             if (variable != null) {
                                 CopyVariableAction copyAction = new CopyVariableAction(variable);
-                                elements.add(copyAction);
-                            }
-                        }
-                        copy.setDelegationClassName(node.getDelegationClassName());
-                    }
-                    targetDefinition.addChild(copy);
-                    targetNodeMap.put(node.getId(), copy);
-                    if (node instanceof FormNode) {
-                        FormNode formNode = (FormNode) node;
-                        if (formNode.hasForm() || formNode.hasFormValidation()) {
-                            CopyFormFilesAction copyAction = new CopyFormFilesAction(formNode, (FormNode) copy);
-                            copyAction.setSourceFolder(copyBuffer.getSourceFolder());
-                            copyAction.setTargetFolder(targetFolder);
-                            elements.add(copyAction);
-                        }
-                        Map<String, FormVariableAccess> variables = formNode.getFormVariables(copyBuffer.getSourceFolder());
-                        for (String varName : variables.keySet()) {
-                            Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), varName);
-                            if (variable != null) {
-                                CopyVariableAction copyAction = new CopyVariableAction(variable);
-                                elements.add(copyAction);
+                                copyActions.add(copyAction);
                             }
                         }
                     }
-                    if (node instanceof SwimlanedNode) {
-                        Swimlane swimlane = ((SwimlanedNode) node).getSwimlane();
-                        if (swimlane != null) {
-                            CopySwimlaneAction copyAction = new CopySwimlaneAction(swimlane);
-                            elements.add(copyAction);
+                }
+                targetNodeMap.put(node.getId(), copy);
+                if (node instanceof FormNode) {
+                    FormNode formNode = (FormNode) node;
+                    if (formNode.hasForm() || formNode.hasFormValidation() || formNode.hasFormScript() || formNode.hasFormTemplate()) {
+                        CopyFormFilesAction copyAction = new CopyFormFilesAction(formNode, (FormNode) copy);
+                        copyAction.setSourceFolder(copyBuffer.getSourceFolder());
+                        copyAction.setTargetFolder(targetFolder);
+                        copyActions.add(copyAction);
+                    }
+                    Map<String, FormVariableAccess> variables = formNode.getFormVariables(copyBuffer.getSourceFolder());
+                    for (String varName : variables.keySet()) {
+                        Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), varName);
+                        if (variable != null) {
+                            CopyVariableAction copyAction = new CopyVariableAction(variable);
+                            copyActions.add(copyAction);
                         }
                     }
-                    if (node instanceof Active) {
-                        List<? extends ru.runa.gpd.lang.model.Action> actions = ((Active) node).getActions();
-                        for (ru.runa.gpd.lang.model.Action action : actions) {
-                            AddActionHandlerAction copyAction = new AddActionHandlerAction((Active) copy, action);
-                            elements.add(copyAction);
-                        }
+                }
+                if (node instanceof SwimlanedNode) {
+                    Swimlane swimlane = ((SwimlanedNode) node).getSwimlane();
+                    if (swimlane != null) {
+                        CopySwimlaneAction copyAction = new CopySwimlaneAction(swimlane);
+                        copyActions.add(copyAction);
                     }
                 }
             }
             // add transitions
-            NodeTypeDefinition definition = NodeRegistry.getNodeTypeDefinition(Transition.class);
             for (Node node : sourceNodeList) {
                 List<Transition> transitions = node.getChildren(Transition.class);
                 for (Transition transition : transitions) {
                     Node source = targetNodeMap.get(transition.getSource().getId());
                     Node target = targetNodeMap.get(transition.getTarget().getId());
                     if (source != null && target != null) {
-                        Transition tr = definition.createElement(source, false);
-                        tr.setName(transition.getName());
-                        tr.setTarget(target);
-                        for (Point bp : transition.getBendpoints()) {
-                            tr.getBendpoints().add(bp.getCopy());
-                        }
-                        source.addLeavingTransition(tr);
-                        for (ru.runa.gpd.lang.model.Action action : transition.getActions()) {
-                            AddActionHandlerAction copyAction = new AddActionHandlerAction(tr, action);
-                            elements.add(copyAction);
-                        }
+                        Transition copy = transition.getCopy(source);
+                        copy.setTarget(target);
                     }
                 }
             }
+            List<ExtraCopyAction> sortedCopyActions = Lists.newArrayList(copyActions);
+            Collections.sort(sortedCopyActions);
             List<ExtraCopyAction> userConfirmedActions = new ArrayList<ExtraCopyAction>();
-            for (ExtraCopyAction copyAction : elements) {
+            for (ExtraCopyAction copyAction : sortedCopyActions) {
                 if (copyAction.isUserConfirmationRequired()) {
                     copyAction.setEnabled(false);
                     userConfirmedActions.add(copyAction);
@@ -191,14 +157,19 @@ public class CopyGraphCommand extends Command {
             }
             if (userConfirmedActions.size() > 0) {
                 // display dialog with collisions
-                CopyGraphRewriteDialog dialog = new CopyGraphRewriteDialog(userConfirmedActions);
-                dialog.open();
+                MultipleSelectionDialog dialog = new MultipleSelectionDialog(
+                        Localization.getString("CopyGraphRewriteDialog.title"), userConfirmedActions);
+                if (dialog.open() != IDialogConstants.OK_ID) {
+                    for (ExtraCopyAction copyAction : userConfirmedActions) {
+                        copyAction.setEnabled(false);
+                    }                    
+                }
             }
             // run copy actions
-            for (ExtraCopyAction copyAction : elements) {
+            for (ExtraCopyAction copyAction : sortedCopyActions) {
                 if (copyAction.isEnabled()) {
                     copyAction.execute();
-                    executedActionsList.add(copyAction);
+                    executedCopyActions.add(copyAction);
                 }
             }
             // set swimlanes
@@ -221,7 +192,7 @@ public class CopyGraphCommand extends Command {
             targetDefinition.removeChild(node);
         }
         // undo actions
-        for (ExtraCopyAction extraCopyAction : executedActionsList) {
+        for (ExtraCopyAction extraCopyAction : executedCopyActions) {
             try {
                 extraCopyAction.undo();
             } catch (Exception e) {
@@ -238,6 +209,7 @@ public class CopyGraphCommand extends Command {
         private IFile formFile;
         private IFile validationFile;
         private IFile scriptFile;
+        private IFile templateFile;
 
         public CopyFormFilesAction(FormNode sourceFormNode, FormNode targetFormNode) {
             super(CopyBuffer.GROUP_FORM_FILES, sourceFormNode.getName());
@@ -254,40 +226,42 @@ public class CopyGraphCommand extends Command {
         }
 
         @Override
-        public boolean isUserConfirmationRequired() {
-            if (sourceFormNode.hasForm() && targetFolder.getFile(sourceFormNode.getFormFileName()).exists()) {
-                return true;
+        protected String getChanges() {
+            List<String> fileNames = Lists.newArrayList();
+            if (targetFormNode.hasForm() && targetFolder.getFile(targetFormNode.getFormFileName()).exists()) {
+                fileNames.add(targetFormNode.getFormFileName());
             }
-            if (sourceFormNode.hasFormValidation() && targetFolder.getFile(sourceFormNode.getValidationFileName()).exists()) {
-                return true;
+            if (targetFormNode.hasFormValidation() && targetFolder.getFile(targetFormNode.getValidationFileName()).exists()) {
+                fileNames.add(targetFormNode.getValidationFileName());
             }
-            if (sourceFormNode.hasFormScript() && targetFolder.getFile(sourceFormNode.getScriptFileName()).exists()) {
-                return true;
+            if (targetFormNode.hasFormScript() && targetFolder.getFile(targetFormNode.getScriptFileName()).exists()) {
+                fileNames.add(targetFormNode.getScriptFileName());
             }
-            return false;
+            if (fileNames.isEmpty()) {
+                return super.getChanges();
+            }
+            return fileNames.toString();
         }
 
         @Override
         public void execute() throws CoreException {
             if (sourceFormNode.hasForm()) {
-                formFile = copyFile(sourceFormNode.getFormFileName());
-                targetFormNode.setFormFileName(sourceFormNode.getFormFileName()); // TODO
-                targetFormNode.setFormType(sourceFormNode.getFormType());
+                formFile = copyFile(sourceFormNode.getFormFileName(), targetFormNode.getFormFileName());
             }
             if (sourceFormNode.hasFormValidation()) {
-                validationFile = copyFile(sourceFormNode.getValidationFileName());
-                targetFormNode.setValidationFileName(sourceFormNode.getValidationFileName());
+                validationFile = copyFile(sourceFormNode.getValidationFileName(), targetFormNode.getValidationFileName());
             }
             if (sourceFormNode.hasFormScript()) {
-                scriptFile = copyFile(sourceFormNode.getScriptFileName());
-                targetFormNode.setScriptFileName(sourceFormNode.getScriptFileName());
+                scriptFile = copyFile(sourceFormNode.getScriptFileName(), targetFormNode.getScriptFileName());
+            }
+            if (targetFormNode.hasFormTemplate() && !targetFolder.getFile(targetFormNode.getTemplateFileName()).exists()) {
+                templateFile = copyFile(sourceFormNode.getTemplateFileName(), targetFormNode.getTemplateFileName());
             }
         }
 
-        private IFile copyFile(String fileName) throws CoreException {
-            // TODO copy safely (length of file names)
-            InputStream is = sourceFolder.getFile(fileName).getContents();
-            IFile file = targetFolder.getFile(fileName);
+        private IFile copyFile(String sourceFileName, String targetFileName) throws CoreException {
+            InputStream is = sourceFolder.getFile(sourceFileName).getContents();
+            IFile file = targetFolder.getFile(targetFileName);
             if (file.exists()) {
                 file.delete(true, null);
             }
@@ -307,40 +281,48 @@ public class CopyGraphCommand extends Command {
             if (scriptFile != null) {
                 scriptFile.delete(true, null);
             }
+            if (templateFile != null) {
+                templateFile.delete(true, null);
+            }
         }
     }
 
     private class CopySwimlaneAction extends ExtraCopyAction {
+        private final Swimlane sourceSwimlane;
         private Swimlane oldSwimlane;
-        private final Swimlane swimlane;
+        private Swimlane addedSwimlane;
 
         public CopySwimlaneAction(Swimlane sourceSwimlane) {
             super(CopyBuffer.GROUP_SWIMLANES, sourceSwimlane.getName());
-            this.swimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(targetDefinition, false);
-            this.swimlane.setName(sourceSwimlane.getName());
-            this.swimlane.setScriptingName(sourceSwimlane.getScriptingName());
-            this.swimlane.setDelegationClassName(sourceSwimlane.getDelegationClassName());
-            this.swimlane.setDelegationConfiguration(sourceSwimlane.getDelegationConfiguration());
+            this.sourceSwimlane = sourceSwimlane;
         }
 
         @Override
-        public boolean isUserConfirmationRequired() {
-            return swimlane.getName() == null;
+        protected String getChanges() {
+            oldSwimlane = targetDefinition.getSwimlaneByName(sourceSwimlane.getName());
+            if (oldSwimlane == null) {
+                return null;
+            }
+            if (!Objects.equal(oldSwimlane.getDelegationClassName(), sourceSwimlane.getDelegationClassName())) {
+                return oldSwimlane.getDelegationClassName() + "/" + sourceSwimlane.getDelegationClassName();
+            }
+            if (!Objects.equal(oldSwimlane.getDelegationConfiguration(), sourceSwimlane.getDelegationConfiguration())) {
+                return oldSwimlane.getDelegationConfiguration() + "/" + sourceSwimlane.getDelegationConfiguration();
+            }
+            return super.getChanges();
         }
 
         @Override
         public void execute() {
-            oldSwimlane = targetDefinition.getSwimlaneByName(getName());
             if (oldSwimlane != null) {
                 targetDefinition.removeChild(oldSwimlane);
-                swimlane.setName(getName());
             }
-            targetDefinition.addChild(swimlane);
+            addedSwimlane = (Swimlane) sourceSwimlane.getCopy(targetDefinition);
         }
 
         @Override
         public void undo() {
-            targetDefinition.removeChild(swimlane);
+            targetDefinition.removeChild(addedSwimlane);
             if (oldSwimlane != null) {
                 targetDefinition.addChild(oldSwimlane);
             }
@@ -348,39 +330,45 @@ public class CopyGraphCommand extends Command {
     }
 
     private class CopyVariableAction extends ExtraCopyAction {
+        private final Variable sourceVariable;
         private Variable oldVariable;
-        private final Variable variable;
+        private Variable addedVariable;
+        private VariableUserType addedUserType;
 
         public CopyVariableAction(Variable sourceVariable) {
             super(CopyBuffer.GROUP_VARIABLES, sourceVariable.getName());
-            this.variable = new Variable(sourceVariable);
-            if (sourceVariable.isComplex()) {
-                variable.setUserType(sourceVariable.getUserType().getCopy());
-            }
+            this.sourceVariable = sourceVariable;
         }
 
         @Override
-        public boolean isUserConfirmationRequired() {
-            return targetDefinition.getVariableNames(true).contains(variable.getName());
+        protected String getChanges() {
+            oldVariable = VariableUtils.getVariableByName(targetDefinition, sourceVariable.getName());
+            if (oldVariable == null) {
+                return null;
+            }
+            if (!Objects.equal(oldVariable.getFormat(), sourceVariable.getFormat())) {
+                return oldVariable.getFormat() + "/" + sourceVariable.getFormat();
+            }
+            return super.getChanges();
         }
 
         @Override
         public void execute() {
-            this.oldVariable = VariableUtils.getVariableByName(targetDefinition, variable.getName());
             if (oldVariable != null) {
                 targetDefinition.removeChild(oldVariable);
             }
-            targetDefinition.addChild(variable);
-            if (variable.isComplex()) {
-                targetDefinition.addVariableUserType(variable.getUserType());
+            addedVariable = (Variable) sourceVariable.getCopy(targetDefinition);
+            if (addedVariable.isComplex() && targetDefinition.getVariableUserType(addedVariable.getUserType().getName()) != null) {
+                addedUserType = addedVariable.getUserType();
+                targetDefinition.addVariableUserType(addedUserType);
             }
         }
 
         @Override
         public void undo() {
-            targetDefinition.removeChild(variable);
-            if (variable.isComplex()) {
-                targetDefinition.removeVariableUserType(variable.getUserType());
+            targetDefinition.removeChild(addedVariable);
+            if (addedUserType != null) {
+                targetDefinition.removeVariableUserType(addedUserType);
             }
             if (oldVariable != null) {
                 targetDefinition.addChild(oldVariable);
@@ -388,26 +376,4 @@ public class CopyGraphCommand extends Command {
         }
     }
 
-    private class AddActionHandlerAction extends ExtraCopyAction {
-        private final Active active;
-        private final Action action;
-
-        public AddActionHandlerAction(Active active, Action action) {
-            super(CopyBuffer.GROUP_ACTION_HANDLERS, action.toString());
-            this.active = active;
-            this.action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement((GraphElement) active, true);
-            this.action.setDelegationClassName(action.getDelegationClassName());
-            this.action.setDelegationConfiguration(action.getDelegationConfiguration());
-        }
-
-        @Override
-        public void execute() {
-            active.addAction(action, -1);
-        }
-
-        @Override
-        public void undo() {
-            active.removeAction(action);
-        }
-    }
 }
