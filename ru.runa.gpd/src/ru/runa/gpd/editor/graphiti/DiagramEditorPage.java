@@ -31,8 +31,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 
-import ru.runa.gpd.editor.GraphicalEditorContributor;
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.editor.ProcessEditorContributor;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -127,7 +127,7 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
 
     @Override
     protected KeyHandler getCommonKeyHandler() {
-        return GraphicalEditorContributor.createKeyHandler(getActionRegistry());
+        return ((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).getKeyHandler(getActionRegistry());
     }
 
     @Override

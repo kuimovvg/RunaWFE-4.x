@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -250,6 +251,7 @@ public class ImportParWizardPage extends ImportWizardPage {
             if (inputElement instanceof Map) {
                 ArrayList<WfDefinition> arrayList = new ArrayList<WfDefinition>();
                 arrayList.addAll(((Map<WfDefinition, List<WfDefinition>>) inputElement).keySet());
+                Collections.sort(arrayList);
                 return arrayList.toArray(new WfDefinition[arrayList.size()]);
             }
             return new Object[0];

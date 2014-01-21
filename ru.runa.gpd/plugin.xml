@@ -22,7 +22,7 @@
     </editor>
     <editor
           class="ru.runa.gpd.editor.gef.GEFProcessEditor"
-          contributorClass="ru.runa.gpd.editor.GraphicalEditorContributor"
+          contributorClass="ru.runa.gpd.editor.gef.GEFActionBarContributor"
           icon="icons/process.gif"
           id="ru.runa.gpd.GEFDesignerEditor"
           name="GEFEditor">

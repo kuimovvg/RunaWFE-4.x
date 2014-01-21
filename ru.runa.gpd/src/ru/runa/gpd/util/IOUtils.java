@@ -65,7 +65,13 @@ public class IOUtils {
         if (formExtensions.contains(ext)) {
             return true;
         }
-        return fileName.endsWith(FormNode.VALIDATION_SUFFIX);
+        if (fileName.endsWith(FormNode.VALIDATION_SUFFIX)) {
+            return true;
+        }
+        if (fileName.endsWith(FormNode.SCRIPT_SUFFIX)) {
+            return true;
+        }
+        return false;
     }
 
     public static String getExtension(String fileName) {
