@@ -10,9 +10,9 @@ public class SendMessageConfAction extends BaseModelActionDelegate {
     @Override
     public void run(IAction action) {
         SendMessageNode messageNode = getSelection();
-        MessageNodeDialog dialog = new MessageNodeDialog(messageNode.getProcessDefinition(), messageNode.getVariablesList(), true);
+        MessageNodeDialog dialog = new MessageNodeDialog(messageNode.getProcessDefinition(), messageNode.getVariableMappings(), true);
         if (dialog.open() != Window.CANCEL) {
-            messageNode.setVariablesList(dialog.getSubprocessVariables());
+            messageNode.setVariableMappings(dialog.getSubprocessVariables());
         }
     }
 }

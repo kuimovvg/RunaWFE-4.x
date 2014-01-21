@@ -10,12 +10,12 @@ import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
 
 public class ReceiveMessageNode extends Node implements Active, ITimed {
-    private final List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
+    private final List<VariableMapping> variableMappings = new ArrayList<VariableMapping>();
 
     @Override
     public void validate(List<ValidationError> errors, IFile definitionFile) {
         super.validate(errors, definitionFile);
-        for (VariableMapping variableMapping : variablesList) {
+        for (VariableMapping variableMapping : variableMappings) {
             if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {
                 continue;
             }
@@ -27,15 +27,15 @@ public class ReceiveMessageNode extends Node implements Active, ITimed {
         }
     }
 
-    public List<VariableMapping> getVariablesList() {
+    public List<VariableMapping> getVariableMappings() {
         List<VariableMapping> result = new ArrayList<VariableMapping>();
-        result.addAll(variablesList);
+        result.addAll(variableMappings);
         return result;
     }
 
-    public void setVariablesList(List<VariableMapping> variablesList) {
-        this.variablesList.clear();
-        this.variablesList.addAll(variablesList);
+    public void setVariableMappings(List<VariableMapping> variablesList) {
+        this.variableMappings.clear();
+        this.variableMappings.addAll(variablesList);
         setDirty();
     }
 
@@ -64,4 +64,14 @@ public class ReceiveMessageNode extends Node implements Active, ITimed {
         }
         super.addLeavingTransition(transition);
     }
+    
+    @Override
+    public ReceiveMessageNode getCopy(GraphElement parent) {
+        ReceiveMessageNode copy = (ReceiveMessageNode) super.getCopy(parent);
+        for (VariableMapping mapping : getVariableMappings()) {
+            copy.getVariableMappings().add(mapping.getCopy());
+        }
+        return copy;
+    }
+
 }

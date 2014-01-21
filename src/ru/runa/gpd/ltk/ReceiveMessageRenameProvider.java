@@ -9,7 +9,7 @@ public class ReceiveMessageRenameProvider extends MessageRenameProvider<ReceiveM
 
     @Override
     protected List<VariableMapping> getVariableMappings() {
-        return element.getVariablesList();
+        return element.getVariableMappings();
     }
 
 }

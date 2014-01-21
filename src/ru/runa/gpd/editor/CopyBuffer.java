@@ -5,9 +5,12 @@ import java.util.List;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.gef.ui.actions.Clipboard;
 
+import com.google.common.base.Objects;
+
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.util.SelectionItem;
 
 public class CopyBuffer {
 	public static final String GROUP_ACTION_HANDLERS = Localization.getString("CopyBuffer.ActionHandler");
@@ -57,12 +60,13 @@ public class CopyBuffer {
 		return sourceDefinition;
 	}
 
-	public static abstract class ExtraCopyAction {
+	public static abstract class ExtraCopyAction extends SelectionItem implements Comparable<ExtraCopyAction> {
         private final String groupName;
     	private final String name;
-        private boolean enabled = true;
+        private String changes;
         
 		public ExtraCopyAction(String groupName, String name) {
+		    super(true, null);
 		    this.groupName = groupName;
 			this.name = name;
 		}
@@ -71,20 +75,22 @@ public class CopyBuffer {
             return name;
         }
 
+		@Override
         public String getLabel() {
-            return groupName + ": " + name;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+            String label = groupName + ": " + name;
+            if (changes != null) {
+                label += " (" + changes + ")";
+            }
+            return label;
         }
         
-        public boolean isUserConfirmationRequired() {
-            return false;
+        public final boolean isUserConfirmationRequired() {
+            changes = getChanges();
+            return changes != null;
+        }
+        
+        protected String getChanges() {
+            return null;
         }
 
 		public abstract void execute() throws Exception;
@@ -95,5 +101,25 @@ public class CopyBuffer {
 		public String toString() {
 		    return getLabel();
 		}
+		
+		@Override
+		public boolean equals(Object obj) {
+		    ExtraCopyAction o = (ExtraCopyAction) obj;
+		    return groupName.equals(o.groupName) && name.equals(o.name);
+		}
+		
+		@Override
+		public int hashCode() {
+		    return Objects.hashCode(groupName, name);
+		}
+		
+		@Override
+		public int compareTo(ExtraCopyAction o) {
+		    if (groupName.equals(o.groupName)) {
+	            return name.compareTo(o.name);
+		    }
+		    return groupName.compareTo(o.groupName);
+		}
+		
 	}
 }
