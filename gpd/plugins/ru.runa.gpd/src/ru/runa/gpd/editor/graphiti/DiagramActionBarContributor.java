@@ -12,10 +12,10 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.ui.actions.RetargetAction;
 
-import ru.runa.gpd.editor.GraphicalEditorContributor;
+import ru.runa.gpd.editor.ProcessEditorContributor;
 
 // see org.eclipse.graphiti.ui.editor.DiagramEditorActionBarContributor
-public class DiagramActionBarContributor extends GraphicalEditorContributor {
+public class DiagramActionBarContributor extends ProcessEditorContributor {
     /**
      * Creates and initialises all Actions. See the corresponding method in the
      * super class.
