@@ -7,7 +7,7 @@ import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.extension.handler.ParamsDef;
 import ru.runa.wfe.lang.BaseTaskNode;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskCompletionBy;
+import ru.runa.wfe.task.TaskCompletionInfo;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -38,7 +38,7 @@ public class EndAsyncTasksHandler extends ActionHandlerBase {
         }
         log.info("Cancelling tasks by '" + nodeId + "': " + tasks);
         for (Task task : tasks) {
-            task.end(context, TaskCompletionBy.HANDLER, null);
+            task.end(context, TaskCompletionInfo.createForHandler(nodeId));
         }
     }
 

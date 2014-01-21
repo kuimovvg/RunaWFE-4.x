@@ -45,6 +45,7 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
         if (SystemProperties.isV3CompatibilityMode() || SystemProperties.isAllowedNotDefinedVariables()) {
             return new WfVariable(variableName, executionContext.getVariableValue(variableName));
         }
+        log.warn("No variable defined by name '" + variableName + "', returning null");
         return null;
     }
 

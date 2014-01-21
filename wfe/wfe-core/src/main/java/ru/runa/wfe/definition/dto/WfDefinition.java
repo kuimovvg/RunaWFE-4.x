@@ -32,7 +32,7 @@ import ru.runa.wfe.security.SecuredObjectType;
 import com.google.common.base.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class WfDefinition extends Identifiable {
+public class WfDefinition extends Identifiable implements Comparable<WfDefinition> {
     private static final long serialVersionUID = -6032491529439317948L;
 
     private Long id;
@@ -117,6 +117,14 @@ public class WfDefinition extends Identifiable {
     }
 
     @Override
+    public int compareTo(WfDefinition o) {
+        if (name == null) {
+            return -1;
+        }
+        return name.compareTo(o.name);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(id);
     }
@@ -133,4 +141,5 @@ public class WfDefinition extends Identifiable {
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("version", version).toString();
     }
+    
 }

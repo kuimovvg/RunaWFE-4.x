@@ -52,6 +52,7 @@ import ru.runa.wfe.audit.TaskCancelledLog;
 import ru.runa.wfe.audit.TaskEndBySubstitutorLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskExpiredLog;
+import ru.runa.wfe.audit.TaskRemovedOnProcessEndLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
@@ -252,23 +253,26 @@ public class Task implements Assignable {
      * name will be used in the signal. If this task completion does not trigger
      * execution to move on, the transition is ignored.
      */
-    public void end(ExecutionContext executionContext, TaskCompletionBy completionBy, Executor executor) {
-        log.debug("Ending " + this + " by " + completionBy + " with " + executor);
-        switch (completionBy) {
+    public void end(ExecutionContext executionContext, TaskCompletionInfo completionInfo) {
+        log.debug("Ending " + this + " with " + completionInfo);
+        switch (completionInfo.getCompletionBy()) {
         case TIMER:
-            executionContext.addLog(new TaskExpiredLog(this));
+            executionContext.addLog(new TaskExpiredLog(this, completionInfo));
             break;
         case ASSIGNED_EXECUTOR:
-            executionContext.addLog(new TaskEndLog(this, executor));
+            executionContext.addLog(new TaskEndLog(this, completionInfo));
             break;
         case SUBSTITUTOR:
-            executionContext.addLog(new TaskEndBySubstitutorLog(this, executor));
+            executionContext.addLog(new TaskEndBySubstitutorLog(this, completionInfo));
             break;
         case HANDLER:
-            executionContext.addLog(new TaskCancelledLog(this));
+            executionContext.addLog(new TaskCancelledLog(this, completionInfo));
+            break;
+        case PROCESS_END:
+            executionContext.addLog(new TaskRemovedOnProcessEndLog(this, completionInfo));
             break;
         default:
-            throw new IllegalArgumentException("Unimplemented for " + completionBy);
+            throw new IllegalArgumentException("Unimplemented for " + completionInfo.getCompletionBy());
         }
         InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(nodeId);
         ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);

@@ -2,12 +2,12 @@ package ru.runa.wfe.lang;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.base.Objects;
-
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.TaskCompletionBy;
+import ru.runa.wfe.task.TaskCompletionInfo;
 import ru.runa.wfe.task.TaskFactory;
+
+import com.google.common.base.Objects;
 
 public abstract class BaseTaskNode extends InteractionNode implements Synchronizable {
     private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public abstract class BaseTaskNode extends InteractionNode implements Synchroniz
         if (!async) {
             for (Task task : executionContext.getToken().getTasks()) {
                 if (Objects.equal(task.getNodeId(), getNodeId())) {
-                    task.end(executionContext, TaskCompletionBy.TIMER, null);
+                    task.end(executionContext, TaskCompletionInfo.createForTimer());
                 }
             }
         }
