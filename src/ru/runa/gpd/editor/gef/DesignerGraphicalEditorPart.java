@@ -37,8 +37,8 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.ObjectActionContributorManager;
 
-import ru.runa.gpd.editor.GraphicalEditorContributor;
 import ru.runa.gpd.editor.ProcessEditorBase;
+import ru.runa.gpd.editor.ProcessEditorContributor;
 import ru.runa.gpd.editor.StructuredSelectionProvider;
 import ru.runa.gpd.lang.model.GraphElement;
 
@@ -103,12 +103,12 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             }
         });
         KeyHandler keyHandler = new GraphicalViewerKeyHandler(getGraphicalViewer());
-        keyHandler.setParent(GraphicalEditorContributor.createKeyHandler(getActionRegistry()));
+        keyHandler.setParent(((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).getKeyHandler(getActionRegistry()));
         getGraphicalViewer().setKeyHandler(keyHandler);
         getGraphicalViewer().setContextMenu(createContextMenu());
         getSite().setSelectionProvider(getGraphicalViewer());
     }
-
+    
     private MenuManager createContextMenu() {
         MenuManager menuManager = new EditorContextMenuProvider(getGraphicalViewer());
         getSite().registerContextMenu("ru.runa.gpd.graph.contextmenu", menuManager, getSite().getSelectionProvider());
@@ -118,7 +118,7 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
     @Override
     protected void createActions() {
         super.createActions();
-        GraphicalEditorContributor.createCustomGEFActions(getActionRegistry(), editor, getSelectionActions());
+        GEFActionBarContributor.createCustomGEFActions(getActionRegistry(), editor, getSelectionActions());
     }
 
     @Override
