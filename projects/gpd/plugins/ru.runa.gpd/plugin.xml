@@ -228,6 +228,12 @@
              label="%label.action.validationOfForm"
              menubarPath="formdata/sp2"
              />
+       <action
+             class="ru.runa.gpd.lang.action.DeleteFormFilesAction"
+             id="deleteFormFiles"
+             label="%label.action.deleteFormFiles"
+             menubarPath="formdata/sp1">
+       </action>
     </objectContribution>
     <objectContribution
           adaptable="false"
@@ -258,12 +264,6 @@
              name="formExists"
              value="true">
        </filter>
-       <action
-             class="ru.runa.gpd.lang.action.DeleteFormDelegate"
-             id="deleteForm"
-             label="%label.action.deleteForm"
-             menubarPath="formdata/sp1"
-             />
        <action
              class="ru.runa.gpd.lang.action.OpenExternalFormEditorDelegate"
              id="editFormEditors"

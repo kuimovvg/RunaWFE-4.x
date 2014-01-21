@@ -102,4 +102,11 @@ public class ActionImpl extends Action {
         }
     }
 
+    @Override
+    public ActionImpl getCopy(GraphElement parent) {
+        ActionImpl copy = (ActionImpl) super.getCopy(parent);
+        copy.setEventType(getEventType());
+        return copy;
+    }
+
 }

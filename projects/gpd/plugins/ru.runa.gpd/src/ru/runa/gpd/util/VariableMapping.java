@@ -16,9 +16,9 @@ public class VariableMapping {
     public VariableMapping() {
     }
 
-    public VariableMapping(String processVariable, String subprocessVariable, String usage) {
-        this.processVariableName = processVariable;
-        this.subprocessVariableName = subprocessVariable;
+    public VariableMapping(String processVariableName, String subprocessVariableName, String usage) {
+        this.processVariableName = processVariableName;
+        this.subprocessVariableName = subprocessVariableName;
         this.usage = usage;
     }
 
@@ -46,4 +46,7 @@ public class VariableMapping {
         this.usage = usage;
     }
 
+    public VariableMapping getCopy() {
+        return new VariableMapping(processVariableName, subprocessVariableName, usage);
+    }
 }

@@ -206,4 +206,25 @@ public abstract class FormNode extends SwimlanedNode {
 	public boolean hasFormTemplate() {
         return templateFileName != null && templateFileName.length() > 0;
     }
+	
+    @Override
+    public FormNode getCopy(GraphElement parent) {
+        FormNode copy = (FormNode) super.getCopy(parent);
+        copy.setFormType(getFormType());
+        if (hasForm()) {
+            copy.setFormFileName(copy.getId() + "." + getFormType());
+        }
+        if (hasFormValidation()) {
+            copy.setValidationFileName(copy.getId() + "." + FormNode.VALIDATION_SUFFIX);
+        }
+        if (hasFormScript()) {
+            copy.setScriptFileName(copy.getId() + "." + FormNode.SCRIPT_SUFFIX);
+        }
+        if (hasFormTemplate()) {
+            copy.setTemplateFileName(getTemplateFileName());
+        }
+        copy.setUseJSValidation(isUseJSValidation());
+        return copy;
+    }
+
 }

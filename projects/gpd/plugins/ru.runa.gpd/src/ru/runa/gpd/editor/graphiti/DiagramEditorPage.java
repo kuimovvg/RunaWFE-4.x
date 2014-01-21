@@ -46,6 +46,7 @@ import com.google.common.base.Objects;
 
 public class DiagramEditorPage extends DiagramEditor implements PropertyChangeListener {
     private final ProcessEditorBase editor;
+    private KeyHandler keyHandler;
 
     public DiagramEditorPage(ProcessEditorBase editor) {
         this.editor = editor;
@@ -125,9 +126,14 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         return new DiagramContextMenuProvider(getGraphicalViewer(), getActionRegistry(), getDiagramTypeProvider());
     }
 
+    
     @Override
     protected KeyHandler getCommonKeyHandler() {
-        return ((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).getKeyHandler(getActionRegistry());
+        if (keyHandler == null) {
+            keyHandler = ((ProcessEditorContributor) getEditor().getEditorSite().
+                    getActionBarContributor()).createKeyHandler(getActionRegistry());
+        }
+        return keyHandler;
     }
 
     @Override

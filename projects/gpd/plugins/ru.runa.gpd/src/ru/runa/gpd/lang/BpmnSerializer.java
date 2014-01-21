@@ -198,18 +198,20 @@ public class BpmnSerializer extends ProcessSerializer {
                 properties.put(EMBEDDED, true);
             }
             writeExtensionElements(element, properties);
-            writeVariables(element, subprocess.getVariableMappings());
+            if (!subprocess.isEmbedded()) {
+                writeVariables(element, subprocess.getVariableMappings());
+            }
         }
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
             Element messageElement = writeNode(process, messageNode);
             messageElement.addAttribute(RUNA_PREFIX + ":" + TIMER_DURATION, messageNode.getTtlDuration().getDuration());
-            writeVariables(messageElement, messageNode.getVariablesList());
+            writeVariables(messageElement, messageNode.getVariableMappings());
         }
         List<ReceiveMessageNode> receiveMessageNodes = definition.getChildren(ReceiveMessageNode.class);
         for (ReceiveMessageNode messageNode : receiveMessageNodes) {
             Element messageElement = writeNode(process, messageNode);
-            writeVariables(messageElement, messageNode.getVariablesList());
+            writeVariables(messageElement, messageNode.getVariableMappings());
             // TODO duplicated
             Timer timer = messageNode.getTimer();
             if (timer != null) {
@@ -573,12 +575,12 @@ public class BpmnSerializer extends ProcessSerializer {
             SendMessageNode messageNode = create(messageElement, definition);
             String duration = messageElement.attributeValue(RUNA_PREFIX + ":" + TIMER_DURATION, "1 days");
             messageNode.setTtlDuration(new Duration(duration));
-            messageNode.setVariablesList(parseVariableMappings(messageElement));
+            messageNode.setVariableMappings(parseVariableMappings(messageElement));
         }
         List<Element> receiveMessageElements = process.elements(RECEIVE_TASK);
         for (Element messageElement : receiveMessageElements) {
             ReceiveMessageNode messageNode = create(messageElement, definition);
-            messageNode.setVariablesList(parseVariableMappings(messageElement));
+            messageNode.setVariableMappings(parseVariableMappings(messageElement));
         }
         List<Element> intermediateEventElements = process.elements(INTERMEDIATE_CATCH_EVENT);
         for (Element intermediateEventElement : intermediateEventElements) {

@@ -179,4 +179,15 @@ public class Transition extends NamedGraphElement implements Active {
         }
         return "";
     }
+    
+    @Override
+    public Transition getCopy(GraphElement parent) {
+        Transition copy = (Transition) super.getCopy(parent);
+        for (Point bp : getBendpoints()) {
+            copy.getBendpoints().add(bp.getCopy());
+        }
+        ((Node) parent).onLeavingTransitionAdded(copy);
+        return copy;
+    }
+
 }

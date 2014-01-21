@@ -22,4 +22,10 @@ public class Action extends GraphElement implements Delegable, Describable {
     public String toString() {
         return getLabel();
     }
+    
+    @Override
+    public Action getCopy(GraphElement parent) {
+        return (Action) super.getCopy(parent);
+    }
+
 }

@@ -26,6 +26,9 @@ public class Variable extends NamedGraphElement {
     private String defaultValue;
     private VariableUserType userType;
 
+    public Variable() {
+    }
+    
     protected Variable(String format, boolean publicVisibility, String defaultValue) {
         this(null, null, format, publicVisibility, defaultValue);
     }
@@ -205,6 +208,19 @@ public class Variable extends NamedGraphElement {
             helper.add("format", format);
         }
         return helper.toString();
+    }
+
+    @Override
+    protected void fillCopyCustomFields(GraphElement copy) {
+        Variable copyVariable = (Variable) copy;
+        copyVariable.setFormat(getFormat());
+        if (getUserType() != null) {
+            copyVariable.setUserType(getUserType().getCopy());
+        }
+        copyVariable.setScriptingName(getScriptingName());
+        copyVariable.setDefaultValue(getDefaultValue());
+        copyVariable.setPublicVisibility(isPublicVisibility());
+        super.fillCopyCustomFields(copyVariable);
     }
 
 }

@@ -214,19 +214,20 @@ public class JpdlSerializer extends ProcessSerializer {
             setAttribute(subProcessElement, NAME, subprocess.getSubProcessName());
             if (subprocess.isEmbedded()) {
                 setAttribute(subProcessElement, EMBEDDED, Boolean.TRUE.toString());
-            }
-            for (VariableMapping variable : subprocess.getVariableMappings()) {
-                Element variableElement = processStateElement.addElement(VARIABLE);
-                setAttribute(variableElement, NAME, variable.getProcessVariableName());
-                setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
-                setAttribute(variableElement, ACCESS, variable.getUsage());
+            } else {
+                for (VariableMapping variable : subprocess.getVariableMappings()) {
+                    Element variableElement = processStateElement.addElement(VARIABLE);
+                    setAttribute(variableElement, NAME, variable.getProcessVariableName());
+                    setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
+                    setAttribute(variableElement, ACCESS, variable.getUsage());
+                }
             }
         }
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
             Element messageElement = writeNode(root, messageNode, null);
             messageElement.addAttribute(DUEDATE, messageNode.getTtlDuration().getDuration());
-            for (VariableMapping variable : messageNode.getVariablesList()) {
+            for (VariableMapping variable : messageNode.getVariableMappings()) {
                 Element variableElement = messageElement.addElement(VARIABLE);
                 setAttribute(variableElement, NAME, variable.getProcessVariableName());
                 setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
@@ -236,7 +237,7 @@ public class JpdlSerializer extends ProcessSerializer {
         List<ReceiveMessageNode> receiveMessageNodes = definition.getChildren(ReceiveMessageNode.class);
         for (ReceiveMessageNode messageNode : receiveMessageNodes) {
             Element messageElement = writeNode(root, messageNode, null);
-            for (VariableMapping variable : messageNode.getVariablesList()) {
+            for (VariableMapping variable : messageNode.getVariableMappings()) {
                 Element variableElement = messageElement.addElement(VARIABLE);
                 setAttribute(variableElement, NAME, variable.getProcessVariableName());
                 setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
@@ -699,7 +700,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     variablesList.add(variable);
                 }
             }
-            messageNode.setVariablesList(variablesList);
+            messageNode.setVariableMappings(variablesList);
         }
         List<Element> receiveMessageNodes = root.elements(RECEIVE_MESSAGE);
         for (Element node : receiveMessageNodes) {
@@ -729,7 +730,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     }
                 }
             }
-            messageNode.setVariablesList(variablesList);
+            messageNode.setVariableMappings(variablesList);
         }
         List<Element> endTokenStates = root.elements(END_TOKEN);
         for (Element node : endTokenStates) {
