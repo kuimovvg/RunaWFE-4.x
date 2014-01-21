@@ -52,15 +52,18 @@ import ru.runa.wfe.audit.ProcessCancelLog;
 import ru.runa.wfe.audit.ProcessEndLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.definition.Deployment;
+import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.extension.AssignmentHandler;
 import ru.runa.wfe.job.dao.JobDAO;
 import ru.runa.wfe.lang.Node;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Synchronizable;
 import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.TaskCompletionInfo;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.TemporaryGroup;
 import ru.runa.wfe.user.dao.ExecutorDAO;
@@ -286,8 +289,7 @@ public class Process extends IdentifiableBase {
         // flush just created tasks
         ApplicationContextFactory.getTaskDAO().flushPendingChanges();
         boolean activeSuperProcessExists = parentNodeProcess != null && !parentNodeProcess.getProcess().hasEnded();
-        List<Task> taskToDelete = Lists.newArrayList();
-        for (Task task : getTasks()) {
+        for (Task task : Lists.newArrayList(getTasks())) {
             Node node = executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
             if (node instanceof Synchronizable) {
                 Synchronizable synchronizable = (Synchronizable) node;
@@ -302,16 +304,29 @@ public class Process extends IdentifiableBase {
                     }
                 }
             }
-            taskToDelete.add(task);
+            task.end(executionContext, TaskCompletionInfo.createForProcessEnd(id));
         }
-        log.info("Removing active tasks: " + taskToDelete);
-        tasks.removeAll(taskToDelete);
         if (parentNodeProcess == null) {
             log.debug("Removing async tasks ON_MAIN_PROCESS_END");
+            IProcessDefinitionLoader processDefinitionLoader = ApplicationContextFactory.getProcessDefinitionLoader();
             for (Process subProcess : executionContext.getSubprocessesRecursively()) {
                 if (subProcess.getTasks().size() > 0) {
-                    log.info("Removing active subprocess tasks: " + subProcess.getTasks());
-                    subProcess.getTasks().clear();
+                    ProcessDefinition subProcessDefinition = processDefinitionLoader.getDefinition(subProcess);
+                    ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subProcess);
+                    for (Task task : Lists.newArrayList(subProcess.getTasks())) {
+                        Node node = subProcessDefinition.getNodeNotNull(task.getNodeId());
+                        if (node instanceof Synchronizable) {
+                            Synchronizable synchronizable = (Synchronizable) node;
+                            if (synchronizable.isAsync()) {
+                                switch (synchronizable.getCompletionMode()) {
+                                case NEVER:
+                                    continue;
+                                case ON_MAIN_PROCESS_END:
+                                    task.end(subExecutionContext, TaskCompletionInfo.createForProcessEnd(id));
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

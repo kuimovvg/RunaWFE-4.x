@@ -5,9 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.TaskCompletionInfo;
 
 /**
- * Logging task completion by timer.
+ * Logging task cancelled automatically.
  * 
  * @author Dofs
  */
@@ -19,20 +20,25 @@ public class TaskCancelledLog extends TaskEndLog {
     public TaskCancelledLog() {
     }
 
-    public TaskCancelledLog(Task task) {
-        super(task, null);
+    public TaskCancelledLog(Task task, TaskCompletionInfo completionInfo) {
+        super(task, completionInfo);
+        addAttribute(ATTR_INFO, completionInfo.getHandlerInfo());
     }
 
-    @Override
     @Transient
-    public String getActorName() {
+    public String getHandlerInfo() {
+        String handlerInfo = getAttribute(ATTR_INFO);
+        if (handlerInfo != null) {
+            return handlerInfo;
+        }
+        // for pre 4.1.0 data
         return "";
     }
 
     @Override
     @Transient
     public Object[] getPatternArguments() {
-        return new Object[] { getTaskName() };
+        return new Object[] { getTaskName(), getHandlerInfo() };
     }
 
 }
