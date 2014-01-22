@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 
@@ -104,7 +105,10 @@ public class ProcessCache {
         if (definition != null) {
             CACHE_BY_NAME.remove(definition.getName());
             if (file.exists()) {
-                getProcessDefinition(file);
+                ProcessDefinition parsedDefinition = getProcessDefinition(file);
+                if (!(definition instanceof SubprocessDefinition)) {
+                    parsedDefinition.getEmbeddedSubprocesses().putAll(definition.getEmbeddedSubprocesses());
+                }
             }
         }
     }

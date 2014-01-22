@@ -19,6 +19,11 @@ public class StartState extends FormNode {
     }
 
     @Override
+    protected boolean isSwimlaneDisabled() {
+        return getProcessDefinition() instanceof SubprocessDefinition;
+    }
+    
+    @Override
     public void validate(List<ValidationError> errors, IFile definitionFile) {
         super.validate(errors, definitionFile);
         if (hasForm()) {
@@ -37,6 +42,9 @@ public class StartState extends FormNode {
         }
         if (hasFormValidation() && getProcessDefinition() instanceof SubprocessDefinition) {
             errors.add(ValidationError.createLocalizedError(this, "startState.formValidationIsNotUsableInEmbeddedSubprocess"));
+        }
+        if (isSwimlaneDisabled() && getSwimlane() != null) {
+            errors.add(ValidationError.createLocalizedError(this, "startState.swimlaneIsNotUsableInEmbeddedSubprocess"));
         }
     }
 }

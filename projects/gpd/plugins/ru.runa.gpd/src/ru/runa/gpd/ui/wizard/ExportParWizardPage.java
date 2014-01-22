@@ -99,7 +99,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
         createDestinationGroup(exportGroup);
         exportToServerButton = new Button(exportGroup, SWT.RADIO);
         exportToServerButton.setText(Localization.getString("ExportParWizardPage.page.exportToServerButton"));
-        SyncUIHelper.createHeader(exportGroup, WFEServerProcessDefinitionImporter.getInstance(), WFEConnectionPreferencePage.class);
+        SyncUIHelper.createHeader(exportGroup, WFEServerProcessDefinitionImporter.getInstance(), WFEConnectionPreferencePage.class, null);
         restoreWidgetValues();
         giveFocusToDestination();
         setControl(pageControl);
@@ -334,7 +334,7 @@ public class ExportParWizardPage extends WizardArchiveFileResourceExportPage1 {
                 Display.getDefault().syncExec(new Runnable() {
                     @Override
                     public void run() {
-                        WFEServerProcessDefinitionImporter.getInstance().uploadPar(definitionName, baos.toByteArray());
+                        WFEServerProcessDefinitionImporter.getInstance().uploadPar(definitionName, baos.toByteArray(), true);
                     }
                 });
             } catch (Exception e) {

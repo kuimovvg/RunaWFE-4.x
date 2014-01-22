@@ -25,6 +25,7 @@ import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
 import ru.runa.gpd.lang.model.Subprocess;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Timer;
@@ -128,7 +129,8 @@ public class CopyGraphCommand extends Command {
                 }
                 if (node instanceof SwimlanedNode) {
                     Swimlane swimlane = ((SwimlanedNode) node).getSwimlane();
-                    if (swimlane != null) {
+                    boolean ignoreSwimlane = targetDefinition instanceof SubprocessDefinition && node instanceof StartState;
+                    if (swimlane != null && !ignoreSwimlane) {
                         CopySwimlaneAction copyAction = new CopySwimlaneAction(swimlane);
                         copyActions.add(copyAction);
                     }
@@ -175,9 +177,12 @@ public class CopyGraphCommand extends Command {
             // set swimlanes
             for (Map.Entry<String, Node> entry : targetNodeMap.entrySet()) {
                 if (entry.getValue() instanceof SwimlanedNode) {
-                    SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getGraphElementByIdNotNull(entry.getKey());
-                    Swimlane swimlane = targetDefinition.getSwimlaneByName(sourceNode.getSwimlaneName());
-                    ((SwimlanedNode) entry.getValue()).setSwimlane(swimlane);
+                    boolean ignoreSwimlane = targetDefinition instanceof SubprocessDefinition && entry.getValue() instanceof StartState;
+                    if (!ignoreSwimlane) {
+                        SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getGraphElementByIdNotNull(entry.getKey());
+                        Swimlane swimlane = targetDefinition.getSwimlaneByName(sourceNode.getSwimlaneName());
+                        ((SwimlanedNode) entry.getValue()).setSwimlane(swimlane);
+                    }
                 }
             }
         } catch (Exception e) {
