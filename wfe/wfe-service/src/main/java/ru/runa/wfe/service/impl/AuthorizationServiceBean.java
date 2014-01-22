@@ -139,7 +139,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(identifiable != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         }
         return (List<Executor>) authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, withPermission);
     }
@@ -151,7 +151,7 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(identifiable != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         }
         return authorizationLogic.getExecutorsWithPermissionCount(user, identifiable, batchPresentation, withPermission);
     }

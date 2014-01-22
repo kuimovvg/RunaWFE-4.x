@@ -90,7 +90,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
     public List<Relation> getRelations(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.RELATIONS.createDefault();
+            batchPresentation = BatchPresentationFactory.RELATIONS.createNonPaged();
         }
         return relationLogic.getRelations(user, batchPresentation);
     }
@@ -133,7 +133,7 @@ public class RelationServiceBean implements RelationServiceLocal, RelationServic
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(user);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createDefault();
+            batchPresentation = BatchPresentationFactory.RELATION_PAIRS.createNonPaged();
         }
         return relationLogic.getRelations(user, name, batchPresentation);
     }
