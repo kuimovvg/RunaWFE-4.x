@@ -5,9 +5,13 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import ru.runa.gpd.PluginLogger;
+import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
+import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -55,39 +59,45 @@ public class WFEServerProcessDefinitionImporter extends DataImporter {
         return getConnector().getProcessDefinitionArchive(definition);
     }
 
-    public void uploadPar(String definitionName, byte[] par) {
+    public void uploadPar(String definitionName, byte[] par, boolean retryWithSynchronize) {
         WfDefinition oldVersion = null;
         if (!hasCachedData()) {
             synchronize();
-            //        } else {
-            //            WFEServerConnector.getInstance().connect();
         }
-        for (WfDefinition definition : definitions.keySet()) {
-            if (definitionName.equals(definition.getName())) {
-                oldVersion = definition;
-                break;
+        try {
+            for (WfDefinition definition : definitions.keySet()) {
+                if (definitionName.equals(definition.getName())) {
+                    oldVersion = definition;
+                    break;
+                }
             }
-        }
-        WfDefinition lastDefinition;
-        List<WfDefinition> lastHistory;
-        if (oldVersion != null) {
-            String[] types = oldVersion.getCategories();
-            if (types == null) {
-                types = new String[] { "GPD" };
-            }
-            try {
+            WfDefinition lastDefinition;
+            List<WfDefinition> lastHistory;
+            if (oldVersion != null) {
+                String[] types = oldVersion.getCategories();
+                if (types == null) {
+                    types = new String[] { "GPD" };
+                }
                 lastDefinition = getConnector().redeployProcessDefinitionArchive(oldVersion.getId(), par, Lists.newArrayList(types));
                 List<WfDefinition> oldHistory = definitions.remove(oldVersion);
                 lastHistory = Lists.newArrayList(oldVersion);
                 lastHistory.addAll(oldHistory);
-            } catch (DefinitionDoesNotExistException e) {
+            } else {
                 lastDefinition = getConnector().deployProcessDefinitionArchive(par);
                 lastHistory = Lists.newArrayList();
             }
-        } else {
-            lastDefinition = getConnector().deployProcessDefinitionArchive(par);
-            lastHistory = Lists.newArrayList();
+            definitions.put(lastDefinition, lastHistory);
+        } catch (Exception e) {
+            if (retryWithSynchronize) {
+                if (e instanceof DefinitionDoesNotExistException || e instanceof DefinitionAlreadyExistException || 
+                        e instanceof DefinitionNameMismatchException) {
+                    PluginLogger.logInfo("Retrying due to " + e);
+                    synchronize();
+                    uploadPar(definitionName, par, false);
+                    return;
+                }
+            }
+            Throwables.propagate(e);
         }
-        definitions.put(lastDefinition, lastHistory);
     }
 }

@@ -15,7 +15,9 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
+import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.webservice.AuthenticationAPI;
 import ru.runa.wfe.webservice.AuthenticationWebService;
@@ -136,7 +138,14 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
 
     @Override
     public WfDefinition deployProcessDefinitionArchive(byte[] par) {
-        return WfDefinitionAdapter.toDTO(getDefinitionService().deployProcessDefinition(getUser(), par, Lists.newArrayList("GPD")));
+        try {
+            return WfDefinitionAdapter.toDTO(getDefinitionService().deployProcessDefinition(getUser(), par, Lists.newArrayList("GPD")));
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("DefinitionAlreadyExistException")) {
+                throw new DefinitionAlreadyExistException("");
+            }
+            throw Throwables.propagate(e);
+        }
     }
 
     @Override
@@ -144,8 +153,11 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
         try {
             return WfDefinitionAdapter.toDTO(getDefinitionService().redeployProcessDefinition(getUser(), definitionId, par, types));
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("Definition "+definitionId+" does not exists")) {
+            if (e.getMessage() != null && e.getMessage().contains("DefinitionDoesNotExistException")) {
                 throw new DefinitionDoesNotExistException(String.valueOf(definitionId));
+            }
+            if (e.getMessage() != null && e.getMessage().contains("DefinitionNameMismatchException")) {
+                throw new DefinitionNameMismatchException(e.getMessage(), "", "");
             }
             throw Throwables.propagate(e);
         }

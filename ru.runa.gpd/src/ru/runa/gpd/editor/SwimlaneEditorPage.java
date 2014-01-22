@@ -35,7 +35,9 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
 import ru.runa.gpd.lang.model.Variable;
@@ -192,17 +194,6 @@ public class SwimlaneEditorPage extends EditorPartBase {
     private void delete(Swimlane swimlane) {
         boolean confirmationRequired = false;
         StringBuffer confirmationInfo = new StringBuffer();
-        StringBuffer stateNames = new StringBuffer();
-        for (SwimlanedNode node : getDefinition().getChildren(SwimlanedNode.class)) {
-            if (node.getSwimlaneName() != null && swimlane.getName().equals(node.getSwimlaneName())) {
-                stateNames.append(" - ").append(node.getName()).append("\n");
-            }
-        }
-        if (stateNames.length() > 0) {
-            confirmationInfo.append(Localization.getString("Swimlane.UsedInStates")).append("\n");
-            confirmationInfo.append(stateNames).append("\n\n");
-            confirmationRequired = true;
-        }
         List<FormNode> nodesWithVar = ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), swimlane.getName());
         if (nodesWithVar.size() > 0) {
             confirmationInfo.append(Localization.getString("Swimlane.ExistInForms")).append("\n");
@@ -223,7 +214,21 @@ public class SwimlaneEditorPage extends EditorPartBase {
             confirmationRequired = true;
         }
         if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), confirmationInfo.toString())) {
-            // remove variable from form validations
+            // clear swimlanes
+            ProcessDefinition mainProcessDefinition = getDefinition().getMainProcessDefinition();            
+            for (SwimlanedNode node : mainProcessDefinition.getChildren(SwimlanedNode.class)) {
+                if (swimlane.getName().equals(node.getSwimlaneName())) {
+                    node.setSwimlane(null);
+                }
+            }
+            for (SubprocessDefinition subprocessDefinition : mainProcessDefinition.getEmbeddedSubprocesses().values()) {
+                for (SwimlanedNode node : subprocessDefinition.getChildren(SwimlanedNode.class)) {
+                    if (swimlane.getName().equals(node.getSwimlaneName())) {
+                        node.setSwimlane(null);
+                    }
+                }
+            }
+            // TODO remove variable from form validations in EmbeddedSubprocesses
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane.getName());
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
             command.setProcessDefinition(getDefinition());

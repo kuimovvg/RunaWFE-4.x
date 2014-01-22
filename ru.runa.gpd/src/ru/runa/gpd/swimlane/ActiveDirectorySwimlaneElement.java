@@ -37,7 +37,7 @@ public class ActiveDirectorySwimlaneElement extends OrgFunctionSwimlaneElement {
     @Override
     public void createGUI(Composite parent) {
         Composite clientArea = createSection(parent, 1);
-        SyncUIHelper.createHeader(clientArea, LDAPExecutorsImporter.getInstance(), LDAPConnectionPreferencePage.class);
+        SyncUIHelper.createHeader(clientArea, LDAPExecutorsImporter.getInstance(), LDAPConnectionPreferencePage.class, null);
         Composite content = new Composite(clientArea, SWT.NONE);
         content.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         content.setLayout(new GridLayout(2, false));

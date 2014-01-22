@@ -282,7 +282,7 @@ public class VariableEditorPage extends EditorPartBase {
             confirmationRequired = true;
         }
         if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), confirmationInfo.toString())) {
-            // remove variable from form validations
+            // TODO remove variable from form validations in EmbeddedSubprocesses
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable.getName());
             // remove variable from definition
             ProcessDefinitionRemoveVariablesCommand command = new ProcessDefinitionRemoveVariablesCommand();
