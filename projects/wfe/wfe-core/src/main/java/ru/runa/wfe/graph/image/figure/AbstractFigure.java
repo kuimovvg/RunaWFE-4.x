@@ -41,8 +41,8 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
+import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.figure.uml.TaskNodeFigure;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.AngleInfo;
@@ -79,7 +79,7 @@ public abstract class AbstractFigure {
         }
         this.async = (node instanceof Synchronizable && ((Synchronizable) node).isAsync());
         this.minimized = node.isGraphMinimazedView();
-        if (node instanceof InteractionNode) {
+        if (node instanceof InteractionNode && ((InteractionNode) node).getTasks().size() > 0) {
             TaskDefinition taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
             if (taskDefinition.getSwimlane() != null) {
                 this.swimlane = taskDefinition.getSwimlane().getName();
