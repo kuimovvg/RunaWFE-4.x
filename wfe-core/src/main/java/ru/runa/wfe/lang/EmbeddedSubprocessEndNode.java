@@ -35,10 +35,11 @@ public class EmbeddedSubprocessEndNode extends Node {
     }
 
     @Override
-    public void leave(ExecutionContext executionContext, Transition transition) {
+    protected void addLeaveLog(ExecutionContext executionContext) {
+        super.addLeaveLog(executionContext);
         executionContext.getToken().setNodeId(subProcessState.getNodeId());
         executionContext.addLog(new NodeLeaveLog(subProcessState));
         executionContext.getToken().setNodeId(getNodeId());
-        super.leave(executionContext, transition);
     }
+
 }

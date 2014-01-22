@@ -420,6 +420,9 @@ public class BpmnXmlReader {
     // }
 
     private void readTask(ProcessDefinition processDefinition, Element element, InteractionNode node) {
+        if (node instanceof EmbeddedSubprocessStartNode) {
+            return;
+        }
         TaskDefinition taskDefinition = new TaskDefinition();
         taskDefinition.setNodeId(node.getNodeId());
         taskDefinition.setProcessDefinition(processDefinition);
