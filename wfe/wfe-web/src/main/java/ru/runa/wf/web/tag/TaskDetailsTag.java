@@ -73,15 +73,11 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
         BatchPresentation batchPresentation = getProfile().getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS).clone();
         batchPresentation.setFieldsToGroup(new int[0]);
         WfTask task = Delegates.getExecutionService().getTask(getUser(), getTaskId());
-        if (task.isGroupAssigned()) {
-            setButtonEnabled(true);
-        } else {
-            setButtonEnabled(false);
-        }
+        this.buttonEnabled = task.isGroupAssigned();
         String url = getReturnAction() + "?" + IdForm.ID_INPUT_NAME + "=" + taskId + "&" + ProcessForm.ACTOR_ID_INPUT_NAME + "=" + actorId;
         tdFormElement.addElement(ListTasksFormTag.buildTasksTable(pageContext, batchPresentation, Lists.newArrayList(task), url, true));
-
         tdFormElement.addElement(new Input(Input.HIDDEN, IdForm.ID_INPUT_NAME, String.valueOf(taskId)));
+        tdFormElement.addElement(new Input(Input.HIDDEN, ProcessForm.ACTOR_ID_INPUT_NAME, String.valueOf(actorId)));
         tdFormElement.addElement(new Input(Input.HIDDEN, WebResources.HIDDEN_ONE_TASK_INDICATOR, WebResources.HIDDEN_ONE_TASK_INDICATOR));
         if (task.getOwner() != null) {
             tdFormElement.addElement(new Input(Input.HIDDEN, WebResources.HIDDEN_TASK_PREVIOUS_OWNER_ID, task.getOwner().getId().toString()));
@@ -96,14 +92,6 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
     @Override
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_ACCEPT_TASK, pageContext);
-    }
-
-    /**
-     * @param buttonEnabled
-     *            the buttonEnabled to set
-     */
-    public void setButtonEnabled(boolean buttonEnabled) {
-        this.buttonEnabled = buttonEnabled;
     }
 
     @Override
