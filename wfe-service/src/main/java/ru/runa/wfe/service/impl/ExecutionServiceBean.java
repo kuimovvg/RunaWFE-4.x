@@ -98,7 +98,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public int getProcessesCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
+            batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         }
         return executionLogic.getAllProcessesCount(user, batchPresentation);
     }
@@ -108,7 +108,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public List<WfProcess> getProcesses(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.PROCESSES.createDefault();
+            batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         }
         return executionLogic.getProcesses(user, batchPresentation);
     }
@@ -148,7 +148,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public List<WfTask> getTasks(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.TASKS.createDefault();
+            batchPresentation = BatchPresentationFactory.TASKS.createNonPaged();
         }
         return taskLogic.getTasks(user, batchPresentation);
     }
@@ -314,7 +314,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public List<SystemLog> getSystemLogs(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createDefault();
+            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createNonPaged();
         }
         return auditLogic.getSystemLogs(user, batchPresentation);
     }
@@ -324,7 +324,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public int getSystemLogsCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createDefault();
+            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createNonPaged();
         }
         return auditLogic.getSystemLogsCount(user, batchPresentation);
     }

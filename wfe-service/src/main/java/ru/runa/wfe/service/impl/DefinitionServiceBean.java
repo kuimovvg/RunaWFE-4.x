@@ -102,7 +102,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.DEFINITIONS.createDefault();
+            batchPresentation = BatchPresentationFactory.DEFINITIONS.createNonPaged();
         }
         return definitionLogic.getLatestProcessDefinitions(user, batchPresentation);
     }
