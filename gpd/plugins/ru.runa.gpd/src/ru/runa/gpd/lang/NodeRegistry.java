@@ -110,11 +110,11 @@ public class NodeRegistry {
                 if (embeddedSubprocess) {
                     SubprocessDefinition subprocessDefinition = new SubprocessDefinition();
                     IFile parentDefinitionFile = IOUtils.getAdjacentFile(definitionFile, ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
-                    ProcessDefinition parentProcessDefinition = ProcessCache.getProcessDefinition(parentDefinitionFile);
-                    Preconditions.checkNotNull(parentProcessDefinition, "parentProcessDefinition");
-                    subprocessDefinition.setParent(parentProcessDefinition);
+                    ProcessDefinition mainProcessDefinition = ProcessCache.getProcessDefinition(parentDefinitionFile);
+                    Preconditions.checkNotNull(mainProcessDefinition, "parentProcessDefinition");
+                    subprocessDefinition.setParent(mainProcessDefinition);
                     language.getSerializer().parseXML(document, subprocessDefinition);
-                    parentProcessDefinition.addEmbeddedSubprocess(subprocessDefinition);
+                    mainProcessDefinition.addEmbeddedSubprocess(subprocessDefinition);
                     return subprocessDefinition;
                 } else {
                     ProcessDefinition definition = new ProcessDefinition();

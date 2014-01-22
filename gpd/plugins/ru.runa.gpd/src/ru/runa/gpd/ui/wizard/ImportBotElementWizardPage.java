@@ -30,19 +30,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
+import ru.runa.gpd.wfe.ConnectorCallback;
 import ru.runa.gpd.wfe.DataImporter;
 import ru.runa.gpd.wfe.WFEServerBotElementImporter;
 import ru.runa.gpd.wfe.WFEServerBotStationElementImporter;
@@ -58,7 +55,7 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
     private Text selectedParsLabel;
     private Button selectParsButton;
     protected Button importFromServerButton;
-    protected TreeViewer serverDefinitionViewer;
+    protected TreeViewer serverDataViewer;
     private String selectedDirFileName;
     private String[] selectedFileNames;
     protected final IResource importResource;
@@ -137,22 +134,20 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
         });
         importFromServerButton = new Button(importGroup, SWT.RADIO);
         importFromServerButton.setText(Localization.getString("ImportParWizardPage.page.importFromServerButton"));
-        Composite groupLinkComposite = SyncUIHelper.createHeader(importGroup, getDataImporter(), WFEConnectionPreferencePage.class);
-        for (Control innerControl : groupLinkComposite.getChildren()) {
-            if (innerControl instanceof Hyperlink && ((Hyperlink) innerControl).getText().equals(Localization.getString("button.Synchronize"))) {
-                ((Hyperlink) innerControl).addHyperlinkListener(new HyperlinkAdapter() {
-                    @Override
-                    public void linkActivated(HyperlinkEvent e) {
-                        try {
-                            populateInputView();
-                        } catch (Exception ex) {
-                            Dialogs.error(Localization.getString("error.Synchronize"), ex);
-                        }
-                    }
-                });
+        SyncUIHelper.createHeader(importGroup, getDataImporter(), WFEConnectionPreferencePage.class, new ConnectorCallback() {
+
+            @Override
+            public void onSynchronizationCompleted() {
+                populateInputView();
             }
-        }
-        createServerDefinitionsGroup(importGroup);
+
+            @Override
+            public void onSynchronizationFailed(Exception e) {
+                Dialogs.error(Localization.getString("error.Synchronize"), e);
+            }
+            
+        });
+        createServerDataGroup(importGroup);
         setControl(pageControl);
     }
 
@@ -161,7 +156,7 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
         // editor.setEnabled(fromFile, fileSelectionArea);
         selectParsButton.setEnabled(fromFile);
         if (fromFile) {
-            serverDefinitionViewer.setInput(new Object());
+            serverDataViewer.setInput(new Object());
             //serverDefinitionViewer.refresh(true);
         } else {
             if (getDataImporter().isConfigured()) {
@@ -172,21 +167,21 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
                     PluginLogger.logInfo("def sync [sec]: " + ((end - start) / 1000));
                 }
                 populateInputView();
-                serverDefinitionViewer.refresh(true);
+                serverDataViewer.refresh(true);
             }
         }
     }
 
     protected abstract void populateInputView();
 
-    private void createServerDefinitionsGroup(Composite parent) {
-        serverDefinitionViewer = new TreeViewer(parent);
+    private void createServerDataGroup(Composite parent) {
+        serverDataViewer = new TreeViewer(parent);
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.heightHint = 100;
-        serverDefinitionViewer.getControl().setLayoutData(gridData);
-        serverDefinitionViewer.setContentProvider(getContentProvider());
-        serverDefinitionViewer.setLabelProvider(new BotStationLabelProvider());
-        serverDefinitionViewer.setInput(new Object());
+        serverDataViewer.getControl().setLayoutData(gridData);
+        serverDataViewer.setContentProvider(getContentProvider());
+        serverDataViewer.setLabelProvider(new BotStationLabelProvider());
+        serverDataViewer.setInput(new Object());
     }
 
     protected abstract Class<?> getBotElementClass();
@@ -209,7 +204,7 @@ public abstract class ImportBotElementWizardPage extends ImportWizardPage {
                     parInputStreams[i] = new FileInputStream(fileName);
                 }
             } else {
-                TreePath[] selections = ((ITreeSelection) serverDefinitionViewer.getSelection()).getPaths();
+                TreePath[] selections = ((ITreeSelection) serverDataViewer.getSelection()).getPaths();
                 List<TreePath> defSelections = new ArrayList<TreePath>();
                 for (TreePath object : selections) {
                     defSelections.add(object);

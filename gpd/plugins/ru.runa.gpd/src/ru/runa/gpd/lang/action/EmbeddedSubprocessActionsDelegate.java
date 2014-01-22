@@ -63,7 +63,7 @@ public class EmbeddedSubprocessActionsDelegate extends BaseModelDropDownActionDe
         }
         List<String> usedNames = Lists.newArrayList();
         usedNames.add(definition.getName());
-        for (Subprocess subprocess : definition.getChildren(Subprocess.class)) {
+        for (Subprocess subprocess : mainProcessDefinition.getChildren(Subprocess.class)) {
             if (subprocess.isEmbedded() && !Objects.equal(subprocess, this.subprocess)) {
                 usedNames.add(subprocess.getSubProcessName());
             }

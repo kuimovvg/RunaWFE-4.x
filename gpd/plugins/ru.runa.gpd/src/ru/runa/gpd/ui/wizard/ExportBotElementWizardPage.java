@@ -76,7 +76,7 @@ public abstract class ExportBotElementWizardPage extends WizardArchiveFileResour
         createDestinationGroup(exportGroup);
         exportToServerButton = new Button(exportGroup, SWT.RADIO);
         exportToServerButton.setText(Localization.getString("ExportParWizardPage.page.exportToServerButton"));
-        SyncUIHelper.createHeader(exportGroup, WFEServerBotElementImporter.getInstance(), WFEConnectionPreferencePage.class);
+        SyncUIHelper.createHeader(exportGroup, WFEServerBotElementImporter.getInstance(), WFEConnectionPreferencePage.class, null);
         restoreWidgetValues();
         giveFocusToDestination();
         setControl(pageControl);

@@ -35,8 +35,10 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.wfe.ConnectorCallback;
 import ru.runa.gpd.wfe.WFEServerProcessDefinitionImporter;
 import ru.runa.wfe.definition.dto.WfDefinition;
 
@@ -115,7 +117,19 @@ public class ImportParWizardPage extends ImportWizardPage {
         });
         importFromServerButton = new Button(importGroup, SWT.RADIO);
         importFromServerButton.setText(Localization.getString("ImportParWizardPage.page.importFromServerButton"));
-        SyncUIHelper.createHeader(importGroup, WFEServerProcessDefinitionImporter.getInstance(), WFEConnectionPreferencePage.class);
+        SyncUIHelper.createHeader(importGroup, WFEServerProcessDefinitionImporter.getInstance(), WFEConnectionPreferencePage.class, new ConnectorCallback() {
+            
+            @Override
+            public void onSynchronizationFailed(Exception e) {
+                Dialogs.error(Localization.getString("error.Synchronize"), e);
+            }
+            
+            @Override
+            public void onSynchronizationCompleted() {
+                serverDefinitionViewer.setInput(WFEServerProcessDefinitionImporter.getInstance().loadCachedData());
+                serverDefinitionViewer.refresh(true);
+            }
+        });
         createServerDefinitionsGroup(importGroup);
         setControl(pageControl);
     }

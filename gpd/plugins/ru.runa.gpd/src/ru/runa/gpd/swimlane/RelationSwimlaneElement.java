@@ -47,7 +47,7 @@ public class RelationSwimlaneElement extends SwimlaneElement<RelationSwimlaneIni
 
     @Override
     public void createGUI(Composite parent) {
-        SyncUIHelper.createHeader(parent, WFEServerRelationsImporter.getInstance(), WFEConnectionPreferencePage.class);
+        SyncUIHelper.createHeader(parent, WFEServerRelationsImporter.getInstance(), WFEConnectionPreferencePage.class, null);
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(3, false));
         Label relationNameLabel = new Label(composite, SWT.NONE);
