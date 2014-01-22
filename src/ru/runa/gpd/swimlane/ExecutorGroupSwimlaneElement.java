@@ -11,7 +11,7 @@ public class ExecutorGroupSwimlaneElement extends GroupSwimlaneElement {
     @Override
     public void createGUI(Composite clientArea) {
         super.createGUI(clientArea);
-        SyncUIHelper.createHeader(getClientArea(), WFEServerExecutorsImporter.getInstance(), WFEConnectionPreferencePage.class);
+        SyncUIHelper.createHeader(getClientArea(), WFEServerExecutorsImporter.getInstance(), WFEConnectionPreferencePage.class, null);
     }
 
 }

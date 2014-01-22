@@ -52,7 +52,7 @@ public class ImportBotWizardPage extends ImportBotElementWizardPage {
     @Override
     protected void populateInputView() {
         if (importFromServerButton.getSelection()) {
-            serverDefinitionViewer.setInput(WFEServerBotElementImporter.getInstance().getBots());
+            serverDataViewer.setInput(WFEServerBotElementImporter.getInstance().getBots());
         }
     }
 
