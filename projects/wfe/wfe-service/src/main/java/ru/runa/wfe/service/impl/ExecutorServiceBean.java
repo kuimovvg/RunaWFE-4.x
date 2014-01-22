@@ -73,7 +73,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
             @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         }
         return executorLogic.getExecutors(user, batchPresentation);
     }
@@ -83,7 +83,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
     public int getExecutorsCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
         Preconditions.checkArgument(user != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         }
         return executorLogic.getExecutorsCount(user, batchPresentation);
     }
@@ -145,7 +145,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         }
         return executorLogic.getGroupChildren(user, group, batchPresentation, excluded);
     }
@@ -157,7 +157,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(group != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.EXECUTORS.createDefault();
+            batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         }
         return executorLogic.getGroupChildrenCount(user, group, batchPresentation, excluded);
     }
@@ -212,7 +212,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
+            batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         }
         return executorLogic.getExecutorGroups(user, executor, batchPresentation, excluded);
     }
@@ -224,7 +224,7 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(executor != null);
         if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.GROUPS.createDefault();
+            batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();
         }
         return executorLogic.getExecutorGroupsCount(user, executor, batchPresentation, excluded);
     }
