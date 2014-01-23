@@ -23,7 +23,7 @@ public enum AppServerType {
     public String getUrlPattern() {
         if (auto == this) {
             try {
-                URL url = new URL(ResourcesManager.getHttpVersionUrl());
+                URL url = new URL(ResourcesManager.getAppServerVersionUrl());
                 InputStreamReader reader = new InputStreamReader(url.openStream());
                 String type = CharStreams.toString(reader);
                 reader.close();

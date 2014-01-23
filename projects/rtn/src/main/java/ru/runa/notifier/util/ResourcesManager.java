@@ -18,8 +18,12 @@
 
 package ru.runa.notifier.util;
 
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.io.CharStreams;
 
 /**
  * Created on 2006
@@ -151,7 +155,7 @@ public class ResourcesManager {
         return applyPattern("http://${server.name}:${server.port}/wfe");
     }
 
-    public static String getHttpVersionUrl() {
+    public static String getAppServerVersionUrl() {
         return applyPattern("http://${server.name}:${server.port}/version");
     }
 
@@ -167,6 +171,16 @@ public class ResourcesManager {
         while (matcher.find()) {
             String name = matcher.group(1);
             String value = PROPERTIES.getStringPropertyNotNull(name);
+            if ("server.version".equals(name) && "auto".equals(value)) {
+                String versionUrl = getHttpServerUrl() + "/version";
+                try {
+                    InputStreamReader reader = new InputStreamReader(new URL(versionUrl).openStream());
+                    value = CharStreams.toString(reader);
+                    reader.close();
+                } catch (Exception e) {
+                    throw new RuntimeException("Unable to acquire version using " + versionUrl);
+                }
+            }
             matcher.appendReplacement(buffer, Matcher.quoteReplacement(value));
         }
         matcher.appendTail(buffer);
