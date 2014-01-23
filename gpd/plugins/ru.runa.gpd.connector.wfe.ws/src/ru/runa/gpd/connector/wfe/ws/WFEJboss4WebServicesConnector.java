@@ -11,7 +11,7 @@ public class WFEJboss4WebServicesConnector extends AbstractWebServicesConnector 
         try {
             String host = Activator.getPrefString(P_WFE_CONNECTION_HOST);
             String port = Activator.getPrefString(P_WFE_CONNECTION_PORT);
-            String version = Activator.getPrefString(P_WFE_CONNECTION_VERSION);
+            String version = getVersion();
             return new URL("http://" + host + ":" + port + "/runawfe-wfe-service-" + version + "/" + serviceName + "ServiceBean?wsdl");
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
