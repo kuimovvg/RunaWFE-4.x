@@ -1,5 +1,7 @@
 package ru.runa.wfe.commons.bc;
 
+import java.util.Calendar;
+
 import com.google.common.base.Objects;
 
 /**
@@ -11,6 +13,24 @@ public class BusinessDuration {
     private final boolean businessTime;
 
     public BusinessDuration(int calendarField, int amount, boolean businessTime) {
+        if (businessTime) {
+            if (Calendar.YEAR == calendarField) {
+                amount *= BusinessCalendarProperties.getBusinessYearInDays();
+                calendarField = Calendar.DAY_OF_YEAR;
+            }
+            if (Calendar.MONTH == calendarField) {
+                amount *= BusinessCalendarProperties.getBusinessMonthInDays();
+                calendarField = Calendar.DAY_OF_YEAR;
+            }
+            if (Calendar.WEEK_OF_YEAR == calendarField) {
+                amount *= BusinessCalendarProperties.getBusinessWeekInDays();
+                calendarField = Calendar.DAY_OF_YEAR;
+            }
+            if (Calendar.HOUR == calendarField) {
+                amount *= 60;
+                calendarField = Calendar.MINUTE;
+            }
+        }
         this.calendarField = calendarField;
         this.amount = amount;
         this.businessTime = businessTime;

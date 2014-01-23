@@ -10,6 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import com.google.common.base.Objects;
+
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.commons.xml.XmlUtils;
@@ -69,13 +71,19 @@ public class CreateCalendarConfig {
         private final int field;
         private String expression;
         private final String type;
+        private final boolean businessTime;
 
         public CalendarOperation(Element element) {
             type = element.attributeValue("type");
             field = Integer.parseInt(element.attributeValue("field"));
             expression = element.attributeValue("expression");
+            businessTime = "true".equals(element.attributeValue("businessTime"));
         }
 
+        public boolean isBusinessTime() {
+            return businessTime;
+        }
+        
         public String getExpression() {
             return expression;
         }
@@ -88,6 +96,10 @@ public class CreateCalendarConfig {
             return type;
         }
 
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(getClass()).add("type", type).add("businessTime", businessTime).add("field", field).add("expression", expression).toString();
+        }
     }
 
     public static CreateCalendarConfig parse(String xml) {

@@ -66,24 +66,6 @@ public class BusinessDurationParser {
         if (lead == '-') {
             amount = -amount;
         }
-        if (businessTime) {
-            if (Calendar.YEAR == calendarField) {
-                amount *= BusinessCalendarProperties.getBusinessYearInDays();
-                calendarField = Calendar.DAY_OF_YEAR;
-            }
-            if (Calendar.MONTH == calendarField) {
-                amount *= BusinessCalendarProperties.getBusinessMonthInDays();
-                calendarField = Calendar.DAY_OF_YEAR;
-            }
-            if (Calendar.WEEK_OF_YEAR == calendarField) {
-                amount *= BusinessCalendarProperties.getBusinessWeekInDays();
-                calendarField = Calendar.DAY_OF_YEAR;
-            }
-            if (Calendar.HOUR == calendarField) {
-                amount *= 60;
-                calendarField = Calendar.MINUTE;
-            }
-        }
         return new BusinessDuration(calendarField, amount, businessTime);
     }
 
