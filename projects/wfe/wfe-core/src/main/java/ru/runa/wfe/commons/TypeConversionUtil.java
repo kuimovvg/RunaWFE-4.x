@@ -64,6 +64,9 @@ public class TypeConversionUtil {
             if (classConvertTo.isInstance(object)) {
                 return classConvertTo.cast(object);
             }
+            if (List.class.isAssignableFrom(classConvertTo)) {
+                return (T) convertToList(Object.class, object, preConvertor, postConvertor);
+            }
             if (object instanceof Actor) {
                 // compatibility: client code expecting 'actorCode'
                 Long actorCode = ((Actor) object).getCode();
@@ -122,9 +125,6 @@ public class TypeConversionUtil {
                     Array.set(array, i, convertTo(componentType, list.get(i), preConvertor, postConvertor));
                 }
                 return (T) array;
-            }
-            if (List.class.isAssignableFrom(classConvertTo)) {
-                return (T) convertToList(Object.class, object, preConvertor, postConvertor);
             }
             if (object instanceof Date && classConvertTo == Calendar.class) {
                 return (T) CalendarUtil.dateToCalendar((Date) object);
