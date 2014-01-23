@@ -106,6 +106,9 @@ public class VariableFormatPage extends DynaContentWizardPage {
     private Combo createTypeCombo(Composite composite) {
         final Combo combo = new Combo(composite, SWT.BORDER | SWT.READ_ONLY);
         for (VariableFormatArtifact artifact : VariableFormatRegistry.getInstance().getAll()) {
+            if (UserTypeFormat.class.getName().equals(artifact.getName())) {
+                continue;
+            }
             if (artifact.isEnabled()) {
                 combo.add(artifact.getLabel());
             }
