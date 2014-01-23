@@ -23,7 +23,7 @@ public class DisplayVariableTag extends FreemarkerTag {
             }
             return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, variableFormat, variable.getValue());
         } else {
-            String html = "<span class=\"displayVariable " + variable.getDefinition().getScriptingName() + "\">";
+            String html = "<span class=\"displayVariable " + variable.getDefinition().getScriptingNameWithoutDots() + "\">";
             html += ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variable);
             html += "</span>";
             return html;

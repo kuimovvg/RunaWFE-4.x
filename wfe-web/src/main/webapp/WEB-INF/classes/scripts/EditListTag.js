@@ -7,7 +7,7 @@ $(document).ready(function() {
 		console.log("Adding row " + rowIndex);
         var e = "<div row='" + rowIndex + "' style='margin-bottom:4px;'>";
         e += componentInputUNIQUENAME.replace(/\[\]/g, "[" + rowIndex + "]");
-        e += "<input type='button' value=' - ' onclick='removeUNIQUENAME(this);' />";
+        e += "<input type='button' value=' - ' onclick='removeUNIQUENAME(this);' style='width: 30px;' />";
         e += "</div>";
         $("#btnAddUNIQUENAME").before(e);
         updateSizeUNIQUENAME(1);

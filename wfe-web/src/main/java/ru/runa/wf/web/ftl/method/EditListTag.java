@@ -29,7 +29,7 @@ public class EditListTag extends AjaxFreemarkerTag {
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String scriptingVariableName = variable.getDefinition().getScriptingName();
+        String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
         VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
@@ -50,10 +50,10 @@ public class EditListTag extends AjaxFreemarkerTag {
             Object value = list.get(row);
             html.append("<div row=\"").append(row).append("\">");
             html.append(ViewUtil.getComponentInput(user, webHelper, variableName + "[" + row + "]", componentFormat, value));
-            html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName).append("(this);\" />");
+            html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName).append("(this);\" style=\"width: 30px;\" />");
             html.append("</div>");
         }
-        html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName).append("\" value=\" + \" /></div>");
+        html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName).append("\" value=\" + \" style=\"width: 30px;\" /></div>");
         html.append("</span>");
         return html.toString();
     }

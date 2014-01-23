@@ -72,6 +72,10 @@ public class VariableDefinition implements Serializable {
         return scriptingName;
     }
 
+    public String getScriptingNameWithoutDots() {
+        return scriptingName.replaceAll(".", "_");
+    }
+    
     public String getFormatClassName() {
         if (format != null && format.contains(FORMAT_COMPONENT_TYPE_START)) {
             int index = format.indexOf(FORMAT_COMPONENT_TYPE_START);

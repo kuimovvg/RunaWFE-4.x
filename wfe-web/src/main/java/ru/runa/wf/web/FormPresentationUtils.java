@@ -333,7 +333,7 @@ public class FormPresentationUtils {
         if (userInput != null && userInput.get(name) != null && userInput.get(name).length == 1 && userInput.get(name)[0].length() < 1000) {
             return userInput.get(name)[0];
         }
-        if (name.endsWith(FormSubmissionUtils.SIZE_SUFFIX)) {
+        if (name.endsWith(FormSubmissionUtils.SIZE_SUFFIX) || name.contains(".")) {
             return null;
         }
         Object value = variableProvider.getValue(name);
