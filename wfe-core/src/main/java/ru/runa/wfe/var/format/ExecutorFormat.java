@@ -64,7 +64,7 @@ public class ExecutorFormat extends VariableFormat implements VariableDisplaySup
         Executor executor = (Executor) object;
         boolean link = false;
         try {
-            link = ApplicationContextFactory.getExecutorLogic().isPermissionAllowed(user, executor, Permission.READ);
+            link = ApplicationContextFactory.getPermissionDAO().isAllowed(user, Permission.READ, executor);
         } catch (Exception e) {
             LogFactory.getLog(getClass()).warn("Unable to determine permission", e);
         }
