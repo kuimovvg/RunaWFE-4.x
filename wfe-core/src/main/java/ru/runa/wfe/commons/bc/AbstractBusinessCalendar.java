@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.google.common.base.Preconditions;
+
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.CalendarInterval;
 import ru.runa.wfe.commons.CalendarUtil;
@@ -26,21 +28,28 @@ public abstract class AbstractBusinessCalendar implements BusinessCalendar {
 
     @Override
     public Date apply(Date date, String durationString) {
-        BusinessDuration businessDuration = BusinessDurationParser.parse(durationString);
-        if (businessDuration.getAmount() == 0) {
+        Preconditions.checkNotNull(durationString, "durationString");
+        BusinessDuration duration = BusinessDurationParser.parse(durationString);
+        return apply(date, duration);
+    }
+    
+    @Override
+    public Date apply(Date date, BusinessDuration duration) {
+        Preconditions.checkNotNull(duration, "duration");
+        if (duration.getAmount() == 0) {
             return date;
         }
         Calendar calendar = CalendarUtil.dateToCalendar(date);
-        if (!businessDuration.isBusinessTime()) {
-            calendar.add(businessDuration.getCalendarField(), businessDuration.getAmount());
+        if (!duration.isBusinessTime()) {
+            calendar.add(duration.getCalendarField(), duration.getAmount());
             return calendar.getTime();
         }
-        if (businessDuration.getCalendarField() == Calendar.MINUTE) {
-            applyUsingMinutes(calendar, businessDuration.getAmount());
-        } else if (businessDuration.getCalendarField() == Calendar.DAY_OF_YEAR) {
-            applyUsingDays(calendar, businessDuration.getAmount());
+        if (duration.getCalendarField() == Calendar.MINUTE) {
+            applyUsingMinutes(calendar, duration.getAmount());
+        } else if (duration.getCalendarField() == Calendar.DAY_OF_YEAR) {
+            applyUsingDays(calendar, duration.getAmount());
         } else {
-            throw new InternalApplicationException("Business duration expressed in unexpected unit: " + businessDuration);
+            throw new InternalApplicationException("Business duration expressed in unexpected unit: " + duration);
         }
         return calendar.getTime();
     }
