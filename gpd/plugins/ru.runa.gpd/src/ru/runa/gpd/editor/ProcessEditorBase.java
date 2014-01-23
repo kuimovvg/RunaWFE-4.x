@@ -296,6 +296,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
             for (IResource resource : children) {
                 boolean interested = IOUtils.looksLikeFormFile(resource.getName());
                 if (interested && !usedFormFiles.contains(resource.getName())) {
+                    PluginLogger.logInfo("Deleting unused " + resource);
                     resource.delete(true, null);
                 }
             }

@@ -170,8 +170,11 @@ public class CopyGraphCommand extends Command {
             // run copy actions
             for (ExtraCopyAction copyAction : sortedCopyActions) {
                 if (copyAction.isEnabled()) {
+                    PluginLogger.logInfo("Copying '" + copyAction + "'");
                     copyAction.execute();
                     executedCopyActions.add(copyAction);
+                } else {
+                    PluginLogger.logInfo("Ignored to copy '" + copyAction + "'");
                 }
             }
             // set swimlanes
@@ -217,7 +220,7 @@ public class CopyGraphCommand extends Command {
         private IFile templateFile;
 
         public CopyFormFilesAction(FormNode sourceFormNode, FormNode targetFormNode) {
-            super(CopyBuffer.GROUP_FORM_FILES, sourceFormNode.getName());
+            super(CopyBuffer.GROUP_FORM_FILES, sourceFormNode.getName() + " (" + sourceFormNode.getId() + ")");
             this.sourceFormNode = sourceFormNode;
             this.targetFormNode = targetFormNode;
         }
@@ -265,6 +268,7 @@ public class CopyGraphCommand extends Command {
         }
 
         private IFile copyFile(String sourceFileName, String targetFileName) throws CoreException {
+            PluginLogger.logInfo("copying " + sourceFileName + " to " + targetFileName);
             InputStream is = sourceFolder.getFile(sourceFileName).getContents();
             IFile file = targetFolder.getFile(targetFileName);
             if (file.exists()) {
@@ -290,6 +294,7 @@ public class CopyGraphCommand extends Command {
                 templateFile.delete(true, null);
             }
         }
+        
     }
 
     private class CopySwimlaneAction extends ExtraCopyAction {
@@ -300,11 +305,14 @@ public class CopyGraphCommand extends Command {
         public CopySwimlaneAction(Swimlane sourceSwimlane) {
             super(CopyBuffer.GROUP_SWIMLANES, sourceSwimlane.getName());
             this.sourceSwimlane = sourceSwimlane;
+            this.oldSwimlane = targetDefinition.getSwimlaneByName(sourceSwimlane.getName());
+            if (oldSwimlane != null) {
+                setEnabled(getChanges() != null);
+            }
         }
 
         @Override
         protected String getChanges() {
-            oldSwimlane = targetDefinition.getSwimlaneByName(sourceSwimlane.getName());
             if (oldSwimlane == null) {
                 return null;
             }
@@ -332,6 +340,7 @@ public class CopyGraphCommand extends Command {
                 targetDefinition.addChild(oldSwimlane);
             }
         }
+
     }
 
     private class CopyVariableAction extends ExtraCopyAction {
@@ -343,11 +352,14 @@ public class CopyGraphCommand extends Command {
         public CopyVariableAction(Variable sourceVariable) {
             super(CopyBuffer.GROUP_VARIABLES, sourceVariable.getName());
             this.sourceVariable = sourceVariable;
+            this.oldVariable = VariableUtils.getVariableByName(targetDefinition, sourceVariable.getName());
+            if (oldVariable != null) {
+                setEnabled(getChanges() != null);
+            }
         }
 
         @Override
         protected String getChanges() {
-            oldVariable = VariableUtils.getVariableByName(targetDefinition, sourceVariable.getName());
             if (oldVariable == null) {
                 return null;
             }
@@ -379,6 +391,7 @@ public class CopyGraphCommand extends Command {
                 targetDefinition.addChild(oldVariable);
             }
         }
+
     }
 
 }
