@@ -29,7 +29,7 @@
 	min-width: 300px;
 }
 .taskform input, .taskform select {
-	width: 100%;
+	width: 90%;
 }
 .taskform .inputBoolean {
 	width: 20px;
