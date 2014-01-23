@@ -6,7 +6,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import ru.runa.gpd.Activator;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.wfe.WFEServerConnectorRegistry;
-import ru.runa.wfe.commons.SystemProperties;
 
 /**
  * Class used to initialize default preference values.
@@ -25,7 +24,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
         store.setDefault(P_WFE_CONNECTION_TYPE, DEFAULT_CONNECTOR_ID);
         store.setDefault(P_WFE_CONNECTION_HOST, "localhost");
         store.setDefault(P_WFE_CONNECTION_PORT, WFEServerConnectorRegistry.getEntryNotNull(DEFAULT_CONNECTOR_ID).defaultPort);
-        store.setDefault(P_WFE_CONNECTION_VERSION, SystemProperties.getVersion());
+        store.setDefault(P_WFE_CONNECTION_VERSION, "auto");
         store.setDefault(P_WFE_CONNECTION_LOGIN_MODE, LOGIN_MODE_LOGIN_PASSWORD);
         store.setDefault(P_WFE_CONNECTION_LOGIN, "Administrator");
         store.setDefault(P_WFE_CONNECTION_PASSWORD, "wf");
