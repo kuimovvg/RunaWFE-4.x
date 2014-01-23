@@ -39,7 +39,7 @@ public class ViewListTag extends FreemarkerTag {
     protected Object executeTag() throws TemplateModelException {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String scriptingVariableName = variable.getDefinition().getScriptingName();
+        String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
         VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
         StringBuffer html = new StringBuffer();
         List<Object> list = variableProvider.getValue(List.class, variableName);

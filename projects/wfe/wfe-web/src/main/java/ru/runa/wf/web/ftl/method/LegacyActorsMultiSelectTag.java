@@ -34,7 +34,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String scriptingVariableName = variable.getDefinition().getScriptingName();
+        String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
         Map<String, String> substitutions = Maps.newHashMap();
         substitutions.put("VARIABLE", variableName);
         substitutions.put("UNIQUENAME", scriptingVariableName);

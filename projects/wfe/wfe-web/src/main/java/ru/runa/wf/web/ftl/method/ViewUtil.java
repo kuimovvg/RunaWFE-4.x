@@ -148,7 +148,7 @@ public class ViewUtil {
             }
             html += "</textarea>";
         }
-        if (LongFormat.class == variableFormat.getClass() || DoubleFormat.class == variableFormat.getClass()
+        if (variableFormat instanceof LongFormat || DoubleFormat.class == variableFormat.getClass()
                 || BigDecimalFormat.class == variableFormat.getClass()) {
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputNumber\" ";
             if (value instanceof Number) {
@@ -211,7 +211,7 @@ public class ViewUtil {
             html += "</textarea>";
             return html;
         }
-        if (LongFormat.class == variableFormat.getClass() || DoubleFormat.class == variableFormat.getClass()
+        if (variableFormat instanceof LongFormat || DoubleFormat.class == variableFormat.getClass()
                 || BigDecimalFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"text\" name=\"" + variableName + "\" class=\"inputNumber\" disabled=\"true\" ";
             if (value instanceof Number) {
