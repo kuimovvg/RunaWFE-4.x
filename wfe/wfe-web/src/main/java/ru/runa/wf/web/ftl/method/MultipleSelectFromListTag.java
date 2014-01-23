@@ -50,7 +50,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
             if (selectedValues != null && selectedValues.contains(option)) {
                 html.append(" checked=\"true\"");
             }
-            html.append(">");
+            html.append("style=\"width: 30px;\">");
             html.append("<label for=\"").append(id).append("\">");
             html.append(optionLabel);
             html.append("</label><br>");
