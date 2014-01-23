@@ -136,17 +136,21 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     private VariableDefinition buildVariable(String name) {
         int dotIndex = name.indexOf(VariableUserType.DELIM);
         if (dotIndex != -1) {
-            String parentName = name.substring(0, dotIndex);
-            String attributeName = name.substring(dotIndex + 1);
-            VariableDefinition parentDefinition = variablesMap.get(parentName);
-            if (parentDefinition == null) {
-                throw new InternalApplicationException("No variable found by name '" + parentName + "' when building user type attribute descriptor");
+            try {
+                String parentName = name.substring(0, dotIndex);
+                String attributeName = name.substring(dotIndex + 1);
+                VariableDefinition parentDefinition = variablesMap.get(parentName);
+                if (parentDefinition == null) {
+                    throw new InternalApplicationException("No variable found by name '" + parentName + "' when building user type attribute descriptor");
+                }
+                if (!parentDefinition.isComplex()) {
+                    throw new InternalApplicationException(parentDefinition + " is not user defined type");
+                }
+                VariableDefinition attributeDefinition = parentDefinition.getUserType().getAttributeNotNull(attributeName);
+                return new VariableDefinition(name, attributeDefinition);
+            } catch (Exception e) {
+                log.warn("Unable to build variable '" + name + "'", e);
             }
-            if (!parentDefinition.isComplex()) {
-                throw new InternalApplicationException(parentDefinition + " is not user defined type");
-            }
-            VariableDefinition attributeDefinition = parentDefinition.getUserType().getAttributeNotNull(attributeName);
-            return new VariableDefinition(name, attributeDefinition);
         }
         return null;
     }

@@ -37,7 +37,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     protected String renderRequest() throws TemplateModelException {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        String scriptingVariableName = variable.getDefinition().getScriptingName();
+        String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("VARIABLE", variableName);
         substitutions.put("UNIQUENAME", scriptingVariableName);
