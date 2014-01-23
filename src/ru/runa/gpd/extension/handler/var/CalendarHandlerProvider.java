@@ -13,6 +13,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -142,13 +143,13 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
 
         private Composite createParametersComposite(Composite parent) {
             Composite composite = new Composite(parent, SWT.NONE);
-            composite.setLayout(new GridLayout(4, false));
+            composite.setLayout(new GridLayout(5, false));
             GridData data = new GridData(GridData.FILL_HORIZONTAL);
-            data.horizontalSpan = 4;
+            data.horizontalSpan = 5;
             composite.setLayoutData(data);
             Composite strokeComposite = new Composite(composite, SWT.NONE);
             data = new GridData(GridData.FILL_HORIZONTAL);
-            data.horizontalSpan = 4;
+            data.horizontalSpan = 5;
             strokeComposite.setLayoutData(data);
             strokeComposite.setLayout(new GridLayout(5, false));
             Label strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -181,6 +182,18 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
         }
 
         private void addOperationSection(Composite parent, final CalendarOperation operation, final int index) {
+            {
+                final Button checkBusinessTimeButton = new Button(parent, SWT.CHECK);
+                checkBusinessTimeButton.setText(Localization.getString("label.businessTime"));
+                checkBusinessTimeButton.setEnabled(CalendarOperation.ADD.equals(operation.getType()));
+                checkBusinessTimeButton.setSelection(operation.isBusinessTime());
+                checkBusinessTimeButton.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        operation.setBusinessTime(checkBusinessTimeButton.getSelection());
+                    }
+                });
+            }
             {
                 final Combo combo = new Combo(parent, SWT.READ_ONLY);
                 for (String fieldName : CalendarConfig.FIELD_NAMES) {
