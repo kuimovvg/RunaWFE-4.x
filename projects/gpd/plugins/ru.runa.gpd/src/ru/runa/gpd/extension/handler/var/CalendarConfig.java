@@ -22,6 +22,7 @@ public class CalendarConfig extends Observable {
     static {
         registerField("YEAR", Calendar.YEAR);
         registerField("MONTH", Calendar.MONTH);
+        registerField("WEEK_OF_YEAR", Calendar.WEEK_OF_YEAR);
         registerField("DAY_OF_MONTH", Calendar.DAY_OF_MONTH);
         registerField("HOUR", Calendar.HOUR);
         registerField("MINUTE", Calendar.MINUTE);

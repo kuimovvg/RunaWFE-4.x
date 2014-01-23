@@ -12,6 +12,7 @@ public class CalendarOperation extends Observable {
     private String fieldName = "";
     private String expression = "";
     private String type = "";
+    private boolean businessTime;
 
     public String getExpression() {
         return expression;
@@ -36,12 +37,23 @@ public class CalendarOperation extends Observable {
     public void setType(String type) {
         this.type = type;
     }
+    
+    public boolean isBusinessTime() {
+        return businessTime;
+    }
+    
+    public void setBusinessTime(boolean businessTime) {
+        this.businessTime = businessTime;
+    }
 
     public void serialize(Element parent) {
         Element element = parent.addElement("operation");
         element.addAttribute("type", type);
         element.addAttribute("field", CalendarConfig.CALENDAR_FIELDS.get(fieldName).toString());
         element.addAttribute("expression", expression);
+        if (businessTime) {
+            element.addAttribute("businessTime", "true");
+        }
     }
 
     public static CalendarOperation deserialize(Element element) {
@@ -53,6 +65,9 @@ public class CalendarOperation extends Observable {
             model.fieldName = CalendarConfig.getFieldName(field);
         }
         model.expression = element.attributeValue("expression");
+        if ("true".equals(element.attributeValue("businessTime"))) {
+            model.businessTime = true;
+        }
         return model;
     }
 }
