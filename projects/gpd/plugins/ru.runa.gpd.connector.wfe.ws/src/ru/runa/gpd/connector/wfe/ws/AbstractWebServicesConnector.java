@@ -1,5 +1,6 @@
 package ru.runa.gpd.connector.wfe.ws;
 
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +38,30 @@ import ru.runa.wfe.webservice.WfExecutor;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.CharStreams;
 
 public abstract class AbstractWebServicesConnector extends WFEServerConnector {
     private User user;
 
     protected abstract URL getUrl(String serviceName);
 
+    protected String getVersion() {
+        String version = Activator.getPrefString(P_WFE_CONNECTION_VERSION);
+        if ("auto".equalsIgnoreCase(version)) {
+            String host = Activator.getPrefString(P_WFE_CONNECTION_HOST);
+            String port = Activator.getPrefString(P_WFE_CONNECTION_PORT);
+            String url = "http://" + host + ":" + port + "/wfe/version";
+            try {
+                InputStreamReader reader = new InputStreamReader(new URL(url).openStream());
+                version = CharStreams.toString(reader);
+                reader.close();
+            } catch (Exception e) {
+                throw new RuntimeException("Unable to acquire version using " + url);
+            }
+        }
+        return version;
+    }
+    
     @Override
     public void connect() {
         AuthenticationAPI authenticationAPI = new AuthenticationWebService(getUrl("Authentication")).getAuthenticationAPIPort();
