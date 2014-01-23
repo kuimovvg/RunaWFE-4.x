@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.bc.BusinessCalendar;
+import ru.runa.wfe.commons.bc.BusinessDuration;
 
 /**
  * a calendar that knows about business hours. modified on 06.03.2009 by
@@ -157,5 +158,10 @@ public class JbpmBusinessCalendar implements BusinessCalendar {
             end = duration.addTo(date);
         }
         return end;
+    }
+    
+    @Override
+    public Date apply(Date date, BusinessDuration duration) {
+        throw new UnsupportedOperationException();
     }
 }

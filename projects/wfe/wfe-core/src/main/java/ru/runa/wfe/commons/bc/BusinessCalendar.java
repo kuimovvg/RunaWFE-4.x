@@ -22,6 +22,17 @@ public interface BusinessCalendar {
     public Date apply(Date date, String durationString);
 
     /**
+     * Applies specified duration to specified date.
+     * 
+     * @param date
+     *            base date
+     * @param duration
+     *            business duration
+     * @return calculated date
+     */
+    public Date apply(Date date, BusinessDuration duration);
+
+    /**
      * Checks whether specified day is working or not (holiday)
      */
     public boolean isHoliday(Calendar calendar);
