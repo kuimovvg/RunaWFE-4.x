@@ -6,7 +6,7 @@
 <tiles:put name="body" type="string">
 <%
 	long relationId = Long.parseLong(request.getParameter("relationId"));
-	String returnAction = "/manage_relation_pair.do?relationId=" + relationId;
+	String returnAction = "/manage_relation.do?relationId=" + relationId;
 %>
 <wf:relationForm relationId="<%= relationId %>">
 	<table width="100%">
