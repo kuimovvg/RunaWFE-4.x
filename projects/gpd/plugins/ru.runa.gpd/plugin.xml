@@ -1468,6 +1468,16 @@
             enabled="true"
             label="%ru.runa.wf.logic.bot.StopProcessHandler">
       </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="false"
+            cellEditorProvider="ru.runa.gpd.extension.handler.AddReadProcessPermissionsProvider"
+            className="ru.runa.wfe.extension.handler.process.AddReadProcessPermissionsHandler"
+            decisionHandler="false"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.process.AddReadProcessPermissionsHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
