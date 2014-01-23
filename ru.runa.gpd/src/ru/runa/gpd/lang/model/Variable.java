@@ -75,7 +75,10 @@ public class Variable extends NamedGraphElement {
 
     @Override
     public void setName(String name) {
-        if (name.trim().length() == 0 || getProcessDefinition().getVariableNames(true).contains(name)) {
+        if (name.trim().length() == 0) {
+            return;
+        }
+        if (getProcessDefinition() != null && getProcessDefinition().getVariableNames(true).contains(name)) {
             return;
         }
         super.setName(name);
