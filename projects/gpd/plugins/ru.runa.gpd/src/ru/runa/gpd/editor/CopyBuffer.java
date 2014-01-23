@@ -97,6 +97,11 @@ public class CopyBuffer {
 
 		public abstract void undo() throws Exception;
 
+//        @Override
+//        public String toString() {
+//            return getClass().getSimpleName() + " on " + sourceFormNode;
+//        }
+
 		@Override
 		public String toString() {
 		    return getLabel();
