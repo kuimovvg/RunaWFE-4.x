@@ -226,6 +226,7 @@ public class FreemarkerUtil {
         private void addPropertyDescriptor(Map<String, String> properties, String name, String variableName) {
             properties.put(name, "${" + variableName + "." + name + "}");
         }
+
     }
 
     public static class EditorHashModel extends VariableTypeSupportHashModel {
@@ -349,6 +350,17 @@ public class FreemarkerUtil {
             return usedVariables;
         }
 
+        private TemplateModel wrapParameter(Variable variable) throws TemplateModelException {
+            if (variable.getUserType() != null) {
+                Map<String, TemplateModel> properties = new HashMap<String, TemplateModel>();
+                for (Variable attribute : variable.getUserType().getAttributes()) {
+                    properties.put(attribute.getName(), wrapParameter(attribute));
+                }
+                return new SimpleHash(properties);
+            }
+            return wrap(VAR_VALUE_PLC);
+        }
+        
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
             // add output variables / read access
@@ -358,7 +370,7 @@ public class FreemarkerUtil {
                     usedVariables.put(key, FormVariableAccess.READ);
                 }
                 if (stageRenderingParams) {
-                    return wrap(VAR_VALUE_PLC);
+                    return wrapParameter(variable);
                 }
                 return getTemplateModel(variable);
             }
