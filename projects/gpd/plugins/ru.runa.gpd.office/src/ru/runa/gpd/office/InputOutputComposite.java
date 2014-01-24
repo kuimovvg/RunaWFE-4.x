@@ -205,10 +205,6 @@ public class InputOutputComposite extends Composite {
             } else {
                 String id = ((GraphElement) delegable).getId();
                 fileName = id + ".template." + fileExtension;
-                while (ProcessFileUtils.getProcessFile(fileName).exists()) {
-                    id += "d";
-                    fileName = id + ".template." + fileExtension;
-                }
             }
             control = new TemplateFileComposite(composite, fileName, fileExtension);
             ((TemplateFileComposite) control).addPropertyChangeListener(this);
