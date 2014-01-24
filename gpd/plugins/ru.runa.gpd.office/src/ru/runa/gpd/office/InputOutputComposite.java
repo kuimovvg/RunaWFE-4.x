@@ -105,7 +105,7 @@ public class InputOutputComposite extends Composite {
             final Combo combo = new Combo(composite, SWT.READ_ONLY);
             combo.add(stringLabel);
             combo.add(Messages.getString("label.fileVariable"));
-            if (mode == FilesSupplierMode.IN) {
+            if (mode == FilesSupplierMode.IN && delegable instanceof GraphElement) {
                 combo.add(Messages.getString("label.processDefinitionFile"));
             }
             if (!Strings.isNullOrEmpty(variableName)) {
