@@ -235,10 +235,30 @@ public class FreemarkerUtil {
             Mode.setDesignerMode();
             this.variables = variables;
         }
+        
+        private TemplateModel wrapParameter(String prefix, Variable variable) {
+            if (prefix != null) {
+                prefix += "." + variable.getName();
+            } else {
+                prefix = variable.getName();
+            }
+            if (variable.getUserType() != null) {
+                Map<String, TemplateModel> properties = new HashMap<String, TemplateModel>();
+                for (Variable attribute : variable.getUserType().getAttributes()) {
+                    properties.put(attribute.getName(), wrapParameter(prefix, attribute));
+                }
+                return new SimpleHash(properties);
+            }
+            return new SimpleScalar(prefix);
+        }
 
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
             if (stageRenderingParams) {
+                Variable variable = variables.get(key);
+                if (variable != null) {
+                    return wrapParameter(null, variable);
+                }
                 return new SimpleScalar(key);
             }
             // output variables
