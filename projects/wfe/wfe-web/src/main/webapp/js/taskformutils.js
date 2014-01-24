@@ -1,3 +1,4 @@
+var ie6compatibility = $.browser.msie && $.browser.version < 8;
 
 $(function() {
 	$(document).bind('drop dragover', function (e) {
@@ -12,24 +13,12 @@ $(function() {
 	$(".dropzone").bind('dragover', function (e) {
 		$(this).addClass("dropzonehover");
 	});
-//	if ($.browser.mozilla) {
-//	if (window.mozIndexedDB !== undefined) {
-//		$(".inputFileAttach").click(function(e) {
-//			if(e.currentTarget === this && e.target.nodeName !== 'INPUT') {
-//				$(this).find(".inputFile").click();
-//			}
-//		});
-//	}
-//	if ($.browser.msie) {
-//		alert ($.browser.version);
-//		if ($.browser.version < 9) {
-//			$(".inputFileAttach").click(function(e) {
-//				if(e.currentTarget === this && e.target.nodeName !== 'INPUT') {
-//					$(this).find(".inputFile").click();
-//				}
-//			});
-//		}
-//	}
+	if (ie6compatibility) {
+		$(".inputFileContainer").css("width", "400px");
+		$(".inputFileAjax").css({"width": "77px", "height": "26px", "cursor": "pointer", "filter": "alpha(opacity=50)"});
+		$(".inputFileAttachButtonDiv").css("width", "170px");
+		$(".inputFileAttach").css("cursor", "default");
+	}
 	$(document).delegate(".inputFileDelete", "click", function() {
 		deleteFile($(this).attr("inputId"));
 	});
@@ -94,6 +83,9 @@ function deleteFile(inputId) {
 			statusImg.removeClass("inputFileDelete");
 			var progressBarLine = progressBar.find(".line");
 			progressBarLine.css("width", "0%");
+			if (ie6compatibility) {
+				//alert("inputFileAjax visibility = " + $(".inputFileAjax").css("visibility"));
+			}
 		}
 	});
 }
