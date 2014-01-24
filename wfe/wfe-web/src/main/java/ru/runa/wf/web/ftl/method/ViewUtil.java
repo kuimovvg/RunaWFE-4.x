@@ -343,7 +343,7 @@ public class ViewUtil {
         html += "<div class=\"inputFileContainer\">";
         html += "\n\t<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
         html += "\n\t\t<label class=\"inputFileAttach\">";
-        html += "\n\t\t\t<div style=\"float: left;\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
+        html += "\n\t\t\t<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
         html += "\n\t\t\t<input class=\"inputFile inputFileAjax\" name=\"" + variableName + "\" type=\"file\">";
         html += "\n\t\t</label>";
         html += "\n\t</div>";
