@@ -152,7 +152,7 @@ public class WebResources {
     }
 
     public static boolean isAjaxFileInputEnabled() {
-        return RESOURCES.getBooleanProperty("task.form.ajaxFileInputEnabled", false);
+        return RESOURCES.getBooleanProperty("task.form.ajaxFileInputEnabled", true);
     }
 
 }
