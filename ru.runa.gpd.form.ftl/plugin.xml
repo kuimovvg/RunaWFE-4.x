@@ -377,8 +377,7 @@
                multiple="false"
                name="%Param.RelationInversed"
                type="combo"
-               variableAccess="NONE"
-               variableTypeFilter="java.lang.Boolean">
+               variableAccess="NONE">
             <paramValue
                   name="%Param.Value.No"
                   value="false">
@@ -417,8 +416,7 @@
                multiple="false"
                name="%Param.RelationInversed"
                type="combo"
-               variableAccess="NONE"
-               variableTypeFilter="java.lang.Boolean">
+               variableAccess="NONE">
             <paramValue
                   name="%Param.Value.No"
                   value="false">
@@ -451,8 +449,7 @@
                multiple="false"
                name="%Param.RelationInversed"
                type="combo"
-               variableAccess="NONE"
-               variableTypeFilter="java.lang.Boolean">
+               variableAccess="NONE">
             <paramValue
                   name="%Param.Value.No"
                   value="false">
