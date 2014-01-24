@@ -1,5 +1,7 @@
 package ru.runa.wfe.commons;
 
+import java.util.Calendar;
+
 public class SystemProperties {
     private static final PropertyResources RESOURCES = new PropertyResources("system.properties");
     private static final boolean developmentMode = "true".equals(System.getProperty("devmode"));
@@ -8,6 +10,7 @@ public class SystemProperties {
 
     public static final String RESOURCE_EXTENSION_PREFIX = "wfe.custom.";
     public static final String DEPRECATED_PREFIX = "deprecated.";
+    public static final String startup = CalendarUtil.formatDateTime(Calendar.getInstance());
 
     public static PropertyResources getResources() {
         return RESOURCES;
@@ -32,6 +35,10 @@ public class SystemProperties {
      */
     public static String getVersion() {
         return RESOURCES.getStringProperty("version");
+    }
+
+    public static String getStartup() {
+        return startup;
     }
 
     public static String getAdministratorName() {
