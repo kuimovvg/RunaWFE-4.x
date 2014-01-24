@@ -13,6 +13,7 @@ import ru.runa.alfresco.RemoteAlfConnection;
 import ru.runa.alfresco.RemoteAlfObjectAccessor;
 import ru.runa.bp.AlfHandler;
 import ru.runa.bp.AlfHandlerData;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.extension.handler.ParamDef;
 
 import com.google.common.base.Strings;
@@ -27,6 +28,9 @@ public class AlfGetObjectPropertiesByUuid extends AlfHandler {
         if (!Strings.isNullOrEmpty(uuid)) {
             uuid = uuid.trim();
             NamedValue[] props = ((RemoteAlfConnection) alfConnection).loadObjectProperties(uuid);
+            if (props == null) {
+                throw new InternalApplicationException("No object can be loaded by uuid = '" + uuid + "'");
+            }
             for (NamedValue namedValue : props) {
                 int index = namedValue.getName().lastIndexOf('}');
                 String keyName = namedValue.getName().substring(index + 1);
