@@ -330,8 +330,8 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
     @Override
     public final IPropertyDescriptor[] getPropertyDescriptors() {
         List<IPropertyDescriptor> descriptors = new ArrayList<IPropertyDescriptor>();
+        descriptors.add(new PropertyDescriptor(PROPERTY_ID, Localization.getString("Node.property.id")));
         if (this instanceof NamedGraphElement) {
-            descriptors.add(new PropertyDescriptor(PROPERTY_ID, Localization.getString("Node.property.id")));
             if (((NamedGraphElement) this).canNameBeSetFromProperties()) {
                 descriptors.add(new TextPropertyDescriptor(PROPERTY_NAME, Localization.getString("property.name")));
             } else {

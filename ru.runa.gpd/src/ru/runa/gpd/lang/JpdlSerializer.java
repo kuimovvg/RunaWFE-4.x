@@ -347,6 +347,9 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private void writeDelegation(Element parent, String elementName, Delegable delegable) {
         Element delegationElement = parent.addElement(elementName);
+        if (delegable instanceof Action) {
+            setAttribute(delegationElement, ID, ((Action) delegable).getId());
+        }
         setAttribute(delegationElement, CLASS, delegable.getDelegationClassName());
         if (delegable instanceof Describable) {
             Describable describable = (Describable) delegable;
@@ -430,6 +433,7 @@ public class JpdlSerializer extends ProcessSerializer {
 
     private void parseAction(Element node, GraphElement parent, String eventType) {
         ActionImpl action = NodeRegistry.getNodeTypeDefinition(ActionImpl.class).createElement(parent, false);
+        action.setId(node.attributeValue(ID));
         setDelegableClassName(action, node.attributeValue(CLASS));
         action.setDelegationConfiguration(node.getText());
         action.setId(parent.getId() + "." + parent.getActions().size());
