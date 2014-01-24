@@ -215,7 +215,7 @@ public class WorkspaceOperations {
                 IFile newDefinitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
                 definition.setName(newName);
                 saveProcessDefinition(newDefinitionFile, definition);
-                ProcessCache.newProcessDefinitionWasCreated(definitionFile);
+                ProcessCache.newProcessDefinitionWasCreated(newDefinitionFile);
                 ResourcesPlugin.getWorkspace().getRoot().getFolder(oldPath).delete(true, null);
                 refreshResource(definitionFolder);
             } catch (Exception e) {
