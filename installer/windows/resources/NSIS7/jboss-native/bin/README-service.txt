@@ -1,4 +1,4 @@
-The JBoss(R)* app server is Copyright 2000-2007, Red Hat Middleware LLC
+The JBoss(R)* app server is Copyright 2000-2008, Red Hat Middleware LLC
 and individual contributors, and is licensed under the GNU LGPL.
 
 
@@ -15,7 +15,7 @@ line mode.
 To install the JBoss Application Server as Windows service use
 the provided service.bat batch file.
 
-C:\> cd c:\jboss-4.2.0\bin
+C:\> cd c:\jboss-5.0.0\bin
 C:\> service.bat install
 
 To start the JBoss Application Server as Windows service use Control pannel
@@ -24,9 +24,9 @@ redirected to the file run.log. You can inspect the file for any errors
 during service startup.
 
 
-C:\> net start JBAS4SVC
-  The JBoss Application Server 4.2 service is starting.
-  The JBoss Application Server 4.2 service was started successfully.
+C:\> net start JBAS50SVC
+  The JBoss Application Server 5.0 service is starting.
+  The JBoss Application Server 5.0 service was started successfully.
 
 
 To stop the JBoss Application Server as Windows service use Control pannel
@@ -35,8 +35,8 @@ is redirected to the file shutdown.log. You can inspect the file for
 any errors during service shutdown.
 
 
-C:\> net stop JBAS4SVC
-  The JBoss Application Server 4.2 service was stopped successfully.
+C:\> net stop JBAS50SVC
+  The JBoss Application Server 5.0 service was stopped successfully.
 
 
 To restart the JBoss Application Server as Windows service use Control pannel.
@@ -45,7 +45,7 @@ To remove the JBoss Application Server as Windows service use the provided
 service.bat batch file.
 
 
-C:\> cd c:\jboss-4.2.0\bin
+C:\> cd c:\jboss-5.0.0\bin
 C:\> service.bat uninstall
 
 
