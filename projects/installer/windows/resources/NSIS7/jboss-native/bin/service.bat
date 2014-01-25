@@ -8,7 +8,7 @@ REM -------------------------------------------------------------------------
 REM JBoss Service Script for Windows
 REM -------------------------------------------------------------------------
 
-cd /D  "%0\.."
+
 @if not "%ECHO%" == "" echo %ECHO%
 @if "%OS%" == "Windows_NT" setlocal
 set DIRNAME=%CD%
@@ -17,19 +17,22 @@ REM
 REM VERSION, VERSION_MAJOR and VERSION_MINOR are populated
 REM during the build with ant filter.
 REM
-set SVCNAME=JBAS42SVC
+set SVCNAME=JBAS50SVC
 set SVCDISP=RunaWFE Server %VERSION%
 set SVCDESC=RunaWFE Server %VERSION%
 set NOPAUSE=Y
 
+REM Suppress killing service on logoff event
+set JAVA_OPTS=-Xrs
+
 REM Figure out the running mode
 
-@if "%1" == "install"   goto cmdInstall
-@if "%1" == "uninstall" goto cmdUninstall
-@if "%1" == "start"     goto cmdStart
-@if "%1" == "stop"      goto cmdStop
-@if "%1" == "restart"   goto cmdRestart
-@if "%1" == "signal"    goto cmdSignal
+if /I "%1" == "install"   goto cmdInstall
+if /I "%1" == "uninstall" goto cmdUninstall
+if /I "%1" == "start"     goto cmdStart
+if /I "%1" == "stop"      goto cmdStop
+if /I "%1" == "restart"   goto cmdRestart
+if /I "%1" == "signal"    goto cmdSignal
 echo Usage: service install^|uninstall^|start^|stop^|restart^|signal
 goto cmdEnd
 
@@ -42,43 +45,65 @@ REM ERR_RET_PARAMS          5
 REM ERR_RET_MODE            6
 
 :errExplain
-@if errorlevel 1 echo Invalid command line parameters
-@if errorlevel 2 echo Failed installing %SVCDISP%
-@if errorlevel 4 echo Failed removing %SVCDISP%
-@if errorlevel 6 echo Unknown service mode for %SVCDISP%
+if errorlevel 1 echo Invalid command line parameters
+if errorlevel 2 echo Failed installing %SVCDISP%
+if errorlevel 4 echo Failed removing %SVCDISP%
+if errorlevel 6 echo Unknown service mode for %SVCDISP%
 goto cmdEnd
 
 :cmdInstall
-jbosssvc.exe -iwdc %SVCNAME% "%DIRNAME%" "%SVCDISP%" "%SVCDESC%" service.bat
-@if not errorlevel 0 goto errExplain
+jbosssvc.exe -imwdc %SVCNAME% "%DIRNAME%" "%SVCDISP%" "%SVCDESC%" service.bat
+if not errorlevel 0 goto errExplain
 echo Service %SVCDISP% installed
 goto cmdEnd
 
 :cmdUninstall
-call shutdown -S -s jnp://localhost:10099 >shutdown.log  2>nul
-@if not errorlevel 0 goto skipWaitStop
-ping -n 20 -w 1000 127.0.0.1 > nul
-:skipWaitStop
 jbosssvc.exe -u %SVCNAME%
-@if not errorlevel 0 goto errExplain
+if not errorlevel 0 goto errExplain
 echo Service %SVCDISP% removed
 goto cmdEnd
 
 :cmdStart
 REM Executed on service start
-call standalone.bat >run.log
+del .r.lock 2>&1 | findstr /C:"being used" > nul
+if not errorlevel 1 (
+  echo Could not continue. Locking file already in use.
+  goto cmdEnd
+)
+echo Y > .r.lock
+jbosssvc.exe -p 1 "Starting %SVCDISP%" > run.log
+call run.bat < .r.lock >> run.log 2>&1
+jbosssvc.exe -p 1 "Shutdown %SVCDISP% service" >> run.log
+del .r.lock
 goto cmdEnd
 
 :cmdStop
 REM Executed on service stop
-call shutdown -S -s jnp://localhost:10099 >shutdown.log
+echo Y > .s.lock
+jbosssvc.exe -p 1 "Shutting down %SVCDISP%" > shutdown.log
+call shutdown -S < .s.lock >> shutdown.log 2>&1
+jbosssvc.exe -p 1 "Shutdown %SVCDISP% service" >> shutdown.log
+del .s.lock
 goto cmdEnd
 
 :cmdRestart
-REM Executed on service restart
-REM Note. We can only stop and start
-call shutdown -S -s jnp://localhost:10099 >>shutdown.log
-call standalone.bat >>run.log
+REM Executed manually from command line
+REM Note: We can only stop and start
+echo Y > .s.lock
+jbosssvc.exe -p 1 "Shutting down %SVCDISP%" >> shutdown.log
+call shutdown -S < .s.lock >> shutdown.log 2>&1
+del .s.lock
+:waitRun
+REM Delete lock file
+del .r.lock > nul 2>&1
+REM Wait one second if lock file exist
+jbosssvc.exe -s 1
+if exist ".r.lock" goto waitRun
+echo Y > .r.lock
+jbosssvc.exe -p 1 "Restarting %SVCDISP%" >> run.log
+call run.bat < .r.lock >> run.log 2>&1
+jbosssvc.exe -p 1 "Shutdown %SVCDISP% service" >> run.log
+del .r.lock
 goto cmdEnd
 
 :cmdSignal
