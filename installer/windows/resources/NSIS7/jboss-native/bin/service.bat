@@ -8,7 +8,7 @@ REM -------------------------------------------------------------------------
 REM JBoss Service Script for Windows
 REM -------------------------------------------------------------------------
 
-
+cd /D  "%0\.."
 @if not "%ECHO%" == "" echo %ECHO%
 @if "%OS%" == "Windows_NT" setlocal
 set DIRNAME=%CD%
@@ -52,12 +52,13 @@ if errorlevel 6 echo Unknown service mode for %SVCDISP%
 goto cmdEnd
 
 :cmdInstall
-jbosssvc.exe -imwdc %SVCNAME% "%DIRNAME%" "%SVCDISP%" "%SVCDESC%" service.bat
+jbosssvc.exe -iwdc %SVCNAME% "%DIRNAME%" "%SVCDISP%" "%SVCDESC%" service.bat
 if not errorlevel 0 goto errExplain
 echo Service %SVCDISP% installed
 goto cmdEnd
 
 :cmdUninstall
+call jboss-cli.bat --commands=connect,:shutdown
 jbosssvc.exe -u %SVCNAME%
 if not errorlevel 0 goto errExplain
 echo Service %SVCDISP% removed
@@ -65,45 +66,17 @@ goto cmdEnd
 
 :cmdStart
 REM Executed on service start
-del .r.lock 2>&1 | findstr /C:"being used" > nul
-if not errorlevel 1 (
-  echo Could not continue. Locking file already in use.
-  goto cmdEnd
-)
-echo Y > .r.lock
-jbosssvc.exe -p 1 "Starting %SVCDISP%" > run.log
-call run.bat < .r.lock >> run.log 2>&1
-jbosssvc.exe -p 1 "Shutdown %SVCDISP% service" >> run.log
-del .r.lock
+call standalone.bat >run.log
 goto cmdEnd
 
 :cmdStop
 REM Executed on service stop
-echo Y > .s.lock
-jbosssvc.exe -p 1 "Shutting down %SVCDISP%" > shutdown.log
-call shutdown -S < .s.lock >> shutdown.log 2>&1
-jbosssvc.exe -p 1 "Shutdown %SVCDISP% service" >> shutdown.log
-del .s.lock
+call jboss-cli.bat --commands=connect,:shutdown
 goto cmdEnd
 
 :cmdRestart
-REM Executed manually from command line
-REM Note: We can only stop and start
-echo Y > .s.lock
-jbosssvc.exe -p 1 "Shutting down %SVCDISP%" >> shutdown.log
-call shutdown -S < .s.lock >> shutdown.log 2>&1
-del .s.lock
-:waitRun
-REM Delete lock file
-del .r.lock > nul 2>&1
-REM Wait one second if lock file exist
-jbosssvc.exe -s 1
-if exist ".r.lock" goto waitRun
-echo Y > .r.lock
-jbosssvc.exe -p 1 "Restarting %SVCDISP%" >> run.log
-call run.bat < .r.lock >> run.log 2>&1
-jbosssvc.exe -p 1 "Shutdown %SVCDISP% service" >> run.log
-del .r.lock
+call jboss-cli.bat --commands=connect,:shutdown
+call standalone.bat >run.log
 goto cmdEnd
 
 :cmdSignal
