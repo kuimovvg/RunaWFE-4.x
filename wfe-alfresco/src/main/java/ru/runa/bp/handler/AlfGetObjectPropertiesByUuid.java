@@ -27,6 +27,8 @@ public class AlfGetObjectPropertiesByUuid extends AlfHandler {
         String uuid = alfHandlerData.getInputParamValue(String.class, "uuid");
         if (!Strings.isNullOrEmpty(uuid)) {
             uuid = uuid.trim();
+        }
+        if (!Strings.isNullOrEmpty(uuid)) {
             NamedValue[] props = ((RemoteAlfConnection) alfConnection).loadObjectProperties(uuid);
             if (props == null) {
                 throw new InternalApplicationException("No object can be loaded by uuid = '" + uuid + "'");
