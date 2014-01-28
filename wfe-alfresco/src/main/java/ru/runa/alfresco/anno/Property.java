@@ -24,4 +24,9 @@ public @interface Property {
      * Readonly means that marked property will not be persisted in Alfresco.
      */
     boolean readOnly() default false;
+
+    /**
+     * Class is loaded from Alfresco model. You can override it here.
+     */
+    String className() default "";
 }

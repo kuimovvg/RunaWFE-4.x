@@ -42,6 +42,8 @@ public class AlfObject implements IAlfObject, Serializable {
 
     @Property(name = "name")
     private String objectName;
+    @Property(name = "created", readOnly = true, className = "java.util.Date")
+    private Calendar created;
     @Property(name = "modified", readOnly = true)
     private Calendar lastUpdated;
 
@@ -88,6 +90,14 @@ public class AlfObject implements IAlfObject, Serializable {
 
     public void setObjectName(String objectName) {
         this.objectName = objectName;
+    }
+
+    public Calendar getCreated() {
+        return created;
+    }
+
+    public void setCreated(Calendar created) {
+        this.created = created;
     }
 
     public Calendar getLastUpdated() {
