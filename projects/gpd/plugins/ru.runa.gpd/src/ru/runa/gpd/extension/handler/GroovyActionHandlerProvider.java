@@ -23,6 +23,7 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class GroovyActionHandlerProvider extends DelegableProvider {
@@ -33,6 +34,21 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
         }
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariables(true, true));
+    }
+    
+    @Override
+    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+        String configuration = delegable.getDelegationConfiguration();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return super.getUsedVariables(delegable, processDefinition);
+        }
+        List<Variable> result = Lists.newArrayList();
+        for (Variable variable : processDefinition.getVariables(true, true)) {
+            if (configuration.contains(variable.getScriptingName())) {
+                result.add(variable);
+            }
+        }
+        return result;
     }
 
     private static class ConfigurationDialog extends DelegableConfigurationDialog {

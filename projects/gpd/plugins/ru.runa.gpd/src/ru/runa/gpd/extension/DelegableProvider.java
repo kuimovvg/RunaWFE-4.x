@@ -5,8 +5,13 @@ import java.util.List;
 import org.eclipse.jface.window.Window;
 import org.osgi.framework.Bundle;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 
 public class DelegableProvider {
     protected Bundle bundle;
@@ -44,6 +49,20 @@ public class DelegableProvider {
      * @param delegable
      */
     public void onDelete(Delegable delegable) {
-        
     }
+
+    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+        String configuration = delegable.getDelegationConfiguration();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return Lists.newArrayList();
+        }
+        List<Variable> result = Lists.newArrayList();
+        for (Variable variable : processDefinition.getVariables(true, true)) {
+            if (configuration.contains(variable.getName())) {
+                result.add(variable);
+            }
+        }
+        return result;
+    }
+    
 }

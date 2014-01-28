@@ -17,24 +17,19 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
-import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
-import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
-import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.dialog.MultipleSelectionDialog;
-import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Charsets;
@@ -82,32 +77,9 @@ public class CopyGraphCommand extends Command {
                     continue;
                 }
                 Node copy = node.getCopy(targetDefinition);
-                if (node instanceof ITimed) {
-                    Timer timer = ((ITimed) node).getTimer();
-                    if (timer != null) {
-                        String variableName = timer.getDelay().getVariableName();
-                        if (variableName != null) {
-                            Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), variableName);
-                            CopyVariableAction copyAction = new CopyVariableAction(variable);
-                            copyActions.add(copyAction);
-                        }
-                    }
-                }
-                if (node instanceof Subprocess) {
-                    for (VariableMapping mapping : ((Subprocess) node).getVariableMappings()) {
-                        Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), mapping.getProcessVariableName());
-                        if (variable != null) {
-                            CopyVariableAction copyAction = new CopyVariableAction(variable);
-                            copyActions.add(copyAction);
-                        }
-                        if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName())) {
-                            variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), mapping.getSubprocessVariableName());
-                            if (variable != null) {
-                                CopyVariableAction copyAction = new CopyVariableAction(variable);
-                                copyActions.add(copyAction);
-                            }
-                        }
-                    }
+                for (Variable variable : node.getUsedVariables(copyBuffer.getSourceFolder())) {
+                    CopyVariableAction copyAction = new CopyVariableAction(variable);
+                    copyActions.add(copyAction);
                 }
                 targetNodeMap.put(node.getId(), copy);
                 if (node instanceof FormNode) {
@@ -117,14 +89,6 @@ public class CopyGraphCommand extends Command {
                         copyAction.setSourceFolder(copyBuffer.getSourceFolder());
                         copyAction.setTargetFolder(targetFolder);
                         copyActions.add(copyAction);
-                    }
-                    Map<String, FormVariableAccess> variables = formNode.getFormVariables(copyBuffer.getSourceFolder());
-                    for (String varName : variables.keySet()) {
-                        Variable variable = VariableUtils.getVariableByName(copyBuffer.getSourceDefinition(), varName);
-                        if (variable != null) {
-                            CopyVariableAction copyAction = new CopyVariableAction(variable);
-                            copyActions.add(copyAction);
-                        }
                     }
                 }
                 if (node instanceof SwimlanedNode) {
@@ -146,6 +110,10 @@ public class CopyGraphCommand extends Command {
                         Transition copy = transition.getCopy(source);
                         copy.setTarget(target);
                     }
+                    for (Variable variable : transition.getUsedVariables(copyBuffer.getSourceFolder())) {
+                        CopyVariableAction copyAction = new CopyVariableAction(variable);
+                        copyActions.add(copyAction);
+                    }
                 }
             }
             List<ExtraCopyAction> sortedCopyActions = Lists.newArrayList(copyActions);
@@ -159,12 +127,11 @@ public class CopyGraphCommand extends Command {
             }
             if (userConfirmedActions.size() > 0) {
                 // display dialog with collisions
-                MultipleSelectionDialog dialog = new MultipleSelectionDialog(
-                        Localization.getString("CopyGraphRewriteDialog.title"), userConfirmedActions);
+                MultipleSelectionDialog dialog = new MultipleSelectionDialog(Localization.getString("CopyGraphRewriteDialog.title"), userConfirmedActions);
                 if (dialog.open() != IDialogConstants.OK_ID) {
                     for (ExtraCopyAction copyAction : userConfirmedActions) {
                         copyAction.setEnabled(false);
-                    }                    
+                    }
                 }
             }
             // run copy actions
@@ -294,7 +261,7 @@ public class CopyGraphCommand extends Command {
                 templateFile.delete(true, null);
             }
         }
-        
+
     }
 
     private class CopySwimlaneAction extends ExtraCopyAction {
