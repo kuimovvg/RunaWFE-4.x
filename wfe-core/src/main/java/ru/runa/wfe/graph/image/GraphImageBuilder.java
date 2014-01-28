@@ -135,7 +135,9 @@ public class GraphImageBuilder {
             } else {
                 color = DrawProperties.getBaseColor();
             }
-            nodeFigures.put(node, new RenderHits(color, true, true));
+            if (node != null) {
+                nodeFigures.put(node, new RenderHits(color, true, true));
+            }
         }
     }
 
