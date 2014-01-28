@@ -4,8 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ru.runa.Messages;
+import ru.runa.alfresco.AlfConnection;
 import ru.runa.alfresco.ConnectionException;
-import ru.runa.alfresco.RemoteAlfConnection;
 import ru.runa.alfresco.RemoteAlfConnector;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 
@@ -17,9 +17,9 @@ import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 public abstract class AlfAjaxTag extends AjaxFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
-    protected abstract String renderRequest(RemoteAlfConnection session) throws Exception;
+    protected abstract String renderRequest(AlfConnection alfConnection) throws Exception;
 
-    protected void processAjaxRequest(RemoteAlfConnection session, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected void processAjaxRequest(AlfConnection alfConnection, HttpServletRequest request, HttpServletResponse response) throws Exception {
         //
     }
 

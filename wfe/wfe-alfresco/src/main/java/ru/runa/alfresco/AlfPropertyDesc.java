@@ -5,8 +5,10 @@ import org.alfresco.service.namespace.QName;
 import ru.runa.alfresco.anno.Assoc;
 import ru.runa.alfresco.anno.Property;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 
 /**
  * Descriptor for Alfresco property and association mapping.
@@ -32,6 +34,9 @@ public class AlfPropertyDesc {
         this.property = property;
         if (property != null) {
             propertyName = property.name();
+            if (!Strings.isNullOrEmpty(property.className())) {
+                propertyClass = ClassLoaderUtil.loadClass(property.className());
+            }
         }
         this.assoc = assoc;
         if (assoc != null) {
@@ -113,7 +118,9 @@ public class AlfPropertyDesc {
     }
 
     public void setPropertyClass(Class<?> propertyClass) {
-        this.propertyClass = propertyClass;
+        if (this.propertyClass == null) {
+            this.propertyClass = propertyClass;
+        }
     }
 
     public String getDefaultValue() {
