@@ -10,7 +10,7 @@ public class SystemProperties {
 
     public static final String RESOURCE_EXTENSION_PREFIX = "wfe.custom.";
     public static final String DEPRECATED_PREFIX = "deprecated.";
-    public static final String startup = CalendarUtil.formatDateTime(Calendar.getInstance());
+    public static final Calendar SYSTEM_STARTUP_CALENDAR = Calendar.getInstance();
 
     public static PropertyResources getResources() {
         return RESOURCES;
@@ -38,7 +38,7 @@ public class SystemProperties {
     }
 
     public static String getStartup() {
-        return startup;
+        return CalendarUtil.formatDateTime(SYSTEM_STARTUP_CALENDAR);
     }
 
     public static String getAdministratorName() {
