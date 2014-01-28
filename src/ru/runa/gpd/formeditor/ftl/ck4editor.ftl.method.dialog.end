@@ -1,0 +1,28 @@
+				]}
+			],
+			onShow : function() {
+				var fakeElement = this.getSelectedElement();
+				if ( fakeElement ) {
+					var realElement = editor.restoreRealElement(fakeElement);
+					this.setupContent(realElement);
+				} else {
+					var test = function(e) {
+						if(e.id.indexOf('FtlTagVBox') == e.id.length-10) {
+							e.getElement().getParent().getParent().hide();
+						};
+					};
+					this.foreach(test);
+				}
+			},
+			onOk : function() {
+				var element = editor.document.createElement( 'ftl_element' );
+				this.commitContent( { element : element } );
+				var fakeElement = editor.createFakeElement( element, 'cke_' + 'ftl_element', 'ftl_element' );
+				editor.insertElement( fakeElement );
+				// Without this editor incorrect show new element  
+				editor.setData(editor.getData());
+			},
+			buttons:[CKEDITOR.dialog.okButton, CKEDITOR.dialog.cancelButton]
+		};
+	}
+);
