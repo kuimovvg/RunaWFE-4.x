@@ -18,6 +18,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
@@ -25,7 +28,9 @@ import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TaskState;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
@@ -93,6 +98,21 @@ public class SendEmailActionHandlerProvider extends DelegableProvider {
             return wizardPage.getResult();
         }
         return null;
+    }
+
+    @Override
+    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+        String configuration = delegable.getDelegationConfiguration();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return super.getUsedVariables(delegable, processDefinition);
+        }
+        List<Variable> result = Lists.newArrayList();
+        for (Variable variable : processDefinition.getVariables(true, true)) {
+            if (configuration.contains("\"" + variable.getName() + "\"")) {
+                result.add(variable);
+            }
+        }
+        return result;
     }
 
     @Override

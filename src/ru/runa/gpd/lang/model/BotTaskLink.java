@@ -45,8 +45,8 @@ public class BotTaskLink implements Delegable {
     }
 
     @Override
-    public void setDelegationClassName(String delegateClassName) {
-        this.delegationClassName = delegateClassName;
+    public void setDelegationClassName(String delegationClassName) {
+        this.delegationClassName = delegationClassName;
     }
 
     @Override
@@ -73,5 +73,14 @@ public class BotTaskLink implements Delegable {
             return taskState.getProcessDefinition().getVariableNames(includeSwimlanes, typeClassNameFilters);
         }
         return Lists.newArrayList();
+    }
+    
+    public BotTaskLink getCopy(TaskState taskState) {
+        BotTaskLink copy = new BotTaskLink();
+        copy.setBotTaskName(botTaskName);
+        copy.setDelegationClassName(delegationClassName);
+        copy.setDelegationConfiguration(delegationConfiguration);
+        copy.setTaskState(taskState);
+        return copy;
     }
 }

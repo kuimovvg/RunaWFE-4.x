@@ -3,6 +3,7 @@ package ru.runa.gpd.lang.model;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -73,7 +74,7 @@ public class Subprocess extends Node implements Active {
     }
 
     public List<VariableMapping> getVariableMappings() {
-        return Lists.newArrayList(variableMappings);
+        return variableMappings;
     }
 
     public void setVariableMappings(List<VariableMapping> variablesList) {
@@ -135,6 +136,24 @@ public class Subprocess extends Node implements Active {
         }
         copy.setEmbedded(isEmbedded());
         return copy;
+    }
+    
+    @Override
+    public List<Variable> getUsedVariables(IFolder processFolder) {
+        List<Variable> result = super.getUsedVariables(processFolder);
+        for (VariableMapping mapping : getVariableMappings()) {
+            Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getProcessVariableName());
+            if (variable != null) {
+                result.add(variable);
+            }
+            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName())) {
+                variable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getSubprocessVariableName());
+                if (variable != null) {
+                    result.add(variable);
+                }
+            }
+        }
+        return result;
     }
 
 }

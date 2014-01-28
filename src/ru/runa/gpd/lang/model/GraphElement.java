@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IActionFilter;
@@ -29,6 +30,7 @@ import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 @SuppressWarnings("unchecked")
 public abstract class GraphElement extends EventSupport implements IPropertySource, PropertyNames, IActionFilter {
@@ -421,5 +423,21 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
     }
     
     protected void fillCopyCustomFields(GraphElement copy) {
+    }
+    
+    public List<Variable> getUsedVariables(IFolder processFolder) {
+        List<Variable> result = Lists.newArrayList();
+        if (this instanceof Delegable) {
+            DelegableProvider provider = HandlerRegistry.getProvider(getDelegationClassName());
+            result.addAll(provider.getUsedVariables((Delegable) this, getProcessDefinition()));
+        }
+        if (this instanceof Active) {
+            List<? extends Action> actions = ((Active) this).getActions();
+            for (Action action : actions) {
+                DelegableProvider provider = HandlerRegistry.getProvider(action.getDelegationClassName());
+                result.addAll(provider.getUsedVariables(action, getProcessDefinition()));
+            }
+        }
+        return result;
     }
 }

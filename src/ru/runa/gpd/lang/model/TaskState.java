@@ -260,6 +260,29 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
             super.setPropertyValue(id, value);
         }
     }
+    
+    @Override
+    public TaskState getCopy(GraphElement parent) {
+        TaskState copy = (TaskState) super.getCopy(parent);
+        copy.setAsync(async);
+        copy.setAsyncCompletionMode(copy.getAsyncCompletionMode());
+        if (getBotTaskLink() != null) {
+            copy.setBotTaskLink(getBotTaskLink().getCopy(copy));
+        }
+        if (getEscalationAction() != null) {
+            copy.setEscalationAction(getEscalationAction().getCopy(copy));
+        }
+        if (getEscalationDelay() != null) {
+            copy.setEscalationDelay(new Duration(getEscalationDelay()));
+        }
+        copy.setIgnoreSubstitutionRules(ignoreSubstitutionRules);
+        copy.setReassignmentEnabled(reassignmentEnabled);
+        if (getTimeOutDelay() != null) {
+            copy.setTimeOutDelay(new Duration(getTimeOutDelay()));
+        }
+        copy.setUseEscalation(useEscalation);
+        return copy;
+    }
 
     @Override
     public void validate(List<ValidationError> errors, IFile definitionFile) {
