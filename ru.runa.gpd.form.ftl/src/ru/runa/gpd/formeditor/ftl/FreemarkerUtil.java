@@ -270,24 +270,6 @@ public class FreemarkerUtil {
             return new EditorMethodModel(key);
         }
 
-        //        public class SpanScalarModel implements TemplateScalarModel {
-        //            private final String name;
-        //
-        //            public SpanScalarModel(String name) {
-        //                this.name = name;
-        //            }
-        //
-        //            @Override
-        //            public String getAsString() throws TemplateModelException {
-        //                StringBuffer buffer = new StringBuffer("<").append(OUTPUT_ELEMENT_NAME()).append(" ");
-        //                buffer.append(ATTR_FTL_TAG_NAME).append("=\"").append(name).append("\" ");
-        //                buffer.append("ftlTagFormat='-' ");
-        //                buffer.append(ATTR_STYLE).append("=\"").append(getStyle(null)).append("\" ");
-        //                buffer.append("src=\"http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=").append(name).append("\" ");
-        //                buffer.append("/>");
-        //                return buffer.toString();
-        //            }
-        //        }
         public class EditorMethodModel implements TemplateMethodModel {
             private String name;
 
@@ -299,7 +281,6 @@ public class FreemarkerUtil {
             public Object exec(List args) throws TemplateModelException {
                 stageRenderingParams = false;
                 StringBuffer buffer = new StringBuffer("<").append(METHOD_ELEMENT_NAME()).append(" ");
-                buffer.append("src=\"http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=").append(name).append("\" ");
                 buffer.append(ATTR_FTL_TAG_NAME).append("=\"").append(name).append("\" ");
                 buffer.append(ATTR_FTL_TAG_PARAMS).append("=\"");
                 for (int i = 0; i < args.size(); i++) {
@@ -309,7 +290,10 @@ public class FreemarkerUtil {
                     buffer.append(args.get(i).toString());
                 }
                 buffer.append("\" ");
-                buffer.append(ATTR_STYLE).append("=\"").append(getStyle(name)).append("\" ");
+                if (!WebServerUtils.useCKEditor()) {
+                    buffer.append("src=\"http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=").append(name).append("\" ");
+                    buffer.append(ATTR_STYLE).append("=\"").append(getStyle(name)).append("\" ");
+                }
                 buffer.append("/>");
                 return buffer.toString();
             }

@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import ru.runa.gpd.Activator;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.IOUtils;
 
 public class CKEditorDialogCreatorHelper {
@@ -141,12 +143,18 @@ public class CKEditorDialogCreatorHelper {
     }
 
     public static String createFtlMethodDialog() throws IOException {
+        String ckeditorType = Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR);
         StringBuilder result = new StringBuilder();
         result.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ckeditor.ftl.method.dialog.start")));
         List<MethodTag> tagsList = MethodTag.getEnabled();
         {
             CKSelectElement selectElement = new CKSelectElement();
-            selectElement.setId("ELEMENT_TAG_TYPE").setLabel("editor.lang.FreemarkerTags.MethodTitle").setDefaultValue(tagsList.isEmpty() ? null : "'" + tagsList.get(0).id + "'");
+            selectElement.setId("ELEMENT_TAG_TYPE").setLabel("editor.lang.FreemarkerTags.MethodTitle");
+            if (PrefConstants.FORM_CK_EDITOR3.equals(ckeditorType)) {
+                selectElement.setDefaultValue(tagsList.isEmpty() ? null : "'" + tagsList.get(0).id + "'");
+            } else {
+                selectElement.setDefaultValue("''");
+            }
             for (MethodTag tagInfo : tagsList) {
                 selectElement.addItem("'" + tagInfo.name + "'", "'" + tagInfo.id + "'");
             }
@@ -164,7 +172,9 @@ public class CKEditorDialogCreatorHelper {
                                        */
             "onChange : function(){\n" + "    var test = function(e){\n" + "        if(e.id.indexOf('FtlTagVBox') == e.id.length-10){\n"
                     + "            e.getElement().getParent().getParent().hide();\n" + "        };\n" + "    };\n" + "    this.getDialog().foreach(test);\n"
-                    + "    this.getDialog().getContentElement( 'mainTab', this.getValue() + 'FtlTagVBox' ).getElement().getParent().getParent().show();\n" + "}\n");
+                    + "    if (this.getValue() && this.getValue() != '') {\n"
+                    + "    this.getDialog().getContentElement( 'mainTab', this.getValue() + 'FtlTagVBox' ).getElement().getParent().getParent().show();\n" + "}\n"
+                    + "    }\n");
             selectElement.write(result, 4);
         }
         for (MethodTag tagInfo : tagsList) {
@@ -214,7 +224,7 @@ public class CKEditorDialogCreatorHelper {
             result.append(",\n");
             box.write(result, 4);
         }
-        result.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream("ckeditor.ftl.method.dialog.end")));
+        result.append(IOUtils.readStream(FreemarkerUtil.class.getResourceAsStream(ckeditorType + "editor.ftl.method.dialog.end")));
         return result.toString();
     }
 }
