@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
@@ -222,11 +224,30 @@ public abstract class Node extends NamedGraphElement implements Describable {
             Timer timer = ((ITimed) this).getTimer();
             if (timer != null) {
                 Timer copyTimer = new Timer();
-                copyTimer.setDelay(new Duration(timer.getDelay()));
+                if (timer.getDelay() != null) {
+                    copyTimer.setDelay(new Duration(timer.getDelay()));
+                }
                 copy.addChild(copyTimer);
             }
         }
         return copy;
     }
 
+    @Override
+    public List<Variable> getUsedVariables(IFolder processFolder) {
+        List<Variable> result = super.getUsedVariables(processFolder);
+        if (this instanceof ITimed) {
+            Timer timer = ((ITimed) this).getTimer();
+            if (timer != null) {
+                String variableName = timer.getDelay().getVariableName();
+                if (variableName != null) {
+                    Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), variableName);
+                    if (variable != null) {
+                        result.add(variable);
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }

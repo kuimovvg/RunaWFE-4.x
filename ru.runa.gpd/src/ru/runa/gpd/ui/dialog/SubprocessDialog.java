@@ -50,7 +50,7 @@ public class SubprocessDialog extends Dialog {
 
     public SubprocessDialog(Subprocess subprocess) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
-        this.variableMappings = subprocess.getVariableMappings();
+        this.variableMappings = Lists.newArrayList(subprocess.getVariableMappings());
         this.definition = subprocess.getProcessDefinition();
         this.subprocessName = subprocess.getSubProcessName();
     }
