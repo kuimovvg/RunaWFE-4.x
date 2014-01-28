@@ -17,6 +17,7 @@ import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorParser;
 
@@ -227,4 +228,20 @@ public abstract class FormNode extends SwimlanedNode {
         return copy;
     }
 
+    @Override
+    public List<Variable> getUsedVariables(IFolder processFolder) {
+        List<Variable> result = super.getUsedVariables(processFolder);
+        try {
+            Map<String, FormVariableAccess> variables = getFormVariables(processFolder);
+            for (String variableName : variables.keySet()) {
+                Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), variableName);
+                if (variable != null) {
+                    result.add(variable);
+                }
+            }
+        } catch (Exception e) {
+            PluginLogger.logError(e);
+        }
+        return result;
+    }
 }

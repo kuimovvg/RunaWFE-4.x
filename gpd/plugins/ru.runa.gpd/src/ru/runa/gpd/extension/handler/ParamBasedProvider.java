@@ -25,7 +25,13 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
+import ru.runa.gpd.util.VariableUtils;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public abstract class ParamBasedProvider extends DelegableProvider {
     protected abstract ParamDefConfig getParamConfig(Delegable delegable);
@@ -62,6 +68,30 @@ public abstract class ParamBasedProvider extends DelegableProvider {
             return wizard.getConfiguration();
         }
         return null;
+    }
+
+    @Override
+    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+        String configuration = delegable.getDelegationConfiguration();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return Lists.newArrayList();
+        }
+        List<Variable> result = Lists.newArrayList();
+        ParamDefConfig paramDefConfig = getParamConfig(delegable);
+        Map<String, String> props = paramDefConfig.parseConfiguration(configuration);
+        for (ParamDefGroup group : paramDefConfig.getGroups()) {
+            for (ParamDef paramDef : group.getParameters()) {
+                String value = props.get(paramDef.getName());
+                if (!paramDef.isUseVariable() || value == null) {
+                    continue;
+                }
+                Variable variable = VariableUtils.getVariableByName(processDefinition, value);
+                if (variable != null) {
+                    result.add(variable);
+                }
+            }
+        }
+        return result;
     }
 
     @Override

@@ -12,9 +12,12 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jface.window.Window;
 
+import com.google.common.collect.Lists;
+
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
+import ru.runa.gpd.extension.decision.GroovyDecisionModel.IfExpr;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
@@ -87,5 +90,25 @@ public class GroovyDecisionProvider extends DelegableProvider implements IDecisi
         String conf = decision.getDelegationConfiguration();
         conf = conf.replaceAll(Pattern.quote("\"" + oldName + "\""), Matcher.quoteReplacement("\"" + newName + "\""));
         decision.setDelegationConfiguration(conf);
+    }
+    
+    @Override
+    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+        try {
+            List<Variable> variables = processDefinition.getVariables(true, true);
+            GroovyDecisionModel model = new GroovyDecisionModel(delegable.getDelegationConfiguration(), variables);
+            List<Variable> result = Lists.newArrayList();
+            for (IfExpr expr : model.getIfExprs()) {
+                if (expr.getVariable1() != null) {
+                    result.add(expr.getVariable1());
+                }
+                if (expr.getLexem2() instanceof Variable) {
+                    result.add((Variable) expr.getLexem2());
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            return super.getUsedVariables(delegable, processDefinition);
+        }
     }
 }

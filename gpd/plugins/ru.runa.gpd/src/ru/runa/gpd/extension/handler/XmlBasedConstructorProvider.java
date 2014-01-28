@@ -22,12 +22,17 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
@@ -41,6 +46,22 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
             return dialog.getResult();
         }
         return null;
+    }
+
+    // TODO implement in subclasses
+    @Override
+    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+        String configuration = delegable.getDelegationConfiguration();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return super.getUsedVariables(delegable, processDefinition);
+        }
+        List<Variable> result = Lists.newArrayList();
+        for (Variable variable : processDefinition.getVariables(true, true)) {
+            if (configuration.contains("\"" + variable.getName() + "\"")) {
+                result.add(variable);
+            }
+        }
+        return result;
     }
 
     @Override
