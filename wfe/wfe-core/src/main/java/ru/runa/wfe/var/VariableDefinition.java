@@ -73,7 +73,7 @@ public class VariableDefinition implements Serializable {
     }
 
     public String getScriptingNameWithoutDots() {
-        return scriptingName.replaceAll(".", "_");
+        return scriptingName.replaceAll("\\.", "_");
     }
     
     public String getFormatClassName() {
