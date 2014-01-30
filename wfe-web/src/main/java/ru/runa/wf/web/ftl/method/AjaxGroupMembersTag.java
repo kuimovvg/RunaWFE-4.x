@@ -50,13 +50,14 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
         String userVariableName = getParameterAsString(1);
         String userScriptingVariableName = variableProvider.getVariableNotNull(userVariableName).getDefinition().getScriptingNameWithoutDots();
         Map<String, String> substitutions = Maps.newHashMap();
+        substitutions.put("QUALIFIER", groupVariableName);
         substitutions.put("groupSelectorId", groupScriptingVariableName);
         substitutions.put("userSelectorId", userScriptingVariableName);
         StringBuffer html = new StringBuffer();
         html.append(exportScript("scripts/AjaxGroupMembersTag.js", substitutions, true));
         html.append("<span class=\"ajaxGroupMembers\">");
         html.append("<span id=\"ajaxGroupMembers_").append(groupScriptingVariableName).append("\">");
-        html.append("<select id=\"").append(groupScriptingVariableName).append("\" name=\"").append(groupVariableName).append("\">");
+        html.append("<select id=\"").append(groupScriptingVariableName).append("\" name=\"").append(groupVariableName).append("\" style=\"width: auto;\">");
         List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());
         Group defaultGroup = variableProvider.getValue(Group.class, groupVariableName);
         if (defaultGroup == null && groups.size() > 0) {
@@ -74,7 +75,7 @@ public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
         }
         html.append("</select></span>");
         html.append("<span id=\"ajaxGroupMembers_").append(userScriptingVariableName).append("\">");
-        html.append("<select id=\"").append(userScriptingVariableName).append("\" name=\"").append(userVariableName).append("\">");
+        html.append("<select id=\"").append(userScriptingVariableName).append("\" name=\"").append(userVariableName).append("\" style=\"width: auto;\">");
         if (defaultGroup != null) {
             List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, defaultGroup);
             Actor defaultActor = variableProvider.getValue(Actor.class, userVariableName);
