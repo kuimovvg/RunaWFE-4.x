@@ -8,7 +8,7 @@ $(document).ready(function(){
     $("#userSelectorId").append('<option> Loading ... </option>');
     $.getJSON(
 	  "jsonUrl", 
-	  {tag: "AjaxGroupMembers", qualifier: "groupSelectorId", groupId: s},
+	  {tag: "AjaxGroupMembers", qualifier: "QUALIFIER", groupId: s},
 	  function(data) {
 	    $("#userSelectorId option").remove();
 		$.each (data, function(i, item) { 
