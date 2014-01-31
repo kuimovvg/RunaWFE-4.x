@@ -154,6 +154,7 @@ public class CKEditorDialogCreatorHelper {
                 selectElement.setDefaultValue(tagsList.isEmpty() ? null : "'" + tagsList.get(0).id + "'");
             } else {
                 selectElement.setDefaultValue("''");
+                selectElement.addItem("''", "''");
             }
             for (MethodTag tagInfo : tagsList) {
                 selectElement.addItem("'" + tagInfo.name + "'", "'" + tagInfo.id + "'");
