@@ -11,7 +11,7 @@ public abstract class Operation {
     public abstract boolean isValid();
 
     public boolean isEndBlock(String paragraphText) {
-        return (DocxUtils.CLOSING_PLACEHOLDER_START + getName() + DocxUtils.PLACEHOLDER_END).equals(paragraphText);
+        return (DocxUtils.CLOSING_PLACEHOLDER_START + getName() + DocxUtils.PLACEHOLDER_END).equals(paragraphText.trim());
     }
 
     @Override
