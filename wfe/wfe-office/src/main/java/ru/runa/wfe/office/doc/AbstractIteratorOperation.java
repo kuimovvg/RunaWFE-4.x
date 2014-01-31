@@ -39,7 +39,7 @@ public class AbstractIteratorOperation extends Operation {
 
     @Override
     public boolean isValid() {
-        return iterateBy != null && containerVariableName != null && (getContainerValue() instanceof Map || getContainerValue() instanceof List);
+        return iterateBy != null && containerVariableName != null && containerVariable != null && (getContainerValue() instanceof Map || getContainerValue() instanceof List);
     }
 
     public Object getContainerValue() {

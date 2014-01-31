@@ -52,6 +52,9 @@ public class DocxConfig extends FilesSupplierConfig {
         LOG.warn("", e);
     }
 
+    public void warn(String message) {
+        LOG.warn(message);
+    }
     public Map<String, TableConfig> getTables() {
         return tables;
     }
