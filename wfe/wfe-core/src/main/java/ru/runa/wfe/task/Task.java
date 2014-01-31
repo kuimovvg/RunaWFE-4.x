@@ -230,20 +230,19 @@ public class Task implements Assignable {
 
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
-        if (Objects.equal(getExecutor(), executor)) {
-            return;
+        if (!Objects.equal(getExecutor(), executor)) {
+            log.debug("assigning " + this + " to " + executor);
+            // log this assignment
+            executionContext.addLog(new TaskAssignLog(this, executor));
+            // do the actual assignment
+            setExecutor(executor);
+            InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(nodeId);
+            ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);
+            node.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_ASSIGN);
         }
-        log.debug("assigning " + this + " to " + executor);
-        // log this assignment
-        executionContext.addLog(new TaskAssignLog(this, executor));
-        // do the actual assignment
-        setExecutor(executor);
         if (cascadeUpdate) {
             swimlane.assignExecutor(executionContext, executor, false);
         }
-        InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(nodeId);
-        ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);
-        node.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_ASSIGN);
     }
 
     /**
