@@ -38,6 +38,7 @@ import com.google.common.collect.Lists;
 // TODO use scripting name for variables!
 public class DocxUtils {
     private static final String LINE_DELIMITER = "\n";
+    private static final String ITERATOR_NAME_DELIMITER = " as ";
     public static final String PLACEHOLDER_START = OfficeProperties.getDocxPlaceholderStart();
     public static final String PLACEHOLDER_END = OfficeProperties.getDocxPlaceholderEnd();
     public static final String ELEMENT_START = OfficeProperties.getDocxElementStart();
@@ -150,13 +151,17 @@ public class DocxUtils {
 
     public static <T extends AbstractIteratorOperation> T parseIterationOperation(DocxConfig config, IVariableProvider variableProvider,
             String string, T operation) {
+        string = string.trim();
         if (string.startsWith(CLOSING_PLACEHOLDER_START)) {
             return null;
         }
         if (string.startsWith(PLACEHOLDER_START) && string.endsWith(PLACEHOLDER_END)) {
             String placeholder = string.substring(PLACEHOLDER_START.length(), string.length() - PLACEHOLDER_END.length());
-            StringTokenizer tokenizer = new StringTokenizer(placeholder, " ");
-            String iteratorWithContainerVariable = tokenizer.nextToken();
+            int iteratorNameIndex = placeholder.lastIndexOf(ITERATOR_NAME_DELIMITER);
+            String iteratorWithContainerVariable = placeholder;
+            if (iteratorNameIndex != -1) {
+                iteratorWithContainerVariable = iteratorWithContainerVariable.substring(0, iteratorNameIndex);
+            }
             int colonIndex = iteratorWithContainerVariable.indexOf(":");
             if (colonIndex > 0) {
                 operation.setIterateBy(IterateBy.identifyByString(config, iteratorWithContainerVariable));
@@ -164,8 +169,8 @@ public class DocxUtils {
             } else {
                 operation.setContainerVariableName(iteratorWithContainerVariable);
             }
-            if (tokenizer.hasMoreElements()) {
-                String lexem = tokenizer.nextToken();
+            if (iteratorNameIndex != -1) {
+                String lexem = placeholder.substring(iteratorNameIndex + ITERATOR_NAME_DELIMITER.length());
                 if (operation instanceof ColumnExpansionOperation) {
                     ((ColumnExpansionOperation) operation).setContainerSelector(lexem);
                 }
@@ -173,16 +178,14 @@ public class DocxUtils {
                     ((LoopOperation) operation).setIteratorVariableName(lexem);
                 }
             }
-            if (tokenizer.hasMoreElements()) {
-                config.reportProblem("Found invalid escape sequence '" + string + "'");
-                return null;
-            }
             WfVariable variable = variableProvider.getVariable(operation.getContainerVariableName());
             if (variable != null) {
                 operation.setContainerVariable(variable);
+            } else {
+                config.warn("Variable not found by '" + placeholder + "' (checked '" + operation.getContainerVariableName() + "')");
             }
             if (!operation.isValid()) {
-                // config.reportProblem("Invalid " + operation);
+                //config.reportProblem("Invalid " + operation + " for '" + placeholder + "'");
                 return null;
             }
             return operation;
