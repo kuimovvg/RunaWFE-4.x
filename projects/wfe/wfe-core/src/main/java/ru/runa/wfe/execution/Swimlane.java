@@ -128,12 +128,11 @@ public class Swimlane implements Serializable, Assignable {
 
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
-        if (Objects.equal(getExecutor(), executor)) {
-            return;
+        if (!Objects.equal(getExecutor(), executor)) {
+            log.debug("assigning swimlane '" + getName() + "' to '" + executor + "'");
+            executionContext.addLog(new SwimlaneAssignLog(this, executor));
+            setExecutor(executor);
         }
-        log.debug("assigning swimlane '" + getName() + "' to '" + executor + "'");
-        executionContext.addLog(new SwimlaneAssignLog(this, executor));
-        setExecutor(executor);
         if (cascadeUpdate) {
             // change actor for already assigned tasks
             for (Task task : process.getTasks()) {
