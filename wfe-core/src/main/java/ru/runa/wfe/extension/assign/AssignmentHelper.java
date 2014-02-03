@@ -48,10 +48,10 @@ public class AssignmentHelper {
             String swimlaneName;
             if (assignable instanceof Swimlane) {
                 swimlaneName = ((Swimlane) assignable).getName();
-            } else if (executionContext.getTask().getSwimlane() == null) {
+            } else if (executionContext.getTask().getSwimlane() != null) {
                 swimlaneName = executionContext.getTask().getSwimlane().getName();
             } else {
-                log.debug("Unable to get swimlane name; assignment postponed in " + assignable);
+                log.warn("Unable to get swimlane name; assignment postponed in " + assignable);
                 return;
             }
             Group tmpGroup = TemporaryGroup.create(executionContext.getProcess().getId(), swimlaneName);
