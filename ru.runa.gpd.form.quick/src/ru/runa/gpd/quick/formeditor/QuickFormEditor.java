@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -337,21 +338,15 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             }
         });
         addButton(buttonsBar, "editor.button.delete", new LoggingSelectionAdapter() {
-            @Override
+            @SuppressWarnings("unchecked")
+			@Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-                QuickFormGpdVariable row = (QuickFormGpdVariable) selection.getFirstElement();
-                if (row == null) {
-                    return;
-                }
-                for (QuickFormGpdVariable variableDef : quickForm.getVariables()) {
-                    if (variableDef.getName().equals(row.getName())) {
-                        quickForm.getVariables().remove(variableDef);
-                        setTableInput();
-                        setDirty(true);
-                        break;
-                    }
-                }
+                List<QuickFormGpdVariable> variablesForDelete = selection.toList();
+                quickForm.getVariables().removeAll(variablesForDelete);
+                
+                setTableInput();
+                setDirty(true);
             }
         });
         addButton(buttonsBar, "editor.button.up", new LoggingSelectionAdapter() {
