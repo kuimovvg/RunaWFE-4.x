@@ -65,7 +65,7 @@ public class BotDataFileBuilder implements DataFileBuilder {
         if (StringUtils.isNotEmpty(bot.getUsername())) {
             element.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, bot.getUsername());
         }
-        element.addAttribute(AdminScriptConstants.PASSWORD_ATTRIBUTE_NAME, bot.getPassword());
+        element.addAttribute(AdminScriptConstants.PASSWORD_ATTRIBUTE_NAME, "");
     }
 
     private void populateBotTask(Document script, BotTask botTask, String botStationName, String botName) {
