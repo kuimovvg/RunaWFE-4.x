@@ -8,7 +8,11 @@ import org.eclipse.swt.events.KeyEvent;
 import com.google.common.collect.Lists;
 
 public class VariableNameChecker extends KeyAdapter {
-    private static final List<Character> forbiddenCharacters = Lists.newArrayList('"', '\'', '&', '@', '>', '<', '\\');
+    private static final List<Character> forbiddenCharacters = Lists.newArrayList('"', '\'', '&', '@', '>', '<', '\\', '.');
+    
+    public static List<Character> getForbiddenCharacters() {
+        return forbiddenCharacters;
+    }
     
     @Override
     public void keyPressed(KeyEvent e) {
