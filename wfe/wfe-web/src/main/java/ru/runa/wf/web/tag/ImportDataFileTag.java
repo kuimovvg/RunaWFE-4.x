@@ -34,7 +34,14 @@ public class ImportDataFileTag extends TitledFormTag {
         getForm().setEncType(Form.ENC_UPLOAD);
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
+        createAddDataRow(table);
+        clearPasswordRow(table);
+        table.addElement(HTMLUtils.createInputRow(Messages.getMessage("managesystem.datafile.title", pageContext), FileForm.FILE_INPUT_NAME, "",
+                true, true, Input.FILE));
+        tdFormElement.addElement(table);
+    }
 
+    private void createAddDataRow(Table table) {
         TD td = new TD();
         Input uploadInput = new Input(Input.RADIO, ImportDataFileAction.UPLOAD_PARAM, ImportDataFileAction.UPLOAD_ONLY);
         uploadInput.setID(ImportDataFileAction.UPLOAD_ONLY);
@@ -51,10 +58,32 @@ public class ImportDataFileTag extends TitledFormTag {
         label.addElement(new StringElement(Messages.getMessage("managesystem.datafile.clearbeforeupload.label", pageContext)));
         td.addElement(label);
         table.addElement(HTMLUtils.createRow(Messages.getMessage("managesystem.datafile.action.title", pageContext), td));
+    }
 
-        table.addElement(HTMLUtils.createInputRow(Messages.getMessage("managesystem.datafile.title", pageContext), FileForm.FILE_INPUT_NAME, "",
-                true, true, Input.FILE));
-        tdFormElement.addElement(table);
+    private void clearPasswordRow(Table table) {
+        TD td = new TD();
+        Input setPasswordInput = new Input(Input.RADIO, ImportDataFileAction.PASSWORD_PARAM, ImportDataFileAction.SET_PASSWORD);
+        setPasswordInput.setID(ImportDataFileAction.SET_PASSWORD);
+        setPasswordInput.setChecked(true);
+        td.addElement(setPasswordInput);
+        Label label = new Label(ImportDataFileAction.SET_PASSWORD);
+        label.addElement(new StringElement(Messages.getMessage("managesystem.datafile.set.password.label", pageContext)));
+        td.addElement(label);
+        td.addElement(Entities.NBSP);
+        Input clearPasswordInput = new Input(Input.RADIO, ImportDataFileAction.PASSWORD_PARAM, ImportDataFileAction.CLEAR_PASSWORD);
+        clearPasswordInput.setID(ImportDataFileAction.CLEAR_PASSWORD);
+        td.addElement(clearPasswordInput);
+        label = new Label(ImportDataFileAction.CLEAR_PASSWORD);
+        label.addElement(new StringElement(Messages.getMessage("managesystem.datafile.clear.password.label", pageContext)));
+        td.addElement(label);
+        table.addElement(HTMLUtils.createRow(Messages.getMessage("managesystem.datafile.action.password.title", pageContext), td));
+
+        TD passInputTd = new TD();
+        Input passwordText = new Input(Input.TEXT, ImportDataFileAction.PASSWORD_VALUE_PARAM, "123");
+        passwordText.setID(ImportDataFileAction.PASSWORD_VALUE_PARAM);
+        passwordText.setStyle("width: 300px;");
+        passInputTd.addElement(passwordText);
+        table.addElement(HTMLUtils.createRow(Messages.getMessage("managesystem.datafile.password.title", pageContext), passInputTd));
     }
 
     @Override
