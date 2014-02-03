@@ -99,7 +99,7 @@ public class VariableNamePage extends ContentWizardPage {
                 VariableUtils.getVariableNames(variableContainer.getVariables(false, true)).contains(variableName)) {
             setErrorMessage(Localization.getString("VariableNamePage.error.duplicated"));
         } else if (!VariableNameChecker.isValid(variableName)) {
-            setErrorMessage(Localization.getString("VariableNamePage.error.forbiddenCharacters"));
+            setErrorMessage(Localization.getString("VariableNamePage.error.forbiddenCharacters", VariableNameChecker.getForbiddenCharacters()));
         } else {
             setErrorMessage(null);
         }
