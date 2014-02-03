@@ -112,6 +112,7 @@ public class AdminScriptRunner {
     private final Map<String, Set<String>> namedProcessDefinitionIdentities = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> namedExecutorIdentities = new HashMap<String, Set<String>>();
     private int processDeployed;
+    private String defaultPasswordValue;
 
     public void setUser(User user) {
         this.user = user;
@@ -123,6 +124,10 @@ public class AdminScriptRunner {
 
     public void setConfigs(Map<String, byte[]> configs) {
         this.configs = configs;
+    }
+
+    public void setDefaultPasswordValue(String defaultPasswordValue) {
+        this.defaultPasswordValue = defaultPasswordValue;
     }
 
     public void runScript(byte[] scriptXml) throws AdminScriptException {
@@ -216,7 +221,9 @@ public class AdminScriptRunner {
             actor.setCode(Long.valueOf(codeString));
         }
         actor = executorLogic.create(user, actor);
-        if (password != null) {
+        if (defaultPasswordValue != null) {
+            executorLogic.setPassword(user, actor, defaultPasswordValue);
+        } else if (password != null) {
             executorLogic.setPassword(user, actor, password);
         }
     }
@@ -886,7 +893,12 @@ public class AdminScriptRunner {
             bot = new Bot();
             bot.setBotStation(botStation);
             bot.setUsername(name);
-            bot.setPassword(pass);
+            if (defaultPasswordValue != null) {
+                bot.setPassword(defaultPasswordValue);
+            } else {
+                bot.setPassword(pass);
+            }
+
             // if (!Strings.isNullOrEmpty(timeout)) {
             // bot.setStartTimeout(Long.parseLong(timeout));
             // }

@@ -71,10 +71,12 @@ public class ScriptingServiceBean implements ScriptingService {
 
     @Override
     @WebMethod(exclude = true)
-    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes, Map<String, byte[]> configs) {
+    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes, Map<String, byte[]> configs,
+            String defaultPasswordValue) {
         runner.setUser(user);
         runner.setProcessDefinitionsBytes(processDefinitionsBytes);
         runner.setConfigs(configs);
+        runner.setDefaultPasswordValue(defaultPasswordValue);
         runner.init();
 
         Document document = XmlUtils.parseWithXSDValidation(configData, "workflowScript.xsd");
@@ -88,6 +90,9 @@ public class ScriptingServiceBean implements ScriptingService {
                 errors.add(e.getMessage());
             }
         }
+
+        runner.setConfigs(null);
+        runner.setDefaultPasswordValue(null);
         return errors;
     }
 

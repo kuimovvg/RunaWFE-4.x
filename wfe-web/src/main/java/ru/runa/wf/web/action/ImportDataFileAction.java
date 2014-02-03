@@ -50,8 +50,12 @@ import com.google.common.io.ByteStreams;
 public class ImportDataFileAction extends ActionBase {
     public static final String ACTION_PATH = "/importDataFileAction";
     public static final String UPLOAD_PARAM = "type";
+    public static final String PASSWORD_PARAM = "passwordType";
+    public static final String PASSWORD_VALUE_PARAM = "passwordValue";
     public static final String CLEAR_BEFORE_UPLOAD = "clearBeforeUpload";
     public static final String UPLOAD_ONLY = "uploadOnly";
+    public static final String SET_PASSWORD = "setPassword";
+    public static final String CLEAR_PASSWORD = "clearPassword";
     private static final String DEPLOY_PROCESS_DEFINITION_TAG_NAME = "deployProcessDefinition";
     private static final String FILE_ATTRIBUTE_NAME = "file";
 
@@ -65,6 +69,12 @@ public class ImportDataFileAction extends ActionBase {
         String paramType = request.getParameter(UPLOAD_PARAM);
         if (CLEAR_BEFORE_UPLOAD.equals(paramType)) {
             clearBeforeUpload = true;
+        }
+
+        String defaultPasswordValue = null;
+        final String passwordParamType = request.getParameter(PASSWORD_PARAM);
+        if (SET_PASSWORD.equals(passwordParamType)) {
+            defaultPasswordValue = request.getParameter(PASSWORD_VALUE_PARAM);
         }
 
         ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(archive));
@@ -137,7 +147,7 @@ public class ImportDataFileAction extends ActionBase {
         }
 
         List<String> errors = Delegates.getScriptingService().executeAdminScriptSkipError(getLoggedUser(request), scriptXml, processDefinitionsBytes,
-                configs);
+                configs, defaultPasswordValue);
         if (errors != null && errors.size() > 0) {
             for (String error : errors) {
                 addError(request, new Exception(error));

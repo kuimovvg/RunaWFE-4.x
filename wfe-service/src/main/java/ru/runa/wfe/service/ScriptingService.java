@@ -30,7 +30,7 @@ public interface ScriptingService {
      */
     public void executeAdminScript(User user, byte[] scriptData, byte[][] processDefinitionsBytes) throws AdminScriptException;
 
-    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes, Map<String, byte[]> configs);
+    public List<String> executeAdminScriptSkipError(User user, byte[] configData, byte[][] processDefinitionsBytes, Map<String, byte[]> configs, String defaultPasswordValue);
 
     /**
      * Executes Groovy script.
