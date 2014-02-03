@@ -240,7 +240,7 @@ public class Task implements Assignable {
             ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);
             node.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_ASSIGN);
         }
-        if (cascadeUpdate) {
+        if (cascadeUpdate && swimlane != null) {
             swimlane.assignExecutor(executionContext, executor, false);
         }
     }
