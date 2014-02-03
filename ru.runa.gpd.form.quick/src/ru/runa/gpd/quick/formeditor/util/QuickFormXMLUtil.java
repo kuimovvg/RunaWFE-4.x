@@ -100,12 +100,13 @@ public class QuickFormXMLUtil {
                     if (paramElements != null && paramElements.size() > 0) {
                         List<String> params = new ArrayList<String>();
                         int index = 0;
+                        Variable variable = null;
                         for (Element paramElement : paramElements) {
                         	if(index == 0) {
                         		templatedVariableDef.setName(paramElement.getText());
-                        		Variable variable = VariableUtils.getVariableByName(processDefinition, templatedVariableDef.getName());
+                        		variable = VariableUtils.getVariableByName(processDefinition, templatedVariableDef.getName());
                                 if (variable == null) {
-                                    continue;
+                                    break;
                                 }
                                 templatedVariableDef.setFormatLabel(variable.getFormatLabel());                              
                         	} else {
@@ -113,6 +114,10 @@ public class QuickFormXMLUtil {
                         	}
                             
                             index++;
+                        }
+                        
+                        if (variable == null) {
+                            continue;
                         }
                         
                         templatedVariableDef.setParams(params.toArray(new String[0]));
