@@ -1,67 +1,67 @@
 
-var editLinkedListsVariableNames = [VARIABLE_NAMES];
-var editLinkedListsRowTemplate = "ROW_TEMPLATE";
+var ellUNIQUENAMEVariableNames = [VARIABLE_NAMES];
+var ellUNIQUENAMERowTemplate = "ROW_TEMPLATE";
 
 $(document).ready(function() {
-    $('#editLinkedListsButtonAdd').click(function() {
-        var rowIndex = getEditLinkedLinksSize();
-		console.log("Adding row " + rowIndex);
+    $('#ellUNIQUENAMEButtonAdd').click(function() {
+        var rowIndex = ellUNIQUENAMEGetSize();
+		console.log("UNIQUENAME: Adding row " + rowIndex);
         var e = "<tr row='" + rowIndex + "'>";
-        e += editLinkedListsRowTemplate.replace(/\[\]/g, "[" + rowIndex + "]");
-        e += "<td><input type='button' value=' - ' onclick='removeRow(this);' /></td>";
+        e += ellUNIQUENAMERowTemplate.replace(/\[\]/g, "[" + rowIndex + "]");
+        e += "<td><input type='button' value=' - ' onclick='ellUNIQUENAMERemoveRow(this);' /></td>";
         e += "</tr>";
-        $('#editLinkedLists').append(e);
-        updateSize(1);
+        $('#ellUNIQUENAME').append(e);
+        ellUNIQUENAMEUpdateSize(1);
         JS_HANDLERS
-        $("#editLinkedLists").trigger("onRowAdded", [rowIndex]);
+        $("#ellUNIQUENAME").trigger("onRowAdded", [rowIndex]);
     });
 });
 
-function getEditLinkedLinksSize() {
-	return parseInt($("#editLinkedLists").attr("rowsCount"));
+function ellUNIQUENAMEGetSize() {
+	return parseInt($("#ellUNIQUENAME").attr("rowsCount"));
 }
 
-function removeRow(button) {
+function ellUNIQUENAMERemoveRow(button) {
 	var tr = $(button).closest("tr");
 	var rowIndex = parseInt(tr.attr("row"));
-	var size = getEditLinkedLinksSize();
-	console.log("Removing row ", rowIndex);
+	var size = ellUNIQUENAMEGetSize();
+	console.log("UNIQUENAME: Removing row " + rowIndex);
 	tr.remove();
 	for (var i = rowIndex; i < size - 1; i++) {
-		updateRowIndexes(i + 1, i);
+		ellUNIQUENAMEUpdateRowIndexes(i + 1, i);
 	}
-	updateSize(-1);
-    $("#editLinkedLists").trigger("onRowRemoved", [rowIndex]);
+	ellUNIQUENAMEUpdateSize(-1);
+    $("#ellUNIQUENAME").trigger("onRowRemoved", [rowIndex]);
 }
 
-function updateRowIndexes(oldIndex, newIndex) {
+function ellUNIQUENAMEUpdateRowIndexes(oldIndex, newIndex) {
 	$("tr[row='"+oldIndex+"'] input").each(function() {
-		updateIndexedName($(this), oldIndex, newIndex);
+		ellUNIQUENAMEUpdateIndexedName($(this), oldIndex, newIndex);
 	});
 	$("tr[row='"+oldIndex+"'] select").each(function() {
-		updateIndexedName($(this), oldIndex, newIndex);
+		ellUNIQUENAMEUpdateIndexedName($(this), oldIndex, newIndex);
 	});
 	$("tr[row='"+oldIndex+"'] textarea").each(function() {
-		updateIndexedName($(this), oldIndex, newIndex);
+		ellUNIQUENAMEUpdateIndexedName($(this), oldIndex, newIndex);
 	});
 	$("tr[row='"+oldIndex+"']").attr("row", newIndex);
 }
 
-function updateIndexedName(element, oldIndex, newIndex) {
+function ellUNIQUENAMEUpdateIndexedName(element, oldIndex, newIndex) {
 	var name = element.attr("name");
 	if (name == null) {
-		console.log("name is null in ", element);
+		console.log("UNIQUENAME: Name is null in ", element);
 		return;
 	}
 	name = name.replace("[" + oldIndex + "]", "[" + newIndex + "]");
 	element.attr("name", name);
 }
 
-function updateSize(delta) {
-    for (i in editLinkedListsVariableNames) {
-		var sizeInput = $("input[name='" + editLinkedListsVariableNames[i] + ".size']");
+function ellUNIQUENAMEUpdateSize(delta) {
+    for (i in ellUNIQUENAMEVariableNames) {
+		var sizeInput = $("input[name='" + ellUNIQUENAMEVariableNames[i] + ".size']");
 		sizeInput.val(parseInt(sizeInput.val()) + delta);
 	}
-	$("#editLinkedLists").attr("rowsCount", getEditLinkedLinksSize() + delta);
-	console.log("Lists size = " + getEditLinkedLinksSize());
+	$("#ellUNIQUENAME").attr("rowsCount", ellUNIQUENAMEGetSize() + delta);
+	console.log("UNIQUENAME: Lists size = " + ellUNIQUENAMEGetSize());
 }

@@ -391,33 +391,28 @@ public class ViewUtil {
             loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
         }
         String hideStyle = "style=\"display: none;\"";
-        String html = "";
-        html += "<div class=\"inputFileContainer\">";
-        html += "\n\t<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
-        html += "\n\t\t<label class=\"inputFileAttach\">";
-        html += "\n\t\t\t<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
-        html += "\n\t\t\t<input class=\"inputFile inputFileAjax\" name=\"" + variableName + "\" type=\"file\">";
-        html += "\n\t\t</label>";
-        html += "\n\t</div>";
-        html += "\n\t<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
-        html += "\n\t\t<div class=\"line\" style=\"width: " + (file != null ? "10" : "") + "0%;\"></div>";
-        html += "\n\t\t<div class=\"status\">";
+        String html = "<div class=\"inputFileContainer\">";
+        html += "<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
+        html += "<label class=\"inputFileAttach\">";
+        html += "<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
+        html += "<input class=\"inputFile inputFileAjax\" name=\"" + variableName + "\" type=\"file\">";
+        html += "</label></div>";
+        html += "<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
+        html += "<div class=\"line\" style=\"width: " + (file != null ? "10" : "") + "0%;\"></div>";
+        html += "<div class=\"status\">";
         if (file != null) {
-            html += "\n\t\t\t<img src=\"" + deleteImageUrl + "\" class=\"inputFileDelete\" inputId=\"" + variableName + "\">";
+            html += "<img src=\"" + deleteImageUrl + "\" class=\"inputFileDelete\" inputId=\"" + variableName + "\">";
         } else {
-            html += "\n\t\t\t<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
+            html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
         }
-        html += "\n\t\t\t<span class=\"statusText\">";
+        html += "<span class=\"statusText\">";
         if (file != null && webHelper != null) {
             String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName);
             html += "<a href='" + viewUrl + "'>" + file.getName() + " - " + file.getSize() + "</a>";
         } else {
             html += loadingMessage;
         }
-        html += "</span>";
-        html += "\n\t\t</div>";
-        html += "\n\t</div>";
-        html += "\n</div>";
+        html += "</span></div></div></div>";
         return html;
     }
 
