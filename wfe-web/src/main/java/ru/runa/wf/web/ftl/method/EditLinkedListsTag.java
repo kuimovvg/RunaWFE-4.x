@@ -38,6 +38,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         StringBuffer rowTemplate = new StringBuffer();
         StringBuffer jsHandlers = new StringBuffer();
         StringBuffer jsVariableNamesArray = new StringBuffer();
+        String uniqueName = null;
         int i = 3;
         int rowsCount = 0;
         while (true) {
@@ -45,7 +46,10 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             if (variableName == null) {
                 break;
             }
-            WfVariable variable = variableProvider.getVariable(variableName);
+            WfVariable variable = variableProvider.getVariableNotNull(variableName);
+            if (rowsCount == 0) {
+                uniqueName = variable.getDefinition().getScriptingName();
+            }
             VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
             List<Object> list = variableProvider.getValue(List.class, variableName);
             if (list == null) {
@@ -75,13 +79,14 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             substitutions.put("ROW_TEMPLATE", rowTemplate.toString());
             substitutions.put("JS_HANDLERS", jsHandlers.toString());
             substitutions.put("VARIABLE_NAMES", jsVariableNamesArray.toString());
-            html.append(exportScript("scripts/EditLinkedListsTag.js", substitutions, true));
-            html.append("<table id=\"editLinkedLists\" class=\"editLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
+            substitutions.put("UNIQUENAME", uniqueName);
+            html.append(exportScript("scripts/EditLinkedListsTag.js", substitutions, false));
+            html.append("<table id=\"ell").append(uniqueName).append("\" class=\"editLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
             String operationsColumn = null;
             if (allowToAddElements || allowToDeleteElements) {
                 operationsColumn = "<th style=\"width: 30px;\">";
                 if (allowToAddElements) {
-                    operationsColumn += "<input type=\"button\" id=\"editLinkedListsButtonAdd\" value=\" + \" />";
+                    operationsColumn += "<input type=\"button\" id=\"ell" + uniqueName + "ButtonAdd\" value=\" + \" />";
                 }
                 operationsColumn += "</th>";
             }
@@ -90,7 +95,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
                 html.append(ViewUtil.getHiddenInput(variableName + ".size", StringFormat.class, rowsCount));
             }
             for (int row = 0; row < rowsCount; row++) {
-                renderRow(html, variableNames, lists, componentFormats, row, allowToChangeElements, allowToDeleteElements);
+                renderRow(html, uniqueName, variableNames, lists, componentFormats, row, allowToChangeElements, allowToDeleteElements);
             }
             html.append("</table>");
             return html.toString();
@@ -98,8 +103,8 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         return "-";
     }
 
-    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<VariableFormat> componentFormats, int row,
-            boolean allowToChangeElements, boolean allowToDeleteElements) {
+    protected void renderRow(StringBuffer html, String uniqueName, List<String> variableNames, List<List<?>> lists,
+            List<VariableFormat> componentFormats, int row, boolean allowToChangeElements, boolean allowToDeleteElements) {
         html.append("<tr row=\"").append(row).append("\">");
         for (int column = 0; column < variableNames.size(); column++) {
             Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
@@ -107,12 +112,13 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             renderColumn(html, variableNames.get(column), componentFormat, o, row, column, allowToChangeElements);
         }
         if (allowToDeleteElements) {
-            html.append("<td><input type='button' value=' - ' onclick=\"removeRow(this);\" /></td>");
+            html.append("<td><input type='button' value=' - ' onclick=\"ell").append(uniqueName).append("RemoveRow(this);\" /></td>");
         }
         html.append("</tr>");
     }
 
-    protected void renderColumn(StringBuffer html, String variableName, VariableFormat componentFormat, Object value, int row, int column, boolean enabled) {
+    protected void renderColumn(StringBuffer html, String variableName, VariableFormat componentFormat, Object value, int row, int column,
+            boolean enabled) {
         String inputName = variableName + "[" + row + "]";
         html.append("<td column=\"").append(column).append("\">");
         html.append(getComponentInput(inputName, componentFormat, value, enabled));
