@@ -150,19 +150,10 @@ public class SubprocessDefinition extends ProcessDefinition {
         }
         super.removeChild(child);
     }
-    
-    @Override
-    public TimerAction getTimeOutAction() {
-        return getParent().getTimeOutAction();
-    }
 
     @Override
     public Duration getTimeOutDelay() {
         return getParent().getTimeOutDelay();
-    }
-
-    @Override
-    public void setTimeOutAction(TimerAction timeOutAction) {
     }
 
     @Override

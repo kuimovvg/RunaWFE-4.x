@@ -44,7 +44,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private boolean showGrid;
     private Duration defaultTaskTimeoutDelay = new Duration();
     private Duration timeOutDelay = new Duration();
-    private TimerAction timeOutAction = null;
     private boolean invalid;
     private int nextNodeIdCounter;
     private SwimlaneDisplayMode swimlaneDisplayMode = SwimlaneDisplayMode.none;
@@ -397,9 +396,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
             return timeOutDelay;
         }
-        if (PROPERTY_TIMEOUT_ACTION.equals(id)) {
-            return timeOutAction;
-        }
         if (PROPERTY_ACCESS_TYPE.equals(id)) {
             return accessType.ordinal();
         }
@@ -417,8 +413,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                 return;
             }
             setTimeOutDelay((Duration) value);
-        } else if (PROPERTY_TIMEOUT_ACTION.equals(id)) {
-            setTimeOutAction((TimerAction) value);
         } else if (PROPERTY_ACCESS_TYPE.equals(id)) {
             int i = ((Integer) value).intValue();
             setAccessType(ProcessDefinitionAccessType.values()[i]);
@@ -433,20 +427,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     @Override
-    public TimerAction getTimeOutAction() {
-        return timeOutAction;
-    }
-
-    @Override
     public Duration getTimeOutDelay() {
         return timeOutDelay;
-    }
-
-    public void setTimeOutAction(TimerAction timeOutAction) {
-        if (timeOutAction == TimerAction.NONE) {
-            timeOutAction = null;
-        }
-        this.timeOutAction = timeOutAction;
     }
 
     @Override
