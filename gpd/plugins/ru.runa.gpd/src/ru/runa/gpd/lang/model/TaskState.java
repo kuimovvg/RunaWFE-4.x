@@ -166,10 +166,10 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
 
     public void setUseEscalation(boolean useEscalation) { // TODO refactor
         if (escalationAction == null || !this.useEscalation) {
-            escalationAction = new TimerAction();
+            escalationAction = new TimerAction(getProcessDefinition());
             escalationAction.setDelegationClassName(EscalationActionHandler.class.getName());
-            String org_function = Activator.getPrefString(PrefConstants.P_ESCALATION_CONFIG);
-            escalationAction.setDelegationConfiguration(org_function);
+            String orgFunction = Activator.getPrefString(PrefConstants.P_ESCALATION_CONFIG);
+            escalationAction.setDelegationConfiguration(orgFunction);
             String repeat = Activator.getPrefString(PrefConstants.P_ESCALATION_REPEAT);
             if (!Strings.isNullOrEmpty(repeat)) {
                 escalationAction.setRepeatDuration(repeat);
@@ -181,11 +181,6 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
         }
         this.useEscalation = useEscalation;
         firePropertyChange(PROPERTY_ESCALATION, !useEscalation, useEscalation);
-    }
-
-    @Override
-    public TimerAction getTimeOutAction() {
-        return null;
     }
 
     public boolean isIgnoreSubstitutionRules() {
@@ -270,7 +265,7 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
             copy.setBotTaskLink(getBotTaskLink().getCopy(copy));
         }
         if (getEscalationAction() != null) {
-            copy.setEscalationAction(getEscalationAction().getCopy(copy));
+            copy.setEscalationAction(getEscalationAction().getCopy(parent.getProcessDefinition()));
         }
         if (getEscalationDelay() != null) {
             copy.setEscalationDelay(new Duration(getEscalationDelay()));

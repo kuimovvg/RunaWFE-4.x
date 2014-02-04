@@ -24,7 +24,7 @@ public class EscalationGlobalPreferencePage extends FieldEditorPreferencePage im
     public EscalationGlobalPreferencePage() {
         super(GRID);
         setPreferenceStore(Activator.getDefault().getPreferenceStore());
-        timerAction = new TimerAction();
+        timerAction = new TimerAction(null);
         timerAction.setDelegationClassName(EscalationActionHandler.class.getName());
         String string = Activator.getPrefString(P_ESCALATION_REPEAT);
         if (!Strings.isNullOrEmpty(string)) {

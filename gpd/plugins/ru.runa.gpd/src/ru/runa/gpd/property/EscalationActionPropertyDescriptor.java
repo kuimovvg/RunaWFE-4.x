@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.ui.dialog.EscalationActionEditDialog;
 
@@ -31,7 +30,7 @@ public class EscalationActionPropertyDescriptor extends PropertyDescriptor {
 
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
-            EscalationActionEditDialog dialog = new EscalationActionEditDialog(((GraphElement) element).getProcessDefinition(), element.getEscalationAction());
+            EscalationActionEditDialog dialog = new EscalationActionEditDialog(element.getEscalationAction());
             return dialog.openDialog();
         }
     }

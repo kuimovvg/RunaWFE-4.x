@@ -68,15 +68,19 @@ public class ProcessDefinitionValidator {
                 } else if (validationError.getSource() instanceof Action) {
                     Action action = (Action) validationError.getSource();
                     NamedGraphElement actionParent = (NamedGraphElement) action.getParent();
-                    marker.setAttribute(PluginConstants.ACTION_INDEX_KEY, actionParent.getActions().indexOf(action));
-                    String parentNodeTreePath;
-                    if (actionParent instanceof Transition) {
-                        parentNodeTreePath = ((NamedGraphElement) actionParent.getParent()).getName() + "|" + actionParent.getName();
+                    if (actionParent != null) {
+                        marker.setAttribute(PluginConstants.ACTION_INDEX_KEY, actionParent.getActions().indexOf(action));
+                        String parentNodeTreePath;
+                        if (actionParent instanceof Transition) {
+                            parentNodeTreePath = ((NamedGraphElement) actionParent.getParent()).getName() + "|" + actionParent.getName();
+                        } else {
+                            parentNodeTreePath = actionParent.getName();
+                        }
+                        marker.setAttribute(PluginConstants.PARENT_NODE_KEY, parentNodeTreePath);
+                        elementId = action + " (" + parentNodeTreePath + ")";
                     } else {
-                        parentNodeTreePath = actionParent.getName();
+                        elementId = action.toString();
                     }
-                    marker.setAttribute(PluginConstants.PARENT_NODE_KEY, parentNodeTreePath);
-                    elementId = action + " (" + parentNodeTreePath + ")";
                 } else {
                     marker.setAttribute(PluginConstants.SELECTION_LINK_KEY, elementId);
                 }

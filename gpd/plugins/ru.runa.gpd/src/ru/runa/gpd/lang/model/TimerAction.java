@@ -6,11 +6,11 @@ import ru.runa.gpd.util.Duration;
 import com.google.common.base.Strings;
 
 public class TimerAction extends Action {
-    public final static TimerAction NONE = new TimerAction();
     private Duration repeatDelay = new Duration();
-    private ProcessDefinition definition;
+    private final ProcessDefinition processDefinition;
 
-    public TimerAction() {
+    public TimerAction(ProcessDefinition processDefinition) {
+        this.processDefinition = processDefinition;
     }
 
     public Duration getRepeatDelay() {
@@ -24,11 +24,7 @@ public class TimerAction extends Action {
 
     @Override
     public ProcessDefinition getProcessDefinition() {
-        return definition;
-    }
-
-    public void setDefinition(ProcessDefinition definition) {
-        this.definition = definition;
+        return processDefinition;
     }
 
     public void setRepeatDuration(String duration) {
@@ -54,7 +50,10 @@ public class TimerAction extends Action {
     
     @Override
     public TimerAction getCopy(GraphElement parent) {
-        TimerAction copy = (TimerAction) super.getCopy(parent);
+        TimerAction copy = new TimerAction((ProcessDefinition) parent);
+        copy.setDescription(getDescription());
+        copy.setDelegationClassName(getDelegationClassName());
+        copy.setDelegationConfiguration(getDelegationConfiguration());
         copy.setRepeatDuration(getRepeatDelay().getDuration());
         return copy;
     }
