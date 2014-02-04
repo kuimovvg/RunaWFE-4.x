@@ -253,10 +253,8 @@ public class FormPresentationUtils {
                     continue;
                 }
                 if (node.getFirstChild() != null) {
-                    if (Strings.isNullOrEmpty(node.getFirstChild().getNodeValue())) {
-                        log.debug("Setting " + inputName + " text");
-                        node.getFirstChild().setNodeValue(stringValue);
-                    }
+                    log.debug("Setting " + inputName + " text");
+                    node.getFirstChild().setNodeValue(stringValue);
                 } else {
                     log.debug("Adding " + inputName + " text");
                     node.appendChild(document.createTextNode(stringValue));
