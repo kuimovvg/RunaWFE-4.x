@@ -1,12 +1,12 @@
 package ru.runa.gpd.ui.dialog;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
 
 public class EscalationActionEditDialog extends TimerActionEditDialog {
-    public EscalationActionEditDialog(ProcessDefinition definition, TimerAction timerAction) {
-        super(definition, timerAction);
+    
+    public EscalationActionEditDialog(TimerAction timerAction) {
+        super(timerAction);
     }
 
     @Override

@@ -224,6 +224,9 @@ public abstract class Node extends NamedGraphElement implements Describable {
             Timer timer = ((ITimed) this).getTimer();
             if (timer != null) {
                 Timer copyTimer = new Timer();
+                if (timer.getAction() != null) {
+                    copyTimer.setAction(timer.getAction().getCopy(parent.getProcessDefinition()));
+                }
                 if (timer.getDelay() != null) {
                     copyTimer.setDelay(new Duration(timer.getDelay()));
                 }

@@ -594,12 +594,12 @@ public class JpdlSerializer extends ProcessSerializer {
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION.equals(aa.getName())) {
-                            TimerAction timerAction = new TimerAction();
+                            TimerAction timerAction = new TimerAction(definition);
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT));
                             if (TIMER_GLOBAL.equals(nameTimer)) {
-                                definition.setTimeOutAction(timerAction);
+                                //definition.setTimeOutAction(timerAction);
                             } else if (TIMER_ESCALATION.equals(nameTimer)) {
                                 ((TaskState) state).setEscalationAction(timerAction);
                             } else {
@@ -623,7 +623,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     List<Element> actionNodes = stateNodeChild.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION.equals(aa.getName())) {
-                            TimerAction timerAction = new TimerAction();
+                            TimerAction timerAction = new TimerAction(definition);
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT));
@@ -725,7 +725,7 @@ public class JpdlSerializer extends ProcessSerializer {
                     List<Element> actionNodes = childNode.elements();
                     for (Element aa : actionNodes) {
                         if (ACTION.equals(aa.getName())) {
-                            TimerAction timerAction = new TimerAction();
+                            TimerAction timerAction = new TimerAction(definition);
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeatDuration(childNode.attributeValue(REPEAT));
