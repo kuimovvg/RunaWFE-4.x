@@ -32,6 +32,8 @@ import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
+import com.google.common.base.Preconditions;
+
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.decision.GroovyTypeSupport;
 import ru.runa.gpd.extension.decision.GroovyValidationModel;
@@ -67,6 +69,8 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         super("Global validators");
         this.variables = processDefinition.getVariables(true, true);
         for (Variable variable : variables) {
+            // this is here due to strage NPE
+            Preconditions.checkNotNull(variable.getScriptingName(), variable.getName());
             variableNames.add(variable.getScriptingName());
         }
         setTitle(Localization.getString("ValidatorWizardPage.globalpage.title"));
