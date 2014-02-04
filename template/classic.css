@@ -13,9 +13,11 @@
 	background-color: #990000;
 	color: white;
 	text-align: left;
-	width: 100%;
 	font-size: 11pt;
 	padding: 0px 10px;
+}
+.taskform caption {
+	width: 100%;
 }
 .taskform td {
 	border: 1px solid #aaaaaa;
