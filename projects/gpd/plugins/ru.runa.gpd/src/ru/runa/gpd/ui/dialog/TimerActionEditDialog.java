@@ -20,31 +20,24 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.util.Duration;
 
 public class TimerActionEditDialog extends Dialog {
     protected static final int DELETE_ID = 111;
-    protected final TimerAction editable;
-    protected final ProcessDefinition definition;
+    protected final TimerAction sourceTimerAction;
+    protected final TimerAction editableTimerAction;
     protected Button editConfigButton;
     protected Text classNameField;
     protected Text configField;
     protected Text repeatField;
     protected boolean deleteButtonEnabled;
 
-    public TimerActionEditDialog(ProcessDefinition definition, TimerAction timerAction) {
+    public TimerActionEditDialog(TimerAction timerAction) {
         super(Display.getCurrent().getActiveShell());
-        this.definition = definition;
-        editable = new TimerAction();
-        editable.setDefinition(definition);
+        this.sourceTimerAction = timerAction;
+        editableTimerAction = timerAction.getCopy(sourceTimerAction.getProcessDefinition());
         deleteButtonEnabled = timerAction != null;
-        if (timerAction != null) {
-            editable.setDelegationClassName(timerAction.getDelegationClassName());
-            editable.setDelegationConfiguration(timerAction.getDelegationConfiguration());
-            editable.setRepeatDuration(timerAction.getRepeatDelay().getDuration());
-        }
     }
 
     protected boolean isClassNameFieldEnabled() {
@@ -86,7 +79,7 @@ public class TimerActionEditDialog extends Dialog {
                     ChooseHandlerClassDialog dialog = new ChooseHandlerClassDialog(HandlerArtifact.ACTION);
                     String className = dialog.openDialog();
                     if (className != null) {
-                        editable.setDelegationClassName(className);
+                        editableTimerAction.setDelegationClassName(className);
                         updateGUI();
                     }
                 }
@@ -114,13 +107,13 @@ public class TimerActionEditDialog extends Dialog {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     try {
-                        DelegableProvider provider = HandlerRegistry.getProvider(editable.getDelegationClassName());
-                        String config = provider.showConfigurationDialog(editable);
+                        DelegableProvider provider = HandlerRegistry.getProvider(editableTimerAction.getDelegationClassName());
+                        String config = provider.showConfigurationDialog(editableTimerAction);
                         if (config != null) {
-                            editable.setDelegationConfiguration(config);
+                            editableTimerAction.setDelegationConfiguration(config);
                         }
                     } catch (Exception ex) {
-                        PluginLogger.logError("Unable to open configuration dialog for " + editable.getDelegationClassName(), ex);
+                        PluginLogger.logError("Unable to open configuration dialog for " + editableTimerAction.getDelegationClassName(), ex);
                     }
                     updateGUI();
                 }
@@ -145,10 +138,10 @@ public class TimerActionEditDialog extends Dialog {
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    DurationEditDialog dialog = new DurationEditDialog(definition, editable.getRepeatDelay());
+                    DurationEditDialog dialog = new DurationEditDialog(editableTimerAction.getProcessDefinition(), editableTimerAction.getRepeatDelay());
                     Duration duration = (Duration) dialog.openDialog();
                     if (duration != null) {
-                        editable.setRepeatDuration(duration.getDuration());
+                        editableTimerAction.setRepeatDuration(duration.getDuration());
                         updateGUI();
                     }
                 }
@@ -158,15 +151,15 @@ public class TimerActionEditDialog extends Dialog {
     }
 
     private void updateGUI() {
-        classNameField.setText(editable.getDelegationClassName() != null ? editable.getDelegationClassName() : "");
-        configField.setText(editable.getDelegationConfiguration() != null ? editable.getDelegationConfiguration() : "");
-        if (editable.getRepeatDelay().hasDuration()) {
-            repeatField.setText(editable.getRepeatDelay().toString());
+        classNameField.setText(editableTimerAction.getDelegationClassName() != null ? editableTimerAction.getDelegationClassName() : "");
+        configField.setText(editableTimerAction.getDelegationConfiguration() != null ? editableTimerAction.getDelegationConfiguration() : "");
+        if (editableTimerAction.getRepeatDelay().hasDuration()) {
+            repeatField.setText(editableTimerAction.getRepeatDelay().toString());
         } else {
             repeatField.setText(Localization.getString("duration.norepeat"));
         }
-        editConfigButton.setEnabled(editable.isValid());
-        getButton(IDialogConstants.OK_ID).setEnabled(editable.isValid());
+        editConfigButton.setEnabled(editableTimerAction.isValid());
+        getButton(IDialogConstants.OK_ID).setEnabled(editableTimerAction.isValid());
     }
 
     @Override
@@ -197,11 +190,11 @@ public class TimerActionEditDialog extends Dialog {
     public Object openDialog() {
         int buttonId = open();
         if (buttonId == DELETE_ID) {
-            return TimerAction.NONE;
+            return null;
         }
         if (buttonId == IDialogConstants.OK_ID) {
-            return editable;
+            return editableTimerAction;
         }
-        return null;
+        return sourceTimerAction;
     }
 }

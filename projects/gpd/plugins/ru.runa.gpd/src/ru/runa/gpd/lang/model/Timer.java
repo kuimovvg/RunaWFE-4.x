@@ -34,9 +34,6 @@ public class Timer extends Node {
     }
 
     public void setAction(TimerAction timerAction) {
-        if (timerAction == TimerAction.NONE) {
-            timerAction = null;
-        }
         TimerAction old = this.action;
         this.action = timerAction;
         firePropertyChange(PROPERTY_TIMER_ACTION, old, action);
@@ -49,7 +46,7 @@ public class Timer extends Node {
             errors.add(ValidationError.createLocalizedError(this, "timerState.invalidVariable"));
         }
         if (action != null) {
-            action.validate(null, definitionFile);
+            action.validate(errors, definitionFile);
         }
     }
 
