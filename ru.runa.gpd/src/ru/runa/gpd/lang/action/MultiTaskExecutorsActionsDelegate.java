@@ -69,7 +69,8 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
     }
 
     private void createVariable() {
-        Variable typedVariable = new Variable("", null, ListFormat.class.getName(), false, null);
+        Variable typedVariable = new Variable();
+        typedVariable.setFormat(ListFormat.class.getName());
         VariableWizard wizard = new VariableWizard(currentDefinition, typedVariable, true, false);
         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
         if (dialog.open() == Window.OK) {

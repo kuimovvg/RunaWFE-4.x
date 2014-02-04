@@ -7,15 +7,14 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
-import com.google.common.base.Preconditions;
-
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.wfe.var.ComplexVariable;
+
+import com.google.common.base.Objects;
+import com.google.common.base.Objects.ToStringHelper;
 
 public class Variable extends NamedGraphElement {
     public static final String FORMAT_COMPONENT_TYPE_START = "(";
@@ -30,10 +29,6 @@ public class Variable extends NamedGraphElement {
     public Variable() {
     }
     
-    protected Variable(String format, boolean publicVisibility, String defaultValue) {
-        this(null, null, format, publicVisibility, defaultValue);
-    }
-
     public Variable(String name, String scriptingName, String format, boolean publicVisibility, String defaultValue) {
         super(name);
         setScriptingName(scriptingName);
@@ -71,7 +66,6 @@ public class Variable extends NamedGraphElement {
     }
 
     public void setScriptingName(String scriptingName) {
-        Preconditions.checkNotNull(scriptingName);
         this.scriptingName = scriptingName;
     }
 
