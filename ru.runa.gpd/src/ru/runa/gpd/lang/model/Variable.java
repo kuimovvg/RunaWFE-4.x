@@ -9,6 +9,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.Preconditions;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
@@ -69,8 +70,9 @@ public class Variable extends NamedGraphElement {
         return scriptingName;
     }
 
-    public void setScriptingName(String nameForScripting) {
-        this.scriptingName = nameForScripting;
+    public void setScriptingName(String scriptingName) {
+        Preconditions.checkNotNull(scriptingName);
+        this.scriptingName = scriptingName;
     }
 
     @Override
