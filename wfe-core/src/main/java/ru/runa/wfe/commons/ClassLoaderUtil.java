@@ -29,6 +29,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -125,8 +126,14 @@ public class ClassLoaderUtil {
         } catch (IOException e) {
             throw new InternalApplicationException("couldn't load properties file '" + resource + "'", e);
         }
-        log.debug("Read properties " + resource);
-        log.debug(properties);
+        log.debug("Using properties " + resource);
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            if (entry.getKey().toString().endsWith("password")) {
+                log.debug(entry.getKey() + "=***HIDDEN***");
+            } else {
+                log.debug(entry.getKey() + "=" + entry.getValue());
+            }
+        }
         return properties;
     }
 
