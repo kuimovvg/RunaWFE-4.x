@@ -22,9 +22,11 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.ActorFormat;
 import ru.runa.wfe.var.format.BigDecimalFormat;
@@ -133,64 +135,99 @@ public class ViewUtil {
     }
 
     public static String getComponentInput(User user, WebHelper webHelper, String variableName, VariableFormat variableFormat, Object value) {
-        String html = "";
         if (StringFormat.class == variableFormat.getClass()) {
+            String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
             if (value != null) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
+            return html;
         }
         if (TextFormat.class == variableFormat.getClass()) {
+            String html = "";
             html += "<textarea name=\"" + variableName + "\" class=\"inputText\">";
             if (value != null) {
                 html += value;
             }
             html += "</textarea>";
+            return html;
         }
         if (variableFormat instanceof LongFormat || DoubleFormat.class == variableFormat.getClass()
                 || BigDecimalFormat.class == variableFormat.getClass()) {
+            String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputNumber\" ";
             if (value instanceof Number) {
                 html += "value=\"" + value + "\" ";
             }
             html += "/>";
+            return html;
         }
         if (FileFormat.class == variableFormat.getClass()) {
-            html += getFileInput(webHelper, variableName, (FileVariable) value);
+            return getFileInput(webHelper, variableName, (FileVariable) value);
         }
         if (BooleanFormat.class == variableFormat.getClass()) {
+            String html = "";
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
             if (value instanceof Boolean && ((Boolean) value)) {
                 html += "checked=\"checked\" ";
             }
             html += "/>";
+            return html;
         }
         if (DateFormat.class == variableFormat.getClass()) {
+            String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDate\" style=\"width: 100px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDate((Date) value) + "\" ";
             }
             html += "/>";
+            return html;
         }
         if (TimeFormat.class == variableFormat.getClass()) {
+            String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputTime\" style=\"width: 50px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatTime((Date) value) + "\" ";
             }
             html += "/>";
+            return html;
         }
         if (DateTimeFormat.class == variableFormat.getClass()) {
+            String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputDateTime\" style=\"width: 150px;\" ";
             if (value instanceof Date) {
                 html += "value=\"" + CalendarUtil.formatDateTime((Date) value) + "\" ";
             }
             html += "/>";
+            return html;
         }
         if (variableFormat instanceof ExecutorFormat) {
-            html = ViewUtil.createExecutorSelect(user, variableName, variableFormat, value, true);
+            return ViewUtil.createExecutorSelect(user, variableName, variableFormat, value, true);
         }
-        return html;
+        if (variableFormat instanceof UserTypeFormat) {
+            ComplexVariable complexVariable = (ComplexVariable) value;
+            if (complexVariable == null) {
+                complexVariable = new ComplexVariable();
+            }
+            VariableUserType userType = ((UserTypeFormat) variableFormat).getVariableDefinition().getUserType();
+            StringBuffer b = new StringBuffer();
+            b.append("<table class=\"list\">");
+            for (VariableDefinition attributeDefinition : userType.getAttributes()) {
+                b.append("<tr>");
+                b.append("<td class=\"list\">").append(attributeDefinition.getName()).append("</td>");
+                b.append("<td class=\"list\">");
+                String childName = variableName + VariableUserType.DELIM + attributeDefinition.getName();
+                VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
+                Object attributeValue = complexVariable.get(attributeDefinition.getName());
+                b.append(getComponentInput(user, webHelper, childName, attributeFormat, attributeValue));
+                b.append("</td>");
+                b.append("</tr>");
+            }
+            b.append("</table>");
+            return b.toString();
+        }
+        throw new InternalApplicationException("No input method implemented for " + variableFormat);
     }
 
     public static String getComponentOutput(User user, WebHelper webHelper, Long processId, String variableName, VariableFormat variableFormat,
@@ -260,10 +297,25 @@ public class ViewUtil {
             return ViewUtil.createExecutorSelect(user, variableName, variableFormat, value, false);
         }
         if (variableFormat instanceof UserTypeFormat) {
-            // TODO tmp
-            return ((UserTypeFormat) variableFormat).formatHtml(user, webHelper, processId, variableName, value, null);
+            ComplexVariable complexVariable = (ComplexVariable) value;
+            VariableUserType userType = ((UserTypeFormat) variableFormat).getVariableDefinition().getUserType();
+            StringBuffer b = new StringBuffer();
+            b.append("<table class=\"list\">");
+            for (VariableDefinition attributeDefinition : userType.getAttributes()) {
+                b.append("<tr>");
+                b.append("<td class=\"list\">").append(attributeDefinition.getName()).append("</td>");
+                b.append("<td class=\"list\">");
+                String childName = variableName + VariableUserType.DELIM + attributeDefinition.getName();
+                VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
+                Object attributeValue = complexVariable.get(attributeDefinition.getName());
+                b.append(getComponentOutput(user, webHelper, processId, childName, attributeFormat, attributeValue));
+                b.append("</td>");
+                b.append("</tr>");
+            }
+            b.append("</table>");
+            return b.toString();
         }
-        throw new InternalApplicationException("Not supported format " + variableFormat);
+        throw new InternalApplicationException("No output method implemented for " + variableFormat);
     }
 
     public static String getComponentJSFunction(VariableFormat variableFormat) {

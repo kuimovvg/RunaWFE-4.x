@@ -69,7 +69,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
         }
         return result;
     }
-        
+
     @Override
     protected Object convertToJSONValue(Object value) {
         ComplexVariable complexVariable = (ComplexVariable) value;
@@ -90,7 +90,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
     public VariableDefinition getVariableDefinition() {
         return variableDefinition;
     }
-    
+
     @Override
     public void setVariableDefinition(VariableDefinition variableDefinition) {
         this.variableDefinition = variableDefinition;
@@ -104,7 +104,8 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
         for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
             b.append("<tr>");
             b.append("<td class=\"list\">").append(attributeDefinition.getName()).append("</td>");
-            b.append("<td class=\"list\">").append(attributeDefinition.getFormatLabel()).append("</td>");
+            // TODO make option?
+            // b.append("<td class=\"list\">").append(attributeDefinition.getFormatLabel()).append("</td>");
             VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
             Object attributeValue = complexVariable.get(attributeDefinition.getName());
             b.append("<td class=\"list\">");

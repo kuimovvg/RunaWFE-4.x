@@ -1,6 +1,7 @@
 package ru.runa.wfe.var;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -9,6 +10,7 @@ import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VariableUserType {
@@ -51,6 +53,15 @@ public class VariableUserType {
             }
         }
         throw new InternalApplicationException("No attribute found by name '" + name + "' in " + this);
+    }
+
+    public Map<String, VariableDefinition> expand(String variableName) {
+        Map<String, VariableDefinition> map = Maps.newHashMap();
+        for (VariableDefinition attributeDefinition : getAttributes()) {
+            String name = variableName + VariableUserType.DELIM + attributeDefinition.getName();
+            map.put(name, new VariableDefinition(name, attributeDefinition));
+        }
+        return map;
     }
 
     @Override
