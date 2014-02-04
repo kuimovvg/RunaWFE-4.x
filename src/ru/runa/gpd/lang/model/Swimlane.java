@@ -18,7 +18,7 @@ public class Swimlane extends Variable implements Delegable {
     private static final String DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
 
     public Swimlane() {
-        super(ExecutorFormat.class.getName(), false, null);
+        setFormat(ExecutorFormat.class.getName());
         setDelegationClassName(DELEGATION_CLASS_NAME);
     }
 
