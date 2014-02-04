@@ -20,11 +20,14 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.ListFormat;
+import ru.runa.wfe.var.format.UserTypeFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Throwables;
@@ -147,6 +150,18 @@ public class FormSubmissionUtils {
                         }
                         variableValue = list;
                     }
+                } else if (format instanceof UserTypeFormat) {
+                    UserTypeFormat userTypeFormat = (UserTypeFormat) format;
+                    VariableUserType userType = userTypeFormat.getVariableDefinition().getUserType();
+                    Map<String, VariableDefinition> expandedDefinitions = userType.expand(variableDefinition.getName());
+                    ComplexVariable complexVariable = new ComplexVariable();
+                    for (VariableDefinition simpleDefinition : expandedDefinitions.values()) {
+                        Object value = userInput.get(simpleDefinition.getName());
+                        VariableFormat simpleFormat = FormatCommons.create(simpleDefinition);
+                        Object convertedValue = convertComponent(simpleDefinition.getName(), simpleFormat, value, formatErrorsForFields);
+                        complexVariable.put(simpleDefinition.getName(), convertedValue);
+                    }
+                    variableValue = complexVariable;
                 } else {
                     Object value = userInput.get(variableDefinition.getName());
                     if (value != null) {
