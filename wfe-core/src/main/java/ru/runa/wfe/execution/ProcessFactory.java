@@ -105,7 +105,7 @@ public class ProcessFactory {
                 variables.put(entry.getKey(), entry.getValue());
             }
         }
-        Process subProcess = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchySubProcess());
+        Process subProcess = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchyIds());
         nodeProcessDAO.create(new NodeProcess(subProcessNode, parentExecutionContext.getToken(), subProcess, index));
         return subProcess;
     }
@@ -139,7 +139,7 @@ public class ProcessFactory {
         Token rootToken = new Token(processDefinition, process);
         process.setRootToken(rootToken);
         processDAO.create(process);
-        process.setHierarchySubProcess(ProcessHierarchyUtils.createHierarchy(parentHierarchy, process.getId()));
+        process.setHierarchyIds(ProcessHierarchyUtils.createHierarchy(parentHierarchy, process.getId()));
         ExecutionContext executionContext = new ExecutionContext(processDefinition, rootToken);
         if (actor != null) {
             executionContext.addLog(new ProcessStartLog(actor));

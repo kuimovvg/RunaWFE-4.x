@@ -53,7 +53,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -286,24 +285,19 @@ public class Token implements Serializable {
     public void end(ExecutionContext executionContext, Actor canceller) {
         if (hasEnded()) {
             log.debug(this + " already ended");
-            return;
+        } else {
+            log.info("Ending " + this + " by " + canceller);
+            endDate = new Date();
+            for (Process subProcess : executionContext.getActiveSubprocesses()) {
+                ProcessDefinition subProcessDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(subProcess);
+                subProcess.end(new ExecutionContext(subProcessDefinition, subProcess), canceller);
+            }
         }
-        log.info("Ending " + this + " by " + canceller);
-        // ended tokens cannot reactivate parents
-        // ableToReactivateParent = false;
-        // set the end date
-        // the end date is also the flag that indicates that this token has
-        // ended.
-        endDate = new Date();
-        // end all this token's children
+        // end all this token's children not depending from current token state
         for (Token child : getChildren()) {
             if (!child.hasEnded()) {
                 child.end(new ExecutionContext(executionContext.getProcessDefinition(), child), canceller);
             }
-        }
-        for (Process subProcess : executionContext.getActiveSubprocesses()) {
-            ProcessDefinition subProcessDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(subProcess);
-            subProcess.end(new ExecutionContext(subProcessDefinition, subProcess), canceller);
         }
     }
 
@@ -324,8 +318,7 @@ public class Token implements Serializable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", id).add("startDate", CalendarUtil.formatDateTime(startDate))
-                .add("endDate", CalendarUtil.formatDateTime(endDate)).toString();
+        return Objects.toStringHelper(this).add("id", id).add("processId", getProcess().getId()).toString();
     }
 
 }

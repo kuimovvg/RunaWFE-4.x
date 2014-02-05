@@ -86,7 +86,7 @@ public class Process extends IdentifiableBase {
     private Date startDate;
     private Date endDate;
     private Token rootToken;
-    private String hierarchySubProcess;
+    private String hierarchyIds;
     private Deployment deployment;
 
     private Set<Swimlane> swimlanes;
@@ -125,12 +125,12 @@ public class Process extends IdentifiableBase {
     }
 
     @Column(name = "TREE_PATH")
-    public String getHierarchySubProcess() {
-        return hierarchySubProcess;
+    public String getHierarchyIds() {
+        return hierarchyIds;
     }
 
-    public void setHierarchySubProcess(String hierarchySubProcess) {
-        this.hierarchySubProcess = hierarchySubProcess;
+    public void setHierarchyIds(String hierarchyIds) {
+        this.hierarchyIds = hierarchyIds;
     }
 
     @Column(name = "START_DATE")

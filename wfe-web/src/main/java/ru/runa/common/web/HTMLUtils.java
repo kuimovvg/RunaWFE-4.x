@@ -21,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
+import java.util.Map;
 
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +33,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.ecs.ConcreteElement;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
@@ -46,6 +51,13 @@ import org.xml.sax.InputSource;
 
 import ru.runa.common.WebResources;
 import ru.runa.common.web.form.IdForm;
+import ru.runa.wf.web.action.ShowGraphModeHelper;
+import ru.runa.wf.web.ftl.method.ViewUtil;
+import ru.runa.wfe.audit.presentation.ExecutorIdsValue;
+import ru.runa.wfe.audit.presentation.ExecutorNameValue;
+import ru.runa.wfe.audit.presentation.FileValue;
+import ru.runa.wfe.audit.presentation.HtmlValue;
+import ru.runa.wfe.audit.presentation.ProcessIdValue;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.security.Permission;
@@ -60,8 +72,10 @@ import ru.runa.wfe.user.User;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 
 public class HTMLUtils {
+    private static final Log log = LogFactory.getLog(HTMLUtils.class);
 
     private HTMLUtils() {
     }
@@ -209,6 +223,82 @@ public class HTMLUtils {
         String url = Commons.getActionUrl(WebResources.ACTION_MAPPING_UPDATE_EXECUTOR, IdForm.ID_INPUT_NAME, executor.getId(), pageContext,
                 PortletUrlType.Render);
         return new A(url, executorName);
+    }
+
+    /**
+     * Substitutes arguments for process history logs
+     * 
+     * @param user
+     * @param pageContext
+     *            can be <code>null</code>
+     * @param arguments
+     * @return representable values
+     */
+    public static Object[] substituteArguments(User user, PageContext pageContext, Object[] arguments) {
+        Object[] result = new Object[arguments.length];
+        for (int i = 0; i < result.length; i++) {
+            if (arguments[i] instanceof ExecutorNameValue) {
+                String name = ((ExecutorNameValue) arguments[i]).getName();
+                if (name == null) {
+                    result[i] = "null";
+                    continue;
+                }
+                try {
+                    Executor executor = Delegates.getExecutorService().getExecutorByName(user, name);
+                    result[i] = pageContext != null ? createExecutorElement(pageContext, executor) : executor.toString();
+                } catch (Exception e) {
+                    log.debug("could not get executor '" + name + "': " + e.getMessage());
+                    result[i] = name;
+                }
+            } else if (arguments[i] instanceof ExecutorIdsValue) {
+                List<Long> ids = ((ExecutorIdsValue) arguments[i]).getIds();
+                if (ids == null || ids.isEmpty()) {
+                    result[i] = "null";
+                    continue;
+                }
+                String executors = "{ ";
+                for (Long id : ids) {
+                    try {
+                        Executor executor = Delegates.getExecutorService().getExecutor(user, id);
+                        executors += pageContext != null ? createExecutorElement(pageContext, executor) : executor.toString();
+                        executors += "&nbsp;";
+                    } catch (Exception e) {
+                        log.debug("could not get executor by " + id + ": " + e.getMessage());
+                        executors += id + "&nbsp;";
+                    }
+                }
+                executors += "}";
+                result[i] = executors;
+            } else if (arguments[i] instanceof ProcessIdValue) {
+                Long processId = ((ProcessIdValue) arguments[i]).getId();
+                if (processId == null) {
+                    result[i] = "null";
+                    continue;
+                }
+                if (pageContext == null) {
+                    result[i] = processId;
+                    continue;
+                }
+                Map<String, Object> params = Maps.newHashMap();
+                params.put(IdForm.ID_INPUT_NAME, processId);
+                String url = Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render);
+                result[i] = new A(url, processId.toString()).setClass(Resources.CLASS_LINK).toString();
+            } else if (arguments[i] instanceof FileValue) {
+                FileValue fileValue = (FileValue) arguments[i];
+                if (pageContext != null) {
+                    result[i] = ViewUtil.getFileLogOutput(new StrutsWebHelper(pageContext), fileValue.getLogId(), fileValue.getFileName());
+                } else {
+                    result[i] = fileValue.getFileName() + " (ID=" + fileValue.getLogId() + ")";
+                }
+            } else if (arguments[i] instanceof HtmlValue) {
+                result[i] = ((HtmlValue) arguments[i]).getString();
+            } else if (arguments[i] instanceof String) {
+                result[i] = StringEscapeUtils.escapeHtml((String) arguments[i]);
+            } else {
+                result[i] = arguments[i];
+            }
+        }
+        return result;
     }
 
 }

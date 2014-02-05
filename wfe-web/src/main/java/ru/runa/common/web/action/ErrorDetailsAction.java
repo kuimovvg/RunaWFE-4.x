@@ -23,6 +23,7 @@ import org.apache.struts.action.ActionMapping;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdNameForm;
@@ -33,10 +34,6 @@ import ru.runa.common.web.html.TableBuilder;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
-import ru.runa.wfe.audit.presentation.ExecutorIdsValue;
-import ru.runa.wfe.audit.presentation.ExecutorNameValue;
-import ru.runa.wfe.audit.presentation.FileValue;
-import ru.runa.wfe.audit.presentation.ProcessIdValue;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.definition.IFileDataProvider;
@@ -45,7 +42,6 @@ import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors.BotTaskIdentifier;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors.TokenErrorDetail;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
@@ -326,7 +322,7 @@ public class ErrorDetailsAction extends ActionBase {
             try {
                 Object[] arguments = log.getPatternArguments();
                 String format = getResources(request).getMessage("history.log." + log.getClass().getSimpleName());
-                Object[] substitutedArguments = substituteArguments(user, arguments);
+                Object[] substitutedArguments = HTMLUtils.substituteArguments(user, null, arguments);
                 description = log.toString(format, substitutedArguments);
             } catch (Exception e) {
                 description = log.toString();
@@ -362,58 +358,6 @@ public class ErrorDetailsAction extends ActionBase {
         RowBuilder rowBuilder = new TRRowBuilder(rows);
         TableBuilder tableBuilder = new TableBuilder();
         return tableBuilder.build(tasksHistoryHeaderBuilder, rowBuilder).toString();
-    }
-
-    private Object[] substituteArguments(User user, Object[] arguments) {
-        Object[] result = new Object[arguments.length];
-        for (int i = 0; i < result.length; i++) {
-            if (arguments[i] instanceof ExecutorNameValue) {
-                String name = ((ExecutorNameValue) arguments[i]).getName();
-                if (name == null) {
-                    result[i] = "null";
-                    continue;
-                }
-                try {
-                    Executor executor = Delegates.getExecutorService().getExecutorByName(user, name);
-                    result[i] = executor.toString();
-                } catch (Exception e) {
-                    log.debug("could not get executor '" + name + "': " + e.getMessage());
-                    result[i] = name;
-                }
-            } else if (arguments[i] instanceof ExecutorIdsValue) {
-                List<Long> ids = ((ExecutorIdsValue) arguments[i]).getIds();
-                if (ids == null || ids.isEmpty()) {
-                    result[i] = "null";
-                    continue;
-                }
-                String executors = "{ ";
-                for (Long id : ids) {
-                    try {
-                        Executor executor = Delegates.getExecutorService().getExecutor(user, id);
-                        executors += executor.toString();
-                        executors += "&nbsp;";
-                    } catch (Exception e) {
-                        log.debug("could not get executor by " + id + ": " + e.getMessage());
-                        executors += id + "&nbsp;";
-                    }
-                }
-                executors += "}";
-                result[i] = executors;
-            } else if (arguments[i] instanceof ProcessIdValue) {
-                Long processId = ((ProcessIdValue) arguments[i]).getId();
-                if (processId == null) {
-                    result[i] = "null";
-                    continue;
-                }
-                result[i] = processId;
-            } else if (arguments[i] instanceof FileValue) {
-                FileValue fileValue = (FileValue) arguments[i];
-                result[i] = fileValue.getFileName() + " (ID=" + fileValue.getLogId() + ")";
-            } else {
-                result[i] = arguments[i];
-            }
-        }
-        return result;
     }
 
 }
