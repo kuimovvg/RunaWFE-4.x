@@ -6,6 +6,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -17,11 +18,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
+import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.VariableMapping;
 
 public class MessageVariableDialog extends Dialog {
 
-    private final List<String> processVariables;
+    private final List<String> variableNames;
     private final boolean usageSelector;
     private final VariableMapping oldMapping;
     private String variable = "";
@@ -29,9 +33,9 @@ public class MessageVariableDialog extends Dialog {
 
     private Text aliasText;
 
-    protected MessageVariableDialog(List<String> processVariables, boolean usageSelector, VariableMapping oldMapping) {
+    protected MessageVariableDialog(List<String> variableNames, boolean usageSelector, VariableMapping oldMapping) {
         super(Display.getCurrent().getActiveShell());
-        this.processVariables = processVariables;
+        this.variableNames = variableNames;
         this.usageSelector = usageSelector;
         this.oldMapping = oldMapping;
         if (oldMapping != null) {
@@ -68,10 +72,10 @@ public class MessageVariableDialog extends Dialog {
             gridData.minimumWidth = 200;
             variableText.setLayoutData(gridData);
             variableText.setText(getVariable());
-
-            variableText.addModifyListener(new ModifyListener() {
-
-                public void modifyText(ModifyEvent e) {
+            variableText.addModifyListener(new LoggingModifyTextAdapter() {
+                
+                @Override
+                protected void onTextChanged(ModifyEvent e) throws Exception {
                     variable = variableText.getText();
                 }
 
@@ -80,12 +84,13 @@ public class MessageVariableDialog extends Dialog {
             final Combo variableCombo = new Combo(composite, SWT.BORDER);
             GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
             gridData.minimumWidth = 200;
-            variableCombo.setItems(processVariables.toArray(new String[processVariables.size()]));
+            variableCombo.setItems(variableNames.toArray(new String[variableNames.size()]));
             variableCombo.setLayoutData(gridData);
             variableCombo.setText(getVariable());
-            variableCombo.addModifyListener(new ModifyListener() {
-
-                public void modifyText(ModifyEvent e) {
+            variableCombo.addSelectionListener(new LoggingSelectionAdapter() {
+                
+                @Override
+                protected void onSelection(SelectionEvent e) throws Exception {
                     variable = variableCombo.getText();
                     aliasText.setText(variable);
                 }
@@ -107,6 +112,9 @@ public class MessageVariableDialog extends Dialog {
                 alias = aliasText.getText();
             }
         });
+        if (usageSelector) {
+            new InsertVariableTextMenuDetectListener(aliasText, variableNames);
+        }
 
         return area;
     }

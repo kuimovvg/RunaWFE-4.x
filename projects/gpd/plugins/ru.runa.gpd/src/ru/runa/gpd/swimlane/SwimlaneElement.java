@@ -7,12 +7,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.Section;
 
 import ru.runa.gpd.Localization;
@@ -32,7 +29,6 @@ public abstract class SwimlaneElement<T extends SwimlaneInitializer> {
     protected String swimlaneName;
     private T swimlaneInitializer;
     protected ProcessDefinition processDefinition;
-    private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
     private String treePath;
 
     public String getTreePath() {
@@ -144,13 +140,6 @@ public abstract class SwimlaneElement<T extends SwimlaneInitializer> {
     }
 
     public abstract void createGUI(Composite clientArea);
-
-    protected Hyperlink createLink(Composite parent, String msg) {
-        Hyperlink link = new Hyperlink(parent, SWT.NONE);
-        link.setText(msg);
-        hyperlinkGroup.add(link);
-        return link;
-    }
 
     protected Composite createSection(Composite parentComposite, int numColumns) {
         section = new Section(parentComposite, ExpandableComposite.COMPACT | ExpandableComposite.TWISTIE);

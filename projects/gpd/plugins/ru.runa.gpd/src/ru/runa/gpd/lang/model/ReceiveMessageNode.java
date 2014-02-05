@@ -1,43 +1,10 @@
 package ru.runa.gpd.lang.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-
 import ru.runa.gpd.PluginConstants;
-import ru.runa.gpd.lang.ValidationError;
-import ru.runa.gpd.util.VariableMapping;
 
-public class ReceiveMessageNode extends Node implements Active, ITimed {
-    private final List<VariableMapping> variableMappings = new ArrayList<VariableMapping>();
-
-    @Override
-    public void validate(List<ValidationError> errors, IFile definitionFile) {
-        super.validate(errors, definitionFile);
-        for (VariableMapping variableMapping : variableMappings) {
-            if (VariableMapping.USAGE_SELECTOR.equals(variableMapping.getUsage())) {
-                continue;
-            }
-            String processVarName = variableMapping.getProcessVariableName();
-            if (!getProcessDefinition().getVariableNames(true).contains(processVarName)) {
-                errors.add(ValidationError.createLocalizedError(this, "message.processVariableDoesNotExist", processVarName));
-                continue;
-            }
-        }
-    }
-
-    public List<VariableMapping> getVariableMappings() {
-        List<VariableMapping> result = new ArrayList<VariableMapping>();
-        result.addAll(variableMappings);
-        return result;
-    }
-
-    public void setVariableMappings(List<VariableMapping> variablesList) {
-        this.variableMappings.clear();
-        this.variableMappings.addAll(variablesList);
-        setDirty();
-    }
+public class ReceiveMessageNode extends MessagingNode implements ITimed {
 
     @Override
     protected boolean allowLeavingTransition(List<Transition> transitions) {
@@ -65,13 +32,4 @@ public class ReceiveMessageNode extends Node implements Active, ITimed {
         super.addLeavingTransition(transition);
     }
     
-    @Override
-    public ReceiveMessageNode getCopy(GraphElement parent) {
-        ReceiveMessageNode copy = (ReceiveMessageNode) super.getCopy(parent);
-        for (VariableMapping mapping : getVariableMappings()) {
-            copy.getVariableMappings().add(mapping.getCopy());
-        }
-        return copy;
-    }
-
 }

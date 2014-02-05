@@ -14,13 +14,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
@@ -34,6 +31,7 @@ import ru.runa.gpd.office.Messages;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.util.ProcessFileUtils;
 
 public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<DocxModel> {
@@ -74,7 +72,6 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     }
 
     private class ConstructorView extends Composite implements Observer {
-        private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
         private final Delegable delegable;
 
         public ConstructorView(Composite parent, Delegable delegable) {
@@ -147,9 +144,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                     model.getTables().get(tableIndex).setName(text.getText());
                 }
             });
-            Hyperlink hl1 = new Hyperlink(group, SWT.NONE);
-            hl1.setText("[X]");
-            hl1.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(group, "[X]", new LoggingHyperlinkAdapter() {
 
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
@@ -157,7 +152,6 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                     buildFromModel();
                 }
             });
-            hyperlinkGroup.add(hl1);
             Group pgroup = new Group(group, SWT.None);
             GridData pdata = new GridData(GridData.FILL_HORIZONTAL);
             pdata.horizontalSpan = 3;
@@ -210,9 +204,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             headerLabel.setText(Messages.getString(labelKey));
             strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
             strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            Hyperlink hl2 = new Hyperlink(strokeComposite, SWT.NONE);
-            hl2.setText(Localization.getString("button.add"));
-            hl2.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(strokeComposite, Localization.getString("button.add"), new LoggingHyperlinkAdapter() {
 
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
@@ -220,7 +212,6 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                     buildFromModel();
                 }
             });
-            hyperlinkGroup.add(hl2);
             return composite;
         }
 
@@ -239,9 +230,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                 }
             });
             if (columnIndex != 0) {
-                Hyperlink hl0 = new Hyperlink(parent, SWT.NONE);
-                hl0.setText(Localization.getString("button.up"));
-                hl0.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                SWTUtils.createLink(parent, Localization.getString("button.up"), new LoggingHyperlinkAdapter() {
 
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
@@ -249,13 +238,10 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                         buildFromModel();
                     }
                 });
-                hyperlinkGroup.add(hl0);
             } else {
                 new Label(parent, SWT.NONE);
             }
-            Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);
-            hl1.setText("[X]");
-            hl1.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
 
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
@@ -263,7 +249,6 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                     buildFromModel();
                 }
             });
-            hyperlinkGroup.add(hl1);
         }
     }
 

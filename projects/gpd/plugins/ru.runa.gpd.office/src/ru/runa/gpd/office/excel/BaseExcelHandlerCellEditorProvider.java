@@ -16,14 +16,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
@@ -33,8 +29,10 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.Messages;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.util.ProcessFileUtils;
 
 public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstructorProvider<ExcelModel> {
@@ -72,7 +70,6 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
     }
 
     private class ConstructorView extends Composite implements Observer {
-        private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
         private final Delegable delegable;
 
         public ConstructorView(Composite parent, Delegable delegable) {
@@ -92,39 +89,30 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                 for (Control control : getChildren()) {
                     control.dispose();
                 }
-                Hyperlink addCellLink = new Hyperlink(this, SWT.NONE);
-                addCellLink.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-                addCellLink.setText(Messages.getString("label.AddCell"));
-                addCellLink.addHyperlinkListener(new HyperlinkAdapter() {
+                SWTUtils.createLink(this, Messages.getString("label.AddCell"), new LoggingHyperlinkAdapter() {
+                    
                     @Override
-                    public void linkActivated(HyperlinkEvent e) {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.add(new ConstraintsModel(ConstraintsModel.CELL));
                         buildFromModel();
                     }
-                });
-                hyperlinkGroup.add(addCellLink);
-                Hyperlink addRowLink = new Hyperlink(this, SWT.NONE);
-                addRowLink.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-                addRowLink.setText(Messages.getString("label.AddRow"));
-                addRowLink.addHyperlinkListener(new HyperlinkAdapter() {
+                }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+                SWTUtils.createLink(this, Messages.getString("label.AddRow"), new LoggingHyperlinkAdapter() {
+                    
                     @Override
-                    public void linkActivated(HyperlinkEvent e) {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.add(new ConstraintsModel(ConstraintsModel.ROW));
                         buildFromModel();
                     }
-                });
-                hyperlinkGroup.add(addRowLink);
-                Hyperlink addColumnLink = new Hyperlink(this, SWT.NONE);
-                addColumnLink.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-                addColumnLink.setText(Messages.getString("label.AddColumn"));
-                addColumnLink.addHyperlinkListener(new HyperlinkAdapter() {
+                }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+                SWTUtils.createLink(this, Messages.getString("label.AddColumn"), new LoggingHyperlinkAdapter() {
+                    
                     @Override
-                    public void linkActivated(HyperlinkEvent e) {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.add(new ConstraintsModel(ConstraintsModel.COLUMN));
                         buildFromModel();
                     }
-                });
-                hyperlinkGroup.add(addColumnLink);
+                }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
                 new InputOutputComposite(this, delegable, model.getInOutModel(), getMode(), "xlsx");
                 for (ConstraintsModel c : model.constraints) {
                     switch (c.type) {
@@ -174,16 +162,14 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                         cmodel.variableName = combo.getText();
                     }
                 });
-                Hyperlink hl1 = new Hyperlink(group, SWT.NONE);
-                hl1.setText("[X]");
-                hl1.addHyperlinkListener(new HyperlinkAdapter() {
+                SWTUtils.createLink(group, "[X]", new LoggingHyperlinkAdapter() {
+                    
                     @Override
-                    public void linkActivated(HyperlinkEvent e) {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.remove(cmodel);
                         buildFromModel();
                     }
                 });
-                hyperlinkGroup.add(hl1);
                 final Combo sheetCombo = new Combo(group, SWT.READ_ONLY);
                 sheetCombo.add(Messages.getString("label.sheetByTitle"));
                 sheetCombo.add(Messages.getString("label.sheetByIndex"));

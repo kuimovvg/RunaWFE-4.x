@@ -6,11 +6,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
@@ -21,7 +17,10 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -51,15 +50,12 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
         return result;
     }
 
-    private static class ConfigurationDialog extends DelegableConfigurationDialog {
-        private final List<String> variableNames = Lists.newArrayList();
-        private HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
+    private class ConfigurationDialog extends DelegableConfigurationDialog {
+        private final List<String> variableNames;
 
         public ConfigurationDialog(String initialValue, List<Variable> variables) {
             super(initialValue);
-            for (Variable variable : variables) {
-                this.variableNames.add(variable.getScriptingName());
-            }
+            this.variableNames = VariableUtils.getVariableNamesForScripting(variables);
         }
 
         @Override
@@ -67,12 +63,10 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
             Composite composite = new Composite(parent, SWT.NONE);
             composite.setLayout(new GridLayout(2, false));
             composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            Hyperlink hl3 = new Hyperlink(composite, SWT.NONE);
-            hl3.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-            hl3.setText(Localization.getString("button.insert_variable"));
-            hl3.addHyperlinkListener(new HyperlinkAdapter() {
+            SWTUtils.createLink(parent, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
@@ -81,8 +75,7 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
                         styledText.setCaretOffset(styledText.getCaretOffset() + variableName.length());
                     }
                 }
-            });
-            hyperlinkGroup.add(hl3);
+            }).setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
         }
 
         @Override

@@ -10,10 +10,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.wfe.WFEServerExecutorsImporter;
 import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
@@ -35,8 +35,7 @@ public class ExecutorSwimlaneElement extends OrgFunctionSwimlaneElement {
         Composite clientArea = createSection(parent, 2);
         selectionText = new Text(clientArea, SWT.READ_ONLY | SWT.BORDER);
         selectionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        Hyperlink h1 = createLink(clientArea, Localization.getString("button.choose"));
-        h1.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+        SWTUtils.createLink(clientArea, Localization.getString("button.choose"), new LoggingHyperlinkAdapter() {
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                 List<String> items = new ArrayList<String>();

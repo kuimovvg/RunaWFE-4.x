@@ -8,6 +8,7 @@ import ru.runa.gpd.lang.model.VariableContainer;
 import ru.runa.gpd.lang.model.VariableUserType;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -64,8 +65,10 @@ public class VariableUtils {
             }
         }
         String scriptingName = new String(chars);
-        if (excludedVariable != null && Objects.equal(excludedVariable.getScriptingName(), scriptingName)) {
-            return scriptingName;
+        if (excludedVariable != null) {
+            if (excludedVariable.getScriptingName() == null || Objects.equal(excludedVariable.getScriptingName(), scriptingName)) {
+                return scriptingName;
+            }
         }
         while (getVariableByScriptingName(variableContainer.getVariables(false, true), scriptingName) != null) {
             scriptingName += "_";
@@ -74,8 +77,10 @@ public class VariableUtils {
     }
 
     public static List<String> getVariableNamesForScripting(List<Variable> variables) {
-        List<String> result = Lists.newArrayList();
+        List<String> result = Lists.newArrayListWithExpectedSize(variables.size());
         for (Variable variable : variables) {
+            // this is here due to strage NPE
+            Preconditions.checkNotNull(variable.getScriptingName(), variable.getName());
             result.add(variable.getScriptingName());
         }
         return result;

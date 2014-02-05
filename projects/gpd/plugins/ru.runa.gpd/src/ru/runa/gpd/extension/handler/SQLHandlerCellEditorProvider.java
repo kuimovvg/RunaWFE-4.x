@@ -14,14 +14,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
@@ -29,6 +25,8 @@ import ru.runa.gpd.extension.handler.SQLTasksModel.SQLQueryModel;
 import ru.runa.gpd.extension.handler.SQLTasksModel.SQLQueryParameterModel;
 import ru.runa.gpd.extension.handler.SQLTasksModel.SQLTaskModel;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.wfe.user.Executor;
 
 public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQLTasksModel> {
@@ -58,7 +56,6 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
     }
 
     private class ConstructorView extends Composite implements Observer {
-        private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
         private final Delegable delegable;
 
         public ConstructorView(Composite parent, Delegable delegable) {
@@ -102,16 +99,13 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             GridData data = new GridData();
             data.widthHint = 200;
             text.setLayoutData(data);
-            Hyperlink hl = new Hyperlink(this, SWT.NONE);
-            hl.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-            hl.setText(Localization.getString("button.add") + " " + Localization.getString("label.SQLQuery"));
-            hl.addHyperlinkListener(new HyperlinkAdapter() {
+            SWTUtils.createLink(this, Localization.getString("button.add") + " " + Localization.getString("label.SQLQuery"), new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().addQuery();
                 }
-            });
-            hyperlinkGroup.add(hl);
+            }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
             for (SQLQueryModel queryModel : taskModel.queries) {
                 addQuerySection(queryModel, taskModel.queries.indexOf(queryModel));
             }
@@ -134,15 +128,13 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
                     model.getFirstTask().queries.get(queryIndex).query = text.getText();
                 }
             });
-            Hyperlink hl1 = new Hyperlink(group, SWT.NONE);
-            hl1.setText("[X]");
-            hl1.addHyperlinkListener(new HyperlinkAdapter() {
+            SWTUtils.createLink(group, "[X]", new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().deleteQuery(queryIndex);
                 }
             });
-            hyperlinkGroup.add(hl1);
             Composite paramsComposite = createParametersComposite(group, "label.SQLParams", queryIndex, false);
             for (SQLQueryParameterModel parameterModel : queryModel.params) {
                 addParamSection(paramsComposite, parameterModel, queryIndex, queryModel.params.indexOf(parameterModel), true);
@@ -172,15 +164,13 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             headerLabel.setText(Localization.getString(labelKey));
             strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
             strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            Hyperlink hl2 = new Hyperlink(strokeComposite, SWT.NONE);
-            hl2.setText(Localization.getString("button.add"));
-            hl2.addHyperlinkListener(new HyperlinkAdapter() {
+            SWTUtils.createLink(strokeComposite, Localization.getString("button.add"), new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().addQueryParameter(queryIndex, result);
                 }
             });
-            hyperlinkGroup.add(hl2);
             return composite;
         }
 
@@ -199,27 +189,23 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
                 }
             });
             if (paramIndex != 0) {
-                Hyperlink hl0 = new Hyperlink(parent, SWT.NONE);
-                hl0.setText(Localization.getString("button.up"));
-                hl0.addHyperlinkListener(new HyperlinkAdapter() {
+                SWTUtils.createLink(parent, Localization.getString("button.up"), new LoggingHyperlinkAdapter() {
+                    
                     @Override
-                    public void linkActivated(HyperlinkEvent e) {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.getFirstTask().moveUpQueryParameter(queryIndex, parameterModel.result, paramIndex);
                     }
                 });
-                hyperlinkGroup.add(hl0);
             } else {
                 new Label(parent, SWT.NONE);
             }
-            Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);
-            hl1.setText("[X]");
-            hl1.addHyperlinkListener(new HyperlinkAdapter() {
+            SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().deleteQueryParameter(queryIndex, parameterModel.result, paramIndex);
                 }
             });
-            hyperlinkGroup.add(hl1);
         }
     }
 }

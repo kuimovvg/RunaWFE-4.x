@@ -49,4 +49,9 @@ public class VariableMapping {
     public VariableMapping getCopy() {
         return new VariableMapping(processVariableName, subprocessVariableName, usage);
     }
+    
+    @Override
+    public String toString() {
+        return processVariableName + "=" + subprocessVariableName + " (" + usage + ")";
+    }
 }
