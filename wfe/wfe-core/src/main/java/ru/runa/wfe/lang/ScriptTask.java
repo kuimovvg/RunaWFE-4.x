@@ -4,6 +4,7 @@ import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 
@@ -38,6 +39,11 @@ public class ScriptTask extends Node {
             log.error("Failed " + this);
             throw Throwables.propagate(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("id", getNodeId()).add("delegation", delegation).toString();
     }
 
 }

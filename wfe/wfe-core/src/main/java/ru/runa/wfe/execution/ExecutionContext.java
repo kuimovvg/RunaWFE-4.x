@@ -230,7 +230,7 @@ public class ExecutionContext {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("token", getToken()).toString();
+        return Objects.toStringHelper(this).add("processId", getToken().getProcess().getId()).add("tokenId", getToken().getId()).toString();
     }
 
 }

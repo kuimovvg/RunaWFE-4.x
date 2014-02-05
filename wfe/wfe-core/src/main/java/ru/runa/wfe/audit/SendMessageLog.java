@@ -25,6 +25,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import ru.runa.wfe.audit.presentation.HtmlValue;
 import ru.runa.wfe.lang.Node;
 
 /**
@@ -48,7 +49,7 @@ public class SendMessageLog extends NodeEnterLog {
     @Override
     @Transient
     public Object[] getPatternArguments() {
-        return new Object[] { getAttributeNotNull(ATTR_MESSAGE) };
+        return new Object[] { new HtmlValue(getAttributeNotNull(ATTR_MESSAGE)) };
     }
 
 }

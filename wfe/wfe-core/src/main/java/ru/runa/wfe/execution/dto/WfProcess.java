@@ -55,7 +55,7 @@ public class WfProcess extends IdentifiableBase {
         version = process.getDeployment().getVersion().intValue();
         startDate = process.getStartDate();
         endDate = process.getEndDate();
-        hierarchySubProcess = process.getHierarchySubProcess();
+        hierarchySubProcess = process.getHierarchyIds();
     }
 
     @Override
