@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -28,6 +27,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.EditPropertyDialog;
 
 public class ParamDefDynaComposite extends ParamDefComposite {
@@ -76,10 +76,12 @@ public class ParamDefDynaComposite extends ParamDefComposite {
         data = new GridData(GridData.FILL_VERTICAL);
         buttonsBar.setLayoutData(data);
         buttonsBar.setLayout(new GridLayout(1, false));
-        createButton(buttonsBar, Localization.getString("button.add"), new AddSelectionAdapter());
-        final Button editButton = createButton(buttonsBar, Localization.getString("button.edit"), new EditSelectionAdapter());
-        final Button deleteButton = createButton(buttonsBar, Localization.getString("button.delete"), new DeleteSelectionAdapter());
+        SWTUtils.createButton(buttonsBar, Localization.getString("button.add"), new AddSelectionAdapter()).setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
+        final Button editButton = SWTUtils.createButton(buttonsBar, Localization.getString("button.edit"), new EditSelectionAdapter());
+        editButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
         editButton.setEnabled(false);
+        final Button deleteButton = SWTUtils.createButton(buttonsBar, Localization.getString("button.delete"), new DeleteSelectionAdapter());
+        deleteButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
         deleteButton.setEnabled(false);
         tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
@@ -88,15 +90,6 @@ public class ParamDefDynaComposite extends ParamDefComposite {
                 deleteButton.setEnabled(!tableViewer.getSelection().isEmpty());
             }
         });
-    }
-
-    private Button createButton(Composite parent, String label, SelectionAdapter selectionAdapter) {
-        Button button = new Button(parent, SWT.PUSH);
-        button.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.VERTICAL_ALIGN_BEGINNING));
-        button.setText(label);
-        button.setFont(JFaceResources.getDialogFont());
-        button.addSelectionListener(selectionAdapter);
-        return button;
     }
 
     public Map<String, String> getAProperties() {

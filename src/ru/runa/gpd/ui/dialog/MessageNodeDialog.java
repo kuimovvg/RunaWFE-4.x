@@ -26,7 +26,10 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 
+import com.google.common.collect.Lists;
+
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.model.MessagingNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.util.VariableMapping;
@@ -40,7 +43,7 @@ public class MessageNodeDialog extends Dialog {
 
     public MessageNodeDialog(ProcessDefinition definition, List<VariableMapping> variableMappings, boolean sendMode) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
-        this.variableMappings = variableMappings;
+        this.variableMappings = Lists.newArrayList(variableMappings);
         this.definition = definition;
         this.sendMode = sendMode;
     }
@@ -134,7 +137,7 @@ public class MessageNodeDialog extends Dialog {
         addByProcessIdButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                VariableMapping mapping = new VariableMapping("processId", "${currentProcessId}", VariableMapping.USAGE_SELECTOR);
+                VariableMapping mapping = new VariableMapping("processId", MessagingNode.SELECTOR_CURRENT_PROCESS_ID, VariableMapping.USAGE_SELECTOR);
                 if (sendMode) {
                     editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
                 } else {
@@ -147,7 +150,7 @@ public class MessageNodeDialog extends Dialog {
         addByProcessNameButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                VariableMapping mapping = new VariableMapping("processDefinitionName", "${currentDefinitionName}", VariableMapping.USAGE_SELECTOR);
+                VariableMapping mapping = new VariableMapping("processDefinitionName", MessagingNode.SELECTOR_CURRENT_PROCESS_DEFINITION_NAME, VariableMapping.USAGE_SELECTOR);
                 if (sendMode) {
                     editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
                 } else {
@@ -160,7 +163,7 @@ public class MessageNodeDialog extends Dialog {
         addByNodeNameButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                VariableMapping mapping = new VariableMapping("processNodeName", "${currentNodeName}", VariableMapping.USAGE_SELECTOR);
+                VariableMapping mapping = new VariableMapping("processNodeName", MessagingNode.SELECTOR_CURRENT_NODE_NAME, VariableMapping.USAGE_SELECTOR);
                 if (sendMode) {
                     editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
                 } else {
@@ -267,7 +270,7 @@ public class MessageNodeDialog extends Dialog {
         }
     }
 
-    public List<VariableMapping> getSubprocessVariables() {
+    public List<VariableMapping> getVariableMappings() {
         return variableMappings;
     }
 

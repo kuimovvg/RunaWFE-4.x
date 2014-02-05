@@ -18,17 +18,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.ui.custom.HighlightTextStyling;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.util.IOUtils;
@@ -42,7 +41,6 @@ public class FormulaCellEditorProvider extends DelegableProvider {
 
     private static class ConfigurationDialog extends DelegableConfigurationDialog {
         private final List<String> variableNames;
-        private HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
 
         public ConfigurationDialog(String initialValue, List<String> variableNames) {
             super(initialValue);
@@ -55,34 +53,24 @@ public class FormulaCellEditorProvider extends DelegableProvider {
             composite.setLayout(new GridLayout(3, false));
             composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-            Hyperlink hl1 = new Hyperlink(composite, SWT.NONE);
-            hl1.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-            hl1.setText(Localization.getString("help"));
-            hl1.addHyperlinkListener(new HyperlinkAdapter() {
+            Hyperlink hl1 = SWTUtils.createLink(composite, Localization.getString("help"), new LoggingHyperlinkAdapter() {
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
-                    try {
-                        String lang = Locale.getDefault().getLanguage();
-                        InputStream is = FormulaCellEditorProvider.class.getResourceAsStream("FormulaHelp_" + lang);
-                        if (is == null) {
-                            is = FormulaCellEditorProvider.class.getResourceAsStream("FormulaHelp");
-                        }
-                        String help = IOUtils.readStream(is);
-                        HelpDialog dialog = new HelpDialog(help);
-                        dialog.open();
-                    } catch (IOException ex) {
-                        PluginLogger.logError("Unable to find help file", ex);
+                public void onLinkActivated(HyperlinkEvent e) throws IOException {
+                    String lang = Locale.getDefault().getLanguage();
+                    InputStream is = FormulaCellEditorProvider.class.getResourceAsStream("FormulaHelp_" + lang);
+                    if (is == null) {
+                        is = FormulaCellEditorProvider.class.getResourceAsStream("FormulaHelp");
                     }
+                    String help = IOUtils.readStream(is);
+                    HelpDialog dialog = new HelpDialog(help);
+                    dialog.open();
                 }
             });
-            hyperlinkGroup.add(hl1);
+            hl1.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
 
-            Hyperlink hl2 = new Hyperlink(composite, SWT.NONE);
-            hl2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-            hl2.setText(Localization.getString("button.insert_function"));
-            hl2.addHyperlinkListener(new HyperlinkAdapter() {
+            Hyperlink hl2 = SWTUtils.createLink(composite, Localization.getString("button.insert_function"), new LoggingHyperlinkAdapter() {
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                public void onLinkActivated(HyperlinkEvent e) {
                     ChooseFunctionDialog dialog = new ChooseFunctionDialog();
                     String function = dialog.openDialog();
                     if (function != null) {
@@ -92,14 +80,11 @@ public class FormulaCellEditorProvider extends DelegableProvider {
                     }
                 }
             });
-            hyperlinkGroup.add(hl2);
+            hl2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 
-            Hyperlink hl3 = new Hyperlink(composite, SWT.NONE);
-            hl3.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-            hl3.setText(Localization.getString("button.insert_variable"));
-            hl3.addHyperlinkListener(new HyperlinkAdapter() {
+            Hyperlink hl3 = SWTUtils.createLink(composite, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                public void onLinkActivated(HyperlinkEvent e) {
                     ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
@@ -112,7 +97,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
                     }
                 }
             });
-            hyperlinkGroup.add(hl3);
+            hl3.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
         }
 
         @Override

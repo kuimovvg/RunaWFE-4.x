@@ -23,16 +23,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
-
-import com.google.common.base.Preconditions;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.decision.GroovyTypeSupport;
@@ -46,6 +41,7 @@ import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ParametersComposite;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ValidatorInfoControl;
@@ -63,16 +59,12 @@ public class GlobalValidatorsWizardPage extends WizardPage {
     private Map<String, Map<String, ValidatorConfig>> fieldConfigs;
     private List<ValidatorConfig> validatorConfigs;
     private final List<Variable> variables;
-    private final List<String> variableNames = new ArrayList<String>();
+    private final List<String> variableNames;
 
     protected GlobalValidatorsWizardPage(ProcessDefinition processDefinition) {
         super("Global validators");
         this.variables = processDefinition.getVariables(true, true);
-        for (Variable variable : variables) {
-            // this is here due to strage NPE
-            Preconditions.checkNotNull(variable.getScriptingName(), variable.getName());
-            variableNames.add(variable.getScriptingName());
-        }
+        this.variableNames = VariableUtils.getVariableNamesForScripting(variables);
         setTitle(Localization.getString("ValidatorWizardPage.globalpage.title"));
         setDescription(Localization.getString("ValidatorWizardPage.globalpage.description"));
     }
@@ -215,7 +207,6 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         private final Combo comboBoxOp;
         private final Combo comboBoxVar2;
         private final TabFolder tabFolder;
-        private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
 
         public GroovyParamsComposite(ValidatorInfoControl parent, int style) {
             super(parent, style);
@@ -263,14 +254,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
             codeComposite.setLayout(new GridLayout());
             codeComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
             tabs[1].setControl(codeComposite);
-            Hyperlink hl3 = new Hyperlink(codeComposite, SWT.NONE);
-            hl3.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-            hl3.setText(Localization.getString("button.insert_variable"));
-            hyperlinkGroup.add(hl3);
-            codeText = new StyledText(codeComposite, SWT.BORDER | SWT.MULTI);
-            codeText.setLayoutData(new GridData(GridData.FILL_BOTH));
-            codeText.addLineStyleListener(new JavaHighlightTextStyling(variableNames));
-            hl3.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(codeComposite, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
@@ -281,7 +265,10 @@ public class GlobalValidatorsWizardPage extends WizardPage {
                         codeText.setCaretOffset(codeText.getCaretOffset() + variableName.length());
                     }
                 }
-            });
+            }).setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+            codeText = new StyledText(codeComposite, SWT.BORDER | SWT.MULTI);
+            codeText.setLayoutData(new GridData(GridData.FILL_BOTH));
+            codeText.addLineStyleListener(new JavaHighlightTextStyling(variableNames));
         }
 
         private GridData getComboGridData() {

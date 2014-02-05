@@ -10,18 +10,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ldap.LDAPConnectionPreferencePage;
 import ru.runa.gpd.ldap.LDAPExecutorsImporter;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
 
 public class ActiveDirectorySwimlaneElement extends OrgFunctionSwimlaneElement {
-    private Hyperlink chooseExecutorLink;
     private Text selectionText;
 
     public ActiveDirectorySwimlaneElement() {
@@ -43,8 +42,7 @@ public class ActiveDirectorySwimlaneElement extends OrgFunctionSwimlaneElement {
         content.setLayout(new GridLayout(2, false));
         selectionText = new Text(content, SWT.READ_ONLY | SWT.BORDER);
         selectionText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        chooseExecutorLink = createLink(content, Localization.getString("button.choose"));
-        chooseExecutorLink.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+        SWTUtils.createLink(content, Localization.getString("button.choose"), new LoggingHyperlinkAdapter() {
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                 ChooseItemDialog dialog = new ChooseItemDialog(Localization.getString("WFDialog.Text"), null, true);

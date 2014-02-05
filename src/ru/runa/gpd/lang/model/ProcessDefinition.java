@@ -320,7 +320,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public String getNextSwimlaneName() {
         int runner = 1;
         while (true) {
-            String candidate = Localization.getString("default.swimlane.name") + " " + runner;
+            String candidate = Localization.getString("default.swimlane.name") + runner;
             if (getSwimlaneByName(candidate) == null) {
                 return candidate;
             }

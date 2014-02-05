@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
@@ -30,8 +31,11 @@ import ru.runa.gpd.extension.decision.GroovyDecisionModel.IfExpr;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
+import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 import ru.runa.gpd.util.VariableUtils;
 
@@ -100,7 +104,20 @@ public class GroovyEditorDialog extends Dialog {
         constructor.setLayoutData(new GridData(GridData.FILL_BOTH));
         Composite sourceView = new Composite(tabFolder, SWT.NONE);
         sourceView.setLayout(new GridLayout());
+        sourceView.setLayoutData(new GridData(GridData.FILL_BOTH));
         sourceHeader = new ErrorHeaderComposite(sourceView);
+        SWTUtils.createLink(sourceHeader, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
+            @Override
+            protected void onLinkActivated(HyperlinkEvent e) throws Exception {
+                ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
+                String variableName = dialog.openDialog();
+                if (variableName != null) {
+                    styledText.insert(variableName);
+                    styledText.setFocus();
+                    styledText.setCaretOffset(styledText.getCaretOffset() + variableName.length());
+                }
+            }
+        }).setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
         styledText = new StyledText(sourceView, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         styledText.addLineStyleListener(new JavaHighlightTextStyling(variableNames));
         styledText.setText(this.initValue);
@@ -405,8 +422,8 @@ public class GroovyEditorDialog extends Dialog {
 
         public ErrorHeaderComposite(Composite parent) {
             super(parent, SWT.NONE);
-            setLayout(new GridLayout(2, false));
             setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            setLayout(new GridLayout(2, false));
             errorLabel = new Label(this, SWT.NONE);
             errorLabel.setForeground(ColorConstants.red);
             errorLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -414,7 +431,6 @@ public class GroovyEditorDialog extends Dialog {
 
         public void setErrorText(String text) {
             errorLabel.setText(text);
-            pack();
         }
 
         public void clearErrorText() {

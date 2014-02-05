@@ -12,7 +12,7 @@ public class ReceiveMessageConfAction extends BaseModelActionDelegate {
         ReceiveMessageNode messageNode = getSelection();
         MessageNodeDialog dialog = new MessageNodeDialog(messageNode.getProcessDefinition(), messageNode.getVariableMappings(), false);
         if (dialog.open() != Window.CANCEL) {
-            messageNode.setVariableMappings(dialog.getSubprocessVariables());
+            messageNode.setVariableMappings(dialog.getVariableMappings());
         }
     }
 }

@@ -22,15 +22,12 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.Localization;
@@ -42,6 +39,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.util.IOUtils;
@@ -160,7 +158,6 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
     }
 
     private class ContentComposite extends Composite {
-        private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
         private final Button bodyInlinedButton;
         private final StyledText styledText;
         private final TableViewer tableViewer;
@@ -192,11 +189,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
                     styledText.setEditable(!bodyInlinedButton.getSelection());
                 }
             });
-            Hyperlink hl3 = new Hyperlink(this, SWT.NONE);
-            gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
-            hl3.setLayoutData(gridData);
-            hl3.setText(Localization.getString("button.insert_variable"));
-            hl3.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(this, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     List<String> ftlVariableNames = VariableUtils.getValidVariableNames(delegable.getVariableNames(true));
@@ -209,8 +202,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
                         styledText.setCaretOffset(styledText.getCaretOffset() + r.length());
                     }
                 }
-            });
-            hyperlinkGroup.add(hl3);
+            }).setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
             styledText = new StyledText(this, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
             styledText.setLineSpacing(2);
             gridData = new GridData(GridData.FILL_BOTH);

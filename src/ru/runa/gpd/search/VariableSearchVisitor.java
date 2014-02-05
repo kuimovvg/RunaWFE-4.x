@@ -37,6 +37,7 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
+import ru.runa.gpd.lang.model.MessagingNode;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
@@ -46,6 +47,7 @@ import ru.runa.gpd.lang.model.TaskState;
 import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -72,7 +74,7 @@ public class VariableSearchVisitor {
         }
         this.matcherWithBrackets = Pattern.compile(Pattern.quote("\"" + query.getSearchText() + "\"")).matcher("");
     }
-    
+
     public IStatus search(SearchResult searchResult, IProgressMonitor monitor) {
         Map<ProcessDefinition, IFile> map = Maps.newHashMap();
         map.put(query.getMainProcessDefinition(), query.getMainProcessdefinitionFile());
@@ -153,6 +155,9 @@ public class VariableSearchVisitor {
             if (graphElement instanceof Subprocess) {
                 processSubprocessNode(definitionFile, (Subprocess) graphElement);
             }
+            if (graphElement instanceof MessagingNode) {
+                processMessagingNode(definitionFile, (MessagingNode) graphElement);
+            }
         } catch (Exception e) {
             status.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
         } finally {
@@ -195,14 +200,34 @@ public class VariableSearchVisitor {
             if (mapping.getProcessVariableName().equals(query.getSearchText())) {
                 matchesCount++;
             }
-            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
-                    mapping.getSubprocessVariableName().equals(query.getSearchText())) {
+            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && mapping.getSubprocessVariableName().equals(query.getSearchText())) {
                 // MultiSubprocess selector variable
                 matchesCount++;
             }
         }
         if (matchesCount > 0) {
             ElementMatch elementMatch = new ElementMatch(subprocessNode, definitionFile);
+            elementMatch.setMatchesCount(matchesCount);
+            query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
+        }
+    }
+
+    private void processMessagingNode(IFile definitionFile, MessagingNode messagingNode) throws Exception {
+        List<VariableMapping> mappings = messagingNode.getVariableMappings();
+        int matchesCount = 0;
+        for (VariableMapping mapping : mappings) {
+            if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+                if (mapping.getSubprocessVariableName().equals(VariableUtils.wrapVariableName(query.getSearchText()))) {
+                    matchesCount++;
+                }
+            } else {
+                if (mapping.getProcessVariableName().equals(query.getSearchText())) {
+                    matchesCount++;
+                }
+            }
+        }
+        if (matchesCount > 0) {
+            ElementMatch elementMatch = new ElementMatch(messagingNode, definitionFile);
             elementMatch.setMatchesCount(matchesCount);
             query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
         }
