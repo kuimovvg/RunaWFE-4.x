@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
@@ -23,6 +22,7 @@ import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 
 public class ManualSwimlaneElement extends OrgFunctionSwimlaneElement {
     private Composite paramsComposite;
@@ -98,8 +98,7 @@ public class ManualSwimlaneElement extends OrgFunctionSwimlaneElement {
             String message = Localization.getString(parameter.getDefinition().getName()) + " *:";
             Control control;
             if (parameter.getDefinition().isMultiple()) {
-                control = createLink(paramsComposite, message);
-                ((Hyperlink) control).addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                control = SWTUtils.createLink(paramsComposite, message, new LoggingHyperlinkAdapter() {
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         getSwimlaneInitializerNotNull().propagateParameter(parameter, 1);
@@ -114,18 +113,16 @@ public class ManualSwimlaneElement extends OrgFunctionSwimlaneElement {
             }
             control.setLayoutData(createLayoutData(1, false));
             if (parameter.isCanBeDeleted()) {
-                Hyperlink linkDelete = createLink(paramsComposite, "[-]");
-                linkDelete.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+                GridData gridData = createLayoutData(1, false);
+                gridData.widthHint = 20;
+                SWTUtils.createLink(paramsComposite, "[-]", new LoggingHyperlinkAdapter() {
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         getSwimlaneInitializerNotNull().removeParameter(parameter);
                         fireCompletedEvent();
                         reloadParametersUI();
                     }
-                });
-                GridData td = createLayoutData(1, false);
-                td.widthHint = 20;
-                linkDelete.setLayoutData(td);
+                }).setLayoutData(gridData);
             }
             final Text text = new Text(paramsComposite, SWT.BORDER);
             text.setText(parameter.getValue());

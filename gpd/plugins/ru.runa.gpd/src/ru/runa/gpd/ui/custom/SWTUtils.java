@@ -1,8 +1,10 @@
 package ru.runa.gpd.ui.custom;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -42,6 +44,14 @@ public class SWTUtils {
         link.addHyperlinkListener(clickListener);
         hyperlinkGroup.add(link);
         return link;
+    }
+
+    public static Button createButton(Composite parent, String label, SelectionAdapter selectionAdapter) {
+        Button button = new Button(parent, SWT.PUSH);
+        button.setText(label);
+        //button.setFont(JFaceResources.getDialogFont());
+        button.addSelectionListener(selectionAdapter);
+        return button;
     }
 
 }

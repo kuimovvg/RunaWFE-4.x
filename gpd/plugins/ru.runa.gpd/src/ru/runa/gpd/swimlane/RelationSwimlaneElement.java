@@ -14,20 +14,19 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.settings.WFEConnectionPreferencePage;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.wfe.WFEServerRelationsImporter;
 import ru.runa.wfe.user.Executor;
 
 public class RelationSwimlaneElement extends SwimlaneElement<RelationSwimlaneInitializer> {
-    private Hyperlink chooseLink;
     private Text relationNameText;
     private Combo variableCombo;
     private Button inversedButton;
@@ -60,8 +59,7 @@ public class RelationSwimlaneElement extends SwimlaneElement<RelationSwimlaneIni
                 fireCompletedEvent();
             }
         });
-        chooseLink = createLink(composite, Localization.getString("button.choose"));
-        chooseLink.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+        SWTUtils.createLink(composite, Localization.getString("button.choose"), new LoggingHyperlinkAdapter() {
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                 ChooseItemDialog dialog = new ChooseItemDialog(Localization.getString("Relations"), null, true);
