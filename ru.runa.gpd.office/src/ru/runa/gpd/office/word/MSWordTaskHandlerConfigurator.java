@@ -13,12 +13,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
@@ -53,7 +50,6 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
     }
 
     private class ConstructorView extends Composite implements Observer {
-        private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
         private final Delegable delegable;
 
         public ConstructorView(Composite parent, Delegable delegable) {
@@ -163,16 +159,13 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
             data = new GridData(GridData.FILL_HORIZONTAL);
             data.horizontalSpan = 3;
             Composite strokeComposite = SWTUtils.createStrokeComposite(composite, data, Messages.getString("MSWordConfig.label.mappings"), 4);
-            Hyperlink hl2 = new Hyperlink(strokeComposite, SWT.NONE);
-            hl2.setText(Localization.getString("button.add"));
-            hl2.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(strokeComposite, Localization.getString("button.add"), new LoggingHyperlinkAdapter() {
                 
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.addMapping();
                 }
             });
-            hyperlinkGroup.add(hl2);
             return composite;
         }
 
@@ -201,16 +194,13 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                     mapping.setBookmarkName(text.getText());
                 }
             });
-            Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);
-            hl1.setText("[X]");
-            hl1.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
                 
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.deleteMapping(index);
                 }
             });
-            hyperlinkGroup.add(hl1);
         }
     }
 }

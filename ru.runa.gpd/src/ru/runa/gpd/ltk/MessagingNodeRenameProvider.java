@@ -8,19 +8,26 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.NullChange;
 
+import ru.runa.gpd.lang.model.MessagingNode;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
+import ru.runa.gpd.util.VariableUtils;
 
-public abstract class MessageRenameProvider<T extends NamedGraphElement> extends VariableRenameProvider<T> {
-    protected abstract List<VariableMapping> getVariableMappings();
+public class MessagingNodeRenameProvider extends VariableRenameProvider<MessagingNode> {
 
     @Override
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
-        for (VariableMapping mapping : getVariableMappings()) {
-            if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
-                mappingsToChange.add(mapping);
+        for (VariableMapping mapping : element.getVariableMappings()) {
+            if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+                if (mapping.getSubprocessVariableName().equals(VariableUtils.wrapVariableName(oldVariable.getName()))) {
+                    mappingsToChange.add(mapping);
+                }
+            } else {
+                if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
+                    mappingsToChange.add(mapping);
+                }
             }
         }
         List<Change> changes = new ArrayList<Change>();
@@ -41,7 +48,11 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> extends
         @Override
         public Change perform(IProgressMonitor pm) throws CoreException {
             for (VariableMapping mapping : mappingsToChange) {
-                mapping.setProcessVariableName(replacementVariableName);
+                if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+                    mapping.setSubprocessVariableName(VariableUtils.wrapVariableName(replacementVariableName));
+                } else {
+                    mapping.setProcessVariableName(replacementVariableName);
+                }
             }
             return new NullChange("Subprocess");
         }
@@ -50,8 +61,13 @@ public abstract class MessageRenameProvider<T extends NamedGraphElement> extends
         protected String toPreviewContent(String variableName) {
             StringBuffer buffer = new StringBuffer();
             for (VariableMapping mapping : mappingsToChange) {
-                buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variableName);
-                buffer.append("\" name=\"").append(mapping.getSubprocessVariableName()).append("\" />").append("\n");
+                buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"");
+                if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+                    buffer.append(mapping.getProcessVariableName()).append("\" name=\"").append(VariableUtils.wrapVariableName(variableName));
+                } else {
+                    buffer.append(variableName).append("\" name=\"").append(mapping.getSubprocessVariableName());
+                }
+                buffer.append("\" />").append("\n");
             }
             return buffer.toString();
         }

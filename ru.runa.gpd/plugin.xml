@@ -795,7 +795,7 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <onVariableRenamed
-               provider="ru.runa.gpd.ltk.SendMessageRenameProvider">
+               provider="ru.runa.gpd.ltk.MessagingNodeRenameProvider">
          </onVariableRenamed>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
@@ -818,7 +818,7 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <onVariableRenamed
-               provider="ru.runa.gpd.ltk.ReceiveMessageRenameProvider">
+               provider="ru.runa.gpd.ltk.MessagingNodeRenameProvider">
          </onVariableRenamed>
          <graphiti
                add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"

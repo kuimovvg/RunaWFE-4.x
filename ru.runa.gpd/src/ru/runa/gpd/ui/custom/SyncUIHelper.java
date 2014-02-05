@@ -9,7 +9,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
@@ -20,8 +19,6 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 
 public class SyncUIHelper {
 
-    private static HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
-
     public static Composite createHeader(Composite parent, DataImporter importer, Class<? extends IPreferencePage> pageClass, ConnectorCallback callback) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(2, true));
@@ -31,8 +28,7 @@ public class SyncUIHelper {
     }
 
     public static void createConnectionSettingsLink(final Composite parent, final Class<? extends IPreferencePage> pageClass) {
-        Hyperlink editSettingsLink = createLink(parent, Localization.getString("button.ConnectionSettings"));
-        editSettingsLink.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+        SWTUtils.createLink(parent, Localization.getString("button.ConnectionSettings"), new LoggingHyperlinkAdapter() {
 
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
@@ -54,8 +50,7 @@ public class SyncUIHelper {
     }
 
     public static void createSynchronizeLink(Composite parent, final DataImporter importer, final ConnectorCallback callback) {
-        final Hyperlink syncItemsLink = createLink(parent, Localization.getString("button.Synchronize"));
-        syncItemsLink.addHyperlinkListener(new LoggingHyperlinkAdapter() {
+        Hyperlink hyperlink = SWTUtils.createLink(parent, Localization.getString("button.Synchronize"), new LoggingHyperlinkAdapter() {
 
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
@@ -73,14 +68,7 @@ public class SyncUIHelper {
                 }
             }
         });
-        syncItemsLink.setEnabled(importer.isConfigured());
-    }
-
-    private static Hyperlink createLink(Composite parent, String msg) {
-        Hyperlink link = new Hyperlink(parent, SWT.NONE);
-        link.setText(msg);
-        hyperlinkGroup.add(link);
-        return link;
+        hyperlink.setEnabled(importer.isConfigured());
     }
 
 }

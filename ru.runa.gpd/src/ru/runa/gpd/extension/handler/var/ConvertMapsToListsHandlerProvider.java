@@ -14,17 +14,15 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.forms.HyperlinkGroup;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.wfe.extension.handler.var.ConvertMapToListOperation;
 import ru.runa.wfe.extension.handler.var.ConvertMapsToListsConfig;
 import ru.runa.wfe.extension.handler.var.ConvertMapsToListsConfig.Sorting;
@@ -51,7 +49,6 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
     }
 
     private class ConstructorView extends Composite implements Observer {
-        private final HyperlinkGroup hyperlinkGroup = new HyperlinkGroup(Display.getCurrent());
         private final Delegable delegable;
 
         public ConstructorView(Composite parent, Delegable delegable) {
@@ -137,7 +134,7 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
             }
         }
 
-        private void createStrokeComposite(Composite parent, String label, HyperlinkAdapter hyperlinkAdapter) {
+        private void createStrokeComposite(Composite parent, String label, LoggingHyperlinkAdapter hyperlinkAdapter) {
             Composite strokeComposite = new Composite(parent, SWT.NONE);
             GridData data = new GridData(GridData.FILL_HORIZONTAL);
             data.horizontalSpan = 3;
@@ -152,10 +149,7 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
             strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
             strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             if (hyperlinkAdapter != null) {
-                Hyperlink hl1 = new Hyperlink(strokeComposite, SWT.NONE);
-                hl1.setText(Localization.getString("button.add"));
-                hl1.addHyperlinkListener(hyperlinkAdapter);
-                hyperlinkGroup.add(hl1);
+                SWTUtils.createLink(strokeComposite, Localization.getString("button.add"), hyperlinkAdapter);
             }
         }
 
@@ -165,9 +159,10 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
             GridData data = new GridData(GridData.FILL_HORIZONTAL);
             data.horizontalSpan = 3;
             composite.setLayoutData(data);
-            createStrokeComposite(composite, Localization.getString("ConvertMapsToListsConfig.label.operations"), new HyperlinkAdapter() {
+            createStrokeComposite(composite, Localization.getString("ConvertMapsToListsConfig.label.operations"), new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.addOperation();
                 }
             });
@@ -203,15 +198,13 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
                     }
                 });
             }
-            Hyperlink hl1 = new Hyperlink(parent, SWT.NONE);
-            hl1.setText("[X]");
-            hl1.addHyperlinkListener(new HyperlinkAdapter() {
+            SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
+                
                 @Override
-                public void linkActivated(HyperlinkEvent e) {
+                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.deleteOperation(index);
                 }
             });
-            hyperlinkGroup.add(hl1);
         }
     }
 }

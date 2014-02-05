@@ -12,7 +12,7 @@ public class SendMessageConfAction extends BaseModelActionDelegate {
         SendMessageNode messageNode = getSelection();
         MessageNodeDialog dialog = new MessageNodeDialog(messageNode.getProcessDefinition(), messageNode.getVariableMappings(), true);
         if (dialog.open() != Window.CANCEL) {
-            messageNode.setVariableMappings(dialog.getSubprocessVariables());
+            messageNode.setVariableMappings(dialog.getVariableMappings());
         }
     }
 }
