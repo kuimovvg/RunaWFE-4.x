@@ -119,14 +119,11 @@ public class FormulaActionHandler extends ActionHandlerBase {
         return answer;
     }
 
-    String idsuf = null;
-
     @Override
     public void execute(ExecutionContext context) {
         this.context = context;
-        idsuf = " (process id = " + context.getProcess().getId() + ")";
         if (configuration == null) {
-            log.error("Configuration not found in " + idsuf);
+            log.error("Configuration not found in " + context);
             return;
         }
         formula = configuration.toCharArray();
@@ -786,7 +783,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
     }
 
     private void error(String message) {
-        log.warn("Incorrect formula '" + idsuf + "' -> " + new String(formula));
+        log.warn("Incorrect formula in " + context + " -> " + new String(formula));
         if (message != null) {
             log.warn(" - " + message);
         }

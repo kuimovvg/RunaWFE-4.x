@@ -37,11 +37,8 @@ import ru.runa.wfe.user.User;
  * Created on 02.09.2004
  */
 public abstract class VisibleTag extends TagSupport {
-
     private static final long serialVersionUID = 1L;
-
-    protected static final Log log = LogFactory.getLog(VisibleTag.class);
-
+    protected final Log log = LogFactory.getLog(getClass());
     private boolean isVisible = false;
 
     protected abstract ConcreteElement getEndElement();

@@ -29,7 +29,7 @@ public class AlfHandlerData extends HandlerData {
         super(paramsDef, context);
         this.user = null;
         this.task = null;
-        processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(context.getProcess().getHierarchySubProcess());
+        processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(context.getProcess().getHierarchyIds());
     }
 
     public AlfHandlerData(ParamsDef paramsDef, User user, IVariableProvider variableProvider, WfTask task) {

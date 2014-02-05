@@ -66,9 +66,12 @@ public class Timer extends Job {
             Event event = executionContext.getNode().getEvent(Event.TIMER);
             if (event != null) {
                 for (Action timerAction : event.getActions()) {
-                    // in case of multiple timers on node we discriminate
-                    // actions by name
+                    // multiple timers are discriminated actions by name
                     if (Objects.equal(getName(), timerAction.getName())) {
+                        timerAction.execute(executionContext);
+                    }
+                    // back compatibility mode (pre 4.1.0)
+                    if (Objects.equal(getName(), timerAction.getNodeId())) {
                         timerAction.execute(executionContext);
                     }
                 }
@@ -107,7 +110,7 @@ public class Timer extends Job {
             ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.TIMER_EXECUTION_FAILED, th, th.getMessage());
             String taskName;
             try {
-                taskName = executionContext.getProcessDefinition().getNodeNotNull(getToken().getNodeId()).getNodeId();
+                taskName = executionContext.getProcessDefinition().getNodeNotNull(getToken().getNodeId()).getName();
             } catch (Exception e) {
                 taskName = "Unknown due to " + e;
             }

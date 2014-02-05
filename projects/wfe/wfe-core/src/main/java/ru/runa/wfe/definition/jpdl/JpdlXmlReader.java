@@ -360,11 +360,12 @@ public class JpdlXmlReader {
             // 1 timer for compatibility timer names with 3.x
             String name;
             if (SystemProperties.isV3CompatibilityMode()) {
-                name = element.attributeValue(NAME_ATTR, node.getNodeId());
+                name = element.attributeValue(NAME_ATTR, node.getName());
             } else {
                 name = node.getNodeId() + "/timer-" + (timerNumber++);
             }
             CreateTimerAction createTimerAction = ApplicationContextFactory.createAutowiredBean(CreateTimerAction.class);
+            createTimerAction.setNodeId(node.getNodeId());
             createTimerAction.setName(name);
             createTimerAction.setTransitionName(element.attributeValue(TRANSITION_ATTR));
             String durationString = element.attributeValue(DUEDATE_ATTR);
