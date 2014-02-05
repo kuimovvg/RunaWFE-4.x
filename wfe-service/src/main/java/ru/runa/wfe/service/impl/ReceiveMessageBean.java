@@ -17,8 +17,8 @@
  */
 package ru.runa.wfe.service.impl;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -37,6 +37,7 @@ import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.audit.ReceiveMessageLog;
 import ru.runa.wfe.commons.JMSUtil;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
@@ -58,6 +59,7 @@ import com.google.common.base.Objects;
         @ActivationConfigProperty(propertyName = "useDLQ", propertyValue = "false") })
 @TransactionManagement(TransactionManagementType.BEAN)
 @Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@SuppressWarnings("unchecked")
 public class ReceiveMessageBean implements MessageListener {
     private static Log log = LogFactory.getLog(ReceiveMessageBean.class);
     @Autowired
@@ -65,63 +67,80 @@ public class ReceiveMessageBean implements MessageListener {
     @Autowired
     private IProcessDefinitionLoader processDefinitionLoader;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onMessage(Message message) {
-        ObjectMessage objectMessage = (ObjectMessage) message;
+        log.debug("Received " + message);
         try {
-            log.info(message);
-            boolean handled = false;
-            List<Token> tokens = tokenDAO.findActiveTokens(NodeType.RECEIVE_MESSAGE);
-            for (Token token : tokens) {
-                ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDeployment().getId());
-                ReceiveMessage receiveMessage = (ReceiveMessage) token.getNodeNotNull(processDefinition);
-                ExecutionContext executionContext = new ExecutionContext(processDefinition, token);
-                boolean suitable = true;
-                for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
-                    if (variableMapping.isPropertySelector()) {
-                        String selectorValue = objectMessage.getStringProperty(variableMapping.getName());
-                        String testValue = variableMapping.getMappedName();
-                        String expectedValue;
-                        if ("${currentProcessId}".equals(testValue) || "${currentInstanceId}".equals(testValue)) {
-                            expectedValue = String.valueOf(token.getProcess().getId());
-                        } else if ("${currentDefinitionName}".equals(testValue)) {
-                            expectedValue = token.getProcess().getDeployment().getName();
-                        } else if ("${currentNodeName}".equals(testValue)) {
-                            expectedValue = receiveMessage.getName();
-                        } else if ("${currentNodeId}".equals(testValue)) {
-                            expectedValue = receiveMessage.getNodeId();
-                        } else {
-                            Object value = ExpressionEvaluator.evaluateVariable(executionContext.getVariableProvider(), testValue);
-                            expectedValue = TypeConversionUtil.convertTo(String.class, value);
-                        }
-                        if (!Objects.equal(expectedValue, selectorValue)) {
-                            log.debug("Rejected in " + token + " due to diff in " + variableMapping.getName() + "(" + expectedValue + "!="
-                                    + selectorValue + ")");
-                            suitable = false;
-                            break;
-                        }
-                    }
+            ObjectMessage objectMessage = (ObjectMessage) message;
+            boolean sequenceMessages = SystemProperties.isReceiveMessageSequenceModeEnabled();
+            if (sequenceMessages) {
+                synchronized (ReceiveMessageBean.class) {
+                    handleMessage(objectMessage);
                 }
-                if (suitable) {
-                    HashMap<String, Object> map = (HashMap<String, Object>) objectMessage.getObject();
-                    for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
-                        if (!variableMapping.isPropertySelector() && map.containsKey(variableMapping.getMappedName())) {
-                            Object value = map.get(variableMapping.getMappedName());
-                            executionContext.setVariableValue(variableMapping.getName(), value);
-                        }
-                    }
-                    executionContext.addLog(new ReceiveMessageLog(receiveMessage, JMSUtil.toString(objectMessage, true)));
-                    receiveMessage.leave(executionContext);
-                    handled = true;
-                }
-            }
-            if (!handled) {
-                throw new MessagePostponedException(JMSUtil.toString(objectMessage, false));
+            } else {
+                handleMessage(objectMessage);
             }
         } catch (JMSException e) {
             log.error("", e);
             throw new RuntimeException(e);
+        }
+    }
+
+    private void handleMessage(ObjectMessage message) throws JMSException {
+        String messageString = JMSUtil.toString(message, false);
+        log.info("Handling " + messageString);
+        boolean handled = false;
+        List<Token> tokens = tokenDAO.findActiveTokens(NodeType.RECEIVE_MESSAGE);
+        for (Token token : tokens) {
+            ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDeployment().getId());
+            ReceiveMessage receiveMessage = (ReceiveMessage) token.getNodeNotNull(processDefinition);
+            ExecutionContext executionContext = new ExecutionContext(processDefinition, token);
+            boolean suitable = true;
+            for (VariableMapping mapping : receiveMessage.getVariableMappings()) {
+                if (mapping.isPropertySelector()) {
+                    String selectorValue = message.getStringProperty(mapping.getName());
+                    String testValue = mapping.getMappedName();
+                    String expectedValue;
+                    if ("${currentProcessId}".equals(testValue) || "${currentInstanceId}".equals(testValue)) {
+                        expectedValue = String.valueOf(token.getProcess().getId());
+                    } else if ("${currentDefinitionName}".equals(testValue)) {
+                        expectedValue = token.getProcess().getDeployment().getName();
+                    } else if ("${currentNodeName}".equals(testValue)) {
+                        expectedValue = receiveMessage.getName();
+                    } else if ("${currentNodeId}".equals(testValue)) {
+                        expectedValue = receiveMessage.getNodeId();
+                    } else {
+                        Object value = ExpressionEvaluator.evaluateVariable(executionContext.getVariableProvider(), testValue);
+                        expectedValue = TypeConversionUtil.convertTo(String.class, value);
+                    }
+                    if (!Objects.equal(expectedValue, selectorValue)) {
+                        log.debug(message + " rejected in " + token + " due to diff in " + mapping.getName() + " (" + expectedValue + "!="
+                                + selectorValue + ")");
+                        suitable = false;
+                        break;
+                    }
+                }
+            }
+            if (suitable) {
+                log.debug(message + " accepted in " + token + " for " + receiveMessage);
+                executionContext.addLog(new ReceiveMessageLog(receiveMessage, JMSUtil.toString(message, true)));
+                Map<String, Object> map = (Map<String, Object>) message.getObject();
+                for (VariableMapping variableMapping : receiveMessage.getVariableMappings()) {
+                    if (!variableMapping.isPropertySelector()) {
+                        if (map.containsKey(variableMapping.getMappedName())) {
+                            Object value = map.get(variableMapping.getMappedName());
+                            executionContext.setVariableValue(variableMapping.getName(), value);
+                        } else {
+                            log.warn("Message does not contain value for '" + variableMapping.getMappedName() + "'");
+                        }
+                    }
+                }
+                receiveMessage.leave(executionContext);
+                handled = true;
+            }
+        }
+        if (!handled) {
+            throw new MessagePostponedException(messageString);
         }
     }
 }
