@@ -67,7 +67,7 @@ public class AjaxFreemarkerTagServlet extends HttpServlet {
                         }
                     }
                     if (ajaxTag == null) {
-                        throw new NullPointerException("No tag found by qualifier " + qualifier + "; tags: " + tags);
+                        throw new NullPointerException("No tag found by qualifier '" + qualifier + "', tags in session: " + tags);
                     }
                 } else {
                     ajaxTag = tags.get(0);

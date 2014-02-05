@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Objects;
 import com.google.common.io.ByteStreams;
 
 import freemarker.template.TemplateModelException;
@@ -106,5 +107,11 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
             LogFactory.getLog(getClass()).error("Tag execution error", e);
             return "<p style='color: red;'>Tag error: Script not found at </p><b>" + e.getMessage() + "</b>";
         }
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return Objects.toStringHelper(getClass()).add("qualifier", getQualifier()).toString();
     }
 }
