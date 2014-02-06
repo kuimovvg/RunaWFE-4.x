@@ -52,6 +52,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
@@ -267,8 +268,11 @@ public class Token implements Serializable {
         }
     }
 
-    public void signalInSubprocess(ExecutionContext subExecutionContext) {
+    public void signalOnSubprocessEnd(ExecutionContext subExecutionContext) {
         if (!hasEnded()) {
+            if (nodeType != NodeType.SUBPROCESS && nodeType != NodeType.MULTI_SUBPROCESS) {
+                throw new InternalApplicationException("Unexpected token node " + nodeId + " of type " + nodeType + " on subprocess end");
+            }
             NodeProcess parentNodeProcess = subExecutionContext.getParentNodeProcess();
             Long superDefinitionId = parentNodeProcess.getProcess().getDeployment().getId();
             ProcessDefinition superDefinition = ApplicationContextFactory.getProcessDefinitionLoader().getDefinition(superDefinitionId);
