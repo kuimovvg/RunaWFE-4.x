@@ -43,7 +43,7 @@ public class WfProcess extends IdentifiableBase {
     private Date endDate;
     private int version;
     private Long definitionId;
-    private String hierarchySubProcess;
+    private String hierarchyIds;
 
     public WfProcess() {
     }
@@ -55,7 +55,7 @@ public class WfProcess extends IdentifiableBase {
         version = process.getDeployment().getVersion().intValue();
         startDate = process.getStartDate();
         endDate = process.getEndDate();
-        hierarchySubProcess = process.getHierarchyIds();
+        hierarchyIds = process.getHierarchyIds();
     }
 
     @Override
@@ -95,8 +95,8 @@ public class WfProcess extends IdentifiableBase {
         return definitionId;
     }
 
-    public String getHierarchySubProcess() {
-        return hierarchySubProcess;
+    public String getHierarchyIds() {
+        return hierarchyIds;
     }
 
     @Override
