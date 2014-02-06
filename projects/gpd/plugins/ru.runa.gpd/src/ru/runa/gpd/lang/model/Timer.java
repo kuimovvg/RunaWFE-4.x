@@ -3,6 +3,7 @@ package ru.runa.gpd.lang.model;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
@@ -11,6 +12,7 @@ import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
 import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.util.VariableUtils;
 
 public class Timer extends Node {
     private Duration duration = new Duration();
@@ -107,5 +109,29 @@ public class Timer extends Node {
     public void addLeavingTransition(Transition transition) {
         super.addLeavingTransition(transition);
         transition.setName(PluginConstants.TIMER_TRANSITION_NAME);
+    }
+    
+    @Override
+    public Timer getCopy(GraphElement parent) {
+        Timer copy = (Timer) super.getCopy(parent);
+        if (getAction() != null) {
+            copy.setAction(getAction().getCopy(parent.getProcessDefinition()));
+        }
+        if (getDelay() != null) {
+            copy.setDelay(new Duration(getDelay()));
+        }
+        return copy;
+    }
+    
+    @Override
+    public List<Variable> getUsedVariables(IFolder processFolder) {
+        List<Variable> result = super.getUsedVariables(processFolder);
+        if (duration != null && duration.getVariableName() != null) {
+            Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), duration.getVariableName());
+            if (variable != null) {
+                result.add(variable);
+            }
+        }
+        return result;
     }
 }

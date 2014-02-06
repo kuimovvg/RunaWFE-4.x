@@ -1,9 +1,11 @@
 package ru.runa.gpd.lang.model;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
@@ -18,6 +20,7 @@ import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
 import ru.runa.gpd.settings.PrefConstants;
 import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 
@@ -277,6 +280,21 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
         }
         copy.setUseEscalation(useEscalation);
         return copy;
+    }
+
+    @Override
+    public List<Variable> getUsedVariables(IFolder processFolder) {
+        List<Variable> result = super.getUsedVariables(processFolder);
+        if (getBotTaskLink() != null && !Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
+                Map<String, String> map = ParamDefConfig.getAllParameters(getBotTaskLink().getDelegationConfiguration());
+                for (String variableName : map.values()) {
+                    Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), variableName);
+                    if (variable != null) {
+                        result.add(variable);
+                    }
+                }
+        }
+        return result;
     }
 
     @Override
