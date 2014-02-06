@@ -116,7 +116,7 @@ public class VariableUtils {
                 return variable;
             }
         }
-        if (name.contains(VariableUserType.DELIM)) {
+        if (name != null && name.contains(VariableUserType.DELIM)) {
             int index = name.indexOf(VariableUserType.DELIM);
             String complexVariableName = name.substring(0, index);
             Variable complexVariable = getVariableByName(variableContainer, complexVariableName);
