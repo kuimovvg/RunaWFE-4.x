@@ -1,16 +1,12 @@
 package ru.runa.wfe.var;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
-import ru.runa.wfe.InternalApplicationException;
-
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VariableUserType {
@@ -33,35 +29,13 @@ public class VariableUserType {
         return attributes;
     }
 
-    /**
-     * @return attribute definition using recursion
-     */
-    public VariableDefinition getAttributeNotNull(String name) {
-        int dotIndex = name.indexOf(VariableUserType.DELIM);
-        if (dotIndex > 0) {
-            String parentName = name.substring(0, dotIndex);
-            String attributeName = name.substring(dotIndex + 1);
-            VariableDefinition parentDefinition = getAttributeNotNull(parentName);
-            if (!parentDefinition.isComplex()) {
-                throw new InternalApplicationException(parentDefinition + "' is not user defined type");
-            }
-            return parentDefinition.getUserType().getAttributeNotNull(attributeName);
-        }
-        for (VariableDefinition definition : getAttributes()) {
+    public VariableDefinition getAttribute(String name) {
+        for (VariableDefinition definition : attributes) {
             if (Objects.equal(name, definition.getName())) {
                 return definition;
             }
         }
-        throw new InternalApplicationException("No attribute found by name '" + name + "' in " + this);
-    }
-
-    public Map<String, VariableDefinition> expand(String variableName) {
-        Map<String, VariableDefinition> map = Maps.newHashMap();
-        for (VariableDefinition attributeDefinition : getAttributes()) {
-            String name = variableName + VariableUserType.DELIM + attributeDefinition.getName();
-            map.put(name, new VariableDefinition(name, attributeDefinition));
-        }
-        return map;
+        return null;
     }
 
     @Override

@@ -56,10 +56,10 @@ public class VariableDefinition implements Serializable {
         setFormat(format);
     }
 
-    public VariableDefinition(String name, VariableDefinition attributeDefinition) {
-        this(true, name, name, attributeDefinition.getFormat());
+    public VariableDefinition(String name, String scriptingName, VariableDefinition attributeDefinition) {
+        this(true, name, scriptingName, attributeDefinition.getFormat());
     }
-    
+
     public boolean isSyntetic() {
         return syntetic;
     }
@@ -75,7 +75,7 @@ public class VariableDefinition implements Serializable {
     public String getScriptingNameWithoutDots() {
         return scriptingName.replaceAll("\\.", "_");
     }
-    
+
     public String getFormatClassName() {
         if (format != null && format.contains(FORMAT_COMPONENT_TYPE_START)) {
             int index = format.indexOf(FORMAT_COMPONENT_TYPE_START);
@@ -83,11 +83,11 @@ public class VariableDefinition implements Serializable {
         }
         return format;
     }
-    
+
     public String getFormat() {
         return format;
     }
-    
+
     public void setFormat(String format) {
         this.format = format;
     }
@@ -130,15 +130,15 @@ public class VariableDefinition implements Serializable {
     public void setFormatLabel(String formatLabel) {
         this.formatLabel = formatLabel;
     }
-    
+
     public boolean isComplex() {
         return userType != null;
     }
-    
+
     public VariableUserType getUserType() {
         return userType;
     }
-    
+
     public void setUserType(VariableUserType userType) {
         this.userType = userType;
     }
@@ -152,7 +152,7 @@ public class VariableDefinition implements Serializable {
         for (VariableDefinition attributeDefinition : complexVariable.getUserType().getAttributes()) {
             String name = superVariable.getName() + VariableUserType.DELIM + attributeDefinition.getName();
             String scriptingName = superVariable.getScriptingName() + VariableUserType.DELIM + attributeDefinition.getScriptingName();
-            VariableDefinition variable = new VariableDefinition(true, name, scriptingName, attributeDefinition.getFormat());
+            VariableDefinition variable = new VariableDefinition(name, scriptingName, attributeDefinition);
             variable.setUserType(attributeDefinition.getUserType());
             if (variable.isComplex()) {
                 result.addAll(expandComplexVariable(variable, attributeDefinition));
