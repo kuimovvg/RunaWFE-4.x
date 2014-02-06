@@ -273,7 +273,7 @@ public class Process extends IdentifiableBase {
         NodeProcess parentNodeProcess = executionContext.getParentNodeProcess();
         if (parentNodeProcess != null && !parentNodeProcess.getParentToken().hasEnded()) {
             log.info("Signalling to parent " + parentNodeProcess.getProcess());
-            parentNodeProcess.getParentToken().signalInSubprocess(executionContext);
+            parentNodeProcess.getParentToken().signalOnSubprocessEnd(executionContext);
         }
 
         // make sure all the timers for this process are canceled
