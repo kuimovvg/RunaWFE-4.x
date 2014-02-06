@@ -23,7 +23,6 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.ListFormat;
@@ -151,11 +150,9 @@ public class FormSubmissionUtils {
                         variableValue = list;
                     }
                 } else if (format instanceof UserTypeFormat) {
-                    UserTypeFormat userTypeFormat = (UserTypeFormat) format;
-                    VariableUserType userType = userTypeFormat.getVariableDefinition().getUserType();
-                    Map<String, VariableDefinition> expandedDefinitions = userType.expand(variableDefinition.getName());
+                    List<VariableDefinition> expandedDefinitions = variableDefinition.expandComplexVariable();
                     ComplexVariable complexVariable = new ComplexVariable();
-                    for (VariableDefinition simpleDefinition : expandedDefinitions.values()) {
+                    for (VariableDefinition simpleDefinition : expandedDefinitions) {
                         Object value = userInput.get(simpleDefinition.getName());
                         VariableFormat simpleFormat = FormatCommons.create(simpleDefinition);
                         Object convertedValue = convertComponent(simpleDefinition.getName(), simpleFormat, value, formatErrorsForFields);
