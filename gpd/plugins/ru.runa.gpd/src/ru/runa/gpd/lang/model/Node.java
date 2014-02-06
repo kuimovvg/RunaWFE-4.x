@@ -10,7 +10,6 @@ import org.eclipse.core.resources.IFolder;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.Duration;
-import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Sets;
@@ -223,14 +222,7 @@ public abstract class Node extends NamedGraphElement implements Describable {
         if (this instanceof ITimed) {
             Timer timer = ((ITimed) this).getTimer();
             if (timer != null) {
-                Timer copyTimer = new Timer();
-                if (timer.getAction() != null) {
-                    copyTimer.setAction(timer.getAction().getCopy(parent.getProcessDefinition()));
-                }
-                if (timer.getDelay() != null) {
-                    copyTimer.setDelay(new Duration(timer.getDelay()));
-                }
-                copy.addChild(copyTimer);
+                timer.getCopy(copy);
             }
         }
         return copy;
@@ -242,13 +234,7 @@ public abstract class Node extends NamedGraphElement implements Describable {
         if (this instanceof ITimed) {
             Timer timer = ((ITimed) this).getTimer();
             if (timer != null) {
-                String variableName = timer.getDelay().getVariableName();
-                if (variableName != null) {
-                    Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), variableName);
-                    if (variable != null) {
-                        result.add(variable);
-                    }
-                }
+                result.addAll(timer.getUsedVariables(processFolder));
             }
         }
         return result;
