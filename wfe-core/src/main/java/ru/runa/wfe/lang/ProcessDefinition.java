@@ -136,20 +136,35 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     private VariableDefinition buildVariable(String name) {
         int dotIndex = name.indexOf(VariableUserType.DELIM);
         if (dotIndex != -1) {
-            try {
-                String parentName = name.substring(0, dotIndex);
-                String attributeName = name.substring(dotIndex + 1);
-                VariableDefinition parentDefinition = variablesMap.get(parentName);
-                if (parentDefinition == null) {
-                    throw new InternalApplicationException("No variable found by name '" + parentName + "' when building user type attribute descriptor");
+            String parentName = name.substring(0, dotIndex);
+            String remainderName = name.substring(dotIndex + 1);
+            VariableDefinition parentDefinition = variablesMap.get(parentName);
+            VariableDefinition attributeDefinition = null;
+            String scriptingName = "";
+            while (parentDefinition != null && parentDefinition.isComplex()) {
+                if (!scriptingName.isEmpty()) {
+                    scriptingName += VariableUserType.DELIM;
                 }
-                if (!parentDefinition.isComplex()) {
-                    throw new InternalApplicationException(parentDefinition + " is not user defined type");
+                scriptingName += parentDefinition.getScriptingName();
+                //
+                dotIndex = remainderName.indexOf(VariableUserType.DELIM);
+                if (dotIndex == -1) {
+                    attributeDefinition = parentDefinition.getUserType().getAttribute(remainderName);
+                    if (attributeDefinition != null) {
+                        scriptingName += VariableUserType.DELIM + attributeDefinition.getScriptingName();
+                        remainderName = "";
+                    }
+                    parentDefinition = null;
+                } else {
+                    parentName = remainderName.substring(0, dotIndex);
+                    remainderName = remainderName.substring(dotIndex + 1);
+                    parentDefinition = parentDefinition.getUserType().getAttribute(parentName);
                 }
-                VariableDefinition attributeDefinition = parentDefinition.getUserType().getAttributeNotNull(attributeName);
-                return new VariableDefinition(name, attributeDefinition);
-            } catch (Exception e) {
-                log.warn("Unable to build variable '" + name + "'", e);
+            }
+            if (remainderName.isEmpty()) {
+                return new VariableDefinition(name, scriptingName, attributeDefinition);
+            } else {
+                log.warn("Unable to build syntetic variable by name '" + name + "', last checked " + parentDefinition + " with " + remainderName);
             }
         }
         return null;
