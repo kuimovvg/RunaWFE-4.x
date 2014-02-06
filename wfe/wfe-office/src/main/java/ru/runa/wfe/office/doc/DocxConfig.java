@@ -37,7 +37,7 @@ public class DocxConfig extends FilesSupplierConfig {
     public boolean isStrictMode() {
         return strictMode;
     }
-    
+
     public void reportProblem(String message) {
         if (strictMode) {
             throw new InternalApplicationException(message);
@@ -55,6 +55,7 @@ public class DocxConfig extends FilesSupplierConfig {
     public void warn(String message) {
         LOG.warn(message);
     }
+
     public Map<String, TableConfig> getTables() {
         return tables;
     }
