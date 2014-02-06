@@ -185,7 +185,8 @@ public class DocxUtils {
                 config.warn("Variable not found by '" + placeholder + "' (checked '" + operation.getContainerVariableName() + "')");
             }
             if (!operation.isValid()) {
-                //config.reportProblem("Invalid " + operation + " for '" + placeholder + "'");
+                // config.reportProblem("Invalid " + operation + " for '" +
+                // placeholder + "'");
                 return null;
             }
             return operation;
@@ -261,8 +262,24 @@ public class DocxUtils {
             return;
         }
         if (!paragraphText.contains(PLACEHOLDER_END)) {
-            config.reportProblem("No placeholder end '" + PLACEHOLDER_END + "' found in " + paragraphText);
+            config.warn("No placeholder end '" + PLACEHOLDER_END + "' found for '" + PLACEHOLDER_START + "' in " + paragraphText);
             return;
+        }
+        boolean whetherSingleRunContainsPlaceholderStart = false;
+        boolean whetherSingleRunContainsPlaceholderEnd = false;
+        for (XWPFRun run : paragraph.getRuns()) {
+            if (!whetherSingleRunContainsPlaceholderStart && run.getText(0).contains(PLACEHOLDER_START)) {
+                whetherSingleRunContainsPlaceholderStart = true;
+            }
+            if (!whetherSingleRunContainsPlaceholderEnd && run.getText(0).contains(PLACEHOLDER_END)) {
+                whetherSingleRunContainsPlaceholderEnd = true;
+            }
+        }
+        if (!whetherSingleRunContainsPlaceholderStart) {
+            fixRunsToStateInWhichSingleRunContainsPlaceholder(config, paragraph, PLACEHOLDER_START);
+        }
+        if (!whetherSingleRunContainsPlaceholderEnd) {
+            fixRunsToStateInWhichSingleRunContainsPlaceholder(config, paragraph, PLACEHOLDER_END);
         }
         List<ReplaceOperation> operations = Lists.newArrayList();
         for (XWPFRun run : Lists.newArrayList(paragraph.getRuns())) {
@@ -295,6 +312,87 @@ public class DocxUtils {
                     operations.remove(replaceOperation);
                 }
             }
+        }
+    }
+
+    private static void fixRunsToStateInWhichSingleRunContainsPlaceholder(DocxConfig config, XWPFParagraph paragraph, String placeholder) {
+        config.warn("Restructuring runs for '" + PLACEHOLDER_START + "' in '" + paragraph.getParagraphText() + "'");
+        try {
+            List<XWPFRun> runs = paragraph.getRuns();
+            for (int i = 0; i < runs.size() - 1; i++) {
+                PlaceholderMatch match = new PlaceholderMatch(placeholder.toCharArray());
+                PlaceholderMatch.Status status = match.testRun(runs.get(i));
+                int next = i + 1;
+                while (status == PlaceholderMatch.Status.MOVE_NEXT_RUN) {
+                    status = match.testRun(runs.get(next));
+                    next++;
+                }
+                if (status == PlaceholderMatch.Status.MOVE_NEW_RUN) {
+                    continue;
+                }
+                if (status == PlaceholderMatch.Status.COMPLETED) {
+                    for (int n = 0; n < match.runs.size(); n++) {
+                        if (n == 0) {
+                            String newText = match.runs.get(n).getText(0);
+                            newText = newText.substring(0, match.comparisonStartInFirstRunIndex) + placeholder;
+                            match.runs.get(n).setText(newText, 0);
+                        } else if (n == match.runs.size() - 1) {
+                            String newText = match.runs.get(n).getText(0);
+                            newText = newText.substring(match.comparisonEndInLastRunIndex);
+                            match.runs.get(n).setText(newText, 0);
+                        } else {
+                            match.runs.get(n).setText("", 0);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            config.reportProblem(new Exception("Unable to adjust runs for '" + PLACEHOLDER_START + "' in '" + paragraph.getParagraphText() + "'", e));
+        }
+    }
+
+    private static class PlaceholderMatch {
+        enum Status {
+            MOVE_NEW_RUN, MOVE_NEXT_RUN, COMPLETED
+        }
+
+        final char[] placeholderChars;
+        final List<XWPFRun> runs = Lists.newArrayList();
+        int currentComparisonIndex = 0;
+        int comparisonStartInFirstRunIndex = -1;
+        int comparisonEndInLastRunIndex = -1;
+
+        private PlaceholderMatch(char[] placeholderChars) {
+            this.placeholderChars = placeholderChars;
+        }
+
+        Status testRun(XWPFRun run) {
+            boolean firstRun = runs.size() == 0;
+            runs.add(run);
+            char[] runChars = run.getText(0).toCharArray();
+            for (int j = 0; j < runChars.length; j++) {
+                if (runChars[j] == placeholderChars[currentComparisonIndex]) {
+                    if (firstRun && currentComparisonIndex == 0) {
+                        comparisonStartInFirstRunIndex = j;
+                    }
+                    currentComparisonIndex++;
+                    if (isMatchCompleted()) {
+                        comparisonEndInLastRunIndex = j + 1;
+                        return Status.COMPLETED;
+                    }
+                } else if (currentComparisonIndex != 0) {
+                    if (firstRun) {
+                        currentComparisonIndex = 0;
+                    } else {
+                        break;
+                    }
+                }
+            }
+            return currentComparisonIndex != 0 ? Status.MOVE_NEXT_RUN : Status.MOVE_NEW_RUN;
+        }
+
+        boolean isMatchCompleted() {
+            return currentComparisonIndex == placeholderChars.length;
         }
     }
 
