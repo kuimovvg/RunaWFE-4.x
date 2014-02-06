@@ -37,7 +37,7 @@ public class AlfHandlerData extends HandlerData {
         this.user = user;
         this.task = task;
         WfProcess process = Delegates.getExecutionService().getProcess(user, getProcessId());
-        processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(process.getHierarchySubProcess());
+        processIdsHierarchy = ProcessHierarchyUtils.getProcessIds(process.getHierarchyIds());
     }
 
     /**
