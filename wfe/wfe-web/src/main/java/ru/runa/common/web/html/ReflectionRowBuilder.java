@@ -326,7 +326,7 @@ public class ReflectionRowBuilder implements RowBuilder {
 
             if (env.isFilterable()) {
                 StringBuilder str = new StringBuilder();
-                for (int j = 1; j < ProcessHierarchyUtils.getProcessIdsArray(((WfProcess) item).getHierarchySubProcess()).length; j++) {
+                for (int j = 1; j < ProcessHierarchyUtils.getProcessIdsArray(((WfProcess) item).getHierarchyIds()).length; j++) {
                     str.append(Entities.NBSP);
                 }
 

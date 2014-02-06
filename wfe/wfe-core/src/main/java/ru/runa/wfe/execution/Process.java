@@ -220,7 +220,6 @@ public class Process extends IdentifiableBase {
         Swimlane swimlane = getSwimlaneNotNull(swimlaneDefinition);
         if (reassign || swimlane.getExecutor() == null) {
             try {
-                log.debug("assign " + swimlane);
                 AssignmentHandler assignmentHandler = swimlaneDefinition.getDelegation().getInstance();
                 assignmentHandler.assign(executionContext, swimlane);
             } catch (Exception e) {
