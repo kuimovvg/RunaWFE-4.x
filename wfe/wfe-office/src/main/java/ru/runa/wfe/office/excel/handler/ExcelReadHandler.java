@@ -32,7 +32,7 @@ public class ExcelReadHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
             WfVariable variable = variableProvider.getVariableNotNull(binding.getVariableName());
             binding.getConstraints().applyPlaceholders(variableProvider);
             ExcelStorable storable = dataStore.create(binding.getConstraints());
-            storable.setFormat(variable.getFormatNotNull());
+            storable.setFormat(variable.getDefinition().getFormatNotNull());
             storable.load(workbook);
             result.put(binding.getVariableName(), storable.getData());
         }

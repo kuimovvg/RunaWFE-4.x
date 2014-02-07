@@ -202,7 +202,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
         }
         WfVariable variable = context.getVariableProvider().getVariable(variableName);
         if (variable != null) {
-            Class<?> definedClass = variable.getFormatNotNull().getJavaClass();
+            Class<?> definedClass = variable.getDefinition().getFormatNotNull().getJavaClass();
             boolean appropriateType = definedClass.isAssignableFrom(value.getClass());
             if (!appropriateType) {
                 appropriateType = variable.getValue() != null && variable.getValue().getClass() == value.getClass();

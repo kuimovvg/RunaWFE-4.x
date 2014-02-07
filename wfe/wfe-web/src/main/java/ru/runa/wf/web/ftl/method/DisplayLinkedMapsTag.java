@@ -18,7 +18,7 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        List<String> variableNames = Lists.newArrayList();
+        List<WfVariable> variables = Lists.newArrayList();
         List<VariableFormat> componentFormats = Lists.newArrayList();
         List<Map<?, ?>> maps = Lists.newArrayList();
         String firstParameter = getParameterAsString(0);
@@ -35,7 +35,7 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
             if (map == null) {
                 map = Maps.newHashMap();
             }
-            variableNames.add(variableName);
+            variables.add(variable);
             componentFormats.add(componentFormat);
             maps.add(map);
             i++;
@@ -43,19 +43,20 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
         if (maps.size() > 0) {
             StringBuffer html = new StringBuffer();
             html.append("<table class=\"displayLinkedMaps\">");
-            html.append(ViewUtil.generateTableHeader(variableNames, variableProvider, null));
+            html.append(ViewUtil.generateTableHeader(variables, variableProvider, null));
             for (Map.Entry<?, ?> entry : maps.get(0).entrySet()) {
                 html.append("<tr>");
                 for (int column = 0; column < maps.size(); column++) {
                     Map<?, ?> map = maps.get(column);
                     Object o = map.get(entry.getKey());
-                    String variableName = variableNames.get(column);
+                    WfVariable containerVariable = variables.get(column);
                     VariableFormat componentFormat = componentFormats.get(column);
+                    WfVariable componentVariable = ViewUtil.createComponentVariable(containerVariable, null, componentFormat, o);
                     String value;
                     if (componentView) {
-                        value = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, o);
+                        value = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
                     } else {
-                        value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, o);
+                        value = ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
                     }
                     html.append("<td>").append(value).append("</td>");
                 }

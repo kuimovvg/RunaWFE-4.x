@@ -40,7 +40,7 @@ public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
         substitutions.put("UNIQUENAME", scriptingVariableName);
         substitutions.put("START_COUNTER", "0");
         StringBuffer html = new StringBuffer();
-        html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, true));
+        html.append(exportScript(substitutions, true));
         html.append("<div id=\"actorsMultiSelect").append(variableName).append("\"><div id=\"actorsMultiSelectCnt").append(variableName)
                 .append("\"></div><div id=\"actorsMultiSelectAddButton\"><a href=\"javascript:{}\" id=\"btnAdd").append(variableName)
                 .append("\">[ + ]</a></div></div>");

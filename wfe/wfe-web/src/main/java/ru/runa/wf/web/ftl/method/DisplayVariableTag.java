@@ -2,8 +2,6 @@ package ru.runa.wf.web.ftl.method;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.ListFormat;
-import ru.runa.wfe.var.format.VariableFormat;
 import freemarker.template.TemplateModelException;
 
 public class DisplayVariableTag extends FreemarkerTag {
@@ -14,19 +12,13 @@ public class DisplayVariableTag extends FreemarkerTag {
         String variableName = getParameterAsString(0);
         boolean componentView = getParameterAs(boolean.class, 1);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
+        String html = "<span class=\"displayVariable " + variable.getDefinition().getScriptingNameWithoutDots() + "\">";
         if (componentView) {
-            VariableFormat variableFormat = variable.getFormatNotNull();
-            if (variableFormat instanceof ListFormat) {
-                ViewListTag tag = new ViewListTag();
-                tag.initChained(this);
-                return tag.executeTag();
-            }
-            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, variableFormat, variable.getValue());
+            html += ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variable);
         } else {
-            String html = "<span class=\"displayVariable " + variable.getDefinition().getScriptingNameWithoutDots() + "\">";
             html += ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variable);
-            html += "</span>";
-            return html;
         }
+        html += "</span>";
+        return html;
     }
 }

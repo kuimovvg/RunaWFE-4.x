@@ -57,7 +57,7 @@ public class ProcessVariablesRowBuilder implements RowBuilder {
         Object value = variable.getValue();
         TR tr = new TR();
         TD nameTd = new TD(variable.getDefinition().getName());
-        if (variable.getDefinition().isSyntetic()) {
+        if (variable.getDefinition().isSynthetic()) {
             nameTd.setStyle("color: #aaaaaa;");
         }
         tr.addElement(nameTd.setClass(Resources.CLASS_LIST_TABLE_TD));
