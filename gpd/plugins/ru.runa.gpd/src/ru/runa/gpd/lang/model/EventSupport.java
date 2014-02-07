@@ -4,9 +4,24 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class EventSupport {
-    private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    private final Object sourceBean;
+    private PropertyChangeSupport listeners;
 
-    protected void firePropertyChange(String propName, Object old, Object newValue) {
+    public EventSupport(Object sourceBean) {
+        this.sourceBean = sourceBean;
+        initPropertyChangeSupport();
+    }
+
+    public EventSupport() {
+        this.sourceBean = this;
+        initPropertyChangeSupport();
+    }
+
+    private void initPropertyChangeSupport() {
+        listeners = new PropertyChangeSupport(sourceBean);
+    }
+
+    public void firePropertyChange(String propName, Object old, Object newValue) {
         listeners.firePropertyChange(propName, old, newValue);
     }
 
@@ -19,11 +34,5 @@ public class EventSupport {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         listeners.removePropertyChangeListener(listener);
     }
-
-    protected void removeAllPropertyChangeListeners() {
-        listeners = new PropertyChangeSupport(this);
-    }
-
-
 
 }

@@ -302,7 +302,7 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
     }
 
     @Override
-    protected void firePropertyChange(String propName, Object old, Object newValue) {
+    public void firePropertyChange(String propName, Object old, Object newValue) {
         super.firePropertyChange(propName, old, newValue);
         if (!PROPERTY_DIRTY.equals(propName)) {
             if (!Objects.equal(old, newValue)) {
