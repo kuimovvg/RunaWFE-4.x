@@ -153,7 +153,7 @@ public class DocxFileChangerPre406 {
                 }
                 VariableFormat format = config.getTypeHints().get(placeholder);
                 if (format == null) {
-                    format = variable.getFormatNotNull();
+                    format = variable.getDefinition().getFormatNotNull();
                 }
                 String replacement = format.format(variable.getValue());
                 paragraph.removeRun(i);

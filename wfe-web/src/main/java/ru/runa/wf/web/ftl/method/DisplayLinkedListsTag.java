@@ -3,6 +3,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
@@ -17,7 +18,7 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
 
     @Override
     protected Object executeTag() throws TemplateModelException {
-        List<String> variableNames = Lists.newArrayList();
+        List<WfVariable> variables = Lists.newArrayList();
         List<VariableFormat> componentFormats = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();
         String firstParameter = getParameterAsString(0);
@@ -31,11 +32,11 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
             }
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
             VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
-            List<Object> list = (List<Object>) variable.getValue();
+            List<Object> list = TypeConversionUtil.convertTo(List.class, variable.getValue());
             if (list == null) {
                 list = new ArrayList<Object>();
             }
-            variableNames.add(variableName);
+            variables.add(variable);
             componentFormats.add(componentFormat);
             lists.add(list);
             if (list.size() > rowsCount) {
@@ -43,12 +44,12 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
             }
             i++;
         }
-        if (variableNames.size() > 0) {
+        if (variables.size() > 0) {
             StringBuffer html = new StringBuffer();
             html.append("<table class=\"displayLinkedLists\" rowsCount=\"").append(rowsCount).append("\">");
-            html.append(ViewUtil.generateTableHeader(variableNames, variableProvider, null));
+            html.append(ViewUtil.generateTableHeader(variables, variableProvider, null));
             for (int row = 0; row < rowsCount; row++) {
-                renderRow(html, variableNames, lists, componentFormats, componentView, row);
+                renderRow(html, variables, lists, componentFormats, componentView, row);
             }
             html.append("</table>");
             return html.toString();
@@ -56,30 +57,30 @@ public class DisplayLinkedListsTag extends FreemarkerTag {
         return "-";
     }
 
-    protected void renderRow(StringBuffer html, List<String> variableNames, List<List<?>> lists, List<VariableFormat> componentFormats,
+    private void renderRow(StringBuffer html, List<WfVariable> variables, List<List<?>> lists, List<VariableFormat> componentFormats,
             boolean componentView, int row) {
         html.append("<tr row=\"").append(row).append("\">");
-        for (int column = 0; column < variableNames.size(); column++) {
+        for (int column = 0; column < variables.size(); column++) {
             Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
             VariableFormat componentFormat = componentFormats.get(column);
-            renderColumn(html, variableNames.get(column), componentFormat, o, componentView, row, column);
+            renderColumn(html, variables.get(column), componentFormat, o, componentView, row, column);
         }
         html.append("</tr>");
     }
 
-    protected void renderColumn(StringBuffer html, String variableName, VariableFormat componentFormat, Object value, boolean componentView, int row,
-            int column) {
-        String inputName = variableName + "[" + row + "]";
+    private void renderColumn(StringBuffer html, WfVariable containerVariable, VariableFormat componentFormat, Object value, boolean componentView,
+            int row, int column) {
+        WfVariable componentVariable = ViewUtil.createListComponentVariable(containerVariable, row, componentFormat, value);
         html.append("<td column=\"").append(column).append("\">");
-        html.append(getComponentOutput(inputName, componentFormat, value, componentView, row));
+        html.append(getComponentOutput(componentVariable, componentView, row));
         html.append("</td>");
     }
 
-    protected String getComponentOutput(String variableName, VariableFormat componentFormat, Object value, boolean componentView, int row) {
+    private String getComponentOutput(WfVariable componentVariable, boolean componentView, int row) {
         if (componentView) {
-            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, value);
+            return ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
         } else {
-            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, value);
+            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
         }
     }
 

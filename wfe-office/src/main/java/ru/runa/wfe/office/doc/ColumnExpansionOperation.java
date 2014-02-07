@@ -7,7 +7,6 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 
 public class ColumnExpansionOperation extends AbstractIteratorOperation {
     private String containerSelector;
@@ -15,14 +14,14 @@ public class ColumnExpansionOperation extends AbstractIteratorOperation {
     public void setContainerSelector(String containerSelector) {
         this.containerSelector = containerSelector;
     }
-    
+
     @Override
     public void setContainerVariable(WfVariable containerVariable) {
         super.setContainerVariable(containerVariable);
         if (iterateBy == null) {
             if (containerVariable.getValue() instanceof Map) {
                 iterateBy = IterateBy.values;
-            } 
+            }
             if (containerVariable.getValue() instanceof List) {
                 iterateBy = IterateBy.items;
             }
@@ -38,14 +37,14 @@ public class ColumnExpansionOperation extends AbstractIteratorOperation {
             List<?> list = (List<?>) containerVariable.getValue();
             Object listItem = list.size() > index ? list.get(index) : null;
             if (containerSelector == null) {
-                return FormatCommons.formatComponentValue((VariableFormatContainer) containerVariable.getFormatNotNull(), 0, listItem);
+                return FormatCommons.formatComponentValue(containerVariable, 0, listItem);
             } else {
                 return String.valueOf(DocxUtils.getValue(config, variableProvider, listItem, containerSelector));
             }
         }
         if (iterateBy == IterateBy.keys) {
             if (containerSelector == null) {
-                return FormatCommons.formatComponentValue((VariableFormatContainer) containerVariable.getFormatNotNull(), 0, key);
+                return FormatCommons.formatComponentValue(containerVariable, 0, key);
             } else {
                 return String.valueOf(DocxUtils.getValue(config, variableProvider, key, containerSelector));
             }
@@ -53,12 +52,12 @@ public class ColumnExpansionOperation extends AbstractIteratorOperation {
         if (iterateBy == IterateBy.values) {
             Object value = ((Map<?, ?>) containerVariable.getValue()).get(key);
             if (containerSelector == null) {
-                return FormatCommons.formatComponentValue((VariableFormatContainer) containerVariable.getFormatNotNull(), 1, value);
+                return FormatCommons.formatComponentValue(containerVariable, 1, value);
             } else {
                 return String.valueOf(DocxUtils.getValue(config, variableProvider, value, containerSelector));
             }
         }
         return null;
     }
-    
+
 }

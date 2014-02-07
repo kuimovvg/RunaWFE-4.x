@@ -12,6 +12,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONAware;
 import org.json.simple.JSONObject;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxJsonFreemarkerTag;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -42,18 +43,18 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
         substitutions.put("VARIABLE", variableName);
         substitutions.put("UNIQUENAME", scriptingVariableName);
         StringBuffer html = new StringBuffer();
-        List<Actor> actors = variableProvider.getValue(List.class, variableName);
+        List<Object> actors = variableProvider.getValue(List.class, variableName);
         if (actors == null) {
             actors = Lists.newArrayList();
         }
         substitutions.put("START_COUNTER", String.valueOf(actors.size()));
-        html.append(exportScript("scripts/ActorsMultiSelectTag.js", substitutions, false));
+        html.append(exportScript(substitutions, false));
         html.append("<div id=\"actorsMultiSelect_").append(scriptingVariableName).append("\">");
         html.append("<div id=\"actorsMultiSelectCnt_").append(scriptingVariableName).append("\">");
         for (int i = 0; i < actors.size(); i++) {
             String divId = "div_" + scriptingVariableName + i;
             String e = "<div id='" + divId + "'>";
-            Actor actor = actors.get(i);
+            Actor actor = TypeConversionUtil.convertTo(Actor.class, actors.get(i));
             e += "<input type='hidden' name='" + variableName + "' value='ID" + actor.getId() + "' /> " + getDisplayName(actor);
             e += " <a href='javascript:{}' onclick='$(\"#" + divId + "\").remove();'>[ X ]</a>";
             e += "</div>";

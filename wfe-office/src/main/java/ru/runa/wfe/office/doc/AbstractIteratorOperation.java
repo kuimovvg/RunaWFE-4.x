@@ -39,7 +39,8 @@ public class AbstractIteratorOperation extends Operation {
 
     @Override
     public boolean isValid() {
-        return iterateBy != null && containerVariableName != null && containerVariable != null && (getContainerValue() instanceof Map || getContainerValue() instanceof List);
+        return iterateBy != null && containerVariableName != null && containerVariable != null
+                && (getContainerValue() instanceof Map || getContainerValue() instanceof List);
     }
 
     public Object getContainerValue() {
@@ -79,13 +80,13 @@ public class AbstractIteratorOperation extends Operation {
             return LongFormat.class.getName();
         }
         if (iterateBy == IterateBy.keys) {
-            return ((VariableFormatContainer) containerVariable.getFormatNotNull()).getComponentClassName(0);
+            return ((VariableFormatContainer) containerVariable.getDefinition().getFormatNotNull()).getComponentClassName(0);
         }
         if (iterateBy == IterateBy.items) {
-            return ((VariableFormatContainer) containerVariable.getFormatNotNull()).getComponentClassName(0);
+            return ((VariableFormatContainer) containerVariable.getDefinition().getFormatNotNull()).getComponentClassName(0);
         }
         if (iterateBy == IterateBy.values) {
-            return ((VariableFormatContainer) containerVariable.getFormatNotNull()).getComponentClassName(1);
+            return ((VariableFormatContainer) containerVariable.getDefinition().getFormatNotNull()).getComponentClassName(1);
         }
         return null;
     }

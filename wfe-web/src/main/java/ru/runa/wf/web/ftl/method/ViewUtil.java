@@ -1,10 +1,13 @@
 package ru.runa.wf.web.ftl.method;
 
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,7 +19,10 @@ import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.servlet.UploadedFile;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.commons.web.WebUtils;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -38,6 +44,7 @@ import ru.runa.wfe.var.format.ExecutorFormat;
 import ru.runa.wfe.var.format.FileFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.GroupFormat;
+import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.LongFormat;
 import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.TextFormat;
@@ -45,6 +52,7 @@ import ru.runa.wfe.var.format.TimeFormat;
 import ru.runa.wfe.var.format.UserTypeFormat;
 import ru.runa.wfe.var.format.VariableDisplaySupport;
 import ru.runa.wfe.var.format.VariableFormat;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -53,7 +61,7 @@ public class ViewUtil {
     private static final Log log = LogFactory.getLog(ViewUtil.class);
 
     public static String createExecutorSelect(User user, WfVariable variable) {
-        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getFormatNotNull(), variable.getValue(), true);
+        return createExecutorSelect(user, variable.getDefinition().getName(), variable.getDefinition().getFormatNotNull(), variable.getValue(), true);
     }
 
     private static String createExecutorSelect(User user, String variableName, VariableFormat variableFormat, Object value, boolean enabled) {
@@ -97,14 +105,38 @@ public class ViewUtil {
         return html;
     }
 
-    public static String getHiddenInput(String variableName, Class<? extends VariableFormat> formatClass, Object value) {
-        if (value != null) {
-            String stringValue = getStringValue(variableName, formatClass, value);
-            if (stringValue != null) {
-                return "<input type=\"hidden\" name=\"" + variableName + "\" value=\"" + stringValue + "\" />";
-            }
+    public static WfVariable createVariable(String variableName, String scriptingName, VariableFormat componentFormat, Object value) {
+        VariableDefinition definition = new VariableDefinition(true, variableName, scriptingName, componentFormat.getClass().getName());
+        return new WfVariable(definition, value);
+    }
+
+    public static WfVariable createComponentVariable(WfVariable containerVariable, String nameSuffix, VariableFormat componentFormat, Object value) {
+        String name = containerVariable.getDefinition().getName() + (nameSuffix != null ? nameSuffix : "");
+        String scriptingName = containerVariable.getDefinition().getScriptingName() + (nameSuffix != null ? nameSuffix : "");
+        return createVariable(name, scriptingName, componentFormat, value);
+    }
+
+    public static WfVariable createListComponentVariable(WfVariable complexVariable, int index, VariableFormat componentFormat, Object value) {
+        String nameSuffix = index == -1 ? "[]" : "[" + index + "]";
+        return createComponentVariable(complexVariable, nameSuffix, componentFormat, value);
+    }
+
+    public static WfVariable createListSizeVariable(WfVariable complexVariable, Object value) {
+        String nameSuffix = ".size";
+        return createComponentVariable(complexVariable, nameSuffix, new StringFormat(), value);
+    }
+
+    public static WfVariable createUserTypeComponentVariable(WfVariable complexVariable, VariableDefinition attributeDefinition, Object value) {
+        String nameSuffix = VariableUserType.DELIM + attributeDefinition.getName();
+        return createComponentVariable(complexVariable, nameSuffix, attributeDefinition.getFormatNotNull(), value);
+    }
+
+    public static String getHiddenInput(WfVariable variable) {
+        String stringValue = variable.getStringValue();
+        if (stringValue == null) {
+            stringValue = "";
         }
-        return "";
+        return "<input type=\"hidden\" name=\"" + variable.getDefinition().getName() + "\" value=\"" + stringValue + "\" />";
     }
 
     private static String getStringValue(String variableName, Class<? extends VariableFormat> formatClass, Object value) {
@@ -134,7 +166,10 @@ public class ViewUtil {
         return null;
     }
 
-    public static String getComponentInput(User user, WebHelper webHelper, String variableName, VariableFormat variableFormat, Object value) {
+    public static String getComponentInput(User user, WebHelper webHelper, WfVariable variable) {
+        String variableName = variable.getDefinition().getName();
+        VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
+        Object value = variable.getValue();
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
@@ -217,21 +252,57 @@ public class ViewUtil {
                 b.append("<tr>");
                 b.append("<td class=\"list\">").append(attributeDefinition.getName()).append("</td>");
                 b.append("<td class=\"list\">");
-                String childName = variableName + VariableUserType.DELIM + attributeDefinition.getName();
-                VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
                 Object attributeValue = complexVariable.get(attributeDefinition.getName());
-                b.append(getComponentInput(user, webHelper, childName, attributeFormat, attributeValue));
+                WfVariable componentVariable = createUserTypeComponentVariable(variable, attributeDefinition, attributeValue);
+                b.append(getComponentInput(user, webHelper, componentVariable));
                 b.append("</td>");
                 b.append("</tr>");
             }
             b.append("</table>");
             return b.toString();
         }
+        if (variableFormat instanceof ListFormat) {
+            String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
+            VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
+            Map<String, String> substitutions = new HashMap<String, String>();
+            substitutions.put("VARIABLE", variableName);
+            substitutions.put("UNIQUENAME", scriptingVariableName);
+            WfVariable templateComponentVariable = ViewUtil.createListComponentVariable(variable, -1, componentFormat, null);
+            String inputTag = ViewUtil.getComponentInput(user, webHelper, templateComponentVariable);
+            inputTag = inputTag.replaceAll("\"", "'").replaceAll("\t", "").replaceAll("\n", "");
+            substitutions.put("COMPONENT_INPUT", inputTag);
+            substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(componentFormat));
+            StringBuffer html = new StringBuffer();
+            InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.EditListTag.js", ViewUtil.class);
+            html.append(WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions));
+            List<Object> list = TypeConversionUtil.convertTo(List.class, variable.getValue());
+            if (list == null) {
+                list = new ArrayList<Object>();
+            }
+            html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
+            WfVariable sizeVariable = ViewUtil.createListSizeVariable(variable, list.size());
+            html.append(ViewUtil.getHiddenInput(sizeVariable));
+            for (int row = 0; row < list.size(); row++) {
+                Object o = list.get(row);
+                html.append("<div row=\"").append(row).append("\">");
+                WfVariable componentVariable = ViewUtil.createListComponentVariable(variable, row, componentFormat, o);
+                html.append(ViewUtil.getComponentInput(user, webHelper, componentVariable));
+                html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
+                        .append("(this);\" style=\"width: 30px;\" />");
+                html.append("</div>");
+            }
+            html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName)
+                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
+            html.append("</span>");
+            return html.toString();
+        }
         throw new InternalApplicationException("No input method implemented for " + variableFormat);
     }
 
-    public static String getComponentOutput(User user, WebHelper webHelper, Long processId, String variableName, VariableFormat variableFormat,
-            Object value) {
+    public static String getComponentOutput(User user, WebHelper webHelper, Long processId, WfVariable variable) {
+        String variableName = variable.getDefinition().getName();
+        VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
+        Object value = variable.getValue();
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
             if (value != null) {
@@ -305,15 +376,31 @@ public class ViewUtil {
                 b.append("<tr>");
                 b.append("<td class=\"list\">").append(attributeDefinition.getName()).append("</td>");
                 b.append("<td class=\"list\">");
-                String childName = variableName + VariableUserType.DELIM + attributeDefinition.getName();
-                VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
                 Object attributeValue = complexVariable.get(attributeDefinition.getName());
-                b.append(getComponentOutput(user, webHelper, processId, childName, attributeFormat, attributeValue));
+                WfVariable componentVariable = createUserTypeComponentVariable(variable, attributeDefinition, attributeValue);
+                b.append(getComponentOutput(user, webHelper, processId, componentVariable));
                 b.append("</td>");
                 b.append("</tr>");
             }
             b.append("</table>");
             return b.toString();
+        }
+        if (variableFormat instanceof ListFormat) {
+            VariableFormat componentFormat = FormatCommons.createComponent((VariableFormatContainer) variableFormat, 0);
+            StringBuffer html = new StringBuffer();
+            List<Object> list = TypeConversionUtil.convertTo(List.class, value);
+            html.append("<span class=\"viewList\" id=\"").append(variable.getDefinition().getScriptingName()).append("\">");
+            if (list != null) {
+                for (int row = 0; row < list.size(); row++) {
+                    Object listValue = list.get(row);
+                    html.append("<div row=\"").append(row).append("\">");
+                    WfVariable componentVariable = createListComponentVariable(variable, row, componentFormat, listValue);
+                    html.append(ViewUtil.getComponentOutput(user, webHelper, processId, componentVariable));
+                    html.append("</div>");
+                }
+            }
+            html.append("</span>");
+            return html.toString();
         }
         throw new InternalApplicationException("No output method implemented for " + variableFormat);
     }
@@ -345,7 +432,7 @@ public class ViewUtil {
             if (variable.getValue() == null) {
                 return "";
             }
-            VariableFormat format = variable.getFormatNotNull();
+            VariableFormat format = variable.getDefinition().getFormatNotNull();
             if (format instanceof VariableDisplaySupport) {
                 VariableDisplaySupport displaySupport = (VariableDisplaySupport) format;
                 return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue(), null);
@@ -357,7 +444,7 @@ public class ViewUtil {
             if (variable.getValue() != null && variable.getValue().getClass().isArray()) {
                 return Arrays.toString((Object[]) variable.getValue());
             } else {
-                if (variable.getDefinition().isSyntetic()) {
+                if (variable.getDefinition().isSynthetic()) {
                     return String.valueOf(variable.getValue());
                 } else {
                     return " <span style=\"color: #cccccc;\">(" + variable.getValue() + ")</span>";
@@ -416,15 +503,15 @@ public class ViewUtil {
         return html;
     }
 
-    public static String generateTableHeader(List<String> variableNames, IVariableProvider variableProvider, String operationsColumn) {
+    public static String generateTableHeader(List<WfVariable> variables, IVariableProvider variableProvider, String operationsColumn) {
         StringBuffer header = new StringBuffer();
         header.append("<tr class=\"header\">");
-        for (String variableName : variableNames) {
-            Object value = variableProvider.getValue(variableName + "_header");
+        for (WfVariable variable : variables) {
+            Object value = variableProvider.getValue(variable.getDefinition().getName() + "_header");
             if (value == null) {
-                value = variableName;
+                value = variable.getDefinition().getName();
             }
-            header.append("<th>").append(variableName).append("</th>");
+            header.append("<th>").append(value).append("</th>");
         }
         if (operationsColumn != null) {
             header.append(operationsColumn);

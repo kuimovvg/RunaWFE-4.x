@@ -40,6 +40,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.common.web.form.SubstitutionCriteriasForm;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.commons.web.WebUtils;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.ExecutorService;
 import ru.runa.wfe.service.SubstitutionService;
@@ -102,12 +103,13 @@ public class ListSubstitutionCriteriasFormTag extends UpdateSystemBaseFormTag {
             }
             message += "</ul>" + Messages.getMessage(Messages.CONF_POPUP_REMOVE_SUBSTITUTION_CRITERIA, pageContext);
             getForm().addAttribute("id", "substitutionCriteriasForm");
-            tdFormElement.addElement("<script>" + "onload = function() {" + "openSubstitutionCriteriasConfirmPopup('" + message + "', '"
+            String javascript = "onload = function() {" + "openSubstitutionCriteriasConfirmPopup('" + message + "', '"
                     + SubstitutionCriteriasForm.REMOVE_METHOD_ALL + "', '"
                     + Messages.getMessage(Messages.CONF_POPUP_SUBSTITUTION_CRITERIA_BUTTON_ALL, pageContext) + "', '"
                     + SubstitutionCriteriasForm.REMOVE_METHOD_ONLY + "', '"
                     + Messages.getMessage(Messages.CONF_POPUP_SUBSTITUTION_CRITERIA_BUTTON_ONLY, pageContext) + "', '"
-                    + Messages.getMessage(Messages.CONF_POPUP_BUTTON_CANCEL, pageContext) + "');" + "}" + "</script>");
+                    + Messages.getMessage(Messages.CONF_POPUP_BUTTON_CANCEL, pageContext) + "');" + "}";
+            tdFormElement.addElement(WebUtils.getScript(javascript));
         }
     }
 

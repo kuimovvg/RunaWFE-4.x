@@ -23,6 +23,9 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
@@ -33,7 +36,7 @@ public class VariableDefinition implements Serializable {
     public static final String FORMAT_COMPONENT_TYPE_END = ")";
     public static final String FORMAT_COMPONENT_TYPE_CONCAT = ", ";
 
-    private boolean syntetic;
+    private boolean synthetic;
     private String name;
     private String format;
     private boolean publicAccess;
@@ -41,18 +44,19 @@ public class VariableDefinition implements Serializable {
     private String scriptingName;
     private String formatLabel;
     private VariableUserType userType;
+    private transient VariableFormat variableFormat;
 
     public VariableDefinition() {
     }
 
-    public VariableDefinition(boolean syntetic, String name, String scriptingName) {
-        this.syntetic = syntetic;
+    public VariableDefinition(boolean synthetic, String name, String scriptingName) {
+        this.synthetic = synthetic;
         this.name = name;
         this.scriptingName = scriptingName;
     }
 
-    public VariableDefinition(boolean syntetic, String name, String scriptingName, String format) {
-        this(syntetic, name, scriptingName);
+    public VariableDefinition(boolean synthetic, String name, String scriptingName, String format) {
+        this(synthetic, name, scriptingName);
         setFormat(format);
     }
 
@@ -60,8 +64,8 @@ public class VariableDefinition implements Serializable {
         this(true, name, scriptingName, attributeDefinition.getFormat());
     }
 
-    public boolean isSyntetic() {
-        return syntetic;
+    public boolean isSynthetic() {
+        return synthetic;
     }
 
     public String getName() {
@@ -74,6 +78,13 @@ public class VariableDefinition implements Serializable {
 
     public String getScriptingNameWithoutDots() {
         return scriptingName.replaceAll("\\.", "_");
+    }
+
+    public VariableFormat getFormatNotNull() {
+        if (variableFormat == null) {
+            variableFormat = FormatCommons.create(this);
+        }
+        return variableFormat;
     }
 
     public String getFormatClassName() {

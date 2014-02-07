@@ -21,11 +21,6 @@ package ru.runa.wfe.var.format;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.google.common.collect.Maps;
-
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.var.FileVariable;
@@ -33,8 +28,9 @@ import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableDefinitionAware;
 import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.collect.Maps;
+
 public class FormatCommons {
-    private static final Log log = LogFactory.getLog(FormatCommons.class);
 
     private static VariableFormat create(String className, VariableDefinition variableDefinition) {
         VariableFormat format = ClassLoaderUtil.instantiate(className);
@@ -62,13 +58,17 @@ public class FormatCommons {
     }
 
     public static VariableFormat createComponent(WfVariable containerVariable, int index) {
-        return createComponent((VariableFormatContainer) containerVariable.getFormatNotNull(), index);
+        return createComponent((VariableFormatContainer) containerVariable.getDefinition().getFormatNotNull(), index);
     }
 
     public static String formatComponentValue(VariableFormatContainer formatContainer, int index, Object value) {
         return createComponent(formatContainer, index).format(value);
     }
-    
+
+    public static String formatComponentValue(WfVariable containerVariable, int index, Object value) {
+        return createComponent(containerVariable, index).format(value);
+    }
+
     public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value) {
         return getFileOutput(webHelper, processId, variableName, value, null, null);
     }

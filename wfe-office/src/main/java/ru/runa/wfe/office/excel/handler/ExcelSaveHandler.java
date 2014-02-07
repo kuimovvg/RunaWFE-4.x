@@ -33,7 +33,7 @@ public class ExcelSaveHandler extends OfficeFilesSupplierHandler<ExcelBindings> 
             WfVariable variable = variableProvider.getVariableNotNull(binding.getVariableName());
             if (variable.getValue() != null) {
                 ExcelStorable storable = dataStore.create(binding.getConstraints());
-                storable.setFormat(variable.getFormatNotNull());
+                storable.setFormat(variable.getDefinition().getFormatNotNull());
                 storable.setData(variable.getValue());
                 dataStore.save(workbook, storable);
             } else {

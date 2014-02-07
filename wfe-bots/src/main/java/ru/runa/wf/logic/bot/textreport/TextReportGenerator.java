@@ -63,7 +63,7 @@ public class TextReportGenerator {
             String originalVarName = matcher.group(1);
             String variableName = symbolsReplacer.replaceAllReverse(originalVarName);
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
-            String formattedValue = variable.getFormatNotNull().format(variable.getValue());
+            String formattedValue = variable.getStringValue();
             if (formattedValue != null) {
                 String replacedFormattedValue = symbolsReplacer.replaceAll(formattedValue);
                 matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacedFormattedValue));
