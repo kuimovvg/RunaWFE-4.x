@@ -101,18 +101,6 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                         model.setStrict(strict.getSelection());
                     }
                 });
-//                Hyperlink addTableLink = new Hyperlink(this, SWT.NONE);
-//                addTableLink.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-//                addTableLink.setText(Messages.getString("label.AddTable"));
-//                addTableLink.addHyperlinkListener(new LoggingHyperlinkAdapter() {
-//
-//                    @Override
-//                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-//                        model.getTables().add(new DocxTableModel());
-//                        buildFromModel();
-//                    }
-//                });
-//                hyperlinkGroup.add(addTableLink);
                 new Label(this, SWT.NONE);
                 new InputOutputComposite(this, delegable, model.getInOutModel(), FilesSupplierMode.BOTH, "docx");
                 int i = 0;

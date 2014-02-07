@@ -26,7 +26,7 @@ public class VariableUserType extends EventSupport implements VariableContainer,
 	}
 	
 	@Override
-	protected void firePropertyChange(String propName, Object old, Object newValue) {
+	public void firePropertyChange(String propName, Object old, Object newValue) {
 		super.firePropertyChange(propName, old, newValue);
 		if (processDefinition != null) {
 		    processDefinition.setDirty();

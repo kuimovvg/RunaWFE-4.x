@@ -1,7 +1,5 @@
 package ru.runa.gpd.ui.custom;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.InputStream;
 
@@ -17,13 +15,13 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.model.EventSupport;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ProcessFileUtils;
 
 public abstract class ProcessFileComposite extends Composite {
-    // TODO integrate with complex variables commit
-    private PropertyChangeSupport listeners = new PropertyChangeSupport(this);
+    private final EventSupport eventSupport = new EventSupport(this);
     protected final IFile file;
 
     public ProcessFileComposite(Composite parent, IFile file) {
@@ -44,7 +42,7 @@ public abstract class ProcessFileComposite extends Composite {
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         IOUtils.copyFile(getTemplateInputStream(), file);
-                        firePropertyChange(PropertyNames.VALUE, null, file.getName());
+                        eventSupport.firePropertyChange(PropertyNames.VALUE, null, file.getName());
                         rebuild();
                     }
                 });
@@ -62,7 +60,7 @@ public abstract class ProcessFileComposite extends Composite {
                         return;
                     }
                     IOUtils.copyFile(path, file);
-                    firePropertyChange(PropertyNames.VALUE, null, file.getName());
+                    eventSupport.firePropertyChange(PropertyNames.VALUE, null, file.getName());
                     rebuild();
                 }
             });
@@ -98,7 +96,7 @@ public abstract class ProcessFileComposite extends Composite {
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         ProcessFileUtils.deleteProcessFile(file);
                         rebuild();
-                        firePropertyChange(PropertyNames.VALUE, file.getName(), null);
+                        eventSupport.firePropertyChange(PropertyNames.VALUE, file.getName(), null);
                     }
                 });
             }
@@ -106,6 +104,10 @@ public abstract class ProcessFileComposite extends Composite {
         layout(true, true);
     }
 
+    public EventSupport getEventSupport() {
+        return eventSupport;
+    }
+    
     protected abstract boolean hasTemplate();
 
     protected abstract InputStream getTemplateInputStream();
@@ -114,17 +116,4 @@ public abstract class ProcessFileComposite extends Composite {
 
     protected abstract boolean isDeleteFileOperationSupported();
 
-    protected void firePropertyChange(String propName, Object old, Object newValue) {
-        listeners.firePropertyChange(propName, old, newValue);
-    }
-
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        // duplicates
-        removePropertyChangeListener(listener);
-        listeners.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        listeners.removePropertyChangeListener(listener);
-    }
 }
