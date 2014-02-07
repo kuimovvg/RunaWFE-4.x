@@ -207,7 +207,7 @@ public class InputOutputComposite extends Composite {
                 fileName = id + ".template." + fileExtension;
             }
             control = new TemplateFileComposite(composite, fileName, fileExtension);
-            ((TemplateFileComposite) control).addPropertyChangeListener(this);
+            ((TemplateFileComposite) control).getEventSupport().addPropertyChangeListener(this);
             composite.layout(true, true);
         }
         
