@@ -212,14 +212,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     @Override
-    public void removeAllPropertyChangeListeners() {
-        super.removeAllPropertyChangeListeners();
-        for (GraphElement element : getChildren(GraphElement.class)) {
-            element.removeAllPropertyChangeListeners();
-        }
-    }
-
-    @Override
     public void setName(String name) {
         if (name.length() == 0) {
             name = "Process";
