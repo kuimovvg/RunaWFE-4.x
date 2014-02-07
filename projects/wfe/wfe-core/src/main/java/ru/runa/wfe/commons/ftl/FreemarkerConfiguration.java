@@ -40,7 +40,7 @@ public class FreemarkerConfiguration {
     }
 
     private FreemarkerConfiguration() {
-        if (SystemProperties.isV3CompatibilityMode()) {
+        if (SystemProperties.isV3CompatibilityMode() || "true".equals(System.getProperty("deprecated.ftl.tags.enabled"))) {
             parseTags(SystemProperties.DEPRECATED_PREFIX + CONFIG, false);
         }
         parseTags(CONFIG, true);

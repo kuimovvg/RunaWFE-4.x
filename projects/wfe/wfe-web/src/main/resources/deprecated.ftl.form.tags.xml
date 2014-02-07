@@ -11,4 +11,7 @@
 	<ftltag name="DownloadFile" class="ru.runa.wf.web.ftl.method.DownloadFileTag" />
 	<ftltag name="InputDateTime" class="ru.runa.wf.web.ftl.method.DateTimeInputTag" />
 	<ftltag name="MultipleSelect" class="ru.runa.wf.web.ftl.method.MultipleSelectFromListTag" />
+	<ftltag name="EditStringList" class="ru.runa.wf.web.ftl.method.InputVariableTag" />
+	<ftltag name="EditList" class="ru.runa.wf.web.ftl.method.InputVariableTag" />
+	<ftltag name="ViewList" class="ru.runa.wf.web.ftl.method.DisplayVariableTag" />
 </configuration>

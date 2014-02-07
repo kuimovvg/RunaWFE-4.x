@@ -10,13 +10,10 @@
 	<ftltag name="DisplayMapElement" class="ru.runa.wf.web.ftl.method.DisplayMapElementTag" />
 	<ftltag name="DisplayVariable" class="ru.runa.wf.web.ftl.method.DisplayVariableTag" />
 	<ftltag name="EditLinkedLists" class="ru.runa.wf.web.ftl.method.EditLinkedListsTag" />
-	<ftltag name="EditList" class="ru.runa.wf.web.ftl.method.EditListTag" />
-	<ftltag name="EditStringList" class="ru.runa.wf.web.ftl.method.EditStringListTag" />
 	<ftltag name="GroupMembers" class="ru.runa.wf.web.ftl.method.GroupMembersTag" />
 	<ftltag name="InputVariable" class="ru.runa.wf.web.ftl.method.InputVariableTag" />
 	<ftltag name="MultiLanguageExample" class="ru.runa.wf.web.ftl.method.MultiLanguageExampleTag" />
 	<ftltag name="MultipleSelectFromList" class="ru.runa.wf.web.ftl.method.MultipleSelectFromListTag" />
 	<ftltag name="SelectFromList" class="ru.runa.wf.web.ftl.method.SelectFromListTag" />
 	<ftltag name="ViewFile" class="ru.runa.wf.web.ftl.method.FileTag" />
-	<ftltag name="ViewList" class="ru.runa.wf.web.ftl.method.ViewListTag" />
 </configuration>

@@ -29,7 +29,6 @@ import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
@@ -455,12 +454,12 @@ public class DocxUtils {
                         WfVariable containerVariable = variableProvider.getVariable(placeholder);
                         if (containerVariable != null) {
                             int index = containerVariable.getValue() instanceof Map ? 1 : 0;
-                            valueFormat = FormatCommons.createComponent((VariableFormatContainer) containerVariable.getFormatNotNull(), index);
+                            valueFormat = FormatCommons.createComponent(containerVariable, index);
                         }
                     } else {
                         WfVariable variable = variableProvider.getVariable(placeholder);
                         if (variable != null) {
-                            valueFormat = variable.getFormatNotNull();
+                            valueFormat = variable.getDefinition().getFormatNotNull();
                         }
                     }
                     String replacement;

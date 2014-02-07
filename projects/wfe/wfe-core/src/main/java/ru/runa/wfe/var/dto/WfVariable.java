@@ -7,16 +7,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.StringFormat;
-import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 @XmlType(namespace = "http://stub.service.wfe.runa.ru/", name = "wfVariableStub")
 @XmlAccessorType(XmlAccessType.FIELD)
-//@XmlJavaTypeAdapter(VariableAdapter.class)
 public class WfVariable implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,12 +40,12 @@ public class WfVariable implements Serializable {
         return definition;
     }
 
-    public VariableFormat getFormatNotNull() {
-        return FormatCommons.create(getDefinition());
-    }
-
     public Object getValue() {
         return value;
+    }
+
+    public String getStringValue() {
+        return definition.getFormatNotNull().format(value);
     }
 
     public void setValue(Object value) {

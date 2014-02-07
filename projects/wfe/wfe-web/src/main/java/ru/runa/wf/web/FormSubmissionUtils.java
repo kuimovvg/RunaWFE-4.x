@@ -29,6 +29,7 @@ import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.UserTypeFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -40,6 +41,7 @@ public class FormSubmissionUtils {
     public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
     public static final String USER_ERRORS = "UserErrors";
     public static final String UPLOADED_FILES = "UploadedFiles";
+    public static final Object IGNORED_VALUE = new Object();
 
     /**
      * save in request user input with errors
@@ -69,7 +71,7 @@ public class FormSubmissionUtils {
         Map<String, String[]> userInput = getUserFormInput(request);
         if (userInput != null) {
             List<String> formatErrorsForFields = new ArrayList<String>();
-            return convert(request, userInput, interaction, formatErrorsForFields);
+            return extractVariables(request, userInput, interaction, formatErrorsForFields);
         }
         return null;
     }
@@ -102,7 +104,7 @@ public class FormSubmissionUtils {
         List<String> formatErrorsForFields = new ArrayList<String>();
         Map<String, Object> userInput = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
         userInput.putAll(getUploadedFilesMap(request));
-        Map<String, Object> variables = convert(request, userInput, interaction, formatErrorsForFields);
+        Map<String, Object> variables = extractVariables(request, userInput, interaction, formatErrorsForFields);
         if (formatErrorsForFields.size() > 0) {
             throw new VariablesFormatException(formatErrorsForFields);
         }
@@ -110,68 +112,13 @@ public class FormSubmissionUtils {
         return variables;
     }
 
-    private static Map<String, Object> convert(HttpServletRequest request, Map<String, ? extends Object> userInput, Interaction interaction,
+    private static Map<String, Object> extractVariables(HttpServletRequest request, Map<String, ? extends Object> userInput, Interaction interaction,
             List<String> formatErrorsForFields) {
         try {
             HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
-                VariableFormat format = FormatCommons.create(variableDefinition);
-                Object variableValue = null;
-                boolean forceSetVariableValue = false;
-                if (format instanceof ListFormat) {
-                    String sizeInputName = variableDefinition.getName() + SIZE_SUFFIX;
-                    ListFormat listFormat = (ListFormat) format;
-                    VariableFormat componentFormat = FormatCommons.createComponent(listFormat, 0);
-                    if (userInput.containsKey(sizeInputName)) {
-                        // js dynamic way
-                        String[] strings = (String[]) userInput.get(sizeInputName);
-                        if (strings == null || strings.length != 1) {
-                            log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
-                            continue;
-                        }
-                        int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
-                        List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
-                        for (int i = 0; i < listSize; i++) {
-                            String inputName = variableDefinition.getName() + "[" + i + "]";
-                            Object componentValue = userInput.get(inputName);
-                            list.add(convertComponent(inputName, componentFormat, componentValue, formatErrorsForFields));
-                        }
-                        variableValue = list;
-                    } else {
-                        // http old-style way
-                        String[] strings = (String[]) userInput.get(variableDefinition.getName());
-                        if (strings == null || strings.length == 0) {
-                            continue;
-                        }
-                        List<Object> list = Lists.newArrayListWithExpectedSize(strings.length);
-                        for (String componentValue : strings) {
-                            list.add(convertComponent(variableDefinition.getName(), componentFormat, componentValue, formatErrorsForFields));
-                        }
-                        variableValue = list;
-                    }
-                } else if (format instanceof UserTypeFormat) {
-                    List<VariableDefinition> expandedDefinitions = variableDefinition.expandComplexVariable();
-                    ComplexVariable complexVariable = new ComplexVariable();
-                    for (VariableDefinition simpleDefinition : expandedDefinitions) {
-                        Object value = userInput.get(simpleDefinition.getName());
-                        VariableFormat simpleFormat = FormatCommons.create(simpleDefinition);
-                        Object convertedValue = convertComponent(simpleDefinition.getName(), simpleFormat, value, formatErrorsForFields);
-                        complexVariable.put(simpleDefinition.getName(), convertedValue);
-                    }
-                    variableValue = complexVariable;
-                } else {
-                    Object value = userInput.get(variableDefinition.getName());
-                    if (value != null) {
-                        forceSetVariableValue = true;
-                    }
-                    variableValue = convertComponent(variableDefinition.getName(), format, value, formatErrorsForFields);
-                }
-                if (variableValue != null || forceSetVariableValue) {
-                    FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
-                            FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
-                    if (handler != null) {
-                        variableValue = handler.handle(variableValue);
-                    }
+                Object variableValue = extractVariable(request, userInput, variableDefinition, formatErrorsForFields);
+                if (!Objects.equal(IGNORED_VALUE, variableValue)) {
                     variables.put(variableDefinition.getName(), variableValue);
                 }
             }
@@ -179,6 +126,68 @@ public class FormSubmissionUtils {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    private static Object extractVariable(HttpServletRequest request, Map<String, ? extends Object> userInput, VariableDefinition variableDefinition,
+            List<String> formatErrorsForFields) throws Exception {
+        VariableFormat format = FormatCommons.create(variableDefinition);
+        Object variableValue = null;
+        boolean forceSetVariableValue = false;
+        if (format instanceof ListFormat) {
+            String sizeInputName = variableDefinition.getName() + SIZE_SUFFIX;
+            ListFormat listFormat = (ListFormat) format;
+            VariableFormat componentFormat = FormatCommons.createComponent(listFormat, 0);
+            if (userInput.containsKey(sizeInputName)) {
+                // js dynamic way
+                String[] strings = (String[]) userInput.get(sizeInputName);
+                if (strings == null || strings.length != 1) {
+                    log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
+                    return null;
+                }
+                int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
+                List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
+                for (int i = 0; i < listSize; i++) {
+                    String inputName = variableDefinition.getName() + "[" + i + "]";
+                    Object componentValue = userInput.get(inputName);
+                    list.add(convertComponent(inputName, componentFormat, componentValue, formatErrorsForFields));
+                }
+                variableValue = list;
+            } else {
+                // http old-style way
+                String[] strings = (String[]) userInput.get(variableDefinition.getName());
+                if (strings == null || strings.length == 0) {
+                    return null;
+                }
+                List<Object> list = Lists.newArrayListWithExpectedSize(strings.length);
+                for (String componentValue : strings) {
+                    list.add(convertComponent(variableDefinition.getName(), componentFormat, componentValue, formatErrorsForFields));
+                }
+                variableValue = list;
+            }
+        } else if (format instanceof UserTypeFormat) {
+            List<VariableDefinition> expandedDefinitions = variableDefinition.expandComplexVariable();
+            ComplexVariable complexVariable = new ComplexVariable();
+            for (VariableDefinition componentDefinition : expandedDefinitions) {
+                Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
+                complexVariable.put(componentDefinition.getName(), componentValue);
+            }
+            variableValue = complexVariable;
+        } else {
+            Object value = userInput.get(variableDefinition.getName());
+            if (value != null) {
+                forceSetVariableValue = true;
+            }
+            variableValue = convertComponent(variableDefinition.getName(), format, value, formatErrorsForFields);
+        }
+        if (variableValue != null || forceSetVariableValue) {
+            FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
+                    FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
+            if (handler != null) {
+                variableValue = handler.handle(variableValue);
+            }
+            return variableValue;
+        }
+        return IGNORED_VALUE;
     }
 
     private static Object convertComponent(String inputName, VariableFormat format, Object value, List<String> formatErrorsForFields) {

@@ -124,7 +124,7 @@ public class MultiProcessState extends SubProcessState {
             // if (SystemProperties.isV3CompatibilityMode()) {
             // discriminatorValue = new ArrayList<Object>();
             // } else {
-            throw new RuntimeException("discriminatorValue == null");
+            throw new RuntimeException("discriminatorValue == null in " + this);
             // }
         }
         int subprocessesCount = TypeConversionUtil.getArraySize(discriminatorValue);
@@ -248,7 +248,7 @@ public class MultiProcessState extends SubProcessState {
                         String processVariableName = variableMapping.getName();
                         WfVariable variable = executionContext.getVariableProvider().getVariable(processVariableName);
                         Object value;
-                        if (variable == null || variable.getFormatNotNull() instanceof ListFormat) {
+                        if (variable == null || variable.getDefinition().getFormatNotNull() instanceof ListFormat) {
                             value = new ArrayList<Object>();
                             for (Process subprocess : subprocesses) {
                                 ExecutionContext subExecutionContext = new ExecutionContext(subProcessDefinition, subprocess);
