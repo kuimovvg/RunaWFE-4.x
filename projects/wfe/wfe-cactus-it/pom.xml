@@ -80,7 +80,6 @@
     <build>
         <finalName>cactus</finalName>
         <sourceDirectory>src/test/java</sourceDirectory>
-        <!--testSourceDirectory>src/test/java</testSourceDirectory-->
         <resources>
             <resource>
                 <directory>src/test/resources</directory>
@@ -149,9 +148,10 @@
                     <execution>
                         <phase>pre-integration-test</phase>
                         <configuration>
-                            <tasks>
-                                <unzip src="${jboss.zip.file}" dest="${project.build.directory}" />
-                            </tasks>
+                        	<skip>${maven.test.skip}</skip>
+							<target name="copyjboss">
+								<unzip src="${jboss.zip.file}" dest="${project.build.directory}" />
+							</target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -159,12 +159,12 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- container integration -->
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
                 <version>1.3.3</version>
                 <configuration>
+                	<skip>${maven.test.skip}</skip>
                     <container>
                         <containerId>jboss42x</containerId>
                         <home>${jboss.home}</home>
