@@ -45,6 +45,9 @@ public abstract class AbstractDateFormat extends VariableFormat {
 
     @Override
     public Object parseJSON(String json) {
+        if (json == null) {
+            return null;
+        }
         return convertFromStringValue(json);
     }
 
