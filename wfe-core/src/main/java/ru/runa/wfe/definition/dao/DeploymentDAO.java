@@ -25,10 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -43,6 +45,12 @@ public class DeploymentDAO extends GenericDAO<Deployment> {
     public void deploy(Deployment deployment, Deployment previousLatestVersion) {
         // if there is a current latest process definition
         if (previousLatestVersion != null) {
+            Deployment latestDeployment = findLatestDeployment(previousLatestVersion.getName());
+            if (!Objects.equal(latestDeployment.getId(), previousLatestVersion.getId())) {
+                throw new InternalApplicationException("Last deployed version of process definition '" + latestDeployment.getName() + "' is '"
+                        + latestDeployment.getVersion() + "'. You were provided process definition id for version '"
+                        + previousLatestVersion.getVersion() + "'");
+            }
             // take the next version number
             deployment.setVersion(previousLatestVersion.getVersion() + 1);
         } else {
