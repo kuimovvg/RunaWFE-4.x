@@ -65,6 +65,9 @@ public abstract class VariableFormat {
      */
     public Object parseJSON(String json) {
         try {
+            if (json == null) {
+                return null;
+            }
             JSONParser parser = new JSONParser();
             Object jsonObject = parser.parse(json);
             if (jsonObject == null) {
