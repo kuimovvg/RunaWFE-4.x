@@ -387,9 +387,9 @@ public class JpdlXmlReader {
                 timerAction.setName(name);
                 addAction(node, Event.TIMER, timerAction);
             }
-
             CancelTimerAction cancelTimerAction = ApplicationContextFactory.createAutowiredBean(CancelTimerAction.class);
-            cancelTimerAction.setName(name);
+            cancelTimerAction.setNodeId(createTimerAction.getNodeId());
+            cancelTimerAction.setName(createTimerAction.getName());
             String cancelEventType = node instanceof TaskDefinition ? Event.TASK_END : Event.NODE_LEAVE;
             addAction(node, cancelEventType, cancelTimerAction);
         }

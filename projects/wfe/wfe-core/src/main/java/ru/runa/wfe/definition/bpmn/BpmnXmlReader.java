@@ -306,6 +306,7 @@ public class BpmnXmlReader {
         addAction(node, createEventType, createTimerAction);
 
         CancelTimerAction cancelTimerAction = ApplicationContextFactory.createAutowiredBean(CancelTimerAction.class);
+        cancelTimerAction.setNodeId(createTimerAction.getNodeId());
         cancelTimerAction.setName(createTimerAction.getName());
         String cancelEventType = node instanceof TaskDefinition ? Event.TASK_END : Event.NODE_LEAVE;
         addAction(node, cancelEventType, cancelTimerAction);
