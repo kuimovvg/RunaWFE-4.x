@@ -1,15 +1,15 @@
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 import java.util.List;
-
-import javax.xml.datatype.DatatypeFactory;
 
 import ru.runa.wfe.webservice.AuthenticationAPI;
 import ru.runa.wfe.webservice.AuthenticationWebService;
+import ru.runa.wfe.webservice.DefinitionAPI;
+import ru.runa.wfe.webservice.DefinitionWebService;
 import ru.runa.wfe.webservice.ExecutionAPI;
 import ru.runa.wfe.webservice.ExecutionWebService;
 import ru.runa.wfe.webservice.User;
 import ru.runa.wfe.webservice.Variable;
+import ru.runa.wfe.webservice.WfDefinition;
 
 public class StartProcess {
 
@@ -17,27 +17,18 @@ public class StartProcess {
         try {
             AuthenticationAPI authenticationAPI = new AuthenticationWebService().getAuthenticationAPIPort();
             User user = authenticationAPI.authenticateByLoginPassword("Administrator", "wf");
+            DefinitionAPI definitionAPI = new DefinitionWebService().getDefinitionAPIPort();
             ExecutionAPI executionAPI = new ExecutionWebService().getExecutionAPIPort();
+
             List<Variable> variables = new ArrayList<Variable>();
 
-/*            Variable variable1 = new Variable();
-            variable1.setName("var1");
-            GregorianCalendar c = new GregorianCalendar();
-            variable1.setDateValue(DatatypeFactory.newInstance().newXMLGregorianCalendar(c));
-            variables.add(variable1);
+            Variable usersListVariable = new Variable();
+            usersListVariable.setName("–°–ø–∏—Å–æ–∫ –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª–µ–π");
+            usersListVariable.setValue("[{\"name\": \"julius\"}, {\"name\": \"nero\"}, {\"name\": \"Administrator\"}]");
+            variables.add(usersListVariable);
 
-            Variable variable2 = new Variable();
-            variable2.setName("œÂÂÏÂÌÌ‡ˇ1");
-            variable2.setStringValue("—“–Œ ¿");
-            variables.add(variable2);
-
-            Variable variable3 = new Variable();
-            variable3.setName("œÂÂÏÂÌÌ‡ˇ2");
-            variable3.setLongValue(-3L);
-            variables.add(variable3);*/
-
-            Long processId = executionAPI.startProcessWS(user, "ESCALATIONTEST", variables);
-            System.out.println(processId);
+            Long processId = executionAPI.startProcessWS(user, "messagingFailureTest", variables);
+            System.out.println("Started process " + processId);
         } catch (Exception e) {
             e.printStackTrace();
         }
