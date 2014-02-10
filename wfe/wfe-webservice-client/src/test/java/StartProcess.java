@@ -9,7 +9,6 @@ import ru.runa.wfe.webservice.ExecutionAPI;
 import ru.runa.wfe.webservice.ExecutionWebService;
 import ru.runa.wfe.webservice.User;
 import ru.runa.wfe.webservice.Variable;
-import ru.runa.wfe.webservice.WfDefinition;
 
 public class StartProcess {
 
