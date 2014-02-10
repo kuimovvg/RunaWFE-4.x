@@ -49,7 +49,7 @@ public class VariableConverter {
             Object value = FormatCommons.create(variableDefinition).parseJSON(variable.value);
             return value;
         } catch (Exception e) {
-            throw new InternalApplicationException("Unable unmarshal " + variable, e);
+            throw new InternalApplicationException("Unable unmarshal '" + variable + "': " + e, e);
         }
     }
 
