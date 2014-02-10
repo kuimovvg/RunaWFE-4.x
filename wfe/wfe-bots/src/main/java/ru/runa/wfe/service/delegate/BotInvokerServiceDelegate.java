@@ -26,19 +26,9 @@ import com.google.common.base.Strings;
  * Created on 04.03.2005
  */
 public class BotInvokerServiceDelegate extends EJB3Delegate implements BotInvokerService {
-    private String customProviderUrl;
 
     public BotInvokerServiceDelegate() {
         super("BotInvokerServiceBean", BotInvokerService.class, "wfe-bots");
-    }
-
-    @Override
-    protected String getCustomProviderUrl() {
-        return customProviderUrl;
-    }
-
-    public void setCustomProviderUrl(String customProviderUrl) {
-        this.customProviderUrl = customProviderUrl;
     }
 
     private BotInvokerService getBotInvokerService() {
