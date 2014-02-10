@@ -28,6 +28,7 @@ public abstract class EJB3Delegate {
     private final String beanName;
     private final String localInterfaceClassName;
     private final String remoteInterfaceClassName;
+    private String customProviderUrl;
 
     /**
      * Creates delegate only for remote usage.
@@ -82,7 +83,11 @@ public abstract class EJB3Delegate {
     }
 
     protected String getCustomProviderUrl() {
-        return null;
+        return customProviderUrl;
+    }
+
+    public void setCustomProviderUrl(String customProviderUrl) {
+        this.customProviderUrl = customProviderUrl;
     }
 
     @SuppressWarnings("unchecked")
