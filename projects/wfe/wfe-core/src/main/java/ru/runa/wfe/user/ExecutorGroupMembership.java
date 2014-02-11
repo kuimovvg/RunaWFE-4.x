@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.user;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -49,6 +51,7 @@ public class ExecutorGroupMembership {
     private Long version;
     private Group group;
     private Executor executor;
+    private Date createDate;
 
     public ExecutorGroupMembership() {
     }
@@ -56,6 +59,7 @@ public class ExecutorGroupMembership {
     public ExecutorGroupMembership(Group group, Executor executor) {
         this.group = group;
         this.executor = executor;
+        this.createDate = new Date();
     }
 
     @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
@@ -102,6 +106,15 @@ public class ExecutorGroupMembership {
 
     public void setVersion(Long version) {
         this.version = version;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override

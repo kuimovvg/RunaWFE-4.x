@@ -79,12 +79,12 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
     }
 
     private TR populateTaskRow(TaskCreateLog createLog, TaskEndLog endLog) {
-        Calendar taskCreateDate = CalendarUtil.dateToCalendar(createLog.getDate());
+        Calendar taskCreateDate = CalendarUtil.dateToCalendar(createLog.getCreateDate());
         Calendar taskEndDate = null;
         String taskEndDateString = "";
         String actorName = null;
         if (endLog != null) {
-            taskEndDate = CalendarUtil.dateToCalendar(endLog.getDate());
+            taskEndDate = CalendarUtil.dateToCalendar(endLog.getCreateDate());
             taskEndDateString = CalendarUtil.formatDateTime(taskEndDate);
             actorName = endLog.getActorName();
         }

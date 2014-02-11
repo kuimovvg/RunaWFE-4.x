@@ -20,12 +20,28 @@ package ru.runa.wfe.commons.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
+
 /**
  * DAO for database initialization and variables managing. Creates appropriate
  * tables (drops tables if such tables already exists) and records.
  */
 public class ConstantDAO extends GenericDAO<Constant> {
     private static final Log log = LogFactory.getLog(ConstantDAO.class);
+    private static final String DATABASE_VERSION_VARIABLE_NAME = "ru.runa.database_version";
+
+    public Integer getDatabaseVersion() {
+        try {
+            return TypeConversionUtil.convertTo(int.class, getValue(DATABASE_VERSION_VARIABLE_NAME));
+        } catch (Exception e) {
+            log.warn("Unable to get database version", e);
+            return null;
+        }
+    }
+
+    public void setDatabaseVersion(int version) {
+        setValue(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(version));
+    }
 
     private Constant get(String name) {
         return findFirstOrNull("from Constant where name = ?", name);
@@ -38,17 +54,12 @@ public class ConstantDAO extends GenericDAO<Constant> {
      *            constant name.
      * @return constant value.
      */
-    public String getValue(String name) {
-        try {
-            Constant constant = get(name);
-            if (constant == null) {
-                return null;
-            }
-            return constant.getValue();
-        } catch (Exception e) {
-            log.warn("Unable to get constant value", e);
+    private String getValue(String name) {
+        Constant constant = get(name);
+        if (constant == null) {
             return null;
         }
+        return constant.getValue();
     }
 
     /**
@@ -59,7 +70,7 @@ public class ConstantDAO extends GenericDAO<Constant> {
      * @param value
      *            constant value.
      */
-    public void saveOrUpdateConstant(String name, String value) {
+    private void setValue(String name, String value) {
         Constant constant = get(name);
         if (constant == null) {
             create(new Constant(name, value));

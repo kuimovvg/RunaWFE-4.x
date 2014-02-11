@@ -46,15 +46,14 @@ public class DefinitionClassPresentation extends ClassPresentation {
                 + classNameSQL + ".name=temp.name)", false, new FieldDescriptor[] {
                 // display name field type DB source isSort filter mode
                 // get value/show in web getter parameters
-                new FieldDescriptor(NAME, String.class.getName(), new DefaultDBSource(Deployment.class, "name"), true,
-                        FieldFilterMode.DATABASE, "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { DefinitionPermission.START_PROCESS,
-                                "name" }),
-                new FieldDescriptor(DESCRIPTION, String.class.getName(), new SubstringDBSource(Deployment.class, "description"),
-                        true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.DescriptionProcessTDBuilder", new Object[] {}),
-                new FieldDescriptor(TYPE, AnywhereStringFilterCriteria.class.getName(), new DefaultDBSource(Deployment.class,
-                        "category"), true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TypeProcessTDBuilder", new Object[] {}, true),
-                new FieldDescriptor(DEPLOYMENT_DATE, Date.class.getName(), new DefaultDBSource(Deployment.class, "deployedDate"),
-                        true, FieldFilterMode.DATABASE, "ru.runa.wf.web.html.DefinitionDeployedDateTDBuilder", new Object[] {}) });
+                new FieldDescriptor(NAME, String.class.getName(), new DefaultDBSource(Deployment.class, "name"), true, FieldFilterMode.DATABASE,
+                        "ru.runa.common.web.html.PropertyTDBuilder", new Object[] { DefinitionPermission.START_PROCESS, "name" }),
+                new FieldDescriptor(DESCRIPTION, String.class.getName(), new SubstringDBSource(Deployment.class, "description"), true,
+                        FieldFilterMode.DATABASE, "ru.runa.wf.web.html.DescriptionProcessTDBuilder", new Object[] {}),
+                new FieldDescriptor(TYPE, AnywhereStringFilterCriteria.class.getName(), new DefaultDBSource(Deployment.class, "category"), true,
+                        FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TypeProcessTDBuilder", new Object[] {}, true),
+                new FieldDescriptor(DEPLOYMENT_DATE, Date.class.getName(), new DefaultDBSource(Deployment.class, "createDate"), true,
+                        FieldFilterMode.DATABASE, "ru.runa.wf.web.html.DefinitionDeployedDateTDBuilder", new Object[] {}) });
     }
 
     public static final ClassPresentation getInstance() {

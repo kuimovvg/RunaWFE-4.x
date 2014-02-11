@@ -59,8 +59,7 @@ public class ProfileLogic extends CommonLogic {
     private Profile getProfileNotNull(Actor actor) {
         Profile profile = profileDAO.get(actor);
         if (profile == null) {
-            profile = new Profile();
-            profile.setActor(actor);
+            profile = new Profile(actor);
             profileDAO.create(profile);
         }
         return profile;

@@ -224,7 +224,7 @@ public class ExecutionContext {
         if (getToken().getNodeId() != null) {
             processLog.setNodeId(getToken().getNodeId());
         }
-        processLog.setDate(new Date());
+        processLog.setCreateDate(new Date());
         processLogDAO.create(processLog);
     }
 

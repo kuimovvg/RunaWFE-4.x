@@ -1,5 +1,7 @@
 package ru.runa.wfe.commons.dao;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,6 +26,7 @@ public class Localization {
     private Long id;
     private String name;
     private String value;
+    private Date createDate;
 
     public Localization() {
     }
@@ -31,6 +34,7 @@ public class Localization {
     public Localization(String name, String value) {
         this.name = name;
         this.value = value;
+        this.createDate = new Date();
     }
 
     @Id
@@ -61,6 +65,15 @@ public class Localization {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
 }

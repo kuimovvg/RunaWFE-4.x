@@ -63,7 +63,7 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
         name = deployment.getName();
         description = deployment.getDescription();
         categories = deployment.getCategories();
-        deployedDate = deployment.getDeployedDate();
+        deployedDate = deployment.getCreateDate();
     }
 
     @Override

@@ -38,11 +38,7 @@ public class CreateBotAction extends ActionBase {
                 addError(request, new ActionMessage(Messages.ERROR_FILL_REQUIRED_VALUES));
                 return mapping.findForward(Resources.FORWARD_FAILURE);
             }
-            Bot bot = new Bot();
-            bot.setUsername(botForm.getWfeUser());
-            bot.setPassword(botForm.getWfePassword());
-            // bot.setStartTimeout(botForm.getBotTimeout());
-            bot.setBotStation(Delegates.getBotService().getBotStation(botForm.getBotStationId()));
+            Bot bot = new Bot(Delegates.getBotService().getBotStation(botForm.getBotStationId()), botForm.getWfeUser(), botForm.getWfePassword());
             Delegates.getBotService().createBot(getLoggedUser(request), bot);
         } catch (Exception e) {
             addError(request, e);

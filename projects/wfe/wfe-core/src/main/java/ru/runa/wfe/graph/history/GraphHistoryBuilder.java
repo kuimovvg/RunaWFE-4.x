@@ -181,7 +181,7 @@ public class GraphHistoryBuilder {
 
                                 TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
                                 transitionModel.getBendpoints().clear();
-                                Date transitionLeaveDate = findNextTransitionLog(log, correctNodeId).getDate();
+                                Date transitionLeaveDate = findNextTransitionLog(log, correctNodeId).getCreateDate();
                                 transitionModel.setName(CalendarUtil.formatDateTime(transitionLeaveDate));
                                 if (diagramModel.isShowActions()) {
                                     transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
@@ -739,9 +739,9 @@ public class GraphHistoryBuilder {
         presentation.initialize(node, nodeModel.getConstraints());
 
         Calendar startCal = Calendar.getInstance();
-        startCal.setTime(nodeEnterlog.getDate());
+        startCal.setTime(nodeEnterlog.getCreateDate());
         Calendar endCal = Calendar.getInstance();
-        endCal.setTime(nodeLeaveLog.getDate());
+        endCal.setTime(nodeLeaveLog.getCreateDate());
         Long period = endCal.getTimeInMillis() - startCal.getTimeInMillis();
         Calendar periodCal = Calendar.getInstance();
         periodCal.setTimeInMillis(period);

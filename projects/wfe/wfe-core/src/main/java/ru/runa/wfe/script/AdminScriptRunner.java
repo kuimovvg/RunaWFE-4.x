@@ -890,18 +890,7 @@ public class AdminScriptRunner {
         }
         Bot bot = botLogic.getBot(user, botStation.getId(), name);
         if (bot == null) {
-            bot = new Bot();
-            bot.setBotStation(botStation);
-            bot.setUsername(name);
-            if (defaultPasswordValue != null) {
-                bot.setPassword(defaultPasswordValue);
-            } else {
-                bot.setPassword(pass);
-            }
-
-            // if (!Strings.isNullOrEmpty(timeout)) {
-            // bot.setStartTimeout(Long.parseLong(timeout));
-            // }
+            bot = new Bot(botStation, name, defaultPasswordValue != null ? defaultPasswordValue : pass);
             botLogic.createBot(user, bot);
         }
     }
@@ -975,9 +964,7 @@ public class AdminScriptRunner {
         for (Element taskElement : taskNodeList) {
             String name = taskElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             String handler = taskElement.attributeValue(AdminScriptConstants.HANDLER_ATTRIBUTE_NAME, "");
-            BotTask task = new BotTask();
-            task.setBot(bot);
-            task.setName(name);
+            BotTask task = new BotTask(bot, name);
             task.setTaskHandlerClassName(handler);
             String config = taskElement.attributeValue(AdminScriptConstants.CONFIGURATION_STRING_ATTRIBUTE_NAME);
             byte[] configuration;

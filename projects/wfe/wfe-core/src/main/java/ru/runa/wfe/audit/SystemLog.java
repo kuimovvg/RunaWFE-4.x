@@ -66,19 +66,19 @@ public abstract class SystemLog {
     /**
      * Action time.
      */
-    private Date actionTime;
+    private Date createDate;
 
     /**
      * Creates instance of base class for system logs.
      * 
      * @param actorCode
      *            Code of {@link Actor}, executed action.
-     * @param actionTime
+     * @param createDate
      *            Action time.
      */
     public SystemLog(Long actorId) {
         this.actorId = actorId;
-        actionTime = new Date();
+        this.createDate = new Date();
     }
 
     /**
@@ -129,15 +129,15 @@ public abstract class SystemLog {
      * 
      * @return Action time.
      */
-    @Column(name = "TIME", nullable = false)
-    public Date getActionTime() {
-        return actionTime;
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
     }
 
     /**
      * Hibernate support.
      */
-    public void setActionTime(Date actionTime) {
-        this.actionTime = actionTime;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 }

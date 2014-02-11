@@ -18,6 +18,7 @@
 package ru.runa.wfe.ss;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -51,6 +52,7 @@ public class SubstitutionCriteria implements Serializable {
     private Long id;
     private String name;
     private String configuration;
+    private Date createDate;
 
     public SubstitutionCriteria() {
     }
@@ -83,6 +85,15 @@ public class SubstitutionCriteria implements Serializable {
 
     public void setConfiguration(String configuration) {
         this.configuration = configuration;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override
