@@ -18,6 +18,7 @@
 package ru.runa.wfe.ss;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -66,6 +67,7 @@ public class Substitution implements Comparable<Substitution>, Serializable {
     private String orgFunction;
     private SubstitutionCriteria criteria;
     private boolean external;
+    private Date createDate;
 
     @Column(name = "ENABLED_FLAG", nullable = false)
     public boolean isEnabled() {
@@ -145,6 +147,15 @@ public class Substitution implements Comparable<Substitution>, Serializable {
 
     public void setCriteria(SubstitutionCriteria criteria) {
         this.criteria = criteria;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override

@@ -38,6 +38,7 @@ import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
+import ru.runa.wfe.commons.dbpatch.impl.AddCreateDateColumns;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
@@ -58,7 +59,6 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.SystemExecutors;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 
-import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
@@ -69,8 +69,6 @@ import com.google.common.collect.Lists;
  */
 public class InitializerLogic {
     protected static final Log log = LogFactory.getLog(InitializerLogic.class);
-    private static final String IS_DATABASE_INITIALIZED_VARIABLE_NAME = "ru.runa.database_initialized";
-    private static final String DATABASE_VERSION_VARIABLE_NAME = "ru.runa.database_version";
 
     private static final List<Class<? extends DBPatch>> dbPatches = Lists.newArrayList();
 
@@ -94,20 +92,27 @@ public class InitializerLogic {
         dbPatches.add(UnsupportedPatch.class);
         dbPatches.add(UnsupportedPatch.class);
         dbPatches.add(UnsupportedPatch.class);
-        dbPatches.add(UnsupportedPatch.class); // 20
-        // 4.x
+        dbPatches.add(UnsupportedPatch.class);
+        // version 20
+        // 4.0.0
         dbPatches.add(AddHierarchyProcess.class);
-        dbPatches.add(JbpmRefactoringPatch.class); // 22
+        dbPatches.add(JbpmRefactoringPatch.class);
         dbPatches.add(TransitionLogPatch.class);
+        // 4.0.1
         dbPatches.add(PerformancePatch401.class);
         dbPatches.add(TaskEndDateRemovalPatch.class);
+        // 4.0.1
         dbPatches.add(PermissionMappingPatch403.class);
+        // 4.0.5
         dbPatches.add(NodeTypeChangePatch.class);
         dbPatches.add(ExpandDescriptionsPatch.class);
-        // 4.1.0
+        // 4.0.6
         dbPatches.add(TaskOpenedByExecutorsPatch.class);
+        // 4.1.0
         dbPatches.add(AddNodeIdToProcessLogPatch.class);
         dbPatches.add(AddSubProcessIndexColumn.class);
+        // 4.1.1
+        dbPatches.add(AddCreateDateColumns.class);
     };
 
     @Autowired
@@ -120,23 +125,15 @@ public class InitializerLogic {
     protected LocalizationDAO localizationDAO;
 
     /**
-     * Tests whether database already initialized
-     */
-    protected boolean isAlreadyIntialized() {
-        String version = constantDAO.getValue(IS_DATABASE_INITIALIZED_VARIABLE_NAME);
-        return "true".equalsIgnoreCase(version);
-    }
-
-    /**
      * Initialize database if needed.
      */
     public void onStartup(UserTransaction transaction) {
         try {
-            if (!isAlreadyIntialized()) {
-                initializeDatabase(transaction);
+            Integer databaseVersion = constantDAO.getDatabaseVersion();
+            if (databaseVersion != null) {
+                applyPatches(transaction, databaseVersion);
             } else {
-                log.info("database is initialized. skipping initialization ...");
-                applyPatches(transaction);
+                initializeDatabase(transaction);
             }
             String localizedFileName = "localizations." + Locale.getDefault().getLanguage() + ".xml";
             InputStream stream = ClassLoaderUtil.getAsStream(localizedFileName, getClass());
@@ -177,8 +174,7 @@ public class InitializerLogic {
         try {
             transaction.begin();
             insertInitialData();
-            constantDAO.saveOrUpdateConstant(IS_DATABASE_INITIALIZED_VARIABLE_NAME, String.valueOf(Boolean.TRUE));
-            constantDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbPatches.size()));
+            constantDAO.setDatabaseVersion(dbPatches.size());
             transaction.commit();
         } catch (Throwable th) {
             Utils.rollbackTransaction(transaction);
@@ -217,9 +213,8 @@ public class InitializerLogic {
     /**
      * Apply patches to initialized database.
      */
-    protected void applyPatches(UserTransaction transaction) {
-        String versionString = constantDAO.getValue(DATABASE_VERSION_VARIABLE_NAME);
-        int dbVersion = Strings.isNullOrEmpty(versionString) ? 0 : Integer.parseInt(versionString);
+    protected void applyPatches(UserTransaction transaction, int dbVersion) {
+        log.info("database is initialized, checking patches...");
         DBType dbType = ApplicationContextFactory.getDBType();
         boolean isDDLTransacted = (dbType == DBType.MSSQL || dbType == DBType.POSTGRESQL);
         String isDDLTransactedProperty = System.getProperty("runawfe.transacted.ddl");
@@ -245,12 +240,12 @@ public class InitializerLogic {
                 }
                 patch.executeDML();
                 if (!isDDLTransacted) {
-                    constantDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbVersion));
+                    constantDAO.setDatabaseVersion(dbVersion);
                     transaction.commit();
                 }
                 patch.executeDDLAfter(isDDLTransacted);
                 if (isDDLTransacted) {
-                    constantDAO.saveOrUpdateConstant(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(dbVersion));
+                    constantDAO.setDatabaseVersion(dbVersion);
                     transaction.commit();
                 }
                 log.info("Patch " + patch.getClass().getName() + "(" + dbVersion + ") is applied to database successfuly.");

@@ -151,7 +151,7 @@ public class Task implements Assignable {
         this.description = description;
     }
 
-    @Column(name = "CREATE_DATE")
+    @Column(name = "CREATE_DATE", nullable = false)
     public Date getCreateDate() {
         return createDate;
     }

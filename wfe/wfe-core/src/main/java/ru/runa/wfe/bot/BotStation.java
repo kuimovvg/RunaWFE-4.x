@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.bot;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,13 +50,15 @@ public class BotStation extends IdentifiableBase {
     private Long version;
     private String name;
     private String address;
+    private Date createDate;
 
     public BotStation() {
     }
 
     public BotStation(String name) {
         this.name = name;
-        version = 0L;
+        this.version = 0L;
+        this.createDate = new Date();
     }
 
     public BotStation(String name, String address) {
@@ -110,6 +114,15 @@ public class BotStation extends IdentifiableBase {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override

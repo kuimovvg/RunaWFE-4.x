@@ -62,7 +62,7 @@ public class TransitionLogPatch extends DBPatch {
                     TransitionLog transitionLog = new TransitionLog(transition);
                     transitionLog.setProcessId(process.getId());
                     transitionLog.setTokenId(process.getRootToken().getId());
-                    transitionLog.setDate(new Date());
+                    transitionLog.setCreateDate(new Date());
                     processLogDAO.create(transitionLog);
                     success++;
                 } catch (Exception e) {

@@ -22,6 +22,7 @@
 package ru.runa.wfe.execution;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -95,6 +96,13 @@ public class Process extends IdentifiableBase {
     public Process() {
     }
 
+    public Process(Deployment deployment) {
+        setDeployment(deployment);
+        setSwimlanes(new HashSet<Swimlane>());
+        setTasks(new HashSet<Task>());
+        setStartDate(new Date());
+    }
+
     @Transient
     @Override
     public SecuredObjectType getSecuredObjectType() {
@@ -138,8 +146,8 @@ public class Process extends IdentifiableBase {
         return startDate;
     }
 
-    public void setStartDate(Date start) {
-        startDate = start;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     @Column(name = "END_DATE")

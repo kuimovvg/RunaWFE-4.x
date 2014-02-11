@@ -281,7 +281,7 @@ public class DefinitionLogic extends WFCommonLogic {
 
     private ProcessDefinition parseProcessDefinition(byte[] data) {
         Deployment deployment = new Deployment();
-        deployment.setDeployedDate(new Date());
+        deployment.setCreateDate(new Date());
         deployment.setContent(data);
         ProcessArchive archive = new ProcessArchive(deployment);
         return archive.parseProcessDefinition();

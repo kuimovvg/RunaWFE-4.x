@@ -145,14 +145,14 @@ public class GraphImageBuilder {
         for (Map.Entry<TaskCreateLog, TaskEndLog> entry : logs.getTaskLogs().entrySet()) {
             boolean activeTask = entry.getValue() == null;
             Date deadlineDate = entry.getKey().getDeadlineDate();
-            Date endDate = activeTask ? new Date() : entry.getValue().getDate();
+            Date endDate = activeTask ? new Date() : entry.getValue().getCreateDate();
             AbstractFigure figure = allNodeFigures.get(entry.getKey().getNodeId());
             if (figure == null) {
                 // ru.runa.wfe.audit.TaskCreateLog.getNodeId() = null for old
                 // tasks
                 continue;
             }
-            Date deadlineWarningDate = taskObjectFactory.getDeadlineWarningDate(entry.getKey().getDate(), deadlineDate);
+            Date deadlineWarningDate = taskObjectFactory.getDeadlineWarningDate(entry.getKey().getCreateDate(), deadlineDate);
             Color color = null;
             if (activeTask) {
                 color = DrawProperties.getBaseColor();

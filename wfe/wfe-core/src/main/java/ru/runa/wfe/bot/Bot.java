@@ -18,6 +18,7 @@
 package ru.runa.wfe.bot;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -49,6 +50,17 @@ public class Bot implements Serializable {
     private BotStation botStation;
     private String username;
     private String password;
+    private Date createDate;
+
+    public Bot() {
+    }
+
+    public Bot(BotStation botStation, String username, String password) {
+        this.botStation = botStation;
+        this.username = username;
+        this.password = password;
+        this.createDate = new Date();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
@@ -103,6 +115,15 @@ public class Bot implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override

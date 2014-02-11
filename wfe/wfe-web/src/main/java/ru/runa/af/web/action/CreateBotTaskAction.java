@@ -30,9 +30,7 @@ public class CreateBotTaskAction extends ActionBase {
         try {
             BotService botService = Delegates.getBotService();
             Bot bot = botService.getBot(getLoggedUser(request), form.getId());
-            BotTask task = new BotTask();
-            task.setBot(bot);
-            task.setName("");
+            BotTask task = new BotTask(bot, "");
             botService.createBotTask(getLoggedUser(request), task);
         } catch (Exception e) {
             addError(request, e);

@@ -20,6 +20,7 @@ package ru.runa.wfe.presentation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -83,6 +84,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
      * Helper to hold fields set (such us fields to display, sort and so on).
      */
     private transient Store storage;
+    private Date createDate;
 
     protected BatchPresentation() {
     }
@@ -91,7 +93,8 @@ public final class BatchPresentation implements Cloneable, Serializable {
         setName(name);
         setCategory(category);
         this.type = type;
-        fields = createDefaultFields();
+        this.fields = createDefaultFields();
+        this.createDate = new Date();
     }
 
     private Fields createDefaultFields() {
@@ -238,6 +241,15 @@ public final class BatchPresentation implements Cloneable, Serializable {
             this.rangeSize = rangeSize;
             pageNumber = 1;
         }
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Transient

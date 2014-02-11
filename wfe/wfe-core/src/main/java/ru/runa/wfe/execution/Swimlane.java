@@ -22,6 +22,7 @@
 package ru.runa.wfe.execution;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -64,12 +65,14 @@ public class Swimlane implements Serializable, Assignable {
     private String name;
     private Executor executor;
     private Process process;
+    private Date createDate;
 
     public Swimlane() {
     }
 
     public Swimlane(String name) {
         this.name = name;
+        this.createDate = new Date();
     }
 
     @Id
@@ -124,6 +127,15 @@ public class Swimlane implements Serializable, Assignable {
 
     public void setProcess(Process process) {
         this.process = process;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override

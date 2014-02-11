@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.user;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -67,6 +69,7 @@ public abstract class Executor extends IdentifiableBase implements Comparable<Ex
     private String name;
     private String description;
     private String fullName;
+    private Date createDate;
 
     protected Executor() {
     }
@@ -74,6 +77,7 @@ public abstract class Executor extends IdentifiableBase implements Comparable<Ex
     protected Executor(String name, String description) {
         setName(name);
         setDescription(description);
+        this.createDate = new Date();
     }
 
     @Override
@@ -124,6 +128,15 @@ public abstract class Executor extends IdentifiableBase implements Comparable<Ex
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override
