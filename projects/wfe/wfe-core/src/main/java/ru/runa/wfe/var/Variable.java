@@ -183,14 +183,15 @@ public abstract class Variable<T extends Object> {
 
     public void setValue(ExecutionContext executionContext, Object newValue) {
         Object newStorableValue;
-        if (converter != null && newValue != null) {
-            if (!converter.supports(newValue)) {
-                throw new InternalApplicationException("the converter '" + converter.getClass().getName() + "' in variable '"
-                        + this.getClass().getName() + "' does not support values of type '" + newValue.getClass().getName() + "'.");
+        if (supports(newValue)) {
+            if (converter != null && converter.supports(newValue)) {
+                newStorableValue = converter.convert(this, newValue);
+            } else {
+                converter = null;
+                newStorableValue = newValue;
             }
-            newStorableValue = converter.convert(this, newValue);
         } else {
-            newStorableValue = newValue;
+            throw new InternalApplicationException(this + " does not support new value '" + newValue + "' of '" + newValue.getClass() + "'");
         }
         Object oldValue = getStorableValue();
         setStringValue(newValue != null ? toString(newValue) : null);
