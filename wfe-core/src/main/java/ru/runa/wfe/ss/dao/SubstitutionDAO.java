@@ -17,6 +17,7 @@
  */
 package ru.runa.wfe.ss.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -37,6 +38,12 @@ import com.google.common.collect.Lists;
  */
 @SuppressWarnings("unchecked")
 public class SubstitutionDAO extends GenericDAO<Substitution> {
+
+    @Override
+    public Substitution create(Substitution entity) {
+        entity.setCreateDate(new Date());
+        return super.create(entity);
+    }
 
     @Override
     protected void checkNotNull(Substitution entity, Object identity) {

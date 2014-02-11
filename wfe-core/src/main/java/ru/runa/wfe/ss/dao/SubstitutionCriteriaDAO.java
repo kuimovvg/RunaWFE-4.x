@@ -1,5 +1,6 @@
 package ru.runa.wfe.ss.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import ru.runa.wfe.commons.dao.GenericDAO;
@@ -14,6 +15,12 @@ import ru.runa.wfe.ss.SubstitutionCriteria;
  */
 @SuppressWarnings("unchecked")
 public class SubstitutionCriteriaDAO extends GenericDAO<SubstitutionCriteria> {
+
+    @Override
+    public SubstitutionCriteria create(SubstitutionCriteria entity) {
+        entity.setCreateDate(new Date());
+        return super.create(entity);
+    }
 
     public SubstitutionCriteria getByName(String name) {
         return findFirstOrNull("from SubstitutionCriteria where name=?", name);

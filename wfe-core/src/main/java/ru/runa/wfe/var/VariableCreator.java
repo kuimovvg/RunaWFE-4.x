@@ -1,5 +1,6 @@
 package ru.runa.wfe.var;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -62,6 +63,7 @@ public class VariableCreator {
         variable.setName(name);
         variable.setProcess(executionContext.getProcess());
         variable.setValue(executionContext, value);
+        variable.setCreateDate(new Date());
         return variable;
     }
 

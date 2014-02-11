@@ -22,6 +22,7 @@
 package ru.runa.wfe.var;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -75,6 +76,7 @@ public abstract class Variable<T extends Object> {
     private Process process;
     private Converter converter;
     private String stringValue;
+    private Date createDate;
 
     public Variable() {
     }
@@ -131,6 +133,15 @@ public abstract class Variable<T extends Object> {
 
     public void setProcess(Process process) {
         this.process = process;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Column(name = "STRINGVALUE", length = 1024)

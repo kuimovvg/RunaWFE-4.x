@@ -335,7 +335,7 @@ public class ErrorDetailsAction extends ActionBase {
             for (int i = processIds.size(); i < maxLevel; i++) {
                 tr.addElement(new TD().addElement("").setClass(Resources.CLASS_EMPTY20_TABLE_TD));
             }
-            String eventDateString = CalendarUtil.format(log.getDate(), CalendarUtil.DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT);
+            String eventDateString = CalendarUtil.format(log.getCreateDate(), CalendarUtil.DATE_WITH_HOUR_MINUTES_SECONDS_FORMAT);
             if (!Objects.equal(mergedEventDateString, eventDateString)) {
                 if (mergedEventDateTD != null) {
                     mergedEventDateTD.setRowSpan(mergedRowsCount + 1);

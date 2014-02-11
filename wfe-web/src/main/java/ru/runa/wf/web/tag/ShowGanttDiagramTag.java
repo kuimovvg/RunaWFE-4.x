@@ -55,16 +55,16 @@ public class ShowGanttDiagramTag extends ProcessBaseFormTag {
                 }
                 if (createLog != null) {
                     TaskEndLog endLog = taskLogs.get(createLog);
-                    js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getDate(), endLog.getDate(), "0ccc00", endLog.getActorName(),
+                    js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getCreateDate(), endLog.getCreateDate(), "0ccc00", endLog.getActorName(),
                             false, createLog.getProcessId(), null);
                 }
             }
             if (log instanceof TaskCreateLog) {
                 TaskCreateLog createLog = (TaskCreateLog) log;
                 TaskEndLog endLog = taskLogs.get(createLog);
-                Date end = (endLog != null) ? endLog.getDate() : new Date();
+                Date end = (endLog != null) ? endLog.getCreateDate() : new Date();
                 String executorName = (endLog != null) ? endLog.getActorName() : null;
-                js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getDate(), end, "008880", executorName, false,
+                js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getCreateDate(), end, "008880", executorName, false,
                         createLog.getProcessId(), null);
             }
             if (log instanceof SubprocessStartLog) {

@@ -1,6 +1,5 @@
 package ru.runa.wfe.execution;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +20,6 @@ import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.dao.PermissionDAO;
-import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.SystemExecutors;
@@ -96,7 +94,8 @@ public class ProcessFactory {
         }
     }
 
-    public Process createSubprocess(ExecutionContext parentExecutionContext, ProcessDefinition processDefinition, Map<String, Object> variables, int index) {
+    public Process createSubprocess(ExecutionContext parentExecutionContext, ProcessDefinition processDefinition, Map<String, Object> variables,
+            int index) {
         Process parentProcess = parentExecutionContext.getProcess();
         Node subProcessNode = parentExecutionContext.getNode();
         Map<String, Object> defaultValues = processDefinition.getDefaultVariableValues();
@@ -131,11 +130,7 @@ public class ProcessFactory {
 
     private Process createProcessInternal(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String parentHierarchy) {
         Preconditions.checkNotNull(processDefinition, "can't create a process when processDefinition is null");
-        Process process = new Process();
-        process.setStartDate(new Date());
-        process.setDeployment(processDefinition.getDeployment());
-        process.setSwimlanes(new HashSet<Swimlane>());
-        process.setTasks(new HashSet<Task>());
+        Process process = new Process(processDefinition.getDeployment());
         Token rootToken = new Token(processDefinition, process);
         process.setRootToken(rootToken);
         processDAO.create(process);

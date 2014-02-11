@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.relation;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,21 +46,10 @@ import com.google.common.base.Objects;
 public class Relation extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Identity of relation. This field is set, then relation is stored in
-     * database.
-     */
     private Long id;
-
-    /**
-     * Name of relation.
-     */
     private String name;
-
-    /**
-     * Description of relation.
-     */
     private String description;
+    private Date createDate;
 
     public Relation() {
     }
@@ -74,6 +65,7 @@ public class Relation extends IdentifiableBase {
     public Relation(String name, String description) {
         this.name = name;
         this.description = description;
+        this.createDate = new Date();
     }
 
     @Transient
@@ -121,6 +113,15 @@ public class Relation extends IdentifiableBase {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override

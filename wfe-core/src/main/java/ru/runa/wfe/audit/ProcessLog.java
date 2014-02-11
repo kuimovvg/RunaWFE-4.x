@@ -77,7 +77,7 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
     private Long id;
     private Long processId;
     private Long tokenId;
-    private Date date;
+    private Date createDate;
     private Severity severity = Severity.DEBUG;
     @XmlTransient
     private HashMap<String, String> attributes = Maps.newHashMap();
@@ -127,13 +127,13 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
         this.nodeId = nodeId;
     }
 
-    @Column(name = "LOG_DATE", nullable = false)
-    public Date getDate() {
-        return date;
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateDate(Date date) {
+        this.createDate = date;
     }
 
     @Column(name = "SEVERITY", nullable = false)
@@ -215,12 +215,12 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
 
     @Override
     public int compareTo(ProcessLog o) {
-        return date.compareTo(o.date);
+        return createDate.compareTo(o.createDate);
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("nodeId", nodeId).add("tokenId", tokenId)
-                .add("date", CalendarUtil.formatDateTime(date)).add("attributes", attributes).toString();
+                .add("date", CalendarUtil.formatDateTime(createDate)).add("attributes", attributes).toString();
     }
 }

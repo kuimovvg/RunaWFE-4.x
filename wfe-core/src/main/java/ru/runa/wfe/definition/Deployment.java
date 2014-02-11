@@ -36,7 +36,7 @@ public class Deployment extends Identifiable {
     private String description;
     private String category;
     private byte[] content;
-    private Date deployedDate;
+    private Date createDate;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
@@ -106,13 +106,13 @@ public class Deployment extends Identifiable {
         this.content = content;
     }
 
-    @Column(name = "DEPLOYED")
-    public Date getDeployedDate() {
-        return deployedDate;
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setDeployedDate(Date deployedDate) {
-        this.deployedDate = deployedDate;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Transient
@@ -154,13 +154,13 @@ public class Deployment extends Identifiable {
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("version", version).toString();
     }
-    
+
     @Transient
     public Deployment getCopy() {
         Deployment deployment = new Deployment();
         deployment.category = category;
         deployment.content = content;
-        deployment.deployedDate = deployedDate;
+        deployment.createDate = createDate;
         deployment.description = description;
         deployment.id = id;
         deployment.language = language;

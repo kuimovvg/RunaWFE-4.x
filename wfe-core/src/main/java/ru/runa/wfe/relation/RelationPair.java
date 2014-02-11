@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.relation;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -72,6 +74,7 @@ public class RelationPair extends IdentifiableBase {
      * Relation to which belongs this executors pair.
      */
     private Relation relation;
+    private Date createDate;
 
     public RelationPair() {
     }
@@ -91,6 +94,7 @@ public class RelationPair extends IdentifiableBase {
         this.relation = relation;
         this.left = left;
         this.right = right;
+        this.createDate = new Date();
     }
 
     @Transient
@@ -161,6 +165,15 @@ public class RelationPair extends IdentifiableBase {
 
     public void setRelation(Relation relation) {
         this.relation = relation;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @Override

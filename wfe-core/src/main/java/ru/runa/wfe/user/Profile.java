@@ -19,6 +19,7 @@
 package ru.runa.wfe.user;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -73,8 +74,14 @@ public final class Profile implements Serializable {
     private Set<BatchPresentation> batchPresentations = Sets.newHashSet();
     @XmlTransient
     private Map<String, BatchPresentation> defaultBatchPresentations = Maps.newHashMap();
+    private Date createDate;
 
     public Profile() {
+    }
+
+    public Profile(Actor actor) {
+        setActor(actor);
+        this.createDate = new Date();
     }
 
     @Id
@@ -108,6 +115,15 @@ public final class Profile implements Serializable {
 
     public void setActor(Actor actor) {
         this.actor = actor;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     @OneToMany(targetEntity = BatchPresentation.class, fetch = FetchType.EAGER)

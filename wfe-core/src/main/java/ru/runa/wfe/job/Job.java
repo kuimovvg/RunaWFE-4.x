@@ -44,13 +44,15 @@ public abstract class Job {
     private Date dueDate;
     private Process process;
     private Token token;
+    private Date createDate;
 
     public Job() {
     }
 
     public Job(Token token) {
         this.token = token;
-        process = token.getProcess();
+        this.process = token.getProcess();
+        this.createDate = new Date();
     }
 
     @Id
@@ -114,6 +116,15 @@ public abstract class Job {
 
     public void setToken(Token token) {
         this.token = token;
+    }
+
+    @Column(name = "CREATE_DATE", nullable = false)
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public abstract void execute(ExecutionContext executionContext);
