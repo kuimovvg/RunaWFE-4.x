@@ -29,11 +29,10 @@ import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.util.Duration;
-import ru.runa.wfe.var.format.LongFormat;
 
 public class CalendarHandlerProvider extends XmlBasedConstructorProvider<CalendarConfig> {
     private static String[] dateFormats = new String[] { Date.class.getName() };
-    private static String[] setFormats = new String[] { Date.class.getName(), LongFormat.class.getName() };
+    private static String[] setFormats = new String[] { Date.class.getName(), Long.class.getName() };
 
     @Override
     protected CalendarConfig createDefault() {
