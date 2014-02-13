@@ -1,5 +1,7 @@
 package ru.runa.wfe.user;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -54,6 +56,7 @@ public class EscalationGroup extends TemporaryGroup {
     public static EscalationGroup create(Process process, Task task, Executor originalExecutor, int escalationLevel) {
         String identifier = GROUP_PREFIX + "_" + process.getId() + "_" + task.getId();
         EscalationGroup escalationGroup = new EscalationGroup();
+        escalationGroup.setCreateDate(new Date());
         escalationGroup.setName(identifier);
         escalationGroup.setDescription(process.getId().toString());
         escalationGroup.setOriginalExecutor(originalExecutor);
