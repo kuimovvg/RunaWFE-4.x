@@ -53,6 +53,7 @@ import ru.runa.wfe.audit.TaskEndBySubstitutorLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskExpiredLog;
 import ru.runa.wfe.audit.TaskRemovedOnProcessEndLog;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
@@ -60,7 +61,9 @@ import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.InteractionNode;
+import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.TaskDefinition;
+import ru.runa.wfe.lang.WaitState;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
@@ -273,9 +276,14 @@ public class Task implements Assignable {
         default:
             throw new IllegalArgumentException("Unimplemented for " + completionInfo.getCompletionBy());
         }
-        InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(nodeId);
+        Node node = executionContext.getProcessDefinition().getNodeNotNull(nodeId);
+        if (SystemProperties.isV3CompatibilityMode() && node instanceof WaitState) {
+            delete();
+            return;
+        }
+        InteractionNode interactionNode = (InteractionNode) node;
         ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);
-        node.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_END);
+        interactionNode.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_END);
         delete();
     }
 
