@@ -37,15 +37,7 @@ public class QuickFormVariabliesToDisplayWizard extends Wizard implements INewWi
 
     @Override
     public boolean performFinish() {
-        for (String name : page.getSelectedVariables()) {
-            QuickFormGpdVariable variableDef = new QuickFormGpdVariable();
-            Variable variable = VariableUtils.getVariableByName(processDefinition, name);
-            variableDef.setTagName(QuickFormType.READ_TAG);
-            variableDef.setName(variable.getName());
-            variableDef.setFormatLabel(variable.getFormatLabel());
-            variableDef.setParams(new String[] { "false" });
-            quickFormVariableDefs.add(variableDef);
-        }
+    	quickFormVariableDefs.addAll(page.getSelectedVariables());
         return true;
     }
 
