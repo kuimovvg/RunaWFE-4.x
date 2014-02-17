@@ -51,6 +51,7 @@ public class TaskNodeFigure extends AbstractFigure {
         }
         Rectangle rect = getTextBoundsRectangle();
         graphics.drawRoundRect(rect.x, rect.y, rect.width, rect.height, 20, 20);
+        drawTextInfo(graphics, 1 + DrawProperties.GRID_SIZE / 2);
         if (hasTimer && !minimized) {
             drawImage(graphics, "image/bpmn/boundary_timer.png", coords[0] + 1, coords[1] + coords[3] - 2 * DrawProperties.GRID_SIZE, true);
         }
