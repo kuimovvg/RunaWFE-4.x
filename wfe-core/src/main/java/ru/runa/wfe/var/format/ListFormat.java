@@ -95,7 +95,7 @@ public class ListFormat extends VariableFormat implements VariableFormatContaine
     }
 
     @Override
-    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object, Object context) {
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
         List<Object> list = (List<Object>) object;
         StringBuffer b = new StringBuffer();
         b.append("<table class=\"list\">");
@@ -106,7 +106,8 @@ public class ListFormat extends VariableFormat implements VariableFormatContaine
             o = TypeConversionUtil.convertTo(componentFormat.getJavaClass(), o);
             String value;
             if (componentFormat instanceof VariableDisplaySupport) {
-                value = ((VariableDisplaySupport) componentFormat).formatHtml(user, webHelper, processId, name, o, list);
+                String componentName = name + "[" + i + "]";
+                value = ((VariableDisplaySupport) componentFormat).formatHtml(user, webHelper, processId, componentName, o);
             } else {
                 value = componentFormat.format(o);
             }

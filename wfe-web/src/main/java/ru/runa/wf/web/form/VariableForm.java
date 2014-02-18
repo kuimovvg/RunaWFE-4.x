@@ -26,11 +26,8 @@ import ru.runa.common.web.form.IdForm;
  */
 public class VariableForm extends IdForm {
     private static final long serialVersionUID = 6826950808617370338L;
-
     private Long logId;
     private String variableName;
-    private int listIndex;
-    private String mapKey;
 
     public Long getLogId() {
         return logId;
@@ -46,22 +43,6 @@ public class VariableForm extends IdForm {
 
     public void setVariableName(String variableName) {
         this.variableName = variableName;
-    }
-
-    public int getListIndex() {
-        return listIndex;
-    }
-
-    public void setListIndex(int listIndex) {
-        this.listIndex = listIndex;
-    }
-
-    public String getMapKey() {
-        return mapKey;
-    }
-
-    public void setMapKey(String mapKey) {
-        this.mapKey = mapKey;
     }
 
 }
