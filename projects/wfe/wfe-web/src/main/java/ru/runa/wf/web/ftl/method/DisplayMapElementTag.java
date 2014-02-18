@@ -2,8 +2,8 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.Map;
 
+import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
@@ -20,11 +20,9 @@ public class DisplayMapElementTag extends FreemarkerTag {
         Object key = getParameterAs(Object.class, 1);
         Object object = map.get(key);
         VariableFormat componentFormat = FormatCommons.createComponent(variable, 1);
-        if (object instanceof FileVariable) {
-            return FormatCommons.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, null, key);
-        } else {
-            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, object);
-        }
+        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START + key + FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        WfVariable componentVariable = ViewUtil.createComponentVariable(variable, nameSuffix, componentFormat, object);
+        return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
     }
 
 }

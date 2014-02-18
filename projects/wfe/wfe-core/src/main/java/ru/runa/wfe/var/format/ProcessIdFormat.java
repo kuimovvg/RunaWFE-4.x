@@ -19,7 +19,7 @@ public class ProcessIdFormat extends LongFormat implements VariableDisplaySuppor
     }
 
     @Override
-    public String formatHtml(User user, WebHelper webHelper, Long currentProcessId, String name, Object object, Object context) {
+    public String formatHtml(User user, WebHelper webHelper, Long currentProcessId, String name, Object object) {
         Long processId = (Long) object;
         boolean link = false;
         String title;

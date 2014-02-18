@@ -3,9 +3,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FileFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 import freemarker.template.TemplateModelException;
@@ -25,11 +23,8 @@ public class DisplayListElementTag extends FreemarkerTag {
             object = list.get(index);
         }
         VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
-        if (componentFormat instanceof FileFormat) {
-            return FormatCommons.getFileOutput(webHelper, variableProvider.getProcessId(), variableName, (FileVariable) object, index, null);
-        } else {
-            return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), variableName, componentFormat, object);
-        }
+        WfVariable componentVariable = ViewUtil.createListComponentVariable(variable, index, componentFormat, object);
+        return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
     }
 
 }

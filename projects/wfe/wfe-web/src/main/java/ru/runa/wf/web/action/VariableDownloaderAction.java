@@ -30,7 +30,9 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.action.ActionBase;
+import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.form.VariableForm;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.FileVariable;
 
@@ -67,27 +69,42 @@ public class VariableDownloaderAction extends ActionBase {
 
     private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
+        String variableName = form.getVariableName();
+        String qualifier = null;
+        if (variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_START) && 
+                variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_END)) {
+            int is = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_START);
+            int ie = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_END);
+            qualifier = variableName.substring(is + 1, ie);
+            variableName = variableName.substring(0, is);
+        }
         Object object;
         if (form.getLogId() != null) {
             object = Delegates.getExecutionService().getProcessLogValue(getLoggedUser(request), form.getLogId());
         } else {
-            object = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), form.getVariableName()).getValue();
+            object = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), variableName).getValue();
         }
         if (object instanceof FileVariable) {
             return (FileVariable) object;
         }
         if (object instanceof List<?>) {
             List<FileVariable> list = (List<FileVariable>) object;
-            return list.get(form.getListIndex());
+            if (qualifier == null) {
+                throw new InternalApplicationException("No index for list was specified");
+            }
+            return list.get(Integer.parseInt(qualifier));
         }
         if (object instanceof Map<?, ?>) {
             Map<Object, FileVariable> map = (Map<Object, FileVariable>) object;
+            if (qualifier == null) {
+                throw new InternalApplicationException("No key for map was specified");
+            }
             for (Map.Entry<Object, FileVariable> entry : map.entrySet()) {
-                if (Objects.equal(String.valueOf(entry.getKey()), form.getMapKey())) {
+                if (Objects.equal(String.valueOf(entry.getKey()), qualifier)) {
                     return entry.getValue();
                 }
             }
-            throw new IllegalArgumentException("No file found by key = " + form.getMapKey() + "; all values: " + map);
+            throw new IllegalArgumentException("No file found by key = " + qualifier + "; all values: " + map);
         }
         throw new IllegalArgumentException("Unexpected variable type: " + object + " by name " + form.getVariableName());
     }
