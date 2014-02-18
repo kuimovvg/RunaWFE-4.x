@@ -60,7 +60,7 @@ public class ExecutorFormat extends VariableFormat implements VariableDisplaySup
     }
 
     @Override
-    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object, Object context) {
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
         Executor executor = (Executor) object;
         boolean link = false;
         try {

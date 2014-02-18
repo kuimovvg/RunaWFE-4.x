@@ -116,9 +116,13 @@ public class ViewUtil {
         return createVariable(name, scriptingName, componentFormat, value);
     }
 
-    public static WfVariable createListComponentVariable(WfVariable complexVariable, int index, VariableFormat componentFormat, Object value) {
-        String nameSuffix = index == -1 ? "[]" : "[" + index + "]";
-        return createComponentVariable(complexVariable, nameSuffix, componentFormat, value);
+    public static WfVariable createListComponentVariable(WfVariable containerVariable, int index, VariableFormat componentFormat, Object value) {
+        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        if (index != -1) {
+            nameSuffix += index;
+        }
+        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        return createComponentVariable(containerVariable, nameSuffix, componentFormat, value);
     }
 
     public static WfVariable createListSizeVariable(WfVariable complexVariable, Object value) {
@@ -137,33 +141,6 @@ public class ViewUtil {
             stringValue = "";
         }
         return "<input type=\"hidden\" name=\"" + variable.getDefinition().getName() + "\" value=\"" + stringValue + "\" />";
-    }
-
-    private static String getStringValue(String variableName, Class<? extends VariableFormat> formatClass, Object value) {
-        if (value != null) {
-            String stringValue = "";
-            if (DateFormat.class == formatClass) {
-                if (value instanceof Date) {
-                    stringValue = CalendarUtil.formatDate((Date) value);
-                }
-            } else if (TimeFormat.class == formatClass) {
-                if (value instanceof Date) {
-                    stringValue = CalendarUtil.formatTime((Date) value);
-                }
-            } else if (DateTimeFormat.class == formatClass) {
-                if (value instanceof Date) {
-                    stringValue = CalendarUtil.formatDateTime((Date) value);
-                }
-            } else if (ActorFormat.class == formatClass || ExecutorFormat.class == formatClass || GroupFormat.class == formatClass) {
-                if (value instanceof Executor) {
-                    stringValue = "ID" + ((Executor) value).getId();
-                }
-            } else {
-                stringValue = value.toString();
-            }
-            return stringValue;
-        }
-        return null;
     }
 
     public static String getComponentInput(User user, WebHelper webHelper, WfVariable variable) {
@@ -303,6 +280,10 @@ public class ViewUtil {
         String variableName = variable.getDefinition().getName();
         VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
         Object value = variable.getValue();
+        if (FileFormat.class == variableFormat.getClass()) {
+            // because component is not usable
+            return getOutput(user, webHelper, processId, variable);
+        }
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
             if (value != null) {
@@ -327,10 +308,6 @@ public class ViewUtil {
             }
             html += "/>";
             return html;
-        }
-        if (FileFormat.class == variableFormat.getClass()) {
-            // because component is not usable
-            return FormatCommons.getFileOutput(webHelper, processId, variableName, (FileVariable) value);
         }
         if (BooleanFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" disabled=\"true\" ";
@@ -421,12 +398,6 @@ public class ViewUtil {
         return "";
     }
 
-    public static String getOutput(User user, WebHelper webHelper, Long processId, String variableName, VariableFormat componentFormat, Object value) {
-        VariableDefinition definition = new VariableDefinition(true, variableName, variableName, componentFormat.getClass().getName());
-        WfVariable variable = new WfVariable(definition, value);
-        return getOutput(user, webHelper, processId, variable);
-    }
-
     public static String getOutput(User user, WebHelper webHelper, Long processId, WfVariable variable) {
         try {
             if (variable.getValue() == null) {
@@ -435,7 +406,7 @@ public class ViewUtil {
             VariableFormat format = variable.getDefinition().getFormatNotNull();
             if (format instanceof VariableDisplaySupport) {
                 VariableDisplaySupport displaySupport = (VariableDisplaySupport) format;
-                return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue(), null);
+                return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
             } else {
                 return format.format(variable.getValue());
             }
@@ -523,7 +494,8 @@ public class ViewUtil {
     public static String getFileLogOutput(WebHelper webHelper, Long logId, String fileName) {
         HashMap<String, Object> params = Maps.newHashMap();
         params.put("logId", logId);
-        return FormatCommons.getFileOutput(webHelper, params, fileName);
+        String href = webHelper.getActionUrl("/variableDownloader", params);
+        return "<a href=\"" + href + "\">" + fileName + "</>";
     }
 
 }

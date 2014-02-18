@@ -97,7 +97,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
     }
 
     @Override
-    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object, Object context) {
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
         ComplexVariable complexVariable = (ComplexVariable) object;
         StringBuffer b = new StringBuffer();
         b.append("<table class=\"list\">");
@@ -113,7 +113,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
                 Object value;
                 if (attributeFormat instanceof VariableDisplaySupport) {
                     String childName = name + VariableUserType.DELIM + attributeDefinition.getName();
-                    value = ((VariableDisplaySupport) attributeFormat).formatHtml(user, webHelper, processId, childName, attributeValue, null);
+                    value = ((VariableDisplaySupport) attributeFormat).formatHtml(user, webHelper, processId, childName, attributeValue);
                 } else {
                     value = attributeFormat.format(attributeValue);
                 }

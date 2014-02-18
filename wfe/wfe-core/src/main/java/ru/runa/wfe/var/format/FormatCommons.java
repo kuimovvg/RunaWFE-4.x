@@ -18,17 +18,10 @@
 
 package ru.runa.wfe.var.format;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableDefinitionAware;
 import ru.runa.wfe.var.dto.WfVariable;
-
-import com.google.common.collect.Maps;
 
 public class FormatCommons {
 
@@ -67,31 +60,6 @@ public class FormatCommons {
 
     public static String formatComponentValue(WfVariable containerVariable, int index, Object value) {
         return createComponent(containerVariable, index).format(value);
-    }
-
-    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value) {
-        return getFileOutput(webHelper, processId, variableName, value, null, null);
-    }
-
-    public static String getFileOutput(WebHelper webHelper, Long processId, String variableName, FileVariable value, Integer listIndex, Object mapKey) {
-        if (value == null) {
-            return "&nbsp;";
-        }
-        HashMap<String, Object> params = Maps.newHashMap();
-        params.put("id", processId);
-        params.put("variableName", variableName);
-        if (listIndex != null) {
-            params.put("listIndex", String.valueOf(listIndex));
-        }
-        if (mapKey != null) {
-            params.put("mapKey", String.valueOf(mapKey));
-        }
-        return getFileOutput(webHelper, params, value.getName());
-    }
-
-    public static String getFileOutput(WebHelper webHelper, Map<String, Object> params, String fileName) {
-        String href = webHelper.getActionUrl("/variableDownloader", params);
-        return "<a href=\"" + href + "\">" + fileName + "</>";
     }
 
 }

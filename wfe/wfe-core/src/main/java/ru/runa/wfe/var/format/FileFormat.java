@@ -17,14 +17,13 @@
  */
 package ru.runa.wfe.var.format;
 
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
 import javax.xml.bind.DatatypeConverter;
 
 import org.json.simple.JSONObject;
 
-import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.WebHelper;
@@ -85,21 +84,16 @@ public class FileFormat extends VariableFormat implements VariableDisplaySupport
     }
 
     @Override
-    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object, Object context) {
-        Integer index = null;
-        Object key = null;
-        if (context instanceof List) {
-            index = ((List) context).indexOf(object);
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
+        if (object == null) {
+            return "&nbsp;";
         }
-        if (context instanceof Map) {
-            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) context).entrySet()) {
-                if (Objects.equal(object, entry.getValue())) {
-                    key = entry.getKey();
-                    break;
-                }
-            }
-        }
-        return FormatCommons.getFileOutput(webHelper, processId, name, (FileVariable) object, index, key);
+        FileVariable value = (FileVariable) object;
+        HashMap<String, Object> params = Maps.newHashMap();
+        params.put("id", processId);
+        params.put("variableName", name);
+        String href = webHelper.getActionUrl("/variableDownloader", params);
+        return "<a href=\"" + href + "\">" + value.getName() + "</>";
     }
     
 }

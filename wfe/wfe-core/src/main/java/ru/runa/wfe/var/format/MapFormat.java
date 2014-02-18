@@ -102,7 +102,7 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
     }
     
     @Override
-    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object map, Object context) {
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object map) {
         StringBuffer b = new StringBuffer();
         b.append("<table class=\"list\">");
         VariableFormat keyFormat = FormatCommons.createComponent(this, 0);
@@ -112,7 +112,7 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
             String value;
             Object keyValue = TypeConversionUtil.convertTo(keyFormat.getJavaClass(), entry.getKey());
             if (keyFormat instanceof VariableDisplaySupport) {
-                value = ((VariableDisplaySupport) keyFormat).formatHtml(user, webHelper, processId, name, keyValue, null);
+                value = ((VariableDisplaySupport) keyFormat).formatHtml(user, webHelper, processId, name, keyValue);
             } else {
                 value = keyFormat.format(keyValue);
             }
@@ -120,7 +120,8 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
             b.append("</td><td>");
             Object valueValue = TypeConversionUtil.convertTo(valueFormat.getJavaClass(), entry.getValue());
             if (keyFormat instanceof VariableDisplaySupport) {
-                value = ((VariableDisplaySupport) keyFormat).formatHtml(user, webHelper, processId, name, valueValue, map);
+                String componentName = name + "[" + keyValue + "]";
+                value = ((VariableDisplaySupport) keyFormat).formatHtml(user, webHelper, processId, componentName, valueValue);
             } else {
                 value = keyFormat.format(valueValue);
             }

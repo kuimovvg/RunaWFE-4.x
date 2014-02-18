@@ -36,12 +36,14 @@ import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
 public class FormSubmissionUtils {
-    public static final String SIZE_SUFFIX = ".size";
     private static final Log log = LogFactory.getLog(FormSubmissionUtils.class);
     public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
     public static final String USER_ERRORS = "UserErrors";
     public static final String UPLOADED_FILES = "UploadedFiles";
     public static final Object IGNORED_VALUE = new Object();
+    public static final String SIZE_SUFFIX = ".size";
+    public static final String COMPONENT_QUALIFIER_START = "[";
+    public static final String COMPONENT_QUALIFIER_END = "]";
 
     /**
      * save in request user input with errors
@@ -147,7 +149,7 @@ public class FormSubmissionUtils {
                 int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
                 List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
                 for (int i = 0; i < listSize; i++) {
-                    String inputName = variableDefinition.getName() + "[" + i + "]";
+                    String inputName = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
                     Object componentValue = userInput.get(inputName);
                     list.add(convertComponent(inputName, componentFormat, componentValue, formatErrorsForFields));
                 }
