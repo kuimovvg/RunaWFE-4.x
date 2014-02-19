@@ -69,19 +69,19 @@ public class VariableDownloaderAction extends ActionBase {
 
     private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
-        String variableName = form.getVariableName();
         String qualifier = null;
-        if (variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_START) && 
-                variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_END)) {
-            int is = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_START);
-            int ie = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_END);
-            qualifier = variableName.substring(is + 1, ie);
-            variableName = variableName.substring(0, is);
-        }
         Object object;
         if (form.getLogId() != null) {
             object = Delegates.getExecutionService().getProcessLogValue(getLoggedUser(request), form.getLogId());
         } else {
+            String variableName = form.getVariableName();
+            if (variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_START) && 
+                    variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_END)) {
+                int is = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_START);
+                int ie = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_END);
+                qualifier = variableName.substring(is + 1, ie);
+                variableName = variableName.substring(0, is);
+            }
             object = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), variableName).getValue();
         }
         if (object instanceof FileVariable) {
