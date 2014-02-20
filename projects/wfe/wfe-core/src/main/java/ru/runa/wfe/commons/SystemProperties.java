@@ -117,8 +117,4 @@ public class SystemProperties {
         return RESOURCES.getBooleanProperty("variables.autocast.enabled", true);
     }
 
-    public static boolean isReceiveMessageSequenceModeEnabled() {
-        return RESOURCES.getBooleanProperty("receive.message.handle.in.sequence.enabled", true);
-    }
-
 }
