@@ -62,6 +62,7 @@ public class Timer extends Job {
 
     @Override
     public void execute(ExecutionContext executionContext) {
+        String timerNodeId = getToken().getNodeId();
         try {
             Event event = executionContext.getNode().getEvent(Event.TIMER);
             if (event != null) {
@@ -86,7 +87,7 @@ public class Timer extends Job {
                     task.setExecutor(null);
                     assignmentHelper.removeIfTemporaryGroup(oldExecutor);
                 } else {
-                    log.warn("Task is null in timer node '" + getToken().getNodeId() + "' when leaving by transition: " + outTransitionName);
+                    log.warn("Task is null in timer node '" + timerNodeId + "' when leaving by transition: " + outTransitionName);
                 }
                 log.info("Leaving " + this + " by transition " + outTransitionName);
                 getToken().signal(executionContext, executionContext.getNode().getLeavingTransitionNotNull(outTransitionName));
@@ -105,16 +106,16 @@ public class Timer extends Job {
                 log.info("Deleting " + this + " after execution");
                 ApplicationContextFactory.getJobDAO().deleteTimersByName(getName(), getToken());
             }
-            ProcessExecutionErrors.removeProcessError(getProcess().getId(), getToken().getNodeId());
+            ProcessExecutionErrors.removeProcessError(getProcess().getId(), timerNodeId);
         } catch (Throwable th) {
             ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.TIMER_EXECUTION_FAILED, th, th.getMessage());
             String taskName;
             try {
-                taskName = executionContext.getProcessDefinition().getNodeNotNull(getToken().getNodeId()).getName();
+                taskName = executionContext.getProcessDefinition().getNodeNotNull(timerNodeId).getName();
             } catch (Exception e) {
                 taskName = "Unknown due to " + e;
             }
-            ProcessExecutionErrors.addProcessError(getProcess().getId(), getToken().getNodeId(), taskName, null, pee);
+            ProcessExecutionErrors.addProcessError(getProcess().getId(), timerNodeId, taskName, null, pee);
             throw Throwables.propagate(th);
         }
     }
