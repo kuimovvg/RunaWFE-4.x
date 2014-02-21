@@ -34,13 +34,10 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchResult;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.TransactionalExecutor;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Permission;
@@ -65,9 +62,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.4
  */
 @SuppressWarnings("unchecked")
-public class LDAPLogic {
-    private static final Log log = LogFactory.getLog(LDAPLogic.class);
-
+public class LDAPLogic extends TransactionalExecutor {
     private static final String OBJECT_CLASS_ATTR_NAME = "objectClass";
     private static final String OBJECT_CLASS_ATTR_USER_VALUE = "user";
     private static final String OBJECT_CLASS_ATTR_GROUP_VALUE = "group";
@@ -111,8 +106,16 @@ public class LDAPLogic {
         return new InitialDirContext(env);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    boolean createExecutors;
+
     public void synchronizeExecutors(boolean createExecutors) {
+        // TODO avoid class member
+        this.createExecutors = createExecutors;
+        executeInTransaction(false);
+    }
+
+    @Override
+    protected void doExecuteInTransaction() {
         if (!SystemProperties.isLDAPSynchronizationEnabled()) {
             log.warn("Synchronization is disabled");
             return;
