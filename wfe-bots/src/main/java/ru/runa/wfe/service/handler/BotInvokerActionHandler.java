@@ -37,8 +37,6 @@ public class BotInvokerActionHandler extends ActionHandlerBase {
     @Override
     public void execute(ExecutionContext executionContext) {
         try {
-            // FIXME temporary fix for lock in timer issue
-            ru.runa.wfe.commons.ApplicationContextFactory.getCurrentSession().flush();
             List<BotStation> botStations = Delegates.getBotService().getBotStations();
             BotStation botStation = null;
             if (!Strings.isNullOrEmpty(configuration)) {

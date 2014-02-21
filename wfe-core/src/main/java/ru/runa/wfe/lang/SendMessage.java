@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.jms.ObjectMessage;
 
 import ru.runa.wfe.audit.SendMessageLog;
-import ru.runa.wfe.commons.JMSUtil;
+import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
@@ -57,8 +57,8 @@ public class SendMessage extends VariableContainerNode {
         variables.put("currentNodeId", executionContext.getNode().getNodeId());
         MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, executionContext.getVariableProvider());
         long ttl = ExpressionEvaluator.evaluateDuration(executionContext, ttlDuration);
-        ObjectMessage message = JMSUtil.sendMessage(variableMappings, variableProvider, ttl);
-        String log = JMSUtil.toString(message, true);
+        ObjectMessage message = Utils.sendMessage(variableMappings, variableProvider, ttl);
+        String log = Utils.toString(message, true);
         executionContext.addLog(new SendMessageLog(this, log));
         leave(executionContext);
     }

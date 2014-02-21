@@ -21,15 +21,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
+import javax.ejb.MessageDrivenContext;
 import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.interceptor.Interceptors;
-import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
+import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,9 +39,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.audit.ReceiveMessageLog;
-import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.commons.JMSUtil;
+import ru.runa.wfe.commons.TransactionalExecutor;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
@@ -49,18 +51,19 @@ import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
-import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.service.interceptors.PerformanceObserver;
 import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @MessageDriven(activationConfig = { @ActivationConfigProperty(propertyName = "destination", propertyValue = "queue/bpmMessages"),
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue"),
         @ActivationConfigProperty(propertyName = "useDLQ", propertyValue = "false") })
 @TransactionManagement(TransactionManagementType.BEAN)
-@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
+@Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, SpringBeanAutowiringInterceptor.class })
 @SuppressWarnings("unchecked")
 public class ReceiveMessageBean implements MessageListener {
     private static Log log = LogFactory.getLog(ReceiveMessageBean.class);
@@ -69,14 +72,18 @@ public class ReceiveMessageBean implements MessageListener {
     private TokenDAO tokenDAO;
     @Autowired
     private IProcessDefinitionLoader processDefinitionLoader;
+    @Resource
+    private MessageDrivenContext context;
 
     @Override
     public void onMessage(Message jmsMessage) {
+        List<ReceiveMessageData> handlers = Lists.newArrayList();
+        ObjectMessage message = (ObjectMessage) jmsMessage;
+        String messageString = Utils.toString(message, false);
+        UserTransaction transaction = context.getUserTransaction();
         try {
-            ObjectMessage message = (ObjectMessage) jmsMessage;
-            String messageString = JMSUtil.toString(message, false);
             log.debug("Received " + messageString);
-            boolean handled = false;
+            transaction.begin();
             List<Token> tokens = tokenDAO.findActiveTokens(NodeType.RECEIVE_MESSAGE);
             for (Token token : tokens) {
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDeployment().getId());
@@ -109,50 +116,60 @@ public class ReceiveMessageBean implements MessageListener {
                     }
                 }
                 if (suitable) {
-                    handleMessage(executionContext, receiveMessage, message);
-                    handled = true;
+                    handlers.add(new ReceiveMessageData(executionContext, receiveMessage));
                 }
             }
-            if (!handled) {
-                throw new MessagePostponedException(messageString);
-            }
-        } catch (JMSException e) {
+            transaction.commit();
+        } catch (Exception e) {
             log.error("", e);
-            throw new RuntimeException(e);
+            Utils.rollbackTransaction(transaction);
+            Throwables.propagate(e);
+        }
+        if (handlers.size() == 0) {
+            throw new MessagePostponedException(messageString);
+        }
+        for (ReceiveMessageData data : handlers) {
+            handleMessage(data, message);
         }
     }
 
-    private void handleMessage(ExecutionContext executionContext, ReceiveMessage node, ObjectMessage message) throws JMSException {
+    private void handleMessage(final ReceiveMessageData data, final ObjectMessage message) {
         try {
-            acquireLock(executionContext);
-            log.info("Handling "  + message + " in " + executionContext + " for " + node);
-            executionContext.addLog(new ReceiveMessageLog(node, JMSUtil.toString(message, true)));
-            Map<String, Object> map = (Map<String, Object>) message.getObject();
-            for (VariableMapping variableMapping : node.getVariableMappings()) {
-                if (!variableMapping.isPropertySelector()) {
-                    if (map.containsKey(variableMapping.getMappedName())) {
-                        Object value = map.get(variableMapping.getMappedName());
-                        executionContext.setVariableValue(variableMapping.getName(), value);
-                    } else {
-                        log.warn("message does not contain value for '" + variableMapping.getMappedName() + "'");
+            acquireLock(data.processId);
+            new TransactionalExecutor(context.getUserTransaction()) {
+
+                @Override
+                protected void doExecuteInTransaction() throws Exception {
+                    log.info("Handling " + message + " for " + data);
+                    Token token = tokenDAO.getNotNull(data.tokenId);
+                    ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(token.getProcess().getDeployment().getId());
+                    ExecutionContext executionContext = new ExecutionContext(processDefinition, token);
+                    executionContext.addLog(new ReceiveMessageLog(data.node, Utils.toString(message, true)));
+                    Map<String, Object> map = (Map<String, Object>) message.getObject();
+                    for (VariableMapping variableMapping : data.node.getVariableMappings()) {
+                        if (!variableMapping.isPropertySelector()) {
+                            if (map.containsKey(variableMapping.getMappedName())) {
+                                Object value = map.get(variableMapping.getMappedName());
+                                executionContext.setVariableValue(variableMapping.getName(), value);
+                            } else {
+                                log.warn("message does not contain value for '" + variableMapping.getMappedName() + "'");
+                            }
+                        }
                     }
+                    data.node.leave(executionContext);
                 }
-            }
-            node.leave(executionContext);
+            }.executeInTransaction(true);
         } finally {
-            releaseLock(executionContext);
+            releaseLock(data.processId);
         }
     }
 
-    private void acquireLock(ExecutionContext executionContext) {
-        boolean refreshSessionEntities = false;
+    private void acquireLock(Long processId) {
         ReentrantLock lock;
         synchronized (processLocks) {
-            Long processId = executionContext.getProcess().getId();
             lock = processLocks.get(processId);
             if (lock != null) {
                 log.debug("acquiring existing " + lock + " for " + processId);
-                refreshSessionEntities = true;
             } else {
                 lock = new ReentrantLock();
                 log.debug("acquiring new " + lock + " for " + processId);
@@ -160,21 +177,28 @@ public class ReceiveMessageBean implements MessageListener {
             }
         }
         lock.lock();
-        if (refreshSessionEntities) {
-            ApplicationContextFactory.getCurrentSession().refresh(executionContext.getProcess());
-            ApplicationContextFactory.getCurrentSession().refresh(executionContext.getToken());
-        }
     }
 
-    private void releaseLock(ExecutionContext executionContext) {
+    private void releaseLock(Long processId) {
         synchronized (processLocks) {
-            Long processId = executionContext.getProcess().getId();
             ReentrantLock lock = processLocks.get(processId);
             if (!lock.hasQueuedThreads()) {
                 log.debug("releasing " + lock + " for " + processId);
                 processLocks.remove(processId);
             }
             lock.unlock();
+        }
+    }
+
+    private static class ReceiveMessageData {
+        private Long processId;
+        private Long tokenId;
+        private ReceiveMessage node;
+
+        public ReceiveMessageData(ExecutionContext executionContext, ReceiveMessage node) {
+            this.processId = executionContext.getProcess().getId();
+            this.tokenId = executionContext.getToken().getId();
+            this.node = node;
         }
     }
 
