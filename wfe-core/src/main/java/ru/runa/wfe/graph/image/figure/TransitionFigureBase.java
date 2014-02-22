@@ -26,10 +26,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.runa.wfe.definition.Language;
 import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.util.ActionUtils;
+import ru.runa.wfe.graph.image.util.ExtraGraphics;
+import ru.runa.wfe.graph.image.util.GraphicsMath;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.lang.Transition.Bendpoint;
@@ -47,6 +50,7 @@ public class TransitionFigureBase {
     protected List<Integer> failedActions = new ArrayList<Integer>();
     private boolean exclusive;
     protected RenderHits renderHits;
+    protected boolean smoothLines;
 
     public void init(Transition transition, AbstractFigure figureFrom, AbstractFigure figureTo) {
         Preconditions.checkNotNull(transition, "transition");
@@ -60,6 +64,11 @@ public class TransitionFigureBase {
         }
         if (transition.isTimerTransition()) {
             timerInfo = transition.getFrom().getTimerActions(false).get(0).getDueDate();
+        }
+        if(transition.getProcessDefinition().getDeployment().getLanguage() == Language.BPMN2&&DrawProperties.isSmoothLinesEnabled()) {
+        	smoothLines = true;
+        } else {
+        	smoothLines = false;
         }
     }
     
@@ -95,7 +104,7 @@ public class TransitionFigureBase {
     public void draw(Graphics2D graphics, Color color) {
         Rectangle rectFrom = figureFrom.getRectangle();
         Rectangle rectTo = figureTo.getRectangle();
-
+        ExtraGraphics extragraphics = new ExtraGraphics(graphics);
         double secondX;
         double secondY;
         if (transition.getBendpoints().size() > 0) {
@@ -139,7 +148,12 @@ public class TransitionFigureBase {
 
         graphics.setStroke(new BasicStroke(DrawProperties.TRANSITION_DRAW_WIDTH));
         graphics.setColor(color);
-        graphics.drawPolyline(xPoints, yPoints, xPoints.length);
+        
+        if(smoothLines) {
+        	extragraphics.drawSmoothPolyline(xPoints, yPoints, xPoints.length);
+        } else {
+        	graphics.drawPolyline(xPoints, yPoints, xPoints.length);
+        }
 
         if (actionsCount > 0) {
             Point p = new Point(xPoints[1], yPoints[1]);
@@ -161,7 +175,7 @@ public class TransitionFigureBase {
 
         if (exclusive) {
             Point from = new Point(start);
-            double angle = getAngle(xPoints[0], yPoints[0], xPoints[1], yPoints[1]);
+            double angle = GraphicsMath.getAngle(xPoints[0], yPoints[0], xPoints[1], yPoints[1]);
             if (transition.isTimerTransition()) {
                 from.x += DrawProperties.GRID_SIZE * Math.cos(angle);
                 from.y += DrawProperties.GRID_SIZE * Math.sin(angle);
@@ -186,7 +200,7 @@ public class TransitionFigureBase {
             }
         }
 
-        double angle = getAngle(xPoints[xPoints.length - 1], yPoints[yPoints.length - 1], xPoints[xPoints.length - 2], yPoints[yPoints.length - 2]);
+        double angle = GraphicsMath.getAngle(xPoints[xPoints.length - 1], yPoints[yPoints.length - 1], xPoints[xPoints.length - 2], yPoints[yPoints.length - 2]);
         double delta = DrawProperties.TRANSITION_SM_ANGLE;
         double hypotenuse = DrawProperties.TRANSITION_SM_L / Math.cos(delta);
         int xLeft = (int) Math.round(end.x + hypotenuse * Math.cos(angle - delta));
@@ -222,43 +236,6 @@ public class TransitionFigureBase {
             graphics.setColor(DrawProperties.getTextColor());
             graphics.drawString(drawString, xStart, (int) (yStart + textBounds.getHeight() - padding));
         }
-    }
-
-    private double getAngle(double x1, double y1, double x2, double y2) {
-        double angle = 0;
-        if (x2 == x1) {
-            if (y2 > y1) {
-                return 3 * Math.PI / 2;
-            } else {
-                return Math.PI / 2;
-            }
-        } else {
-            if (y2 == y1) {
-                if (x2 > x1) {
-                    return 0;
-                } else {
-                    return Math.PI;
-                }
-            }
-        }
-        if (x2 > x1) {
-            if (y2 > y1) {
-                // IV
-                angle = 2 * Math.PI - Math.atan((y2 - y1) / (x2 - x1));
-            } else {
-                // I
-                angle = Math.atan((y1 - y2) / (x2 - x1));
-            }
-        } else {
-            if (y2 > y1) {
-                // III
-                angle = Math.PI + Math.atan((y2 - y1) / (x1 - x2));
-            } else {
-                // II
-                angle = Math.PI - Math.atan((y1 - y2) / (x1 - x2));
-            }
-        }
-        return angle;
     }
 
     public void setExclusive(boolean exclusive) {
