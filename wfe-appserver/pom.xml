@@ -2,13 +2,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>ru.runa.wfe</groupId>
-		<artifactId>wfe-app</artifactId>
-		<version>4.1.1-SNAPSHOT</version>
-		<relativePath>../wfe-app/pom.xml</relativePath>
-	</parent>
-
+	<groupId>ru.runa.wfe</groupId>
+	<version>4.1.1-SNAPSHOT</version>
 	<artifactId>wfe-appserver</artifactId>
 	<packaging>pom</packaging>
 	<name>RunaWFE application server</name>
