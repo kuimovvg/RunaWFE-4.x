@@ -82,6 +82,10 @@ public final class DrawProperties {
         return resources.getIntegerProperty("fontSize", 9);
     }
 
+    public static int getSmoothDist() {
+        return resources.getIntegerProperty("smoothDist", 10);
+    }
+    
     public static String getFontFamily() {
         return resources.getStringProperty("fontFamily", "Verdana");
     }
@@ -117,5 +121,8 @@ public final class DrawProperties {
     public static boolean isLogsInGraphEnabled() {
         return resources.getBooleanProperty("logs.enabled", false);
     }
-
+    
+    public static boolean isSmoothLinesEnabled() {
+    	return resources.getBooleanProperty("smoothLines", true);
+    }
 }
