@@ -26,7 +26,6 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.runa.wfe.definition.Language;
 import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.image.GraphImage.RenderHits;
 import ru.runa.wfe.graph.image.GraphImageHelper;
@@ -52,7 +51,7 @@ public class TransitionFigureBase {
     protected RenderHits renderHits;
     protected boolean smoothLines;
 
-    public void init(Transition transition, AbstractFigure figureFrom, AbstractFigure figureTo) {
+    public void init(Transition transition, AbstractFigure figureFrom, AbstractFigure figureTo, boolean smoothLines) {
         Preconditions.checkNotNull(transition, "transition");
         Preconditions.checkNotNull(figureFrom, "figureFrom");
         Preconditions.checkNotNull(figureTo, "figureTo");
@@ -65,13 +64,9 @@ public class TransitionFigureBase {
         if (transition.isTimerTransition()) {
             timerInfo = transition.getFrom().getTimerActions(false).get(0).getDueDate();
         }
-        if(transition.getProcessDefinition().getDeployment().getLanguage() == Language.BPMN2&&DrawProperties.isSmoothLinesEnabled()) {
-        	smoothLines = true;
-        } else {
-        	smoothLines = false;
-        }
+        this.smoothLines = smoothLines;
     }
-    
+
     public Transition getTransition() {
         return transition;
     }
@@ -128,8 +123,7 @@ public class TransitionFigureBase {
             yPoints[i + 1] = bendPoint.y;
         }
         if (bendPoint == null) {
-            if (figureFrom.getType() == NodeType.FORK || figureFrom.getType() == NodeType.JOIN
-                    || transition.isTimerTransition()) {
+            if (figureFrom.getType() == NodeType.FORK || figureFrom.getType() == NodeType.JOIN || transition.isTimerTransition()) {
                 bendPoint = start;
             } else {
                 bendPoint = new Point((int) rectFrom.getCenterX(), (int) rectFrom.getCenterY());// start;
@@ -148,11 +142,11 @@ public class TransitionFigureBase {
 
         graphics.setStroke(new BasicStroke(DrawProperties.TRANSITION_DRAW_WIDTH));
         graphics.setColor(color);
-        
-        if(smoothLines) {
-        	extragraphics.drawSmoothPolyline(xPoints, yPoints, xPoints.length);
+
+        if (smoothLines) {
+            extragraphics.drawSmoothPolyline(xPoints, yPoints, xPoints.length);
         } else {
-        	graphics.drawPolyline(xPoints, yPoints, xPoints.length);
+            graphics.drawPolyline(xPoints, yPoints, xPoints.length);
         }
 
         if (actionsCount > 0) {
@@ -200,7 +194,8 @@ public class TransitionFigureBase {
             }
         }
 
-        double angle = GraphicsMath.getAngle(xPoints[xPoints.length - 1], yPoints[yPoints.length - 1], xPoints[xPoints.length - 2], yPoints[yPoints.length - 2]);
+        double angle = GraphicsMath.getAngle(xPoints[xPoints.length - 1], yPoints[yPoints.length - 1], xPoints[xPoints.length - 2],
+                yPoints[yPoints.length - 2]);
         double delta = DrawProperties.TRANSITION_SM_ANGLE;
         double hypotenuse = DrawProperties.TRANSITION_SM_L / Math.cos(delta);
         int xLeft = (int) Math.round(end.x + hypotenuse * Math.cos(angle - delta));
