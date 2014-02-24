@@ -56,10 +56,12 @@ public class GraphImageBuilder {
     private final Map<String, AbstractFigure> allNodeFigures = Maps.newHashMap();
     private final Map<TransitionFigureBase, RenderHits> transitionFigureBases = Maps.newHashMap();
     private final Map<AbstractFigure, RenderHits> nodeFigures = Maps.newHashMap();
+    private final boolean smoothTransitions;
 
     public GraphImageBuilder(WfTaskFactory taskObjectFactory, ProcessDefinition processDefinition) {
         this.taskObjectFactory = taskObjectFactory;
         this.processDefinition = processDefinition;
+        this.smoothTransitions = DrawProperties.isSmoothLinesEnabled() && processDefinition.getDeployment().getLanguage() == Language.BPMN2;
     }
 
     public void setHighlightedToken(Token highlightedToken) {
@@ -94,7 +96,7 @@ public class GraphImageBuilder {
             for (Transition transition : node.getLeavingTransitions()) {
                 AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getTransitionNodeId(true));
                 TransitionFigureBase transitionFigureBase = factory.createTransitionFigure();
-                transitionFigureBase.init(transition, nodeFigure, figureTo);
+                transitionFigureBase.init(transition, nodeFigure, figureTo, smoothTransitions);
                 if (processDefinition.getDeployment().getLanguage() == Language.BPMN2) {
                     boolean exclusiveNode = (node.getNodeType() != NodeType.FORK && node.getNodeType() != NodeType.JOIN && node.getNodeType() != NodeType.PARALLEL_GATEWAY);
                     transitionFigureBase.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
