@@ -14,7 +14,6 @@ import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
-import ru.runa.wfe.var.format.UserTypeFormat;
 
 import com.google.common.collect.Maps;
 
@@ -68,24 +67,15 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
                 processDefinition.addVariable(variable.getName(), variable);
             }
         }
-//        for (VariableDefinition variableDefinition : Lists.newArrayList(processDefinition.getVariables())) {
-//            if (variableDefinition.isComplex()) {
-//                List<VariableDefinition> children = variableDefinition.expandComplexVariable();
-//                for (VariableDefinition child : children) {
-//                    processDefinition.addVariable(child.getName(), child);
-//                }
-//            }
-//        }
     }
-    
+
     private VariableDefinition parse(Element element, Map<String, VariableUserType> userTypes) {
         String name = element.attributeValue(NAME);
         String scriptingName = element.attributeValue(SCRIPTING_NAME, name);
         VariableDefinition variable = new VariableDefinition(false, name, scriptingName);
         String userTypeName = element.attributeValue(USER_TYPE);
         if (userTypeName != null) {
-            variable.setFormat(UserTypeFormat.class.getName());
-            variable.setUserType(userTypes.get(userTypeName));
+            variable.setFormat(userTypeName);
         } else {
             String format = element.attributeValue(FORMAT);
             format = BackCompatibilityClassNames.getClassName(format);
@@ -109,6 +99,7 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
         }
         variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue(PUBLIC, "false")));
         variable.setDefaultValue(element.attributeValue(DEFAULT_VALUE));
+        variable.setUserTypes(userTypes);
         return variable;
     }
 

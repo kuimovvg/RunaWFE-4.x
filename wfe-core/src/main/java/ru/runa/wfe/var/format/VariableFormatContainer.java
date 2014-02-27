@@ -1,5 +1,9 @@
 package ru.runa.wfe.var.format;
 
+import java.util.Map;
+
+import ru.runa.wfe.var.VariableUserType;
+
 /**
  * Container marker. Used for lists, maps, etc.
  * 
@@ -7,13 +11,22 @@ package ru.runa.wfe.var.format;
  * @since 4.0.5
  */
 public interface VariableFormatContainer {
+
+    /**
+     * @return component format by index.
+     */
+    public String getComponentClassName(int index);
+
     /**
      * Sets component formats.
      */
     public void setComponentClassNames(String[] componentClassNames);
 
     /**
-     * Gets component format by index.
+     * @return all user types for this process definition
      */
-    public String getComponentClassName(int index);
+    public Map<String, VariableUserType> getUserTypes();
+
+    public void setUserTypes(Map<String, VariableUserType> userTypes);
+
 }

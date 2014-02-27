@@ -9,16 +9,16 @@ import org.json.simple.JSONObject;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.VariableDefinitionAware;
+import ru.runa.wfe.var.VariableUserType;
 
 import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class MapFormat extends VariableFormat implements VariableFormatContainer, VariableDefinitionAware, VariableDisplaySupport {
+public class MapFormat extends VariableFormat implements VariableFormatContainer, VariableDisplaySupport {
     private String keyFormatClassName;
     private String valueFormatClassName;
-    private VariableDefinition variableDefinition;
+    // TODO find more convenient way to reference user types
+    private Map<String, VariableUserType> userTypes;
 
     @Override
     public Class<?> getJavaClass() {
@@ -52,6 +52,16 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
             return valueFormatClassName;
         }
         return null;
+    }
+
+    @Override
+    public Map<String, VariableUserType> getUserTypes() {
+        return userTypes;
+    }
+
+    @Override
+    public void setUserTypes(Map<String, VariableUserType> userTypes) {
+        this.userTypes = userTypes;
     }
 
     @Override
@@ -92,16 +102,6 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
     }
 
     @Override
-    public VariableDefinition getVariableDefinition() {
-        return variableDefinition;
-    }
-    
-    @Override
-    public void setVariableDefinition(VariableDefinition variableDefinition) {
-        this.variableDefinition = variableDefinition;
-    }
-    
-    @Override
     public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object map) {
         StringBuffer b = new StringBuffer();
         b.append("<table class=\"list\">");
@@ -131,5 +131,12 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
         b.append("</table>");
         return b.toString();
     }
-    
+
+    @Override
+    public String toString() {
+        VariableFormat keyFormat = FormatCommons.createComponent(this, 0);
+        VariableFormat valueFormat = FormatCommons.createComponent(this, 1);
+        return getClass().getName() + "(" + keyFormat.getName() + ", " + valueFormat.getName() + ")";
+    }
+
 }

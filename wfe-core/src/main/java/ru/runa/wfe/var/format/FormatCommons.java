@@ -18,23 +18,28 @@
 
 package ru.runa.wfe.var.format;
 
+import java.util.Map;
+
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.VariableDefinitionAware;
+import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
 
 public class FormatCommons {
 
-    private static VariableFormat create(String className, VariableDefinition variableDefinition) {
+    private static VariableFormat create(String className, Map<String, VariableUserType> userTypes) {
+        if (userTypes.containsKey(className)) {
+            return new UserTypeFormat(userTypes.get(className));
+        }
         VariableFormat format = ClassLoaderUtil.instantiate(className);
-        if (format instanceof VariableDefinitionAware) {
-            ((VariableDefinitionAware) format).setVariableDefinition(variableDefinition);
+        if (format instanceof VariableFormatContainer) {
+            ((VariableFormatContainer) format).setUserTypes(userTypes);
         }
         return format;
     }
 
     public static VariableFormat create(VariableDefinition variableDefinition) {
-        VariableFormat format = create(variableDefinition.getFormatClassName(), variableDefinition);
+        VariableFormat format = create(variableDefinition.getFormatClassName(), variableDefinition.getUserTypes());
         if (format instanceof VariableFormatContainer) {
             ((VariableFormatContainer) format).setComponentClassNames(variableDefinition.getFormatComponentClassNames());
         }
@@ -43,11 +48,7 @@ public class FormatCommons {
 
     public static VariableFormat createComponent(VariableFormatContainer formatContainer, int index) {
         String elementFormatClassName = formatContainer.getComponentClassName(index);
-        VariableDefinition variableDefinition = null;
-        if (formatContainer instanceof VariableDefinitionAware) {
-            variableDefinition = ((VariableDefinitionAware) formatContainer).getVariableDefinition();
-        }
-        return create(elementFormatClassName, variableDefinition);
+        return create(elementFormatClassName, formatContainer.getUserTypes());
     }
 
     public static VariableFormat createComponent(WfVariable containerVariable, int index) {
