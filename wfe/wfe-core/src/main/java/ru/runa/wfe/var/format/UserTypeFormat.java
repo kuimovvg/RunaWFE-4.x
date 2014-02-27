@@ -9,12 +9,18 @@ import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.VariableDefinitionAware;
 import ru.runa.wfe.var.VariableUserType;
 
-public class UserTypeFormat extends VariableFormat implements VariableDefinitionAware, VariableDisplaySupport {
+import com.google.common.base.Preconditions;
+
+public class UserTypeFormat extends VariableFormat implements VariableDisplaySupport {
     private static final Log log = LogFactory.getLog(UserTypeFormat.class);
-    private VariableDefinition variableDefinition;
+    private final VariableUserType userType;
+
+    public UserTypeFormat(VariableUserType userType) {
+        Preconditions.checkNotNull(userType);
+        this.userType = userType;
+    }
 
     @Override
     public Class<?> getJavaClass() {
@@ -23,15 +29,15 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
 
     @Override
     public String getName() {
-        return buildFormatDescriptor(variableDefinition).toString();
+        return buildFormatDescriptor(userType).toString();
     }
 
-    private static JSONObject buildFormatDescriptor(VariableDefinition variableDefinition) {
+    private static JSONObject buildFormatDescriptor(VariableUserType userType) {
         JSONObject result = new JSONObject();
-        for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
+        for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             Object value;
             if (attributeDefinition.isComplex()) {
-                value = buildFormatDescriptor(attributeDefinition);
+                value = buildFormatDescriptor(attributeDefinition.getUserType());
             } else {
                 value = FormatCommons.create(attributeDefinition).getName();
             }
@@ -55,7 +61,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
     protected ComplexVariable convertFromJSONValue(Object jsonValue) {
         JSONObject object = (JSONObject) jsonValue;
         ComplexVariable result = new ComplexVariable();
-        for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
+        for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             try {
                 VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
                 Object attributeValue = object.get(attributeDefinition.getName());
@@ -74,7 +80,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
     protected Object convertToJSONValue(Object value) {
         ComplexVariable complexVariable = (ComplexVariable) value;
         JSONObject object = new JSONObject();
-        for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
+        for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
             Object attributeValue = complexVariable.get(attributeDefinition.getName());
             if (attributeValue != null) {
@@ -87,21 +93,11 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
     }
 
     @Override
-    public VariableDefinition getVariableDefinition() {
-        return variableDefinition;
-    }
-
-    @Override
-    public void setVariableDefinition(VariableDefinition variableDefinition) {
-        this.variableDefinition = variableDefinition;
-    }
-
-    @Override
     public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
         ComplexVariable complexVariable = (ComplexVariable) object;
         StringBuffer b = new StringBuffer();
         b.append("<table class=\"list\">");
-        for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
+        for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             b.append("<tr>");
             b.append("<td class=\"list\">").append(attributeDefinition.getName()).append("</td>");
             // TODO make option?
@@ -126,4 +122,12 @@ public class UserTypeFormat extends VariableFormat implements VariableDefinition
         return b.toString();
     }
 
+    public VariableUserType getUserType() {
+        return userType;
+    }
+
+    @Override
+    public String toString() {
+        return userType.getName();
+    }
 }

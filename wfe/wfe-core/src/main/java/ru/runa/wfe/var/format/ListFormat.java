@@ -1,6 +1,7 @@
 package ru.runa.wfe.var.format;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONArray;
@@ -8,15 +9,15 @@ import org.json.simple.JSONArray;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.VariableDefinition;
-import ru.runa.wfe.var.VariableDefinitionAware;
+import ru.runa.wfe.var.VariableUserType;
 
 import com.google.common.collect.Lists;
 
 @SuppressWarnings({ "unchecked" })
-public class ListFormat extends VariableFormat implements VariableFormatContainer, VariableDefinitionAware, VariableDisplaySupport {
+public class ListFormat extends VariableFormat implements VariableFormatContainer, VariableDisplaySupport {
     private String componentClassName;
-    private VariableDefinition variableDefinition;
+    // TODO find more convenient way to reference user types
+    private Map<String, VariableUserType> userTypes;
 
     @Override
     public Class<?> getJavaClass() {
@@ -47,6 +48,16 @@ public class ListFormat extends VariableFormat implements VariableFormatContaine
     }
 
     @Override
+    public Map<String, VariableUserType> getUserTypes() {
+        return userTypes;
+    }
+
+    @Override
+    public void setUserTypes(Map<String, VariableUserType> userTypes) {
+        this.userTypes = userTypes;
+    }
+
+    @Override
     public List<?> convertFromStringValue(String json) throws Exception {
         return (List<?>) parseJSON(json);
     }
@@ -60,7 +71,7 @@ public class ListFormat extends VariableFormat implements VariableFormatContaine
     protected Object convertFromJSONValue(Object jsonValue) {
         JSONArray array = (JSONArray) jsonValue;
         List<Object> result = Lists.newArrayListWithExpectedSize(array.size());
-        VariableFormat componentFormat = FormatCommons.createComponent((VariableFormatContainer) this, 0);
+        VariableFormat componentFormat = FormatCommons.createComponent(this, 0);
         for (Object object : array) {
             try {
                 result.add(componentFormat.convertFromJSONValue(object));
@@ -82,16 +93,6 @@ public class ListFormat extends VariableFormat implements VariableFormatContaine
             array.add(componentFormat.formatJSON(o));
         }
         return array;
-    }
-
-    @Override
-    public VariableDefinition getVariableDefinition() {
-        return variableDefinition;
-    }
-
-    @Override
-    public void setVariableDefinition(VariableDefinition variableDefinition) {
-        this.variableDefinition = variableDefinition;
     }
 
     @Override
@@ -117,5 +118,11 @@ public class ListFormat extends VariableFormat implements VariableFormatContaine
         b.append("</table>");
         return b.toString();
     }
-    
+
+    @Override
+    public String toString() {
+        VariableFormat componentFormat = FormatCommons.createComponent(this, 0);
+        return getClass().getName() + "(" + componentFormat.getName() + ")";
+    }
+
 }

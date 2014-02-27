@@ -106,7 +106,7 @@ public class ViewUtil {
     }
 
     public static WfVariable createVariable(String variableName, String scriptingName, VariableFormat componentFormat, Object value) {
-        VariableDefinition definition = new VariableDefinition(true, variableName, scriptingName, componentFormat.getClass().getName());
+        VariableDefinition definition = new VariableDefinition(true, variableName, scriptingName, componentFormat);
         return new WfVariable(definition, value);
     }
 
@@ -126,13 +126,13 @@ public class ViewUtil {
     }
 
     public static WfVariable createListSizeVariable(WfVariable complexVariable, Object value) {
-        String nameSuffix = ".size";
-        return createComponentVariable(complexVariable, nameSuffix, new StringFormat(), value);
+        return createComponentVariable(complexVariable, FormSubmissionUtils.SIZE_SUFFIX, new StringFormat(), value);
     }
 
     public static WfVariable createUserTypeComponentVariable(WfVariable complexVariable, VariableDefinition attributeDefinition, Object value) {
-        String nameSuffix = VariableUserType.DELIM + attributeDefinition.getName();
-        return createComponentVariable(complexVariable, nameSuffix, attributeDefinition.getFormatNotNull(), value);
+        String name = complexVariable.getDefinition().getName() + VariableUserType.DELIM + attributeDefinition.getName();
+        String scriptingName = complexVariable.getDefinition().getScriptingName() + VariableUserType.DELIM + attributeDefinition.getScriptingName();
+        return createVariable(name, scriptingName, attributeDefinition.getFormatNotNull(), value);
     }
 
     public static String getHiddenInput(WfVariable variable) {
@@ -222,7 +222,7 @@ public class ViewUtil {
             if (complexVariable == null) {
                 complexVariable = new ComplexVariable();
             }
-            VariableUserType userType = ((UserTypeFormat) variableFormat).getVariableDefinition().getUserType();
+            VariableUserType userType = ((UserTypeFormat) variableFormat).getUserType();
             StringBuffer b = new StringBuffer();
             b.append("<table class=\"list\">");
             for (VariableDefinition attributeDefinition : userType.getAttributes()) {
@@ -346,7 +346,7 @@ public class ViewUtil {
         }
         if (variableFormat instanceof UserTypeFormat) {
             ComplexVariable complexVariable = (ComplexVariable) value;
-            VariableUserType userType = ((UserTypeFormat) variableFormat).getVariableDefinition().getUserType();
+            VariableUserType userType = ((UserTypeFormat) variableFormat).getUserType();
             StringBuffer b = new StringBuffer();
             b.append("<table class=\"list\">");
             for (VariableDefinition attributeDefinition : userType.getAttributes()) {
