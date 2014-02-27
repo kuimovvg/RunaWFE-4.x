@@ -126,6 +126,9 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             if (graphElement.getConstraint() == null) {
                 continue;
             }
+            if (!(graphElement.getParentContainer() instanceof ProcessDefinition)) {
+                continue;
+            }
             Rectangle constraint = graphElement.getConstraint();
             if (constraint.x - canvasShift < xOffset) {
                 xOffset = constraint.x - canvasShift;
