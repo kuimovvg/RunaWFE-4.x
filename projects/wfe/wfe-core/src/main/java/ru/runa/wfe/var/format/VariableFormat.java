@@ -39,7 +39,7 @@ public abstract class VariableFormat {
     }
 
     protected abstract Object convertFromStringValue(String source) throws Exception;
-    
+
     /**
      * Formats given variable object.
      * 
@@ -103,9 +103,9 @@ public abstract class VariableFormat {
     protected Object convertToJSONValue(Object value) {
         return value;
     }
-    
+
     @Override
     public String toString() {
-        return getName();
+        return getClass().getName();
     }
 }

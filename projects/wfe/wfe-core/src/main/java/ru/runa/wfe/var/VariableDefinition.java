@@ -19,6 +19,7 @@ package ru.runa.wfe.var;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -43,8 +44,9 @@ public class VariableDefinition implements Serializable {
     private String defaultValue;
     private String scriptingName;
     private String formatLabel;
-    private VariableUserType userType;
     private transient VariableFormat variableFormat;
+    // TODO find more convenient way to reference user types
+    private Map<String, VariableUserType> userTypes;
 
     public VariableDefinition() {
     }
@@ -55,6 +57,12 @@ public class VariableDefinition implements Serializable {
         this.scriptingName = scriptingName;
     }
 
+    public VariableDefinition(boolean synthetic, String name, String scriptingName, VariableFormat variableFormat) {
+        this(synthetic, name, scriptingName);
+        setFormat(variableFormat.toString());
+        this.variableFormat = variableFormat;
+    }
+
     public VariableDefinition(boolean synthetic, String name, String scriptingName, String format) {
         this(synthetic, name, scriptingName);
         setFormat(format);
@@ -62,6 +70,7 @@ public class VariableDefinition implements Serializable {
 
     public VariableDefinition(String name, String scriptingName, VariableDefinition attributeDefinition) {
         this(true, name, scriptingName, attributeDefinition.getFormat());
+        setUserTypes(attributeDefinition.getUserTypes());
     }
 
     public boolean isSynthetic() {
@@ -112,6 +121,14 @@ public class VariableDefinition implements Serializable {
         return new String[0];
     }
 
+    public Map<String, VariableUserType> getUserTypes() {
+        return userTypes;
+    }
+
+    public void setUserTypes(Map<String, VariableUserType> userTypes) {
+        this.userTypes = userTypes;
+    }
+
     public boolean isPublicAccess() {
         return publicAccess;
     }
@@ -132,8 +149,8 @@ public class VariableDefinition implements Serializable {
         if (formatLabel != null) {
             return formatLabel;
         }
-        if (userType != null) {
-            return userType.getName();
+        if (getUserType() != null) {
+            return getUserType().getName();
         }
         return format;
     }
@@ -143,15 +160,11 @@ public class VariableDefinition implements Serializable {
     }
 
     public boolean isComplex() {
-        return userType != null;
+        return getUserType() != null;
     }
 
     public VariableUserType getUserType() {
-        return userType;
-    }
-
-    public void setUserType(VariableUserType userType) {
-        this.userType = userType;
+        return userTypes != null ? userTypes.get(format) : null;
     }
 
     public List<VariableDefinition> expandComplexVariable() {
@@ -164,7 +177,6 @@ public class VariableDefinition implements Serializable {
             String name = superVariable.getName() + VariableUserType.DELIM + attributeDefinition.getName();
             String scriptingName = superVariable.getScriptingName() + VariableUserType.DELIM + attributeDefinition.getScriptingName();
             VariableDefinition variable = new VariableDefinition(name, scriptingName, attributeDefinition);
-            variable.setUserType(attributeDefinition.getUserType());
             if (variable.isComplex()) {
                 result.addAll(expandComplexVariable(variable, attributeDefinition));
             } else {
