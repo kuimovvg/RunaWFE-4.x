@@ -134,42 +134,46 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
 
     private Map<Long, TreeMap<Substitution, HashSet<Actor>>> getMapActorToSubstitutors() {
         Map<Long, TreeMap<Substitution, HashSet<Actor>>> result = Maps.newHashMap();
-        for (Substitution substitution : substitutionDAO.getAll()) {
-            try {
-                Actor actor = null;
+        try {
+            for (Substitution substitution : substitutionDAO.getAll()) {
                 try {
-                    actor = executorDAO.getActor(substitution.getActorId());
-                } catch (ExecutorDoesNotExistException e) {
-                    log.error("in " + substitution + ": " + e);
-                    continue;
-                }
-                if (!substitution.isEnabled()) {
-                    continue;
-                }
-                TreeMap<Substitution, HashSet<Actor>> subDescr = result.get(actor.getId());
-                if (subDescr == null) {
-                    subDescr = new TreeMap<Substitution, HashSet<Actor>>();
-                    result.put(actor.getId(), subDescr);
-                }
-                if (substitution instanceof TerminatorSubstitution) {
-                    subDescr.put(substitution, null);
-                    continue;
-                }
-                List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(substitution.getOrgFunction(), null);
-                HashSet<Actor> substitutors = new HashSet<Actor>();
-                for (Executor sub : executors) {
-                    if (sub instanceof Actor) {
-                        substitutors.add((Actor) sub);
-                    } else {
-                        for (Actor groupActor : executorDAO.getGroupActors((Group) sub)) {
-                            substitutors.add(groupActor);
+                    Actor actor = null;
+                    try {
+                        actor = executorDAO.getActor(substitution.getActorId());
+                    } catch (ExecutorDoesNotExistException e) {
+                        log.error("in " + substitution + ": " + e);
+                        continue;
+                    }
+                    if (!substitution.isEnabled()) {
+                        continue;
+                    }
+                    TreeMap<Substitution, HashSet<Actor>> subDescr = result.get(actor.getId());
+                    if (subDescr == null) {
+                        subDescr = new TreeMap<Substitution, HashSet<Actor>>();
+                        result.put(actor.getId(), subDescr);
+                    }
+                    if (substitution instanceof TerminatorSubstitution) {
+                        subDescr.put(substitution, null);
+                        continue;
+                    }
+                    List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(substitution.getOrgFunction(), null);
+                    HashSet<Actor> substitutors = new HashSet<Actor>();
+                    for (Executor sub : executors) {
+                        if (sub instanceof Actor) {
+                            substitutors.add((Actor) sub);
+                        } else {
+                            for (Actor groupActor : executorDAO.getGroupActors((Group) sub)) {
+                                substitutors.add(groupActor);
+                            }
                         }
                     }
+                    subDescr.put(substitution, substitutors);
+                } catch (Exception e) {
+                    log.error("Error in " + substitution, e);
                 }
-                subDescr.put(substitution, substitutors);
-            } catch (Exception e) {
-                log.error("Error in " + substitution, e);
             }
+        } catch (Throwable th) {
+            log.error("in substitution", th);
         }
         return result;
     }
