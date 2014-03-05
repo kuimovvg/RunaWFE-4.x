@@ -6,7 +6,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
@@ -17,13 +17,10 @@ import ru.runa.wfe.commons.xml.XmlUtils;
  */
 public class Settings {
     protected static Log log = LogFactory.getLog(Settings.class);
-    private static final String CONFIG_RESOURCE = "/alfwf.settings.xml";
+    private static final String CONFIG_RESOURCE = "alfwf.settings.xml";
 
     protected static Document getConfigDocument() throws Exception {
-        InputStream is = Settings.class.getResourceAsStream(CONFIG_RESOURCE);
-        if (is == null) {
-            throw new InternalApplicationException("No resource found in " + CONFIG_RESOURCE);
-        }
+        InputStream is = ClassLoaderUtil.getAsStreamNotNull(CONFIG_RESOURCE, Settings.class);
         return XmlUtils.parseWithoutValidation(is);
     }
 
