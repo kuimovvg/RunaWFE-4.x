@@ -24,6 +24,7 @@ package ru.runa.wfe.commons;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -115,12 +117,12 @@ public class ClassLoaderUtil {
                 is = getAsStream(resource, ClassLoaderUtil.class);
             }
             if (is != null) {
-                properties.load(is);
+                properties.load(new InputStreamReader(is, Charsets.UTF_8));
                 is.close();
             }
             is = getAsStream(SystemProperties.RESOURCE_EXTENSION_PREFIX + resource, ClassLoaderUtil.class);
             if (is != null) {
-                properties.load(is);
+                properties.load(new InputStreamReader(is, Charsets.UTF_8));
                 is.close();
             }
         } catch (IOException e) {
