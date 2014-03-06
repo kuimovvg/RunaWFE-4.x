@@ -108,10 +108,14 @@ public class LDAPLogic extends TransactionalExecutor {
 
     boolean createExecutors;
 
-    public void synchronizeExecutors(boolean createExecutors) {
+    public void synchronizeExecutors(boolean inNewTransaction, boolean createExecutors) {
         // TODO avoid class member
         this.createExecutors = createExecutors;
-        executeInTransaction(false);
+        if (inNewTransaction) {
+            executeInTransaction(false);
+        } else {
+            doExecuteInTransaction();
+        }
     }
 
     @Override
