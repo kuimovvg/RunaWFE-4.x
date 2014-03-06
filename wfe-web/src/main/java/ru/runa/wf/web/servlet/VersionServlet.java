@@ -41,6 +41,10 @@ public class VersionServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String prefix = SystemProperties.getResources().getStringProperty("version.prefix", null);
+        if (prefix != null) {
+            response.getOutputStream().write(prefix.getBytes(Charsets.UTF_8));
+        }
         response.getOutputStream().write(SystemProperties.getVersion().getBytes(Charsets.UTF_8));
         response.getOutputStream().flush();
     }
