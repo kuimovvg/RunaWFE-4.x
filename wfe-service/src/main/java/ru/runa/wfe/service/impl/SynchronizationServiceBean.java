@@ -43,7 +43,7 @@ public class SynchronizationServiceBean implements SynchronizationService {
 
     @Override
     public void synchronizeExecutorsWithLDAP(User user, boolean createExecutors) {
-        importer.synchronizeExecutors(createExecutors);
+        importer.synchronizeExecutors(false, createExecutors);
     }
 
 }
