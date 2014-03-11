@@ -54,6 +54,10 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
             try {
                 InputStreamReader reader = new InputStreamReader(new URL(url).openStream());
                 version = CharStreams.toString(reader);
+                int colonIndex = version.indexOf(":");
+                if (colonIndex != -1) {
+                    version = version.substring(colonIndex + 1);
+                }
                 reader.close();
             } catch (Exception e) {
                 throw new RuntimeException("Unable to acquire version using " + url);
