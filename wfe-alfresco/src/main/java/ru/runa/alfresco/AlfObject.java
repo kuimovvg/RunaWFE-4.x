@@ -24,6 +24,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Base class for all mappable objects.
@@ -118,7 +119,7 @@ public class AlfObject implements IAlfObject, Serializable {
     }
 
     public Set<String> getDirtyFieldNames(AlfTypeDesc mapping) {
-        Set<String> dirtyFieldNames = new HashSet<String>();
+        Set<String> dirtyFieldNames = Sets.newHashSet();
         for (AlfPropertyDesc desc : mapping.getAllDescs()) {
             if (desc.getProperty() == null || desc.getProperty().readOnly()) {
                 continue;
@@ -135,6 +136,29 @@ public class AlfObject implements IAlfObject, Serializable {
             }
             if (!EqualsUtil.equals(initialObject, currentObject)) {
                 dirtyFieldNames.add(desc.getFieldName());
+            }
+        }
+        return dirtyFieldNames;
+    }
+
+    public List<String> getDirtyFieldChanges(AlfTypeDesc mapping) {
+        List<String> dirtyFieldNames = Lists.newArrayList();
+        for (AlfPropertyDesc desc : mapping.getAllDescs()) {
+            if (desc.getProperty() == null || desc.getProperty().readOnly()) {
+                continue;
+            }
+            Object initialObject = initialFieldValues.get(desc.getFieldName());
+            Object currentObject;
+            if (desc.isNodeReference()) {
+                currentObject = getReferencePropertyUuid(desc.getFieldName(), true);
+            } else {
+                currentObject = ClassUtils.getFieldValue(this, desc);
+                if (currentObject instanceof List) {
+                    currentObject = ((List) currentObject).toArray();
+                }
+            }
+            if (!EqualsUtil.equals(initialObject, currentObject)) {
+                dirtyFieldNames.add(desc.getFieldName() + " (" + initialObject + " -> " + currentObject + ")");
             }
         }
         return dirtyFieldNames;
