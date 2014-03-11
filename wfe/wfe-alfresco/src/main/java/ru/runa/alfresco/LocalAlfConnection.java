@@ -306,6 +306,9 @@ public class LocalAlfConnection implements AlfConnection {
             return false;
         }
         log.debug("Updating " + object + " (" + props.size() + ") fields");
+        if (!registry.getNodeService().hasAspect(getNodeRef(object), ContentModel.ASPECT_VERSIONABLE)) {
+            log.debug(object.getDirtyFieldChanges(typeDesc));
+        }
         for (QName name : props.keySet()) {
             registry.getNodeService().setProperty(getNodeRef(object), name, props.get(name));
         }

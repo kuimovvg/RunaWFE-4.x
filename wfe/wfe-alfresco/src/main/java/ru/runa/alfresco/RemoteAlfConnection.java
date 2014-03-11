@@ -550,6 +550,7 @@ public class RemoteAlfConnection implements AlfConnection {
                 return false;
             }
             log.info("Updating " + object + " (" + contentProps.length + ") fields");
+            log.debug(object.getDirtyFieldChanges(typeDesc));
             CMLUpdate update = new CMLUpdate(contentProps, getPredicate(object), null);
             CML cml = new CML();
             cml.setUpdate(new CMLUpdate[] { update });
