@@ -71,7 +71,8 @@ public interface AlfConnection {
     public void loadAssociation(String uuidRef, Collection collection, AlfPropertyDesc desc);
 
     /**
-     * Finds object in Alfresco repository.
+     * Finds object in Alfresco repository. TODO don't use this method and
+     * refactor usage.
      * 
      * @param <T>
      *            result type
