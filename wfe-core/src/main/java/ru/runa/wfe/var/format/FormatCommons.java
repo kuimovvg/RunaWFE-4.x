@@ -28,7 +28,7 @@ import ru.runa.wfe.var.dto.WfVariable;
 public class FormatCommons {
 
     private static VariableFormat create(String className, Map<String, VariableUserType> userTypes) {
-        if (userTypes.containsKey(className)) {
+        if (userTypes != null && userTypes.containsKey(className)) {
             return new UserTypeFormat(userTypes.get(className));
         }
         VariableFormat format = ClassLoaderUtil.instantiate(className);
