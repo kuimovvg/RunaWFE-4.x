@@ -70,9 +70,8 @@ public class Timer extends Job {
                     // multiple timers are discriminated actions by name
                     if (Objects.equal(getName(), timerAction.getName())) {
                         timerAction.execute(executionContext);
-                    }
-                    // back compatibility mode (pre 4.1.0)
-                    if (Objects.equal(getName(), timerAction.getNodeId())) {
+                    } else if (Objects.equal(getName(), timerAction.getNodeId())) {
+                        // back compatibility mode (pre 4.1.0)
                         timerAction.execute(executionContext);
                     }
                 }
