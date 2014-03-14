@@ -19,7 +19,6 @@ import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.EditDomain;
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
-import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.ui.actions.ActionRegistry;
 import org.eclipse.gef.ui.parts.GraphicalEditor;
@@ -256,12 +255,12 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
             firePropertyChange(IEditorPart.PROP_DIRTY);
         }
         if (PropertyNames.PROPERTY_SHOW_GRID.equals(evt.getPropertyName())) {
-            getGraphicalViewer().setProperty(SnapToGrid.PROPERTY_GRID_ENABLED, evt.getNewValue());
-            getGraphicalViewer().setProperty(SnapToGrid.PROPERTY_GRID_VISIBLE, evt.getNewValue());
-            refresh();
+            updateGridLayerVisibility(definition.isShowGrid());
         }
     }
-
+    
+    protected abstract void updateGridLayerVisibility(boolean enabled);
+    
     private String getGraphImagePath() {
         IFile file = ((FileEditorInput) getEditorInput()).getFile();
         String fileName = ParContentProvider.PROCESS_IMAGE_FILE_NAME;
