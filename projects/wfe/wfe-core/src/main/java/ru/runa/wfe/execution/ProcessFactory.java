@@ -85,7 +85,9 @@ public class ProcessFactory {
                 permissions = Permission.mergePermissions(permissions, processStarterPermissions);
                 permissionsAreSetToProcessStarter = true;
             }
-            permissionDAO.setPermissions(executor, permissions, process);
+            if (permissions.size() > 0) {
+                permissionDAO.setPermissions(executor, permissions, process);
+            }
         }
         if (!permissionsAreSetToProcessStarter) {
             Executor processStarter = executorDAO.getExecutor(SystemExecutors.PROCESS_STARTER_NAME);
@@ -124,7 +126,9 @@ public class ProcessFactory {
             List<Permission> permissionsByParentProcess = permissionDAO.getIssuedPermissions(executor, parentProcess);
             Set<Permission> permissionsByDefinition = getProcessPermissions(executor, processDefinition);
             Set<Permission> permissions = Permission.mergePermissions(permissionsByParentProcess, permissionsByDefinition);
-            permissionDAO.setPermissions(executor, permissions, subProcess);
+            if (permissions.size() > 0) {
+                permissionDAO.setPermissions(executor, permissions, subProcess);
+            }
         }
     }
 

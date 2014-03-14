@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 
 /**
  * Utility for measuring executing time and logging it.
+ * 
  * @author dofs
  */
 public class TimeMeasurer {
@@ -27,7 +28,7 @@ public class TimeMeasurer {
     public void jobEnded(String jobName) {
         long jobTime = System.currentTimeMillis() - startTime;
         if (jobTime > thresholdInMs) {
-            log.info("Task '" + jobName + "' executed for " + (jobTime/1000) + " sec.");
+            log.info("Task '" + jobName + "' executed for " + jobTime + " ms");
         }
     }
 }

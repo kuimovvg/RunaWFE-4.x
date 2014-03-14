@@ -58,13 +58,13 @@ public class PermissionDAO extends CommonDAO {
     @Autowired
     private ExecutorDAO executorDAO;
 
-    private Map<SecuredObjectType, List<Executor>> privelegedExecutors = Maps.newHashMap();
+    private Map<SecuredObjectType, Set<Executor>> privelegedExecutors = Maps.newHashMap();
     private Set<Long> privelegedExecutorIds = Sets.newHashSet();
 
     @Override
     protected void initDao() throws Exception {
         for (SecuredObjectType type : SecuredObjectType.values()) {
-            privelegedExecutors.put(type, new ArrayList<Executor>());
+            privelegedExecutors.put(type, new HashSet<Executor>());
         }
         try {
             List<PrivelegedMapping> list = getHibernateTemplate().find("from PrivelegedMapping m");
@@ -80,7 +80,7 @@ public class PermissionDAO extends CommonDAO {
 
     public List<Permission> getIssuedPermissions(Executor executor, Identifiable identifiable) {
         List<Permission> permissions = Lists.newArrayList();
-        if (!getPrivilegedExecutors(identifiable).contains(executor)) {
+        if (!isPrivilegedExecutor(identifiable, executor)) {
             List<PermissionMapping> permissionMappings = getOwnPermissionMappings(executor, identifiable);
             Permission noPermission = identifiable.getSecuredObjectType().getNoPermission();
             for (PermissionMapping pm : permissionMappings) {
@@ -101,8 +101,8 @@ public class PermissionDAO extends CommonDAO {
      *            Secured object to set permission on.
      */
     public void setPermissions(Executor executor, Collection<Permission> permissions, Identifiable identifiable) {
-        if (isPrivilegedExecutor(executor, identifiable)) {
-            log.debug("permissions not granted for privileged executor");
+        if (isPrivilegedExecutor(identifiable, executor)) {
+            log.debug(permissions + " not granted for privileged " + executor);
             return;
         }
         checkArePermissionAllowed(identifiable, permissions);
@@ -136,10 +136,8 @@ public class PermissionDAO extends CommonDAO {
 
     public boolean isAllowed(final User user, final Permission permission, final SecuredObjectType securedObjectType, final Long identifiableId) {
         final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(user.getActor());
-        for (Executor executor : executorWithGroups) {
-            if (getPrivilegedExecutors(securedObjectType).contains(executor)) {
-                return true;
-            }
+        if (isPrivilegedExecutor(securedObjectType, executorWithGroups)) {
+            return true;
         }
         return !getHibernateTemplate().executeFind(new HibernateCallback<List<PermissionMapping>>() {
 
@@ -173,14 +171,12 @@ public class PermissionDAO extends CommonDAO {
             return new boolean[0];
         }
         final Set<Executor> executorWithGroups = getExecutorWithAllHisGroups(user.getActor());
-        for (Executor potentialPrivilegedExecutor : executorWithGroups) {
-            if (getPrivilegedExecutors(identifiables.get(0)).contains(potentialPrivilegedExecutor)) {
-                boolean[] result = new boolean[identifiables.size()];
-                for (int i = 0; i < identifiables.size(); i++) {
-                    result[i] = true;
-                }
-                return result;
+        if (isPrivilegedExecutor(identifiables.get(0).getSecuredObjectType(), executorWithGroups)) {
+            boolean[] result = new boolean[identifiables.size()];
+            for (int i = 0; i < identifiables.size(); i++) {
+                result[i] = true;
             }
+            return result;
         }
         final SecuredObjectType securedObjectType = identifiables.get(0).getSecuredObjectType();
         List<PermissionMapping> permissions = new ArrayList<PermissionMapping>();
@@ -301,7 +297,7 @@ public class PermissionDAO extends CommonDAO {
                 "select distinct(pm.executor) from PermissionMapping pm where pm.identifiableId=? and pm.type=?", identifiable.getIdentifiableId(),
                 identifiable.getSecuredObjectType());
         Set<Executor> result = Sets.newHashSet(list);
-        result.addAll(getPrivilegedExecutors(identifiable));
+        result.addAll(getPrivilegedExecutors(identifiable.getSecuredObjectType()));
         return result;
     }
 
@@ -315,11 +311,7 @@ public class PermissionDAO extends CommonDAO {
      *            executors.
      * @return Privileged {@linkplain Executor}'s array.
      */
-    public List<Executor> getPrivilegedExecutors(Identifiable identifiable) {
-        return getPrivilegedExecutors(identifiable.getSecuredObjectType());
-    }
-
-    public List<Executor> getPrivilegedExecutors(SecuredObjectType securedObjectType) {
+    public Collection<Executor> getPrivilegedExecutors(SecuredObjectType securedObjectType) {
         return privelegedExecutors.get(securedObjectType);
     }
 
@@ -327,7 +319,7 @@ public class PermissionDAO extends CommonDAO {
      * Check if executor is privileged executor for any secured object type.
      */
     public boolean isPrivilegedExecutor(Executor executor) {
-        for (List<Executor> executors : privelegedExecutors.values()) {
+        for (Set<Executor> executors : privelegedExecutors.values()) {
             if (executors.contains(executor)) {
                 return true;
             }
@@ -358,8 +350,18 @@ public class PermissionDAO extends CommonDAO {
      * @return true if executor is privileged for given identifiable and false
      *         otherwise.
      */
-    public boolean isPrivilegedExecutor(Executor executor, Identifiable identifiable) {
-        return getPrivilegedExecutors(identifiable).contains(executor);
+    private boolean isPrivilegedExecutor(Identifiable identifiable, Executor executor) {
+        Collection<Executor> executorWithGroups = getExecutorWithAllHisGroups(executor);
+        return isPrivilegedExecutor(identifiable.getSecuredObjectType(), executorWithGroups);
+    }
+
+    private boolean isPrivilegedExecutor(SecuredObjectType securedObjectType, Collection<Executor> executorWithGroups) {
+        for (Executor executor : executorWithGroups) {
+            if (getPrivilegedExecutors(securedObjectType).contains(executor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -371,11 +373,12 @@ public class PermissionDAO extends CommonDAO {
      * @param privelegedExecutors
      *            Privileged executors for target class.
      */
-    public void addType(SecuredObjectType type, List<? extends Executor> privelegedExecutors) {
-        for (Executor executor : privelegedExecutors) {
-            getHibernateTemplate().save(new PrivelegedMapping(type, executor));
-            this.privelegedExecutors.get(type).add(executor);
-            privelegedExecutorIds.add(executor.getId());
+    public void addType(SecuredObjectType type, List<? extends Executor> executors) {
+        for (Executor executor : executors) {
+            PrivelegedMapping mapping = new PrivelegedMapping(type, executor);
+            getHibernateTemplate().save(mapping);
+            privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
+            privelegedExecutorIds.add(mapping.getExecutor().getId());
         }
     }
 
