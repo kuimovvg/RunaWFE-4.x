@@ -66,6 +66,9 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
         case RECEIVE_MESSAGE:
             figure = new Circle("image/bpmn/receivemessage.png");
             break;
+        case TEXT_ANNOTATION:
+            figure = new TextAnnotationFigure();
+            break;
         default:
             throw new InternalApplicationException("Unexpected figure type found: " + node.getNodeType());
         }
