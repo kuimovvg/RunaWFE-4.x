@@ -109,11 +109,15 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
     @Override
     public void createPartControl(Composite parent) {
         super.createPartControl(parent);
-        // hides grid on diagram, but you can re-enable it
+        updateGridLayerVisibility(editor.getDefinition().isShowGrid());
+    }
+    
+    protected void updateGridLayerVisibility(boolean enabled) {
         if (getGraphicalViewer() != null && getGraphicalViewer().getEditPartRegistry() != null) {
             ScalableFreeformRootEditPart rootEditPart = (ScalableFreeformRootEditPart) getGraphicalViewer().getEditPartRegistry().get(LayerManager.ID);
             IFigure gridFigure = ((LayerManager) rootEditPart).getLayer(LayerConstants.GRID_LAYER);
-            gridFigure.setVisible(false);
+            gridFigure.setVisible(enabled);
+        //gridFigure.setEnabled(editor.getDefinition().isShowGrid());
         }
     }
 
