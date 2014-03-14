@@ -46,6 +46,7 @@ import ru.runa.wfe.lang.WaitState;
 import ru.runa.wfe.lang.bpmn2.EndToken;
 import ru.runa.wfe.lang.bpmn2.ExclusiveGateway;
 import ru.runa.wfe.lang.bpmn2.ParallelGateway;
+import ru.runa.wfe.lang.bpmn2.TextAnnotation;
 import ru.runa.wfe.var.VariableMapping;
 
 import com.google.common.base.Objects;
@@ -101,6 +102,8 @@ public class BpmnXmlReader {
     private static final String ACCESS_TYPE = "accessType";
     private static final String EMBEDDED = "embedded";
     private static final String IGNORE_SUBSTITUTION_RULES = "ignoreSubstitutionRules";
+    private static final String TEXT_ANNOTATION = "textAnnotation";
+    private static final String TEXT = "text";
 
     @Autowired
     private LocalizationDAO localizationDAO;
@@ -118,6 +121,7 @@ public class BpmnXmlReader {
         nodeTypes.put(SCRIPT_TASK, ScriptTask.class);
         nodeTypes.put(EXCLUSIVE_GATEWAY, ExclusiveGateway.class);
         nodeTypes.put(PARALLEL_GATEWAY, ParallelGateway.class);
+        nodeTypes.put(TEXT_ANNOTATION, TextAnnotation.class);
     }
 
     public BpmnXmlReader(Document document) {
@@ -285,6 +289,10 @@ public class BpmnXmlReader {
         if (node instanceof SendMessage) {
             SendMessage sendMessage = (SendMessage) node;
             sendMessage.setTtlDuration(element.attributeValue(QName.get(TIME_DURATION, RUNA_NAMESPACE), "1 days"));
+        }
+        if (node instanceof TextAnnotation) {
+            node.setName("TextAnnotation_" + node.getNodeId());
+            node.setDescription(element.elementTextTrim(TEXT));
         }
     }
 

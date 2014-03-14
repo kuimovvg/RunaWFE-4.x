@@ -9,5 +9,5 @@ public enum NodeType {
     /**
      * 
      */
-    EXCLUSIVE_GATEWAY, PARALLEL_GATEWAY;
+    EXCLUSIVE_GATEWAY, PARALLEL_GATEWAY, TEXT_ANNOTATION;
 }
