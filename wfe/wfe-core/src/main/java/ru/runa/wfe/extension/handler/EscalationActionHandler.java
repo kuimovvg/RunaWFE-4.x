@@ -28,6 +28,7 @@ import ru.runa.wfe.audit.TaskEscalationLog;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
+import ru.runa.wfe.execution.logic.RelationSwimlaneInitializer;
 import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.job.Timer;
@@ -53,13 +54,15 @@ public class EscalationActionHandler extends ActionHandlerBase {
     private ExecutorDAO executorDAO;
     @Autowired
     private ExecutorLogic executorLogic;
-    private String orgFunctionClassName;
+    private String orgFunctionInitializer;
 
     @Override
     public void setConfiguration(String configuration) {
         super.setConfiguration(configuration);
-        orgFunctionClassName = Strings.isNullOrEmpty(configuration) ? defaultOrgFunctionClassName : configuration;
-        ClassLoaderUtil.instantiate(orgFunctionClassName);
+        this.orgFunctionInitializer = Strings.isNullOrEmpty(configuration) ? defaultOrgFunctionClassName : configuration;
+        if (!RelationSwimlaneInitializer.isValid(orgFunctionInitializer)) {
+            ClassLoaderUtil.instantiate(orgFunctionInitializer);
+        }
     }
 
     @Override
@@ -110,7 +113,11 @@ public class EscalationActionHandler extends ActionHandlerBase {
             Set<Executor> assignedExecutors = new HashSet<Executor>();
             assignedExecutors.addAll(previousSwimlaneActors);
             for (Actor previousActor : previousSwimlaneActors) {
-                String swimlaneInitializer = orgFunctionClassName + "(" + previousActor.getCode() + ")";
+                String swimlaneInitializer = orgFunctionInitializer + "(";
+                if (RelationSwimlaneInitializer.isValid(swimlaneInitializer)) {
+                    swimlaneInitializer += RelationSwimlaneInitializer.RELATION_PARAM_VALUE;
+                }
+                swimlaneInitializer += previousActor.getCode() + ")";
                 List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(swimlaneInitializer, null);
                 if (executors.size() == 0) {
                     log.debug("No escalation will be done for member: " + swimlaneInitializer);

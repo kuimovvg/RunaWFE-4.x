@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.relation.dao.RelationDAO;
@@ -20,7 +21,8 @@ import com.google.common.collect.Sets;
 
 public class RelationSwimlaneInitializer extends SwimlaneInitializer {
     private static final char RELATION_INVERSED = '!';
-    public static final String RELATION_BEGIN = "@";
+    private static final String RELATION_BEGIN = "@";
+    public static final String RELATION_PARAM_VALUE = "paramvalue:";
     private String relationName;
     private String relationParameterVariableName;
     private boolean inversed;
@@ -32,18 +34,22 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
     @Autowired
     private RelationPairDAO relationPairDAO;
 
+    public static boolean isValid(String initializer) {
+        return initializer != null && initializer.startsWith(RELATION_BEGIN);
+    }
+
     @Override
-    public void parse(String swimlaneConfiguration) {
-        Preconditions.checkArgument(swimlaneConfiguration.startsWith(RELATION_BEGIN), "Invalid configuration");
+    public void parse(String initializer) {
+        Preconditions.checkArgument(isValid(initializer), "Invalid configuration");
         int relationNameBegin = RELATION_BEGIN.length();
-        if (swimlaneConfiguration.charAt(relationNameBegin) == RELATION_INVERSED) {
+        if (initializer.charAt(relationNameBegin) == RELATION_INVERSED) {
             relationNameBegin += 1;
             inversed = true;
         }
-        int leftBracketIndex = swimlaneConfiguration.indexOf(LEFT_BRACKET);
-        relationName = swimlaneConfiguration.substring(relationNameBegin, leftBracketIndex);
+        int leftBracketIndex = initializer.indexOf(LEFT_BRACKET);
+        relationName = initializer.substring(relationNameBegin, leftBracketIndex);
         int startIndex = relationName.length() + relationNameBegin + 1;
-        relationParameterVariableName = swimlaneConfiguration.substring(startIndex, swimlaneConfiguration.length() - 1);
+        relationParameterVariableName = initializer.substring(startIndex, initializer.length() - 1);
         if (relationParameterVariableName.contains(LEFT_BRACKET) && relationParameterVariableName.endsWith(RIGHT_BRACKET)) {
             // back compatibility
             leftBracketIndex = relationParameterVariableName.indexOf(LEFT_BRACKET);
@@ -53,7 +59,13 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
 
     @Override
     public List<? extends Executor> evaluate(IVariableProvider variableProvider) {
-        Executor parameter = variableProvider.getValueNotNull(Executor.class, relationParameterVariableName);
+        Executor parameter;
+        if (relationParameterVariableName.startsWith(RELATION_PARAM_VALUE)) {
+            String executorValue = relationParameterVariableName.substring(RELATION_PARAM_VALUE.length());
+            parameter = TypeConversionUtil.convertToExecutor(executorValue, executorDAO);
+        } else {
+            parameter = variableProvider.getValueNotNull(Executor.class, relationParameterVariableName);
+        }
         Set<Executor> parameters = Sets.newHashSet();
         parameters.add(parameter);
         parameters.addAll(executorDAO.getExecutorParentsAll(parameter));
