@@ -41,12 +41,6 @@ public class AuthorizationLogic extends CommonLogic {
         return permissionDAO.isAllowed(user, permission, securedObjectType, identifiableId);
     }
 
-    public boolean isPrivelegedExecutor(User user, Executor executor, Identifiable identifiable) {
-        checkPermissionAllowed(user, executor, Permission.READ);
-        checkPermissionAllowed(user, identifiable, Permission.READ);
-        return permissionDAO.isPrivilegedExecutor(executor, identifiable);
-    }
-
     public <T extends Identifiable> boolean[] isAllowed(User user, Permission permission, List<T> identifiables) {
         return permissionDAO.isAllowed(user, permission, identifiables);
     }
@@ -110,7 +104,7 @@ public class AuthorizationLogic extends CommonLogic {
                 batchPresentation, hasPermission);
         if (hasPermission) {
             List<Executor> executors = compiler.getBatch();
-            for (Executor privelegedExecutor : permissionDAO.getPrivilegedExecutors(identifiable)) {
+            for (Executor privelegedExecutor : permissionDAO.getPrivilegedExecutors(identifiable.getSecuredObjectType())) {
                 if (batchPresentation.getClassPresentation().getPresentationClass().isInstance(privelegedExecutor)
                         && isPermissionAllowed(user, privelegedExecutor, Permission.READ)) {
                     executors.add(0, privelegedExecutor);

@@ -581,9 +581,7 @@ public class AdminScriptRunner {
         BatchPresentation batchPresentation = BatchPresentationFactory.EXECUTORS.createNonPaged();
         List<? extends Executor> executors = authorizationLogic.getExecutorsWithPermission(user, identifiable, batchPresentation, true);
         for (Executor executor : executors) {
-            if (!authorizationLogic.isPrivelegedExecutor(user, executor, identifiable)) {
-                authorizationLogic.setPermissions(user, executor, Permission.getNoPermissions(), identifiable);
-            }
+            authorizationLogic.setPermissions(user, executor, Permission.getNoPermissions(), identifiable);
         }
     }
 
