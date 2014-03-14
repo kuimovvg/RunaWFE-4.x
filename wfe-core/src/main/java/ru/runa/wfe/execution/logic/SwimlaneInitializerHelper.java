@@ -29,7 +29,7 @@ public class SwimlaneInitializerHelper {
     public static SwimlaneInitializer parse(String swimlaneConfiguration) {
         if (!CACHE.containsKey(swimlaneConfiguration)) {
             SwimlaneInitializer swimlaneInitializer;
-            if (swimlaneConfiguration != null && swimlaneConfiguration.startsWith(RelationSwimlaneInitializer.RELATION_BEGIN)) {
+            if (RelationSwimlaneInitializer.isValid(swimlaneConfiguration)) {
                 swimlaneInitializer = ApplicationContextFactory.autowireBean(new RelationSwimlaneInitializer());
                 swimlaneInitializer.parse(swimlaneConfiguration);
             } else {
