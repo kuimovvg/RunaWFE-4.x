@@ -40,4 +40,9 @@ public class GraphitiProcessEditor extends ProcessEditorBase {
         }
         return null;
     }
+    
+    @Override
+    protected void updateGridLayerVisibility(boolean enabled) {
+        ((DiagramEditorPage) graphPage).updateGridLayerVisibility(enabled);
+    }
 }
