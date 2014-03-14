@@ -124,7 +124,7 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
                 if ("code".equals(fieldName)) {
                     actor = TypeConversionUtil.convertToExecutor(newValue, new DelegateExecutorLoader(user));
                 } else if ("id".equals(fieldName)) {
-                    actor = Delegates.getExecutorService().getExecutor(user, ((Long) newValue).longValue());
+                    actor = Delegates.getExecutorService().getExecutor(user, (Long) newValue);
                 } else {
                     actor = Delegates.getExecutorService().getExecutorByName(user, (String) newValue);
                 }
@@ -139,7 +139,8 @@ public class DatabaseTaskHandler extends TaskHandlerBase {
         return outputVariables;
     }
 
-    private void fillQueryParameters(User user, PreparedStatement ps, IVariableProvider variableProvider, AbstractQuery query, WfTask task) throws Exception {
+    private void fillQueryParameters(User user, PreparedStatement ps, IVariableProvider variableProvider, AbstractQuery query, WfTask task)
+            throws Exception {
         for (int i = 0; i < query.getParameterCount(); i++) {
             Parameter parameter = query.getParameter(i);
             Object value = variableProvider.getValue(parameter.getVariableName());
