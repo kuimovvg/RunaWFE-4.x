@@ -299,17 +299,7 @@ var simulationWebLinks
 
   Push "8080"                               #text to be replaced
   Push $WFEServerPort                       #replace with
-  Push "$INSTDIR\WFEServer\server\default\deploy\http-invoker.sar\META-INF\jboss-service.xml"   #file to replace in
-  Call AdvReplaceInFile                     #call find and replace function
-
-  Push "8080"                               #text to be replaced
-  Push $WFEServerPort                       #replace with
-  Push "$INSTDIR\WFEServer\server\default\deploy\jbossweb-tomcat55.sar\server.xml"   #file to replace in
-  Call AdvReplaceInFile                     #call find and replace function
-
-  Push "8080"                               #text to be replaced
-  Push $WFEServerPort                       #replace with
-  Push "$INSTDIR\WFEServer\server\default\deploy\jboss-web.deployer\server.xml"   #file to replace in
+  Push "$INSTDIR\WFEServer\standalone\configuration\standalone.xml"   #file to replace in
   Call AdvReplaceInFile                     #call find and replace function
 
   !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\WFEServer\bin"
