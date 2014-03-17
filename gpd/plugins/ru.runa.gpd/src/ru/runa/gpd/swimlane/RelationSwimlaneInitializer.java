@@ -29,13 +29,17 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
             inversed = true;
         }
         int leftBracketIndex = swimlaneConfiguration.indexOf(LEFT_BRACKET);
-        relationName = swimlaneConfiguration.substring(relationNameBegin, leftBracketIndex);
-        int startIndex = relationName.length() + relationNameBegin + 1;
-        relationParameterVariableName = swimlaneConfiguration.substring(startIndex, swimlaneConfiguration.length() - 1);
-        if (relationParameterVariableName.contains(LEFT_BRACKET) && relationParameterVariableName.endsWith(RIGHT_BRACKET)) {
-            // back compatibility
-            leftBracketIndex = relationParameterVariableName.indexOf(LEFT_BRACKET);
-            relationParameterVariableName = relationParameterVariableName.substring(leftBracketIndex + 3, relationParameterVariableName.length() - 2);
+        if (leftBracketIndex != -1) {
+            relationName = swimlaneConfiguration.substring(relationNameBegin, leftBracketIndex);
+            int startIndex = relationName.length() + relationNameBegin + 1;
+            relationParameterVariableName = swimlaneConfiguration.substring(startIndex, swimlaneConfiguration.length() - 1);
+            if (relationParameterVariableName.contains(LEFT_BRACKET) && relationParameterVariableName.endsWith(RIGHT_BRACKET)) {
+                // back compatibility
+                leftBracketIndex = relationParameterVariableName.indexOf(LEFT_BRACKET);
+                relationParameterVariableName = relationParameterVariableName.substring(leftBracketIndex + 3, relationParameterVariableName.length() - 2);
+            }
+        } else {
+            relationName = swimlaneConfiguration.substring(relationNameBegin);
         }
     }
 
@@ -44,7 +48,9 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
     }
 
     public void setRelationName(String relationName) {
+        String old = this.relationName;
         this.relationName = relationName;
+        firePropertyChange(PROPERTY_NAME, old, relationName);
     }
 
     public String getRelationParameterVariableName() {
@@ -52,15 +58,19 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
     }
 
     public void setRelationParameterVariableName(String relationParameterVariableName) {
+        String old = this.relationParameterVariableName;
         this.relationParameterVariableName = relationParameterVariableName;
+        firePropertyChange(PROPERTY_RELATION_PARAMETER, old, relationParameterVariableName);
     }
 
     public boolean isInversed() {
         return inversed;
     }
 
-    public void setInversed(boolean reversed) {
-        this.inversed = reversed;
+    public void setInversed(boolean inversed) {
+        boolean old = this.inversed;
+        this.inversed = inversed;
+        firePropertyChange(PROPERTY_RELATION_INVERSED, old, inversed);
     }
 
     @Override
@@ -87,6 +97,20 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
     }
 
     @Override
+    public boolean isValid() {
+        return !Strings.isNullOrEmpty(relationName) && !Strings.isNullOrEmpty(relationParameterVariableName);
+    }
+    
+    @Override
+    public RelationSwimlaneInitializer getCopy() {
+        RelationSwimlaneInitializer initializer = new RelationSwimlaneInitializer();
+        initializer.setRelationName(relationName);
+        initializer.setRelationParameterVariableName(relationParameterVariableName);
+        initializer.setInversed(inversed);
+        return initializer;
+    }
+    
+    @Override
     public String toString() {
         if (relationName == null) {
             // special case without initializer
@@ -97,9 +121,10 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
         if (inversed) {
             result.append(RELATION_INVERSED);
         }
-        result.append(relationName).append("(");
-        result.append(relationParameterVariableName);
-        result.append(")");
+        result.append(relationName);
+        if (!Strings.isNullOrEmpty(relationParameterVariableName)) {
+            result.append("(").append(relationParameterVariableName).append(")");
+        }
         return result.toString();
     }
 }

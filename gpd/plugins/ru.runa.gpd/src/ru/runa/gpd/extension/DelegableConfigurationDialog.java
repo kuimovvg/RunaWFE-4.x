@@ -14,9 +14,9 @@ import ru.runa.gpd.Localization;
 
 public class DelegableConfigurationDialog extends Dialog {
     protected StyledText styledText;
-    private String title;
+    protected String title;
     protected final String initialValue;
-    private String result;
+    protected String result;
 
     public DelegableConfigurationDialog(String initialValue) {
         super(Display.getCurrent().getActiveShell());

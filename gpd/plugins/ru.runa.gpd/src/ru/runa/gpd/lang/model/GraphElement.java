@@ -27,6 +27,7 @@ import ru.runa.gpd.property.DelegableClassPropertyDescriptor;
 import ru.runa.gpd.property.DelegableConfPropertyDescriptor;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.TimerActionPropertyDescriptor;
+import ru.runa.gpd.util.EventSupport;
 import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;

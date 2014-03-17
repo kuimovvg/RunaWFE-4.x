@@ -34,6 +34,7 @@ public class EscalationGlobalPreferencePage extends FieldEditorPreferencePage im
         if (!Strings.isNullOrEmpty(string)) {
             timerAction.setDelegationConfiguration(string);
         }
+        setDescription(Localization.getString("pref.task.escalation.description"));
     }
 
     @Override

@@ -1,8 +1,12 @@
 package ru.runa.gpd.extension.handler;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -19,10 +23,12 @@ import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.swimlane.RelationComposite;
+import ru.runa.gpd.swimlane.RelationSwimlaneInitializer;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
-import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 
 public class EscalationActionHandlerProvider extends DelegableProvider {
+    
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
         return new EscalationConfigurationDialog(delegable.getDelegationConfiguration());
@@ -32,7 +38,9 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
     public boolean validateValue(Delegable delegable, List<ValidationError> errors) {
         String configuration = delegable.getDelegationConfiguration();
         try {
-            OrgFunctionsRegistry.getInstance().getArtifact(configuration);
+            if (!configuration.startsWith(RelationSwimlaneInitializer.RELATION_BEGIN)) {
+                OrgFunctionsRegistry.getInstance().getArtifact(configuration);
+            }
         } catch (Exception e) {
             errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.invalidConfigurationWithError", e));
         }
@@ -40,7 +48,7 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
     }
 
     public class EscalationConfigurationDialog extends DelegableConfigurationDialog {
-        private Combo combo;
+        private RelationSwimlaneInitializer swimlaneInitializer = new RelationSwimlaneInitializer();
 
         public EscalationConfigurationDialog(String initialValue) {
             super(initialValue);
@@ -52,43 +60,76 @@ public class EscalationActionHandlerProvider extends DelegableProvider {
         }
 
         @Override
-        protected void createDialogHeader(Composite composite) {
-            Composite gui = new Composite(composite, SWT.NONE);
-            gui.setLayout(new GridLayout(2, false));
-            gui.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            String orgFunctionLabel = "";
-            try {
-                orgFunctionLabel = OrgFunctionsRegistry.getInstance().getArtifact(initialValue).getLabel();
-            } catch (Exception e) {
-            }
+        protected void createDialogHeader(Composite parent) {
+            boolean tabRelationEnabled = initialValue.startsWith(RelationSwimlaneInitializer.RELATION_BEGIN);
+            CTabFolder typeTabFolder = new CTabFolder(parent, SWT.BOTTOM | SWT.BORDER);
+            typeTabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+            Composite composite1 = new Composite(typeTabFolder, SWT.NONE);
+            composite1.setLayout(new GridLayout());
+            CTabItem tabItem1 = new CTabItem(typeTabFolder, SWT.NONE);
+            tabItem1.setText(Localization.getString("tab.constructor.relation"));
+            tabItem1.setControl(composite1);
             {
-                Label label = new Label(gui, SWT.NONE);
-                label.setText(Localization.getString("swimlane.initializer"));
-            }
-            combo = new Combo(gui, SWT.READ_ONLY);
-            combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            List<OrgFunctionDefinition> definitions = OrgFunctionsRegistry.getInstance().getAll();
-            for (OrgFunctionDefinition definition : definitions) {
-                combo.add(definition.getLabel());
-            }
-            combo.setText(orgFunctionLabel);
-            combo.addSelectionListener(new LoggingSelectionAdapter() {
-                
-                @Override
-                protected void onSelection(SelectionEvent e) throws Exception {
-                    updateText();
+                final RelationComposite relationComposite = new RelationComposite(composite1, false, null);
+                try {
+                    if (tabRelationEnabled) {
+                        swimlaneInitializer = new RelationSwimlaneInitializer(initialValue);
+                    }
+                } catch (Exception e) {
                 }
-            });
-            super.createDialogHeader(composite);
-        }
+                relationComposite.init(swimlaneInitializer);
+                swimlaneInitializer.addPropertyChangeListener(new PropertyChangeListener() {
+                    
+                    @Override
+                    public void propertyChange(PropertyChangeEvent evt) {
+                        styledText.setText(swimlaneInitializer.toString());
+                    }
+                    
+                });
+            }
+            Composite composite2 = new Composite(typeTabFolder, SWT.NONE);
+            composite2.setLayout(new GridLayout());
+            CTabItem tabItem2 = new CTabItem(typeTabFolder, SWT.NONE);
+            tabItem2.setText(Localization.getString("tab.constructor.orgfunction"));
+            tabItem2.setControl(composite2);
+            {
+                Composite composite = new Composite(composite2, SWT.NONE);
+                composite.setLayout(new GridLayout());
+                composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        public void updateText() {
-            styledText.setText(OrgFunctionsRegistry.getInstance().getArtifactNotNullByLabel(combo.getText()).getName());
+                Composite gui = new Composite(composite, SWT.NONE);
+                gui.setLayout(new GridLayout(2, false));
+                gui.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                String orgFunctionLabel = "";
+                try {
+                    if (!tabRelationEnabled) {
+                        orgFunctionLabel = OrgFunctionsRegistry.getInstance().getArtifact(initialValue).getLabel();
+                    }
+                } catch (Exception e) {
+                }
+                {
+                    Label label = new Label(gui, SWT.NONE);
+                    label.setText(Localization.getString("swimlane.initializer"));
+                }
+                final Combo combo = new Combo(gui, SWT.READ_ONLY);
+                combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                List<OrgFunctionDefinition> definitions = OrgFunctionsRegistry.getInstance().getAll();
+                for (OrgFunctionDefinition definition : definitions) {
+                    if (definition.isUsedForEscalation()) {
+                        combo.add(definition.getLabel());
+                    }
+                }
+                combo.setText(orgFunctionLabel);
+                combo.addSelectionListener(new LoggingSelectionAdapter() {
+                    
+                    @Override
+                    protected void onSelection(SelectionEvent e) throws Exception {
+                        styledText.setText(OrgFunctionsRegistry.getInstance().getArtifactNotNullByLabel(combo.getText()).getName());
+                    }
+                });
+            }
+            typeTabFolder.setSelection(tabRelationEnabled ? 0 : 1);
         }
-
-        @Override
-        protected void createDialogFooter(Composite composite) {
-            styledText.addLineStyleListener(new XmlHighlightTextStyling());
-        }
+        
     }
 }
