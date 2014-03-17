@@ -7,12 +7,14 @@ import ru.runa.gpd.extension.Artifact;
 
 public class OrgFunctionDefinition extends Artifact {
     public static final String MISSED_DEFINITION = "Missed OrgFunction definition";
-    public static final OrgFunctionDefinition DEFAULT = new OrgFunctionDefinition("EmptyOrgFunctionName", "", new ArrayList<OrgFunctionParameterDefinition>());
+    public static final OrgFunctionDefinition DEFAULT = new OrgFunctionDefinition("EmptyOrgFunctionName", "", new ArrayList<OrgFunctionParameterDefinition>(), false);
     private final List<OrgFunctionParameterDefinition> parameters;
+    private final boolean usedForEscalation;
 
-    public OrgFunctionDefinition(String className, String label, List<OrgFunctionParameterDefinition> parameters) {
+    public OrgFunctionDefinition(String className, String label, List<OrgFunctionParameterDefinition> parameters, boolean usedForEscalation) {
         super(true, className, label);
         this.parameters = parameters;
+        this.usedForEscalation = usedForEscalation;
     }
 
     protected void checkMultipleParameters() {
@@ -50,4 +52,9 @@ public class OrgFunctionDefinition extends Artifact {
         }
         return null;
     }
+    
+    public boolean isUsedForEscalation() {
+        return usedForEscalation;
+    }
+
 }

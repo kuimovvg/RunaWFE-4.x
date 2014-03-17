@@ -126,6 +126,16 @@ public class OrgFunctionSwimlaneInitializer extends SwimlaneInitializer {
     }
 
     @Override
+    public boolean isValid() {
+        throw new UnsupportedOperationException("Implement if you need this");
+    }
+    
+    @Override
+    public SwimlaneInitializer getCopy() {
+        throw new UnsupportedOperationException("Implement if you need this");
+    }
+    
+    @Override
     public String toString() {
         if (OrgFunctionDefinition.DEFAULT == definition) {
             // special case without initializer
