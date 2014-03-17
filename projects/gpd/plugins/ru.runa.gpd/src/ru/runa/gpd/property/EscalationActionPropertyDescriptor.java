@@ -20,11 +20,11 @@ public class EscalationActionPropertyDescriptor extends PropertyDescriptor {
 
     @Override
     public CellEditor createPropertyEditor(Composite parent) {
-        return new TimerActionDialogCellEditor(parent);
+        return new EscalationActionDialogCellEditor(parent);
     }
 
-    private class TimerActionDialogCellEditor extends DialogCellEditor {
-        public TimerActionDialogCellEditor(Composite parent) {
+    private class EscalationActionDialogCellEditor extends DialogCellEditor {
+        public EscalationActionDialogCellEditor(Composite parent) {
             super(parent, SWT.NONE);
         }
 

@@ -51,4 +51,6 @@ public interface PropertyNames {
     public static final String VALUE = "value";
     public static final String PROPERTY_ACCESS_TYPE = "accesstype";
     public static final String PROPERTY_USER_TYPES_CHANGED = "userTypesChanged";
+    public static final String PROPERTY_RELATION_PARAMETER = "relationParameter";
+    public static final String PROPERTY_RELATION_INVERSED = "relationInversed";
 }

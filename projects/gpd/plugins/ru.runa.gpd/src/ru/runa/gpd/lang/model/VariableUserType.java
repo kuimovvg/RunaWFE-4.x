@@ -2,6 +2,8 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import ru.runa.gpd.util.EventSupport;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;

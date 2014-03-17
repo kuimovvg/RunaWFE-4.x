@@ -69,7 +69,7 @@ public class SwimlaneConfigDialog extends Dialog implements ISwimlaneElementList
             for (SwimlaneElement swimlaneElement : swimlaneElements) {
                 if (path.startsWith(swimlaneElement.getName())) {
                     int index = swimlaneElements.indexOf(swimlaneElement);
-                    if (index > 1) {
+                    if (index >= 1) {
                         orgFunctionsTabFolder.setSelection(index - 1);
                     }
                     swimlaneElement.open(path, swimlane.getName(), swimlaneInitializer);
