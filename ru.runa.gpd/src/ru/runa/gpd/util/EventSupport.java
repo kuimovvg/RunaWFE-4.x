@@ -1,4 +1,4 @@
-package ru.runa.gpd.lang.model;
+package ru.runa.gpd.util;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;

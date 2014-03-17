@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.Duration;
+import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
 import com.google.common.base.Strings;
 
@@ -42,7 +43,16 @@ public class TimerAction extends Action {
         if (Strings.isNullOrEmpty(getDelegationClassName())) {
             return "";
         }
-        StringBuffer buffer = new StringBuffer(getDelegationClassName());
+        StringBuffer buffer = new StringBuffer();
+        if (EscalationActionHandler.class.getName().equals(getDelegationClassName())) {
+            if (Strings.isNullOrEmpty(getDelegationConfiguration())) {
+                buffer.append(Localization.getString("Variable.property.defaultValue"));
+            } else {
+                buffer.append(getDelegationConfiguration());
+            }
+        } else {
+            buffer.append(getDelegationClassName());
+        }
         buffer.append(" | ");
         buffer.append(repeatDelay.hasDuration() ? repeatDelay : Localization.getString("duration.norepeat"));
         return buffer.toString();

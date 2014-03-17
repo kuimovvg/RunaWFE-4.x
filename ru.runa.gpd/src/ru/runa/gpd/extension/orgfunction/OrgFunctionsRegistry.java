@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.Platform;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.ArtifactContentProvider;
 import ru.runa.gpd.extension.ArtifactRegistry;
+import ru.runa.wfe.commons.TypeConversionUtil;
 
 import com.google.common.collect.Lists;
 
@@ -39,6 +40,7 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
                 try {
                     String className = configElement.getAttribute("className");
                     String label = configElement.getAttribute("label");
+                    boolean canBeUsedForEscalation = TypeConversionUtil.convertTo(boolean.class, configElement.getAttribute("canBeUsedForEscalation"));
                     List<OrgFunctionParameterDefinition> parameters = Lists.newArrayList();
                     IConfigurationElement[] parameterElements = configElement.getChildren();
                     for (IConfigurationElement paramElement : parameterElements) {
@@ -46,7 +48,7 @@ public class OrgFunctionsRegistry extends ArtifactRegistry<OrgFunctionDefinition
                                 paramElement.getAttribute("type"), Boolean.valueOf(paramElement.getAttribute("multiple")));
                         parameters.add(parameterDefinition);
                     }
-                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(className, label, parameters);
+                    OrgFunctionDefinition orgFunctionDefinition = new OrgFunctionDefinition(className, label, parameters, canBeUsedForEscalation);
                     orgFunctionDefinition.checkMultipleParameters();
                     list.add(orgFunctionDefinition);
                 } catch (Exception e) {
