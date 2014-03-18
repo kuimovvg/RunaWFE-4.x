@@ -22,10 +22,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import ru.runa.wfe.audit.TaskEscalationLog;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.logic.RelationSwimlaneInitializer;
@@ -45,29 +45,27 @@ import com.google.common.base.Strings;
 
 public class EscalationActionHandler extends ActionHandlerBase {
     @Autowired
-    @Value(value = "${escalation.enabled}")
-    private boolean escalationEnabled;
-    @Autowired
-    @Value(value = "${escalation.default.orgFunction}")
-    private String defaultOrgFunctionClassName;
-    @Autowired
     private ExecutorDAO executorDAO;
     @Autowired
     private ExecutorLogic executorLogic;
-    private String orgFunctionInitializer;
+    private String hierarchyLoader;
 
     @Override
     public void setConfiguration(String configuration) {
         super.setConfiguration(configuration);
-        this.orgFunctionInitializer = Strings.isNullOrEmpty(configuration) ? defaultOrgFunctionClassName : configuration;
-        if (!RelationSwimlaneInitializer.isValid(orgFunctionInitializer)) {
-            ClassLoaderUtil.instantiate(orgFunctionInitializer);
+        if (Strings.isNullOrEmpty(configuration)) {
+            this.hierarchyLoader = SystemProperties.getEscalationDefaultHierarchyLoader();
+        } else {
+            this.hierarchyLoader = configuration;
+        }
+        if (!RelationSwimlaneInitializer.isValid(hierarchyLoader)) {
+            ClassLoaderUtil.instantiate(hierarchyLoader);
         }
     }
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
-        if (!escalationEnabled) {
+        if (!SystemProperties.isEscalationEnabled()) {
             log.info("Escalation disabled");
             executionContext.setTransientVariable(Timer.STOP_RE_EXECUTION, Boolean.TRUE);
             return;
@@ -113,7 +111,7 @@ public class EscalationActionHandler extends ActionHandlerBase {
             Set<Executor> assignedExecutors = new HashSet<Executor>();
             assignedExecutors.addAll(previousSwimlaneActors);
             for (Actor previousActor : previousSwimlaneActors) {
-                String swimlaneInitializer = orgFunctionInitializer + "(";
+                String swimlaneInitializer = hierarchyLoader + "(";
                 if (RelationSwimlaneInitializer.isValid(swimlaneInitializer)) {
                     swimlaneInitializer += RelationSwimlaneInitializer.RELATION_PARAM_VALUE;
                 }
