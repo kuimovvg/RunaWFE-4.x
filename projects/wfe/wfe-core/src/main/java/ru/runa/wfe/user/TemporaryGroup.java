@@ -2,7 +2,6 @@ package ru.runa.wfe.user;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Transient;
 
 import com.google.common.base.Objects;
 
@@ -31,12 +30,6 @@ public class TemporaryGroup extends Group {
         String nameSuffix = processId + "_" + swimlaneName;
         String description = processId.toString();
         return create(nameSuffix, description);
-    }
-
-    @Transient
-    public String getSwimlaneName() {
-        int beginIndex = (GROUP_PREFIX + "_" + getDescription()).length();
-        return getName().substring(beginIndex);
     }
 
     @Override

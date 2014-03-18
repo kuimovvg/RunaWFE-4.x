@@ -342,7 +342,11 @@ public class Process extends IdentifiableBase {
         for (TemporaryGroup temporaryGroup : groups) {
             try {
                 log.debug("Cleaning " + temporaryGroup);
-                getSwimlane(temporaryGroup.getSwimlaneName()).setExecutor(null);
+                for (Swimlane swimlane : swimlanes) {
+                    if (Objects.equal(temporaryGroup, swimlane.getExecutor())) {
+                        swimlane.setExecutor(null);
+                    }
+                }
                 executorDAO.remove(temporaryGroup);
             } catch (Exception e) {
                 log.error("Unable to delete " + temporaryGroup, e);
