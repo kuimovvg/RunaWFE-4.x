@@ -117,4 +117,12 @@ public class SystemProperties {
         return RESOURCES.getBooleanProperty("variables.autocast.enabled", true);
     }
 
+    public static boolean isEscalationEnabled() {
+        return RESOURCES.getBooleanProperty("escalation.enabled", true);
+    }
+    
+    public static String getEscalationDefaultHierarchyLoader() {
+        return RESOURCES.getStringProperty("escalation.default.hierarchy.loader");
+    }
+
 }

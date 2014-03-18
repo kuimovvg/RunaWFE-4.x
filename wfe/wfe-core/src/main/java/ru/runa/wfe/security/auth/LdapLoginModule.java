@@ -38,10 +38,12 @@ import ru.runa.wfe.user.Actor;
 import com.google.common.collect.Maps;
 
 /**
- * MS Active Directory based login module. Created on 17.06.2005
+ * MS Active Directory based login module. 
+ * @since 2.0
  */
 public class LdapLoginModule extends LoginModuleBase {
     private Hashtable<String, String> env = new Hashtable<String, String>();
+    // Non-ASCII symbols are not allowed here in UTF-8 encoded property files
     @Value(value = "${authentication.domain.name}")
     private String domainName;
     @Value(value = "${authentication.ldap.server.url}")

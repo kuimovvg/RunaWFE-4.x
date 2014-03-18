@@ -54,7 +54,7 @@ public class EscalationGroup extends TemporaryGroup {
     }
 
     public static EscalationGroup create(Process process, Task task, Executor originalExecutor, int escalationLevel) {
-        String identifier = GROUP_PREFIX + "_" + process.getId() + "_" + task.getId();
+        String identifier = GROUP_PREFIX + process.getId() + "_" + task.getId();
         EscalationGroup escalationGroup = new EscalationGroup();
         escalationGroup.setCreateDate(new Date());
         escalationGroup.setName(identifier);
