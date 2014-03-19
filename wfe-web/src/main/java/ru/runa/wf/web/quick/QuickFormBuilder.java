@@ -11,6 +11,7 @@ import ru.runa.wf.web.ftl.FtlFormBuilder;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
+import ru.runa.wfe.var.dto.QuickFormProperty;
 import ru.runa.wfe.var.dto.QuickFormVariable;
 
 import com.google.common.base.Charsets;
@@ -20,8 +21,11 @@ import com.google.common.collect.Maps;
 public class QuickFormBuilder extends FtlFormBuilder {
     private static final String ELEMENT_TAGS = "tags";
     private static final String ATTRIBUTE_NAME = "name";
+    private static final String ATTRIBUTE_VALUE = "value";
     private static final String ELEMENT_TAG = "tag";
     private static final String ELEMENT_PARAM = "param";
+    private static final String ELEMENT_PROPERTIES = "properties";
+    private static final String ELEMENT_PROPERTY = "property";
 
     @Override
     protected String buildForm(IVariableProvider variableProvider) {
@@ -50,16 +54,31 @@ public class QuickFormBuilder extends FtlFormBuilder {
             }
             templateVariables.add(quickFormVariable);
         }
-        String template = processFormTemplate(interaction.getTemplateData(), templateVariables);
+
+        List<QuickFormProperty> templateProperties = new ArrayList<QuickFormProperty>();
+        Element propertiesElement = document.getRootElement().element(ELEMENT_PROPERTIES);
+        if (propertiesElement != null) {
+            List<Element> varPrElementsList = propertiesElement.elements(ELEMENT_PROPERTY);
+            for (Element varElement : varPrElementsList) {
+                QuickFormProperty quickFormGpdProperty = new QuickFormProperty();
+                quickFormGpdProperty.setName(varElement.elementText(ATTRIBUTE_NAME));
+                quickFormGpdProperty.setValue(varElement.elementText(ATTRIBUTE_VALUE));
+                templateProperties.add(quickFormGpdProperty);
+            }
+        }
+
+        String template = processFormTemplate(interaction.getTemplateData(), templateVariables, templateProperties);
         return processFreemarkerTemplate(template, variableProvider);
     }
 
-    private String processFormTemplate(byte[] templateData, List<QuickFormVariable> templateVariables) {
+    private String processFormTemplate(byte[] templateData, List<QuickFormVariable> templateVariables, List<QuickFormProperty> templateProperties) {
         Map<String, Object> map = Maps.newHashMap();
         map.put("variables", templateVariables);
+        for (QuickFormProperty quickFormGpdProperty : templateProperties) {
+            map.put(quickFormGpdProperty.getName(), quickFormGpdProperty.getValue() == null ? "" : quickFormGpdProperty.getValue());
+        }
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
         Preconditions.checkNotNull(templateData, "Template is required");
         return processFreemarkerTemplate(new String(templateData, Charsets.UTF_8), variableProvider);
     }
-
 }
