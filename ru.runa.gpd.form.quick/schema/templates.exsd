@@ -49,6 +49,9 @@
 
    <element name="template">
       <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="parameter"/>
+         </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -71,6 +74,18 @@
             </annotation>
          </attribute>
          <attribute name="enabled" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="parameter">
+      <complexType>
+         <attribute name="name" type="string">
             <annotation>
                <documentation>
                   
