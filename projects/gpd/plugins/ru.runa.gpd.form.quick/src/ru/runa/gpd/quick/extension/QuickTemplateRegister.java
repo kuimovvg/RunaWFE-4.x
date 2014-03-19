@@ -1,6 +1,7 @@
 package ru.runa.gpd.quick.extension;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,10 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.Activator;
+import ru.runa.gpd.extension.Artifact;
 import ru.runa.gpd.extension.ArtifactRegistry;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 public class QuickTemplateRegister extends ArtifactRegistry<QuickTemplateArtifact> {
@@ -45,6 +48,15 @@ public class QuickTemplateRegister extends ArtifactRegistry<QuickTemplateArtifac
                 String label = configElement.getAttribute("label");
                 String fileName = configElement.getAttribute("filename");
                 QuickTemplateArtifact artifact = new QuickTemplateArtifact(enabled, name, label, fileName);
+                if(configElement.getChildren() != null) {
+                	List<Artifact> parameters = new ArrayList<Artifact>();
+                	for(IConfigurationElement parameterConfig : configElement.getChildren()) {
+                		Artifact parameterArtifact = new Artifact();
+                		parameterArtifact.setName(parameterConfig.getAttribute("name"));
+                		parameters.add(parameterArtifact);
+                	}
+                	artifact.setParameters(parameters);
+                }
                 list.add(artifact);
                 templateBundles.put(fileName, bundle);
             }
@@ -74,4 +86,13 @@ public class QuickTemplateRegister extends ArtifactRegistry<QuickTemplateArtifac
         return handlerArtifact != null;
     }
 
+    public QuickTemplateArtifact getArtifactByFileName(String fileName) {
+        for (QuickTemplateArtifact artifact : getAll()) {
+            if (Objects.equal(fileName, artifact.getFileName())) {
+                return artifact;
+            }
+        }
+        
+        return null;
+    }
 }
