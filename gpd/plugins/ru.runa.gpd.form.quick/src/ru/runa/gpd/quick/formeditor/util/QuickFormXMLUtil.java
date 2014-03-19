@@ -19,6 +19,7 @@ import org.osgi.framework.Bundle;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.quick.formeditor.QuickForm;
+import ru.runa.gpd.quick.formeditor.QuickFormGpdProperty;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableUtils;
@@ -30,10 +31,13 @@ import com.google.common.base.Strings;
 public class QuickFormXMLUtil {
     private static final String TEMPLATE_PATH = "/template/";
     public static final String ATTRIBUTE_NAME = "name";
+    public static final String ATTRIBUTE_VALUE = "value";
     public static final String ELEMENT_FORM = "form";
     public static final String ELEMENT_PARAM = "param";
     public static final String ELEMENT_TAG = "tag";
     public static final String ELEMENT_TAGS = "tags";
+    public static final String ELEMENT_PROPERTIES = "properties";
+    public static final String ELEMENT_PROPERTY = "property";
 
     public static String getTemplateFromRegister(Bundle bundle, String templateName) {
         String path = TEMPLATE_PATH + templateName;
@@ -54,6 +58,13 @@ public class QuickFormXMLUtil {
         
         for (QuickFormGpdVariable templatedVariableDef : form.getVariables()) {
             populateQuickFormVariable(tagsElement.addElement(ELEMENT_TAG), templatedVariableDef);
+        }
+        
+        Element propertiesElement = document.getRootElement().addElement(ELEMENT_PROPERTIES);
+        for (QuickFormGpdProperty quickFormGpdProperty : form.getProperties()) {
+        	Element element = propertiesElement.addElement(ELEMENT_PROPERTY);            
+            element.addElement(ATTRIBUTE_NAME).addText(getNotNullValue(quickFormGpdProperty.getName()));
+            element.addElement(ATTRIBUTE_VALUE).addText(getNotNullValue(quickFormGpdProperty.getValue()));
         }
 
         byte[] bytes = XmlUtil.writeXml(document, OutputFormat.createPrettyPrint());
@@ -125,6 +136,18 @@ public class QuickFormXMLUtil {
 
                     quickForm.getVariables().add(templatedVariableDef);
                 }
+                
+                Element propertiesElement = document.getRootElement().element(ELEMENT_PROPERTIES);
+                if(propertiesElement != null) {
+                	List<Element> varPrElementsList = propertiesElement.elements(ELEMENT_PROPERTY);
+                    for (Element varElement : varPrElementsList) {
+                    	QuickFormGpdProperty quickFormGpdProperty = new QuickFormGpdProperty();
+                    	quickFormGpdProperty.setName(varElement.elementText(ATTRIBUTE_NAME));
+                    	quickFormGpdProperty.setValue(varElement.elementText(ATTRIBUTE_VALUE));
+                    	quickForm.getProperties().add(quickFormGpdProperty);
+                    }
+                }
+                
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
