@@ -35,8 +35,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -83,6 +81,7 @@ import ru.runa.gpd.quick.formeditor.util.QuickFormXMLUtil;
 import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
 import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
+import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.util.EditorUtils;
@@ -134,7 +133,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             String subprocessId = quickFormFile.getName().substring(0, quickFormFile.getName().indexOf("."));
             processDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
             Preconditions.checkNotNull(processDefinition, "embedded subpocess");
-        }        
+        }
 
         getSite().getPage().addSelectionListener(this);
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
@@ -166,11 +165,11 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         try {
             byte[] contentBytes = QuickFormXMLUtil.convertQuickFormToXML(definitionFolder, quickForm, formNode.getTemplateFileName());
             InputStream content = new ByteArrayInputStream(contentBytes);
-//            if (!quickFormFile.exists()) {
-//                quickFormFile.create(content, true, null);
-//            } else {
-                quickFormFile.setContents(content, true, true, null);
-//            }
+            // if (!quickFormFile.exists()) {
+            // quickFormFile.create(content, true, null);
+            // } else {
+            quickFormFile.setContents(content, true, true, null);
+            // }
             if (formNode != null) {
                 formNode.setDirty();
             }
@@ -236,21 +235,21 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     String templateHtml = QuickFormXMLUtil.getTemplateFromRegister(bundle, filename);
                     formNode.setTemplateFileName(filename);
                     quickForm.setDelegationConfiguration(templateHtml);
-                    
+
                     quickForm.getProperties().clear();
                     QuickTemplateArtifact quickTemplateArtifact = QuickTemplateRegister.getInstance().getArtifactByFileName(filename);
-                    if(quickTemplateArtifact != null) {
-                    	List<Artifact> parameters = quickTemplateArtifact.getParameters();
-                    	if(parameters != null && parameters.size() > 0) {
-                    		
-                    		for(Artifact parameter : parameters) {
-                    			QuickFormGpdProperty gpdProperty = new QuickFormGpdProperty();
+                    if (quickTemplateArtifact != null) {
+                        List<Artifact> parameters = quickTemplateArtifact.getParameters();
+                        if (parameters != null && parameters.size() > 0) {
+
+                            for (Artifact parameter : parameters) {
+                                QuickFormGpdProperty gpdProperty = new QuickFormGpdProperty();
                                 gpdProperty.setName(parameter.getName());
                                 quickForm.getProperties().add(gpdProperty);
                             }
-                    	}
+                        }
                     }
-                    
+
                     setPropertiesTableInput();
                 }
 
@@ -318,20 +317,20 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                 if (dialog.open() == Window.OK) {
                     setTableInput();
-                    setTableSelection(quickForm.getVariables().get(quickForm.getVariables().size() - 1));                    
+                    setTableSelection(quickForm.getVariables().get(quickForm.getVariables().size() - 1));
                     setDirty(true);
                 }
             }
         });
         addButton(buttonsBar, "editor.button.massadd", new LoggingSelectionAdapter() {
             @Override
-            protected void onSelection(SelectionEvent e) throws Exception {            	
+            protected void onSelection(SelectionEvent e) throws Exception {
                 QuickFormVariabliesToDisplayWizard wizard = new QuickFormVariabliesToDisplayWizard(processDefinition, quickForm.getVariables());
                 CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                 dialog.setPageSize(500, 300);
                 if (dialog.open() == Window.OK) {
-                	setTableInput();
-                	setTableSelection(quickForm.getVariables().get(quickForm.getVariables().size() - 1));                  
+                    setTableInput();
+                    setTableSelection(quickForm.getVariables().get(quickForm.getVariables().size() - 1));
                     setDirty(true);
                 }
             }
@@ -345,11 +344,10 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 if (row == null) {
                     return;
                 }
-                
+
                 for (QuickFormGpdVariable variableDef : quickForm.getVariables()) {
                     if (variableDef.getName().equals(row.getName())) {
-                        QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getVariables(), quickForm.getVariables()
-                                .indexOf(variableDef));
+                        QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getVariables(), quickForm.getVariables().indexOf(variableDef));
                         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                         if (dialog.open() == Window.OK) {
                             setTableInput();
@@ -363,12 +361,12 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         });
         addButton(buttonsBar, "editor.button.delete", new LoggingSelectionAdapter() {
             @SuppressWarnings("unchecked")
-			@Override
+            @Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
                 List<QuickFormGpdVariable> variablesForDelete = selection.toList();
                 quickForm.getVariables().removeAll(variablesForDelete);
-                
+
                 setTableInput();
                 setDirty(true);
             }
@@ -427,7 +425,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         addButton(buttonsBar, "editor.button.show", new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-            	String filename = formNode.getTemplateFileName();
+                String filename = formNode.getTemplateFileName();
 
                 if (!Strings.isNullOrEmpty(filename)) {
                     Bundle bundle = QuickTemplateRegister.getBundle(filename);
@@ -436,8 +434,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     Map<String, Object> variables = new HashMap<String, Object>();
                     variables.put("variables", quickForm.getVariables());
                     variables.put("task", "");
-                    for(QuickFormGpdProperty quickFormGpdProperty : quickForm.getProperties()) {
-                    	variables.put(quickFormGpdProperty.getName(), quickFormGpdProperty.getValue() == null ? "" : quickFormGpdProperty.getValue());
+                    for (QuickFormGpdProperty quickFormGpdProperty : quickForm.getProperties()) {
+                        variables.put(quickFormGpdProperty.getName(), quickFormGpdProperty.getValue() == null ? "" : quickFormGpdProperty.getValue());
                     }
                     MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, null);
                     FormHashModelGpdWrap model = new FormHashModelGpdWrap(null, variableProvider, null);
@@ -448,8 +446,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     variableProvider = new MapDelegableVariableProvider(variables, null);
 
                     for (QuickFormGpdVariable quickFormGpdVariable : quickForm.getVariables()) {
-                    	Variable variable = VariableUtils.getVariableByName(processDefinition, quickFormGpdVariable.getName());
-                        
+                        Variable variable = VariableUtils.getVariableByName(processDefinition, quickFormGpdVariable.getName());
+
                         String defaultValue = PresentationVariableUtils.getPresentationValue(variable.getFormat());
                         Object value = null;
                         if (defaultValue != null) {
@@ -476,46 +474,46 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         addButton(buttonsBar, "editor.button.converting", new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-            	if(StringUtils.isEmpty(formNode.getTemplateFileName())) {
-            		return;
-            	}
-            	
-            	QuickFormConvertor.convertQuickFormToSimple(new ConverterSource() {					
-					@Override
-					public IFile getQuickFormFile() {
-						return quickFormFile;
-					}
-					
-					@Override
-					public QuickForm getQuickForm() {
-						return quickForm;
-					}
-					
-					@Override
-					public ProcessDefinition getProcessDefinition() {
-						return processDefinition;
-					}
-					
-					@Override
-					public FormNode getFormNode() {
-						return formNode;
-					}
-				});
+                if (StringUtils.isEmpty(formNode.getTemplateFileName())) {
+                    return;
+                }
+
+                QuickFormConvertor.convertQuickFormToSimple(new ConverterSource() {
+                    @Override
+                    public IFile getQuickFormFile() {
+                        return quickFormFile;
+                    }
+
+                    @Override
+                    public QuickForm getQuickForm() {
+                        return quickForm;
+                    }
+
+                    @Override
+                    public ProcessDefinition getProcessDefinition() {
+                        return processDefinition;
+                    }
+
+                    @Override
+                    public FormNode getFormNode() {
+                        return formNode;
+                    }
+                });
             }
         });
-        
+
         int dndOperations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
         Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
         tableViewer.addDragSupport(dndOperations, transfers, new MoveVariableDragListener(tableViewer));
         tableViewer.addDropSupport(dndOperations, transfers, new MoveVariableDropListener(tableViewer));
-        
+
         Composite tableParameterComposite = new Composite(composite, SWT.NONE);
         tableParameterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         tableParameterComposite.setLayout(new GridLayout(1, false));
-        
+
         Label labelParameters = new Label(tableParameterComposite, SWT.NONE);
         labelParameters.setText(Messages.getString("editor.paramtable.label"));
-        
+
         propertiesTableViewer = new TableViewer(tableParameterComposite, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         GridData propertiesGridData = new GridData(GridData.FILL_BOTH);
         propertiesGridData.heightHint = 120;
@@ -525,7 +523,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         final Table propertiesTable = propertiesTableViewer.getTable();
         propertiesTable.setHeaderVisible(true);
         propertiesTable.setLinesVisible(true);
-        String[] propertiesColumnNames = new String[] { Messages.getString("editor.paramtable.column1"), Messages.getString("editor.paramtable.column2")};
+        String[] propertiesColumnNames = new String[] { Messages.getString("editor.paramtable.column1"), Messages.getString("editor.paramtable.column2") };
         int[] propertiesColumnWidths = new int[] { 150, 400 };
         int[] propertiesColumnAlignments = new int[] { SWT.LEFT, SWT.LEFT };
         for (int i = 0; i < propertiesColumnNames.length; i++) {
@@ -540,52 +538,58 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         // editing the second column
         final int EDITABLECOLUMN = 1;
 
-        propertiesTable.addSelectionListener(new SelectionAdapter() {
-	        public void widgetSelected(SelectionEvent e) {
-	            Control oldEditor = editor.getEditor();
-	            if (oldEditor != null)
-	            	oldEditor.dispose();
-	
-	            TableItem item = (TableItem) e.item;
-	            if (item == null)
-	              return;
-	
-	            Text newEditor = new Text(propertiesTable, SWT.NONE);
-	            newEditor.setText(item.getText(EDITABLECOLUMN));
-	            newEditor.addModifyListener(new ModifyListener() {
-	            	public void modifyText(ModifyEvent me) {
-	            		Text text = (Text) editor.getEditor();
-	            		editor.getItem().setText(EDITABLECOLUMN, text.getText());
-	            		for(QuickFormGpdProperty quickFormGpdProperty : quickForm.getProperties()) {
-	            			if(quickFormGpdProperty.getName().equals(editor.getItem().getText(0))) {
-	            				quickFormGpdProperty.setValue(text.getText());
-	            				break;
-	            			}
-	            		}
-	            		setDirty(true);
-	            	}
-	            });
-	            List<String> variableNames = processDefinition.getVariableNames(true);
-	            new InsertVariableTextMenuDetectListener(newEditor, variableNames);
-	            
-	            newEditor.selectAll();
-	            newEditor.setFocus();
-	            editor.setEditor(newEditor, item, EDITABLECOLUMN);
-	        }
+        propertiesTable.addSelectionListener(new LoggingSelectionAdapter() {
+
+            @Override
+            protected void onSelection(SelectionEvent e) throws Exception {
+                Control oldEditor = editor.getEditor();
+                if (oldEditor != null) {
+                    oldEditor.dispose();
+                }
+
+                TableItem item = (TableItem) e.item;
+                if (item == null) {
+                    return;
+                }
+
+                Text newEditor = new Text(propertiesTable, SWT.NONE);
+                newEditor.setText(item.getText(EDITABLECOLUMN));
+                newEditor.addModifyListener(new LoggingModifyTextAdapter() {
+
+                    @Override
+                    protected void onTextChanged(ModifyEvent e) throws Exception {
+                        Text text = (Text) editor.getEditor();
+                        editor.getItem().setText(EDITABLECOLUMN, text.getText());
+                        for (QuickFormGpdProperty quickFormGpdProperty : quickForm.getProperties()) {
+                            if (quickFormGpdProperty.getName().equals(editor.getItem().getText(0))) {
+                                quickFormGpdProperty.setValue(text.getText());
+                                break;
+                            }
+                        }
+                        setDirty(true);
+                    }
+                });
+                List<String> variableNames = processDefinition.getVariableNames(true);
+                new InsertVariableTextMenuDetectListener(newEditor, variableNames);
+
+                newEditor.selectAll();
+                newEditor.setFocus();
+                editor.setEditor(newEditor, item, EDITABLECOLUMN);
+            }
         });
-        
+
         setPropertiesTableInput();
-        		
+
         composite.layout(true, true);
     }
 
     private static class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
         @Override
-        public String getColumnText(Object element, int index) {            
+        public String getColumnText(Object element, int index) {
             QuickFormGpdVariable variableDef = (QuickFormGpdVariable) element;
             switch (index) {
             case 0:
-            	if (MethodTag.hasTag(variableDef.getTagName())) {
+                if (MethodTag.hasTag(variableDef.getTagName())) {
                     MethodTag tag = MethodTag.getTagNotNull(variableDef.getTagName());
                     return tag.name;
                 }
@@ -606,17 +610,17 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             return null;
         }
     }
-    
+
     private static class PropertyTableLabelProvider extends LabelProvider implements ITableLabelProvider {
         @Override
         public String getColumnText(Object element, int index) {
-        	QuickFormGpdProperty propertyDef = (QuickFormGpdProperty) element;
-        	switch (index) {
+            QuickFormGpdProperty propertyDef = (QuickFormGpdProperty) element;
+            switch (index) {
             case 0:
-            	return propertyDef.getName();
+                return propertyDef.getName();
             case 1:
-            	return propertyDef.getValue();
-        	}
+                return propertyDef.getValue();
+            }
             return "";
         }
 
@@ -626,7 +630,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         }
     }
 
-    protected Button addButton(Composite parent, String buttonKey, SelectionAdapter selectionListener) {
+    private Button addButton(Composite parent, String buttonKey, LoggingSelectionAdapter selectionListener) {
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         Button button = new Button(parent, SWT.PUSH);
         button.setText(Messages.getString(buttonKey));
@@ -658,14 +662,14 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
     private void setTableInput() {
         tableViewer.setInput(quickForm.getVariables());
     }
-    
+
     private void setPropertiesTableInput() {
         propertiesTableViewer.setInput(quickForm.getProperties());
     }
-    
+
     private void setTableSelection(QuickFormGpdVariable variableDef) {
-    	IStructuredSelection selection = new StructuredSelection(variableDef);
-        tableViewer.setSelection(selection);   
+        IStructuredSelection selection = new StructuredSelection(variableDef);
+        tableViewer.setSelection(selection);
     }
 
     @Override
@@ -686,7 +690,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
         super.dispose();
     }
-    
+
     private class MoveVariableDragListener extends DragSourceAdapter {
         private final TableViewer viewer;
 
@@ -703,7 +707,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             }
         }
     }
-    
+
     private class MoveVariableDropListener extends ViewerDropAdapter {
         public MoveVariableDropListener(Viewer viewer) {
             super(viewer);
@@ -711,24 +715,24 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 
         @Override
         public void drop(DropTargetEvent event) {
-        	QuickFormGpdVariable variable1 = null;
-        	QuickFormGpdVariable beforeVariable = null;
-        	QuickFormGpdVariable targetElement = (QuickFormGpdVariable) determineTarget(event);
-        	for(QuickFormGpdVariable variable : quickForm.getVariables()) {
-        		if(variable.getName().equals(event.data)) {
-        			variable1 = variable;
-        			continue;
-        		}
-        		if(variable.getName().equals(targetElement.getName())) {
-        			beforeVariable = variable;
-        			continue;
-        		}
-        	}
-        	quickForm.changeChildIndex(variable1, beforeVariable);   
-        	setTableInput();
+            QuickFormGpdVariable variable1 = null;
+            QuickFormGpdVariable beforeVariable = null;
+            QuickFormGpdVariable targetElement = (QuickFormGpdVariable) determineTarget(event);
+            for (QuickFormGpdVariable variable : quickForm.getVariables()) {
+                if (variable.getName().equals(event.data)) {
+                    variable1 = variable;
+                    continue;
+                }
+                if (variable.getName().equals(targetElement.getName())) {
+                    beforeVariable = variable;
+                    continue;
+                }
+            }
+            quickForm.changeChildIndex(variable1, beforeVariable);
+            setTableInput();
             setDirty(true);
             super.drop(event);
-            
+
         }
 
         @Override
