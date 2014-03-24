@@ -2,6 +2,7 @@ package ru.runa.gpd.quick.formeditor;
 
 public class QuickFormGpdProperty {
     private String name;
+    private String label;
     private String value;
 
     public String getName() {
@@ -19,4 +20,12 @@ public class QuickFormGpdProperty {
     public void setValue(String value) {
         this.value = value;
     }
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}    
 }
