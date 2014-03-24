@@ -71,7 +71,8 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String MULTI_INSTANCE = "multiInstance";
     private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
-    private static final String DEFAULT_TASK_TIMOUT = "default-task-timeout";
+    private static final String DEFAULT_TASK_DEADLINE = "defaultTaskDeadline";
+    private static final String TASK_DEADLINE = "taskDeadline";
     private static final String USER_TASK = "userTask";
     private static final String START_EVENT = "startEvent";
     private static final String LANE_SET = "laneSet";
@@ -121,7 +122,7 @@ public class BpmnSerializer extends ProcessSerializer {
         process.addAttribute(NAME, definition.getName());
         Map<String, String> processProperties = Maps.newHashMap();
         if (definition.getDefaultTaskTimeoutDelay().hasDuration()) {
-            processProperties.put(DEFAULT_TASK_TIMOUT, definition.getDefaultTaskTimeoutDelay().getDuration());
+            processProperties.put(DEFAULT_TASK_DEADLINE, definition.getDefaultTaskTimeoutDelay().getDuration());
         }
         if (definition.getSwimlaneDisplayMode() != null) {
             processProperties.put(SHOW_SWIMLANE, definition.getSwimlaneDisplayMode().name());
@@ -272,6 +273,10 @@ public class BpmnSerializer extends ProcessSerializer {
             if (taskState.isAsync()) {
                 properties.put(ASYNC, Boolean.TRUE.toString());
                 properties.put(ASYNC_COMPLETION_MODE, taskState.getAsyncCompletionMode().name());
+            }
+            String taskDeadline = taskState.getTimeOutDueDate();
+            if (taskDeadline != null) {
+                properties.put(TASK_DEADLINE, taskDeadline);
             }
         }
         if (swimlanedNode instanceof TaskState) {
@@ -472,7 +477,7 @@ public class BpmnSerializer extends ProcessSerializer {
         Element process = definitionsElement.element(PROCESS);
         Map<String, String> processProperties = parseExtensionProperties(process);
         init(definition, process, processProperties);
-        String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMOUT);
+        String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_DEADLINE);
         if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
             definition.setDefaultTaskTimeoutDelay(new Duration(defaultTaskTimeout));
         }
@@ -538,6 +543,10 @@ public class BpmnSerializer extends ProcessSerializer {
                 String asyncCompletionMode = properties.get(ASYNC_COMPLETION_MODE);
                 if (asyncCompletionMode != null) {
                     state.setAsyncCompletionMode(AsyncCompletionMode.valueOf(asyncCompletionMode));
+                }
+                String taskDeadline = properties.get(TASK_DEADLINE);
+                if (taskDeadline != null) {
+                    state.setTimeOutDelay(new Duration(taskDeadline));
                 }
             }
         }
