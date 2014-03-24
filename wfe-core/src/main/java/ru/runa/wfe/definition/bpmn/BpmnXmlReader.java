@@ -73,7 +73,8 @@ public class BpmnXmlReader {
     private static final String MULTI_INSTANCE = "multiInstance";
     private static final String EXCLUSIVE_GATEWAY = "exclusiveGateway";
     private static final String PARALLEL_GATEWAY = "parallelGateway";
-    private static final String DEFAULT_TASK_TIMEOUT = "default-task-timeout";
+    private static final String DEFAULT_TASK_DEADLINE = "defaultTaskDeadline";
+    private static final String TASK_DEADLINE = "taskDeadline";
     private static final String USER_TASK = "userTask";
     private static final String START_EVENT = "startEvent";
     private static final String LANE_SET = "laneSet";
@@ -123,6 +124,8 @@ public class BpmnXmlReader {
         nodeTypes.put(PARALLEL_GATEWAY, ParallelGateway.class);
         nodeTypes.put(TEXT_ANNOTATION, TextAnnotation.class);
     }
+    
+    private String defaultTaskDeadline;
 
     public BpmnXmlReader(Document document) {
         this.document = document;
@@ -135,11 +138,7 @@ public class BpmnXmlReader {
             processDefinition.setName(process.attributeValue(NAME));
             Map<String, String> processProperties = parseExtensionProperties(process);
             processDefinition.setDescription(processProperties.get(DOCUMENTATION));
-            String defaultTaskTimeout = processProperties.get(DEFAULT_TASK_TIMEOUT);
-            if (!Strings.isNullOrEmpty(defaultTaskTimeout)) {
-                // processDefinition.setDefaultTaskTimeoutDelay(new
-                // Delay(defaultTaskTimeout));
-            }
+            defaultTaskDeadline = processProperties.get(DEFAULT_TASK_DEADLINE);
             String swimlaneDisplayModeName = processProperties.get(SHOW_WIMLANE);
             if (swimlaneDisplayModeName != null) {
                 // definition.setSwimlaneDisplayMode(SwimlaneDisplayMode.valueOf(swimlaneDisplayModeName));
@@ -448,6 +447,11 @@ public class BpmnXmlReader {
         }
         if (properties.containsKey(IGNORE_SUBSTITUTION_RULES)) {
             taskDefinition.setReassignSwimlane(Boolean.parseBoolean(properties.get(IGNORE_SUBSTITUTION_RULES)));
+        }
+        if (properties.containsKey(TASK_DEADLINE)) {
+            taskDefinition.setDeadlineDuration(properties.get(TASK_DEADLINE));
+        } else {
+            taskDefinition.setDeadlineDuration(defaultTaskDeadline);
         }
     }
 
