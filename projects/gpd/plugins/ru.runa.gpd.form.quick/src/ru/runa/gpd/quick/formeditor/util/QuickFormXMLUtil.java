@@ -16,8 +16,11 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.osgi.framework.Bundle;
 
+import ru.runa.gpd.extension.Artifact;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
+import ru.runa.gpd.quick.extension.QuickTemplateRegister;
 import ru.runa.gpd.quick.formeditor.QuickForm;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdProperty;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
@@ -144,6 +147,17 @@ public class QuickFormXMLUtil {
                     	QuickFormGpdProperty quickFormGpdProperty = new QuickFormGpdProperty();
                     	quickFormGpdProperty.setName(varElement.elementText(ATTRIBUTE_NAME));
                     	quickFormGpdProperty.setValue(varElement.elementText(ATTRIBUTE_VALUE));
+                    	for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
+                        	if(templateFileName != null && templateFileName.equals(artifact.getFileName())) {
+                        		for(Artifact parameter : artifact.getParameters()) {
+                        			if (quickFormGpdProperty.getName() != null && quickFormGpdProperty.getName().equalsIgnoreCase(parameter.getName())) {
+                        				quickFormGpdProperty.setLabel(parameter.getLabel());
+                                        break;
+                                    }
+                        		}
+                        		break;
+                        	}                
+                        }
                     	quickForm.getProperties().add(quickFormGpdProperty);
                     }
                 }

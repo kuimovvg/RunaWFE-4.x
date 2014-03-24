@@ -245,6 +245,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                             for (Artifact parameter : parameters) {
                                 QuickFormGpdProperty gpdProperty = new QuickFormGpdProperty();
                                 gpdProperty.setName(parameter.getName());
+                                gpdProperty.setLabel(parameter.getLabel());
                                 quickForm.getProperties().add(gpdProperty);
                             }
                         }
@@ -561,7 +562,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                         Text text = (Text) editor.getEditor();
                         editor.getItem().setText(EDITABLECOLUMN, text.getText());
                         for (QuickFormGpdProperty quickFormGpdProperty : quickForm.getProperties()) {
-                            if (quickFormGpdProperty.getName().equals(editor.getItem().getText(0))) {
+                            if (quickFormGpdProperty.getLabel().equals(editor.getItem().getText(0))) {
                                 quickFormGpdProperty.setValue(text.getText());
                                 break;
                             }
@@ -617,7 +618,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             QuickFormGpdProperty propertyDef = (QuickFormGpdProperty) element;
             switch (index) {
             case 0:
-                return propertyDef.getName();
+            	return propertyDef.getLabel();
             case 1:
                 return propertyDef.getValue();
             }

@@ -48,7 +48,7 @@
             filename="table2ColumnsLayout.ftl.template"
             label="%template.table2ColumnsLayout"
             name="table2ColumnsLayout">
-            <parameter name="Title" />
+            <parameter name="Title" label="%parameter.title"/>
       </template>
       <template
             enabled="true"
