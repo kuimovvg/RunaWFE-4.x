@@ -53,6 +53,7 @@ public class QuickTemplateRegister extends ArtifactRegistry<QuickTemplateArtifac
                 	for(IConfigurationElement parameterConfig : configElement.getChildren()) {
                 		Artifact parameterArtifact = new Artifact();
                 		parameterArtifact.setName(parameterConfig.getAttribute("name"));
+                		parameterArtifact.setLabel(parameterConfig.getAttribute("label"));
                 		parameters.add(parameterArtifact);
                 	}
                 	artifact.setParameters(parameters);
