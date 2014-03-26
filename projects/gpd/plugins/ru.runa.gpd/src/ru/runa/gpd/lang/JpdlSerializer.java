@@ -45,6 +45,7 @@ import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.util.MultiinstanceParameters;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
@@ -89,7 +90,6 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String SEND_MESSAGE = "send-message";
     private static final String RECEIVE_MESSAGE = "receive-message";
     private static final String ACTION_NODE = "node";
-    private static final String TIMER_GLOBAL = "__GLOBAL";
     private static final String TIMER_ESCALATION = "__ESCALATION";
     private static final String END_TOKEN = "end-token-state";
     private static final String MULTI_TASK_NODE = "multi-task-node";
@@ -574,8 +574,6 @@ public class JpdlSerializer extends ProcessSerializer {
                         if (!Strings.isNullOrEmpty(dueDate)) {
                             ((TaskState) state).setEscalationDelay(new Duration(dueDate));
                         }
-                    } else if (TIMER_GLOBAL.equals(nameTimer) && !Strings.isNullOrEmpty(dueDate)) {
-                        definition.setTimeOutDelay(new Duration(dueDate));
                     } else {
                         if (state instanceof TaskState) {
                             Timer timer = new Timer();
@@ -598,9 +596,7 @@ public class JpdlSerializer extends ProcessSerializer {
                             setDelegableClassName(timerAction, aa.attributeValue(CLASS));
                             timerAction.setDelegationConfiguration(aa.getTextTrim());
                             timerAction.setRepeatDuration(stateNodeChild.attributeValue(REPEAT));
-                            if (TIMER_GLOBAL.equals(nameTimer)) {
-                                //definition.setTimeOutAction(timerAction);
-                            } else if (TIMER_ESCALATION.equals(nameTimer)) {
+                            if (TIMER_ESCALATION.equals(nameTimer)) {
                                 ((TaskState) state).setEscalationAction(timerAction);
                             } else {
                                 ((ITimed) state).getTimer().setAction(timerAction);
@@ -669,24 +665,25 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             subprocess.setVariableMappings(variablesList);
         }
-        List<Element> multiInstanceStates = root.elements(MULTIINSTANCE_STATE);
-        for (Element node : multiInstanceStates) {
-            MultiSubprocess multiInstance = create(node, definition);
-            List<VariableMapping> variablesList = new ArrayList<VariableMapping>();
+        List<Element> multiSubprocessStates = root.elements(MULTIINSTANCE_STATE);
+        for (Element node : multiSubprocessStates) {
+            MultiSubprocess multiSubprocess = create(node, definition);
+            List<VariableMapping> mappings = new ArrayList<VariableMapping>();
             List<Element> nodeList = node.elements();
             for (Element childNode : nodeList) {
                 if (SUB_PROCESS.equals(childNode.getName())) {
-                    multiInstance.setSubProcessName(childNode.attributeValue(NAME));
+                    multiSubprocess.setSubProcessName(childNode.attributeValue(NAME));
                 }
                 if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
                     variable.setProcessVariableName(childNode.attributeValue(NAME));
                     variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
                     variable.setUsage(childNode.attributeValue(ACCESS));
-                    variablesList.add(variable);
+                    mappings.add(variable);
                 }
             }
-            multiInstance.setVariableMappings(variablesList);
+            multiSubprocess.setVariableMappings(mappings);
+            MultiinstanceParameters.convertBackCompatible(multiSubprocess);
         }
         List<Element> sendMessageNodes = root.elements(SEND_MESSAGE);
         for (Element node : sendMessageNodes) {

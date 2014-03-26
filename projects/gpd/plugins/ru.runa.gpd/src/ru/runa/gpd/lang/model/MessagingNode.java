@@ -34,7 +34,7 @@ public class MessagingNode extends Node implements Active {
         int selectorRulesCount = 0;
         List<String> variableNames = getProcessDefinition().getVariableNames(true);
         for (VariableMapping mapping : variableMappings) {
-            if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+            if (mapping.isPropertySelector()) {
                 selectorRulesCount++;
                 if (SELECTOR_SPECIAL_NAMES.contains(mapping.getSubprocessVariableName())) {
                     continue;

@@ -35,7 +35,7 @@ public class SubprocessDefinition extends ProcessDefinition {
     protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new PropertyDescriptor(PROPERTY_DEFAULT_TASK_DURATION, Localization.getString("default.task.duedate")));
+        list.add(new PropertyDescriptor(PROPERTY_TASK_TIMEOUT_DELAY, Localization.getString("default.task.duedate")));
         list.add(new PropertyDescriptor(PROPERTY_ACCESS_TYPE, Localization.getString("ProcessDefinition.property.accessType")));
         return list;
     }
@@ -149,15 +149,6 @@ public class SubprocessDefinition extends ProcessDefinition {
             return;
         }
         super.removeChild(child);
-    }
-
-    @Override
-    public Duration getTimeOutDelay() {
-        return getParent().getTimeOutDelay();
-    }
-
-    @Override
-    public void setTimeOutDelay(Duration duration) {
     }
 
     @Override

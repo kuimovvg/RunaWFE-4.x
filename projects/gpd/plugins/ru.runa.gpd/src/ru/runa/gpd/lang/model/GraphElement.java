@@ -159,7 +159,7 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
         }
         childs.remove(child);
         firePropertyChange(NODE_REMOVED, child, null);
-        firePropertyChange(PROPERTY_CHILDS_CHANGED, null, null);
+        firePropertyChange(PROPERTY_CHILDS_CHANGED, null, childs);
         if (child.delegatedListener != null) {
             child.removePropertyChangeListener(child.delegatedListener);
         }
@@ -191,14 +191,16 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
 
     public void swapChilds(GraphElement child1, GraphElement child2) {
         Collections.swap(childs, childs.indexOf(child1), childs.indexOf(child2));
-        firePropertyChange(PROPERTY_CHILDS_CHANGED, null, null);
+        firePropertyChange(PROPERTY_CHILDS_CHANGED, null, childs);
     }
 
     public void changeChildIndex(GraphElement child, GraphElement insertBefore) {
         if (insertBefore != null && child != null) {
+            int old = childs.indexOf(child);
             childs.remove(child);
-            childs.add(childs.indexOf(insertBefore), child);
-            firePropertyChange(PROPERTY_CHILDS_CHANGED, null, null);
+            int before = childs.indexOf(insertBefore);
+            childs.add(before, child);
+            firePropertyChange(PROPERTY_CHILDS_CHANGED, old, before + 1);
         }
     }
 

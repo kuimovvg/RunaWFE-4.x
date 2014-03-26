@@ -12,7 +12,6 @@ public interface PropertyNames {
     public static final String PROPERTY_MINIMAZED_VIEW = "minimazedView";
     public static final String PROPERTY_FORM_FILE = "formFile";
     public static final String PROPERTY_LANGUAGE = "language";
-    public static final String PROPERTY_DEFAULT_TASK_DURATION = "defaultTaskDuration";
     public static final String PROPERTY_FORM_VALIDATION_FILE = "validation";
     public static final String PROPERTY_FORM_JS_VALIDATION = "jsValidation";
     public static final String PROPERTY_FORM_SCRIPT_FILE = "script";
@@ -42,7 +41,7 @@ public interface PropertyNames {
     public static final String PROPERTY_SHOW_ACTIONS = "showActions";
     public static final String PROPERTY_SHOW_GRID = "showGrid";
     public static final String PROPERTY_DIRTY = "dirty";
-    public static final String PROPERTY_TIMEOUT_DELAY = "timeOutDelay";
+    public static final String PROPERTY_TASK_TIMEOUT_DELAY = "taskTimeOutDelay";
     public static final String PROPERTY_ASYNC = "async";
     public static final String PROPERTY_ASYNC_COMPLETION_MODE = "asyncCompletionMode";
     public static final String PROPERTY_TASK_EXECUTION_MODE = "taskExecutionMode";

@@ -22,18 +22,9 @@ import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -80,9 +71,11 @@ import ru.runa.gpd.quick.formeditor.util.QuickFormConvertor.ConverterSource;
 import ru.runa.gpd.quick.formeditor.util.QuickFormXMLUtil;
 import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
 import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
+import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
@@ -503,10 +496,23 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             }
         });
 
-        int dndOperations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
-        Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
-        tableViewer.addDragSupport(dndOperations, transfers, new MoveVariableDragListener(tableViewer));
-        tableViewer.addDropSupport(dndOperations, transfers, new MoveVariableDropListener(tableViewer));
+        TableViewerLocalDragAndDropSupport.enable(tableViewer, new DragAndDropAdapter<QuickFormGpdVariable>() {
+
+            @Override
+            public void onDropElement(QuickFormGpdVariable beforeElement, QuickFormGpdVariable element) {
+                if (quickForm.getVariables().remove(element)) {
+                    int index = quickForm.getVariables().indexOf(beforeElement);
+                    quickForm.getVariables().add(index, element);
+                }
+            }
+            
+            @Override
+            public void onDrop(QuickFormGpdVariable beforeElement, List<QuickFormGpdVariable> elements) {
+                super.onDrop(beforeElement, elements);
+                setTableInput();
+                setDirty(true);
+            }
+        });
 
         Composite tableParameterComposite = new Composite(composite, SWT.NONE);
         tableParameterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -692,58 +698,4 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         super.dispose();
     }
 
-    private class MoveVariableDragListener extends DragSourceAdapter {
-        private final TableViewer viewer;
-
-        public MoveVariableDragListener(TableViewer viewer) {
-            this.viewer = viewer;
-        }
-
-        @Override
-        public void dragSetData(DragSourceEvent event) {
-            IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-            QuickFormGpdVariable firstElement = (QuickFormGpdVariable) selection.getFirstElement();
-            if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-                event.data = firstElement.getName();
-            }
-        }
-    }
-
-    private class MoveVariableDropListener extends ViewerDropAdapter {
-        public MoveVariableDropListener(Viewer viewer) {
-            super(viewer);
-        }
-
-        @Override
-        public void drop(DropTargetEvent event) {
-            QuickFormGpdVariable variable1 = null;
-            QuickFormGpdVariable beforeVariable = null;
-            QuickFormGpdVariable targetElement = (QuickFormGpdVariable) determineTarget(event);
-            for (QuickFormGpdVariable variable : quickForm.getVariables()) {
-                if (variable.getName().equals(event.data)) {
-                    variable1 = variable;
-                    continue;
-                }
-                if (variable.getName().equals(targetElement.getName())) {
-                    beforeVariable = variable;
-                    continue;
-                }
-            }
-            quickForm.changeChildIndex(variable1, beforeVariable);
-            setTableInput();
-            setDirty(true);
-            super.drop(event);
-
-        }
-
-        @Override
-        public boolean performDrop(Object data) {
-            return false;
-        }
-
-        @Override
-        public boolean validateDrop(Object target, int operation, TransferData transferType) {
-            return true;
-        }
-    }
 }

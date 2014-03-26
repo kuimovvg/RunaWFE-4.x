@@ -41,7 +41,7 @@ public class Subprocess extends Node implements Active {
             return;
         }
         for (VariableMapping mapping : variableMappings) {
-            if (VariableMapping.USAGE_MULTIINSTANCE_VARS.equals(mapping.getUsage())) {
+            if (mapping.isText() || mapping.isMultiinstanceLinkByRelation()) {
                 continue;
             }
             Variable processVariable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getProcessVariableName());
@@ -142,15 +142,12 @@ public class Subprocess extends Node implements Active {
     public List<Variable> getUsedVariables(IFolder processFolder) {
         List<Variable> result = super.getUsedVariables(processFolder);
         for (VariableMapping mapping : getVariableMappings()) {
+            if (mapping.isText()) {
+                continue;
+            }
             Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getProcessVariableName());
             if (variable != null) {
                 result.add(variable);
-            }
-            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName())) {
-                variable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getSubprocessVariableName());
-                if (variable != null) {
-                    result.add(variable);
-                }
             }
         }
         return result;

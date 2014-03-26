@@ -20,7 +20,7 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
         for (VariableMapping mapping : element.getVariableMappings()) {
-            if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+            if (mapping.isPropertySelector()) {
                 if (mapping.getSubprocessVariableName().equals(VariableUtils.wrapVariableName(oldVariable.getName()))) {
                     mappingsToChange.add(mapping);
                 }
@@ -48,7 +48,7 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
         @Override
         public Change perform(IProgressMonitor pm) throws CoreException {
             for (VariableMapping mapping : mappingsToChange) {
-                if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+                if (mapping.isPropertySelector()) {
                     mapping.setSubprocessVariableName(VariableUtils.wrapVariableName(replacementVariableName));
                 } else {
                     mapping.setProcessVariableName(replacementVariableName);
@@ -62,7 +62,7 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
             StringBuffer buffer = new StringBuffer();
             for (VariableMapping mapping : mappingsToChange) {
                 buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"");
-                if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+                if (mapping.isPropertySelector()) {
                     buffer.append(mapping.getProcessVariableName()).append("\" name=\"").append(VariableUtils.wrapVariableName(variableName));
                 } else {
                     buffer.append(variableName).append("\" name=\"").append(mapping.getSubprocessVariableName());

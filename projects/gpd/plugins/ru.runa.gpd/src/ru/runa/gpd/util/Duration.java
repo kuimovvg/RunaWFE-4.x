@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Objects;
+
 import ru.runa.gpd.Localization;
 
 public class Duration {
@@ -117,6 +119,17 @@ public class Duration {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hashCode(variableName, delay, unit);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        Duration d = (Duration) obj;
+        return Objects.equal(variableName, d.variableName) && Objects.equal(delay, d.delay) && Objects.equal(unit, d.unit);
+    }
+    
+    @Override
     public String toString() {
         if (!hasDuration()) {
             return NO_DELAY_MESSAGE;
@@ -150,7 +163,7 @@ public class Duration {
             this.value = value;
             this.label = Localization.getString("unit." + value.replaceAll(" ", ""));
         }
-
+        
         @Override
         public String toString() {
             return label;

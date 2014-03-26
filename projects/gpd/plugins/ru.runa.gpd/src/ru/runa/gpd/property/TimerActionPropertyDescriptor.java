@@ -30,7 +30,7 @@ public class TimerActionPropertyDescriptor extends PropertyDescriptor {
 
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
-            TimerActionEditDialog dialog = new TimerActionEditDialog(timer.getAction());
+            TimerActionEditDialog dialog = new TimerActionEditDialog(timer.getProcessDefinition(), timer.getAction());
             return dialog.openDialog();
         }
     }
