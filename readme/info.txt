@@ -1,2 +1,0 @@
-MS Visual Studio 2010
-gsoap 2.8
