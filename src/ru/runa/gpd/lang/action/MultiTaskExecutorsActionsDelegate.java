@@ -17,7 +17,6 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
-import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.base.Objects;
 
@@ -70,7 +69,7 @@ public class MultiTaskExecutorsActionsDelegate extends BaseModelDropDownActionDe
 
     private void createVariable() {
         Variable typedVariable = new Variable();
-        typedVariable.setFormat(ListFormat.class.getName());
+        typedVariable.setFormat("ru.runa.wfe.var.format.ListFormat(ru.runa.wfe.var.format.ExecutorFormat)");
         VariableWizard wizard = new VariableWizard(currentDefinition, typedVariable, true, false);
         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
         if (dialog.open() == Window.OK) {

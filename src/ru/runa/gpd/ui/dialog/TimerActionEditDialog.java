@@ -20,6 +20,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.TimerAction;
 import ru.runa.gpd.util.Duration;
 
@@ -33,10 +34,10 @@ public class TimerActionEditDialog extends Dialog {
     protected Text repeatField;
     protected boolean deleteButtonEnabled;
 
-    public TimerActionEditDialog(TimerAction timerAction) {
+    public TimerActionEditDialog(ProcessDefinition processDefinition, TimerAction timerAction) {
         super(Display.getCurrent().getActiveShell());
         this.sourceTimerAction = timerAction;
-        editableTimerAction = timerAction.getCopy(sourceTimerAction.getProcessDefinition());
+        editableTimerAction = sourceTimerAction != null ? timerAction.getCopy(processDefinition) : new TimerAction(processDefinition);
         deleteButtonEnabled = timerAction != null;
     }
 

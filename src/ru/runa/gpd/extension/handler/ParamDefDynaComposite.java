@@ -13,7 +13,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -27,6 +26,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.EditPropertyDialog;
 
@@ -105,9 +105,10 @@ public class ParamDefDynaComposite extends ParamDefComposite {
         tableViewer.setInput(input);
     }
 
-    private class AddSelectionAdapter extends SelectionAdapter {
+    private class AddSelectionAdapter extends LoggingSelectionAdapter {
+
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             EditPropertyDialog dialog = new EditPropertyDialog(Display.getCurrent().getActiveShell(), false);
             if (dialog.open() == IDialogConstants.OK_ID) {
                 aProperties.put(dialog.getName(), dialog.getValue());
@@ -116,9 +117,10 @@ public class ParamDefDynaComposite extends ParamDefComposite {
         }
     }
 
-    private class EditSelectionAdapter extends SelectionAdapter {
+    private class EditSelectionAdapter extends LoggingSelectionAdapter {
+
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             String[] data = (String[]) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
             EditPropertyDialog dialog = new EditPropertyDialog(Display.getCurrent().getActiveShell(), true);
             dialog.setName(data[0]);
@@ -130,9 +132,10 @@ public class ParamDefDynaComposite extends ParamDefComposite {
         }
     }
 
-    private class DeleteSelectionAdapter extends SelectionAdapter {
+    private class DeleteSelectionAdapter extends LoggingSelectionAdapter {
+
         @Override
-        public void widgetSelected(SelectionEvent e) {
+        protected void onSelection(SelectionEvent e) throws Exception {
             String[] data = (String[]) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
             aProperties.remove(data[0]);
             setTableInput();

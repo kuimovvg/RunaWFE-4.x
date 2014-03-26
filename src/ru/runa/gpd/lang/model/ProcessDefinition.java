@@ -35,7 +35,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
-public class ProcessDefinition extends NamedGraphElement implements Active, Describable, ITimeOut, VariableContainer {
+public class ProcessDefinition extends NamedGraphElement implements Active, Describable, VariableContainer {
     private Language language;
     private Dimension dimension;
     private final SwimlaneGUIConfiguration swimlaneGUIConfiguration = new SwimlaneGUIConfiguration();
@@ -43,7 +43,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private boolean showActions;
     private boolean showGrid;
     private Duration defaultTaskTimeoutDelay = new Duration();
-    private Duration timeOutDelay = new Duration();
     private boolean invalid;
     private int nextNodeIdCounter;
     private SwimlaneDisplayMode swimlaneDisplayMode = SwimlaneDisplayMode.none;
@@ -115,8 +114,9 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     public void setDefaultTaskTimeoutDelay(Duration defaultTaskTimeoutDelay) {
+        Duration old = this.defaultTaskTimeoutDelay;
         this.defaultTaskTimeoutDelay = defaultTaskTimeoutDelay;
-        firePropertyChange(PROPERTY_TIMEOUT_DELAY, null, defaultTaskTimeoutDelay);
+        firePropertyChange(PROPERTY_TASK_TIMEOUT_DELAY, old, defaultTaskTimeoutDelay);
     }
 
     public boolean isShowActions() {
@@ -367,7 +367,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_DEFAULT_TASK_DURATION, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.duedate")));
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_TIMEOUT_DELAY, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.duedate")));
         String[] array = { 
                 Localization.getString("ProcessDefinition.property.accessType.Process"), 
                 Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
@@ -379,14 +379,11 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public Object getPropertyValue(Object id) {
         if (PROPERTY_LANGUAGE.equals(id)) {
             return language;
-        } else if (PROPERTY_DEFAULT_TASK_DURATION.equals(id)) {
+        } else if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
             if (defaultTaskTimeoutDelay.hasDuration()) {
                 return defaultTaskTimeoutDelay;
             }
             return "";
-        }
-        if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
-            return timeOutDelay;
         }
         if (PROPERTY_ACCESS_TYPE.equals(id)) {
             return accessType.ordinal();
@@ -396,15 +393,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        if (PROPERTY_DEFAULT_TASK_DURATION.equals(id)) {
+        if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
             setDefaultTaskTimeoutDelay((Duration) value);
-            firePropertyChange(PROPERTY_DEFAULT_TASK_DURATION, null, null);
-        } else if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
-            if (value == null) {
-                // ignore, edit was canceled
-                return;
-            }
-            setTimeOutDelay((Duration) value);
         } else if (PROPERTY_ACCESS_TYPE.equals(id)) {
             int i = ((Integer) value).intValue();
             setAccessType(ProcessDefinitionAccessType.values()[i]);
@@ -416,16 +406,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     @Override
     public Image getEntryImage() {
         return SharedImages.getImage("icons/process.gif");
-    }
-
-    @Override
-    public Duration getTimeOutDelay() {
-        return timeOutDelay;
-    }
-
-    @Override
-    public void setTimeOutDelay(Duration duration) {
-        this.timeOutDelay = duration;
     }
     
     public List<VariableUserType> getVariableUserTypes() {
