@@ -27,12 +27,14 @@ import com.google.common.base.Objects;
 
 public class VariableMapping implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    public static final String USAGE_READ = "read";
-    public static final String USAGE_WRITE = "write";
-    public static final String USAGE_MULTIINSTANCE_LINK = "multiinstancelink";
-    public static final String USAGE_MULTIINSTANCE_VARS = "multiinstance-vars";
-    public static final String USAGE_SELECTOR = "selector";
+    private static final String USAGE_READ = "read";
+    private static final String USAGE_WRITE = "write";
+    private static final String USAGE_MULTIINSTANCE_LINK = "multiinstancelink";
+    private static final String USAGE_SELECTOR = "selector";
+    private static final String USAGE_TEXT = "text";
+    private static final String USAGE_DISCRIMINATOR_VARIABLE = "variable";
+    private static final String USAGE_DISCRIMINATOR_GROUP = "group";
+    private static final String USAGE_DISCRIMINATOR_RELATION = "relation";
 
     private String name;
     private String mappedName;
@@ -56,15 +58,27 @@ public class VariableMapping implements Serializable {
         return hasUsage(USAGE_MULTIINSTANCE_LINK);
     }
 
-    public boolean isMultiinstanceVariable() {
-        return hasUsage(USAGE_MULTIINSTANCE_VARS);
-    }
-
     public boolean isPropertySelector() {
         return hasUsage(USAGE_SELECTOR);
     }
 
-    private boolean hasUsage(String accessLiteral) {
+    public boolean isMultiinstanceLinkByVariable() {
+        return hasUsage(USAGE_MULTIINSTANCE_LINK) && hasUsage(USAGE_DISCRIMINATOR_VARIABLE);
+    }
+
+    public boolean isMultiinstanceLinkByGroup() {
+        return hasUsage(USAGE_MULTIINSTANCE_LINK) && hasUsage(USAGE_DISCRIMINATOR_GROUP);
+    }
+
+    public boolean isMultiinstanceLinkByRelation() {
+        return hasUsage(USAGE_MULTIINSTANCE_LINK) && hasUsage(USAGE_DISCRIMINATOR_RELATION);
+    }
+
+    public boolean isText() {
+        return hasUsage(USAGE_TEXT);
+    }
+
+    public boolean hasUsage(String accessLiteral) {
         if (usage == null) {
             return false;
         }
