@@ -57,6 +57,14 @@ public class RelationSwimlaneInitializer extends SwimlaneInitializer {
         }
     }
 
+    public String getRelationName() {
+        return relationName;
+    }
+
+    public void setRelationName(String relationName) {
+        this.relationName = relationName;
+    }
+
     @Override
     public List<? extends Executor> evaluate(IVariableProvider variableProvider) {
         Executor parameter;
