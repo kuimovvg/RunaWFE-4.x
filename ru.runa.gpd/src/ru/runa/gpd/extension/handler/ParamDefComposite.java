@@ -111,7 +111,7 @@ public class ParamDefComposite extends Composite {
         }
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
-            new InsertVariableTextMenuDetectListener(textInput, delegable.getVariableNames(true, String.class.getName()));
+            new InsertVariableTextMenuDetectListener(textInput, delegable.getVariableNames(false, String.class.getName()));
         }
         return textInput;
     }

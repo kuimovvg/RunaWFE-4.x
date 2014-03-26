@@ -197,11 +197,14 @@ public class VariableSearchVisitor {
         List<VariableMapping> mappings = subprocessNode.getVariableMappings();
         int matchesCount = 0;
         for (VariableMapping mapping : mappings) {
-            if (mapping.getProcessVariableName().equals(query.getSearchText())) {
+            if (mapping.isMultiinstanceLinkByRelation() && mapping.getProcessVariableName().contains("(" + query.getSearchText() + ")")) {
+                // MultiSubprocess selector variable
                 matchesCount++;
             }
-            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && mapping.getSubprocessVariableName().equals(query.getSearchText())) {
-                // MultiSubprocess selector variable
+            if (mapping.isText()) {
+                continue;
+            }
+            if (mapping.getProcessVariableName().equals(query.getSearchText())) {
                 matchesCount++;
             }
         }
@@ -216,7 +219,7 @@ public class VariableSearchVisitor {
         List<VariableMapping> mappings = messagingNode.getVariableMappings();
         int matchesCount = 0;
         for (VariableMapping mapping : mappings) {
-            if (VariableMapping.USAGE_SELECTOR.equals(mapping.getUsage())) {
+            if (mapping.isPropertySelector()) {
                 if (mapping.getSubprocessVariableName().equals(VariableUtils.wrapVariableName(query.getSearchText()))) {
                     matchesCount++;
                 }

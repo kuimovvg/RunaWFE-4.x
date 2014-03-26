@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.Duration.Unit;
 
@@ -24,16 +26,15 @@ import com.google.common.base.Strings;
 
 public class DurationEditDialog extends Dialog {
     private static final int CLEAR_ID = 111;
+    private final ProcessDefinition processDefinition;
     private Duration editable;
-    private Duration oldDuration;
-    private final ProcessDefinition definition;
     private Text baseDateField;
     private Text delayField;
     private Text unitField;
 
     public DurationEditDialog(ProcessDefinition definition, String duration) {
         super(Display.getCurrent().getActiveShell());
-        this.definition = definition;
+        this.processDefinition = definition;
         if (!Strings.isNullOrEmpty(duration)) {
             editable = new Duration(duration);
         } else {
@@ -41,9 +42,8 @@ public class DurationEditDialog extends Dialog {
         }
     }
 
-    public DurationEditDialog(ProcessDefinition definition, Duration duration) {
-        this(definition, duration.getDuration());
-        this.oldDuration = duration;
+    public DurationEditDialog(ProcessDefinition processDefinition, Duration duration) {
+        this(processDefinition, duration.getDuration());
     }
 
     @Override
@@ -63,16 +63,15 @@ public class DurationEditDialog extends Dialog {
             GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
             gridData.minimumWidth = 200;
             baseDateField.setLayoutData(gridData);
-            Button button = new Button(area, SWT.PUSH);
-            button.setText("...");
-            button.addSelectionListener(new SelectionAdapter() {
+            SWTUtils.createButton(area, "...", new LoggingSelectionAdapter() {
+                
                 @Override
-                public void widgetSelected(SelectionEvent e) {
-                    ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(definition, Duration.CURRENT_DATE_MESSAGE);
+                protected void onSelection(SelectionEvent e) throws Exception {
+                    ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(processDefinition, Duration.CURRENT_DATE_MESSAGE);
                     editable.setVariableName(dialog.openDialog());
                     updateGUI();
                 }
-            });
+            }).setEnabled(processDefinition != null);
         }
         {
             Label label = new Label(area, SWT.NO_BACKGROUND);
@@ -172,11 +171,6 @@ public class DurationEditDialog extends Dialog {
 
     public Object openDialog() {
         if (open() == IDialogConstants.OK_ID) {
-            if (oldDuration != null) {
-                oldDuration.setDelay(editable.getDelay());
-                oldDuration.setUnit(editable.getUnit());
-                oldDuration.setVariableName(editable.getVariableName());
-            }
             return editable;
         }
         return null;

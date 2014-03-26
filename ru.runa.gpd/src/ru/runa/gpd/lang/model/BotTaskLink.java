@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.HandlerArtifact;
 
 import com.google.common.collect.Lists;
@@ -82,5 +83,10 @@ public class BotTaskLink implements Delegable {
         copy.setDelegationConfiguration(delegationConfiguration);
         copy.setTaskState(taskState);
         return copy;
+    }
+    
+    @Override
+    public String toString() {
+        return Localization.getString("BotTaskLink.description", taskState, botTaskName);
     }
 }

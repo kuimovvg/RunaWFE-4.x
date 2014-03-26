@@ -4,6 +4,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.extension.handler.EscalationActionHandler;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 public class TimerAction extends Action {
@@ -38,6 +39,19 @@ public class TimerAction extends Action {
         return !Strings.isNullOrEmpty(getDelegationClassName());
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getDelegationClassName(), getDelegationConfiguration(), repeatDelay);
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        TimerAction t = (TimerAction) obj;
+        return Objects.equal(getDelegationClassName(), t.getDelegationClassName()) && 
+                Objects.equal(getDelegationConfiguration(), t.getDelegationConfiguration()) && 
+                Objects.equal(repeatDelay, t.repeatDelay);
+    }
+    
     @Override
     public String toString() {
         if (Strings.isNullOrEmpty(getDelegationClassName())) {

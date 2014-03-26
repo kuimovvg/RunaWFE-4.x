@@ -37,8 +37,8 @@ public class RelationComposite extends Composite {
         super(parent, SWT.NONE);
         setLayout(new GridLayout());
         setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING & GridData.FILL_HORIZONTAL));
-        SyncUIHelper.createHeader(parent, WFEServerRelationsImporter.getInstance(), WFEConnectionPreferencePage.class, null);
-        Composite composite = new Composite(parent, SWT.NONE);
+        SyncUIHelper.createHeader(this, WFEServerRelationsImporter.getInstance(), WFEConnectionPreferencePage.class, null);
+        Composite composite = new Composite(this, SWT.NONE);
         composite.setLayout(new GridLayout(3, false));
         Label relationNameLabel = new Label(composite, SWT.NONE);
         relationNameLabel.setText(Localization.getString("Relation.Name"));

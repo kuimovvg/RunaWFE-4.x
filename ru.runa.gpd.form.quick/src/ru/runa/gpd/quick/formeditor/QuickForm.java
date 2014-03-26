@@ -29,13 +29,6 @@ public class QuickForm {
         return variables;
     }
 
-    public void changeChildIndex(QuickFormGpdVariable child, QuickFormGpdVariable insertBefore) {
-        if (insertBefore != null && child != null) {
-        	variables.remove(child);
-        	variables.add(variables.indexOf(insertBefore), child);
-        }
-    }
-
 	public List<QuickFormGpdProperty> getProperties() {
 		return properties;
 	}
