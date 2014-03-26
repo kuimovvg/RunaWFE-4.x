@@ -35,6 +35,7 @@ import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.util.Duration;
+import ru.runa.gpd.util.MultiinstanceParameters;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
@@ -574,6 +575,9 @@ public class BpmnSerializer extends ProcessSerializer {
             Subprocess subprocess = create(subprocessElement, definition);
             subprocess.setSubProcessName(subprocessElement.attributeValue(QName.get(PROCESS, RUNA_NAMESPACE)));
             subprocess.setVariableMappings(parseVariableMappings(subprocessElement));
+            if (subprocess instanceof MultiSubprocess) {
+                MultiinstanceParameters.convertBackCompatible((MultiSubprocess) subprocess);
+            }
             Map<String, String> properties = parseExtensionProperties(subprocessElement);
             if (properties.containsKey(EMBEDDED)) {
                 subprocess.setEmbedded(Boolean.parseBoolean(properties.get(EMBEDDED)));

@@ -30,7 +30,7 @@ public class EscalationActionPropertyDescriptor extends PropertyDescriptor {
 
         @Override
         protected Object openDialogBox(Control cellEditorWindow) {
-            EscalationActionEditDialog dialog = new EscalationActionEditDialog(element.getEscalationAction());
+            EscalationActionEditDialog dialog = new EscalationActionEditDialog(element);
             return dialog.openDialog();
         }
     }

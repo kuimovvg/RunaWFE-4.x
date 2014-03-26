@@ -28,7 +28,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
-public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Synchronizable {
+public class TaskState extends FormNode implements Active, ITimed, Synchronizable {
     private TimerAction escalationAction;
     private boolean ignoreSubstitutionRules;
     private boolean useEscalation;
@@ -60,13 +60,12 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
         return timeOutDelay.getDuration();
     }
 
-    @Override
     public void setTimeOutDelay(Duration timeOutDuration) {
+        Duration old = this.timeOutDelay;
         this.timeOutDelay = timeOutDuration;
-        firePropertyChange(PROPERTY_TIMEOUT_DELAY, null, null);
+        firePropertyChange(PROPERTY_TASK_TIMEOUT_DELAY, old, this.timeOutDelay);
     }
 
-    @Override
     public Duration getTimeOutDelay() {
         return timeOutDelay;
     }
@@ -200,7 +199,7 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
         list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION_RULES, Localization.getString("property.ignoreSubstitution")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_TIMEOUT_DELAY, getProcessDefinition(), getTimeOutDelay(), Localization.getString("timeout.property.duration")));
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_TIMEOUT_DELAY, getProcessDefinition(), getTimeOutDelay(), Localization.getString("timeout.property.duration")));
         if (useEscalation) {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
             list.add(new DurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, getProcessDefinition(), getEscalationDelay(), Localization.getString("escalation.duration")));
@@ -220,7 +219,7 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
             }
             return "";
         }
-        if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
+        if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
             Duration d = getTimeOutDelay();
             if (d == null || !d.hasDuration()) {
                 return "";
@@ -248,7 +247,7 @@ public class TaskState extends FormNode implements Active, ITimed, ITimeOut, Syn
             setEscalationAction((TimerAction) value);
         } else if (PROPERTY_ESCALATION_DURATION.equals(id)) {
             setEscalationDelay((Duration) value);
-        } else if (PROPERTY_TIMEOUT_DELAY.equals(id)) {
+        } else if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
             if (value == null) {
                 // ignore, edit was canceled
                 return;

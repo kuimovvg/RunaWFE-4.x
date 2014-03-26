@@ -14,6 +14,7 @@ public abstract class TextCompareChange extends TextEditBasedChange {
     protected final String replacementVariableName;
 
     public TextCompareChange(Object element, String currentVariableName, String replacementVariableName) {
+        // TODO
         super(element.toString());
         this.object = element;
         this.currentVariableName = currentVariableName;

@@ -39,15 +39,15 @@ public class SubprocessVariableDialog extends Dialog {
         if (oldMapping != null) {
             this.processVariable = oldMapping.getProcessVariableName();
             this.subprocessVariable = oldMapping.getSubprocessVariableName();
-            this.usageRead = oldMapping.getUsage().contains(VariableMapping.USAGE_READ);
-            this.usageWrite = oldMapping.getUsage().contains(VariableMapping.USAGE_WRITE);
+            this.usageRead = oldMapping.isReadable();
+            this.usageWrite = oldMapping.isWritable();
         }
     }
 
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
-        String message = oldMapping != null ? Localization.getString("Subprocess.updatingVariable") : Localization.getString("Subprocess.creatingVariable");
+        String message = oldMapping != null ? Localization.getString("Subprocess.UpdateVariableMapping") : Localization.getString("Subprocess.CreateVariableMapping");
         newShell.setText(message);
     }
 
@@ -97,27 +97,32 @@ public class SubprocessVariableDialog extends Dialog {
         gd.horizontalSpan = 2;
         g.setLayoutData(gd);
         g.setLayout(new GridLayout(1, false));
-        g.setText(Localization.getString("Subprocess.Usage"));
+        g.setText(Localization.getString("VariableMapping.Usage"));
         final Button readCheckbox = new Button(g, SWT.CHECK);
-        readCheckbox.setText(Localization.getString("Subprocess.Usage.Read"));
+        readCheckbox.setText(Localization.getString("VariableMapping.Usage.Read"));
         readCheckbox.setSelection(usageRead);
         final Button writeCheckbox = new Button(g, SWT.CHECK);
-        writeCheckbox.setText(Localization.getString("Subprocess.Usage.Write"));
+        writeCheckbox.setText(Localization.getString("VariableMapping.Usage.Write"));
         writeCheckbox.setSelection(usageWrite);
         readCheckbox.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 usageRead = readCheckbox.getSelection();
+                updateButtons();
             }
         });
         writeCheckbox.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 usageWrite = writeCheckbox.getSelection();
+                updateButtons();
             }
         });
-        
         return area;
+    }
+    
+    private void updateButtons() {
+        getButton(OK).setEnabled(usageRead || usageWrite);
     }
 
     public String getAccess() {

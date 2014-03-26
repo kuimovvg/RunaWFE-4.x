@@ -2,6 +2,8 @@ package ru.runa.gpd.ltk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -22,12 +24,13 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
         for (VariableMapping mapping : element.getVariableMappings()) {
-            if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
+            if (mapping.isMultiinstanceLinkByRelation() && mapping.getProcessVariableName().contains("(" + oldVariable.getName() + ")")) {
                 mappingsToChange.add(mapping);
             }
-            if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
-                    mapping.getSubprocessVariableName().equals(oldVariable.getName())) {
-                // MultiSubprocess selector variable
+            if (mapping.isText()) {
+                continue;
+            }
+            if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
                 mappingsToChange.add(mapping);
             }
         }
@@ -52,9 +55,9 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
                 if (currentVariableName.equals(mapping.getProcessVariableName())) {
                     mapping.setProcessVariableName(replacementVariableName);
                 }
-                if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
-                        currentVariableName.equals(mapping.getSubprocessVariableName())) {
-                    mapping.setSubprocessVariableName(replacementVariableName);
+                if (mapping.isMultiinstanceLinkByRelation()) {
+                    mapping.setProcessVariableName(mapping.getProcessVariableName().replace(
+                            Pattern.quote("(" + currentVariableName + ")"), Matcher.quoteReplacement("(" + replacementVariableName + ")")));
                 }
             }
             return new NullChange("Subprocess");
@@ -68,10 +71,11 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
                     buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variableName);
                     buffer.append("\" name=\"").append(mapping.getSubprocessVariableName()).append("\" />").append("\n");
                 }
-                if (VariableMapping.MULTISUBPROCESS_VARIABLE_PLACEHOLDER.equals(mapping.getProcessVariableName()) && 
-                        currentVariableName.equals(mapping.getSubprocessVariableName())) {
-                    buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(mapping.getProcessVariableName());
-                    buffer.append("\" name=\"").append(variableName).append("\" />").append("\n");
+                if (mapping.isMultiinstanceLinkByRelation()) {
+                    String s = mapping.getProcessVariableName().replace(
+                            Pattern.quote("(" + currentVariableName + ")"), Matcher.quoteReplacement("(" + variableName + ")"));
+                    buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(mapping.getSubprocessVariableName());
+                    buffer.append("\" name=\"").append(s).append("\" />").append("\n");
                 }
             }
             return buffer.toString();

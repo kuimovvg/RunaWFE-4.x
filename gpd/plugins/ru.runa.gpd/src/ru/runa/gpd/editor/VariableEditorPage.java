@@ -13,20 +13,11 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerDropAdapter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.DragSourceAdapter;
-import org.eclipse.swt.dnd.DragSourceEvent;
-import org.eclipse.swt.dnd.DropTargetEvent;
-import org.eclipse.swt.dnd.TextTransfer;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.dnd.TransferData;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -52,8 +43,10 @@ import ru.runa.gpd.search.ElementMatch;
 import ru.runa.gpd.search.SearchResult;
 import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.custom.Dialogs;
+import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
+import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
@@ -127,10 +120,13 @@ public class VariableEditorPage extends EditorPartBase {
         });
         fillViewer();
         updateButtons();
-        int dndOperations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
-        Transfer[] transfers = new Transfer[] { TextTransfer.getInstance() };
-        tableViewer.addDragSupport(dndOperations, transfers, new MoveVariableDragListener(tableViewer));
-        tableViewer.addDropSupport(dndOperations, transfers, new MoveVariableDropListener(tableViewer));
+        TableViewerLocalDragAndDropSupport.enable(tableViewer, new DragAndDropAdapter<Variable>() {
+
+            @Override
+            public void onDropElement(Variable beforeElement, Variable variable) {
+                editor.getDefinition().changeChildIndex(variable, beforeElement);
+            }
+        });
     }
 
     private void updateButtons() {
@@ -282,13 +278,15 @@ public class VariableEditorPage extends EditorPartBase {
             confirmationRequired = true;
         }
         if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), confirmationInfo.toString())) {
-            // TODO remove variable from form validations in EmbeddedSubprocesses
+            // TODO remove variable from form validations in
+            // EmbeddedSubprocesses
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, variable.getName());
             // remove variable from definition
             ProcessDefinitionRemoveVariablesCommand command = new ProcessDefinitionRemoveVariablesCommand();
             command.setProcessDefinition(getDefinition());
             command.setVariable(variable);
-            // TODO Ctrl+Z support (form validation) editor.getCommandStack().execute(command);
+            // TODO Ctrl+Z support (form validation)
+            // editor.getCommandStack().execute(command);
             command.execute();
         }
     }
@@ -385,44 +383,4 @@ public class VariableEditorPage extends EditorPartBase {
         }
     }
 
-    private class MoveVariableDragListener extends DragSourceAdapter {
-        private final TableViewer viewer;
-
-        public MoveVariableDragListener(TableViewer viewer) {
-            this.viewer = viewer;
-        }
-
-        @Override
-        public void dragSetData(DragSourceEvent event) {
-            IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-            Variable firstElement = (Variable) selection.getFirstElement();
-            if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
-                event.data = firstElement.getName();
-            }
-        }
-    }
-
-    private class MoveVariableDropListener extends ViewerDropAdapter {
-        public MoveVariableDropListener(Viewer viewer) {
-            super(viewer);
-        }
-
-        @Override
-        public void drop(DropTargetEvent event) {
-            Variable variable1 = VariableUtils.getVariableByName(getDefinition(), (String) event.data);
-            Variable beforeVariable = (Variable) determineTarget(event);
-            getDefinition().changeChildIndex(variable1, beforeVariable);
-            super.drop(event);
-        }
-
-        @Override
-        public boolean performDrop(Object data) {
-            return false;
-        }
-
-        @Override
-        public boolean validateDrop(Object target, int operation, TransferData transferType) {
-            return true;
-        }
-    }
 }

@@ -48,7 +48,9 @@ import ru.runa.gpd.search.ElementMatch;
 import ru.runa.gpd.search.SearchResult;
 import ru.runa.gpd.search.VariableSearchQuery;
 import ru.runa.gpd.ui.custom.Dialogs;
+import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 
@@ -118,6 +120,13 @@ public class SwimlaneEditorPage extends EditorPartBase {
         });
         fillViewer();
         updateButtons();
+        TableViewerLocalDragAndDropSupport.enable(tableViewer, new DragAndDropAdapter<Swimlane>() {
+
+            @Override
+            public void onDropElement(Swimlane beforeElement, Swimlane swimlane) {
+                editor.getDefinition().changeChildIndex(swimlane, beforeElement);
+            }
+        });
     }
 
     private void updateButtons() {
@@ -215,7 +224,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         }
         if (!confirmationRequired || Dialogs.confirm(Localization.getString("confirm.delete"), confirmationInfo.toString())) {
             // clear swimlanes
-            ProcessDefinition mainProcessDefinition = getDefinition().getMainProcessDefinition();            
+            ProcessDefinition mainProcessDefinition = getDefinition().getMainProcessDefinition();
             for (SwimlanedNode node : mainProcessDefinition.getChildren(SwimlanedNode.class)) {
                 if (swimlane.getName().equals(node.getSwimlaneName())) {
                     node.setSwimlane(null);
@@ -228,12 +237,14 @@ public class SwimlaneEditorPage extends EditorPartBase {
                     }
                 }
             }
-            // TODO remove variable from form validations in EmbeddedSubprocesses
+            // TODO remove variable from form validations in
+            // EmbeddedSubprocesses
             ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, swimlane.getName());
             ProcessDefinitionRemoveSwimlaneCommand command = new ProcessDefinitionRemoveSwimlaneCommand();
             command.setProcessDefinition(getDefinition());
             command.setSwimlane(swimlane);
-            // TODO Ctrl+Z support (form validation) editor.getCommandStack().execute(command);
+            // TODO Ctrl+Z support (form validation)
+            // editor.getCommandStack().execute(command);
             command.execute();
             getDefinition().getSwimlaneGUIConfiguration().removeSwimlanePath(swimlane.getName());
         }
