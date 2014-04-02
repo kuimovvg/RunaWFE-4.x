@@ -10,7 +10,6 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.util.IOUtils;
 
 public class OpenFormScriptDelegate extends BaseModelActionDelegate {
-    private static final String EDITOR_ID = "tk.eclipse.plugin.jseditor.editors.JavaScriptEditor";
 
     @Override
     public void run(IAction action) {
@@ -29,7 +28,7 @@ public class OpenFormScriptDelegate extends BaseModelActionDelegate {
             if (!formNode.hasFormScript()) {
                 setNewScriptFormFile(formNode, file.getName());
             }
-            IDE.openEditor(getWorkbenchPage(), file, EDITOR_ID, true);
+            IDE.openEditor(getWorkbenchPage(), file, true);
         } catch (Exception e) {
             PluginLogger.logError(e);
         }
