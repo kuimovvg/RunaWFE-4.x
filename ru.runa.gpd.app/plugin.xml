@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="ru.runa.gpd.app"
-   name="RunaWFE GPD application"
-   version="4.0"
-   provider-name="Runa">
-   <requires>
-      <import plugin="ru.runa.gpd"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.core.resources"/>
-   </requires>
-
-
-   <extension
+<plugin>
+    <extension
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
@@ -24,7 +13,7 @@
          </property>
          <property
                name="aboutText"
-               value="Runa GPD&#x0A;&#x0A;Version: _RunaWFE-Version_&#x0A;&#x0A;This program is free software; you can redistribute it and/or &#x0A;modify it under the terms of the GNU Lesser General Public License &#x0A;as published by the Free Software Foundation; version 2.1 &#x0A;of the License. &#x0A;&#x0A;This program is distributed in the hope that it will be useful, &#x0A;but WITHOUT ANY WARRANTY; without even the implied warranty of &#x0A;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the &#x0A;GNU Lesser General Public License for more details. &#x0A;&#x0A;You should have received a copy of the GNU Lesser General Public License &#x0A;along with this program; if not, write to the Free Software &#x0A;Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.">
+               value="Runa Developer Studio">
          </property>
          <property
                name="aboutImage"
@@ -36,6 +25,17 @@
          </property>
       </product>
    </extension>
+    <extension
+          point="org.eclipse.ui.splashHandlers">
+       <splashHandler
+             class="ru.runa.gpd.app.VersionSplashHandler"
+             id="ru.runa.gpd.app.versionSsplashHandler">
+       </splashHandler>
+       <splashHandlerProductBinding
+             productId="ru.runa.gpd.app.product"
+             splashId="ru.runa.gpd.app.versionSsplashHandler">
+       </splashHandlerProductBinding>
+    </extension>
 
 
 </plugin>

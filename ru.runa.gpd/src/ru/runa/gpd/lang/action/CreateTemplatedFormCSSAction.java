@@ -13,7 +13,6 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 
 public class CreateTemplatedFormCSSAction extends BaseModelDropDownActionDelegate {
-    private static final String EDITOR_ID = "tk.eclipse.plugin.csseditor.editors.CSSEditor";
 
     @Override
     protected void fillMenu(Menu menu) {
@@ -41,7 +40,7 @@ public class CreateTemplatedFormCSSAction extends BaseModelDropDownActionDelegat
                 }
                 FormCSSTemplate template = FormCSSTemplateRegistry.getTemplateNotNull(name);
                 file.setContents(template.getContentAsStream(), true, false, null);
-                IDE.openEditor(getWorkbenchPage(), file, EDITOR_ID, true);
+                IDE.openEditor(getWorkbenchPage(), file, true);
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }

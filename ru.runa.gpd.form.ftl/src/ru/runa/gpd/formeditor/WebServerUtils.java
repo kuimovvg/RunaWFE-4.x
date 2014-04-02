@@ -15,6 +15,7 @@ import org.mortbay.jetty.servlet.WebApplicationContext;
 import org.mortbay.util.InetAddrPort;
 
 import ru.runa.gpd.Activator;
+import ru.runa.gpd.EditorsPlugin;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.formeditor.resources.Messages;
 import ru.runa.gpd.settings.PrefConstants;
@@ -60,13 +61,13 @@ public class WebServerUtils {
         } else if (PrefConstants.FORM_CK_EDITOR4.equals(pref)) {
             url += "/editor.html";
         } else {
-            if (WYSIWYGPlugin.DEBUG) {
+            if (EditorsPlugin.DEBUG) {
                 url += "/fckeditor.debug.html";
             } else {
                 url += "/fckeditor.html";
             }
         }
-        if (WYSIWYGPlugin.DEBUG) {
+        if (EditorsPlugin.DEBUG) {
             PluginLogger.logInfo("Editor url: " + url);
         }
         return url;
@@ -78,7 +79,7 @@ public class WebServerUtils {
     }
     
     private static IPath getStateLocation() {
-        return WYSIWYGPlugin.getDefault().getStateLocation();
+        return EditorsPlugin.getDefault().getStateLocation();
     }
 
     public static void startWebServer(IProgressMonitor monitor, int allProgressCount) throws Exception {
@@ -129,14 +130,14 @@ public class WebServerUtils {
     private static int copyFolder(IPath root, String path, IProgressMonitor monitor, int filesForUnitWork, int currentUnitFilesCount) throws IOException {
         File folder = new File(root.toFile(), path);
         folder.mkdir();
-        Enumeration<String> e = WYSIWYGPlugin.getDefault().getBundle().getEntryPaths(path);
+        Enumeration<String> e = EditorsPlugin.getDefault().getBundle().getEntryPaths(path);
         int filesSize = currentUnitFilesCount;
         while (e != null && e.hasMoreElements()) {
             String child = e.nextElement();
             if (child.endsWith("/")) {
                 filesSize = copyFolder(root, child, monitor, filesForUnitWork, filesSize);
             } else {
-                InputStream in = WYSIWYGPlugin.getDefault().getBundle().getEntry(child).openStream();
+                InputStream in = EditorsPlugin.getDefault().getBundle().getEntry(child).openStream();
                 File targetFile = new File(root.toFile(), child);
                 OutputStream out = new FileOutputStream(targetFile);
                 IOUtils.copyStream(in, out);
@@ -152,7 +153,7 @@ public class WebServerUtils {
 
     private static int countFiles(String path) throws IOException {
         int result = 0;
-        Enumeration<String> e = WYSIWYGPlugin.getDefault().getBundle().getEntryPaths(path);
+        Enumeration<String> e = EditorsPlugin.getDefault().getBundle().getEntryPaths(path);
         while (e != null && e.hasMoreElements()) {
             String child = e.nextElement();
             if (child.endsWith("/")) {

@@ -4,6 +4,8 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.Version;
 
 /**
  * This class controls all aspects of the application's execution
@@ -26,5 +28,10 @@ public class Application implements IApplication {
 
     @Override
     public void stop() {
+    }
+    
+    public static Version getVersion() {
+        Bundle bundle = Activator.getDefault().getBundle();
+        return bundle.getVersion();
     }
 }

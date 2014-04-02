@@ -9,7 +9,6 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 
 public class OpenDescriptionEditorDelegate extends BaseModelActionDelegate {
-    private static final String EDITOR_ID = "tk.eclipse.plugin.wysiwyg.WYSIWYGHTMLEditor";
 
     @Override
     public void run(IAction action) {
@@ -18,7 +17,7 @@ public class OpenDescriptionEditorDelegate extends BaseModelActionDelegate {
             if (!file.exists()) {
                 IOUtils.createFile(file);
             }
-            IDE.openEditor(getWorkbenchPage(), file, EDITOR_ID);
+            IDE.openEditor(getWorkbenchPage(), file);
         } catch (Exception e) {
             PluginLogger.logError(e);
         }

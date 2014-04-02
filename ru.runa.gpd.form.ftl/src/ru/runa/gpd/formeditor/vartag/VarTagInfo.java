@@ -5,7 +5,7 @@ import java.io.InputStream;
 
 import org.osgi.framework.Bundle;
 
-import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.EditorsPlugin;
 
 public class VarTagInfo {
     private final Bundle bundle;
@@ -31,6 +31,6 @@ public class VarTagInfo {
     }
 
     public InputStream openImageStream() throws IOException {
-        return WYSIWYGPlugin.loadTagImage(bundle, imagePath);
+        return EditorsPlugin.loadTagImage(bundle, imagePath);
     }
 }
