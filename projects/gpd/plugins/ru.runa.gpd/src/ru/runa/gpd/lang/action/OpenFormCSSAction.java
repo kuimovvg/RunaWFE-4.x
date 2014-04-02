@@ -9,7 +9,6 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 
 public class OpenFormCSSAction extends BaseModelActionDelegate {
-    private static final String EDITOR_ID = "tk.eclipse.plugin.csseditor.editors.CSSEditor";
 
     @Override
     public void run(IAction action) {
@@ -18,7 +17,7 @@ public class OpenFormCSSAction extends BaseModelActionDelegate {
             if (!file.exists()) {
                 file = IOUtils.createFileSafely(file);
             }
-            IDE.openEditor(getWorkbenchPage(), file, EDITOR_ID, true);
+            IDE.openEditor(getWorkbenchPage(), file, true);
         } catch (Exception e) {
             PluginLogger.logError(e);
         }

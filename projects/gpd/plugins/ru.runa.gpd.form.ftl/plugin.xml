@@ -1,68 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<plugin
-   id="ru.runa.gpd.form.ftl"
-   name="HTML Editor Plug-In"
-   version="4.0"
-   provider-name="Runa"
-   class="ru.runa.gpd.formeditor.WYSIWYGPlugin">
-   <runtime>
-      <library name="wysiwyg.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-logging.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/javax.servlet.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/org.mortbay.jetty.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-fileupload.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/freemarker.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/nekohtml.jar">
-         <export name="*"/>
-      </library>
-      <library name="lib/commons-lang-2.5.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="lib/xercesImpl.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.jface.text"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="ru.runa.gpd"/>
-      <import plugin="tk.eclipse.plugin.htmleditor"/>
-   </requires>
+<plugin>
    <extension-point id="tags" name="Freemarker methods" schema="metadata/tags.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">
       <editor
             class="ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor"
-            extensions="html"
-            icon="metadata/html.png"
-            id="tk.eclipse.plugin.wysiwyg.WYSIWYGHTMLEditor"
+            extensions="ftl,html"
+            icon="icons/html.png"
+            id="ru.runa.gpd.wysiwyg.WYSIWYGHTMLEditor"
             name="%editor.name">
       </editor>
+      <editor
+            class="ru.runa.gpd.htmleditor.editors.HTMLEditor"
+            contributorClass="ru.runa.gpd.htmleditor.editors.HTMLEditorContributor"
+            extensions="xhtml"
+            icon="icons/html.png"
+            id="ru.runa.gpd.htmleditor.editors.HTMLEditor"
+            name="%plugin.editor.htmleditor"/>
+      <editor
+            class="ru.runa.gpd.csseditor.CSSEditor"
+            contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
+            extensions="css"
+            icon="icons/css.png"
+            id="ru.runa.gpd.csseditor.CSSEditor"
+            name="%plugin.editor.csseditor"/>
+      <editor
+            class="ru.runa.gpd.xmleditor.XMLEditor"
+            contributorClass="ru.runa.gpd.xmleditor.XMLEditorContributor"
+            extensions="xml,tld"
+            icon="icons/xml.png"
+            id="ru.runa.gpd.xmleditor.XMLEditor"
+            name="%plugin.editor.xmleditor"/>
+      <editor
+            class="ru.runa.gpd.jseditor.JavaScriptEditor"
+            contributorClass="ru.runa.gpd.jseditor.JavaScriptEditorContributor"
+            extensions="js"
+            icon="icons/javascript.gif"
+            id="ru.runa.gpd.jseditor.JavaScriptEditor"
+            name="%plugin.editor.jseditor"/>
+      <editor
+            class="ru.runa.gpd.htmleditor.editors.WebBrowser"
+            extensions="url"
+            icon="icons/web.gif"
+            id="ru.runa.gpd.htmleditor.editors.WebBrowser"
+            name="%plugin.editor.webbrowser"/>
+   </extension>
+
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ru.runa.gpd.htmleditor.HTMLEditorPreferencePage"
+            name="%plugin.preference.category"
+            id="ru.runa.gpd.htmleditor.category"/>
+      <page
+            class="ru.runa.gpd.htmleditor.AssistPreferencePage"
+            category="ru.runa.gpd.htmleditor.category"
+            name="%plugin.preference.codeassist"
+            id="ru.runa.gpd.htmleditor.AssistPreferencePage"/>
+      <page
+            class="ru.runa.gpd.htmleditor.CSSEditorPreferencePage"
+            category="ru.runa.gpd.htmleditor.category"
+            name="%plugin.preference.csseditor"
+            id="ru.runa.gpd.htmleditor.CSSEditorPreferencePage"/>
+      <page
+            class="ru.runa.gpd.htmleditor.JavaScriptEditorPreferencePage"
+            category="ru.runa.gpd.htmleditor.category"
+            name="%plugin.preference.jseditor"
+            id="ru.runa.gpd.htmleditor.JavaScriptEditorPreferencePage"/>
+      <page
+            class="ru.runa.gpd.htmleditor.tasktag.HTMLTaskTagPreferencePage"
+            category="ru.runa.gpd.htmleditor.category"
+            name="%plugin.preference.tasktag"
+            id="ru.runa.gpd.htmleditor.tasktag.HTMLTaskTagPreferencePage"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="ru.runa.gpd.htmleditor.HTMLPreferenceInitializer"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%plugin.preference.category"
+            id="ru.runa.gpd.htmleditor"/>
+      <view
+            icon="icons/image.gif"
+            category="ru.runa.gpd.htmleditor"
+            class="ru.runa.gpd.htmleditor.views.ImageView"
+            name="%plugin.views.image"
+            id="ru.runa.gpd.htmleditor.views.ImageView"/>
+            
+   </extension>
+
+
+   <extension
+         point="org.eclipse.ui.editors.templates">
+      <contextType
+            class="ru.runa.gpd.htmleditor.template.HTMLContextType"
+            name="HTML/JSP/XML"
+            id="ru.runa.gpd.htmleditor.templateContextType.html"/>
+      <contextType
+            class="ru.runa.gpd.htmleditor.template.JavaScriptContextType"
+            name="JavaScript"
+            id="ru.runa.gpd.htmleditor.templateContextType.javascript"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ru.runa.gpd.htmleditor.template.HTMLTemplatePreferencePage"
+            category="ru.runa.gpd.htmleditor.category"
+            name="%plugin.preference.template"
+            id="ru.runa.gpd.htmleditor.template.HTMLTemplatePreferencePage"/>
    </extension>
    
+   
+      
    <extension
          point="ru.runa.gpd.formtype">
       <element

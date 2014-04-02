@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
-<plugin
-	id="ru.runa.gpd.form.quick"
-	name="Quick Form Editor Plug-In"
-    version="4.0"
-    provider-name="Runa"
-    class="ru.runa.gpd.quick.Activator">
-   <runtime>
-      <library name="lib/freemarker.patched-2.3.11.jar">
-         <export
-               name="*">
-         </export>
-      </library>
-      <library name="."/>
-   </runtime>
-   <requires>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="ru.runa.gpd"/>
-      <import plugin="org.eclipse.core.resources"/>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import plugin="ru.runa.gpd.form.ftl"/>
-      <import plugin="org.eclipse.ui.forms"/>
-   </requires>
+<plugin>
     	<extension-point id="templates" name="Quick templates" schema="schema/templates.exsd"/>
    
    	<extension
