@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="lib" path="lib/dtdparser121.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/Tidy.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-jxpath-1.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/fuzzyxml.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/JavaScriptExecutor.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/js.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.apache.commons.jrcs.diff.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/ss_css2.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/trang.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang-2.5.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>

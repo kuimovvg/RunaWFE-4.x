@@ -23,7 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.EditorsPlugin;
 
 /**
  * Servlet to upload and browse files.<br>
@@ -88,7 +88,7 @@ public class ConnectorServlet extends HttpServlet {
         Node root = createCommonXml(document, commandStr, typeStr, currentFolderStr, /* request.getContextPath() + currentDirPath* currentFolderStr */
                 "");
         if (debug) {
-            WYSIWYGPlugin.logInfo("Command = " + commandStr);
+            EditorsPlugin.logInfo("Command = " + commandStr);
         }
         if (commandStr.equals("GetFolders")) {
             getFolders(currentDir, root, document);
@@ -127,7 +127,7 @@ public class ConnectorServlet extends HttpServlet {
                 transformer.transform(source, dbgResult);
             }
         } catch (Exception ex) {
-            WYSIWYGPlugin.logError(ex.getMessage(), ex);
+            EditorsPlugin.logError(ex.getMessage(), ex);
         }
         out.flush();
         out.close();
@@ -145,7 +145,7 @@ public class ConnectorServlet extends HttpServlet {
     @SuppressWarnings("unchecked")
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (debug) {
-            WYSIWYGPlugin.logInfo("--- Starting FileUpload ---");
+            EditorsPlugin.logInfo("--- Starting FileUpload ---");
         }
         response.setContentType("text/html; charset=UTF-8");
         response.setHeader("Cache-Control", "no-cache");
@@ -160,7 +160,7 @@ public class ConnectorServlet extends HttpServlet {
         }
         String currentDirPath = ConnectorServletHelper.getBaseDir() + currentFolderStr;
         if (debug) {
-            WYSIWYGPlugin.logInfo("currentDirPath = " + currentDirPath + ", currentFolderStr = " + currentFolderStr);
+            EditorsPlugin.logInfo("currentDirPath = " + currentDirPath + ", currentFolderStr = " + currentFolderStr);
         }
         String retVal = "0";
         String fileUrl = "";
@@ -184,7 +184,7 @@ public class ConnectorServlet extends HttpServlet {
             // sync after upload
             ConnectorServletHelper.sync();
         } catch (Exception ex) {
-            WYSIWYGPlugin.logError("Upload file", ex);
+            EditorsPlugin.logError("Upload file", ex);
             retVal = "1";
             errorMessage = ex.getMessage();
         }
@@ -198,7 +198,7 @@ public class ConnectorServlet extends HttpServlet {
         out.flush();
         out.close();
         if (debug) {
-            WYSIWYGPlugin.logInfo("--- End FileUpload ---");
+            EditorsPlugin.logInfo("--- End FileUpload ---");
         }
     }
 
