@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
-import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.EditorsPlugin;
 
 public class MethodTag {
     private static final int DEFAULT_WIDTH = 250;
@@ -43,7 +43,7 @@ public class MethodTag {
     }
 
     public InputStream openImageStream() throws IOException {
-        return WYSIWYGPlugin.loadTagImage(bundle, imagePath);
+        return EditorsPlugin.loadTagImage(bundle, imagePath);
     }
 
     @Override
@@ -181,12 +181,12 @@ public class MethodTag {
                         }
                         ftlMethods.put(id, tag);
                     } catch (Exception e) {
-                        WYSIWYGPlugin.logError("Unable to load FTL method " + name, e);
+                        EditorsPlugin.logError("Unable to load FTL method " + name, e);
                     }
                 }
             }
         } catch (Exception e) {
-            WYSIWYGPlugin.logError("Unable to load FTL methods", e);
+            EditorsPlugin.logError("Unable to load FTL methods", e);
         }
     }
 

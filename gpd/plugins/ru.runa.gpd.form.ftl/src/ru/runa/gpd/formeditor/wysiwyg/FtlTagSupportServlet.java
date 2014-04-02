@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 
-import ru.runa.gpd.formeditor.WYSIWYGPlugin;
+import ru.runa.gpd.EditorsPlugin;
 import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.formeditor.ftl.FreemarkerUtil;
 import ru.runa.gpd.formeditor.ftl.MethodTag;
@@ -37,7 +37,7 @@ public class FtlTagSupportServlet extends HttpServlet {
             String tagName = request.getParameter("tagName");
             if ("CustomizeCommonDialog".equals(commandStr)) {
                 String dialogPath = request.getParameter("dialog");
-                InputStream stream = FileLocator.openStream(WYSIWYGPlugin.getDefault().getBundle(),
+                InputStream stream = FileLocator.openStream(EditorsPlugin.getDefault().getBundle(),
                         new Path(dialogPath.replace("http://localhost:" + WebServerUtils.SERVER_PORT, "CKEditor")), false);
                 String fileContent = IOUtils.readStream(stream);
                 {
@@ -99,7 +99,7 @@ public class FtlTagSupportServlet extends HttpServlet {
                     }
                 }
                 if (imageStream == null) {
-                    imageStream = WYSIWYGPlugin.loadTagImage(WYSIWYGPlugin.getDefault().getBundle(), "metadata/icons/" + tagImageName);
+                    imageStream = EditorsPlugin.loadTagImage(EditorsPlugin.getDefault().getBundle(), "metadata/icons/" + tagImageName);
                 }
                 IOUtils.copyStream(imageStream, response.getOutputStream());
                 return;
@@ -213,12 +213,12 @@ public class FtlTagSupportServlet extends HttpServlet {
                     resultHtml.append(variable.getName());
                 }
             } else {
-                WYSIWYGPlugin.logInfo("Unknown cmd: " + commandStr);
+                EditorsPlugin.logInfo("Unknown cmd: " + commandStr);
             }
             response.getOutputStream().write(resultHtml.toString().getBytes("UTF-8"));
             response.getOutputStream().flush();
         } catch (Throwable th) {
-            WYSIWYGPlugin.logError("-- JS command error", th);
+            EditorsPlugin.logError("-- JS command error", th);
             response.setStatus(500);
         }
     }

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -219,7 +218,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     }
                 }
 
-                if ((prevTemplateFileName == null && filename == null) || (StringUtils.isNotEmpty(prevTemplateFileName) && prevTemplateFileName.equals(filename))) {
+                if ((prevTemplateFileName == null && filename == null) || (!Strings.isNullOrEmpty(prevTemplateFileName) && prevTemplateFileName.equals(filename))) {
                     return;
                 }
 
@@ -247,7 +246,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     setPropertiesTableInput();
                 }
 
-                if (StringUtils.isNotEmpty(prevTemplateFileName)) {
+                if (!Strings.isNullOrEmpty(prevTemplateFileName)) {
                     if (!QuickFormEditorUtil.isTemplateUsingInForms(processDefinition, formNode, prevTemplateFileName)) {
                         IFile confFile = definitionFolder.getFile(prevTemplateFileName);
                         if (confFile.exists()) {
@@ -468,7 +467,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         addButton(buttonsBar, "editor.button.converting", new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-                if (StringUtils.isEmpty(formNode.getTemplateFileName())) {
+                if (Strings.isNullOrEmpty(formNode.getTemplateFileName())) {
                     return;
                 }
 

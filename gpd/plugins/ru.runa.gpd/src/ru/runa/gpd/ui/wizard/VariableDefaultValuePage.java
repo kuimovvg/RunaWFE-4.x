@@ -9,13 +9,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.extension.VariableFormatArtifact;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.DynaContentWizardPage;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Group;
 
 import com.google.common.base.Strings;
 
@@ -84,7 +86,12 @@ public class VariableDefaultValuePage extends DynaContentWizardPage {
                     setErrorMessage(Localization.getString("VariableDefaultValuePage.error.userType"));
                     return;
                 }
-                TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(formatPage.getType().getJavaClassName()), defaultValue);
+                String className = formatPage.getType().getJavaClassName();
+                if (Group.class.getName().equals(className) || Actor.class.getName().equals(className) || Executor.class.getName().equals(className)) {
+                    // TODO validate using connection?
+                } else {
+                    TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(className), defaultValue);
+                }
             }
             setErrorMessage(null);
         } catch (Exception e) {

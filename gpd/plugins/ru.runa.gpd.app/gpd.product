@@ -152,11 +152,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
       <plugin id="org.eclipse.ui.win32" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
-      <plugin id="org.eclipse.update.configurator"/>
-      <plugin id="org.eclipse.update.core"/>
-      <plugin id="org.eclipse.update.core.linux" fragment="true"/>
-      <plugin id="org.eclipse.update.core.win32" fragment="true"/>
-      <plugin id="org.eclipse.update.ui"/>
       <plugin id="ru.runa.gpd"/>
       <plugin id="ru.runa.gpd.alfresco"/>
       <plugin id="ru.runa.gpd.app"/>
@@ -166,7 +161,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
       <plugin id="ru.runa.gpd.form.quick"/>
       <plugin id="ru.runa.gpd.office"/>
       <plugin id="ru.runa.gpd.xpdl"/>
-      <plugin id="tk.eclipse.plugin.htmleditor"/>
    </plugins>
 
 

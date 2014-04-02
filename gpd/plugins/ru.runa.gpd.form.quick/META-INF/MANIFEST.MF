@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: RunaWFE Developer Studio quick form editor
+Bundle-SymbolicName: ru.runa.gpd.form.quick; singleton:=true
+Bundle-Version: 4.1.1.qualifier
+Bundle-ClassPath: lib/freemarker.patched-2.3.11.jar,
+ .
+Bundle-Activator: ru.runa.gpd.quick.Activator
+Bundle-Vendor: Runa
+Bundle-Localization: plugin
+Export-Package: freemarker,freemarker.cache,freemarker.core,freemarker
+ .debug,freemarker.debug.impl,freemarker.ext.ant,freemarker.ext.beans,
+ freemarker.ext.dom,freemarker.ext.jdom,freemarker.ext.jsp,freemarker.
+ ext.jython,freemarker.ext.rhino,freemarker.ext.servlet,freemarker.ext
+ .util,freemarker.ext.xml,freemarker.log,freemarker.template,freemarke
+ r.template.utility
+Require-Bundle: org.eclipse.ui,
+ ru.runa.gpd,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.ui.ide,
+ ru.runa.gpd.form.ftl,
+ org.eclipse.ui.forms
+Bundle-ActivationPolicy: lazy

@@ -1,7 +1,8 @@
 package ru.runa.gpd.ui.action;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.internal.dialogs.AboutDialog;
+
+import ru.runa.gpd.ui.dialog.AboutDialog;
 
 public class HelpAboutAction extends BaseActionDelegate {
 

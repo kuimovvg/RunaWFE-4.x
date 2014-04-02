@@ -7,7 +7,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -96,7 +95,7 @@ public class QuickFormXMLUtil {
             try {
                 Document document = XmlUtil.parseWithoutValidation(file.getContents());
                 
-                if(StringUtils.isNotEmpty(templateFileName)) {
+                if(!Strings.isNullOrEmpty(templateFileName)) {
                 	IFile confFile = ((IFolder) file.getParent()).getFile(templateFileName);
                     if (confFile.exists()) {
                         String configuration = IOUtils.readStream(confFile.getContents());
