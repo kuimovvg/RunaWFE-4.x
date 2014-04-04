@@ -2,12 +2,14 @@ package ru.runa.wfe.definition.par;
 
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
+import ru.runa.wfe.lang.Action;
 import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -27,6 +29,7 @@ public class GraphXmlParser implements ProcessArchiveParser {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition) {
         try {
@@ -44,27 +47,28 @@ public class GraphXmlParser implements ProcessArchiveParser {
             List<Element> nodeElements = root.elements(NODE_ELEMENT);
             for (Element nodeElement : nodeElements) {
                 String nodeId = nodeElement.attributeValue("name");
-                GraphElement node = processDefinition.getGraphElementNotNull(nodeId);
-                node.setGraphConstraints(
+                GraphElement graphElement = processDefinition.getGraphElementNotNull(nodeId);
+                graphElement.setGraphConstraints(
                         Integer.parseInt(nodeElement.attributeValue("x")), 
                         Integer.parseInt(nodeElement.attributeValue("y")),
                         Integer.parseInt(nodeElement.attributeValue("width")), 
                         Integer.parseInt(nodeElement.attributeValue("height")));
-                if (node instanceof Node) {
+                Node transitionSource;
+                if (graphElement instanceof Node) {
                     boolean minimizedView = Boolean.parseBoolean(nodeElement.attributeValue("minimizedView", "false"));
-                    ((Node) node).setGraphMinimazedView(minimizedView);
+                    ((Node) graphElement).setGraphMinimazedView(minimizedView);
+                    transitionSource = (Node) graphElement;
+                } else if (graphElement instanceof Action) {
+                    // in case of BPMN timer in task state
+                    transitionSource = (Node) graphElement.getParent();;
+                } else {
+                    LogFactory.getLog(getClass()).warn("Ignored graph element " + graphElement + " in " + processDefinition);
+                    continue;
                 }
                 List<Element> transitionElements = nodeElement.elements(TRANSITION_ELEMENT);
-                // TODO check without this
-//              NodeModel transitionSource = nodeModel;
-//                GraphElement graphElement = definition.getGraphElement(nodeModel.getNodeId());
-//                if (graphElement instanceof Action) {
-//                    GraphElement parent = graphElement.getParent();
-//                    transitionSource = diagramModel.nodes.get(parent.getNodeId());
-//                }
                 for (Element transitionElement : transitionElements) {
                     String transitionName = transitionElement.attributeValue("name");
-                    Transition transition = ((Node) node).getLeavingTransitionNotNull(transitionName);
+                    Transition transition = transitionSource.getLeavingTransitionNotNull(transitionName);
                     List<Element> bendpointElements = transitionElement.elements(BENDPOINT_ELEMENT);
                     for (Element bendpointElement : bendpointElements) {
                         Bendpoint bendpoint = new Bendpoint(
