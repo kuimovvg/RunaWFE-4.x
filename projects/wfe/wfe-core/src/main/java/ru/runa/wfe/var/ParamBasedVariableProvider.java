@@ -26,11 +26,16 @@ public class ParamBasedVariableProvider extends DelegableVariableProvider {
         return paramsDef.getInputParam(source);
     }
 
-    private String getVariableName(String source, ParamDef paramDef) {
-        if (paramDef == null) {
-            return source;
+    private String getVariableName(String source) {
+        ParamDef inputParamDef = getInputParamDef(source);
+        if (inputParamDef != null) {
+            return inputParamDef.getVariableName();
         }
-        return paramDef.getVariableName();
+        ParamDef outputParamDef = paramsDef.getOutputParam(source);
+        if (outputParamDef != null) {
+            return outputParamDef.getVariableName();
+        }
+        return source;
     }
 
     @Override
@@ -39,13 +44,13 @@ public class ParamBasedVariableProvider extends DelegableVariableProvider {
         if (paramDef != null && Strings.isNullOrEmpty(paramDef.getVariableName())) {
             return paramDef.getValue();
         }
-        variableName = getVariableName(variableName, paramDef);
+        variableName = getVariableName(variableName);
         return super.getValue(variableName);
     }
 
     @Override
     public WfVariable getVariable(String variableName) {
-        variableName = getVariableName(variableName, getInputParamDef(variableName));
+        variableName = getVariableName(variableName);
         return super.getVariable(variableName);
     }
 
