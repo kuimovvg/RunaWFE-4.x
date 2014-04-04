@@ -14,6 +14,7 @@ import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
+import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.EscalationActionPropertyDescriptor;
@@ -72,18 +73,10 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
 
     @Override
     public String getNextTransitionName() {
-        if (getTimer() != null && getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME) == null) {
+        if (getProcessDefinition().getLanguage() == Language.JPDL && getTimer() != null && getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME) == null) {
             return PluginConstants.TIMER_TRANSITION_NAME;
         }
         return super.getNextTransitionName();
-    }
-
-    @Override
-    public void addLeavingTransition(Transition transition) {
-        if (getTimer() == null && PluginConstants.TIMER_TRANSITION_NAME.equals(transition.getName())) {
-            transition.setName(getNextTransitionName());
-        }
-        super.addLeavingTransition(transition);
     }
 
     @Override

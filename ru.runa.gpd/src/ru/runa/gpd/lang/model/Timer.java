@@ -104,12 +104,6 @@ public class Timer extends Node {
     protected boolean allowLeavingTransition(List<Transition> transitions) {
         return transitions.size() == 0;
     }
-
-    @Override
-    public void addLeavingTransition(Transition transition) {
-        super.addLeavingTransition(transition);
-        transition.setName(PluginConstants.TIMER_TRANSITION_NAME);
-    }
     
     @Override
     public Timer getCopy(GraphElement parent) {
