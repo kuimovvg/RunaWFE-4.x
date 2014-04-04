@@ -8,6 +8,9 @@ import com.google.common.collect.Lists;
 
 public class BotStationAdapter {
     public static BotStation toDTO(ru.runa.wfe.webservice.BotStation botStation) {
+        if (botStation == null) {
+            return null;
+        }
         BotStation result = new BotStation();
         result.setId(botStation.getId());
         result.setVersion(botStation.getVersion());
