@@ -24,6 +24,7 @@ import ru.runa.gpd.quick.Messages;
 import ru.runa.gpd.quick.extension.QuickTemplateRegister;
 import ru.runa.gpd.quick.formeditor.QuickForm;
 import ru.runa.gpd.quick.formeditor.QuickFormEditorUtil;
+import ru.runa.gpd.quick.formeditor.QuickFormGpdProperty;
 import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
 import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
 import ru.runa.gpd.ui.custom.Dialogs;
@@ -80,6 +81,9 @@ public final class QuickFormConvertor {
         Map<String, Object> variables = new HashMap<String, Object>();
         variables.put("variables", converterSource.getQuickForm().getVariables());
         variables.put("task", "");
+        for (QuickFormGpdProperty quickFormGpdProperty : converterSource.getQuickForm().getProperties()) {
+            variables.put(quickFormGpdProperty.getName(), quickFormGpdProperty.getValue() == null ? "" : quickFormGpdProperty.getValue());
+        }
         MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, null);
         FormHashModelGpdWrap model = new FormHashModelGpdWrap(null, variableProvider, null);
 
