@@ -7,7 +7,6 @@ import ru.runa.wfe.var.dto.WfVariable;
 public class MapDelegableVariableProvider extends DelegableVariableProvider {
     private final Map<String, Object> values;
 
-    // TODO remove 1-st parameter from constructor
     public MapDelegableVariableProvider(Map<String, ? extends Object> variables, IVariableProvider delegate) {
         super(delegate);
         this.values = (Map<String, Object>) variables;
@@ -39,9 +38,17 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
 
     @Override
     public WfVariable getVariable(String variableName) {
-        Object object = values.get(variableName);
-        if (object instanceof WfVariable) {
-            return (WfVariable) object;
+        if (values.containsKey(variableName)) {
+            Object object = values.get(variableName);
+            if (object instanceof WfVariable) {
+                return (WfVariable) object;
+            }
+            WfVariable variable = super.getVariable(variableName);
+            if (variable != null) {
+                log.debug("Setting " + variable + " value to " + object);
+                variable.setValue(object);
+            }
+            return variable;
         }
         return super.getVariable(variableName);
     }
