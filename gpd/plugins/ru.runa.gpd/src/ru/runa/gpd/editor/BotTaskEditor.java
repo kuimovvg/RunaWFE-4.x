@@ -402,7 +402,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
             String typeLabel = "";
             if (paramDef.getFormatFilters().size() > 0) {
                 String type = paramDef.getFormatFilters().get(0);
-                typeLabel = VariableFormatRegistry.getInstance().getArtifactNotNullByJavaClassName(type).getLabel();
+                typeLabel = VariableFormatRegistry.getInstance().getFilterLabel(type);
             }
             String required = Localization.getString(paramDef.isOptional() ? "no" : "yes");
             String useVariable = Localization.getString(paramDef.isUseVariable() ? "yes" : "no");
