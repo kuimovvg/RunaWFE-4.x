@@ -35,10 +35,6 @@ public class RenameBotDialog extends Dialog {
         Composite area = (Composite) super.createDialogArea(parent);
         GridLayout layout = new GridLayout(1, false);
         area.setLayout(layout);
-        final Label labelTitle = new Label(area, SWT.NO_BACKGROUND);
-        final GridData labelData = new GridData();
-        labelTitle.setLayoutData(labelData);
-        labelTitle.setText(Localization.getString("RenameBotDialog.rename"));
         final Composite composite = new Composite(area, SWT.NONE);
         final GridLayout gridLayout = new GridLayout();
         gridLayout.numColumns = 2;
