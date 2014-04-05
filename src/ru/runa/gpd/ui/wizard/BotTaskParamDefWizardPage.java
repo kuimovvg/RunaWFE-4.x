@@ -59,7 +59,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
             }
             if (paramDef.getFormatFilters().size() > 0) {
                 String type = paramDef.getFormatFilters().get(0);
-                String label = VariableFormatRegistry.getInstance().getArtifactNotNullByJavaClassName(type).getLabel();
+                String label = VariableFormatRegistry.getInstance().getFilterLabel(type);
                 typeCombo.setText(label);
             }
             useVariableButton.setSelection(paramDef.isUseVariable());
@@ -94,7 +94,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("ParamDefWizardPage.page.type"));
         List<String> types = new ArrayList<String>();
-        for (VariableFormatArtifact artifact : VariableFormatRegistry.getInstance().getAll()) {
+        for (VariableFormatArtifact artifact : VariableFormatRegistry.getInstance().getFilterArtifacts()) {
             types.add(artifact.getLabel());
         }
         typeCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
@@ -145,7 +145,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
     }
 
     public String getType() {
-        return VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(typeCombo.getText()).getJavaClassName();
+        return VariableFormatRegistry.getInstance().getFilterJavaClassName(typeCombo.getText());
     }
 
     public boolean isUseVariable() {

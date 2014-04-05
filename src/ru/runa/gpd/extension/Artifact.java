@@ -1,6 +1,6 @@
 package ru.runa.gpd.extension;
 
-public class Artifact {
+public class Artifact implements Comparable<Artifact> {
     private boolean enabled;
     private String name;
     private String label;
@@ -42,5 +42,13 @@ public class Artifact {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+    
+    @Override
+    public int compareTo(Artifact o) {
+        if (label == null || o.label == null) {
+            return -1;
+        }
+        return label.compareTo(o.label);
     }
 }
