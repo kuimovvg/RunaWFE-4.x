@@ -1,22 +1,30 @@
 package ru.runa.gpd.extension;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.Activator;
+import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.wfe.InternalApplicationException;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtifact> {
     private static final String XML_FILE_NAME = "variableFormats.xml";
     private static final VariableFormatRegistry instance = new VariableFormatRegistry();
+    private List<VariableFormatArtifact> filterArtifacts;
 
     public static VariableFormatRegistry getInstance() {
         return instance;
@@ -34,6 +42,7 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
     @Override
     protected void loadDefaults(List<VariableFormatArtifact> list) {
         IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.formats").getExtensions();
+        Map<String, List<String>> mappingByTypeClass = Maps.newHashMap();
         for (IExtension extension : extensions) {
             IConfigurationElement[] configElements = extension.getConfigurationElements();
             for (IConfigurationElement configElement : configElements) {
@@ -42,8 +51,22 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
                 String label = configElement.getAttribute("label");
                 String javaClassName = configElement.getAttribute("javaClassName");
                 list.add(new VariableFormatArtifact(enabled, className, label, javaClassName));
+                if ("ru.runa.wfe.var.format.ProcessIdFormat".equals(className) || "ru.runa.wfe.var.format.UserTypeFormat".equals(className)) {
+                    continue;
+                }
+                if (!mappingByTypeClass.containsKey(javaClassName)) {
+                    mappingByTypeClass.put(javaClassName, new ArrayList<String>());
+                }
+                mappingByTypeClass.get(javaClassName).add(label);
             }
         }
+        filterArtifacts = Lists.newArrayList();
+        filterArtifacts.add(new VariableFormatArtifact(true, null, Localization.getString("label.any"), Object.class.getName()));
+        for (Map.Entry<String, List<String>> entry : mappingByTypeClass.entrySet()) {
+            String label = Joiner.on(", ").join(entry.getValue());
+            filterArtifacts.add(new VariableFormatArtifact(true, null, label, entry.getKey()));
+        }
+        Collections.sort(filterArtifacts);
     }
 
     public static boolean isAssignableFrom(String superClassName, String className) {
@@ -67,6 +90,9 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
 
     public static boolean isApplicable(Variable variable, String classNameFilter) {
     	if (variable.isComplex()) {
+    	    if (Objects.equal(Object.class.getName(), classNameFilter)) {
+    	        return true;
+    	    }
     		return Objects.equal(variable.getUserType().getName(), classNameFilter);
     	}
         return isAssignableFrom(classNameFilter, variable.getJavaClassName());
@@ -97,5 +123,27 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
             }
         }
         return result;
+    }
+    
+    public List<VariableFormatArtifact> getFilterArtifacts() {
+        return filterArtifacts;
+    }
+
+    public String getFilterLabel(String javaClassName) {
+        for (VariableFormatArtifact artifact : filterArtifacts) {
+            if (Objects.equal(javaClassName, artifact.getJavaClassName())) {
+                return artifact.getLabel();
+            }
+        }
+        throw new InternalApplicationException("No filter found by type " + javaClassName);
+    }
+
+    public String getFilterJavaClassName(String label) {
+        for (VariableFormatArtifact artifact : filterArtifacts) {
+            if (Objects.equal(label, artifact.getLabel())) {
+                return artifact.getJavaClassName();
+            }
+        }
+        throw new InternalApplicationException("No filter found by label " + label);
     }
 }
