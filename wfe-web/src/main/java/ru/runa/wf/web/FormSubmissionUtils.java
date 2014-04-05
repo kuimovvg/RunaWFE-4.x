@@ -169,9 +169,10 @@ public class FormSubmissionUtils {
         } else if (format instanceof UserTypeFormat) {
             List<VariableDefinition> expandedDefinitions = variableDefinition.expandComplexVariable();
             ComplexVariable complexVariable = new ComplexVariable();
-            for (VariableDefinition componentDefinition : expandedDefinitions) {
-                Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
-                complexVariable.put(componentDefinition.getName(), componentValue);
+            for (VariableDefinition expandedDefinition : expandedDefinitions) {
+                Object componentValue = extractVariable(request, userInput, expandedDefinition, formatErrorsForFields);
+                String attributeName = expandedDefinition.getName().substring(variableDefinition.getName().length()+1);
+                complexVariable.put(attributeName, componentValue);
             }
             variableValue = complexVariable;
         } else {
