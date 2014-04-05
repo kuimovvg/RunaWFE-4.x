@@ -22,7 +22,7 @@ public class RelativeToCurrentDateRangeFieldValidator extends AbstractRangeValid
             return null;
         }
         if (!add) {
-            daysCount = -1 * daysCount - 1;
+            daysCount = -1 * daysCount;
         }
         Calendar current = Calendar.getInstance();
         if (useBusinessCalendar()) {
