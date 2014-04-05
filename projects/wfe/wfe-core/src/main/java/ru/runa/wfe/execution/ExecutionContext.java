@@ -175,7 +175,10 @@ public class ExecutionContext {
         }
         if (value instanceof ComplexVariable) {
             ComplexVariable complexVariable = (ComplexVariable) value;
-            setVariableValues(complexVariable);
+            for (Map.Entry<String, Object> entry : complexVariable.entrySet()) {
+                String fullName = name + "." + entry.getKey();
+                setVariableValue(fullName, entry.getValue());
+            }
             return;
         }
         Variable<?> variable = variableDAO.get(getProcess(), name);
