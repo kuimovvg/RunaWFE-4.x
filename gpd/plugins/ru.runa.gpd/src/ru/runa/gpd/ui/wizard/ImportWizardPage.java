@@ -27,7 +27,7 @@ public abstract class ImportWizardPage extends WizardPage {
 
     protected void createProjectsGroup(Composite parent) {
         Group projectListGroup = new Group(parent, SWT.NONE);
-        projectListGroup.setLayout(new GridLayout(1, false));
+        projectListGroup.setLayout(new GridLayout());
         projectListGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
         projectListGroup.setText(Localization.getString("label.project"));
         createProjectsList(projectListGroup);
