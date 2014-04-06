@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -109,6 +110,17 @@ public class DocxFileChangerTest extends Assert {
     }
 
     @Test
+    public void testTableColumnsFormat() throws IOException {
+        Map<String, Object> data = Maps.newHashMap();
+        data.put(
+                "ArrayUser",
+                createVariable("ArrayUser", ListFormat.class.getName() + "(" + ActorFormat.class.getName() + ")",
+                        Lists.newArrayList(new Actor("Petrov", "", "", 1L, "test@email", null), 
+                                new Actor("Ivanov", "Pervomayskaya str 30a"))));
+        testDocx(true, "tables_format.docx", data);
+    }
+
+    @Test
     public void testImages() throws IOException {
         Map<String, Object> data = Maps.newHashMap();
         data.put("image1",
@@ -175,7 +187,11 @@ public class DocxFileChangerTest extends Assert {
     private void testDocx(boolean strictMode, String templateFileName, Map<String, Object> data) throws IOException {
         for (String appPrefix : prefixes) {
             String appTemplateFileName = appPrefix + templateFileName;
-            InputStream templateInputStream = ClassLoaderUtil.getAsStreamNotNull(appTemplateFileName, getClass());
+            InputStream templateInputStream = ClassLoaderUtil.getAsStream(appTemplateFileName, getClass());
+            if (templateInputStream == null) {
+                LogFactory.getLog(getClass()).warn("No docx template found by name " + appTemplateFileName);
+                continue;
+            }
             DocxConfig config = new DocxConfig();
             config.setStrictMode(strictMode);
             DocxFileChanger changer = new DocxFileChanger(config, new TestVariableProvider(data), templateInputStream);

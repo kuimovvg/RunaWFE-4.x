@@ -11,6 +11,8 @@ import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
@@ -36,6 +38,7 @@ import com.google.common.collect.Lists;
 
 // TODO use scripting name for variables!
 public class DocxUtils {
+    private static final Log log = LogFactory.getLog(DocxUtils.class);
     private static final String LINE_DELIMITER = "\n";
     private static final String ITERATOR_NAME_DELIMITER = " as ";
     public static final String PLACEHOLDER_START = OfficeProperties.getDocxPlaceholderStart();
@@ -73,19 +76,83 @@ public class DocxUtils {
     }
 
     public static void setCellText(final XWPFTableCell cell, String text) {
-        new SafeIndefiniteLoop(100) {
-
-            @Override
-            protected void doOp() {
-                cell.removeParagraph(0);
+        if (cell.getParagraphs().size() > 0 && cell.getParagraphs().get(0).getRuns().size() > 0) {
+            new SafeIndefiniteLoop(100) {
+    
+                @Override
+                protected void doOp() {
+                    cell.removeParagraph(1);
+                }
+    
+                @Override
+                protected boolean continueLoop() {
+                    return cell.getParagraphs().size() > 1;
+                }
+            }.doLoop();
+            final XWPFParagraph paragraph0 = cell.getParagraphs().get(0);
+            new SafeIndefiniteLoop(100) {
+    
+                @Override
+                protected void doOp() {
+                    paragraph0.removeRun(1);
+                }
+    
+                @Override
+                protected boolean continueLoop() {
+                    return paragraph0.getRuns().size() > 1;
+                }
+            }.doLoop();
+            paragraph0.getRuns().get(0).setText(text != null ? text : "", 0);
+        } else {
+            cell.setText(text != null ? text : "");
+            log.warn("no paragraphs or empty one, using raw text insert");
+        }
+    }
+    
+    public static void setCellText(XWPFTableCell cell, String text, XWPFTableCell cellTemplate) {
+        if (cellTemplate != null && cellTemplate.getParagraphs().size() > 0 && cellTemplate.getParagraphs().get(0).getRuns().size() > 0) {
+            XWPFParagraph paragraph0;
+            if (cell.getParagraphs().size() > 0) {
+                paragraph0 = cell.getParagraphs().get(0);
+            } else {
+                paragraph0 = cell.addParagraph();
             }
-
-            @Override
-            protected boolean continueLoop() {
-                return cell.getParagraphs().size() > 0;
+            try {
+                XWPFParagraph templateParagraph = cellTemplate.getParagraphs().get(0);
+                paragraph0.setAlignment(templateParagraph.getAlignment());
+                paragraph0.setBorderBetween(templateParagraph.getBorderBetween());
+                paragraph0.setBorderBottom(templateParagraph.getBorderBottom());
+                paragraph0.setBorderLeft(templateParagraph.getBorderLeft());
+                paragraph0.setBorderRight(templateParagraph.getBorderRight());
+                paragraph0.setBorderTop(templateParagraph.getBorderTop());
+                paragraph0.setIndentationFirstLine(templateParagraph.getIndentationFirstLine());
+                paragraph0.setIndentationHanging(templateParagraph.getIndentationHanging());
+                paragraph0.setIndentationLeft(templateParagraph.getIndentationLeft());
+                paragraph0.setIndentationRight(templateParagraph.getIndentationRight());
+                paragraph0.setPageBreak(templateParagraph.isPageBreak());
+//                paragraph0.setSpacingAfter(templateParagraph.getSpacingAfter());
+//                paragraph0.setSpacingAfterLines(templateParagraph.getSpacingAfterLines());
+//                paragraph0.setSpacingBefore(templateParagraph.getSpacingBefore());
+//                paragraph0.setSpacingLineRule(templateParagraph.getSpacingLineRule());
+                //paragraph0.setStyle(templateParagraph.getStyle());
+                paragraph0.setVerticalAlignment(templateParagraph.getVerticalAlignment());
+                //paragraph0.setWordWrap(templateParagraph.isWordWrap());
+            } catch (Exception e) {
+                log.warn("Unable to copy paragraph styles", e);
             }
-        }.doLoop();
-        cell.setText(text != null ? text : "");
+            XWPFRun run0;
+            if (paragraph0.getRuns().size() > 0) {
+                run0 = paragraph0.getRuns().get(0);
+            } else {
+                run0 = paragraph0.createRun();
+            }
+            StylesHolder stylesHolder = new StylesHolder(cellTemplate.getParagraphs().get(0).getRuns().get(0));
+            stylesHolder.applyStyles(run0);
+            run0.setText(text != null ? text : "", 0);
+        } else {
+            cell.setText(text != null ? text : "");
+            log.warn("null or invalid template cell, using raw text insert");
+        }
     }
 
     public static Object getValue(DocxConfig config, IVariableProvider variableProvider, Object value, String selector) {

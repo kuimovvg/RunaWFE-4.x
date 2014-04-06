@@ -5,19 +5,30 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.collect.Lists;
 
 public class TableExpansionOperation extends Operation {
+    private final List<XWPFTableCell> cells;
     private int rows = 0;
     private final List<ColumnExpansionOperation> operations;
     private List<Comparable> sortedMapKeys = null;
 
-    public TableExpansionOperation(int columns) {
-        this.operations = Lists.newArrayListWithExpectedSize(columns);
+    public TableExpansionOperation(List<XWPFTableCell> cells) {
+        this.cells = cells;
+        this.operations = Lists.newArrayListWithExpectedSize(cells.size());
     }
 
+    public XWPFTableCell getCell(int columnIndex) {
+        if (columnIndex < cells.size()) {
+            return cells.get(columnIndex);
+        }
+        return null;
+    }
+    
     public int getRows() {
         return rows;
     }
