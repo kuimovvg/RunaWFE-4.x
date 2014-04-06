@@ -34,10 +34,9 @@ public class DropDownButton extends Button {
     private int y2 = -1;
     private Menu menu;
 
-    public DropDownButton(Composite parent, int style) {
+    public DropDownButton(Composite parent) {
         super(parent, SWT.PUSH);
         setText("");
-        setAlignment(SWT.LEFT);
         super.addPaintListener(new PaintListener() {
 
             @Override
