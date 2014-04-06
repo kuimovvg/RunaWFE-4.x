@@ -47,7 +47,7 @@ public class DocxFileChanger {
                 for (XWPFTableRow row : Lists.newArrayList(rows)) {
                     List<XWPFTableCell> cells = row.getTableCells();
                     // try to expand cells by column
-                    TableExpansionOperation tableExpansionOperation = new TableExpansionOperation(cells.size());
+                    TableExpansionOperation tableExpansionOperation = new TableExpansionOperation(cells);
                     for (int columnIndex = 0; columnIndex < cells.size(); columnIndex++) {
                         final XWPFTableCell cell = cells.get(columnIndex);
                         ColumnExpansionOperation operation = DocxUtils.parseIterationOperation(config, variableProvider, cell.getText(),
@@ -67,8 +67,7 @@ public class DocxFileChanger {
                             XWPFTableRow dynamicRow = table.createRow();
                             for (int columnIndex = 0; columnIndex < dynamicRow.getTableCells().size(); columnIndex++) {
                                 String text = tableExpansionOperation.getStringValue(config, variableProvider, columnIndex, rowIndex);
-                                // TODO copy with styles
-                                dynamicRow.getCell(columnIndex).setText(text);
+                                DocxUtils.setCellText(dynamicRow.getCell(columnIndex), text, tableExpansionOperation.getCell(columnIndex));
                             }
                         }
                     }
