@@ -6,7 +6,7 @@ import org.eclipse.jface.window.Window;
 
 import ru.runa.gpd.lang.model.MultiSubprocess;
 import ru.runa.gpd.lang.model.Subprocess;
-import ru.runa.gpd.ui.dialog.MultiInstanceDialog;
+import ru.runa.gpd.ui.dialog.MultiSubprocessDialog;
 import ru.runa.gpd.ui.dialog.SubprocessDialog;
 
 public class SubprocessDelegate extends BaseModelActionDelegate {
@@ -30,7 +30,7 @@ public class SubprocessDelegate extends BaseModelActionDelegate {
     public void openDetails(Subprocess subprocess) {
         if (subprocess instanceof MultiSubprocess) {
             MultiSubprocess multiSubprocess = (MultiSubprocess) subprocess;
-            MultiInstanceDialog dialog = new MultiInstanceDialog(multiSubprocess);
+            MultiSubprocessDialog dialog = new MultiSubprocessDialog(multiSubprocess);
             if (dialog.open() != Window.CANCEL) {
                 multiSubprocess.setSubProcessName(dialog.getSubprocessName());
                 multiSubprocess.setVariableMappings(dialog.getVariableMappings(true));

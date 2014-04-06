@@ -24,13 +24,11 @@ import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.util.VariableMapping;
 
 public class MessageVariableDialog extends Dialog {
-
     private final List<String> variableNames;
     private final boolean usageSelector;
     private final VariableMapping oldMapping;
     private String variable = "";
     private String alias = "";
-
     private Text aliasText;
 
     protected MessageVariableDialog(List<String> variableNames, boolean usageSelector, VariableMapping oldMapping) {

@@ -9,6 +9,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import ru.runa.gpd.Localization;
@@ -19,11 +20,11 @@ import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.util.MultiinstanceParameters;
 import ru.runa.gpd.util.VariableMapping;
 
-public class MultiInstanceDialog extends SubprocessDialog {
+public class MultiSubprocessDialog extends SubprocessDialog {
     private final MultiinstanceParameters parameters;
     private Combo iteratorVariableCombo;
 
-    public MultiInstanceDialog(MultiSubprocess multiSubprocess) {
+    public MultiSubprocessDialog(MultiSubprocess multiSubprocess) {
         super(multiSubprocess);
         parameters = new MultiinstanceParameters(multiSubprocess.getVariableMappings());
     }
@@ -36,9 +37,13 @@ public class MultiInstanceDialog extends SubprocessDialog {
 
     @Override
     protected void createConfigurationComposite(Composite parent) {
-        new MultiinstanceComposite(parent, definition, parameters, 
+        Group group = new Group(parent, SWT.NONE);
+        group.setLayout(new GridLayout());
+        group.setLayoutData(new GridData(GridData.FILL_BOTH));
+        group.setText(Localization.getString("Feature.Multiinstance"));
+        new MultiinstanceComposite(group, definition, parameters, 
                 Localization.getString("Multiinstance.SubprocessesVariableName"), Localization.getString("Multiinstance.SubprocessesGroupName"));
-        Composite composite = new Composite(parent, SWT.NONE);
+        Composite composite = new Composite(group, SWT.NONE);
         composite.setLayout(new GridLayout(2, false));
         composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         Label processVariableLabel = new Label(composite, SWT.NONE);
