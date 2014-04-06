@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class DocxConfig extends FilesSupplierConfig {
-    private static final Log LOG = LogFactory.getLog(DocxConfig.class);
+    private static final Log log = LogFactory.getLog(DocxConfig.class);
     private boolean strictMode;
     private final Map<String, TableConfig> tables = Maps.newHashMap();
     private final Map<String, VariableFormat> typeHints = Maps.newHashMap();
@@ -42,18 +42,18 @@ public class DocxConfig extends FilesSupplierConfig {
         if (strictMode) {
             throw new InternalApplicationException(message);
         }
-        LOG.warn(message);
+        log.warn(message);
     }
 
     public void reportProblem(Exception e) {
         if (strictMode) {
             Throwables.propagate(e);
         }
-        LOG.warn("", e);
+        log.warn("", e);
     }
 
     public void warn(String message) {
-        LOG.warn(message);
+        log.warn(message);
     }
 
     public Map<String, TableConfig> getTables() {
