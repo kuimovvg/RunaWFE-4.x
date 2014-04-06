@@ -129,8 +129,9 @@ public class MessageNodeDialog extends Dialog {
     private void addSelectorButtons(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
-        DropDownButton addButton = new DropDownButton(composite, SWT.NONE);
+        DropDownButton addButton = new DropDownButton(composite);
         addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        addButton.setAlignment(SWT.LEFT);
         addButton.setText(Localization.getString("button.add"));
         addButton.addSelectionListener(new LoggingSelectionAdapter() {
 
