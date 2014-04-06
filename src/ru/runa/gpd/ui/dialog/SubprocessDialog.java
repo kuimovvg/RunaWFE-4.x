@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -84,14 +84,12 @@ public class SubprocessDialog extends Dialog {
         Composite composite = (Composite) super.createDialogArea(parent);
         composite.setLayout(new GridLayout(1, false));
 
-        Composite subprocessComposite = new Composite(composite, SWT.NONE);
-        subprocessComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        subprocessComposite.setLayout(new GridLayout(2, false));
+        Group subprocessNameGroup = new Group(composite, SWT.NONE);
+        subprocessNameGroup.setLayout(new GridLayout());
+        subprocessNameGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        subprocessNameGroup.setText(Localization.getString("Subprocess.Name"));
 
-        Label label = new Label(subprocessComposite, SWT.NO_BACKGROUND);
-        label.setLayoutData(new GridData());
-        label.setText(Localization.getString("Subprocess.Name"));
-        subprocessDefinitionCombo = new Combo(subprocessComposite, SWT.BORDER);
+        subprocessDefinitionCombo = new Combo(subprocessNameGroup, SWT.BORDER);
         subprocessDefinitionCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         subprocessDefinitionCombo.setItems(getProcessDefinitionNames());
         subprocessDefinitionCombo.setVisibleItemCount(10);
@@ -115,11 +113,12 @@ public class SubprocessDialog extends Dialog {
 
         createConfigurationComposite(composite);
 
-        Label variablesLabel = new Label(composite, SWT.NONE);
-        variablesLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        variablesLabel.setText(Localization.getString("Subprocess.VariableMappings"));
+        Group mappingsGroup = new Group(composite, SWT.NONE);
+        mappingsGroup.setLayout(new GridLayout());
+        mappingsGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        mappingsGroup.setText(Localization.getString("Subprocess.VariableMappings"));
 
-        variablesComposite = new VariablesComposite(composite);
+        variablesComposite = new VariablesComposite(mappingsGroup);
         variablesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
         variablesComposite.setFocus();
         return composite;

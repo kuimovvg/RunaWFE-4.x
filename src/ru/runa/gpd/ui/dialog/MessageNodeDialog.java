@@ -1,6 +1,7 @@
 package ru.runa.gpd.ui.dialog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -10,10 +11,10 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -21,18 +22,25 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
 
-import com.google.common.collect.Lists;
-
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.MessagingNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.ui.custom.DragAndDropAdapter;
+import ru.runa.gpd.ui.custom.DropDownButton;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
+import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.util.VariableMapping;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class MessageNodeDialog extends Dialog {
     private final ProcessDefinition definition;
@@ -40,6 +48,12 @@ public class MessageNodeDialog extends Dialog {
     private final boolean sendMode;
     private TableViewer selectorTableViewer;
     private TableViewer dataTableViewer;
+    private Button selectorChangeButton;
+    private Button selectorDeleteButton;
+    private Button dataMoveUpButton;
+    private Button dataMoveDownButton;
+    private Button dataChangeButton;
+    private Button dataDeleteButton;
 
     public MessageNodeDialog(ProcessDefinition definition, List<VariableMapping> variableMappings, boolean sendMode) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
@@ -50,24 +64,25 @@ public class MessageNodeDialog extends Dialog {
 
     @Override
     protected Control createDialogArea(Composite parent) {
-        Composite area = (Composite) super.createDialogArea(parent);
-        GridLayout layout = new GridLayout(1, false);
-        area.setLayout(layout);
-        Label label2 = new Label(area, SWT.NO_BACKGROUND);
-        label2.setLayoutData(new GridData());
-        label2.setText(Localization.getString(sendMode ? "MessageNodeDialog.SelectorSend" : "MessageNodeDialog.SelectorReceive"));
-        createSelectorTableViewer(area);
-        addSelectorButtons(area);
-        Label label1 = new Label(area, SWT.NO_BACKGROUND);
-        label1.setLayoutData(new GridData());
-        label1.setText(Localization.getString("MessageNodeDialog.VariablesList"));
-        createDataTableViewer(area);
-        addDataButtons(area);
-        return area;
+        Composite composite = (Composite) super.createDialogArea(parent);
+        composite.setLayout(new GridLayout());
+        Group routeGroup = new Group(composite, SWT.NONE);
+        routeGroup.setLayout(new GridLayout(2, false));
+        routeGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        routeGroup.setText(Localization.getString(sendMode ? "MessageNodeDialog.SelectorSend" : "MessageNodeDialog.SelectorReceive"));
+        createSelectorTableViewer(routeGroup);
+        addSelectorButtons(routeGroup);
+        Group variablesGroup = new Group(composite, SWT.NONE);
+        variablesGroup.setLayout(new GridLayout(2, false));
+        variablesGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        variablesGroup.setText(Localization.getString("MessageNodeDialog.VariablesList"));
+        createDataTableViewer(variablesGroup);
+        addDataButtons(variablesGroup);
+        return composite;
     }
 
     private void createSelectorTableViewer(Composite parent) {
-        selectorTableViewer = new TableViewer(parent, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        selectorTableViewer = new TableViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
         GridData data = new GridData(GridData.FILL_VERTICAL);
         data.minimumHeight = 100;
         selectorTableViewer.getControl().setLayoutData(data);
@@ -92,96 +107,118 @@ public class MessageNodeDialog extends Dialog {
         });
         selectorTableViewer.setLabelProvider(new VariableMappingTableLabelProvider());
         selectorTableViewer.setContentProvider(new UsageContentProvider(VariableMapping.USAGE_SELECTOR));
-        selectorTableViewer.setInput(new Object());
+        setSelectorTableInput();
+        TableViewerLocalDragAndDropSupport.enable(selectorTableViewer, new DragAndDropAdapter<VariableMapping>() {
+
+            @Override
+            public void onDropElement(VariableMapping beforeElement, VariableMapping element) {
+                if (variableMappings.remove(element)) {
+                    variableMappings.add(variableMappings.indexOf(beforeElement), element);
+                }
+            }
+
+            @Override
+            public void onDrop(VariableMapping beforeElement, List<VariableMapping> elements) {
+                super.onDrop(beforeElement, elements);
+                setSelectorTableInput();
+            }
+
+        });
     }
 
     private void addSelectorButtons(Composite parent) {
-        final Composite par = parent;
-        Composite composite = new Composite(par, SWT.NONE);
-        composite.setLayout(new GridLayout(6, false));
-        Button addButton = new Button(composite, SWT.PUSH);
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        DropDownButton addButton = new DropDownButton(composite, SWT.NONE);
+        addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         addButton.setText(Localization.getString("button.add"));
-        addButton.addSelectionListener(new SelectionAdapter() {
+        addButton.addSelectionListener(new LoggingSelectionAdapter() {
+
             @Override
-            public void widgetSelected(SelectionEvent event) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 editVariableMapping(null, VariableMapping.USAGE_SELECTOR);
             }
         });
-        Button editButton = new Button(composite, SWT.PUSH);
-        editButton.setText(Localization.getString("button.edit"));
-        editButton.addSelectionListener(new SelectionAdapter() {
+        addButton.addButton(Localization.getString("MessageNodeDialog.addByProcessId"), new LoggingSelectionAdapter() {
+
             @Override
-            public void widgetSelected(SelectionEvent event) {
-                IStructuredSelection selection = (IStructuredSelection) selectorTableViewer.getSelection();
-                if (!selection.isEmpty()) {
-                    VariableMapping mapping = (VariableMapping) selection.getFirstElement();
-                    editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
-                }
-            }
-        });
-        Button removeButton = new Button(composite, SWT.PUSH);
-        removeButton.setText(Localization.getString("button.delete"));
-        removeButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                IStructuredSelection selection = (IStructuredSelection) selectorTableViewer.getSelection();
-                if (!selection.isEmpty()) {
-                    VariableMapping mapping = (VariableMapping) selection.getFirstElement();
-                    variableMappings.remove(mapping);
-                    selectorTableViewer.refresh();
-                }
-            }
-        });
-        Button addByProcessIdButton = new Button(composite, SWT.PUSH);
-        addByProcessIdButton.setText(Localization.getString("MessageNodeDialog.addByProcessId"));
-        addByProcessIdButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 VariableMapping mapping = new VariableMapping("processId", MessagingNode.SELECTOR_CURRENT_PROCESS_ID, VariableMapping.USAGE_SELECTOR);
                 if (sendMode) {
                     editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
                 } else {
-                    addVariableMapping(mapping);
+                    addVariableMapping(mapping, true);
                 }
             }
         });
-        Button addByProcessNameButton = new Button(composite, SWT.PUSH);
-        addByProcessNameButton.setText(Localization.getString("MessageNodeDialog.addByProcessName"));
-        addByProcessNameButton.addSelectionListener(new SelectionAdapter() {
+        addButton.addButton(Localization.getString("MessageNodeDialog.addByProcessName"), new LoggingSelectionAdapter() {
+
             @Override
-            public void widgetSelected(SelectionEvent event) {
-                VariableMapping mapping = new VariableMapping("processDefinitionName", MessagingNode.SELECTOR_CURRENT_PROCESS_DEFINITION_NAME, VariableMapping.USAGE_SELECTOR);
+            protected void onSelection(SelectionEvent e) throws Exception {
+                VariableMapping mapping = new VariableMapping("processDefinitionName", MessagingNode.SELECTOR_CURRENT_PROCESS_DEFINITION_NAME,
+                        VariableMapping.USAGE_SELECTOR);
                 if (sendMode) {
                     editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
                 } else {
-                    addVariableMapping(mapping);
+                    addVariableMapping(mapping, true);
                 }
             }
         });
-        Button addByNodeNameButton = new Button(composite, SWT.PUSH);
-        addByNodeNameButton.setText(Localization.getString("MessageNodeDialog.addByNodeName"));
-        addByNodeNameButton.addSelectionListener(new SelectionAdapter() {
+        addButton.addButton(Localization.getString("MessageNodeDialog.addByNodeName"), new LoggingSelectionAdapter() {
+
             @Override
-            public void widgetSelected(SelectionEvent event) {
-                VariableMapping mapping = new VariableMapping("processNodeName", MessagingNode.SELECTOR_CURRENT_NODE_NAME, VariableMapping.USAGE_SELECTOR);
+            protected void onSelection(SelectionEvent e) throws Exception {
+                VariableMapping mapping = new VariableMapping("processNodeName", MessagingNode.SELECTOR_CURRENT_NODE_NAME,
+                        VariableMapping.USAGE_SELECTOR);
                 if (sendMode) {
                     editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
                 } else {
-                    addVariableMapping(mapping);
+                    addVariableMapping(mapping, true);
                 }
             }
         });
+        selectorChangeButton = SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.change"), new LoggingSelectionAdapter() {
+
+            @Override
+            protected void onSelection(SelectionEvent e) throws Exception {
+                IStructuredSelection selection = (IStructuredSelection) selectorTableViewer.getSelection();
+                if (!selection.isEmpty()) {
+                    VariableMapping mapping = (VariableMapping) selection.getFirstElement();
+                    editVariableMapping(mapping, VariableMapping.USAGE_SELECTOR);
+                }
+            }
+        });
+        selectorDeleteButton = SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.delete"), new LoggingSelectionAdapter() {
+
+            @Override
+            protected void onSelection(SelectionEvent e) throws Exception {
+                IStructuredSelection selection = (IStructuredSelection) selectorTableViewer.getSelection();
+                List<VariableMapping> mappings = selection.toList();
+                for (VariableMapping mapping : mappings) {
+                    variableMappings.remove(mapping);
+                }
+                selectorTableViewer.refresh();
+            }
+        });
+        selectorTableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
+            @Override
+            protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
+                updateSelectorButtons();
+            }
+        });
+        updateSelectorButtons();
     }
 
     private void createDataTableViewer(Composite parent) {
-        dataTableViewer = new TableViewer(parent, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        dataTableViewer = new TableViewer(parent, SWT.MULTI | SWT.V_SCROLL | SWT.FULL_SELECTION);
         GridData data = new GridData(GridData.FILL_VERTICAL);
         data.minimumHeight = 200;
         dataTableViewer.getControl().setLayoutData(data);
         final Table table = dataTableViewer.getTable();
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
-        String[] columnNames = new String[] { Localization.getString("MessageNodeDialog.VariableName"), Localization.getString("MessageNodeDialog.Alias") };
+        String[] columnNames = new String[] { Localization.getString("MessageNodeDialog.VariableName"),
+                Localization.getString("MessageNodeDialog.Alias") };
         for (int i = 0; i < columnNames.length; i++) {
             TableColumn tableColumn = new TableColumn(table, SWT.LEFT);
             tableColumn.setText(columnNames[i]);
@@ -199,41 +236,47 @@ public class MessageNodeDialog extends Dialog {
         });
         dataTableViewer.setLabelProvider(new VariableMappingTableLabelProvider());
         dataTableViewer.setContentProvider(new UsageContentProvider(VariableMapping.USAGE_READ));
+        setDataTableInput();
+        TableViewerLocalDragAndDropSupport.enable(dataTableViewer, new DragAndDropAdapter<VariableMapping>() {
+
+            @Override
+            public void onDropElement(VariableMapping beforeElement, VariableMapping element) {
+                if (variableMappings.remove(element)) {
+                    variableMappings.add(variableMappings.indexOf(beforeElement), element);
+                }
+            }
+
+            @Override
+            public void onDrop(VariableMapping beforeElement, List<VariableMapping> elements) {
+                super.onDrop(beforeElement, elements);
+                setDataTableInput();
+            }
+
+        });
+    }
+
+    private void setSelectorTableInput() {
+        selectorTableViewer.setInput(new Object());
+    }
+
+    private void setDataTableInput() {
         dataTableViewer.setInput(new Object());
     }
 
     private void addDataButtons(Composite parent) {
-        final Composite par = parent;
-        Composite composite = new Composite(par, SWT.NONE);
-        composite.setLayout(new GridLayout(4, false));
-        Button addButton = new Button(composite, SWT.PUSH);
-        addButton.setText(Localization.getString("button.add"));
-        addButton.addSelectionListener(new SelectionAdapter() {
+        Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(new GridLayout());
+        SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.add"), new LoggingSelectionAdapter() {
+
             @Override
-            public void widgetSelected(SelectionEvent event) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 editVariableMapping(null, VariableMapping.USAGE_READ);
             }
         });
-        Button addAllButton = new Button(composite, SWT.PUSH);
-        addAllButton.setText(Localization.getString("button.addAll"));
-        addAllButton.addSelectionListener(new SelectionAdapter() {
+        dataChangeButton = SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.change"), new LoggingSelectionAdapter() {
+
             @Override
-            public void widgetSelected(SelectionEvent event) {
-                List<String> variableNamesToAdd = new ArrayList<String>(definition.getVariableNames(false));
-                for (VariableMapping mapping : variableMappings) {
-                    variableNamesToAdd.remove(mapping.getProcessVariableName());
-                }
-                for (String variableName : variableNamesToAdd) {
-                    VariableMapping mapping = new VariableMapping(variableName, variableName, VariableMapping.USAGE_READ);
-                    addVariableMapping(mapping);
-                }
-            }
-        });
-        Button updateButton = new Button(composite, SWT.PUSH);
-        updateButton.setText(Localization.getString("button.edit"));
-        updateButton.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent event) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 IStructuredSelection selection = (IStructuredSelection) dataTableViewer.getSelection();
                 if (!selection.isEmpty()) {
                     VariableMapping oldMapping = (VariableMapping) selection.getFirstElement();
@@ -241,32 +284,59 @@ public class MessageNodeDialog extends Dialog {
                 }
             }
         });
-        Button removeButton = new Button(composite, SWT.PUSH);
-        removeButton.setText(Localization.getString("button.delete"));
-        removeButton.addSelectionListener(new SelectionAdapter() {
+        dataMoveUpButton = SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.up"), new MoveVariableSelectionListener(true));
+        dataMoveDownButton = SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.down"), new MoveVariableSelectionListener(
+                false));
+        dataDeleteButton = SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.delete"), new LoggingSelectionAdapter() {
+
             @Override
-            public void widgetSelected(SelectionEvent event) {
+            protected void onSelection(SelectionEvent e) throws Exception {
                 IStructuredSelection selection = (IStructuredSelection) dataTableViewer.getSelection();
-                if (!selection.isEmpty()) {
-                    VariableMapping mapping = (VariableMapping) selection.getFirstElement();
+                List<VariableMapping> mappings = selection.toList();
+                for (VariableMapping mapping : mappings) {
                     variableMappings.remove(mapping);
-                    dataTableViewer.refresh();
                 }
+                dataTableViewer.refresh();
             }
         });
+        dataTableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
+            @Override
+            protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
+                updateDataButtons();
+            }
+        });
+        updateDataButtons();
     }
 
-    private void editVariableMapping(VariableMapping oldMapping, String usage) {
-        MessageVariableDialog dialog = new MessageVariableDialog(definition.getVariableNames(true), VariableMapping.USAGE_SELECTOR.equals(usage), oldMapping);
+    private void updateSelectorButtons() {
+        List<?> selected = ((IStructuredSelection) selectorTableViewer.getSelection()).toList();
+        selectorChangeButton.setEnabled(selected.size() == 1);
+        selectorDeleteButton.setEnabled(selected.size() > 0);
+    }
+
+    private void updateDataButtons() {
+        List<?> selected = ((IStructuredSelection) dataTableViewer.getSelection()).toList();
+        dataChangeButton.setEnabled(selected.size() == 1);
+        dataMoveUpButton.setEnabled(selected.size() == 1 && variableMappings.indexOf(selected.get(0)) > 0);
+        dataMoveDownButton.setEnabled(selected.size() == 1 && variableMappings.indexOf(selected.get(0)) < variableMappings.size() - 1);
+        dataDeleteButton.setEnabled(selected.size() > 0);
+    }
+
+    private void editVariableMapping(VariableMapping mapping, String usage) {
+        MessageVariableDialog dialog = new MessageVariableDialog(definition.getVariableNames(true), VariableMapping.USAGE_SELECTOR.equals(usage),
+                mapping);
         if (dialog.open() != IDialogConstants.CANCEL_ID) {
-            VariableMapping mapping = new VariableMapping();
+            if (mapping == null) {
+                mapping = new VariableMapping();
+            }
             mapping.setProcessVariableName(dialog.getVariable());
             mapping.setSubprocessVariableName(dialog.getAlias());
             mapping.setUsage(usage);
-            if (oldMapping != null) {
-                variableMappings.remove(oldMapping);
+            if (!variableMappings.contains(mapping)) {
+                addVariableMapping(mapping, false);
             }
-            addVariableMapping(mapping);
+            selectorTableViewer.refresh();
+            dataTableViewer.refresh();
         }
     }
 
@@ -274,16 +344,36 @@ public class MessageNodeDialog extends Dialog {
         return variableMappings;
     }
 
-    private void addVariableMapping(VariableMapping mapping) {
+    private void addVariableMapping(VariableMapping mapping, boolean updateViewers) {
         for (VariableMapping existingMapping : variableMappings) {
-            if (existingMapping.getProcessVariableName().equals(mapping.getProcessVariableName())) {
+            if (Objects.equal(existingMapping.getProcessVariableName(), mapping.getProcessVariableName())) {
                 variableMappings.remove(existingMapping);
                 break;
             }
         }
         variableMappings.add(mapping);
-        selectorTableViewer.refresh();
-        dataTableViewer.refresh();
+        if (updateViewers) {
+            selectorTableViewer.refresh();
+            dataTableViewer.refresh();
+        }
+    }
+
+    private class MoveVariableSelectionListener extends LoggingSelectionAdapter {
+        private final boolean up;
+
+        public MoveVariableSelectionListener(boolean up) {
+            this.up = up;
+        }
+
+        @Override
+        protected void onSelection(SelectionEvent e) throws Exception {
+            IStructuredSelection selection = (IStructuredSelection) dataTableViewer.getSelection();
+            VariableMapping mapping = (VariableMapping) selection.getFirstElement();
+            int index = variableMappings.indexOf(mapping);
+            Collections.swap(variableMappings, index, up ? (index - 1) : (index + 1));
+            setDataTableInput();
+            dataTableViewer.setSelection(selection);
+        }
     }
 
     private static class VariableMappingTableLabelProvider extends LabelProvider implements ITableLabelProvider {
