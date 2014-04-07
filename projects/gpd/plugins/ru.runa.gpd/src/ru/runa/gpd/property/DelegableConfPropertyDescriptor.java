@@ -43,8 +43,17 @@ public class DelegableConfPropertyDescriptor extends PropertyDescriptor {
 
         @Override
         protected void updateContents(Object value) {
-            super.updateContents(value);
-            getDefaultLabel().setToolTipText((String) value);
+            if (getDefaultLabel() != null) {
+                String text = value != null ? (String) value : "";
+                String firstLine;
+                if (text.indexOf("\n") > 0) {
+                    firstLine = text.substring(0, text.indexOf("\n"));
+                } else {
+                    firstLine = text;
+                }
+                getDefaultLabel().setText(firstLine);
+                getDefaultLabel().setToolTipText(text);
+            }
         }
     }
 }

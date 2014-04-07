@@ -345,6 +345,10 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         } else {
             stringValue = value.toString();
         }
-        return stringValue;
+        if (stringValue.indexOf("\n") > 0) {
+            return stringValue.substring(0, stringValue.indexOf("\n"));
+        } else {
+            return stringValue;
+        }
     }
 }
