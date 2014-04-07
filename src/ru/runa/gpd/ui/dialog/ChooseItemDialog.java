@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -82,6 +83,9 @@ public class ChooseItemDialog extends Dialog {
         if (labelProvider != null) {
             itemsList.setLabelProvider(labelProvider);
         }
+        if (selectedItem != null) {
+            itemsList.setSelection(new StructuredSelection(selectedItem));
+        }
         itemsList.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
@@ -112,6 +116,17 @@ public class ChooseItemDialog extends Dialog {
 
     public Object getSelectedItem() {
         return selectedItem;
+    }
+    
+    public void setSelectedItem(Object selectedItem) {
+        this.selectedItem = selectedItem;
+        if (itemsList != null) {
+            if (selectedItem != null) {
+                itemsList.setSelection(new StructuredSelection(selectedItem));
+            } else {
+                itemsList.setSelection(new StructuredSelection());
+            }
+        }
     }
 
     public List<? extends Object> getItems() {

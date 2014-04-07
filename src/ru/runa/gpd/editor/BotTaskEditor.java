@@ -203,7 +203,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         chooseTaskHandlerClassButton.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-                ChooseHandlerClassDialog dialog = new ChooseHandlerClassDialog(HandlerArtifact.TASK_HANDLER);
+                ChooseHandlerClassDialog dialog = new ChooseHandlerClassDialog(HandlerArtifact.TASK_HANDLER, handlerText.getText());
                 String className = dialog.openDialog();
                 if (className != null) {
                     boolean taskHandlerParameterized = BotTaskUtils.isTaskHandlerParameterized(className);
