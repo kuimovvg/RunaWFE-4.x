@@ -8,7 +8,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
@@ -16,6 +15,7 @@ import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.ValidationError;
+import ru.runa.gpd.property.FormFilesPropertyDescriptor;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.validation.ValidatorConfig;
@@ -109,22 +109,14 @@ public abstract class FormNode extends SwimlanedNode {
     @Override
     protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
-        list.add(new PropertyDescriptor(PROPERTY_FORM_FILE, Localization.getString("FormNode.property.formFile")));
-        list.add(new PropertyDescriptor(PROPERTY_FORM_VALIDATION_FILE, Localization.getString("FormNode.property.formValidationFile")));
-        list.add(new PropertyDescriptor(PROPERTY_FORM_SCRIPT_FILE, Localization.getString("FormNode.property.formScriptFile")));
+        list.add(new FormFilesPropertyDescriptor("formFiles", Localization.getString("FormNode.property.formFiles"), this));
         return list;
     }
 
     @Override
     public Object getPropertyValue(Object id) {
-        if (PROPERTY_FORM_FILE.equals(id)) {
-            return safeStringValue(getFormFileName());
-        }
-        if (PROPERTY_FORM_VALIDATION_FILE.equals(id)) {
-            return safeStringValue(getValidationFileName());
-        }
-        if (PROPERTY_FORM_SCRIPT_FILE.equals(id)) {
-            return safeStringValue(getScriptFileName());
+        if ("formFiles".equals(id)) {
+            return this;
         }
         return super.getPropertyValue(id);
     }
