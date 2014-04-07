@@ -134,12 +134,18 @@
     </objectContribution>
     <objectContribution
           adaptable="false"
-          id="taskstate.compactview"
+          id="taskstate.features"
           objectClass="ru.runa.gpd.lang.model.TaskState">
        <action
              class="ru.runa.gpd.lang.action.CompactViewFeatureDelegate"
              id="feature.compactView"
              label="%label.action.feature.compactView"
+             menubarPath="features/sp1">
+       </action>
+       <action
+             class="ru.runa.gpd.lang.action.EditTaskStateDeadlineAction"
+             id="taskstate.deadline"
+             label="%label.action.editDeadline"
              menubarPath="features/sp1">
        </action>
     </objectContribution>
@@ -385,8 +391,13 @@
              value="true">
        </filter>
        <action
+             class="ru.runa.gpd.lang.action.ChooseDelegableHandlerAction"
+             id="delegable.1editHandler"
+             label="%label.action.editHandler">
+       </action>
+       <action
              class="ru.runa.gpd.lang.action.OpenDelegableConfigurationDelegate"
-             id="editConfiguration"
+             id="delegable.2editConfiguration"
              label="%label.action.editConfiguration" />
     </objectContribution>
     <objectContribution
@@ -432,9 +443,15 @@
           id="sendmessage.configuration"
           objectClass="ru.runa.gpd.lang.model.SendMessageNode">
        <action
+             class="ru.runa.gpd.lang.action.SendMessageEditTTLAction"
+             id="sendMessage.ttl"
+             label="%label.action.editTTL"
+             menubarPath="additions">
+       </action>
+       <action
              class="ru.runa.gpd.lang.action.SendMessageConfAction"
-             id="sendMessage"
-             label="%label.element.sendmessage"
+             id="sendMessage.configuration"
+             label="%label.action.editConfiguration"
              menubarPath="additions">
        </action>
     </objectContribution>
@@ -444,8 +461,8 @@
           objectClass="ru.runa.gpd.lang.model.ReceiveMessageNode">
        <action
              class="ru.runa.gpd.lang.action.ReceiveMessageConfAction"
-             id="receiveMessage"
-             label="%label.element.receivemessage"
+             id="receiveMessage.configuration"
+             label="%label.action.editConfiguration"
              menubarPath="additions">
        </action>
     </objectContribution>
@@ -462,6 +479,21 @@
              id="feature.timer"
              label="%label.action.feature.timer"
              menubarPath="features/sp1">
+       </action>
+    </objectContribution>
+    <objectContribution
+          adaptable="false"
+          id="timer.actions"
+          objectClass="ru.runa.gpd.lang.model.Timer">
+       <action
+             class="ru.runa.gpd.lang.action.EditTimerDurationAction"
+             id="timer.1editDuration"
+             label="%label.action.editDuration">
+       </action>
+       <action
+             class="ru.runa.gpd.lang.action.EditTimerActionAction"
+             id="timer.2editAction"
+             label="%label.action.editAction">
        </action>
     </objectContribution>
   </extension>

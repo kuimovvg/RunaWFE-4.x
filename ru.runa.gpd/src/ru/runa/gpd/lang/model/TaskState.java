@@ -64,7 +64,7 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
     public void setTimeOutDelay(Duration timeOutDuration) {
         Duration old = this.timeOutDelay;
         this.timeOutDelay = timeOutDuration;
-        firePropertyChange(PROPERTY_TASK_TIMEOUT_DELAY, old, this.timeOutDelay);
+        firePropertyChange(PROPERTY_TASK_DEADLINE, old, this.timeOutDelay);
     }
 
     public Duration getTimeOutDelay() {
@@ -192,7 +192,7 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
         list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION_RULES, Localization.getString("property.ignoreSubstitution")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_TIMEOUT_DELAY, getProcessDefinition(), getTimeOutDelay(), Localization.getString("timeout.property.duration")));
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, getProcessDefinition(), getTimeOutDelay(), Localization.getString("property.deadline")));
         if (useEscalation) {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
             list.add(new DurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, getProcessDefinition(), getEscalationDelay(), Localization.getString("escalation.duration")));
@@ -212,7 +212,7 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
             }
             return "";
         }
-        if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
+        if (PROPERTY_TASK_DEADLINE.equals(id)) {
             Duration d = getTimeOutDelay();
             if (d == null || !d.hasDuration()) {
                 return "";
@@ -240,7 +240,7 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
             setEscalationAction((TimerAction) value);
         } else if (PROPERTY_ESCALATION_DURATION.equals(id)) {
             setEscalationDelay((Duration) value);
-        } else if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
+        } else if (PROPERTY_TASK_DEADLINE.equals(id)) {
             if (value == null) {
                 // ignore, edit was canceled
                 return;

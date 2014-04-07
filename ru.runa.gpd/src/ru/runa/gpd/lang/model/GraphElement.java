@@ -347,8 +347,8 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
         descriptors.add(new TextPropertyDescriptor(PROPERTY_DESCRIPTION, Localization.getString("property.description")));
         // }
         if (isDelegable()) {
-            String type = ((Delegable) this).getDelegationType();
-            descriptors.add(new DelegableClassPropertyDescriptor(PROPERTY_CLASS, Localization.getString("property.delegation.class"), type));
+            Delegable delegable = (Delegable) this;
+            descriptors.add(new DelegableClassPropertyDescriptor(PROPERTY_CLASS, Localization.getString("property.delegation.class"), delegable));
             descriptors.add(new DelegableConfPropertyDescriptor(PROPERTY_CONFIGURATION, (Delegable) this, Localization.getString("property.delegation.configuration")));
         }
         if (this instanceof ITimed && getProcessDefinition().getLanguage() == Language.JPDL) {

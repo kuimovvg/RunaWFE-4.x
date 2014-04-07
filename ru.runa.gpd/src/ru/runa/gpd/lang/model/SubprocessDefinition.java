@@ -35,7 +35,7 @@ public class SubprocessDefinition extends ProcessDefinition {
     protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new PropertyDescriptor(PROPERTY_TASK_TIMEOUT_DELAY, Localization.getString("default.task.duedate")));
+        list.add(new PropertyDescriptor(PROPERTY_TASK_DEADLINE, Localization.getString("default.task.deadline")));
         list.add(new PropertyDescriptor(PROPERTY_ACCESS_TYPE, Localization.getString("ProcessDefinition.property.accessType")));
         return list;
     }

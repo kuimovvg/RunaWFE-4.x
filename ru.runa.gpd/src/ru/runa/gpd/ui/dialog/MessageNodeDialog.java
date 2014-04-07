@@ -129,6 +129,10 @@ public class MessageNodeDialog extends Dialog {
     private void addSelectorButtons(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = SWT.LEFT;
+        gridData.verticalAlignment = SWT.TOP;
+        composite.setLayoutData(gridData);
         DropDownButton addButton = new DropDownButton(composite);
         addButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         addButton.setAlignment(SWT.LEFT);
@@ -267,6 +271,10 @@ public class MessageNodeDialog extends Dialog {
     private void addDataButtons(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
+        GridData gridData = new GridData();
+        gridData.horizontalAlignment = SWT.LEFT;
+        gridData.verticalAlignment = SWT.TOP;
+        composite.setLayoutData(gridData);
         SWTUtils.createButtonFillHorizontal(composite, Localization.getString("button.add"), new LoggingSelectionAdapter() {
 
             @Override

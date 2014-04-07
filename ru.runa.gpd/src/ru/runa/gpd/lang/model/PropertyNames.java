@@ -41,7 +41,7 @@ public interface PropertyNames {
     public static final String PROPERTY_SHOW_ACTIONS = "showActions";
     public static final String PROPERTY_SHOW_GRID = "showGrid";
     public static final String PROPERTY_DIRTY = "dirty";
-    public static final String PROPERTY_TASK_TIMEOUT_DELAY = "taskTimeOutDelay";
+    public static final String PROPERTY_TASK_DEADLINE = "taskDeadline";
     public static final String PROPERTY_ASYNC = "async";
     public static final String PROPERTY_ASYNC_COMPLETION_MODE = "asyncCompletionMode";
     public static final String PROPERTY_TASK_EXECUTION_MODE = "taskExecutionMode";
