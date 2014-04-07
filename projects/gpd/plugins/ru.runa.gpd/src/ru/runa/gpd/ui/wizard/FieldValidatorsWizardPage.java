@@ -241,10 +241,9 @@ public class FieldValidatorsWizardPage extends WizardPage {
         return (ValidatorDefinition) ((StructuredSelection) validatorsTableViewer.getSelection()).getFirstElement();
     }
 
-    private void updateValidatorsInput(Variable variableOrSwimlane) {
-        if (variableOrSwimlane != null) {
-            String varType = variableOrSwimlane.getJavaClassName();
-            validatorsTableViewer.setInput(ValidationUtil.getFieldValidatorDefinitions(varType));
+    private void updateValidatorsInput(Variable variable) {
+        if (variable != null) {
+            validatorsTableViewer.setInput(ValidationUtil.getFieldValidatorDefinitions(variable));
         }
     }
 
