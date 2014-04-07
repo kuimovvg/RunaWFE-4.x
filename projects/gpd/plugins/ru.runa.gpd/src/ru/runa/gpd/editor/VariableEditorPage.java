@@ -111,7 +111,7 @@ public class VariableEditorPage extends EditorPartBase {
         searchButton = addButton(buttonsBar, "button.search", new SearchVariableUsageSelectionListener(), true);
         moveUpButton = addButton(buttonsBar, "button.up", new MoveVariableSelectionListener(true), true);
         moveDownButton = addButton(buttonsBar, "button.down", new MoveVariableSelectionListener(false), true);
-        deleteButton = addButton(buttonsBar, "button.delete", new RemoveVariableSelectionListener(), true);
+        deleteButton = addButton(buttonsBar, "button.delete", new DeleteVariableSelectionListener(), true);
         tableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
             @Override
             protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
@@ -244,7 +244,7 @@ public class VariableEditorPage extends EditorPartBase {
         }
     }
 
-    private class RemoveVariableSelectionListener extends LoggingSelectionAdapter {
+    private class DeleteVariableSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
