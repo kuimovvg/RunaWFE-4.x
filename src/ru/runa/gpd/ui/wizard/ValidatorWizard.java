@@ -2,7 +2,6 @@ package ru.runa.gpd.ui.wizard;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +14,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
@@ -26,11 +23,9 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.ui.custom.Dialogs;
-import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
-import ru.runa.gpd.validation.ValidatorDefinition.Param;
 import ru.runa.gpd.validation.ValidatorDialog;
 import ru.runa.gpd.validation.ValidatorParser;
 
@@ -114,9 +109,9 @@ public class ValidatorWizard extends Wizard {
 
         protected abstract void clear();
 
-        protected abstract void build(Map<String, Param> defParams, Map<String, String> configParams);
+        protected abstract void build(ValidatorDefinition definition, Map<String, String> configParams);
 
-        protected abstract void updateConfigParams(Collection<String> paramNames, ValidatorConfig config);
+        protected abstract void updateConfigParams(ValidatorDefinition definition, ValidatorConfig config);
     }
 
     public static abstract class ValidatorInfoControl extends Composite {
@@ -150,7 +145,7 @@ public class ValidatorWizard extends Wizard {
                 descriptionLabel.setText(definition.getDescription());
                 errorMessageText.setText(config.getMessage());
                 parametersComposite.clear();
-                parametersComposite.build(definition.getParams(), config.getParams());
+                parametersComposite.build(definition, config.getParams());
                 errorMessageText.setFocus();
             }
             setVisible(config != null);
@@ -160,56 +155,10 @@ public class ValidatorWizard extends Wizard {
             if (config != null) {
                 // save input data to config
                 config.setMessage(errorMessageText.getText());
-                parametersComposite.updateConfigParams(definition.getParams().keySet(), config);
+                parametersComposite.updateConfigParams(definition, config);
                 config = null;
             }
         }
     }
 
-    public static class DefaultParamsComposite extends ParametersComposite {
-        private final Map<String, Combo> inputCombos = new HashMap<String, Combo>();
-
-        public DefaultParamsComposite(Composite parent, int style) {
-            super(parent, style);
-            this.setLayoutData(new GridData(GridData.FILL_BOTH));
-            this.setLayout(new GridLayout(2, true));
-        }
-
-        @Override
-        protected void clear() {
-            for (Control control : getChildren()) {
-                control.dispose();
-            }
-            inputCombos.clear();
-            this.pack(true);
-        }
-
-        @Override
-        protected void build(Map<String, Param> defParams, Map<String, String> configParams) {
-            for (String name : defParams.keySet()) {
-                Param param = defParams.get(name);
-                Label label = new Label(this, SWT.NONE);
-                label.setText(param.getLabel());
-                label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                TypedUserInputCombo combo = new TypedUserInputCombo(this, configParams.get(name));
-                combo.setTypeClassName(param.getType());
-                combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                inputCombos.put(name, combo);
-            }
-            this.pack(true);
-        }
-
-        @Override
-        protected void updateConfigParams(Collection<String> paramNames, ValidatorConfig config) {
-            for (String name : paramNames) {
-                Combo combo = inputCombos.get(name);
-                String text = combo.getText();
-                if (text.length() != 0) {
-                    config.getParams().put(name, text);
-                } else {
-                    config.getParams().remove(name);
-                }
-            }
-        }
-    }
 }

@@ -1,6 +1,7 @@
 package ru.runa.gpd.ui.wizard;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -33,11 +36,16 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
-import ru.runa.gpd.ui.wizard.ValidatorWizard.DefaultParamsComposite;
+import ru.runa.gpd.ui.custom.TypedUserInputCombo;
+import ru.runa.gpd.ui.dialog.TimeInputDialog;
+import ru.runa.gpd.ui.dialog.UserInputDialog;
+import ru.runa.gpd.ui.wizard.ValidatorWizard.ParametersComposite;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ValidatorInfoControl;
 import ru.runa.gpd.util.ValidationUtil;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
+import ru.runa.gpd.validation.ValidatorDefinition.Param;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
 
 public class FieldValidatorsWizardPage extends WizardPage {
@@ -47,15 +55,13 @@ public class FieldValidatorsWizardPage extends WizardPage {
     private Label warningLabel;
     private TableViewer validatorsTableViewer;
     private ValidatorInfoControl infoGroup;
-    private final List<Variable> variables;
-    private final List<Swimlane> swimlanes;
+    private final ProcessDefinition processDefinition;
     private String warningMessage = "";
     private Map<String, Map<String, ValidatorConfig>> fieldConfigs;
 
     protected FieldValidatorsWizardPage(ProcessDefinition processDefinition) {
         super("Field validators");
-        this.variables = processDefinition.getVariables(true, false);
-        this.swimlanes = processDefinition.getSwimlanes();
+        this.processDefinition = processDefinition;
         setTitle(Localization.getString("ValidatorWizardPage.fieldpage.title"));
         setDescription(Localization.getString("ValidatorWizardPage.fieldpage.description"));
     }
@@ -173,8 +179,8 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 updateValidatorSelection();
             }
         });
-        variablesTableViewer.setInput(variables);
-        swimlanesTableViewer.setInput(swimlanes);
+        variablesTableViewer.setInput(processDefinition.getVariables(true, false));
+        swimlanesTableViewer.setInput(processDefinition.getSwimlanes());
         warningLabel = new Label(mainComposite, SWT.NONE);
         data = new GridData(GridData.FILL_HORIZONTAL);
         data.horizontalSpan = 2;
@@ -206,7 +212,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         }
     }
 
-    public class DefaultValidatorInfoControl extends ValidatorInfoControl {
+    private class DefaultValidatorInfoControl extends ValidatorInfoControl {
         public DefaultValidatorInfoControl(Composite parent) {
             super(parent);
             parametersComposite = new DefaultParamsComposite(this, SWT.NONE);
@@ -321,6 +327,72 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 imagePath = UNCHECKED_IMG;
             }
             return SharedImages.getImage(imagePath);
+        }
+    }
+
+    private class DefaultParamsComposite extends ParametersComposite {
+        private final Map<String, Combo> inputCombos = new HashMap<String, Combo>();
+
+        public DefaultParamsComposite(Composite parent, int style) {
+            super(parent, style);
+            this.setLayoutData(new GridData(GridData.FILL_BOTH));
+            this.setLayout(new GridLayout(2, true));
+        }
+
+        @Override
+        protected void clear() {
+            for (Control control : getChildren()) {
+                control.dispose();
+            }
+            inputCombos.clear();
+            this.pack(true);
+        }
+
+        @Override
+        protected void build(ValidatorDefinition definition, Map<String, String> configParams) {
+            for (Map.Entry<String, Param> entry : definition.getParams().entrySet()) {
+                Label label = new Label(this, SWT.NONE);
+                label.setText(entry.getValue().getLabel());
+                label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                String initialValue = configParams.get(entry.getKey());
+                // TODO: enable feature: use variables for comparison
+//                if (initialValue != null && VariableUtils.isVariableNameWrapped(initialValue)) {
+//                    initialValue = VariableUtils.unwrapVariableName(initialValue);
+//                }
+                TypedUserInputCombo combo = new TypedUserInputCombo(this, initialValue);
+//                for (Variable variable : processDefinition.getVariables(true, true, entry.getValue().getType())) {
+//                    combo.add(variable.getName());
+//                }
+                // TODO workaround for time validator
+                Class<? extends UserInputDialog> userInputDialogClass = null;
+                if ("time".equals(definition.getName()) && Date.class.getName().equals(entry.getValue().getType())) {
+                    userInputDialogClass = TimeInputDialog.class;
+                }
+                if (userInputDialogClass != null) {
+                    combo.setTypeClassName(entry.getValue().getType(), userInputDialogClass);
+                } else {
+                    combo.setTypeClassName(entry.getValue().getType());
+                }
+                combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                inputCombos.put(entry.getKey(), combo);
+            }
+            this.pack(true);
+        }
+
+        @Override
+        protected void updateConfigParams(ValidatorDefinition definition, ValidatorConfig config) {
+            for (Map.Entry<String, Param> entry : definition.getParams().entrySet()) {
+                Combo combo = inputCombos.get(entry.getKey());
+                String text = combo.getText();
+                if (text.length() != 0) {
+                    if (processDefinition.getVariableNames(true, true, entry.getValue().getType()).contains(text)) {
+                        text = VariableUtils.wrapVariableName(text);
+                    }
+                    config.getParams().put(entry.getKey(), text);
+                } else {
+                    config.getParams().remove(entry.getKey());
+                }
+            }
         }
     }
 }
