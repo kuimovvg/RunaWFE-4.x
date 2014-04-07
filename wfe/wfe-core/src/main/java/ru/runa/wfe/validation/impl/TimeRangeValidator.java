@@ -27,7 +27,10 @@ public class TimeRangeValidator extends AbstractRangeValidator<Date> {
 
     private Date getParameter(String name) {
         Calendar baseDate = TypeConversionUtil.convertTo(Calendar.class, getFieldValue());
-        Calendar param = TypeConversionUtil.convertTo(Calendar.class, getParameter(name));
+        Calendar param = getParameter(Calendar.class, name, null);
+        if (param == null) {
+            return null;
+        }
         CalendarUtil.setDateFromCalendar(param, baseDate);
         return param.getTime();
     }
