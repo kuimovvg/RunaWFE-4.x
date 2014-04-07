@@ -91,7 +91,7 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String INTERMEDIATE_CATCH_EVENT = "intermediateCatchEvent";
     private static final String CANCEL_ACTIVITY = "cancelActivity";
     private static final String ATTACHED_TO_REF = "attachedToRef";
-    private static final String TIMER_DURATION = "timeDuration";
+    private static final String TIME_DURATION = "timeDuration";
 
     @Override
     public boolean isSupported(Document document) {
@@ -207,7 +207,7 @@ public class BpmnSerializer extends ProcessSerializer {
         List<SendMessageNode> sendMessageNodes = definition.getChildren(SendMessageNode.class);
         for (SendMessageNode messageNode : sendMessageNodes) {
             Element messageElement = writeNode(process, messageNode);
-            messageElement.addAttribute(RUNA_PREFIX + ":" + TIMER_DURATION, messageNode.getTtlDuration().getDuration());
+            messageElement.addAttribute(RUNA_PREFIX + ":" + TIME_DURATION, messageNode.getTtlDuration().getDuration());
             writeVariables(messageElement, messageNode.getVariableMappings());
         }
         List<ReceiveMessageNode> receiveMessageNodes = definition.getChildren(ReceiveMessageNode.class);
@@ -303,7 +303,7 @@ public class BpmnSerializer extends ProcessSerializer {
         if (!Strings.isNullOrEmpty(timer.getDescription())) {
             eventElement.addElement(DOCUMENTATION).addCDATA(timer.getDescription());
         }
-        Element durationElement = eventElement.addElement(TIMER_DURATION);
+        Element durationElement = eventElement.addElement(TIME_DURATION);
         durationElement.addText(timer.getDelay().getDuration());
         if (timer.getAction() != null) {
             // TODO
@@ -426,7 +426,7 @@ public class BpmnSerializer extends ProcessSerializer {
             if (DOCUMENTATION.equals(childNode.getName())) {
                 ((Describable) element).setDescription(childNode.getTextTrim());
             }
-            if (TIMER_DURATION.equals(childNode.getName())) {
+            if (TIME_DURATION.equals(childNode.getName())) {
                 ((Timer) element).setDelay(new Duration(childNode.getTextTrim()));
             }
         }
@@ -586,7 +586,7 @@ public class BpmnSerializer extends ProcessSerializer {
         List<Element> sendMessageElements = process.elements(SEND_TASK);
         for (Element messageElement : sendMessageElements) {
             SendMessageNode messageNode = create(messageElement, definition);
-            String duration = messageElement.attributeValue(RUNA_PREFIX + ":" + TIMER_DURATION, "1 days");
+            String duration = messageElement.attributeValue(TIME_DURATION, "1 days");
             messageNode.setTtlDuration(new Duration(duration));
             messageNode.setVariableMappings(parseVariableMappings(messageElement));
         }

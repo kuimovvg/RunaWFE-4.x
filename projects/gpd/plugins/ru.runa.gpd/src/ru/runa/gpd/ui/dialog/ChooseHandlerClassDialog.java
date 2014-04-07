@@ -9,10 +9,12 @@ import ru.runa.gpd.extension.HandlerRegistry;
 
 public class ChooseHandlerClassDialog extends ChooseItemDialog {
     private String type;
+    private String defaultClassName;
 
-    public ChooseHandlerClassDialog(String type) {
+    public ChooseHandlerClassDialog(String type, String defaultClassName) {
         super(Localization.getString("ChooseClass.title"), Localization.getString("ChooseClass.message"), false);
         this.type = type;
+        this.defaultClassName = defaultClassName;
     }
 
     public String openDialog() {
@@ -24,6 +26,9 @@ public class ChooseHandlerClassDialog extends ChooseItemDialog {
                 }
             });
             setItems(HandlerRegistry.getInstance().getAll(type, true));
+            if (defaultClassName != null) {
+                setSelectedItem(HandlerRegistry.getInstance().getArtifact(defaultClassName));
+            }
             if (open() != IDialogConstants.CANCEL_ID) {
                 return ((Artifact) getSelectedItem()).getName();
             }

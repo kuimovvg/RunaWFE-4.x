@@ -77,7 +77,7 @@ public class TimerActionEditDialog extends Dialog {
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ChooseHandlerClassDialog dialog = new ChooseHandlerClassDialog(HandlerArtifact.ACTION);
+                    ChooseHandlerClassDialog dialog = new ChooseHandlerClassDialog(HandlerArtifact.ACTION, editableTimerAction.getDelegationClassName());
                     String className = dialog.openDialog();
                     if (className != null) {
                         editableTimerAction.setDelegationClassName(className);

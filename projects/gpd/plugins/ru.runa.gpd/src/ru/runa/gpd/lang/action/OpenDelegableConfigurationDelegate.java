@@ -7,6 +7,7 @@ import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 
 public class OpenDelegableConfigurationDelegate extends BaseModelActionDelegate {
+    
     @Override
     public void run(IAction action) {
         Delegable delegable = (Delegable) getSelection();
