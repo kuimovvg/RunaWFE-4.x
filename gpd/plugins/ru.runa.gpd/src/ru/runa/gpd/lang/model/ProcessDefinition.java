@@ -116,7 +116,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public void setDefaultTaskTimeoutDelay(Duration defaultTaskTimeoutDelay) {
         Duration old = this.defaultTaskTimeoutDelay;
         this.defaultTaskTimeoutDelay = defaultTaskTimeoutDelay;
-        firePropertyChange(PROPERTY_TASK_TIMEOUT_DELAY, old, defaultTaskTimeoutDelay);
+        firePropertyChange(PROPERTY_TASK_DEADLINE, old, defaultTaskTimeoutDelay);
     }
 
     public boolean isShowActions() {
@@ -375,7 +375,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_TIMEOUT_DELAY, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.duedate")));
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.deadline")));
         String[] array = { 
                 Localization.getString("ProcessDefinition.property.accessType.Process"), 
                 Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
@@ -387,7 +387,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public Object getPropertyValue(Object id) {
         if (PROPERTY_LANGUAGE.equals(id)) {
             return language;
-        } else if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
+        } else if (PROPERTY_TASK_DEADLINE.equals(id)) {
             if (defaultTaskTimeoutDelay.hasDuration()) {
                 return defaultTaskTimeoutDelay;
             }
@@ -401,7 +401,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
 
     @Override
     public void setPropertyValue(Object id, Object value) {
-        if (PROPERTY_TASK_TIMEOUT_DELAY.equals(id)) {
+        if (PROPERTY_TASK_DEADLINE.equals(id)) {
             setDefaultTaskTimeoutDelay((Duration) value);
         } else if (PROPERTY_ACCESS_TYPE.equals(id)) {
             int i = ((Integer) value).intValue();

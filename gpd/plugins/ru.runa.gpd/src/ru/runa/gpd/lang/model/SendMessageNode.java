@@ -16,8 +16,9 @@ public class SendMessageNode extends MessagingNode implements Active {
     }
 
     public void setTtlDuration(Duration ttlDuration) {
+        Duration old = this.ttlDuration;
         this.ttlDuration = ttlDuration;
-        firePropertyChange(PROPERTY_TTL, null, ttlDuration);
+        firePropertyChange(PROPERTY_TTL, old, ttlDuration);
     }
 
     @Override
