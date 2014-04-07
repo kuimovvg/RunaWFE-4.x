@@ -2,6 +2,7 @@ package ru.runa.gpd.editor;
 
 import java.beans.PropertyChangeEvent;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -24,8 +25,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import com.google.common.collect.Lists;
-
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.PropertyNames;
@@ -37,6 +36,8 @@ import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.dialog.VariableUserTypeDialog;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
+
+import com.google.common.collect.Maps;
 
 public class VariableTypeEditorPage extends EditorPartBase {
     private TableViewer typeTableViewer;
@@ -124,7 +125,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
         attributeButtonsBar.setLayoutData(gridData);
         createAttributeButton = addButton(attributeButtonsBar, "button.create", new CreateAttributeSelectionListener(), false);
         changeAttributeButton = addButton(attributeButtonsBar, "button.change", new ChangeAttributeSelectionListener(), true);
-        deleteAttributeButton = addButton(attributeButtonsBar, "button.delete", new RemoveAttributeSelectionListener(), true);
+        deleteAttributeButton = addButton(attributeButtonsBar, "button.delete", new DeleteAttributeSelectionListener(), true);
         attributeTableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
             @Override
             protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
@@ -297,28 +298,34 @@ public class VariableTypeEditorPage extends EditorPartBase {
         }
     }
     
-    private class RemoveAttributeSelectionListener extends LoggingSelectionAdapter {
+    private class DeleteAttributeSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
             Variable attribute = getAttributeSelection();
-            List<FormNode> nodesWithVar = Lists.newArrayList();
-            String suffix = getTypeSelection().getName() + VariableUserType.DELIM + attribute;
+            Map<String, List<FormNode>> variableFormNodesMapping = Maps.newHashMap();
+            String suffix = attribute.getName();
             // TODO recursion will not work
             for (Variable variable : getDefinition().getVariables(false, false, getTypeSelection().getName())) {
                 String name = variable.getName() + VariableUserType.DELIM + suffix;
-                nodesWithVar.addAll(ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), name));
+                variableFormNodesMapping.put(name, ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), name));
             }
             StringBuffer formNames = new StringBuffer(Localization.getString("Variable.ExistInForms")).append("\n");
-            if (nodesWithVar.size() > 0) {
-                for (FormNode node : nodesWithVar) {
-                    formNames.append(" - ").append(node.getName()).append("\n");
+            if (variableFormNodesMapping.size() > 0) {
+                for (Map.Entry<String, List<FormNode>> entry : variableFormNodesMapping.entrySet()) {
+                    if (entry.getValue().size() > 0) {
+                        formNames.append(" ").append(entry.getKey()).append("\n");
+                        for (FormNode node : entry.getValue()) {
+                            formNames.append(" - ").append(node.getName()).append("\n");
+                        }
+                    }
                 }
                 formNames.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
             }
             if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), formNames.toString())) {
                 // remove variable from form validations
-                // FIXME ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), nodesWithVar, attribute);
-                // remove variable from definition
+                for (Map.Entry<String, List<FormNode>> entry : variableFormNodesMapping.entrySet()) {
+                    ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), entry.getValue(), entry.getKey());
+                }
                 getTypeSelection().removeAttribute(attribute);
             }
         }
