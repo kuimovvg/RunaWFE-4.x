@@ -14,6 +14,7 @@ import ru.runa.gpd.ui.dialog.DateInputDialog;
 import ru.runa.gpd.ui.dialog.DoubleInputDialog;
 import ru.runa.gpd.ui.dialog.LongInputDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 
 import com.google.common.collect.Maps;
 
@@ -31,9 +32,9 @@ public class TypedUserInputCombo extends Combo {
     private String userInputValue;
     private String typeClassName;
     private boolean showEmptyValue = true;
-    private boolean readOnlyOnMissedTypeEditor = true;
     private String previousComboTextValue = "";
     private String[] booleanValues = { "true", "false" };
+    private UserInputDialog userInputDialog;
 
     public TypedUserInputCombo(Composite parent, String oldUserInputValue) {
         super(parent, SWT.READ_ONLY);
@@ -45,14 +46,6 @@ public class TypedUserInputCombo extends Combo {
                     previousComboTextValue = getText();
                     return;
                 }
-                Class<? extends UserInputDialog> userInputDialogClass = dialogClassesForTypes.get(typeClassName);
-                if (userInputDialogClass == null) {
-                    if (readOnlyOnMissedTypeEditor) {
-                        return;
-                    }
-                    userInputDialogClass = dialogClassesForTypes.get(String.class.getName());
-                }
-                UserInputDialog userInputDialog = userInputDialogClass.newInstance();
                 userInputDialog.setInitialValue(userInputValue);
                 if (Window.OK == userInputDialog.open()) {
                     if (userInputValue != null) {
@@ -83,15 +76,19 @@ public class TypedUserInputCombo extends Combo {
     protected void checkSubclass() {
     }
 
-    public void setReadOnlyOnMissedTypeEditor(boolean readOnlyOnMissedTypeEditor) {
-        this.readOnlyOnMissedTypeEditor = readOnlyOnMissedTypeEditor;
-    }
-
     public void setShowEmptyValue(boolean showEmptyValue) {
         this.showEmptyValue = showEmptyValue;
     }
 
     public void setTypeClassName(String typeClassName) {
+        Class<? extends UserInputDialog> userInputDialogClass = dialogClassesForTypes.get(typeClassName);
+        if (userInputDialogClass == null) {
+            userInputDialogClass = dialogClassesForTypes.get(String.class.getName());
+        }
+        setTypeClassName(typeClassName, userInputDialogClass);
+    }
+    
+    public void setTypeClassName(String typeClassName, Class<? extends UserInputDialog> userInputDialogClass) {
         if (this.typeClassName != null) {
             // refresh mode
             removeAll();
@@ -113,9 +110,7 @@ public class TypedUserInputCombo extends Combo {
             add(userInputValue, 0);
             select(0);
         }
-        if (readOnlyOnMissedTypeEditor && dialogClassesForTypes.get(typeClassName) == null) {
-            return;
-        }
+        userInputDialog = ClassLoaderUtil.instantiate(userInputDialogClass);
         add(INPUT_VALUE);
     }
 }
