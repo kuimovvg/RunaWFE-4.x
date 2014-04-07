@@ -50,33 +50,6 @@
 
 
    <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="ru.runa.gpd.htmleditor.HTMLEditorPreferencePage"
-            name="%plugin.preference.category"
-            id="ru.runa.gpd.htmleditor.category"/>
-      <page
-            class="ru.runa.gpd.htmleditor.AssistPreferencePage"
-            category="ru.runa.gpd.htmleditor.category"
-            name="%plugin.preference.codeassist"
-            id="ru.runa.gpd.htmleditor.AssistPreferencePage"/>
-      <page
-            class="ru.runa.gpd.htmleditor.CSSEditorPreferencePage"
-            category="ru.runa.gpd.htmleditor.category"
-            name="%plugin.preference.csseditor"
-            id="ru.runa.gpd.htmleditor.CSSEditorPreferencePage"/>
-      <page
-            class="ru.runa.gpd.htmleditor.JavaScriptEditorPreferencePage"
-            category="ru.runa.gpd.htmleditor.category"
-            name="%plugin.preference.jseditor"
-            id="ru.runa.gpd.htmleditor.JavaScriptEditorPreferencePage"/>
-      <page
-            class="ru.runa.gpd.htmleditor.tasktag.HTMLTaskTagPreferencePage"
-            category="ru.runa.gpd.htmleditor.category"
-            name="%plugin.preference.tasktag"
-            id="ru.runa.gpd.htmleditor.tasktag.HTMLTaskTagPreferencePage"/>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="ru.runa.gpd.htmleditor.HTMLPreferenceInitializer"/>
    </extension>
