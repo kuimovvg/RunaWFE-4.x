@@ -290,7 +290,9 @@ public class DocxUtils {
                                 for (XWPFRun templateRun : templateParagraph.getRuns()) {
                                     XWPFRun newRun = newParagraph.createRun();
                                     StylesHolder stylesHolder = new StylesHolder(templateRun);
-                                    stylesHolder.applyStyles(newRun);// templateRun.getCTR().getRPr().getShd().getFill()
+                                    // https://sourceforge.net/p/runawfe/bugs/474/
+                                    // templateRun.getCTR().getRPr().getShd().getFill()
+                                    stylesHolder.applyStyles(newRun);
                                     String text = templateRun.getText(0);
                                     if (text != null) {
                                         newRun.setText(text);
