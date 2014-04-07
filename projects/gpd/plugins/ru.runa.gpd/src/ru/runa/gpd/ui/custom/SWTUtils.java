@@ -32,7 +32,7 @@ public class SWTUtils {
     }
 
     public static Label createLabel(Composite parent, String text) {
-        Label label = new Label(parent, SWT.BOLD);
+        Label label = new Label(parent, SWT.NONE);
         label.setText(text);
         return label;
     }
