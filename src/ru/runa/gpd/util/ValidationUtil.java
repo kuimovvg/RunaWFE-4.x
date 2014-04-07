@@ -11,10 +11,13 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.form.FormTypeProvider;
 import ru.runa.gpd.form.FormVariableAccess;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
 import ru.runa.gpd.validation.ValidatorParser;
+import ru.runa.wfe.var.format.DateFormat;
+import ru.runa.wfe.var.format.TimeFormat;
 
 public class ValidationUtil {
     // TODO refactor this
@@ -23,11 +26,17 @@ public class ValidationUtil {
         return ValidatorDefinitionRegistry.getValidatorDefinitions().get(name);
     }
 
-    public static List<ValidatorDefinition> getFieldValidatorDefinitions(String className) {
+    public static List<ValidatorDefinition> getFieldValidatorDefinitions(Variable variable) {
         List<ValidatorDefinition> result = new ArrayList<ValidatorDefinition>();
-        for (ValidatorDefinition def : ValidatorDefinitionRegistry.getValidatorDefinitions().values()) {
-            if (!def.isGlobal() && def.isApplicable(className)) {
-                result.add(def);
+        for (ValidatorDefinition definition : ValidatorDefinitionRegistry.getValidatorDefinitions().values()) {
+            if (!definition.isGlobal() && definition.isApplicable(variable.getJavaClassName())) {
+                if (DateFormat.class.getName().equals(variable.getFormat()) && "time".equals(definition.getName())) {
+                    continue;
+                }
+                if (TimeFormat.class.getName().equals(variable.getFormat()) && definition.getName().startsWith("date")) {
+                    continue;
+                }
+                result.add(definition);
             }
         }
         return result;
