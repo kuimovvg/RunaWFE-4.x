@@ -1,7 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,6 @@ import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
-import ru.runa.gpd.validation.ValidatorDefinition.Param;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
 
 public class GlobalValidatorsWizardPage extends WizardPage {
@@ -323,7 +321,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         }
 
         @Override
-        protected void build(Map<String, Param> defParams, Map<String, String> configParams) {
+        protected void build(ValidatorDefinition definition, Map<String, String> configParams) {
             String textData = configParams.get(ValidatorDefinition.EXPRESSION_PARAM_NAME);
             if (textData == null) {
                 textData = "";
@@ -348,7 +346,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         }
 
         @Override
-        protected void updateConfigParams(Collection<String> paramNames, ValidatorConfig config) {
+        protected void updateConfigParams(ValidatorDefinition definition, ValidatorConfig config) {
             toCode();
             String textData = codeText.getText().trim();
             if (textData.length() != 0) {
