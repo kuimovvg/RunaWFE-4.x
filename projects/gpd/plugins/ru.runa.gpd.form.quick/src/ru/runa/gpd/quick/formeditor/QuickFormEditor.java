@@ -374,8 +374,21 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     Map<String, Object> variables = new HashMap<String, Object>();
                     variables.put("variables", quickForm.getVariables());
                     variables.put("task", "");
-                    for (QuickFormGpdProperty quickFormGpdProperty : quickForm.getProperties()) {
-                        variables.put(quickFormGpdProperty.getName(), quickFormGpdProperty.getValue() == null ? "" : quickFormGpdProperty.getValue());
+                    for (QuickFormGpdProperty quickFormGpdProperty : quickForm.getProperties()) {                        
+                    	String value = quickFormGpdProperty.getValue() == null ? "" : quickFormGpdProperty.getValue();
+                    	if(VariableUtils.isVariableNameWrapped(value)) {
+                    		final Variable variable = VariableUtils.getVariableByName(processDefinition, VariableUtils.unwrapVariableName(value));
+                    		
+                    		Object valueRes = null;
+                    		String defaultValue = PresentationVariableUtils.getPresentationValue(variable.getFormat());
+                            if (defaultValue != null) {
+                            	valueRes = TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(variable.getJavaClassName()), defaultValue);
+                            }
+                            
+                    		variables.put(quickFormGpdProperty.getName(), valueRes == null ? "" : valueRes);
+                    	} else {
+                    		variables.put(quickFormGpdProperty.getName(), value);
+                    	}
                     }
                     MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, null);
                     FormHashModelGpdWrap model = new FormHashModelGpdWrap(null, variableProvider, null);
