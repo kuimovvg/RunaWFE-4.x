@@ -352,6 +352,10 @@ public class DocxUtils {
         List<ReplaceOperation> operations = Lists.newArrayList();
         for (XWPFRun run : Lists.newArrayList(paragraph.getRuns())) {
             String text = run.getText(0);
+            if (text == null) {
+                log.warn("Null run value in paragraph " + paragraphText);
+                continue;
+            }
             String replacedText = replaceText(config, variableProvider, operations, text);
             if (!Objects.equal(replacedText, text)) {
                 if (replacedText.contains(LINE_DELIMITER)) {
