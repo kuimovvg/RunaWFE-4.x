@@ -12,6 +12,7 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.Platform;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.wfe.commons.TypeConversionUtil;
 
 public class FormTypeProvider {
     private static final String FORMTYPE_EXT_POINT_ID = "ru.runa.gpd.formtype";
@@ -26,12 +27,11 @@ public class FormTypeProvider {
                     IConfigurationElement[] configElements = extension.getConfigurationElements();
                     for (IConfigurationElement element : configElements) {
                         try {
-                            String name = element.getAttribute("name");
-                            String type = element.getAttribute("type");
                             FormType formType = (FormType) element.createExecutableExtension("contributor");
-                            formType.setName(name);
-                            formType.setType(type);
-                            formTypes.put(type, formType);
+                            formType.setName(element.getAttribute("name"));
+                            formType.setType(element.getAttribute("type"));
+                            formType.setOrder(TypeConversionUtil.convertTo(int.class, element.getAttribute("order")));
+                            formTypes.put(formType.getType(), formType);
                         } catch (Exception e) {
                             PluginLogger.logError("Error processing form type extension", e);
                         }
@@ -71,7 +71,7 @@ public class FormTypeProvider {
     private static class FormTypeComparator implements Comparator<FormType> {
         @Override
         public int compare(FormType o1, FormType o2) {
-            return o1.getType().compareTo(o2.getType());
+            return o2.getOrder() - o1.getOrder();
         }
     }
 }

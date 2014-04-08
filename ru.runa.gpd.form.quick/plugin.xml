@@ -17,6 +17,7 @@
       <element
             contributor="ru.runa.gpd.quick.formeditor.QuickFormType"
             name="%FormType.quick"
+            order="10"
             type="quick"/>
    	</extension>
    	<extension
