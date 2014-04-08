@@ -13,7 +13,8 @@ import ru.runa.gpd.lang.model.FormNode;
 public abstract class FormType {
     private String type;
     private String name;
-
+    private int order;
+    
     /**
      * For deprecated form types.
      * @return
@@ -54,4 +55,13 @@ public abstract class FormType {
     void setName(String name) {
         this.name = name;
     }
+    
+    public int getOrder() {
+        return order;
+    }
+    
+    void setOrder(int order) {
+        this.order = order;
+    }
+    
 }
