@@ -27,6 +27,7 @@ import java.util.List;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.lang.utils.MultiInstanceParameters;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
 
@@ -40,20 +41,29 @@ public class MultiTaskNode extends BaseTaskNode {
     private static final long serialVersionUID = 1L;
 
     private TaskExecutionMode executionMode;
-    private String executorsVariableName;
+    private String executorsDiscriminator;
+    private String executorsDiscriminatorUsage;
 
     @Override
     public void validate() {
         super.validate();
-        Preconditions.checkNotNull(executorsVariableName, "executorsVariableName in " + this);
+        Preconditions.checkNotNull(executorsDiscriminator, "executorsVariableName in " + this);
     }
 
-    public String getExecutorsVariableName() {
-        return executorsVariableName;
+    public String getExecutorsDiscriminatorUsage() {
+        return executorsDiscriminatorUsage;
     }
 
-    public void setExecutorsVariableName(String executorsVariableName) {
-        this.executorsVariableName = executorsVariableName;
+    public void setExecutorsDiscriminatorUsage(String executorsDiscriminatorMode) {
+        this.executorsDiscriminatorUsage = executorsDiscriminatorMode;
+    }
+
+    public String getExecutorsDiscriminator() {
+        return executorsDiscriminator;
+    }
+
+    public void setExecutorsDiscriminator(String executorsDiscriminator) {
+        this.executorsDiscriminator = executorsDiscriminator;
     }
 
     public TaskExecutionMode getExecutionMode() {
@@ -72,9 +82,9 @@ public class MultiTaskNode extends BaseTaskNode {
     @Override
     public void execute(ExecutionContext executionContext) {
         TaskDefinition taskDefinition = getFirstTaskNotNull();
-        List<?> executors = executionContext.getVariableProvider().getValueNotNull(List.class, executorsVariableName);
+        MultiInstanceParameters parameters = new MultiInstanceParameters(executionContext, this);
+        List<?> executors = (List<?>) parameters.getDiscriminatorValue();
         boolean tasksCreated = false;
-        // TODO temporary set, introduce unique property in GPD
         for (Object executorIdentity : new HashSet<Object>(executors)) {
             Executor executor = TypeConversionUtil.convertTo(Executor.class, executorIdentity);
             if (executor == null) {
