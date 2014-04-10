@@ -10,33 +10,33 @@ public class VariableMapping {
     public static final String USAGE_DISCRIMINATOR_GROUP = "group";
     public static final String USAGE_DISCRIMINATOR_RELATION = "relation";
     
-    private String processVariableName;
-    private String subprocessVariableName;
+    private String name;
+    private String mappedName;
     private String usage;
 
     public VariableMapping() {
     }
 
-    public VariableMapping(String processVariableName, String subprocessVariableName, String usage) {
-        this.processVariableName = processVariableName;
-        this.subprocessVariableName = subprocessVariableName;
+    public VariableMapping(String name, String mappedName, String usage) {
+        this.name = name;
+        this.mappedName = mappedName;
         this.usage = usage;
     }
 
-    public String getProcessVariableName() {
-        return processVariableName;
+    public String getName() {
+        return name;
     }
 
-    public void setProcessVariableName(String processVariable) {
-        this.processVariableName = processVariable;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getSubprocessVariableName() {
-        return subprocessVariableName;
+    public String getMappedName() {
+        return mappedName;
     }
 
-    public void setSubprocessVariableName(String subprocessVariable) {
-        this.subprocessVariableName = subprocessVariable;
+    public void setMappedName(String subprocessVariable) {
+        this.mappedName = subprocessVariable;
     }
 
     public String getUsage() {
@@ -87,11 +87,11 @@ public class VariableMapping {
     }
 
     public VariableMapping getCopy() {
-        return new VariableMapping(processVariableName, subprocessVariableName, usage);
+        return new VariableMapping(name, mappedName, usage);
     }
     
     @Override
     public String toString() {
-        return processVariableName + "=" + subprocessVariableName + " (" + usage + ")";
+        return name + "=" + mappedName + " (" + usage + ")";
     }
 }

@@ -65,6 +65,7 @@ import ru.runa.gpd.ui.wizard.NewBotWizard;
 import ru.runa.gpd.ui.wizard.NewFolderWizard;
 import ru.runa.gpd.ui.wizard.NewProcessDefinitionWizard;
 import ru.runa.gpd.ui.wizard.NewProcessProjectWizard;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 import com.google.common.base.Charsets;
@@ -334,12 +335,16 @@ public class WorkspaceOperations {
         dialog.open();
     }
 
-    public static void saveBotTask(IFile botTaskFile, BotTask botTask) throws CoreException {
-        InputStream inputStream = BotTaskUtils.createBotTaskInfo((IFolder) botTaskFile.getParent(), botTask);
-        if (botTaskFile.exists()) {
-            botTaskFile.setContents(inputStream, true, true, null);
-        } else {
-            IOUtils.createFile(botTaskFile, inputStream);
+    public static void saveBotTask(IFile botTaskFile, BotTask botTask) {
+        try {
+            InputStream inputStream = BotTaskUtils.createBotTaskInfo((IFolder) botTaskFile.getParent(), botTask);
+            if (botTaskFile.exists()) {
+                botTaskFile.setContents(inputStream, true, true, null);
+            } else {
+                IOUtils.createFile(botTaskFile, inputStream);
+            }
+        } catch (CoreException e) {
+            throw new InternalApplicationException(e);
         }
     }
 

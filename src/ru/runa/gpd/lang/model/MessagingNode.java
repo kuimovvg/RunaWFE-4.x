@@ -36,19 +36,19 @@ public class MessagingNode extends Node implements Active {
         for (VariableMapping mapping : variableMappings) {
             if (mapping.isPropertySelector()) {
                 selectorRulesCount++;
-                if (SELECTOR_SPECIAL_NAMES.contains(mapping.getSubprocessVariableName())) {
+                if (SELECTOR_SPECIAL_NAMES.contains(mapping.getMappedName())) {
                     continue;
                 }
-                if (VariableUtils.isVariableNameWrapped(mapping.getSubprocessVariableName())) {
-                    String variableName = VariableUtils.unwrapVariableName(mapping.getSubprocessVariableName());
+                if (VariableUtils.isVariableNameWrapped(mapping.getMappedName())) {
+                    String variableName = VariableUtils.unwrapVariableName(mapping.getMappedName());
                     if (!variableNames.contains(variableName)) {
                         errors.add(ValidationError.createLocalizedError(this, "message.processVariableDoesNotExist", variableName));
                     }
                 }
                 continue;
             }
-            if (!variableNames.contains(mapping.getProcessVariableName())) {
-                errors.add(ValidationError.createLocalizedError(this, "message.processVariableDoesNotExist", mapping.getProcessVariableName()));
+            if (!variableNames.contains(mapping.getName())) {
+                errors.add(ValidationError.createLocalizedError(this, "message.processVariableDoesNotExist", mapping.getName()));
                 continue;
             }
         }

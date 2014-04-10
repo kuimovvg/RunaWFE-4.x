@@ -37,8 +37,8 @@ public class SubprocessVariableDialog extends Dialog {
         this.subprocessVariables = subprocessVariables;
         this.oldMapping = oldMapping;
         if (oldMapping != null) {
-            this.processVariable = oldMapping.getProcessVariableName();
-            this.subprocessVariable = oldMapping.getSubprocessVariableName();
+            this.processVariable = oldMapping.getName();
+            this.subprocessVariable = oldMapping.getMappedName();
             this.usageRead = oldMapping.isReadable();
             this.usageWrite = oldMapping.isWritable();
         }
