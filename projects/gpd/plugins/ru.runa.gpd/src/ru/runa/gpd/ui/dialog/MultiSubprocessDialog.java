@@ -39,9 +39,11 @@ public class MultiSubprocessDialog extends SubprocessDialog {
     protected void createConfigurationComposite(Composite parent) {
         Group group = new Group(parent, SWT.NONE);
         group.setLayout(new GridLayout());
-        group.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridData data = new GridData(GridData.FILL_BOTH);
+        data.minimumHeight = 240;
+        group.setLayoutData(data);
         group.setText(Localization.getString("Feature.Multiinstance"));
-        new MultiinstanceComposite(group, definition, parameters, 
+        new MultiinstanceComposite(group, processDefinition, parameters, 
                 Localization.getString("Multiinstance.SubprocessesVariableName"), Localization.getString("Multiinstance.SubprocessesGroupName"));
         Composite composite = new Composite(group, SWT.NONE);
         composite.setLayout(new GridLayout(2, false));

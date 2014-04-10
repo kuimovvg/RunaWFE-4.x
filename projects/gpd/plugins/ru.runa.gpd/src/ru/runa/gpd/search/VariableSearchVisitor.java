@@ -38,6 +38,7 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.MessagingNode;
+import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
@@ -158,6 +159,9 @@ public class VariableSearchVisitor {
             if (graphElement instanceof MessagingNode) {
                 processMessagingNode(definitionFile, (MessagingNode) graphElement);
             }
+            if (graphElement instanceof MultiTaskState) {
+                processMultiTaskNode(definitionFile, (MultiTaskState) graphElement);
+            }
         } catch (Exception e) {
             status.add(new Status(IStatus.ERROR, NewSearchUI.PLUGIN_ID, IStatus.ERROR, e.getMessage(), e));
         } finally {
@@ -197,14 +201,14 @@ public class VariableSearchVisitor {
         List<VariableMapping> mappings = subprocessNode.getVariableMappings();
         int matchesCount = 0;
         for (VariableMapping mapping : mappings) {
-            if (mapping.isMultiinstanceLinkByRelation() && mapping.getProcessVariableName().contains("(" + query.getSearchText() + ")")) {
+            if (mapping.isMultiinstanceLinkByRelation() && mapping.getName().contains("(" + query.getSearchText() + ")")) {
                 // MultiSubprocess selector variable
                 matchesCount++;
             }
             if (mapping.isText()) {
                 continue;
             }
-            if (mapping.getProcessVariableName().equals(query.getSearchText())) {
+            if (mapping.getName().equals(query.getSearchText())) {
                 matchesCount++;
             }
         }
@@ -220,17 +224,36 @@ public class VariableSearchVisitor {
         int matchesCount = 0;
         for (VariableMapping mapping : mappings) {
             if (mapping.isPropertySelector()) {
-                if (mapping.getSubprocessVariableName().equals(VariableUtils.wrapVariableName(query.getSearchText()))) {
+                if (mapping.getMappedName().equals(VariableUtils.wrapVariableName(query.getSearchText()))) {
                     matchesCount++;
                 }
             } else {
-                if (mapping.getProcessVariableName().equals(query.getSearchText())) {
+                if (mapping.getName().equals(query.getSearchText())) {
                     matchesCount++;
                 }
             }
         }
         if (matchesCount > 0) {
             ElementMatch elementMatch = new ElementMatch(messagingNode, definitionFile);
+            elementMatch.setMatchesCount(matchesCount);
+            query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
+        }
+    }
+
+    private void processMultiTaskNode(IFile definitionFile, MultiTaskState state) throws Exception {
+        int matchesCount = 0;
+        VariableMapping discriminatorMapping = state.getDiscriminatorMapping();
+        if (discriminatorMapping.isMultiinstanceLinkByVariable() && Objects.equal(query.getSearchText(), discriminatorMapping.getName())) {
+            matchesCount++;
+        }
+        if (discriminatorMapping.isMultiinstanceLinkByGroup() && !discriminatorMapping.isText() && Objects.equal(query.getSearchText(), discriminatorMapping.getName())) {
+            matchesCount++;
+        }
+        if (discriminatorMapping.isMultiinstanceLinkByRelation() && discriminatorMapping.getName().contains("(" + query.getSearchText() + ")")) {
+            matchesCount++;
+        }
+        if (matchesCount > 0) {
+            ElementMatch elementMatch = new ElementMatch(state, definitionFile);
             elementMatch.setMatchesCount(matchesCount);
             query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
         }

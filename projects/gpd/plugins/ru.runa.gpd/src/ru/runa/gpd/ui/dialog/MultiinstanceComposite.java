@@ -2,6 +2,7 @@ package ru.runa.gpd.ui.dialog;
 
 import java.util.List;
 
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -12,14 +13,20 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.swimlane.RelationComposite;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
+import ru.runa.gpd.ui.wizard.CompactWizardDialog;
+import ru.runa.gpd.ui.wizard.VariableWizard;
 import ru.runa.gpd.util.MultiinstanceParameters;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.wfe.user.Group;
@@ -28,6 +35,8 @@ public class MultiinstanceComposite extends Composite {
     private final ProcessDefinition processDefinition;
     private final MultiinstanceParameters parameters;
     private CTabFolder tabFolder;
+    private Composite variableTabComposite;
+    private Combo variableCombo;
 
     public MultiinstanceComposite(Composite parent, ProcessDefinition processDefinition, final MultiinstanceParameters parameters, String variableLabelText, String groupLabelText) {
         super(parent, SWT.NONE);
@@ -38,12 +47,12 @@ public class MultiinstanceComposite extends Composite {
         tabFolder.setToolTipText(Localization.getString("Multiinstance.TypeMultiInstance"));
         tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
         {
-            Composite composite1 = new Composite(tabFolder, SWT.NONE);
-            composite1.setLayout(new GridLayout());
+            variableTabComposite = new Composite(tabFolder, SWT.NONE);
+            variableTabComposite.setLayout(new GridLayout());
             CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NONE);
             tabItem1.setText(Localization.getString("Multiinstance.tab.variable"));
-            tabItem1.setControl(composite1);
-            createTabVariable(composite1, variableLabelText);
+            tabItem1.setControl(variableTabComposite);
+            createTabVariable(variableTabComposite, variableLabelText);
         }
         {
             Composite composite1 = new Composite(tabFolder, SWT.NONE);
@@ -64,13 +73,13 @@ public class MultiinstanceComposite extends Composite {
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
         if (VariableMapping.USAGE_DISCRIMINATOR_VARIABLE.equals(parameters.getDiscriminatorType())) {
             tabFolder.setSelection(0);
-            gridData.heightHint = 100;
+            //gridData.heightHint = 100;
         } else if (VariableMapping.USAGE_DISCRIMINATOR_GROUP.equals(parameters.getDiscriminatorType())) {
             tabFolder.setSelection(1);
-            gridData.heightHint = 100;
+            //gridData.heightHint = 100;
         } else if (VariableMapping.USAGE_DISCRIMINATOR_RELATION.equals(parameters.getDiscriminatorType())) {
             tabFolder.setSelection(2);
-            gridData.heightHint = 170;
+            //gridData.heightHint = 170;
         } else {
             throw new RuntimeException("Unexpected type value = " + parameters.getDiscriminatorType());
         }
@@ -80,18 +89,37 @@ public class MultiinstanceComposite extends Composite {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 int newPageIndex = tabFolder.indexOf((CTabItem) e.item);
-                GridData gridData = (GridData) getLayoutData();
+                //GridData gridData = (GridData) getLayoutData();
                 if (newPageIndex == 0) {
-                    parameters.setType(VariableMapping.USAGE_DISCRIMINATOR_VARIABLE);
-                    gridData.heightHint = 100;
+                    parameters.setDiscriminatorType(VariableMapping.USAGE_DISCRIMINATOR_VARIABLE);
+                    //gridData.heightHint = 100;
                 } else if (newPageIndex == 1) {
-                    parameters.setType(VariableMapping.USAGE_DISCRIMINATOR_GROUP);
-                    gridData.heightHint = 100;
+                    parameters.setDiscriminatorType(VariableMapping.USAGE_DISCRIMINATOR_GROUP);
+                    //gridData.heightHint = 100;
                 } else if (newPageIndex == 2) {
-                    parameters.setType(VariableMapping.USAGE_DISCRIMINATOR_RELATION);
-                    gridData.heightHint = 170;
+                    parameters.setDiscriminatorType(VariableMapping.USAGE_DISCRIMINATOR_RELATION);
+                    //gridData.heightHint = 170;
                 }
                 getParent().layout(true);
+            }
+        });
+    }
+    
+    public void addCreateVariableLink(String label, final String format) {
+        SWTUtils.createLink(variableTabComposite, label, new LoggingHyperlinkAdapter() {
+            
+            @Override
+            protected void onLinkActivated(HyperlinkEvent e) throws Exception {
+                Variable typedVariable = new Variable();
+                typedVariable.setFormat(format);
+                VariableWizard wizard = new VariableWizard(processDefinition, typedVariable, true, false);
+                CompactWizardDialog dialog = new CompactWizardDialog(wizard);
+                if (dialog.open() == Window.OK) {
+                    Variable variable = wizard.getVariable();
+                    processDefinition.addChild(variable);
+                    variableCombo.add(variable.getName());
+                    variableCombo.setText(variable.getName());
+                }
             }
         });
     }
@@ -102,15 +130,15 @@ public class MultiinstanceComposite extends Composite {
         variableLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         variableLabel.setText(variableLabelText);
         List<String> variableNames = getDiscriminatorVariableNames();
-        final Combo processVariableField = new Combo(parent, SWT.READ_ONLY);
-        processVariableField.setItems(variableNames.toArray(new String[variableNames.size()]));
-        processVariableField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        processVariableField.setText(parameters.getDiscriminatorVariableName());
-        processVariableField.addModifyListener(new LoggingModifyTextAdapter() {
+        variableCombo = new Combo(parent, SWT.READ_ONLY);
+        variableCombo.setItems(variableNames.toArray(new String[variableNames.size()]));
+        variableCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        variableCombo.setText(parameters.getDiscriminatorVariableName());
+        variableCombo.addModifyListener(new LoggingModifyTextAdapter() {
             
             @Override
             protected void onTextChanged(ModifyEvent e) throws Exception {
-                parameters.setDiscriminatorVariableName(processVariableField.getText());
+                parameters.setDiscriminatorVariableName(variableCombo.getText());
             }
         });
     }

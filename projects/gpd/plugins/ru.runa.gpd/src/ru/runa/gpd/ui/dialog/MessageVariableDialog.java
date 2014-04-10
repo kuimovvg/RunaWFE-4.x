@@ -37,8 +37,8 @@ public class MessageVariableDialog extends Dialog {
         this.usageSelector = usageSelector;
         this.oldMapping = oldMapping;
         if (oldMapping != null) {
-            this.variable = oldMapping.getProcessVariableName();
-            this.alias = oldMapping.getSubprocessVariableName();
+            this.variable = oldMapping.getName();
+            this.alias = oldMapping.getMappedName();
         }
     }
 
