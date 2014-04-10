@@ -3,10 +3,13 @@ package ru.runa.gpd.ltk;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChange;
 import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
+import org.eclipse.swt.widgets.Display;
 
 public abstract class TextCompareChange extends TextEditBasedChange {
     protected final Object object;
@@ -64,4 +67,19 @@ public abstract class TextCompareChange extends TextEditBasedChange {
     }
 
     protected abstract String toPreviewContent(String variableName);
+    
+    @Override
+    public Change perform(IProgressMonitor pm) throws CoreException {
+        Display.getDefault().asyncExec(new Runnable() {
+            
+            @Override
+            public void run() {
+                performInUIThread();
+            }
+        });
+        return new NullChange();
+    }
+    
+    protected abstract void performInUIThread();
+
 }

@@ -9,7 +9,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.NullChange;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
@@ -38,6 +37,7 @@ public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask>
     }
 
     private class ConfigChange extends TextCompareChange {
+        
         public ConfigChange(String currentVariableName, String replacementVariableName) {
             super(element, currentVariableName, replacementVariableName);
             // unchecked by default
@@ -45,7 +45,7 @@ public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask>
         }
 
         @Override
-        public Change perform(IProgressMonitor pm) throws CoreException {
+        protected void performInUIThread() {
             String newConfiguration = getConfigurationReplacement();
             element.setDelegationConfiguration(newConfiguration);
             IFile botTaskFile = BotCache.getBotTaskFile(element);
@@ -57,7 +57,6 @@ public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask>
                 }
             }
             WorkspaceOperations.saveBotTask(botTaskFile, element);
-            return new NullChange("BotTask");
         }
 
         private String getConfigurationReplacement() {

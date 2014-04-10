@@ -44,14 +44,14 @@ public class Subprocess extends Node implements Active {
             if (mapping.isText() || mapping.isMultiinstanceLinkByRelation()) {
                 continue;
             }
-            Variable processVariable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getProcessVariableName());
+            Variable processVariable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getName());
             if (processVariable == null) {
-                errors.add(ValidationError.createLocalizedError(this, "subprocess.processVariableDoesNotExist", mapping.getProcessVariableName()));
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.processVariableDoesNotExist", mapping.getName()));
                 continue;
             }
-            Variable subprocessVariable = VariableUtils.getVariableByName(subprocessDefinition, mapping.getSubprocessVariableName());
+            Variable subprocessVariable = VariableUtils.getVariableByName(subprocessDefinition, mapping.getMappedName());
             if (subprocessVariable == null) {
-                errors.add(ValidationError.createLocalizedError(this, "subprocess.subProcessVariableDoesNotExist", mapping.getSubprocessVariableName()));
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.subProcessVariableDoesNotExist", mapping.getMappedName()));
                 continue;
             }
             if (!isCompatibleVariables(processVariable, subprocessVariable)) {
@@ -145,7 +145,7 @@ public class Subprocess extends Node implements Active {
             if (mapping.isText()) {
                 continue;
             }
-            Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getProcessVariableName());
+            Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), mapping.getName());
             if (variable != null) {
                 result.add(variable);
             }

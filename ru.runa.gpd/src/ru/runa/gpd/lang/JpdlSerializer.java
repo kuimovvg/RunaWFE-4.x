@@ -93,7 +93,8 @@ public class JpdlSerializer extends ProcessSerializer {
     private static final String TIMER_ESCALATION = "__ESCALATION";
     private static final String END_TOKEN = "end-token-state";
     private static final String MULTI_TASK_NODE = "multi-task-node";
-    private static final String TASK_EXECUTORS = "taskExecutors";
+    private static final String TASK_EXECUTORS_USAGE = "taskExecutorsUsage";
+    private static final String TASK_EXECUTORS_VALUE = "taskExecutors";
     private static final String TASK_EXECUTION_MODE = "taskExecutionMode";
 
     @Override
@@ -173,7 +174,8 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             if (state instanceof MultiTaskState) {
                 stateElement.addAttribute(TASK_EXECUTION_MODE, ((MultiTaskState) state).getTaskExecutionMode().name());
-                stateElement.addAttribute(TASK_EXECUTORS, ((MultiTaskState) state).getExecutorsVariableName());
+                stateElement.addAttribute(TASK_EXECUTORS_USAGE, ((MultiTaskState) state).getExecutorsDiscriminatorUsage());
+                stateElement.addAttribute(TASK_EXECUTORS_VALUE, ((MultiTaskState) state).getExecutorsDiscriminatorValue());
             }
             writeTimer(stateElement, state.getTimer());
             if (state.isUseEscalation()) {
@@ -217,8 +219,8 @@ public class JpdlSerializer extends ProcessSerializer {
             } else {
                 for (VariableMapping variable : subprocess.getVariableMappings()) {
                     Element variableElement = processStateElement.addElement(VARIABLE);
-                    setAttribute(variableElement, NAME, variable.getProcessVariableName());
-                    setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
+                    setAttribute(variableElement, NAME, variable.getName());
+                    setAttribute(variableElement, MAPPED_NAME, variable.getMappedName());
                     setAttribute(variableElement, ACCESS, variable.getUsage());
                 }
             }
@@ -229,8 +231,8 @@ public class JpdlSerializer extends ProcessSerializer {
             messageElement.addAttribute(DUEDATE, messageNode.getTtlDuration().getDuration());
             for (VariableMapping variable : messageNode.getVariableMappings()) {
                 Element variableElement = messageElement.addElement(VARIABLE);
-                setAttribute(variableElement, NAME, variable.getProcessVariableName());
-                setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
+                setAttribute(variableElement, NAME, variable.getName());
+                setAttribute(variableElement, MAPPED_NAME, variable.getMappedName());
                 setAttribute(variableElement, ACCESS, variable.getUsage());
             }
         }
@@ -239,8 +241,8 @@ public class JpdlSerializer extends ProcessSerializer {
             Element messageElement = writeNode(root, messageNode, null);
             for (VariableMapping variable : messageNode.getVariableMappings()) {
                 Element variableElement = messageElement.addElement(VARIABLE);
-                setAttribute(variableElement, NAME, variable.getProcessVariableName());
-                setAttribute(variableElement, MAPPED_NAME, variable.getSubprocessVariableName());
+                setAttribute(variableElement, NAME, variable.getName());
+                setAttribute(variableElement, MAPPED_NAME, variable.getMappedName());
                 setAttribute(variableElement, ACCESS, variable.getUsage());
             }
             writeTimer(messageElement, messageNode.getTimer());
@@ -530,7 +532,8 @@ public class JpdlSerializer extends ProcessSerializer {
             if (state instanceof MultiTaskState) {
                 TaskExecutionMode mode = TaskExecutionMode.valueOf(node.attributeValue(TASK_EXECUTION_MODE));
                 ((MultiTaskState) state).setTaskExecutionMode(mode);
-                ((MultiTaskState) state).setExecutorsVariableName(node.attributeValue(TASK_EXECUTORS));
+                ((MultiTaskState) state).setExecutorsDiscriminatorUsage(node.attributeValue(TASK_EXECUTORS_USAGE, MultiTaskState.USAGE_DEFAULT));
+                ((MultiTaskState) state).setExecutorsDiscriminatorValue(node.attributeValue(TASK_EXECUTORS_VALUE));
             }
             List<Element> stateChilds = node.elements();
             for (Element stateNodeChild : stateChilds) {
@@ -657,8 +660,8 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
                 if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setName(childNode.attributeValue(NAME));
+                    variable.setMappedName(childNode.attributeValue(MAPPED_NAME));
                     variable.setUsage(childNode.attributeValue(ACCESS));
                     variablesList.add(variable);
                 }
@@ -676,8 +679,8 @@ public class JpdlSerializer extends ProcessSerializer {
                 }
                 if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setName(childNode.attributeValue(NAME));
+                    variable.setMappedName(childNode.attributeValue(MAPPED_NAME));
                     variable.setUsage(childNode.attributeValue(ACCESS));
                     mappings.add(variable);
                 }
@@ -695,8 +698,8 @@ public class JpdlSerializer extends ProcessSerializer {
             for (Element childNode : nodeList) {
                 if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setName(childNode.attributeValue(NAME));
+                    variable.setMappedName(childNode.attributeValue(MAPPED_NAME));
                     variable.setUsage(childNode.attributeValue(ACCESS));
                     variablesList.add(variable);
                 }
@@ -711,8 +714,8 @@ public class JpdlSerializer extends ProcessSerializer {
             for (Element childNode : nodeList) {
                 if (VARIABLE.equals(childNode.getName())) {
                     VariableMapping variable = new VariableMapping();
-                    variable.setProcessVariableName(childNode.attributeValue(NAME));
-                    variable.setSubprocessVariableName(childNode.attributeValue(MAPPED_NAME));
+                    variable.setName(childNode.attributeValue(NAME));
+                    variable.setMappedName(childNode.attributeValue(MAPPED_NAME));
                     variable.setUsage(childNode.attributeValue(ACCESS));
                     variablesList.add(variable);
                 }

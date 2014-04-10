@@ -338,8 +338,8 @@ public class MessageNodeDialog extends Dialog {
             if (mapping == null) {
                 mapping = new VariableMapping();
             }
-            mapping.setProcessVariableName(dialog.getVariable());
-            mapping.setSubprocessVariableName(dialog.getAlias());
+            mapping.setName(dialog.getVariable());
+            mapping.setMappedName(dialog.getAlias());
             mapping.setUsage(usage);
             if (!variableMappings.contains(mapping)) {
                 addVariableMapping(mapping, false);
@@ -355,7 +355,7 @@ public class MessageNodeDialog extends Dialog {
 
     private void addVariableMapping(VariableMapping mapping, boolean updateViewers) {
         for (VariableMapping existingMapping : variableMappings) {
-            if (Objects.equal(existingMapping.getProcessVariableName(), mapping.getProcessVariableName())) {
+            if (Objects.equal(existingMapping.getName(), mapping.getName())) {
                 variableMappings.remove(existingMapping);
                 break;
             }
@@ -391,9 +391,9 @@ public class MessageNodeDialog extends Dialog {
             VariableMapping mapping = (VariableMapping) element;
             switch (index) {
             case 0:
-                return mapping.getProcessVariableName();
+                return mapping.getName();
             case 1:
-                return mapping.getSubprocessVariableName();
+                return mapping.getMappedName();
             }
             return "";
         }
