@@ -13,6 +13,7 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.logic.RelationSwimlaneInitializer;
+import ru.runa.wfe.lang.MultiTaskNode;
 import ru.runa.wfe.lang.VariableContainerNode;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;
@@ -21,6 +22,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.var.VariableMapping;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class MultiInstanceParameters {
@@ -59,6 +61,41 @@ public class MultiInstanceParameters {
         check(node);
     }
 
+    public MultiInstanceParameters(ExecutionContext executionContext, MultiTaskNode node) {
+        discriminatorVariableName = node.getExecutorsDiscriminator();
+        VariableMapping mapping = new VariableMapping(discriminatorVariableName, null, node.getExecutorsDiscriminatorUsage());
+        if (Strings.isNullOrEmpty(mapping.getUsage()) || mapping.isMultiinstanceLinkByVariable()) {
+            discriminatorValue = executionContext.getVariableProvider().getValueNotNull(List.class, discriminatorVariableName);
+        } else if (mapping.isMultiinstanceLinkByGroup()) {
+            setDiscriminatorValueByGroup(executionContext, mapping);
+        } else if (mapping.isMultiinstanceLinkByRelation()) {
+            setDiscriminatorValueByRelation(executionContext, mapping);
+        } else {
+            throw new InternalApplicationException("invalid discriminator mode: '" + mapping.getUsage() + "'");
+        }
+    }
+
+    private void setDiscriminatorValueByGroup(ExecutionContext executionContext, VariableMapping mapping) {
+        Group group;
+        if (mapping.isText()) {
+            group = ApplicationContextFactory.getExecutorDAO().getGroup(discriminatorVariableName);
+        } else {
+            group = executionContext.getVariableProvider().getValueNotNull(Group.class, discriminatorVariableName);
+        }
+        discriminatorValue = Lists.newArrayList(ApplicationContextFactory.getExecutorDAO().getGroupActors(group));
+    }
+
+    private void setDiscriminatorValueByRelation(ExecutionContext executionContext, VariableMapping mapping) {
+        RelationSwimlaneInitializer initializer = ApplicationContextFactory.autowireBean(new RelationSwimlaneInitializer());
+        initializer.parse(discriminatorVariableName);
+        if (!mapping.isText()) {
+            String relationName = initializer.getRelationName();
+            relationName = executionContext.getVariableProvider().getValueNotNull(String.class, relationName);
+            initializer.setRelationName(relationName);
+        }
+        discriminatorValue = initializer.evaluate(executionContext.getVariableProvider());
+    }
+
     private void parseInModernMode(ExecutionContext executionContext, VariableContainerNode node) {
         for (VariableMapping mapping : node.getVariableMappings()) {
             if (mapping.isMultiinstanceLinkByVariable() || mapping.isMultiinstanceLinkByGroup() || mapping.isMultiinstanceLinkByRelation()) {
@@ -68,23 +105,10 @@ public class MultiInstanceParameters {
                     discriminatorValue = executionContext.getVariableValue(discriminatorVariableName);
                 }
                 if (mapping.isMultiinstanceLinkByGroup()) {
-                    Group group;
-                    if (mapping.isText()) {
-                        group = ApplicationContextFactory.getExecutorDAO().getGroup(discriminatorVariableName);
-                    } else {
-                        group = executionContext.getVariableProvider().getValueNotNull(Group.class, discriminatorVariableName);
-                    }
-                    discriminatorValue = Lists.newArrayList(ApplicationContextFactory.getExecutorDAO().getGroupActors(group));
+                    setDiscriminatorValueByGroup(executionContext, mapping);
                 }
                 if (mapping.isMultiinstanceLinkByRelation()) {
-                    RelationSwimlaneInitializer initializer = ApplicationContextFactory.autowireBean(new RelationSwimlaneInitializer());
-                    initializer.parse(discriminatorVariableName);
-                    if (!mapping.isText()) {
-                        String relationName = initializer.getRelationName();
-                        relationName = executionContext.getVariableProvider().getValueNotNull(String.class, relationName);
-                        initializer.setRelationName(relationName);
-                    }
-                    discriminatorValue = initializer.evaluate(executionContext.getVariableProvider());
+                    setDiscriminatorValueByRelation(executionContext, mapping);
                 }
                 break;
             }

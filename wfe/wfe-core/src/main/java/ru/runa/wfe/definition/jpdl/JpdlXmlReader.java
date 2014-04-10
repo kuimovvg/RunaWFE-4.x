@@ -95,6 +95,7 @@ public class JpdlXmlReader {
     private static final String ASYNC_ATTR = "async";
     private static final String ASYNC_COMPLETION_MODE_ATTR = "asyncCompletionMode";
     private static final String TASK_EXECUTORS_ATTR = "taskExecutors";
+    private static final String TASK_EXECUTORS_USAGE = "taskExecutorsUsage";
     private static final String TASK_EXECUTION_MODE_ATTR = "taskExecutionMode";
     private static final String ACTION_NODE = "action";
     private static final String ACCESS_TYPE = "accessType";
@@ -321,7 +322,8 @@ public class JpdlXmlReader {
                     AsyncCompletionMode.NEVER.name())));
             multiTaskNode
                     .setExecutionMode(TaskExecutionMode.valueOf(element.attributeValue(TASK_EXECUTION_MODE_ATTR, TaskExecutionMode.LAST.name())));
-            multiTaskNode.setExecutorsVariableName(element.attributeValue(TASK_EXECUTORS_ATTR));
+            multiTaskNode.setExecutorsDiscriminator(element.attributeValue(TASK_EXECUTORS_ATTR));
+            multiTaskNode.setExecutorsDiscriminatorUsage(element.attributeValue(TASK_EXECUTORS_USAGE));
             readTasks(processDefinition, element, multiTaskNode);
         }
         if (node instanceof SubProcessState) {
