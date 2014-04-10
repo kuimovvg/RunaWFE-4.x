@@ -3,10 +3,7 @@ package ru.runa.gpd.ltk;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.NullChange;
 
 import ru.runa.gpd.lang.model.MessagingNode;
 import ru.runa.gpd.lang.model.NamedGraphElement;
@@ -21,11 +18,11 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
         List<VariableMapping> mappingsToChange = new ArrayList<VariableMapping>();
         for (VariableMapping mapping : element.getVariableMappings()) {
             if (mapping.isPropertySelector()) {
-                if (mapping.getSubprocessVariableName().equals(VariableUtils.wrapVariableName(oldVariable.getName()))) {
+                if (mapping.getMappedName().equals(VariableUtils.wrapVariableName(oldVariable.getName()))) {
                     mappingsToChange.add(mapping);
                 }
             } else {
-                if (mapping.getProcessVariableName().equals(oldVariable.getName())) {
+                if (mapping.getName().equals(oldVariable.getName())) {
                     mappingsToChange.add(mapping);
                 }
             }
@@ -38,6 +35,7 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
     }
 
     private class VariableMappingChange extends TextCompareChange {
+        
         private final List<VariableMapping> mappingsToChange;
 
         public VariableMappingChange(NamedGraphElement element, String currentVariableName, String replacementVariableName, List<VariableMapping> mappingsToChange) {
@@ -46,15 +44,14 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
         }
 
         @Override
-        public Change perform(IProgressMonitor pm) throws CoreException {
+        protected void performInUIThread() {
             for (VariableMapping mapping : mappingsToChange) {
                 if (mapping.isPropertySelector()) {
-                    mapping.setSubprocessVariableName(VariableUtils.wrapVariableName(replacementVariableName));
+                    mapping.setMappedName(VariableUtils.wrapVariableName(replacementVariableName));
                 } else {
-                    mapping.setProcessVariableName(replacementVariableName);
+                    mapping.setName(replacementVariableName);
                 }
             }
-            return new NullChange("Subprocess");
         }
 
         @Override
@@ -63,9 +60,9 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
             for (VariableMapping mapping : mappingsToChange) {
                 buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"");
                 if (mapping.isPropertySelector()) {
-                    buffer.append(mapping.getProcessVariableName()).append("\" name=\"").append(VariableUtils.wrapVariableName(variableName));
+                    buffer.append(mapping.getName()).append("\" name=\"").append(VariableUtils.wrapVariableName(variableName));
                 } else {
-                    buffer.append(variableName).append("\" name=\"").append(mapping.getSubprocessVariableName());
+                    buffer.append(variableName).append("\" name=\"").append(mapping.getMappedName());
                 }
                 buffer.append("\" />").append("\n");
             }

@@ -6,8 +6,6 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.NullChange;
-import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
@@ -31,19 +29,14 @@ public class SwimlanePresentation extends VariableRenameProvider<Swimlane> {
     }
 
     private class SwimlaneInitializerChange extends TextCompareChange {
+        
         public SwimlaneInitializerChange(Object element, String currentVariableName, String previewVariableName) {
             super(element, currentVariableName, previewVariableName);
         }
 
         @Override
-        public Change perform(IProgressMonitor pm) throws CoreException {
-            Display.getDefault().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    element.setDelegationConfiguration(getReplacementConfig());
-                }
-            });
-            return new NullChange("Swimlane");
+        protected void performInUIThread() {
+            element.setDelegationConfiguration(getReplacementConfig());
         }
 
         private String getReplacementConfig() {

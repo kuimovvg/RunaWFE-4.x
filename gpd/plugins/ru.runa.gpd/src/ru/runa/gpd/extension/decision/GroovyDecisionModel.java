@@ -2,11 +2,14 @@ package ru.runa.gpd.extension.decision;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableUtils;
+
+import com.google.common.collect.Sets;
 
 public class GroovyDecisionModel {
     private List<IfExpr> ifs = new ArrayList<IfExpr>();
@@ -97,6 +100,16 @@ public class GroovyDecisionModel {
             IfExpr ifExpr = new IfExpr(defaultTransition);
             addIfExpr(ifExpr);
         }
+    }
+    
+    public static Set<String> getTransitionNames(String code) {
+        Set<String> result = Sets.newHashSet();
+        Matcher returnMatcher = RETURN_PATTERN.matcher(code);
+        while (returnMatcher.find()) {
+            String transitionName = returnMatcher.group(1);
+            result.add(transitionName);
+        }
+        return result;
     }
 
     public List<String> getTransitionNames() {

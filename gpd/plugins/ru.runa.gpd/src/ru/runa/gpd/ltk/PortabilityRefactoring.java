@@ -22,6 +22,7 @@ import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.MultiTaskState;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.ScriptTask;
 import ru.runa.gpd.lang.model.Subprocess;
@@ -75,6 +76,10 @@ public class PortabilityRefactoring extends Refactoring {
         List<Timer> timers = processDefinition.getChildren(Timer.class);
         for (Timer timer : timers) {
             cache.add(new TimerPresentation(timer));
+        }
+        List<MultiTaskState> multiTaskNodes = processDefinition.getChildren(MultiTaskState.class);
+        for (MultiTaskState multiTaskNode : multiTaskNodes) {
+            cache.add(new MultiTaskPresentation(multiTaskNode));
         }
         List<TaskState> taskStates = processDefinition.getChildren(TaskState.class);
         for (TaskState taskState : taskStates) {
