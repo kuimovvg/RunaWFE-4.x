@@ -41,6 +41,7 @@ public abstract class TaskLog extends ProcessLog {
     }
 
     public TaskLog(Task task) {
+        setNodeId(task.getNodeId());
         addAttribute(ATTR_TASK_ID, task.getId().toString());
         addAttribute(ATTR_TASK_NAME, task.getName());
     }
