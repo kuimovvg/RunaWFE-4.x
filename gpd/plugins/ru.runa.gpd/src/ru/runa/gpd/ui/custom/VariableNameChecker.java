@@ -9,11 +9,7 @@ import com.google.common.collect.Lists;
 
 public class VariableNameChecker extends KeyAdapter {
     private static final List<Character> forbiddenCharacters = Lists.newArrayList('"', '\'', '&', '@', '>', '<', '\\', '.', '|');
-    
-    public static List<Character> getForbiddenCharacters() {
-        return forbiddenCharacters;
-    }
-    
+        
     @Override
     public void keyPressed(KeyEvent e) {
         if (forbiddenCharacters.contains(e.character)) {
@@ -26,6 +22,9 @@ public class VariableNameChecker extends KeyAdapter {
             if (forbiddenCharacters.contains(c)) {
                 return false;
             }
+        }
+        if (string.endsWith(" ")) {
+            return false;
         }
         return true;
     }
