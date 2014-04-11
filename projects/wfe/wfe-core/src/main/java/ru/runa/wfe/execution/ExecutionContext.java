@@ -224,7 +224,7 @@ public class ExecutionContext {
     public void addLog(ProcessLog processLog) {
         processLog.setProcessId(getProcess().getId());
         processLog.setTokenId(getToken().getId());
-        if (getToken().getNodeId() != null) {
+        if (processLog.getNodeId() == null) {
             processLog.setNodeId(getToken().getNodeId());
         }
         processLog.setCreateDate(new Date());
