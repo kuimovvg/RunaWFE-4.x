@@ -25,6 +25,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import ru.runa.wfe.lang.GraphElement;
+
 /**
  * Logging action execution.
  * 
@@ -38,7 +40,8 @@ public class ActionLog extends ProcessLog {
     public ActionLog() {
     }
 
-    public ActionLog(Object action) {
+    public ActionLog(GraphElement action) {
+        setNodeId(action.getNodeId());
         addAttributeWithTruncation(ATTR_ACTION, action.toString(), 1000);
     }
 
