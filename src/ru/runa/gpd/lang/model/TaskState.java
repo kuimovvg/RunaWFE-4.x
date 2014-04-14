@@ -320,5 +320,8 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
                 errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.insufficient", botTaskConfigParameterNames));
             }
         }
+        if (isAsync() && getTimer() != null) {
+            errors.add(ValidationError.createLocalizedError(this, "taskState.timerInAsyncTask"));
+        }
     }
 }
