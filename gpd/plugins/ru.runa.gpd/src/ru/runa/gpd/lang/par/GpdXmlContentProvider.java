@@ -126,7 +126,7 @@ public class GpdXmlContentProvider extends AuxContentProvider {
             if (graphElement.getConstraint() == null) {
                 continue;
             }
-            if (!(graphElement.getParentContainer() instanceof ProcessDefinition)) {
+            if (definition.getLanguage() == Language.BPMN && !(graphElement.getParentContainer() instanceof ProcessDefinition)) {
                 continue;
             }
             Rectangle constraint = graphElement.getConstraint();
