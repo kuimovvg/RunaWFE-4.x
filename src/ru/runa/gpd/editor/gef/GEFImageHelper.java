@@ -48,7 +48,7 @@ public class GEFImageHelper {
             imageLoader.data = new ImageData[] { downSample(image) };
             imageLoader.save(filePath, SWT.IMAGE_JPEG);
         } catch (Exception e) {
-            PluginLogger.logError(e);
+            PluginLogger.logError("graphimage: saving failed", e);
         } finally {
             if (g != null) {
                 g.dispose();
