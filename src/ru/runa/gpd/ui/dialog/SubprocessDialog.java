@@ -195,13 +195,12 @@ public class SubprocessDialog extends Dialog {
                 @Override
                 protected void onSelection(SelectionEvent e) throws Exception {
                     IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
-                    if (!selection.isEmpty()) {
-                        VariableMapping mapping = (VariableMapping) selection.getFirstElement();
-                        if (Dialogs.confirm(Localization.getString("confirm.delete"))) {
+                    if (!selection.isEmpty() && Dialogs.confirm(Localization.getString("confirm.delete"))) {
+                        for (VariableMapping mapping : (List<VariableMapping>) selection.toList()) {
                             variableMappings.remove(mapping);
-                            tableViewer.refresh();
-                            setTableInput();
                         }
+                        tableViewer.refresh();
+                        setTableInput();
                     }
                 }
             });
