@@ -21,7 +21,7 @@ public class RelativeToCurrentDateRangeFieldValidator extends AbstractRangeValid
         if (daysCount == null) {
             return null;
         }
-        if (!add) {
+        if (!add && daysCount != 0) {
             daysCount = -1 * daysCount;
         }
         Calendar current = Calendar.getInstance();
