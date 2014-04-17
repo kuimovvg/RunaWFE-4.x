@@ -70,13 +70,11 @@ public interface DefinitionService {
      *            process categories
      * @return redeployed definition
      * @throws DefinitionDoesNotExistException
-     * @throws DefinitionDoesNotExistException
      * @throws DefinitionArchiveFormatException
      * @throws DefinitionNameMismatchException
      */
     public WfDefinition redeployProcessDefinition(User user, Long definitionId, byte[] archive, List<String> categories)
-            throws DefinitionDoesNotExistException, DefinitionDoesNotExistException, DefinitionArchiveFormatException,
-            DefinitionNameMismatchException;
+            throws DefinitionDoesNotExistException, DefinitionArchiveFormatException, DefinitionNameMismatchException;
 
     /**
      * Gets only last version from each process definition.
@@ -97,10 +95,8 @@ public interface DefinitionService {
      *            process definition name
      * @return not <code>null</code>
      * @throws DefinitionDoesNotExistException
-     * @throws DefinitionDoesNotExistException
      */
-    public WfDefinition getLatestProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException,
-            DefinitionDoesNotExistException;
+    public WfDefinition getLatestProcessDefinition(User user, String definitionName) throws DefinitionDoesNotExistException;
 
     /**
      * Gets process definition by id.
@@ -111,13 +107,11 @@ public interface DefinitionService {
      *            process definition id
      * @return not <code>null</code>
      * @throws DefinitionDoesNotExistException
-     * @throws DefinitionDoesNotExistException
      */
-    public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException, DefinitionDoesNotExistException;
+    public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException;
 
     /**
-     * Deletes process definition by name. If version is not specified all
-     * versions will be deleted.
+     * Deletes process definition by name. If version is not specified all versions will be deleted.
      * 
      * @param user
      *            authorized user
@@ -145,8 +139,7 @@ public interface DefinitionService {
     public byte[] getProcessDefinitionFile(User user, Long definitionId, String fileName) throws DefinitionDoesNotExistException;
 
     /**
-     * Gets available output transition names. Process definition id or task id
-     * is required.
+     * Gets available output transition names. Process definition id or task id is required.
      * 
      * @param user
      *            authorized user
