@@ -27,6 +27,8 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
  * taken from https://bugs.eclipse.org/bugs/show_bug.cgi?id=70949
  */
 public class GEFImageHelper {
+    private static final boolean BUG70949_WORKAROUND = "true".equals(System.getProperty("ru.runa.gpd.workaround.bug70949"));
+
     public static void save(GraphicalViewer viewer, ProcessDefinition definition, String filePath) {
         // we remove the selection in order to generate valid graph picture
         viewer.deselectAll();
@@ -45,7 +47,11 @@ public class GEFImageHelper {
             g.translate(r.x * -1, r.y * -1);
             figure.paint(g);
             ImageLoader imageLoader = new ImageLoader();
-            imageLoader.data = new ImageData[] { downSample(image) };
+            if (BUG70949_WORKAROUND) {
+                imageLoader.data = new ImageData[] { downSample(image) };
+            } else {
+                imageLoader.data = new ImageData[] { image.getImageData() };
+            }
             imageLoader.save(filePath, SWT.IMAGE_JPEG);
         } catch (Exception e) {
             PluginLogger.logError("graphimage: saving failed", e);
