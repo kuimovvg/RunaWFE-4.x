@@ -278,7 +278,6 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
             ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
             WorkspaceOperations.saveProcessDefinition(definitionFile, definition);
             getCommandStack().markSaveLocation();
-            sourcePage.setInput(sourcePage.getEditorInput());
             definition.setDirty(false);
         } catch (Exception e) {
             PluginLogger.logError(e);
