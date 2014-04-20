@@ -71,7 +71,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         if (variablesTableViewer != null) {
             variablesTableViewer.refresh(true);
             swimlanesTableViewer.refresh(true);
-            updateSelection();
+            updateVariableSelection();
             validatorsTableViewer.refresh(true);
             updateValidatorSelection();
         }
@@ -105,7 +105,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         variablesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
-                updateSelection();
+                updateVariableSelection();
             }
         });
         variablesTableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
@@ -118,7 +118,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
                     addField(variableName);
                 }
                 variablesTableViewer.refresh(true);
-                updateSelection();
+                updateVariableSelection();
             }
         });
         TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
@@ -129,7 +129,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         swimlanesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
-                updateSelection();
+                updateVariableSelection();
             }
         });
         swimlanesTableViewer.addDoubleClickListener(new LoggingDoubleClickAdapter() {
@@ -142,7 +142,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
                     addField(variableName);
                 }
                 swimlanesTableViewer.refresh(true);
-                updateSelection();
+                updateVariableSelection();
             }
         });
         TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
@@ -195,9 +195,10 @@ public class FieldValidatorsWizardPage extends WizardPage {
         infoGroup.saveConfig();
     }
 
-    private void updateSelection() {
+    private void updateVariableSelection() {
         Map<String, ValidatorConfig> validators = fieldConfigs.get(getCurrentVariableName());
         validatorsTableViewer.getTable().setEnabled(validators != null);
+        infoGroup.setVisible(false);
         updateValidatorsInput(getCurrentSelection());
     }
 
