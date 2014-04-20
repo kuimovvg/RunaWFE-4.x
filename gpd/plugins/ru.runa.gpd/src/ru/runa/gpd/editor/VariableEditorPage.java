@@ -314,9 +314,7 @@ public class VariableEditorPage extends EditorPartBase {
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
                 variable.setFormat(wizard.getVariable().getFormat());
-                if (wizard.getVariable().getUserType() != null) {
-                    variable.setUserType(wizard.getVariable().getUserType());
-                }
+                variable.setUserType(wizard.getVariable().getUserType());
                 variable.setPublicVisibility(wizard.getVariable().isPublicVisibility());
                 variable.setDefaultValue(wizard.getVariable().getDefaultValue());
                 tableViewer.setSelection(selection);
