@@ -179,6 +179,10 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
             if (e.getMessage() != null && e.getMessage().contains("DefinitionDoesNotExistException")) {
                 throw new DefinitionDoesNotExistException(String.valueOf(definitionId));
             }
+            if (e.getMessage() != null && e.getMessage().contains("Definition") && e.getMessage().contains("does not exists")) {
+                // jboss4
+                throw new DefinitionDoesNotExistException(String.valueOf(definitionId));
+            }
             if (e.getMessage() != null && e.getMessage().contains("DefinitionNameMismatchException")) {
                 throw new DefinitionNameMismatchException(e.getMessage(), "", "");
             }
