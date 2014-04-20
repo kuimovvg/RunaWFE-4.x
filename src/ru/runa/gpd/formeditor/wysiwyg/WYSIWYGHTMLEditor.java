@@ -220,7 +220,8 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         if (browser == null) {
             return;
         }
-        ConnectorServletHelper.setBaseDir(((IFileEditorInput) sourceEditor.getEditorInput()).getFile().getParent().getName());
+        ConnectorServletHelper.setBaseDir(sourceEditor.getFile().getParent());
+        ConnectorServletHelper.sync();
         try {
             final Display display = Display.getCurrent();
             final ProgressMonitorDialog monitorDialog = new ProgressMonitorDialog(getSite().getShell());
@@ -363,7 +364,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         if (newPageIndex == 1) {
             syncBrowser2Editor();
         } else if (newPageIndex == 0) {
-            ConnectorServletHelper.sync();
             syncEditor2Browser();
         }
         super.pageChange(newPageIndex);
