@@ -13,49 +13,40 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 
 public class ConnectorServletHelper {
-    private static String baseDir;
+    private static File baseDir;
     private static List<String> synchronizations = new ArrayList<String>();
 
     public static void sync() {
         try {
-            if (baseDir == null) {
+            if (baseDir == null || !baseDir.exists()) {
                 return;
             }
-            File dir = new File(baseDir);
-            File[] resourceFiles = dir.listFiles(new ConnectorServletHelper.FileExtensionFilter());
+            File formCssFile = new File(WebServerUtils.getEditorDirectory(), ParContentProvider.FORM_CSS_FILE_NAME);
+            if (formCssFile.exists()) {
+                formCssFile.delete();
+            }
+            File[] resourceFiles = baseDir.listFiles(new ConnectorServletHelper.FileExtensionFilter());
             for (File file : resourceFiles) {
                 if (!file.isDirectory() && !synchronizations.contains(file.getAbsolutePath())) {
                     IOUtils.copyFileToDir(file, WebServerUtils.getEditorDirectory());
                     synchronizations.add(file.getAbsolutePath());
                 }
             }
-            File formCssFile = new File(WebServerUtils.getEditorDirectory(), ParContentProvider.FORM_CSS_FILE_NAME);
-            if (formCssFile.exists()) {
-                formCssFile.delete();
-            }
-            formCssFile = new File(dir, ParContentProvider.FORM_CSS_FILE_NAME);
-            if (formCssFile.exists()) {
-                IOUtils.copyFileToDir(formCssFile, WebServerUtils.getEditorDirectory());
-            }
         } catch (IOException e) {
             PluginLogger.logError(e);
         }
     }
 
-    public static String getBaseDir() {
+    public static File getBaseDir() {
         return baseDir;
     }
 
     public static void setBaseDir(String dir) {
-        File baseFile = new File(dir);
-        if (!baseFile.exists()) {
-            baseFile.mkdir();
-        }
-        baseDir = dir;
+        baseDir = new File(dir);
     }
 
     static class FileExtensionFilter implements FilenameFilter {
-        private final List<String> extensionExceptions = Arrays.asList("ftl", "xml");
+        private final List<String> extensionExceptions = Arrays.asList("ftl", "xml", "quick");
 
         @Override
         public boolean accept(File dir, String name) {
