@@ -231,7 +231,7 @@ public class WorkspaceOperations {
         serializer.saveToXML(definition, document);
         byte[] bytes = XmlUtil.writeXml(document);
         ParContentProvider.saveAuxInfo(definitionFile, definition);
-        definitionFile.setContents(new ByteArrayInputStream(bytes), true, true, null);
+        definitionFile.setContents(new ByteArrayInputStream(bytes), true, false, null);
     }
 
     public static ProcessEditorBase openProcessDefinition(IFile definitionFile) {
