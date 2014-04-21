@@ -23,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
@@ -46,7 +43,6 @@ import com.google.common.collect.Maps;
  * @since 4.0
  */
 public class WorkflowBotExecutor {
-    private static final Log log = LogFactory.getLog(WorkflowBotExecutor.class);
     private final User user;
     private final Bot bot;
     private final Map<String, BotTask> botTasks = Maps.newHashMap();
@@ -94,7 +90,6 @@ public class WorkflowBotExecutor {
 
     public Set<WfTask> getNewTasks() {
         Set<WfTask> result = new HashSet<WfTask>();
-        Set<WorkflowBotTaskExecutor> failedBotsToRestart = new HashSet<WorkflowBotTaskExecutor>();
         for (Iterator<WorkflowBotTaskExecutor> botIterator = botTaskExecutors.iterator(); botIterator.hasNext();) {
             WorkflowBotTaskExecutor taskExecutor = botIterator.next();
             if (taskExecutor.getExecutionStatus() == WorkflowBotTaskExecutionStatus.COMPLETED) {

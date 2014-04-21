@@ -93,6 +93,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
         return task;
     }
 
+    @SuppressWarnings("deprecation")
     public boolean interruptExecution() {
         if (executionThread == null) {
             return false;
