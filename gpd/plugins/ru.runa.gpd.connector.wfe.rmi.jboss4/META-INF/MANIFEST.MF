@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: RunaWFE Developer Studio jboss4 Server on RMI integration
 Bundle-SymbolicName: ru.runa.gpd.connector.wfe.rmi.jboss4;singleton:=true
-Bundle-Version: 4.1.1.qualifier
+Bundle-Version: 4.1.1
 Bundle-Activator: ru.runa.gpd.connector.wfe.rmi.jboss4.PluginActivator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
