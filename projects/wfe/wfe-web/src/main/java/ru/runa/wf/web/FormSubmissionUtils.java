@@ -149,9 +149,12 @@ public class FormSubmissionUtils {
                 int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
                 List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
                 for (int i = 0; i < listSize; i++) {
-                    String inputName = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
-                    Object componentValue = userInput.get(inputName);
-                    list.add(convertComponent(inputName, componentFormat, componentValue, formatErrorsForFields));
+                    String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                    String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                    VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
+                    componentDefinition.setUserTypes(variableDefinition.getUserTypes());
+                    Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
+                    list.add(componentValue);
                 }
                 variableValue = list;
             } else {
