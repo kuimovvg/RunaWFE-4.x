@@ -277,11 +277,15 @@ public class FormPresentationUtils {
                     if (options.item(j) instanceof HTMLOptionElement) {
                         HTMLOptionElement option = (HTMLOptionElement) options.item(j);
                         if (Objects.equal(option.getValue(), stringValue)) {
-                            log.debug("Setting selected option " + option.getValue() + " in select[name='" + inputName + "']");
-                            option.setAttribute(SELECTED_ATTR, SELECTED_ATTR);
+                            if (!option.hasAttribute(SELECTED_ATTR)) {
+                                log.debug("Setting selected option " + option.getValue() + " in select[name='" + inputName + "']");
+                                option.setAttribute(SELECTED_ATTR, SELECTED_ATTR);
+                            }
                         } else {
-                            log.debug("Removing selected option " + option.getValue() + " in select[name='" + inputName + "']");
-                            option.removeAttribute(SELECTED_ATTR);
+                            if (option.hasAttribute(SELECTED_ATTR)) {
+                                log.debug("Removing selected option " + option.getValue() + " in select[name='" + inputName + "']");
+                                option.removeAttribute(SELECTED_ATTR);
+                            }
                         }
                     }
                 }
