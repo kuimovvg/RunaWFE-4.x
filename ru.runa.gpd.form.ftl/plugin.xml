@@ -80,14 +80,6 @@
             name="JavaScript"
             id="ru.runa.gpd.htmleditor.templateContextType.javascript"/>
    </extension>
-   <extension
-         point="org.eclipse.ui.preferencePages">
-      <page
-            class="ru.runa.gpd.htmleditor.template.HTMLTemplatePreferencePage"
-            category="ru.runa.gpd.htmleditor.category"
-            name="%plugin.preference.template"
-            id="ru.runa.gpd.htmleditor.template.HTMLTemplatePreferencePage"/>
-   </extension>
    
    
       
