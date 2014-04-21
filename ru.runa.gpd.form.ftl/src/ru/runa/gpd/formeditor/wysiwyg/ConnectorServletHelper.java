@@ -46,7 +46,7 @@ public class ConnectorServletHelper {
     }
 
     static class FileExtensionFilter implements FilenameFilter {
-        private final List<String> extensionExceptions = Arrays.asList("ftl", "xml", "quick");
+        private final List<String> extensionExceptions = Arrays.asList("ftl", "xml", "quick", "template", "js");
 
         @Override
         public boolean accept(File dir, String name) {
