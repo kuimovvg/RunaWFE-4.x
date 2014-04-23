@@ -176,6 +176,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 formNode.setDirty();
             }
             setDirty(false);
+            updateButtons();
         } catch (Exception e) {
             PluginLogger.logError("Error on saving template form: '" + quickForm.getName() + "'", e);
         }
@@ -267,7 +268,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
 
                 prevTemplateFileName = filename;
                 setDirty(true);
-                updateButtons();
+                updateConvertButton(!Strings.isNullOrEmpty(formNode.getTemplateFileName()));
             }
         });
         templateCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -609,7 +610,11 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         moveUpButton.setEnabled(selected.size() == 1);
         moveDownButton.setEnabled(selected.size() == 1);
         deleteButton.setEnabled(selected.size() > 0);
-        convertButton.setEnabled(isTemplateValid);
+        updateConvertButton(isTemplateValid);
+    }
+    
+    private void updateConvertButton(boolean isTemplateValid) {
+    	convertButton.setEnabled(isTemplateValid && !isDirty());
     }
 
     private static class TableLabelProvider extends LabelProvider implements ITableLabelProvider {
