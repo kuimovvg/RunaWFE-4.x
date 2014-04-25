@@ -53,9 +53,11 @@ import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 public class SwimlaneEditorPage extends EditorPartBase {
     private TableViewer tableViewer;
+    private Button createButton;
     private Button searchButton;
     private Button moveUpButton;
     private Button moveDownButton;
@@ -64,9 +66,11 @@ public class SwimlaneEditorPage extends EditorPartBase {
     private Button deleteButton;
     private Button copyButton;
     private Button pasteButton;
+    private final boolean swimlanesCreateDeleteEnabled;
 
     public SwimlaneEditorPage(ProcessEditorBase editor) {
         super(editor);
+        swimlanesCreateDeleteEnabled = editor.getDefinition().getSwimlaneDisplayMode() == SwimlaneDisplayMode.none;
     }
 
     @Override
@@ -103,7 +107,8 @@ public class SwimlaneEditorPage extends EditorPartBase {
         gridData.horizontalAlignment = SWT.LEFT;
         gridData.verticalAlignment = SWT.TOP;
         buttonsBar.setLayoutData(gridData);
-        addButton(buttonsBar, "button.create", new CreateSwimlaneSelectionListener(), false);
+        createButton = addButton(buttonsBar, "button.create", new CreateSwimlaneSelectionListener(), false);
+        createButton.setEnabled(swimlanesCreateDeleteEnabled);
         renameButton = addButton(buttonsBar, "button.rename", new RenameSwimlaneSelectionListener(), true);
         changeButton = addButton(buttonsBar, "button.change", new ChangeSwimlaneSelectionListener(), true);
         copyButton = addButton(buttonsBar, "button.copy", new CopySwimlaneSelectionListener(), true);
@@ -136,7 +141,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         enableAction(changeButton, selected.size() == 1);
         enableAction(moveUpButton, selected.size() == 1 && swimlanes.indexOf(selected.get(0)) > 0);
         enableAction(moveDownButton, selected.size() == 1 && swimlanes.indexOf(selected.get(0)) < swimlanes.size() - 1);
-        enableAction(deleteButton, selected.size() > 0);
+        enableAction(deleteButton, swimlanesCreateDeleteEnabled && selected.size() > 0);
         enableAction(renameButton, selected.size() == 1);
         enableAction(copyButton, selected.size() > 0);
         boolean pasteEnabled = false;
@@ -146,7 +151,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 pasteEnabled = true;
             }
         }
-        enableAction(pasteButton, pasteEnabled);
+        enableAction(pasteButton, swimlanesCreateDeleteEnabled && pasteEnabled);
     }
 
     public void select(Swimlane variable) {
