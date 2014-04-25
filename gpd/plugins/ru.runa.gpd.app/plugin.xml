@@ -6,22 +6,18 @@
          point="org.eclipse.core.runtime.products">
       <product
             application="ru.runa.gpd.application"
-            name="runa-gpd">
-         <property
-               name="windowImages"
-               value="icons/logo/16.gif,icons/logo/32.gif,icons/logo/48.gif">
-         </property>
+            name="RunaWFE Developer Studio">
          <property
                name="aboutText"
-               value="Runa Developer Studio">
-         </property>
-         <property
-               name="aboutImage"
-               value="icons/logo/about.gif">
+               value="RunaWFE Developer Studio">
          </property>
          <property
                name="appName"
-               value="runa-gpd">
+               value="RunaWFE Developer Studio">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/logo/16.gif,icons/logo/32.gif,icons/logo/48.gif,icons/logo/64.gif,icons/logo/128.gif">
          </property>
       </product>
    </extension>
@@ -29,11 +25,11 @@
           point="org.eclipse.ui.splashHandlers">
        <splashHandler
              class="ru.runa.gpd.app.VersionSplashHandler"
-             id="ru.runa.gpd.app.versionSsplashHandler">
+             id="ru.runa.gpd.app.versionSplashHandler">
        </splashHandler>
        <splashHandlerProductBinding
              productId="ru.runa.gpd.app.product"
-             splashId="ru.runa.gpd.app.versionSsplashHandler">
+             splashId="ru.runa.gpd.app.versionSplashHandler">
        </splashHandlerProductBinding>
     </extension>
 
