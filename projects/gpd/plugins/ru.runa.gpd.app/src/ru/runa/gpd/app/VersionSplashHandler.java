@@ -19,7 +19,7 @@ public class VersionSplashHandler extends EclipseSplashHandler {
             @Override
             public void paintControl(PaintEvent e) {
                 e.gc.setTextAntialias(SWT.ON);
-                e.gc.drawText(Application.getVersion().toString(), 17, splash.getSize().y - 23);
+                e.gc.drawText(Application.getVersion().toString(), 45, splash.getSize().y - 25);
             }
         });
     }
