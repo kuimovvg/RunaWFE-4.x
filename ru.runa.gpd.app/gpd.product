@@ -1,28 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="runa-gpd" uid="product" id="ru.runa.gpd.app.product" application="ru.runa.gpd.application" version="4.1.0" useFeatures="false" includeLaunchers="true">
+<product name="RunaWFE Developer Studio" uid="product" id="ru.runa.gpd.app.product" application="ru.runa.gpd.application" version="4.2.0" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="/ru.runa.gpd.app/icons/logo/about.gif"/>
       <text>
-         Runa GPD
-
-Version: _RunaWFE-Version_
-
-This program is free software; you can redistribute it and/or 
-modify it under the terms of the GNU Lesser General Public License 
-as published by the Free Software Foundation; version 2.1 
-of the License. 
-
-This program is distributed in the hope that it will be useful, 
-but WITHOUT ANY WARRANTY; without even the implied warranty of 
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
-GNU Lesser General Public License for more details. 
-
-You should have received a copy of the GNU Lesser General Public License 
-along with this program; if not, write to the Free Software 
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+         RunaWFE Developer Studio
       </text>
    </aboutInfo>
 
@@ -32,22 +15,25 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
    <launcherArgs>
    </launcherArgs>
 
-   <windowImages i16="/ru.runa.gpd.app/icons/logo/16.gif" i32="/ru.runa.gpd.app/icons/logo/32.gif" i48="/ru.runa.gpd.app/icons/logo/48.gif"/>
+   <windowImages i16="/ru.runa.gpd.app/icons/logo/16.gif" i32="/ru.runa.gpd.app/icons/logo/32.gif" i48="/ru.runa.gpd.app/icons/logo/48.gif" i64="/ru.runa.gpd.app/icons/logo/64.gif" i128="/ru.runa.gpd.app/icons/logo/128.gif"/>
 
    <splash
       location="ru.runa.gpd.app" />
    <launcher name="runa-gpd">
+      <linux icon="/ru.runa.gpd.app/icons/logo/16.xpm"/>
+      <macosx icon="/ru.runa.gpd.app/icons/logo/16.icns"/>
       <solaris/>
       <win useIco="false">
          <bmp
-            winSmallHigh="/ru.runa.gpd.app/icons/logo/wf_E_16x16_32bit.bmp"
-            winSmallLow="/ru.runa.gpd.app/icons/logo/wf_E_16x16_8bit.bmp"
-            winMediumHigh="/ru.runa.gpd.app/icons/logo/wf_E-32x32_32bit.bmp"
-            winMediumLow="/ru.runa.gpd.app/icons/logo/wf_E-32X32_8bit.bmp"
-            winLargeHigh="/ru.runa.gpd.app/icons/logo/wf_E_48x48_32bit.bmp"
-            winLargeLow="/ru.runa.gpd.app/icons/logo/wf_E_48x48_8bit.bmp"/>
+            winSmallHigh="/ru.runa.gpd.app/icons/logo/16_32.bmp"
+            winSmallLow="/ru.runa.gpd.app/icons/logo/16_8.bmp"
+            winMediumHigh="/ru.runa.gpd.app/icons/logo/32_32.bmp"
+            winMediumLow="/ru.runa.gpd.app/icons/logo/32_8.bmp"
+            winLargeHigh="/ru.runa.gpd.app/icons/logo/48_32.bmp"
+            winLargeLow="/ru.runa.gpd.app/icons/logo/48_8.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
