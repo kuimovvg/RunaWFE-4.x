@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.lang.ValidationError;
@@ -37,7 +36,7 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     protected abstract ParamDefConfig getParamConfig(Delegable delegable);
 
     protected ImageDescriptor getLogo() {
-        return SharedImages.getImageDescriptor(bundle, "/icons/logo.gif", false);
+        return null;
     }
 
     @Override
