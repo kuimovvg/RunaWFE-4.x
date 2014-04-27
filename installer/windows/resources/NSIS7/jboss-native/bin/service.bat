@@ -23,7 +23,7 @@ set SVCDESC=RunaWFE Server %VERSION%
 set NOPAUSE=Y
 
 REM Suppress killing service on logoff event
-set JAVA_OPTS=-Xrs
+REM set JAVA_OPTS=-Xrs
 
 REM Figure out the running mode
 
