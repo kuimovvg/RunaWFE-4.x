@@ -44,6 +44,7 @@ public class FormSubmissionUtils {
     public static final String SIZE_SUFFIX = ".size";
     public static final String COMPONENT_QUALIFIER_START = "[";
     public static final String COMPONENT_QUALIFIER_END = "]";
+    public static final String FORM_NODE_ID_KEY = "UserDefinedVariablesForFormNodeId";
 
     /**
      * save in request user input with errors
@@ -71,7 +72,7 @@ public class FormSubmissionUtils {
      */
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
-        if (userInput != null) {
+        if (userInput != null && Objects.equal(userInput.get(FORM_NODE_ID_KEY)[0], interaction.getNodeId())) {
             List<String> formatErrorsForFields = new ArrayList<String>();
             return extractVariables(request, userInput, interaction, formatErrorsForFields);
         }
