@@ -30,6 +30,7 @@ import ru.runa.common.web.ActionExceptionHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
+import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 
@@ -67,6 +68,11 @@ public abstract class WFFormTag extends TitledFormTag {
             }
             tdFormElement.setClass(Resources.CLASS_BOX_BODY + " taskform " + interaction.getNodeId().replaceAll(" ", ""));
             tdFormElement.addElement(new StringElement(form));
+            Input formNodeIdInput = new Input();
+            formNodeIdInput.setType(Input.HIDDEN);
+            formNodeIdInput.addAttribute("name", FormSubmissionUtils.FORM_NODE_ID_KEY);
+            formNodeIdInput.addAttribute("value", interaction.getNodeId());
+            getForm().addElement(formNodeIdInput);
             formButtonVisible = true;
         } catch (TaskDoesNotExistException e) {
             log.warn(e.getMessage());
