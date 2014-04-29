@@ -124,6 +124,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
         User user = botExecutor.getUser();
         Bot bot = botExecutor.getBot();
         BotTask botTask = null;
+
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
         try {
             String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
@@ -135,15 +136,16 @@ public class WorkflowBotTaskExecutor implements Runnable {
             taskHandler = ClassLoaderUtil.instantiate(botTask.getTaskHandlerClassName());
             try {
                 if (BotTaskConfigurationUtils.isExtendedBotTaskConfiguration(botTask.getConfiguration())) {
-                    taskHandler.setConfiguration(BotTaskConfigurationUtils.getExtendedBotTaskConfiguration(botTask.getConfiguration()));
+                	byte[] configuration = BotTaskConfigurationUtils.getExtendedBotTaskConfiguration(botTask.getConfiguration());
+                    taskHandler.setConfiguration(configuration, botTask.getEmbeddedFile());
                     ParamsDef paramsDef = BotTaskConfigurationUtils.getExtendedBotTaskParameters(user, task, botTask.getConfiguration());
                     variableProvider = new ParamBasedVariableProvider(variableProvider, paramsDef);
                 } else if (BotTaskConfigurationUtils.isParameterizedBotTaskConfiguration(botTask.getConfiguration())) {
                     byte[] configuration = BotTaskConfigurationUtils.substituteParameterizedConfiguration(user, task, botTask.getConfiguration(),
                             variableProvider);
-                    taskHandler.setConfiguration(configuration);
+                    taskHandler.setConfiguration(configuration, botTask.getEmbeddedFile());
                 } else {
-                    taskHandler.setConfiguration(botTask.getConfiguration());
+                    taskHandler.setConfiguration(botTask.getConfiguration(), botTask.getEmbeddedFile());
                 }
                 log.info("Configured taskHandler for " + botTask.getName());
                 ProcessExecutionErrors.removeBotTaskConfigurationError(bot, botTask);

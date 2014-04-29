@@ -62,7 +62,7 @@ public class CancelProcessTaskHandler extends TaskHandlerBase {
             InputStream inputStream = ClassLoaderUtil.getAsStreamNotNull(configurationName, DatabaseTaskHandler.class);
             byte[] configuration = ByteStreams.toByteArray(inputStream);
             DatabaseTaskHandler databaseTaskHandler = new DatabaseTaskHandler();
-            databaseTaskHandler.setConfiguration(configuration);
+            databaseTaskHandler.setConfiguration(configuration, null);
             databaseTaskHandler.handle(user, variableProvider, task);
         }
         return null;

@@ -21,6 +21,7 @@ public class AdminScriptConstants {
     public final static String NEW_BOTSTATION_ATTRIBUTE_NAME = "newBotStation";
     public final static String STARTTIMEOUT_ATTRIBUTE_NAME = "startTimeout";
     public final static String HANDLER_ATTRIBUTE_NAME = "handler";
+    public final static String EMBEDDED_FILE_ATTRIBUTE_NAME = "embeddedFile";
     public final static String TYPE_ATTRIBUTE_NAME = "type";
     public final static String FILE_ATTRIBUTE_NAME = "file";
     public final static String DEFINITION_ID_ATTRIBUTE_NAME = "definitionId";
