@@ -281,7 +281,7 @@ public class ViewUtil {
             if (variable.getValue() == null) {
                 return "";
             }
-            VariableFormat format = variable.getFormatNotNull();
+            VariableFormat format = variable.getDefinition().getFormatNotNull();
             if (format instanceof FileFormat) {
                 return getFileOutput(webHelper, processId, variable.getDefinition().getName(), (FileVariable) variable.getValue());
             }
@@ -319,7 +319,7 @@ public class ViewUtil {
             }
             if (format instanceof VariableDisplaySupport) {
                 VariableDisplaySupport displaySupport = (VariableDisplaySupport) format;
-                return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue(), null);
+                return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
             } else {
                 return format.format(variable.getValue());
             }
@@ -328,7 +328,7 @@ public class ViewUtil {
             if (variable.getValue() != null && variable.getValue().getClass().isArray()) {
                 return Arrays.toString((Object[]) variable.getValue());
             } else {
-                if (variable.getDefinition().isSyntetic()) {
+                if (variable.getDefinition().isSynthetic()) {
                     return String.valueOf(variable.getValue());
                 } else {
                     return " <span style=\"color: #cccccc;\">(" + variable.getValue() + ")</span>";
@@ -370,7 +370,7 @@ public class ViewUtil {
 
     public static String getElementFormatClassName(WfVariable variable, int index) {
         if (variable != null) {
-            VariableFormat format = variable.getFormatNotNull();
+            VariableFormat format = variable.getDefinition().getFormatNotNull();
             if (format instanceof VariableFormatContainer) {
                 return ((VariableFormatContainer) format).getComponentClassName(index);
             }
