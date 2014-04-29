@@ -18,7 +18,6 @@
 package ru.runa.wfe.service.delegate;
 
 import java.util.List;
-import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -36,7 +35,6 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
 
     private final boolean replace;
     private BotStation botStation = null;
-    private Map<String, byte[]> configs;
 
     public WfeScriptForBotStations(User user, boolean replace) {
         this.replace = replace;
@@ -46,10 +44,6 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
 
     public void setBotStation(BotStation bs) {
         botStation = bs;
-    }
-
-    public void setConfigs(Map<String, byte[]> configs) {
-        this.configs = configs;
     }
 
     public static byte[] createScriptForBotLoading(Bot bot, List<BotTask> tasks) {
