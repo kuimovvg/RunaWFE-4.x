@@ -16,11 +16,13 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
-import ru.runa.gpd.util.ProcessFileUtils;
+import ru.runa.gpd.util.EmbeddedFileUtils;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.base.Strings;
@@ -105,13 +107,14 @@ public class InputOutputComposite extends Composite {
             final Combo combo = new Combo(composite, SWT.READ_ONLY);
             combo.add(stringLabel);
             combo.add(Messages.getString("label.fileVariable"));
-            if (mode == FilesSupplierMode.IN && delegable instanceof GraphElement) {
+            if (mode == FilesSupplierMode.IN) {
                 combo.add(Messages.getString("label.processDefinitionFile"));
             }
             if (!Strings.isNullOrEmpty(variableName)) {
                 combo.select(1);
                 showVariable(variableName);
-            } else if (ProcessFileUtils.isProcessFile(fileName)) {
+            } else if ((delegable instanceof GraphElement && EmbeddedFileUtils.isProcessFile(fileName))
+                    || (delegable instanceof BotTask && EmbeddedFileUtils.isBotTaskFile(fileName))) {
                 combo.select(2);
                 showEmbeddedFile(fileName);
             } else {
@@ -119,7 +122,7 @@ public class InputOutputComposite extends Composite {
                 showFileName(fileName);
             }
             combo.addSelectionListener(new LoggingSelectionAdapter() {
-                
+
                 @Override
                 protected void onSelection(SelectionEvent e) throws Exception {
                     if (combo.getSelectionIndex() == 0) {
@@ -147,7 +150,7 @@ public class InputOutputComposite extends Composite {
             }
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             text.addModifyListener(new LoggingModifyTextAdapter() {
-                
+
                 @Override
                 protected void onTextChanged(ModifyEvent e) throws Exception {
                     setFileName(text.getText());
@@ -174,14 +177,14 @@ public class InputOutputComposite extends Composite {
                 combo.setText(variable);
             }
             combo.addSelectionListener(new LoggingSelectionAdapter() {
-                
+
                 @Override
                 protected void onSelection(SelectionEvent e) throws Exception {
                     setVariable(combo.getText());
                 }
             });
             combo.addModifyListener(new LoggingModifyTextAdapter() {
-                
+
                 @Override
                 protected void onTextChanged(ModifyEvent e) throws Exception {
                     setVariable(combo.getText());
@@ -200,20 +203,44 @@ public class InputOutputComposite extends Composite {
                 }
             }
             String fileName;
-            if (ProcessFileUtils.isProcessFile(path)) {
-                fileName = ProcessFileUtils.getProcessFileName(path);
+
+            if (delegable instanceof GraphElement) {
+                if (EmbeddedFileUtils.isProcessFile(path)) {
+                    fileName = EmbeddedFileUtils.getProcessFileName(path);
+                } else {
+                    fileName = EmbeddedFileUtils.generateEmbeddedFileName(delegable, fileExtension);
+                }
+            } else if (delegable instanceof BotTask) {
+                if (EmbeddedFileUtils.isBotTaskFile(path)) {
+                    fileName = EmbeddedFileUtils.getBotTaskFileName(path);
+                } else {
+                    fileName = EmbeddedFileUtils.generateEmbeddedFileName(delegable, fileExtension);
+                }
             } else {
-                String id = ((GraphElement) delegable).getId();
-                fileName = id + ".template." + fileExtension;
+                throw new InternalApplicationException("Unexpected classtype " + delegable);
             }
+
+            // http://sourceforge.net/p/runawfe/bugs/628/
+            updateEmbeddedFileName(fileName);
+
             control = new TemplateFileComposite(composite, fileName, fileExtension);
             ((TemplateFileComposite) control).getEventSupport().addPropertyChangeListener(this);
             composite.layout(true, true);
         }
-        
+
         @Override
         public void propertyChange(PropertyChangeEvent event) {
-            setFileName(ProcessFileUtils.getProcessFilePath((String) event.getNewValue()));
+            updateEmbeddedFileName((String) event.getNewValue());
+        }
+
+        private void updateEmbeddedFileName(String fileName) {
+            if (delegable instanceof GraphElement) {
+                setFileName(EmbeddedFileUtils.getProcessFilePath(fileName));
+            } else if (delegable instanceof BotTask) {
+                setFileName(EmbeddedFileUtils.getBotTaskFilePath(fileName));
+            } else {
+                throw new InternalApplicationException("Unexpected classtype " + delegable);
+            }
         }
 
     }

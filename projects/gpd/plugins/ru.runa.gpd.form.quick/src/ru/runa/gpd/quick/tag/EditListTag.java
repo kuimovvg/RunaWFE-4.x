@@ -34,7 +34,7 @@ public class EditListTag extends AjaxFreemarkerTag {
         substitutions.put("COMPONENT_INPUT", inputTag);
         substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(elementFormatClassName));
         StringBuffer html = new StringBuffer();
-        html.append(exportScript("scripts/EditListTag.js", substitutions, false));
+        html.append(exportScript(substitutions, false));
         List<Object> list = variableProvider.getValue(List.class, variableName);
         if (list == null) {
             list = new ArrayList<Object>();

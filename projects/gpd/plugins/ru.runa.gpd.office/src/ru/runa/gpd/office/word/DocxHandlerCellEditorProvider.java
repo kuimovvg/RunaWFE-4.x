@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.dom4j.Document;
+import org.dom4j.Element;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -21,8 +23,10 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.lang.ValidationError;
+import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
@@ -32,9 +36,12 @@ import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
-import ru.runa.gpd.util.ProcessFileUtils;
+import ru.runa.gpd.util.EmbeddedFileUtils;
+import ru.runa.gpd.util.XmlUtil;
 
-public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<DocxModel> {
+import com.google.common.base.Strings;
+
+public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<DocxModel> implements IBotFileSupportProvider {
     @Override
     protected Composite createConstructorView(Composite parent, Delegable delegable) {
         return new ConstructorView(parent, delegable);
@@ -66,8 +73,9 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     public void onDelete(Delegable delegable) {
         try {
             DocxModel model = fromXml(delegable.getDelegationConfiguration());
-            ProcessFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
+            EmbeddedFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
         } catch (Exception e) {
+            ru.runa.gpd.PluginLogger.logErrorWithoutDialog("Failed to delete embedded file " + model.getInOutModel().inputPath, e);
         }
     }
 
@@ -238,6 +246,37 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
                 }
             });
         }
+    }
+
+    @Override
+    public String getEmbeddedFileName(BotTask botTask) {
+        String xml = botTask.getDelegationConfiguration();
+        Document document = XmlUtil.parseWithoutValidation(xml);
+        Element root = document.getRootElement();
+        Element inputElement = root.element("input");
+        if (inputElement != null) {
+            return EmbeddedFileUtils.getBotTaskFileName(inputElement.attributeValue("path"));
+        }
+        return null;
+    }
+
+    @Override
+    public void taskRenamed(BotTask botTask, String oldName, String newName) {
+        String xml = botTask.getDelegationConfiguration();
+        Document document = XmlUtil.parseWithoutValidation(xml);
+        Element root = document.getRootElement();
+        Element inputElement = root.element("input");
+        String oldPath = inputElement.attributeValue("path");
+        if (!Strings.isNullOrEmpty(oldPath) && EmbeddedFileUtils.isBotTaskFile(oldPath)) {
+            String oldEmbeddedFileName = EmbeddedFileUtils.getBotTaskFileName(oldPath);
+            if (oldEmbeddedFileName.startsWith(oldName)) {
+                String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
+                String newPath = EmbeddedFileUtils.getBotTaskFilePath(newEmbeddedFileName);
+                inputElement.addAttribute("path", newPath);
+            }
+        }
+        String newXml = XmlUtil.toString(document); // Debug Here.
+        botTask.setDelegationConfiguration(newXml);
     }
 
 }

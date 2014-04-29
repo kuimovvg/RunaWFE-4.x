@@ -46,6 +46,7 @@ public class BotTaskUtils {
     private static final String EXTENDED_ELEMENT = "extended";
     private static final String BOTCONFIG_ELEMENT = "botconfig";
     private static final String PARAMETERS_ELEMENT = "parameters";
+    public static final String EMBEDDED_SUFFIX = ".embedded";
 
     public static ParamDefConfig createEmptyParamDefConfig() {
         ParamDefConfig paramDefConfig = new ParamDefConfig();
@@ -163,7 +164,9 @@ public class BotTaskUtils {
 
     /**
      * Gets associated with this swimlane bot name.
-     * @param swimlane any swimlane, can be <code>null</code>
+     * 
+     * @param swimlane
+     *            any swimlane, can be <code>null</code>
      * @return bot name or <code>null</code>.
      */
     public static String getBotName(Swimlane swimlane) {
@@ -187,7 +190,9 @@ public class BotTaskUtils {
 
     /**
      * Opens dialog with formal parameters mapping for bounded to task state bot task.
-     * @param taskState task state with valid bot task link and swimlane
+     * 
+     * @param taskState
+     *            task state with valid bot task link and swimlane
      */
     public static void editBotTaskLinkConfiguration(TaskState taskState) {
         BotTaskLink botTaskLink = taskState.getBotTaskLink();
