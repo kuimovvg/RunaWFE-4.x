@@ -19,6 +19,7 @@ import org.eclipse.jface.operation.ModalContext;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.util.BotScriptUtils;
+import ru.runa.gpd.util.BotTaskUtils;
 import ru.runa.gpd.util.XmlUtil;
 
 public class BotExportCommand extends BotSyncCommand {
@@ -56,6 +57,7 @@ public class BotExportCommand extends BotSyncCommand {
         Document document = BotScriptUtils.createScriptForBotLoading(botFolder.getName(), botTaskForExport);
         XmlUtil.writeXml(document, zipStream);
         writeConfigurationFiles(botFolder, zipStream);
+        writeEmbeddedFiles(botFolder, zipStream);
         zipStream.close();
         out.flush();
     }
@@ -75,4 +77,14 @@ public class BotExportCommand extends BotSyncCommand {
             }
         }
     }
+
+    protected void writeEmbeddedFiles(IFolder botFolder, ZipOutputStream zipStream) throws CoreException, IOException {
+        for (IResource resource : botFolder.members()) {
+            // TODO must be replaced to IBotFileSupportProvider.getEmbeddedFileName(BotTask)
+            if (resource instanceof IFile && resource.getName().contains(BotTaskUtils.EMBEDDED_SUFFIX)) {
+                write(zipStream, new ZipEntry(resource.getName()), (IFile) resource);
+            }
+        }
+    }
+
 }

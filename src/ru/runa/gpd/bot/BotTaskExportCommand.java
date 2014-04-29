@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.CoreException;
 
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.lang.model.BotTask;
+import ru.runa.gpd.util.EmbeddedFileUtils;
 
 import com.google.common.collect.Lists;
 
@@ -35,6 +36,16 @@ public class BotTaskExportCommand extends BotExportCommand {
     protected void writeConfigurationFiles(IFolder botFolder, ZipOutputStream zipStream) throws CoreException, IOException {
         for (IResource resource : botFolder.members()) {
             if (resource instanceof IFile && resource.getName().equals(exportResource.getName() + ".conf")) {
+                write(zipStream, new ZipEntry(resource.getName()), (IFile) resource);
+            }
+        }
+    }
+
+    @Override
+    protected void writeEmbeddedFiles(IFolder botFolder, ZipOutputStream zipStream) throws CoreException, IOException {
+        for (IResource resource : botFolder.members()) {
+            // TODO must be replaced to IBotFileSupportProvider.getEmbeddedFileName(BotTask)
+            if (resource instanceof IFile && EmbeddedFileUtils.isBotTaskFileName(resource.getName(), exportResource.getName())) {
                 write(zipStream, new ZipEntry(resource.getName()), (IFile) resource);
             }
         }

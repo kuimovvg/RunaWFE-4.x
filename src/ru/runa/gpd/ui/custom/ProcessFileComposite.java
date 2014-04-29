@@ -18,7 +18,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.util.EventSupport;
 import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.ProcessFileUtils;
+import ru.runa.gpd.util.EmbeddedFileUtils;
 
 public abstract class ProcessFileComposite extends Composite {
     private final EventSupport eventSupport = new EventSupport(this);
@@ -94,7 +94,7 @@ public abstract class ProcessFileComposite extends Composite {
 
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                        ProcessFileUtils.deleteProcessFile(file);
+                        EmbeddedFileUtils.deleteProcessFile(file);
                         rebuild();
                         eventSupport.firePropertyChange(PropertyNames.VALUE, file.getName(), null);
                     }
