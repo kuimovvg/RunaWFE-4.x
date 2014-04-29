@@ -33,7 +33,7 @@ import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
-import ru.runa.gpd.util.ProcessFileUtils;
+import ru.runa.gpd.util.EmbeddedFileUtils;
 
 public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstructorProvider<ExcelModel> {
     protected abstract FilesSupplierMode getMode();
@@ -63,7 +63,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
     public void onDelete(Delegable delegable) {
         try {
             ExcelModel model = fromXml(delegable.getDelegationConfiguration());
-            ProcessFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
+            EmbeddedFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("Template file deletion", e);
         }
