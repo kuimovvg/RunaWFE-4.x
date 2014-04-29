@@ -108,7 +108,7 @@ public class AdminScriptRunner {
     private BotLogic botLogic;
     private User user;
     private byte[][] processDefinitionsBytes;
-    private Map<String, byte[]> configs;
+    protected Map<String, byte[]> configs;
     private final Map<String, Set<String>> namedProcessDefinitionIdentities = new HashMap<String, Set<String>>();
     private final Map<String, Set<String>> namedExecutorIdentities = new HashMap<String, Set<String>>();
     private int processDeployed;
@@ -960,10 +960,17 @@ public class AdminScriptRunner {
         Bot bot = botLogic.getBotNotNull(user, botStation.getId(), botName);
         List<Element> taskNodeList = element.elements(AdminScriptConstants.BOT_CONFIGURATION_ELEMENT_NAME);
         for (Element taskElement : taskNodeList) {
-            String name = taskElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+            
+        	String name = taskElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             String handler = taskElement.attributeValue(AdminScriptConstants.HANDLER_ATTRIBUTE_NAME, "");
+            String embeddedFile = taskElement.attributeValue(AdminScriptConstants.EMBEDDED_FILE_ATTRIBUTE_NAME, "");
+            
             BotTask task = new BotTask(bot, name);
             task.setTaskHandlerClassName(handler);
+            
+            // Add BotTask embedded file if exists
+            if(! Strings.isNullOrEmpty(embeddedFile)) task.setEmbeddedFile(configs.get(embeddedFile));
+            
             String config = taskElement.attributeValue(AdminScriptConstants.CONFIGURATION_STRING_ATTRIBUTE_NAME);
             byte[] configuration;
             if (Strings.isNullOrEmpty(config)) {

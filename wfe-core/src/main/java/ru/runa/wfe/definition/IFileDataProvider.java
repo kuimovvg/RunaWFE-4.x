@@ -15,6 +15,7 @@ public interface IFileDataProvider {
     public static final String SUBSTITUTION_EXCEPTIONS_FILE_NAME = "substitutionExceptions.xml";
     public static final String BOTS_XML_FILE = "bots.xml";
     public static final String PROCESS_FILE_PROTOCOL = "processfile://";
+    public static final String BOT_TASK_FILE_PROTOCOL = "botfile://";
     public static final String SUBPROCESS_DEFINITION_PREFIX = "sub";
 
     byte[] getFileData(String fileName);

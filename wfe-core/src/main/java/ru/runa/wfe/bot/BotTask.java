@@ -52,6 +52,7 @@ public class BotTask implements Serializable {
     private String name;
     private String taskHandlerClassName;
     private byte[] configuration;
+    private byte[] embeddedFile;
     private Date createDate;
 
     public BotTask() {
@@ -124,6 +125,16 @@ public class BotTask implements Serializable {
 
     public void setConfiguration(byte[] configuration) {
         this.configuration = configuration;
+    }
+    
+    @Lob
+    @Column(length = 16777216, name = "EMBEDDED_FILE")
+    public byte[] getEmbeddedFile() {
+        return embeddedFile;
+    }
+
+    public void setEmbeddedFile(byte[] embeddedFile) {
+        this.embeddedFile = embeddedFile;
     }
 
     @Column(name = "CREATE_DATE", nullable = false)

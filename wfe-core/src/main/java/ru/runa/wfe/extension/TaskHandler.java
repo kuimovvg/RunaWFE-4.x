@@ -38,8 +38,10 @@ public interface TaskHandler {
      * 
      * @param configuration
      *            Loaded from database configuration.
+     * @param embeddedFile
+     * 			  Embedded BotTask file which can be used in TaskHandler.
      */
-    public void setConfiguration(byte[] configuration) throws Exception;
+    public void setConfiguration(byte[] configuration, byte[] embeddedFile) throws Exception;
 
     /**
      * Get configuration for debug purpose.
