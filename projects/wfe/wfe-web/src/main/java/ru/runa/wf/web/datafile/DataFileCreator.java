@@ -10,7 +10,10 @@ import ru.runa.wf.web.datafile.builder.BotDataFileBuilder;
 import ru.runa.wf.web.datafile.builder.DataFileBuilder;
 import ru.runa.wf.web.datafile.builder.DefinitionDataFileBuilder;
 import ru.runa.wf.web.datafile.builder.ExecutorDataFileBuilder;
+import ru.runa.wf.web.datafile.builder.PermissionsDataFileBuilder;
 import ru.runa.wf.web.datafile.builder.RelationDataFileBuilder;
+import ru.runa.wfe.security.ASystem;
+import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.user.User;
 
 /**
@@ -32,6 +35,9 @@ public class DataFileCreator {
         builders.add(new DefinitionDataFileBuilder(user));
         builders.add(new BotDataFileBuilder(user));
         builders.add(new RelationDataFileBuilder(user));
+        List<Identifiable> system = new ArrayList<Identifiable>();
+        system.add(ASystem.INSTANCE);
+        builders.add(new PermissionsDataFileBuilder(system, "addPermissionsOnSystem", user));
     }
 
     public void process() throws Exception {
