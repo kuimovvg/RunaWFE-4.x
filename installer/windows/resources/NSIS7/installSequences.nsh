@@ -77,7 +77,7 @@ var simulationWebLinks
   FileWrite $0 "del /F /S /Q %TEMP%\runawfe$\r$\n"
   FileWrite $0 "rd /S /Q %TEMP%\runawfe$\r$\n"
   FileWrite $0 "nircmd.exe exec hide runBots.bat $2 $\r$\n"
-  FileWrite $0 "SET JBOSS_LOG_DIR=$\"%TEMP%\runawfe\jboss\log$\""
+  FileWrite $0 "SET JBOSS_LOG_DIR=$\"%TEMP%\runawfe\jboss\log$\"$\r$\n"
   FileWrite $0 "call standalone.bat $\"-Djboss.server.log.dir=%TEMP%\runawfe\jboss\log$\" $\"-Djboss.server.temp.dir=%TEMP%\runawfe\jboss\tmp$\" $\"-Djboss.server.base.dir=%APPDATA%\runawfe\jboss$\"$\r$\n"
   FileClose $0
 !macroend
