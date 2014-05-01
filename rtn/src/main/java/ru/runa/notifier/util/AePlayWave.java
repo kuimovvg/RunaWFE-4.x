@@ -21,8 +21,9 @@ public class AePlayWave extends Thread {
     public void run() {
         SourceDataLine auline = null;
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass()
-                    .getResourceAsStream(wavFile));
+            InputStream audioSrc = getClass().getResourceAsStream(wavFile);
+            InputStream bufferedIn = new BufferedInputStream(audioSrc);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedIn);
             AudioFormat format = audioInputStream.getFormat();
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
             auline = (SourceDataLine) AudioSystem.getLine(info);
