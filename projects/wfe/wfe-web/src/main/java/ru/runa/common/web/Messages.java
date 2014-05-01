@@ -279,6 +279,7 @@ public class Messages {
 
     public static final String TITLE_IMPORT_DATAFILE = "managesystem.datafile.import.title";
     public static final String TITLE_EXPORT_DATAFILE = "managesystem.datafile.export.title";
+    public static final String EXCEPTION_DATAFILE_NOT_PRESENT = "managesystem.datafile.not.present";
 
     private Messages() {
     }
