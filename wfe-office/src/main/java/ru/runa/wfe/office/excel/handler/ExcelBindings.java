@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.office.shared.FilesSupplierConfig;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -39,7 +40,8 @@ public class ExcelBindings extends FilesSupplierConfig {
             throw new InternalApplicationException("Variable '" + inputFileVariableName + "' should contains a file");
         }
         if (inputFilePath != null) {
-            return isFileNameBelongsToXLSX(inputFilePath, defaultValue);
+            String path = (String) ExpressionEvaluator.evaluateVariableNotNull(variableProvider, inputFilePath);
+            return isFileNameBelongsToXLSX(path, defaultValue);
         }
         return defaultValue;
     }
