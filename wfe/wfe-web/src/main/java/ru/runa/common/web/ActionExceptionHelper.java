@@ -26,6 +26,7 @@ import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 
 import ru.runa.wf.web.VariablesFormatException;
+import ru.runa.wf.web.action.DataFileNotPresentException;
 import ru.runa.wf.web.action.ProcessDefinitionTypeNotPresentException;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.LocalizableException;
@@ -147,6 +148,8 @@ public class ActionExceptionHelper {
             actionMessage = new ActionMessage(Messages.MESSAGE_RELATION_GROUP_EXISTS, e.getMessage());
         } else if (e instanceof VariablesFormatException) {
             actionMessage = new ActionMessage(Messages.MESSAGE_VARIABLE_FORMAT_ERROR, ((VariablesFormatException) e).getErrorFields());
+        } else if (e instanceof DataFileNotPresentException) {
+            actionMessage = new ActionMessage(Messages.EXCEPTION_DATAFILE_NOT_PRESENT);
         } else if (e instanceof ValidationException) {
             actionMessage = new ActionMessage(Messages.MESSAGE_VALIDATION_ERROR);
         } else if (e instanceof LocalizableException) {
