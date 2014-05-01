@@ -38,7 +38,7 @@ public class PermissionsDataFileBuilder implements DataFileBuilder {
             for (Executor executor : executors) {
 
                 Element element = script.getRootElement().addElement(xmlElement, XmlUtils.RUNA_NAMESPACE);
-                if (!"addPermissionsOnBotStations".equals(xmlElement)) {
+                if (!"addPermissionsOnBotStations".equals(xmlElement) && !"addPermissionsOnSystem".equals(xmlElement)) {
                     element.addAttribute("name", getIdentifiableName(identifiable));
                 }
                 element.addAttribute("executor", executor.getName());
