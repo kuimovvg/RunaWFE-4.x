@@ -5,7 +5,9 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.bc.BusinessCalendar;
+import ru.runa.wfe.var.format.DateFormat;
 
 public class RelativeToCurrentDateRangeFieldValidator extends AbstractRangeValidator<Date> {
 
@@ -25,6 +27,9 @@ public class RelativeToCurrentDateRangeFieldValidator extends AbstractRangeValid
             daysCount = -1 * daysCount;
         }
         Calendar current = Calendar.getInstance();
+        if (DateFormat.class.getName().equals(getVariableProvider().getVariableNotNull(getFieldName()).getDefinition().getFormat())) {
+            CalendarUtil.setZeroTimeCalendar(current);
+        }
         if (useBusinessCalendar()) {
             Date date = businessCalendar.apply(new Date(), daysCount + " business days");
             current.setTime(date);
