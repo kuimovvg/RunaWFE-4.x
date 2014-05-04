@@ -3,6 +3,7 @@ package ru.runa.wfe.validation.impl;
 import ru.runa.wfe.commons.GroovyScriptExecutor;
 import ru.runa.wfe.commons.IScriptExecutor;
 import ru.runa.wfe.validation.Validator;
+import ru.runa.wfe.validation.ValidatorException;
 
 public class GroovyExpressionValidator extends Validator {
 
@@ -19,6 +20,9 @@ public class GroovyExpressionValidator extends Validator {
             if (!Boolean.TRUE.equals(result)) {
                 addError();
             }
+        } catch (ValidatorException e) {
+            log.warn(e);
+            addError(e.getMessage());
         } catch (Exception e) {
             log.error("Groovy", e);
             addError();
