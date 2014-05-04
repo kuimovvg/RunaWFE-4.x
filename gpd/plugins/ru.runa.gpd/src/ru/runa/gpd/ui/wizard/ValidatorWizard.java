@@ -1,7 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -118,20 +117,20 @@ public class ValidatorWizard extends Wizard {
         protected ValidatorDefinition definition;
         protected ValidatorConfig config;
         protected ParametersComposite parametersComposite;
-        private final Label descriptionLabel;
+        private Label descriptionLabel;
         protected Text errorMessageText;
 
-        public ValidatorInfoControl(Composite parent) {
+        public ValidatorInfoControl(Composite parent, boolean showDescription) {
             super(parent, SWT.BORDER);
             this.setLayout(new GridLayout(1, true));
-            descriptionLabel = new Label(this, SWT.NONE);
-            descriptionLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            descriptionLabel.setText("_\n_");
-            Label errorLabel = new Label(this, SWT.NONE);
-            errorLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            errorLabel.setText(Localization.getString("ValidatorsWizardPage.ErrorMessage"));
+            if (showDescription) {
+                descriptionLabel = new Label(this, SWT.NONE);
+                descriptionLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                descriptionLabel.setText("_\n_");
+            }
             errorMessageText = new Text(this, SWT.BORDER);
             errorMessageText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            errorMessageText.setToolTipText(Localization.getString("ValidatorsWizardPage.ErrorMessage"));
         }
 
         protected abstract boolean enableUI(String variableName, ValidatorDefinition definition, ValidatorConfig config);
@@ -142,7 +141,9 @@ public class ValidatorWizard extends Wizard {
                 saveConfig();
                 this.config = config;
                 this.definition = definition;
-                descriptionLabel.setText(definition.getDescription());
+                if (descriptionLabel != null) {
+                    descriptionLabel.setText(definition.getDescription());
+                }
                 errorMessageText.setText(config.getMessage());
                 parametersComposite.clear();
                 parametersComposite.build(definition, config.getParams());

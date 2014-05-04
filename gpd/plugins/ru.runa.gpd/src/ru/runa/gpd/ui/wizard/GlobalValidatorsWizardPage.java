@@ -50,6 +50,8 @@ import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
 
+import com.google.common.base.Strings;
+
 public class GlobalValidatorsWizardPage extends WizardPage {
     private TableViewer validatorsTableViewer;
     private Button deleteButton;
@@ -156,7 +158,9 @@ public class GlobalValidatorsWizardPage extends WizardPage {
             }
         });
         infoGroup = new DefaultValidatorInfoControl(mainComposite);
-        infoGroup.setLayoutData(new GridData(GridData.FILL_BOTH));
+        gridData = new GridData(GridData.FILL_BOTH);
+        gridData.minimumHeight = 250;
+        infoGroup.setLayoutData(gridData);
         infoGroup.setVisible(false);
         mainComposite.pack(true);
         setControl(mainComposite);
@@ -182,8 +186,10 @@ public class GlobalValidatorsWizardPage extends WizardPage {
 
     public class DefaultValidatorInfoControl extends ValidatorInfoControl {
         public DefaultValidatorInfoControl(Composite parent) {
-            super(parent);
-            parametersComposite = new GroovyParamsComposite(this, SWT.NONE);
+            super(parent, false);
+            parametersComposite = new GroovyParamsComposite(this, SWT.BORDER);
+            parametersComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+            parametersComposite.setLayout(new GridLayout(1, true));
             errorMessageText.addModifyListener(new LoggingModifyTextAdapter() {
                 @Override
                 protected void onTextChanged(ModifyEvent e) throws Exception {
@@ -208,9 +214,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
 
         public GroovyParamsComposite(ValidatorInfoControl parent, int style) {
             super(parent, style);
-            this.setLayoutData(new GridData(GridData.FILL_BOTH));
-            this.setLayout(new GridLayout(1, true));
-            tabFolder = new TabFolder(parent, SWT.NULL);
+            tabFolder = new TabFolder(this, SWT.NULL);
             tabFolder.setLayout(new GridLayout());
             tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
             tabFolder.addSelectionListener(new LoggingSelectionAdapter() {
@@ -323,9 +327,6 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         @Override
         protected void build(ValidatorDefinition definition, Map<String, String> configParams) {
             String textData = configParams.get(ValidatorDefinition.EXPRESSION_PARAM_NAME);
-            if (textData == null) {
-                textData = "";
-            }
             try {
                 Expr expr = GroovyValidationModel.fromCode(textData, variables);
                 if (expr != null) {
@@ -338,11 +339,13 @@ public class GlobalValidatorsWizardPage extends WizardPage {
                         comboBoxVar2.setText(expr.getVariable2().getScriptingName());
                         textData = expr.generateCode();
                     }
+                } else if (!Strings.isNullOrEmpty(textData)) {
+                    tabFolder.setSelection(1);
                 }
             } catch (Exception e) {
                 tabFolder.setSelection(1);
             }
-            codeText.setText(textData);
+            codeText.setText(textData != null ? textData : "");
         }
 
         @Override
