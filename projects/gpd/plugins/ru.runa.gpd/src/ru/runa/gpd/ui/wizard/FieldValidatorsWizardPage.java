@@ -215,7 +215,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
 
     private class DefaultValidatorInfoControl extends ValidatorInfoControl {
         public DefaultValidatorInfoControl(Composite parent) {
-            super(parent);
+            super(parent, true);
             parametersComposite = new DefaultParamsComposite(this, SWT.NONE);
         }
 
@@ -356,13 +356,16 @@ public class FieldValidatorsWizardPage extends WizardPage {
                 label.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
                 String initialValue = configParams.get(entry.getKey());
                 // TODO: enable feature: use variables for comparison
-//                if (initialValue != null && VariableUtils.isVariableNameWrapped(initialValue)) {
-//                    initialValue = VariableUtils.unwrapVariableName(initialValue);
-//                }
+                // if (initialValue != null &&
+                // VariableUtils.isVariableNameWrapped(initialValue)) {
+                // initialValue =
+                // VariableUtils.unwrapVariableName(initialValue);
+                // }
                 TypedUserInputCombo combo = new TypedUserInputCombo(this, initialValue);
-//                for (Variable variable : processDefinition.getVariables(true, true, entry.getValue().getType())) {
-//                    combo.add(variable.getName());
-//                }
+                // for (Variable variable : processDefinition.getVariables(true,
+                // true, entry.getValue().getType())) {
+                // combo.add(variable.getName());
+                // }
                 // TODO workaround for time validator
                 Class<? extends UserInputDialog> userInputDialogClass = null;
                 if ("time".equals(definition.getName()) && Date.class.getName().equals(entry.getValue().getType())) {
