@@ -46,9 +46,9 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private boolean invalid;
     private int nextNodeIdCounter;
     private SwimlaneDisplayMode swimlaneDisplayMode = SwimlaneDisplayMode.none;
-    private Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
+    private final Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
     private ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
-    private List<VariableUserType> types = Lists.newArrayList();
+    private final List<VariableUserType> types = Lists.newArrayList();
 
     public ProcessDefinition() {
     }
@@ -56,7 +56,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public ProcessDefinitionAccessType getAccessType() {
         return accessType;
     }
-    
+
     @Override
     public boolean testAttribute(Object target, String name, String value) {
         if ("hasFormCSS".equals(name)) {
@@ -75,15 +75,15 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         this.accessType = accessType;
         firePropertyChange(PROPERTY_ACCESS_TYPE, null, accessType);
     }
-    
+
     public void addEmbeddedSubprocess(SubprocessDefinition subprocessDefinition) {
         embeddedSubprocesses.put(subprocessDefinition.getId(), subprocessDefinition);
     }
-    
+
     public ProcessDefinition getMainProcessDefinition() {
         return this;
     }
-    
+
     public SubprocessDefinition getEmbeddedSubprocessByName(String name) {
         for (SubprocessDefinition subprocessDefinition : embeddedSubprocesses.values()) {
             if (Objects.equal(subprocessDefinition.getName(), name)) {
@@ -96,11 +96,11 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
         return embeddedSubprocesses;
     }
-    
+
     public SubprocessDefinition getEmbeddedSubprocessById(String id) {
         return embeddedSubprocesses.get(id);
     }
-    
+
     public SwimlaneDisplayMode getSwimlaneDisplayMode() {
         return swimlaneDisplayMode;
     }
@@ -246,18 +246,19 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public List<String> getVariableNames(boolean expandComplexTypes, boolean includeSwimlanes, String... typeClassNameFilters) {
         return VariableUtils.getVariableNames(getVariables(expandComplexTypes, includeSwimlanes, typeClassNameFilters));
     }
-        
+
+    @Override
     public List<Variable> getVariables(boolean expandComplexTypes, boolean includeSwimlanes, String... typeClassNameFilters) {
         List<Variable> variables = getChildren(Variable.class);
         if (!includeSwimlanes) {
             variables.removeAll(getSwimlanes());
         }
         if (expandComplexTypes) {
-        	for (Variable variable : Lists.newArrayList(variables)) {
-            	if (variable.isComplex()) {
-           	        variables.addAll(expandComplexVariable(variable, variable));
-            	}
-			}
+            for (Variable variable : Lists.newArrayList(variables)) {
+                if (variable.isComplex()) {
+                    variables.addAll(expandComplexVariable(variable, variable));
+                }
+            }
         }
         List<Variable> result = Lists.newArrayList();
         for (Variable variable : variables) {
@@ -279,12 +280,12 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
                 }
             }
             if (applicable) {
-          		result.add(variable);
+                result.add(variable);
             }
         }
         return result;
     }
-    
+
     private List<Variable> expandComplexVariable(Variable superVariable, Variable complexVariable) {
         List<Variable> result = Lists.newArrayList();
         for (Variable attribute : complexVariable.getUserType().getAttributes()) {
@@ -375,9 +376,9 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.deadline")));
-        String[] array = { 
-                Localization.getString("ProcessDefinition.property.accessType.Process"), 
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, this, getDefaultTaskTimeoutDelay(), Localization
+                .getString("default.task.deadline")));
+        String[] array = { Localization.getString("ProcessDefinition.property.accessType.Process"),
                 Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
         list.add(new ComboBoxPropertyDescriptor(PROPERTY_ACCESS_TYPE, Localization.getString("ProcessDefinition.property.accessType"), array));
         return list;
@@ -415,15 +416,22 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     public Image getEntryImage() {
         return SharedImages.getImage("icons/process.gif");
     }
-    
+
     public List<VariableUserType> getVariableUserTypes() {
-		return types;
-	}
-    
+        return types;
+    }
+
     public void addVariableUserType(VariableUserType type) {
         type.setProcessDefinition(this);
         types.add(type);
         firePropertyChange(PROPERTY_USER_TYPES_CHANGED, null, type);
+    }
+
+    public void changeVariableUserTypePosition(VariableUserType type, int position) {
+        if (position != -1 && types.remove(type)) {
+            types.add(position, type);
+            firePropertyChange(PROPERTY_USER_TYPES_CHANGED, null, type);
+        }
     }
 
     public void removeVariableUserType(VariableUserType type) {
@@ -432,18 +440,18 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     }
 
     public VariableUserType getVariableUserType(String name) {
-    	for (VariableUserType type : types) {
-			if (Objects.equal(name, type.getName())) {
-				return type;
-			}
-		}
-		return null;
-	}
+        for (VariableUserType type : types) {
+            if (Objects.equal(name, type.getName())) {
+                return type;
+            }
+        }
+        return null;
+    }
 
     public VariableUserType getVariableUserTypeNotNull(String name) {
         VariableUserType type = getVariableUserType(name);
         if (type == null) {
-            throw new InternalApplicationException("Type not found by name '"+name+"'");
+            throw new InternalApplicationException("Type not found by name '" + name + "'");
         }
         return type;
     }

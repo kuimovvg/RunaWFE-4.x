@@ -31,8 +31,10 @@ import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.lang.par.ParContentProvider;
+import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
+import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.ui.dialog.VariableUserTypeDialog;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
@@ -42,10 +44,14 @@ import com.google.common.collect.Maps;
 public class VariableTypeEditorPage extends EditorPartBase {
     private TableViewer typeTableViewer;
     private Button renameTypeButton;
+    private Button moveUpTypeButton;
+    private Button moveDownTypeButton;
     private Button deleteTypeButton;
     private TableViewer attributeTableViewer;
     private Button createAttributeButton;
     private Button changeAttributeButton;
+    private Button moveUpAttributeButton;
+    private Button moveDownAttributeButton;
     private Button deleteAttributeButton;
 
     public VariableTypeEditorPage(ProcessEditorBase editor) {
@@ -92,7 +98,18 @@ public class VariableTypeEditorPage extends EditorPartBase {
         typeButtonsBar.setLayoutData(gridData);
         addButton(typeButtonsBar, "button.create", new CreateTypeSelectionListener(), false);
         renameTypeButton = addButton(typeButtonsBar, "button.rename", new RenameTypeSelectionListener(), true);
+        moveUpTypeButton = addButton(typeButtonsBar, "button.up", new MoveTypeSelectionListener(true), true);
+        moveDownTypeButton = addButton(typeButtonsBar, "button.down", new MoveTypeSelectionListener(false), true);
         deleteTypeButton = addButton(typeButtonsBar, "button.delete", new RemoveTypeSelectionListener(), true);
+
+        TableViewerLocalDragAndDropSupport.enable(typeTableViewer, new DragAndDropAdapter<VariableUserType>() {
+
+            @Override
+            public void onDropElement(VariableUserType beforeElement, VariableUserType element) {
+                int index = getDefinition().getVariableUserTypes().indexOf(beforeElement);
+                getDefinition().changeVariableUserTypePosition(element, index);
+            }
+        });
 
         Composite rightComposite = createSection(sashForm, "VariableUserType.attributes");
         rightComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -106,8 +123,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
         Table attributeTable = attributeTableViewer.getTable();
         attributeTable.setHeaderVisible(true);
         attributeTable.setLinesVisible(true);
-        String[] columnNames = new String[] { Localization.getString("property.name"), 
-        		Localization.getString("Variable.property.format"),
+        String[] columnNames = new String[] { Localization.getString("property.name"), Localization.getString("Variable.property.format"),
                 Localization.getString("Variable.property.defaultValue") };
         int[] columnWidths = new int[] { 200, 200, 200 };
         int[] columnAlignments = new int[] { SWT.LEFT, SWT.LEFT, SWT.LEFT };
@@ -125,6 +141,8 @@ public class VariableTypeEditorPage extends EditorPartBase {
         attributeButtonsBar.setLayoutData(gridData);
         createAttributeButton = addButton(attributeButtonsBar, "button.create", new CreateAttributeSelectionListener(), false);
         changeAttributeButton = addButton(attributeButtonsBar, "button.change", new ChangeAttributeSelectionListener(), true);
+        moveUpAttributeButton = addButton(attributeButtonsBar, "button.up", new MoveAttributeSelectionListener(true), true);
+        moveDownAttributeButton = addButton(attributeButtonsBar, "button.down", new MoveAttributeSelectionListener(false), true);
         deleteAttributeButton = addButton(attributeButtonsBar, "button.delete", new DeleteAttributeSelectionListener(), true);
         attributeTableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
             @Override
@@ -132,19 +150,30 @@ public class VariableTypeEditorPage extends EditorPartBase {
                 updateButtons();
             }
         });
+        TableViewerLocalDragAndDropSupport.enable(attributeTableViewer, new DragAndDropAdapter<Variable>() {
+
+            @Override
+            public void onDropElement(Variable beforeElement, Variable element) {
+                List<Variable> attributes = getTypeSelection().getAttributes();
+                int index = attributes.indexOf(beforeElement);
+                if (index != -1 && attributes.remove(element)) {
+                    attributes.add(index, element);
+                }
+            }
+        });
         updateTypeViewer();
         updateButtons();
     }
-    
+
     private void updateTypeViewer() {
         List<VariableUserType> userTypes = getDefinition().getVariableUserTypes();
-    	typeTableViewer.setInput(userTypes);
+        typeTableViewer.setInput(userTypes);
         for (VariableUserType userType : userTypes) {
             userType.addPropertyChangeListener(this);
         }
-    	updateAttributeViewer();
+        updateAttributeViewer();
     }
-    
+
     @Override
     public void dispose() {
         for (VariableUserType userType : getDefinition().getVariableUserTypes()) {
@@ -152,31 +181,37 @@ public class VariableTypeEditorPage extends EditorPartBase {
         }
         super.dispose();
     }
-    
+
     private VariableUserType getTypeSelection() {
-    	return (VariableUserType) ((IStructuredSelection) typeTableViewer.getSelection()).getFirstElement();
+        return (VariableUserType) ((IStructuredSelection) typeTableViewer.getSelection()).getFirstElement();
     }
 
     private void updateAttributeViewer() {
-    	VariableUserType type  = getTypeSelection();
-    	if (type != null) {
-    		attributeTableViewer.setInput(type.getAttributes());
-    	} else {
-    		attributeTableViewer.setInput(new Object[0]);
-    	}
+        VariableUserType type = getTypeSelection();
+        if (type != null) {
+            attributeTableViewer.setInput(type.getAttributes());
+        } else {
+            attributeTableViewer.setInput(new Object[0]);
+        }
     }
- 
+
     private Variable getAttributeSelection() {
-    	return (Variable) ((IStructuredSelection) attributeTableViewer.getSelection()).getFirstElement();
+        return (Variable) ((IStructuredSelection) attributeTableViewer.getSelection()).getFirstElement();
     }
 
     private void updateButtons() {
-    	VariableUserType selectedType = getTypeSelection();
+        VariableUserType selectedType = getTypeSelection();
         enableAction(deleteTypeButton, selectedType != null);
         enableAction(renameTypeButton, selectedType != null);
+        enableAction(moveUpTypeButton, selectedType != null && getDefinition().getVariableUserTypes().indexOf(selectedType) > 0);
+        enableAction(moveDownTypeButton, selectedType != null
+                && getDefinition().getVariableUserTypes().indexOf(selectedType) < getDefinition().getVariableUserTypes().size() - 1);
         enableAction(createAttributeButton, selectedType != null);
         Variable attribute = getAttributeSelection();
         enableAction(changeAttributeButton, attribute != null);
+        enableAction(moveUpAttributeButton, selectedType != null && attribute != null && selectedType.getAttributes().indexOf(attribute) > 0);
+        enableAction(moveDownAttributeButton, selectedType != null && attribute != null
+                && selectedType.getAttributes().indexOf(attribute) < selectedType.getAttributes().size() - 1);
         enableAction(deleteAttributeButton, attribute != null);
     }
 
@@ -200,8 +235,8 @@ public class VariableTypeEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             VariableUserTypeDialog dialog = new VariableUserTypeDialog(getDefinition(), null);
             if (dialog.open() == Window.OK) {
-            	VariableUserType type = new VariableUserType();
-            	type.setName(dialog.getName());
+                VariableUserType type = new VariableUserType();
+                type.setName(dialog.getName());
                 getDefinition().addVariableUserType(type);
                 typeTableViewer.setSelection(new StructuredSelection(type));
             }
@@ -214,29 +249,45 @@ public class VariableTypeEditorPage extends EditorPartBase {
             VariableUserType type = getTypeSelection();
             VariableUserTypeDialog dialog = new VariableUserTypeDialog(getDefinition(), type);
             if (dialog.open() == Window.OK) {
-            	type.setName(dialog.getName());
+                type.setName(dialog.getName());
             }
+        }
+    }
+
+    private class MoveTypeSelectionListener extends LoggingSelectionAdapter {
+        private final boolean up;
+
+        public MoveTypeSelectionListener(boolean up) {
+            this.up = up;
+        }
+
+        @Override
+        protected void onSelection(SelectionEvent e) throws Exception {
+            VariableUserType userType = getTypeSelection();
+            int index = getDefinition().getVariableUserTypes().indexOf(userType);
+            getDefinition().changeVariableUserTypePosition(userType, up ? index - 1 : index + 1);
+            typeTableViewer.setSelection(new StructuredSelection(userType));
         }
     }
 
     private class RemoveTypeSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
-        	VariableUserType type = getTypeSelection();
+            VariableUserType type = getTypeSelection();
             List<Variable> variables = getDefinition().getVariables(false, false, type.getName());
             StringBuffer info = new StringBuffer();
             if (variables.size() > 0) {
                 for (Variable variable : variables) {
-                	info.append(" - ").append(variable.getName()).append("\n");
+                    info.append(" - ").append(variable.getName()).append("\n");
                 }
                 info.append(Localization.getString("UserDefinedVariableType.deletion.VariablesWillBeRemoved"));
             } else {
-            	info.append(Localization.getString("UserDefinedVariableType.deletion.NoUsageFound"));
+                info.append(Localization.getString("UserDefinedVariableType.deletion.NoUsageFound"));
             }
             if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), info.toString())) {
-            	for (Variable variable : variables) {
-            		getDefinition().removeChild(variable);
-            	}
+                for (Variable variable : variables) {
+                    getDefinition().removeChild(variable);
+                }
                 getDefinition().removeVariableUserType(type);
             }
         }
@@ -269,7 +320,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
     private class CreateAttributeSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
-        	VariableUserType type = getTypeSelection();
+            VariableUserType type = getTypeSelection();
             VariableWizard wizard = new VariableWizard(getDefinition(), type, null, true, true, false);
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
@@ -279,25 +330,43 @@ public class VariableTypeEditorPage extends EditorPartBase {
             }
         }
     }
-    
+
     private class ChangeAttributeSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
-        	VariableUserType type = getTypeSelection();
-        	Variable variable = getAttributeSelection();
+            VariableUserType type = getTypeSelection();
+            Variable variable = getAttributeSelection();
             VariableWizard wizard = new VariableWizard(getDefinition(), type, variable, true, true, false);
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
                 variable.setFormat(wizard.getVariable().getFormat());
                 variable.setName(wizard.getVariable().getName());
                 variable.setDefaultValue(wizard.getVariable().getDefaultValue());
-            	getDefinition().setDirty();
+                getDefinition().setDirty();
                 updateAttributeViewer();
                 attributeTableViewer.setSelection(new StructuredSelection(variable));
             }
         }
     }
-    
+
+    private class MoveAttributeSelectionListener extends LoggingSelectionAdapter {
+        private final boolean up;
+
+        public MoveAttributeSelectionListener(boolean up) {
+            this.up = up;
+        }
+
+        @Override
+        protected void onSelection(SelectionEvent e) throws Exception {
+            VariableUserType userType = getTypeSelection();
+            Variable attribute = getAttributeSelection();
+            int index = userType.getAttributes().indexOf(attribute);
+            userType.changeAttributePosition(attribute, up ? index - 1 : index + 1);
+            // updateAttributeViewer();
+            attributeTableViewer.setSelection(new StructuredSelection(attribute));
+        }
+    }
+
     private class DeleteAttributeSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
@@ -332,7 +401,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
     }
 
     private static class AttributeLabelProvider extends LabelProvider implements ITableLabelProvider {
-    	@Override
+        @Override
         public String getColumnText(Object element, int index) {
             Variable variable = (Variable) element;
             switch (index) {
