@@ -33,6 +33,15 @@ function removeUNIQUENAME(button) {
     $("#UNIQUENAME").trigger("onRowRemoved", [rowIndex]);
 }
 
+function removeAllUNIQUENAME() {
+	$("#UNIQUENAME div[row]").each(function() {
+		$(this).remove();
+	});
+	$("input[name='VARIABLE.size']").val("0");
+    $("#UNIQUENAME").trigger("onAllRowsRemoved");
+	console.log("Removed all rows");
+}
+
 function updateRowIndexesUNIQUENAME(oldIndex, newIndex) {
 	$("div[row='"+oldIndex+"'] input").each(function() {
 		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
