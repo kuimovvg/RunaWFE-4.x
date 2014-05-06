@@ -15,6 +15,7 @@ public interface PropertyNames {
     public static final String PROPERTY_FORM_VALIDATION_FILE = "validation";
     public static final String PROPERTY_FORM_JS_VALIDATION = "jsValidation";
     public static final String PROPERTY_FORM_SCRIPT_FILE = "script";
+    public static final String PROPERTY_FORM_TEMPLATE_FILE = "formTemplate";
     public static final String PROPERTY_SOURCE = "source";
     public static final String PROPERTY_TARGET = "target";
     public static final String PROPERTY_FORMAT = "format";

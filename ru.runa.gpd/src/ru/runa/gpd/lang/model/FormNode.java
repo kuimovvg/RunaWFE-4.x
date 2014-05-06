@@ -106,6 +106,20 @@ public abstract class FormNode extends SwimlanedNode {
         firePropertyChange(PROPERTY_FORM_SCRIPT_FILE, old, this.scriptFileName);
     }
 
+    public String getTemplateFileName() {
+        return templateFileName;
+    }
+
+    public void setTemplateFileName(String templateFileName) {
+        String old = this.templateFileName;
+        this.templateFileName = templateFileName;
+        firePropertyChange(PROPERTY_FORM_TEMPLATE_FILE, old, this.templateFileName);
+    }
+
+    public boolean hasFormTemplate() {
+        return templateFileName != null && templateFileName.length() > 0;
+    }
+
     @Override
     protected List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
@@ -188,18 +202,6 @@ public abstract class FormNode extends SwimlanedNode {
         return true;
     }
 
-	public String getTemplateFileName() {
-		return templateFileName;
-	}
-
-	public void setTemplateFileName(String templateFileName) {
-		this.templateFileName = templateFileName;
-	}
-	
-	public boolean hasFormTemplate() {
-        return templateFileName != null && templateFileName.length() > 0;
-    }
-	
     @Override
     public FormNode getCopy(GraphElement parent) {
         FormNode copy = (FormNode) super.getCopy(parent);
