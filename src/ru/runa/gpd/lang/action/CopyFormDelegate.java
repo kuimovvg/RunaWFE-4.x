@@ -29,6 +29,7 @@ public class CopyFormDelegate extends FormDelegate {
             }
             if (!formNode.hasForm() && sourceFormNode.hasForm()) {
                 formNode.setFormType(sourceFormNode.getFormType());
+                formNode.setTemplateFileName(sourceFormNode.getTemplateFileName());
                 String fileName = formNode.getId().concat(".").concat(formNode.getFormType());
                 IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);
                 IFile sourceFile = IOUtils.getAdjacentFile(getDefinitionFile(), sourceFormNode.getFormFileName());
