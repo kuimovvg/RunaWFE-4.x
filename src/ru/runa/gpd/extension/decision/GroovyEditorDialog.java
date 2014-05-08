@@ -127,7 +127,7 @@ public class GroovyEditorDialog extends Dialog {
         tabItem2.setControl(sourceView);
         createConstructorView();
         try {
-            if (initModel != null && initValue.equals(initModel.generateCode())) {
+            if (initModel != null && initValue.equals(initModel.toString())) {
                 initConstructorView();
             } else {
                 if (this.initValue.length() > 0) {
@@ -478,7 +478,7 @@ public class GroovyEditorDialog extends Dialog {
                 }
                 decisionModel.addIfExpr(ifExpr);
             }
-            styledText.setText(decisionModel.generateCode());
+            styledText.setText(decisionModel.toString());
         } catch (RuntimeException e1) {
             PluginLogger.logError(e1);
             setErrorLabelText(Localization.getString("GroovyEditor.error.construct"));

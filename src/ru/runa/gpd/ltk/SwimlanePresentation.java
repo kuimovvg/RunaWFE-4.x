@@ -23,15 +23,15 @@ public class SwimlanePresentation extends VariableRenameProvider<Swimlane> {
         String config = element.getDelegationConfiguration();
         SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(config);
         if (swimlaneInitializer.hasReference(oldVariable)) {
-            changes.add(new SwimlaneInitializerChange(element, oldVariable.getName(), newVariable.getName()));
+            changes.add(new SwimlaneInitializerChange(element, oldVariable, newVariable));
         }
         return changes;
     }
 
     private class SwimlaneInitializerChange extends TextCompareChange {
-        
-        public SwimlaneInitializerChange(Object element, String currentVariableName, String previewVariableName) {
-            super(element, currentVariableName, previewVariableName);
+
+        public SwimlaneInitializerChange(Object element, Variable currentVariable, Variable previewVariable) {
+            super(element, currentVariable, previewVariable);
         }
 
         @Override
@@ -42,7 +42,7 @@ public class SwimlanePresentation extends VariableRenameProvider<Swimlane> {
         private String getReplacementConfig() {
             String config = element.getDelegationConfiguration();
             SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(config);
-            swimlaneInitializer.onVariableRename(currentVariableName, replacementVariableName);
+            swimlaneInitializer.onVariableRename(currentVariable.getName(), replacementVariable.getName());
             return swimlaneInitializer.toString();
         }
 
@@ -57,7 +57,7 @@ public class SwimlanePresentation extends VariableRenameProvider<Swimlane> {
         }
 
         @Override
-        protected String toPreviewContent(String varName) {
+        protected String toPreviewContent(Variable variable) {
             throw new UnsupportedOperationException();
         }
     }

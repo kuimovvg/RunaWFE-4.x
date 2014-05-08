@@ -13,6 +13,7 @@ import ru.runa.gpd.Activator;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.extension.handler.ParamDef;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ValidationError;
@@ -27,7 +28,6 @@ import ru.runa.wfe.lang.AsyncCompletionMode;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 public class TaskState extends FormNode implements Active, ITimed, Synchronizable {
     private TimerAction escalationAction;
@@ -250,7 +250,7 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
             super.setPropertyValue(id, value);
         }
     }
-    
+
     @Override
     public TaskState getCopy(GraphElement parent) {
         TaskState copy = (TaskState) super.getCopy(parent);
@@ -278,13 +278,13 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
     public List<Variable> getUsedVariables(IFolder processFolder) {
         List<Variable> result = super.getUsedVariables(processFolder);
         if (getBotTaskLink() != null && !Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
-                Map<String, String> map = ParamDefConfig.getAllParameters(getBotTaskLink().getDelegationConfiguration());
-                for (String variableName : map.values()) {
-                    Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), variableName);
-                    if (variable != null) {
-                        result.add(variable);
-                    }
+            Map<String, String> map = ParamDefConfig.getAllParameters(getBotTaskLink().getDelegationConfiguration());
+            for (String variableName : map.values()) {
+                Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), variableName);
+                if (variable != null) {
+                    result.add(variable);
                 }
+            }
         }
         return result;
     }
@@ -293,17 +293,9 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
     public void validate(List<ValidationError> errors, IFile definitionFile) {
         super.validate(errors, definitionFile);
         if (getBotTaskLink() != null) {
-            Set<String> linkConfigParameterNames;
-            if (Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
-                linkConfigParameterNames = Sets.newHashSet();
-            } else {
-                ParamDefConfig linkConfig = ParamDefConfig.parse(getBotTaskLink().getDelegationConfiguration());
-                linkConfigParameterNames = linkConfig.getAllParameterNames(true);
-            }
             BotTask botTask = BotCache.getBotTask(getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
             if (botTask == null) {
-                errors.add(ValidationError.createLocalizedWarning(this, "taskState.botTaskLink.botTaskNotFound", 
-                        getSwimlaneBotName(), getBotTaskLink().getBotTaskName()));
+                errors.add(ValidationError.createLocalizedWarning(this, "taskState.botTaskLink.botTaskNotFound", getSwimlaneBotName(), getBotTaskLink().getBotTaskName()));
                 return;
             }
             if (botTask.getParamDefConfig() == null) {
@@ -311,14 +303,34 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
                 return;
             }
             Set<String> botTaskConfigParameterNames = botTask.getParamDefConfig().getAllParameterNames(true);
-            if (linkConfigParameterNames.isEmpty() && !botTaskConfigParameterNames.isEmpty()) {
-                errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.empty"));
-                return;
+            if (Strings.isNullOrEmpty(getBotTaskLink().getDelegationConfiguration())) {
+                if (!botTaskConfigParameterNames.isEmpty()) {
+                    errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.empty"));
+                    return;
+                }
+            } else {
+                List<String> variableNames = getVariableNames(true);
+                Map<String, String> parameters = ParamDefConfig.getAllParameters(getBotTaskLink().getDelegationConfiguration());
+                for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+                    botTaskConfigParameterNames.remove(parameter.getKey());
+                    ParamDef paramDef = botTask.getParamDefConfig().getParamDef(parameter.getKey());
+                    if (paramDef != null && paramDef.isUseVariable() && !variableNames.contains(parameter.getValue())) {
+                        errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.variable.doesnotexist", paramDef.getLabel(), parameter.getValue()));
+                    }
+                }
             }
-            botTaskConfigParameterNames.removeAll(linkConfigParameterNames);
             if (botTaskConfigParameterNames.size() > 0) {
                 errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.insufficient", botTaskConfigParameterNames));
             }
+        } else {
+            // validate against simple bot task
+            // String botName = getSwimlaneBotName();
+            // if (botName != null) {
+            // BotTask botTask = BotCache.getBotTask(botName, getName());
+            // if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
+            // cache.add(new BotTaskConfigRenameProvider(botTask));
+            // }
+            // }
         }
         if (isAsync() && getTimer() != null) {
             errors.add(ValidationError.createLocalizedError(this, "taskState.timerInAsyncTask"));

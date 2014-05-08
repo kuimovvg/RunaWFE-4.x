@@ -1,6 +1,8 @@
 package ru.runa.gpd.extension.handler;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -34,20 +36,25 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
         ProcessDefinition definition = ((GraphElement) delegable).getProcessDefinition();
         return new ConfigurationDialog(delegable.getDelegationConfiguration(), definition.getVariables(true, true));
     }
-    
+
     @Override
-    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+    public List<String> getUsedVariableNames(Delegable delegable) {
         String configuration = delegable.getDelegationConfiguration();
         if (Strings.isNullOrEmpty(configuration)) {
-            return super.getUsedVariables(delegable, processDefinition);
+            return Lists.newArrayList();
         }
-        List<Variable> result = Lists.newArrayList();
-        for (Variable variable : processDefinition.getVariables(true, true)) {
+        List<String> result = Lists.newArrayList();
+        for (Variable variable : ((GraphElement) delegable).getProcessDefinition().getVariables(true, true)) {
             if (configuration.contains(variable.getScriptingName())) {
-                result.add(variable);
+                result.add(variable.getName());
             }
         }
         return result;
+    }
+
+    @Override
+    public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
+        return delegable.getDelegationConfiguration().replaceAll(Pattern.quote(currentVariable.getScriptingName()), Matcher.quoteReplacement(previewVariable.getScriptingName()));
     }
 
     private class ConfigurationDialog extends DelegableConfigurationDialog {
@@ -64,7 +71,7 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
             composite.setLayout(new GridLayout(2, false));
             composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             SWTUtils.createLink(parent, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);

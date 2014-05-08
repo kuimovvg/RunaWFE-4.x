@@ -32,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.FormNode;
@@ -54,6 +55,7 @@ import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
+import ru.runa.gpd.util.WorkspaceOperations;
 
 public class SwimlaneEditorPage extends EditorPartBase {
     private TableViewer tableViewer;
@@ -277,12 +279,13 @@ public class SwimlaneEditorPage extends EditorPartBase {
             if (result != IDialogConstants.OK_ID) {
                 return;
             }
-            Variable oldVariable = new Variable(swimlane);
-            swimlane.setName(newName);
-            swimlane.setScriptingName(renameDialog.getScriptingName());
             IResource projectRoot = editor.getDefinitionFile().getParent();
+            IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+            Variable newVariable = new Variable(swimlane);
+            newVariable.setName(newName);
+            newVariable.setScriptingName(renameDialog.getScriptingName());
             if (useLtk) {
-                PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), oldVariable, swimlane);
+                PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane, newVariable);
                 useLtk &= ref.isUserInteractionNeeded();
                 if (useLtk) {
                     RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
@@ -290,15 +293,18 @@ public class SwimlaneEditorPage extends EditorPartBase {
                     RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
                     result = op.run(Display.getCurrent().getActiveShell(), "");
                     if (result != IDialogConstants.OK_ID) {
-                        // revert changes
-                        swimlane.setName(oldVariable.getName());
-                        swimlane.setScriptingName(oldVariable.getScriptingName());
                         return;
                     }
                 }
             }
-            if (useLtk) {
+            // update name
+            swimlane.setName(newVariable.getName());
+            swimlane.setScriptingName(newVariable.getScriptingName());
+            if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+                for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
+                    WorkspaceOperations.saveProcessDefinition(ProcessCache.getProcessDefinitionFile(subprocessDefinition), subprocessDefinition);
+                }
             }
         }
     }

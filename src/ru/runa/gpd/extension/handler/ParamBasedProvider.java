@@ -24,11 +24,10 @@ import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.LocalizationRegistry;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
-import ru.runa.gpd.util.VariableUtils;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
@@ -70,27 +69,42 @@ public abstract class ParamBasedProvider extends DelegableProvider {
     }
 
     @Override
-    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+    public List<String> getUsedVariableNames(Delegable delegable) {
         String configuration = delegable.getDelegationConfiguration();
         if (Strings.isNullOrEmpty(configuration)) {
             return Lists.newArrayList();
         }
-        List<Variable> result = Lists.newArrayList();
+        List<String> result = Lists.newArrayList();
         ParamDefConfig paramDefConfig = getParamConfig(delegable);
         Map<String, String> props = paramDefConfig.parseConfiguration(configuration);
         for (ParamDefGroup group : paramDefConfig.getGroups()) {
             for (ParamDef paramDef : group.getParameters()) {
                 String value = props.get(paramDef.getName());
-                if (!paramDef.isUseVariable() || value == null) {
-                    continue;
-                }
-                Variable variable = VariableUtils.getVariableByName(processDefinition, value);
-                if (variable != null) {
-                    result.add(variable);
+                if (paramDef.isUseVariable() && value != null) {
+                    result.add(value);
                 }
             }
         }
         return result;
+    }
+
+    @Override
+    public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
+        String configuration = delegable.getDelegationConfiguration();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return configuration;
+        }
+        ParamDefConfig paramDefConfig = getParamConfig(delegable);
+        Map<String, String> properties = paramDefConfig.parseConfiguration(configuration);
+        for (ParamDefGroup group : paramDefConfig.getGroups()) {
+            for (ParamDef paramDef : group.getParameters()) {
+                String value = properties.get(paramDef.getName());
+                if (paramDef.isUseVariable() && Objects.equal(value, currentVariable.getName())) {
+                    properties.put(paramDef.getName(), previewVariable.getName());
+                }
+            }
+        }
+        return paramDefConfig.toConfiguration(delegable.getVariableNames(true), properties);
     }
 
     @Override

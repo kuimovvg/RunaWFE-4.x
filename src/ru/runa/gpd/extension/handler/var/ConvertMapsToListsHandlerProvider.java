@@ -39,8 +39,8 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
     }
 
     @Override
-    protected Composite createConstructorView(Composite parent, Delegable delegable) {
-        return new ConstructorView(parent, delegable);
+    protected Composite createConstructorComposite(Composite parent, Delegable delegable, ConvertMapsToListsConfig model) {
+        return new ConstructorView(parent, delegable, model);
     }
 
     @Override
@@ -48,12 +48,10 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
         return Localization.getString("ConvertMapsToListsConfig.title");
     }
 
-    private class ConstructorView extends Composite implements Observer {
-        private final Delegable delegable;
+    private class ConstructorView extends ConstructorComposite implements Observer {
 
-        public ConstructorView(Composite parent, Delegable delegable) {
-            super(parent, SWT.NONE);
-            this.delegable = delegable;
+        public ConstructorView(Composite parent, Delegable delegable, ConvertMapsToListsConfig model) {
+            super(parent, delegable, model);
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -160,7 +158,7 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
             data.horizontalSpan = 3;
             composite.setLayoutData(data);
             createStrokeComposite(composite, Localization.getString("ConvertMapsToListsConfig.label.operations"), new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.addOperation();
@@ -199,7 +197,7 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
                 });
             }
             SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.deleteOperation(index);
