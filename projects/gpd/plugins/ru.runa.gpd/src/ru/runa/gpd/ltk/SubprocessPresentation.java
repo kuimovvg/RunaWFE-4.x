@@ -12,6 +12,8 @@ import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableMapping;
 
+import com.google.common.base.Objects;
+
 public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
     public SubprocessPresentation(Subprocess subprocess) {
         setElement(subprocess);
@@ -33,7 +35,7 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
         }
         List<Change> changes = new ArrayList<Change>();
         if (mappingsToChange.size() > 0) {
-            changes.add(new SubprocessChange(element, oldVariable.getName(), newVariable.getName(), mappingsToChange));
+            changes.add(new SubprocessChange(element, oldVariable, newVariable, mappingsToChange));
         }
         return changes;
     }
@@ -41,35 +43,34 @@ public class SubprocessPresentation extends VariableRenameProvider<Subprocess> {
     private class SubprocessChange extends TextCompareChange {
         private final List<VariableMapping> mappingsToChange;
 
-        public SubprocessChange(NamedGraphElement element, String currentVariableName, String replacementVariableName, List<VariableMapping> mappingsToChange) {
-            super(element, currentVariableName, replacementVariableName);
+        public SubprocessChange(NamedGraphElement element, Variable currentVariable, Variable replacementVariable, List<VariableMapping> mappingsToChange) {
+            super(element, currentVariable, replacementVariable);
             this.mappingsToChange = mappingsToChange;
         }
 
         @Override
         protected void performInUIThread() {
             for (VariableMapping mapping : mappingsToChange) {
-                if (currentVariableName.equals(mapping.getName())) {
-                    mapping.setName(replacementVariableName);
+                if (Objects.equal(currentVariable.getName(), mapping.getName())) {
+                    mapping.setName(replacementVariable.getName());
                 }
                 if (mapping.isMultiinstanceLinkByRelation()) {
-                    mapping.setName(mapping.getName().replace(
-                            Pattern.quote("(" + currentVariableName + ")"), Matcher.quoteReplacement("(" + replacementVariableName + ")")));
+                    mapping.setName(mapping.getName().replace(Pattern.quote("(" + currentVariable.getName() + ")"),
+                            Matcher.quoteReplacement("(" + replacementVariable.getName() + ")")));
                 }
             }
         }
 
         @Override
-        protected String toPreviewContent(String variableName) {
+        protected String toPreviewContent(Variable variable) {
             StringBuffer buffer = new StringBuffer();
             for (VariableMapping mapping : mappingsToChange) {
-                if (currentVariableName.equals(mapping.getName())) {
-                    buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variableName);
+                if (Objects.equal(currentVariable.getName(), mapping.getName())) {
+                    buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(variable.getName());
                     buffer.append("\" name=\"").append(mapping.getMappedName()).append("\" />").append("\n");
                 }
                 if (mapping.isMultiinstanceLinkByRelation()) {
-                    String s = mapping.getName().replace(
-                            Pattern.quote("(" + currentVariableName + ")"), Matcher.quoteReplacement("(" + variableName + ")"));
+                    String s = mapping.getName().replace(Pattern.quote("(" + currentVariable.getName() + ")"), Matcher.quoteReplacement("(" + variable.getName() + ")"));
                     buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"").append(mapping.getMappedName());
                     buffer.append("\" name=\"").append(s).append("\" />").append("\n");
                 }

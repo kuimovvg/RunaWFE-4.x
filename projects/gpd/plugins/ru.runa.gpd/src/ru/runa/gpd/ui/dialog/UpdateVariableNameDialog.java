@@ -68,12 +68,17 @@ public class UpdateVariableNameDialog extends Dialog {
                 scriptingNameField.setText(scriptingName);
             }
         });
-        // 
+        //
         new Label(composite, SWT.NONE);
         scriptingNameField = new Text(composite, SWT.BORDER);
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
         scriptingNameField.setText(scriptingName);
+        Text saveAllEditorsLabel = new Text(composite, SWT.MULTI | SWT.READ_ONLY);
+        GridData gridData = new GridData(GridData.GRAB_HORIZONTAL);
+        gridData.horizontalSpan = 2;
+        saveAllEditorsLabel.setLayoutData(gridData);
+        saveAllEditorsLabel.setText(Localization.getString("warning.allEditorsWillBeSaved"));
         return area;
     }
 
@@ -98,9 +103,9 @@ public class UpdateVariableNameDialog extends Dialog {
     public String getName() {
         return name;
     }
-    
+
     public String getScriptingName() {
         return scriptingName;
     }
-    
+
 }

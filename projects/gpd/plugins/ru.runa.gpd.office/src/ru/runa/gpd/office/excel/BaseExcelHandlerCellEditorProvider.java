@@ -39,8 +39,8 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
     protected abstract FilesSupplierMode getMode();
 
     @Override
-    protected Composite createConstructorView(Composite parent, Delegable delegable) {
-        return new ConstructorView(parent, delegable);
+    protected Composite createConstructorComposite(Composite parent, Delegable delegable, ExcelModel model) {
+        return new ConstructorView(parent, delegable, model);
     }
 
     @Override
@@ -69,12 +69,10 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
         }
     }
 
-    private class ConstructorView extends Composite implements Observer {
-        private final Delegable delegable;
+    private class ConstructorView extends ConstructorComposite implements Observer {
 
-        public ConstructorView(Composite parent, Delegable delegable) {
-            super(parent, SWT.NONE);
-            this.delegable = delegable;
+        public ConstructorView(Composite parent, Delegable delegable, ExcelModel model) {
+            super(parent, delegable, model);
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -90,7 +88,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     control.dispose();
                 }
                 SWTUtils.createLink(this, Messages.getString("label.AddCell"), new LoggingHyperlinkAdapter() {
-                    
+
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.add(new ConstraintsModel(ConstraintsModel.CELL));
@@ -98,7 +96,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     }
                 }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
                 SWTUtils.createLink(this, Messages.getString("label.AddRow"), new LoggingHyperlinkAdapter() {
-                    
+
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.add(new ConstraintsModel(ConstraintsModel.ROW));
@@ -106,7 +104,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     }
                 }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
                 SWTUtils.createLink(this, Messages.getString("label.AddColumn"), new LoggingHyperlinkAdapter() {
-                    
+
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.add(new ConstraintsModel(ConstraintsModel.COLUMN));
@@ -163,7 +161,7 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     }
                 });
                 SWTUtils.createLink(group, "[X]", new LoggingHyperlinkAdapter() {
-                    
+
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.constraints.remove(cmodel);
@@ -183,14 +181,14 @@ public abstract class BaseExcelHandlerCellEditorProvider extends XmlBasedConstru
                     sheetText.setText("" + cmodel.sheetIndex);
                 }
                 sheetText.addModifyListener(new LoggingModifyTextAdapter() {
-                    
+
                     @Override
                     protected void onTextChanged(ModifyEvent e) throws Exception {
                         updateSheet(sheetCombo, sheetText);
                     }
                 });
                 sheetCombo.addSelectionListener(new LoggingSelectionAdapter() {
-                    
+
                     @Override
                     protected void onSelection(SelectionEvent e) throws Exception {
                         updateSheet(sheetCombo, sheetText);

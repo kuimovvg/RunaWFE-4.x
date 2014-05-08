@@ -8,9 +8,6 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import ru.runa.gpd.BotCache;
@@ -110,26 +107,6 @@ public class BotTaskUtils {
         return new ByteArrayInputStream(buffer.toString().getBytes(Charsets.UTF_8));
     }
 
-    public static InputStream createBotTaskInfo(IFolder botFolder, BotTask botTask) throws CoreException {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(botTask.getDelegationClassName());
-        buffer.append("\n");
-        String configuration = createBotTaskConfiguration(botTask);
-        if (!Strings.isNullOrEmpty(configuration)) {
-            String configurationFileName = botTask.getName() + ".conf";
-            buffer.append(configurationFileName);
-            IFile configurationFile = botFolder.getFile(configurationFileName);
-            ByteArrayInputStream stream = new ByteArrayInputStream(configuration.getBytes(Charsets.UTF_8));
-            if (configurationFile.exists()) {
-                configurationFile.setContents(stream, true, true, null);
-            } else {
-                configurationFile.create(stream, true, null);
-            }
-        }
-        buffer.append("\n");
-        return new ByteArrayInputStream(buffer.toString().getBytes(Charsets.UTF_8));
-    }
-
     public static BotTask createBotTask(String botTaskName, String handlerClassName, String configuration) {
         BotTask botTask = new BotTask();
         botTask.setName(botTaskName);
@@ -189,7 +166,8 @@ public class BotTaskUtils {
     }
 
     /**
-     * Opens dialog with formal parameters mapping for bounded to task state bot task.
+     * Opens dialog with formal parameters mapping for bounded to task state bot
+     * task.
      * 
      * @param taskState
      *            task state with valid bot task link and swimlane
@@ -201,7 +179,8 @@ public class BotTaskUtils {
         ParamDefConfig config = botTask.getParamDefConfig();
         String newConfiguration = null;
         if (BotTaskUtils.isTaskHandlerParameterized(botTaskLink.getDelegationClassName())) {
-            // this is the case of ru.runa.gpd.lang.model.BotTaskType.PARAMETERIZED
+            // this is the case of
+            // ru.runa.gpd.lang.model.BotTaskType.PARAMETERIZED
             ParamBasedProvider provider = (ParamBasedProvider) HandlerRegistry.getProvider(botTaskLink.getDelegationClassName());
             newConfiguration = provider.showConfigurationDialog(botTaskLink);
         } else {

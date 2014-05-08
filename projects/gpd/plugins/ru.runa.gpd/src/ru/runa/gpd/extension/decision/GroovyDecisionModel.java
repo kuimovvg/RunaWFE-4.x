@@ -12,7 +12,7 @@ import ru.runa.gpd.util.VariableUtils;
 import com.google.common.collect.Sets;
 
 public class GroovyDecisionModel {
-    private List<IfExpr> ifs = new ArrayList<IfExpr>();
+    private final List<IfExpr> ifs = new ArrayList<IfExpr>();
     private static Pattern IF_PATTERN = Pattern.compile("if \\((.*)\\)");
     private static Pattern RETURN_PATTERN = Pattern.compile("return \"([^\"]*)\";");
 
@@ -101,7 +101,7 @@ public class GroovyDecisionModel {
             addIfExpr(ifExpr);
         }
     }
-    
+
     public static Set<String> getTransitionNames(String code) {
         Set<String> result = Sets.newHashSet();
         Matcher returnMatcher = RETURN_PATTERN.matcher(code);
@@ -156,7 +156,8 @@ public class GroovyDecisionModel {
         return null;
     }
 
-    public String generateCode() {
+    @Override
+    public String toString() {
         StringBuffer buffer = new StringBuffer();
         IfExpr defaultIf = null;
         for (IfExpr ifExpr : ifs) {
@@ -173,8 +174,8 @@ public class GroovyDecisionModel {
     }
 
     public static class IfExpr {
-        private final Variable variable;
-        private final Object lexem2;
+        private Variable variable1;
+        private Object lexem2;
         private final Operation operation;
         private final String transition;
         private boolean byDefault;
@@ -182,28 +183,36 @@ public class GroovyDecisionModel {
         public IfExpr(String transition) {
             this.transition = transition;
             this.byDefault = true;
-            this.variable = null;
+            this.variable1 = null;
             this.lexem2 = null;
             this.operation = null;
         }
 
         public IfExpr(String transition, Variable variable, Object lexem2, Operation operation) {
             this.transition = transition;
-            this.variable = variable;
+            this.variable1 = variable;
             this.lexem2 = lexem2;
             this.operation = operation;
         }
 
         public String generateCode() {
-            return "if ( " + operation.generateCode(variable, lexem2) + " ) {\n\treturn \"" + transition + "\";\n};\n";
+            return "if ( " + operation.generateCode(variable1, lexem2) + " ) {\n\treturn \"" + transition + "\";\n};\n";
         }
 
         public Variable getVariable1() {
-            return variable;
+            return variable1;
+        }
+
+        public void setVariable1(Variable variable) {
+            this.variable1 = variable;
         }
 
         public Object getLexem2() {
             return lexem2;
+        }
+
+        public void setLexem2(Object lexem2) {
+            this.lexem2 = lexem2;
         }
 
         public boolean isByDefault() {

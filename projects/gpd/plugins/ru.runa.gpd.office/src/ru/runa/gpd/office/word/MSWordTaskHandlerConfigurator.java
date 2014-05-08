@@ -1,5 +1,6 @@
 package ru.runa.gpd.office.word;
 
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -20,13 +21,18 @@ import org.eclipse.ui.forms.events.HyperlinkEvent;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
+import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.office.Messages;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.wfe.var.FileVariable;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<MSWordConfig> {
     @Override
@@ -40,8 +46,13 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
     }
 
     @Override
-    protected Composite createConstructorView(Composite parent, Delegable delegable) {
-        return new ConstructorView(parent, delegable);
+    protected Composite createConstructorComposite(Composite parent, Delegable delegable, MSWordConfig model) {
+        return new ConstructorView(parent, delegable, model);
+    }
+
+    @Override
+    protected int getSelectedTabIndex(Delegable delegable, MSWordConfig model) {
+        return delegable instanceof BotTask ? 1 : 0;
     }
 
     @Override
@@ -49,12 +60,41 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
         return Messages.getString("MSWordConfig.title");
     }
 
-    private class ConstructorView extends Composite implements Observer {
-        private final Delegable delegable;
+    @Override
+    public List<String> getUsedVariableNames(Delegable delegable) {
+        List<String> result = Lists.newArrayList();
+        MSWordConfig model = MSWordConfig.fromXml(delegable.getDelegationConfiguration());
+        if (model != null) {
+            if (model.getResultVariableName() != null) {
+                result.add(model.getResultVariableName());
+            }
+            for (MSWordVariableMapping mapping : model.getMappings()) {
+                result.add(mapping.getVariableName());
+            }
+        }
+        return result;
+    }
 
-        public ConstructorView(Composite parent, Delegable delegable) {
-            super(parent, SWT.NONE);
-            this.delegable = delegable;
+    @Override
+    public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
+        MSWordConfig model = MSWordConfig.fromXml(delegable.getDelegationConfiguration());
+        if (model != null) {
+            if (Objects.equal(model.getResultVariableName(), currentVariable.getName())) {
+                model.setResultVariableName(previewVariable.getName());
+            }
+            for (MSWordVariableMapping mapping : model.getMappings()) {
+                if (Objects.equal(mapping.getVariableName(), currentVariable.getName())) {
+                    mapping.setVariableName(previewVariable.getName());
+                }
+            }
+        }
+        return model.toString();
+    }
+
+    private class ConstructorView extends ConstructorComposite implements Observer {
+
+        public ConstructorView(Composite parent, Delegable delegable, MSWordConfig model) {
+            super(parent, delegable, model);
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -90,7 +130,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 strict.setText(Messages.getString("label.strict"));
                 strict.setSelection(model.isStrictMode());
                 strict.addSelectionListener(new LoggingSelectionAdapter() {
-                    
+
                     @Override
                     protected void onSelection(SelectionEvent e) throws Exception {
                         model.setStrictMode(strict.getSelection());
@@ -104,7 +144,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 text.setLayoutData(getGridData(2));
                 text.setText(model.getTemplatePath());
                 text.addModifyListener(new LoggingModifyTextAdapter() {
-                    
+
                     @Override
                     protected void onTextChanged(ModifyEvent e) throws Exception {
                         model.setTemplatePath(text.getText());
@@ -118,7 +158,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 text.setLayoutData(getGridData(2));
                 text.setText(model.getResultFileName());
                 text.addModifyListener(new LoggingModifyTextAdapter() {
-                    
+
                     @Override
                     protected void onTextChanged(ModifyEvent e) throws Exception {
                         model.setResultFileName(text.getText());
@@ -135,7 +175,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
                 combo.setLayoutData(getGridData(2));
                 combo.setText(model.getResultVariableName());
                 combo.addSelectionListener(new LoggingSelectionAdapter() {
-                    
+
                     @Override
                     protected void onSelection(SelectionEvent e) throws Exception {
                         model.setResultVariableName(combo.getText());
@@ -160,7 +200,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
             data.horizontalSpan = 3;
             Composite strokeComposite = SWTUtils.createStrokeComposite(composite, data, Messages.getString("MSWordConfig.label.mappings"), 4);
             SWTUtils.createLink(strokeComposite, Localization.getString("button.add"), new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.addMapping();
@@ -177,7 +217,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
             combo.setText(mapping.getVariableName());
             combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             combo.addSelectionListener(new LoggingSelectionAdapter() {
-                
+
                 @Override
                 protected void onSelection(SelectionEvent e) throws Exception {
                     String variableName = combo.getText();
@@ -188,14 +228,14 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
             text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             text.setText(mapping.getBookmarkName());
             text.addModifyListener(new LoggingModifyTextAdapter() {
-                
+
                 @Override
                 protected void onTextChanged(ModifyEvent e) throws Exception {
                     mapping.setBookmarkName(text.getText());
                 }
             });
             SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.deleteMapping(index);

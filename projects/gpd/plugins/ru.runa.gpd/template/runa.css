@@ -48,3 +48,10 @@
 	color: red;
 	font-style: italic;
 }
+.title {
+	font-size: 13pt;
+}
+.warning {
+	font-size: 11pt;
+	color: brown;
+}

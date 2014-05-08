@@ -30,7 +30,7 @@ public class BotTaskLinkParametersRenameProvider extends VariableRenameProvider<
         Map<String, String> parameters = ParamDefConfig.getAllParameters(element.getDelegationConfiguration());
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             if (Objects.equal(oldVariable.getName(), entry.getValue())) {
-                changes.add(new ParamChange(element, oldVariable.getName(), newVariable.getName()));
+                changes.add(new ParamChange(element, oldVariable, newVariable));
             }
         }
         return changes;
@@ -38,13 +38,13 @@ public class BotTaskLinkParametersRenameProvider extends VariableRenameProvider<
 
     private class ParamChange extends TextCompareChange {
 
-        public ParamChange(BotTaskLink element, String currentVariableName, String previewVariableName) {
-            super(element, currentVariableName, previewVariableName);
+        public ParamChange(BotTaskLink element, Variable currentVariable, Variable previewVariable) {
+            super(element, currentVariable, previewVariable);
         }
 
         @Override
-        protected String toPreviewContent(String variableName) {
-            return variableName;
+        protected String toPreviewContent(Variable variable) {
+            return variable.getName();
         }
 
         @Override
@@ -54,8 +54,8 @@ public class BotTaskLinkParametersRenameProvider extends VariableRenameProvider<
             for (Element groupElement : groupElements) {
                 List<Element> paramElements = groupElement.elements(PARAM);
                 for (Element element : paramElements) {
-                    if (Objects.equal(currentVariableName, element.attributeValue(VARIABLE))) {
-                        element.addAttribute(VARIABLE, replacementVariableName);
+                    if (Objects.equal(currentVariable.getName(), element.attributeValue(VARIABLE))) {
+                        element.addAttribute(VARIABLE, replacementVariable.getName());
                     }
                 }
             }

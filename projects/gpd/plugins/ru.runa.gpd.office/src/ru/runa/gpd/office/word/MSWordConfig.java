@@ -24,11 +24,11 @@ public class MSWordConfig extends Observable {
     public boolean isStrictMode() {
         return strictMode;
     }
-    
+
     public void setStrictMode(boolean strictMode) {
         this.strictMode = strictMode;
     }
-    
+
     public String getTemplatePath() {
         return templatePath;
     }
@@ -91,7 +91,7 @@ public class MSWordConfig extends Observable {
         }
     }
 
-    public static MSWordConfig fromXml(String xml) throws Exception {
+    public static MSWordConfig fromXml(String xml) {
         MSWordConfig model = new MSWordConfig();
         Document document = XmlUtil.parseWithoutValidation(xml);
         Element root = document.getRootElement();
