@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -25,6 +27,8 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.DelegableConfigurationDialog;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.HighlightTextStyling;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
@@ -32,11 +36,46 @@ import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.util.IOUtils;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 public class FormulaCellEditorProvider extends DelegableProvider {
 
     @Override
     protected DelegableConfigurationDialog createConfigurationDialog(Delegable delegable) {
         return new ConfigurationDialog(delegable.getDelegationConfiguration(), delegable.getVariableNames(true));
+    }
+
+    @Override
+    public List<String> getUsedVariableNames(Delegable delegable) {
+        String configuration = delegable.getDelegationConfiguration();
+        if (Strings.isNullOrEmpty(configuration)) {
+            return Lists.newArrayList();
+        }
+        List<String> result = Lists.newArrayList();
+        for (Variable variable : ((GraphElement) delegable).getProcessDefinition().getVariables(true, true)) {
+            String variableName = variable.getName();
+            if (variableName.indexOf(" ") != -1) {
+                variableName = "'" + variableName + "'";
+            }
+            if (configuration.contains(variableName)) {
+                result.add(variable.getName());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
+        String currentVariableName = currentVariable.getName();
+        if (currentVariableName.indexOf(" ") != -1) {
+            currentVariableName = "'" + currentVariableName + "'";
+        }
+        String previewVariableName = previewVariable.getName();
+        if (previewVariableName.indexOf(" ") != -1) {
+            previewVariableName = "'" + previewVariableName + "'";
+        }
+        return delegable.getDelegationConfiguration().replaceAll(Pattern.quote(currentVariableName), Matcher.quoteReplacement(previewVariableName));
     }
 
     private static class ConfigurationDialog extends DelegableConfigurationDialog {
@@ -165,7 +204,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
 
     private static class HelpDialog extends Dialog {
         private Text text;
-        private String initValue;
+        private final String initValue;
 
         public HelpDialog(String initValue) {
             super(Display.getCurrent().getActiveShell());

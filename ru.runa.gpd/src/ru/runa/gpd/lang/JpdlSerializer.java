@@ -370,11 +370,11 @@ public class JpdlSerializer extends ProcessSerializer {
     @Override
     public void validateProcessDefinitionXML(IFile file) {
         // TODO cannot find declaration of process-definition element
-//        try {
-//            XmlUtil.parseWithXSDValidation(file.getContents(), "jpdl-4.0.xsd");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
+        // try {
+        // XmlUtil.parseWithXSDValidation(file.getContents(), "jpdl-4.0.xsd");
+        // } catch (Exception e) {
+        // throw new RuntimeException(e);
+        // }
     }
 
     private <T extends GraphElement> T create(Element node, GraphElement parent) {
@@ -426,7 +426,7 @@ public class JpdlSerializer extends ProcessSerializer {
             }
         }
     }
-    
+
     private void parseTransition(Element node, GraphElement parent) {
         Transition transition = create(node, parent);
         String targetName = node.attributeValue(TO);
@@ -527,7 +527,10 @@ public class JpdlSerializer extends ProcessSerializer {
             }
             if (state instanceof Synchronizable) {
                 ((Synchronizable) state).setAsync(Boolean.parseBoolean(node.attributeValue(ASYNC, "false")));
-                ((Synchronizable) state).setAsyncCompletionMode(AsyncCompletionMode.valueOf(node.attributeValue(ASYNC_COMPLETION_MODE, AsyncCompletionMode.NEVER.name())));
+                String asyncCompletionMode = node.attributeValue(ASYNC_COMPLETION_MODE);
+                if (asyncCompletionMode != null) {
+                    ((Synchronizable) state).setAsyncCompletionMode(AsyncCompletionMode.valueOf(asyncCompletionMode));
+                }
             }
             if (state instanceof MultiTaskState) {
                 TaskExecutionMode mode = TaskExecutionMode.valueOf(node.attributeValue(TASK_EXECUTION_MODE));

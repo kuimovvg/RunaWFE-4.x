@@ -3,102 +3,67 @@ package ru.runa.gpd.ltk;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.DocumentChange;
-import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.ReplaceEdit;
 
+import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.Variable;
-import ru.runa.wfe.extension.handler.var.FormulaActionHandler;
-
-import com.google.common.base.Objects;
 
 public class DelegablePresentation extends VariableRenameProvider<Delegable> {
-    private final Document document = new Document();
-    private final String name;
 
     public DelegablePresentation(final Delegable delegable, String name) {
-        this.name = name;
         setElement(delegable);
-        document.addDocumentListener(new IDocumentListener() {
-            @Override
-            public void documentAboutToBeChanged(DocumentEvent de) {
-            }
-
-            @Override
-            public void documentChanged(final DocumentEvent de) {
-                Display.getDefault().asyncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        delegable.setDelegationConfiguration(de.getDocument().get());
-                    }
-                });
-            }
-        });
     }
 
     @Override
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
-        String oldVariableName = oldVariable.getName();
-        String newVariableName = newVariable.getName();
-        if (HandlerRegistry.SCRIPT_HANDLER_CLASS_NAMES.contains(element.getDelegationClassName())) {
-            oldVariableName = oldVariable.getScriptingName();
-            newVariableName = newVariable.getScriptingName();
-        } else if (FormulaActionHandler.class.getName().equals(element.getDelegationClassName())) {
-            if (oldVariableName.contains(" ")) {
-                oldVariableName = "'" + oldVariableName + "'";
-            }
-            if (newVariableName.contains(" ")) {
-                newVariableName = "'" + newVariableName + "'";
-            }
-        }
         List<Change> changes = new ArrayList<Change>();
-        if (Objects.equal(oldVariableName, newVariableName)) {
-            return changes;
-        }
-        document.set(element.getDelegationConfiguration());
-        int offset = 0;
-        MultiTextEdit multiEdit = new MultiTextEdit();
-        int len = oldVariableName.length();
-        while (offset > -1) {
-            if (offset >= document.getLength()) {
-                break;
+        DelegableProvider provider = HandlerRegistry.getProvider(element.getDelegationClassName());
+        try {
+            if (provider.getUsedVariableNames(element).contains(oldVariable.getName())) {
+                changes.add(new ConfigChange(oldVariable, newVariable));
             }
-            offset = document.search(offset, oldVariableName, true, true, false);
-            if (offset == -1) {
-                break;
-            }
-            ReplaceEdit replaceEdit = new ReplaceEdit(offset, len, newVariableName);
-            multiEdit.addChild(replaceEdit);
-            offset += len; // to avoid overlapping
-        }
-        if (multiEdit.getChildrenSize() > 0) {
-            DocumentChange change = new DocumentChangeExt(name, document);
-            change.setEdit(multiEdit);
-            changes.add(change);
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Unable to get used variables in " + element, e);
         }
         return changes;
     }
 
-    private class DocumentChangeExt extends DocumentChange {
-        public DocumentChangeExt(String name, IDocument document) {
-            super(name, document);
+    private class ConfigChange extends TextCompareChange {
+
+        public ConfigChange(Variable currentVariable, Variable replacementVariable) {
+            super(element, currentVariable, replacementVariable);
         }
 
         @Override
-        public Object getAdapter(Class adapter) {
-            if (adapter == TextEditChangeNode.class) {
-                return new GPDChangeNode(this, element);
-            }
-            return super.getAdapter(adapter);
+        protected void performInUIThread() {
+            String newConfiguration = getConfigurationReplacement();
+            element.setDelegationConfiguration(newConfiguration);
+        }
+
+        private String getConfigurationReplacement() {
+            DelegableProvider provider = HandlerRegistry.getProvider(element.getDelegationClassName());
+            return provider.getConfigurationOnVariableRename(element, currentVariable, replacementVariable);
+        }
+
+        @Override
+        public String getCurrentContent(IProgressMonitor pm) throws CoreException {
+            return element.getDelegationConfiguration();
+        }
+
+        @Override
+        public String getPreviewContent(IProgressMonitor pm) throws CoreException {
+            return getConfigurationReplacement();
+        }
+
+        @Override
+        protected String toPreviewContent(Variable variable) {
+            throw new UnsupportedOperationException();
         }
     }
+
 }

@@ -1,6 +1,5 @@
 package ru.runa.gpd;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +10,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.lang.model.BotTask;
@@ -21,6 +19,7 @@ import ru.runa.gpd.util.IOUtils;
 import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -81,32 +80,36 @@ public class BotCache {
         }
     }
 
-    private static void cacheBotTask(IFile botTaskFile, List<BotTask> botTasks) throws CoreException, IOException {
-        InputStreamReader reader = null;
+    private static void cacheBotTask(IFile botTaskFile, List<BotTask> botTasks) {
         try {
-            reader = new InputStreamReader(botTaskFile.getContents(), Charsets.UTF_8);
-            List<String> lines = CharStreams.readLines(reader);
-            String configurationFileData = "";
-            if (lines.size() > 1) {
-                String configurationFileName = lines.get(1);
-                if (!Strings.isNullOrEmpty(configurationFileName)) {
-                    IFile confFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
-                    if (confFile.exists()) {
-                        configurationFileData = IOUtils.readStream(confFile.getContents());
+            InputStreamReader reader = null;
+            try {
+                reader = new InputStreamReader(botTaskFile.getContents(), Charsets.UTF_8);
+                List<String> lines = CharStreams.readLines(reader);
+                String configurationFileData = "";
+                if (lines.size() > 1) {
+                    String configurationFileName = lines.get(1);
+                    if (!Strings.isNullOrEmpty(configurationFileName)) {
+                        IFile confFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
+                        if (confFile.exists()) {
+                            configurationFileData = IOUtils.readStream(confFile.getContents());
+                        }
                     }
                 }
+                BotTask botTask = BotTaskUtils.createBotTask(botTaskFile.getName(), lines.get(0), configurationFileData);
+                botTasks.add(botTask);
+                BOT_TASK_FILES.put(botTask, botTaskFile);
+            } finally {
+                if (reader != null) {
+                    reader.close();
+                }
             }
-            BotTask botTask = BotTaskUtils.createBotTask(botTaskFile.getName(), lines.get(0), configurationFileData);
-            botTasks.add(botTask);
-            BOT_TASK_FILES.put(botTask, botTaskFile);
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
         }
     }
 
-    public static synchronized void invalidateBotTask(IFile botTaskFile, BotTask botTask) throws CoreException, IOException {
+    public static synchronized void invalidateBotTask(IFile botTaskFile, BotTask botTask) {
         String botName = botTaskFile.getParent().getName();
         List<BotTask> botTasks = BOT_TASKS.get(botName);
         botTasks.remove(botTask);
@@ -124,6 +127,7 @@ public class BotCache {
 
     /**
      * Gets all bot stations.
+     * 
      * @return not <code>null</code>
      */
     public static synchronized List<String> getAllBotStationNames() {
@@ -134,6 +138,7 @@ public class BotCache {
 
     /**
      * Gets all bots.
+     * 
      * @return not <code>null</code>
      */
     public static synchronized List<String> getAllBotNames() {
@@ -144,6 +149,7 @@ public class BotCache {
 
     /**
      * Gets bot tasks by bot.
+     * 
      * @return bot tasks, not <code>null</code>
      */
     public static synchronized List<BotTask> getBotTasks(String botName) {
@@ -157,6 +163,7 @@ public class BotCache {
 
     /**
      * Gets bot task by bot and name.
+     * 
      * @return bot task or <code>null</code>
      */
     public static synchronized BotTask getBotTask(String botName, String botTaskName) {
@@ -205,7 +212,8 @@ public class BotCache {
     }
 
     /**
-     * @return info file (without extension), not <code>null</code> for existing bot task
+     * @return info file (without extension), not <code>null</code> for existing
+     *         bot task
      */
     public static synchronized IFile getBotTaskFile(BotTask botTask) {
         if (!BOT_TASK_FILES.containsKey(botTask)) {

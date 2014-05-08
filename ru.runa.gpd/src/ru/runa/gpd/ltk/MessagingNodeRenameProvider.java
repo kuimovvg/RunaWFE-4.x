@@ -29,17 +29,17 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
         }
         List<Change> changes = new ArrayList<Change>();
         if (mappingsToChange.size() > 0) {
-            changes.add(new VariableMappingChange(element, oldVariable.getName(), newVariable.getName(), mappingsToChange));
+            changes.add(new VariableMappingChange(element, oldVariable, newVariable, mappingsToChange));
         }
         return changes;
     }
 
     private class VariableMappingChange extends TextCompareChange {
-        
+
         private final List<VariableMapping> mappingsToChange;
 
-        public VariableMappingChange(NamedGraphElement element, String currentVariableName, String replacementVariableName, List<VariableMapping> mappingsToChange) {
-            super(element, currentVariableName, replacementVariableName);
+        public VariableMappingChange(NamedGraphElement element, Variable currentVariable, Variable replacementVariable, List<VariableMapping> mappingsToChange) {
+            super(element, currentVariable, replacementVariable);
             this.mappingsToChange = mappingsToChange;
         }
 
@@ -47,22 +47,22 @@ public class MessagingNodeRenameProvider extends VariableRenameProvider<Messagin
         protected void performInUIThread() {
             for (VariableMapping mapping : mappingsToChange) {
                 if (mapping.isPropertySelector()) {
-                    mapping.setMappedName(VariableUtils.wrapVariableName(replacementVariableName));
+                    mapping.setMappedName(VariableUtils.wrapVariableName(replacementVariable.getName()));
                 } else {
-                    mapping.setName(replacementVariableName);
+                    mapping.setName(replacementVariable.getName());
                 }
             }
         }
 
         @Override
-        protected String toPreviewContent(String variableName) {
+        protected String toPreviewContent(Variable variable) {
             StringBuffer buffer = new StringBuffer();
             for (VariableMapping mapping : mappingsToChange) {
                 buffer.append("<variable access=\"").append(mapping.getUsage()).append("\" mapped-name=\"");
                 if (mapping.isPropertySelector()) {
-                    buffer.append(mapping.getName()).append("\" name=\"").append(VariableUtils.wrapVariableName(variableName));
+                    buffer.append(mapping.getName()).append("\" name=\"").append(VariableUtils.wrapVariableName(variable.getName()));
                 } else {
-                    buffer.append(variableName).append("\" name=\"").append(mapping.getMappedName());
+                    buffer.append(variable.getName()).append("\" name=\"").append(mapping.getMappedName());
                 }
                 buffer.append("\" />").append("\n");
             }

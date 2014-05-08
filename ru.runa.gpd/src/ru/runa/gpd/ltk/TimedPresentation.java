@@ -22,27 +22,27 @@ public class TimedPresentation extends VariableRenameProvider<ITimed> {
         List<Change> changes = new ArrayList<Change>();
         Timer timer = element.getTimer();
         if (timer != null && Objects.equal(oldVariable.getName(), timer.getDelay().getVariableName())) {
-            changes.add(new TimedChange(element, oldVariable.getName(), newVariable.getName()));
+            changes.add(new TimedChange(element, oldVariable, newVariable));
         }
         return changes;
     }
 
     private class TimedChange extends TextCompareChange {
-        
-        public TimedChange(Object element, String currentVariableName, String previewVariableName) {
-            super(element, currentVariableName, previewVariableName);
+
+        public TimedChange(Object element, Variable currentVariable, Variable previewVariable) {
+            super(element, currentVariable, previewVariable);
         }
 
         @Override
         protected void performInUIThread() {
-            element.getTimer().getDelay().setVariableName(replacementVariableName);
+            element.getTimer().getDelay().setVariableName(replacementVariable.getName());
         }
 
         @Override
-        protected String toPreviewContent(String varName) {
+        protected String toPreviewContent(Variable variable) {
             StringBuffer buffer = new StringBuffer();
             Duration durationTmp = new Duration(element.getTimer().getDelay().getDuration());
-            durationTmp.setVariableName(varName);
+            durationTmp.setVariableName(variable.getName());
             buffer.append(durationTmp.getDuration());
             return buffer.toString();
         }

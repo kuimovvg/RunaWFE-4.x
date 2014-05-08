@@ -11,17 +11,18 @@ import org.eclipse.ltk.core.refactoring.TextEditBasedChangeGroup;
 import org.eclipse.ltk.ui.refactoring.TextEditChangeNode;
 import org.eclipse.swt.widgets.Display;
 
+import ru.runa.gpd.lang.model.Variable;
+
 public abstract class TextCompareChange extends TextEditBasedChange {
     protected final Object object;
-    protected final String currentVariableName;
-    protected final String replacementVariableName;
+    protected final Variable currentVariable;
+    protected final Variable replacementVariable;
 
-    public TextCompareChange(Object element, String currentVariableName, String replacementVariableName) {
-        // TODO
+    public TextCompareChange(Object element, Variable currentVariable, Variable replacementVariable) {
         super(element.toString());
         this.object = element;
-        this.currentVariableName = currentVariableName;
-        this.replacementVariableName = replacementVariableName;
+        this.currentVariable = currentVariable;
+        this.replacementVariable = replacementVariable;
     }
 
     @Override
@@ -34,7 +35,7 @@ public abstract class TextCompareChange extends TextEditBasedChange {
 
     @Override
     public String getCurrentContent(IProgressMonitor pm) throws CoreException {
-        return toPreviewContent(currentVariableName);
+        return toPreviewContent(currentVariable);
     }
 
     @Override
@@ -44,7 +45,7 @@ public abstract class TextCompareChange extends TextEditBasedChange {
 
     @Override
     public String getPreviewContent(IProgressMonitor pm) throws CoreException {
-        return toPreviewContent(replacementVariableName);
+        return toPreviewContent(replacementVariable);
     }
 
     @Override
@@ -66,12 +67,12 @@ public abstract class TextCompareChange extends TextEditBasedChange {
         return RefactoringStatus.createInfoStatus("Ok");
     }
 
-    protected abstract String toPreviewContent(String variableName);
-    
+    protected abstract String toPreviewContent(Variable variable);
+
     @Override
     public Change perform(IProgressMonitor pm) throws CoreException {
         Display.getDefault().asyncExec(new Runnable() {
-            
+
             @Override
             public void run() {
                 performInUIThread();
@@ -79,7 +80,7 @@ public abstract class TextCompareChange extends TextEditBasedChange {
         });
         return new NullChange();
     }
-    
+
     protected abstract void performInUIThread();
 
 }

@@ -31,9 +31,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveVariablesCommand;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.lang.par.ParContentProvider;
@@ -51,6 +53,7 @@ import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.util.WorkspaceOperations;
 
 @SuppressWarnings("unchecked")
 public class VariableEditorPage extends EditorPartBase {
@@ -220,26 +223,30 @@ public class VariableEditorPage extends EditorPartBase {
             if (result != IDialogConstants.OK_ID) {
                 return;
             }
-            Variable oldVariable = new Variable(variable);
-            variable.setName(dialog.getName());
-            variable.setScriptingName(dialog.getScriptingName());
             IResource projectRoot = editor.getDefinitionFile().getParent();
-            PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), oldVariable, variable);
-            boolean useLtk = ref.isUserInteractionNeeded();
+            IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+            Variable newVariable = new Variable(variable);
+            newVariable.setName(dialog.getName());
+            newVariable.setScriptingName(dialog.getScriptingName());
+            PortabilityRefactoring refactoring = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), variable, newVariable);
+            boolean useLtk = refactoring.isUserInteractionNeeded();
             if (useLtk) {
-                RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
+                RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);
                 wizard.setDefaultPageTitle(Localization.getString("Refactoring.variable.name"));
-                RefactoringWizardOpenOperation op = new RefactoringWizardOpenOperation(wizard);
-                result = op.run(Display.getCurrent().getActiveShell(), "");
+                RefactoringWizardOpenOperation operation = new RefactoringWizardOpenOperation(wizard);
+                result = operation.run(Display.getCurrent().getActiveShell(), "");
                 if (result != IDialogConstants.OK_ID) {
-                    // revert changes
-                    variable.setName(oldVariable.getName());
-                    variable.setScriptingName(oldVariable.getScriptingName());
                     return;
                 }
             }
-            if (useLtk) {
+            // update variables
+            variable.setName(newVariable.getName());
+            variable.setScriptingName(newVariable.getScriptingName());
+            if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+                for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
+                    WorkspaceOperations.saveProcessDefinition(ProcessCache.getProcessDefinitionFile(subprocessDefinition), subprocessDefinition);
+                }
             }
         }
     }

@@ -23,6 +23,8 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.lang.model.Variable;
 
+import com.google.common.base.Objects;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 public class GroovyDecisionProvider extends DelegableProvider implements IDecisionProvider {
@@ -89,24 +91,40 @@ public class GroovyDecisionProvider extends DelegableProvider implements IDecisi
         conf = conf.replaceAll(Pattern.quote("\"" + oldName + "\""), Matcher.quoteReplacement("\"" + newName + "\""));
         decision.setDelegationConfiguration(conf);
     }
-    
+
     @Override
-    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+    public List<String> getUsedVariableNames(Delegable delegable) throws Exception {
+        List<Variable> variables = ((GraphElement) delegable).getProcessDefinition().getVariables(true, true);
+        GroovyDecisionModel model = new GroovyDecisionModel(delegable.getDelegationConfiguration(), variables);
+        List<String> result = Lists.newArrayList();
+        for (IfExpr expr : model.getIfExprs()) {
+            if (expr.getVariable1() != null) {
+                result.add(expr.getVariable1().getName());
+            }
+            if (expr.getLexem2() instanceof Variable) {
+                result.add(((Variable) expr.getLexem2()).getName());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
         try {
-            List<Variable> variables = processDefinition.getVariables(true, true);
+            List<Variable> variables = ((GraphElement) delegable).getProcessDefinition().getVariables(true, true);
             GroovyDecisionModel model = new GroovyDecisionModel(delegable.getDelegationConfiguration(), variables);
-            List<Variable> result = Lists.newArrayList();
             for (IfExpr expr : model.getIfExprs()) {
-                if (expr.getVariable1() != null) {
-                    result.add(expr.getVariable1());
+                if (Objects.equal(expr.getVariable1(), currentVariable)) {
+                    expr.setVariable1(previewVariable);
                 }
-                if (expr.getLexem2() instanceof Variable) {
-                    result.add((Variable) expr.getLexem2());
+                if (Objects.equal(expr.getLexem2(), currentVariable)) {
+                    expr.setLexem2(previewVariable);
                 }
             }
-            return result;
+            return model.toString();
         } catch (Exception e) {
-            return super.getUsedVariables(delegable, processDefinition);
+            throw Throwables.propagate(e);
         }
     }
+
 }

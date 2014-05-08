@@ -41,8 +41,8 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
     }
 
     @Override
-    protected Composite createConstructorView(Composite parent, Delegable delegable) {
-        return new ConstructorView(parent, delegable);
+    protected Composite createConstructorComposite(Composite parent, Delegable delegable, SQLTasksModel model) {
+        return new ConstructorView(parent, delegable, model);
     }
 
     @Override
@@ -51,16 +51,14 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
     }
 
     @Override
-    protected int getSelectedTabIndex() {
+    protected int getSelectedTabIndex(Delegable delegable, SQLTasksModel model) {
         return model.hasFields() ? 1 : 0;
     }
 
-    private class ConstructorView extends Composite implements Observer {
-        private final Delegable delegable;
+    private class ConstructorView extends ConstructorComposite implements Observer {
 
-        public ConstructorView(Composite parent, Delegable delegable) {
-            super(parent, SWT.NONE);
-            this.delegable = delegable;
+        public ConstructorView(Composite parent, Delegable delegable, SQLTasksModel model) {
+            super(parent, delegable, model);
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -100,7 +98,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             data.widthHint = 200;
             text.setLayoutData(data);
             SWTUtils.createLink(this, Localization.getString("button.add") + " " + Localization.getString("label.SQLQuery"), new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().addQuery();
@@ -129,7 +127,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
                 }
             });
             SWTUtils.createLink(group, "[X]", new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().deleteQuery(queryIndex);
@@ -165,7 +163,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
             strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             SWTUtils.createLink(strokeComposite, Localization.getString("button.add"), new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().addQueryParameter(queryIndex, result);
@@ -190,7 +188,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             });
             if (paramIndex != 0) {
                 SWTUtils.createLink(parent, Localization.getString("button.up"), new LoggingHyperlinkAdapter() {
-                    
+
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         model.getFirstTask().moveUpQueryParameter(queryIndex, parameterModel.result, paramIndex);
@@ -200,7 +198,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
                 new Label(parent, SWT.NONE);
             }
             SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.getFirstTask().deleteQueryParameter(queryIndex, parameterModel.result, paramIndex);

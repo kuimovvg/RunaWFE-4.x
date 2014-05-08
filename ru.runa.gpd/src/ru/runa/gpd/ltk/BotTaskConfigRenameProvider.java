@@ -2,8 +2,6 @@ package ru.runa.gpd.ltk;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -15,31 +13,37 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
 import ru.runa.gpd.BotCache;
+import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.WorkspaceOperations;
 
-import com.google.common.base.Preconditions;
-
 public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask> {
+
     public BotTaskConfigRenameProvider(BotTask botTask) {
-        Preconditions.checkNotNull(botTask);
         setElement(botTask);
     }
 
     @Override
     public List<Change> getChanges(Variable oldVariable, Variable newVariable) throws Exception {
         List<Change> changes = new ArrayList<Change>();
-        if (element.getDelegationConfiguration() != null && element.getDelegationConfiguration().contains(Pattern.quote("\"" + oldVariable + "\""))) {
-            changes.add(new ConfigChange(oldVariable.getName(), newVariable.getName()));
+        DelegableProvider provider = HandlerRegistry.getProvider(element.getDelegationClassName());
+        try {
+            if (provider.getUsedVariableNames(element).contains(oldVariable.getName())) {
+                changes.add(new ConfigChange(oldVariable, newVariable));
+            }
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Unable to get used variables in " + element, e);
         }
         return changes;
     }
 
     private class ConfigChange extends TextCompareChange {
-        
-        public ConfigChange(String currentVariableName, String replacementVariableName) {
-            super(element, currentVariableName, replacementVariableName);
+
+        public ConfigChange(Variable currentVariable, Variable replacementVariable) {
+            super(element, currentVariable, replacementVariable);
             // unchecked by default
             setEnabled(false);
         }
@@ -57,13 +61,12 @@ public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask>
                 }
             }
             WorkspaceOperations.saveBotTask(botTaskFile, element);
+            BotCache.invalidateBotTask(botTaskFile, element);
         }
 
         private String getConfigurationReplacement() {
-            String oldString = Pattern.quote("\"" + currentVariableName + "\"");
-            String newString = Matcher.quoteReplacement("\"" + replacementVariableName + "\"");
-            String newConfiguration = element.getDelegationConfiguration().replaceAll(oldString, newString);
-            return newConfiguration;
+            DelegableProvider provider = HandlerRegistry.getProvider(element.getDelegationClassName());
+            return provider.getConfigurationOnVariableRename(element, currentVariable, replacementVariable);
         }
 
         @Override
@@ -77,7 +80,7 @@ public class BotTaskConfigRenameProvider extends VariableRenameProvider<BotTask>
         }
 
         @Override
-        protected String toPreviewContent(String variableName) {
+        protected String toPreviewContent(Variable variable) {
             throw new UnsupportedOperationException();
         }
     }
