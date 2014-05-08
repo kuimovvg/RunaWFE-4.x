@@ -25,10 +25,14 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.util.Duration;
+
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 public class CalendarHandlerProvider extends XmlBasedConstructorProvider<CalendarConfig> {
     private static String[] dateFormats = new String[] { Date.class.getName() };
@@ -45,8 +49,8 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
     }
 
     @Override
-    protected Composite createConstructorView(Composite parent, Delegable delegable) {
-        return new ConstructorView(parent, delegable);
+    protected Composite createConstructorComposite(Composite parent, Delegable delegable, CalendarConfig config) {
+        return new ConstructorView(parent, delegable, config);
     }
 
     @Override
@@ -54,12 +58,29 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
         return Localization.getString("ru.runa.wfe.extension.handler.var.CreateCalendarHandler");
     }
 
-    private class ConstructorView extends Composite implements Observer {
-        private final Delegable delegable;
+    @Override
+    public List<String> getUsedVariableNames(Delegable delegable) {
+        List<String> result = Lists.newArrayList();
+        CalendarConfig model = CalendarConfig.fromXml(delegable.getDelegationConfiguration());
+        if (model != null && model.getBaseVariableName() != null) {
+            result.add(model.getBaseVariableName());
+        }
+        return result;
+    }
 
-        public ConstructorView(Composite parent, Delegable delegable) {
-            super(parent, SWT.NONE);
-            this.delegable = delegable;
+    @Override
+    public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
+        CalendarConfig model = CalendarConfig.fromXml(delegable.getDelegationConfiguration());
+        if (model != null && Objects.equal(model.getBaseVariableName(), currentVariable.getName())) {
+            model.setBaseVariableName(previewVariable.getName());
+        }
+        return model.toString();
+    }
+
+    private class ConstructorView extends ConstructorComposite implements Observer {
+
+        public ConstructorView(Composite parent, Delegable delegable, CalendarConfig config) {
+            super(parent, delegable, config);
             setLayout(new GridLayout(3, false));
             buildFromModel();
         }
@@ -157,14 +178,14 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
             strokeLabel = new Label(strokeComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
             strokeLabel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             SWTUtils.createLink(strokeComposite, Localization.getString("button.add"), new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.addOperation(CalendarOperation.ADD);
                 }
             });
             SWTUtils.createLink(strokeComposite, Localization.getString("button.set"), new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.addOperation(CalendarOperation.SET);
@@ -216,7 +237,7 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
                 new InsertVariableTextMenuDetectListener(text, variableNames);
             }
             SWTUtils.createLink(parent, "[X]", new LoggingHyperlinkAdapter() {
-                
+
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     model.deleteOperation(index);

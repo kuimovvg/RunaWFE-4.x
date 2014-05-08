@@ -3,6 +3,8 @@ package ru.runa.gpd.extension.handler;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.jface.dialogs.Dialog;
@@ -22,22 +24,20 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.util.XmlUtil;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
 public abstract class XmlBasedConstructorProvider<T extends Observable> extends DelegableProvider {
-    protected T model;
 
     @Override
     public String showConfigurationDialog(Delegable delegable) {
@@ -48,20 +48,26 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         return null;
     }
 
-    // TODO implement in subclasses
     @Override
-    public List<Variable> getUsedVariables(Delegable delegable, ProcessDefinition processDefinition) {
+    public List<String> getUsedVariableNames(Delegable delegable) {
         String configuration = delegable.getDelegationConfiguration();
         if (Strings.isNullOrEmpty(configuration)) {
-            return super.getUsedVariables(delegable, processDefinition);
+            return Lists.newArrayList();
         }
-        List<Variable> result = Lists.newArrayList();
-        for (Variable variable : processDefinition.getVariables(true, true)) {
-            if (configuration.contains("\"" + variable.getName() + "\"")) {
-                result.add(variable);
+        List<String> result = Lists.newArrayList();
+        for (String variableName : delegable.getVariableNames(true)) {
+            if (configuration.contains("\"" + variableName + "\"")) {
+                result.add(variableName);
             }
         }
         return result;
+    }
+
+    @Override
+    public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
+        String oldString = Pattern.quote("\"" + currentVariable.getName() + "\"");
+        String newString = Matcher.quoteReplacement("\"" + previewVariable.getName() + "\"");
+        return delegable.getDelegationConfiguration().replaceAll(oldString, newString);
     }
 
     @Override
@@ -75,23 +81,36 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         }
         return true;
     }
-    
+
     protected void validateModel(Delegable delegable, T model, List<ValidationError> errors) {
     }
 
     protected abstract String getTitle();
 
-    protected abstract Composite createConstructorView(Composite parent, Delegable delegable);
+    protected abstract Composite createConstructorComposite(Composite parent, Delegable delegable, T model);
 
     protected abstract T createDefault();
 
     protected abstract T fromXml(String xml) throws Exception;
 
-    protected int getSelectedTabIndex() {
+    protected int getSelectedTabIndex(Delegable delegable, T model) {
         return 0;
     }
 
+    public abstract class ConstructorComposite extends Composite {
+        protected final T model;
+        protected final Delegable delegable;
+
+        public ConstructorComposite(Composite parent, Delegable delegable, T model) {
+            super(parent, SWT.NONE);
+            this.delegable = delegable;
+            this.model = model;
+        }
+
+    }
+
     private class XmlBasedConstructorDialog extends Dialog {
+        protected T model;
         private TabFolder tabFolder;
         private XmlContentView xmlContentView;
         private Composite constructorView;
@@ -135,7 +154,7 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
                 PluginLogger.logError(Localization.getString("config.error.parse"), ex);
                 model = createDefault();
             }
-            constructorView = createConstructorView(scrolledComposite, delegable);
+            constructorView = createConstructorComposite(scrolledComposite, delegable, model);
             constructorView.setLayoutData(new GridData(GridData.FILL_BOTH));
             if (constructorView instanceof Observer) {
                 model.addObserver((Observer) constructorView);
@@ -147,7 +166,7 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
             TabItem tabItem2 = new TabItem(tabFolder, SWT.NONE);
             tabItem2.setText(" XML ");
             tabItem2.setControl(xmlContentView);
-            tabFolder.setSelection(getSelectedTabIndex());
+            tabFolder.setSelection(getSelectedTabIndex(delegable, model));
             tabFolder.addSelectionListener(new TabSelectionHandler());
             return tabFolder;
         }

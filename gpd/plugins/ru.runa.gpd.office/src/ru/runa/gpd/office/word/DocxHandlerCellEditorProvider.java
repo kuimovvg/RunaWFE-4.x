@@ -42,9 +42,10 @@ import ru.runa.gpd.util.XmlUtil;
 import com.google.common.base.Strings;
 
 public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<DocxModel> implements IBotFileSupportProvider {
+
     @Override
-    protected Composite createConstructorView(Composite parent, Delegable delegable) {
-        return new ConstructorView(parent, delegable);
+    protected Composite createConstructorComposite(Composite parent, Delegable delegable, DocxModel model) {
+        return new ConstructorView(parent, delegable, model);
     }
 
     @Override
@@ -75,16 +76,14 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
             DocxModel model = fromXml(delegable.getDelegationConfiguration());
             EmbeddedFileUtils.deleteProcessFile(model.getInOutModel().inputPath);
         } catch (Exception e) {
-            ru.runa.gpd.PluginLogger.logErrorWithoutDialog("Failed to delete embedded file " + model.getInOutModel().inputPath, e);
+            PluginLogger.logErrorWithoutDialog("Failed to delete embedded file in " + delegable, e);
         }
     }
 
-    private class ConstructorView extends Composite implements Observer {
-        private final Delegable delegable;
+    private class ConstructorView extends ConstructorComposite implements Observer {
 
-        public ConstructorView(Composite parent, Delegable delegable) {
-            super(parent, SWT.NONE);
-            this.delegable = delegable;
+        public ConstructorView(Composite parent, Delegable delegable, DocxModel model) {
+            super(parent, delegable, model);
             setLayout(new GridLayout(2, false));
             buildFromModel();
         }

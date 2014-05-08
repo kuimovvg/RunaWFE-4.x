@@ -16,6 +16,8 @@ import org.eclipse.ui.PlatformUI;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 
 import com.google.common.base.Objects;
@@ -23,13 +25,21 @@ import com.google.common.collect.Lists;
 
 public class CopyFormDialog extends Dialog {
     private Combo statesCombo;
-    private List<FormNode> formNodes = Lists.newArrayList();
+    private final List<FormNode> formNodes = Lists.newArrayList();
     private FormNode selectedFormNode;
 
-    public CopyFormDialog(FormNode formNode) {
+    public CopyFormDialog(FormNode currentNode) {
         super(PlatformUI.getWorkbench().getDisplay().getActiveShell());
-        for (FormNode node : formNode.getProcessDefinition().getChildren(FormNode.class)) {
-            if (!Objects.equal(node, formNode) && node.hasForm()) {
+        ProcessDefinition mainProcessDefinition = currentNode.getProcessDefinition().getMainProcessDefinition();
+        fetchFormNodes(mainProcessDefinition, currentNode);
+        for (SubprocessDefinition subprocessDefinition : mainProcessDefinition.getEmbeddedSubprocesses().values()) {
+            fetchFormNodes(subprocessDefinition, currentNode);
+        }
+    }
+
+    private void fetchFormNodes(ProcessDefinition processDefinition, FormNode currentNode) {
+        for (FormNode node : processDefinition.getChildren(FormNode.class)) {
+            if (!Objects.equal(node, currentNode) && node.hasForm()) {
                 formNodes.add(node);
             }
         }
@@ -47,10 +57,14 @@ public class CopyFormDialog extends Dialog {
         statesCombo = new Combo(composite, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         statesCombo.setLayoutData(new GridData(GridData.FILL_BOTH));
         for (FormNode formNode : formNodes) {
-            statesCombo.add(formNode.getName());
+            if (formNode.getProcessDefinition() instanceof SubprocessDefinition) {
+                statesCombo.add(formNode.getProcessDefinition().getId() + "." + formNode.getName());
+            } else {
+                statesCombo.add(formNode.getName());
+            }
         }
         statesCombo.addSelectionListener(new LoggingSelectionAdapter() {
-            
+
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 updateVisibility();

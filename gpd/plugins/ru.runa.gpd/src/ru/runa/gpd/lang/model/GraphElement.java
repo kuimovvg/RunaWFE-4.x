@@ -299,7 +299,7 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
             firePropertyChange(PROPERTY_CONFIGURATION, old, this.delegationConfiguration);
         }
     }
-    
+
     public List<String> getVariableNames(boolean includeSwimlanes, String... typeClassNameFilters) {
         return VariableUtils.getVariableNames(getProcessDefinition().getVariables(true, includeSwimlanes, typeClassNameFilters));
     }
@@ -403,7 +403,7 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
     public Image getEntryImage() {
         return getTypeDefinition().getImage(getProcessDefinition().getLanguage().getNotation());
     }
-    
+
     public GraphElement getCopy(GraphElement parent) {
         GraphElement copy = getTypeDefinition().createElement(parent, false);
         if (this instanceof Describable) {
@@ -424,21 +424,36 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
         parent.addChild(copy);
         return copy;
     }
-    
+
     protected void fillCopyCustomFields(GraphElement copy) {
     }
-    
+
     public List<Variable> getUsedVariables(IFolder processFolder) {
-        List<Variable> result = Lists.newArrayList();
+        List<String> variableNames = Lists.newArrayList();
         if (this instanceof Delegable) {
-            DelegableProvider provider = HandlerRegistry.getProvider(getDelegationClassName());
-            result.addAll(provider.getUsedVariables((Delegable) this, getProcessDefinition()));
+            try {
+                DelegableProvider provider = HandlerRegistry.getProvider(getDelegationClassName());
+                variableNames.addAll(provider.getUsedVariableNames((Delegable) this));
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("Unable to get used variables in " + this, e);
+            }
         }
         if (this instanceof Active) {
             List<? extends Action> actions = ((Active) this).getActions();
             for (Action action : actions) {
-                DelegableProvider provider = HandlerRegistry.getProvider(action.getDelegationClassName());
-                result.addAll(provider.getUsedVariables(action, getProcessDefinition()));
+                try {
+                    DelegableProvider provider = HandlerRegistry.getProvider(action.getDelegationClassName());
+                    variableNames.addAll(provider.getUsedVariableNames(action));
+                } catch (Exception e) {
+                    PluginLogger.logErrorWithoutDialog("Unable to get used variables in " + action, e);
+                }
+            }
+        }
+        List<Variable> result = Lists.newArrayList();
+        for (String variableName : variableNames) {
+            Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), variableName);
+            if (variable != null) {
+                result.add(variable);
             }
         }
         return result;

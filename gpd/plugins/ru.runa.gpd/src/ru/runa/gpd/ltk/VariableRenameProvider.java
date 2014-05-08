@@ -6,10 +6,13 @@ import org.eclipse.ltk.core.refactoring.Change;
 
 import ru.runa.gpd.lang.model.Variable;
 
+import com.google.common.base.Preconditions;
+
 public abstract class VariableRenameProvider<T> {
     protected T element;
 
     public final void setElement(T element) {
+        Preconditions.checkNotNull(element);
         this.element = element;
     }
 

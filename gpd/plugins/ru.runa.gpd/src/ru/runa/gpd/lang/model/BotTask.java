@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.VariableFormatRegistry;
@@ -119,5 +120,10 @@ public class BotTask implements Delegable, Comparable<BotTask> {
             return -1;
         }
         return name.compareTo(o.name);
+    }
+
+    @Override
+    public String toString() {
+        return Localization.getString("property.botTaskName") + ": " + name;
     }
 }
