@@ -5,6 +5,7 @@ import ru.runa.wfe.webservice.AuthorizationWebService;
 import ru.runa.wfe.webservice.ExecutorAPI;
 import ru.runa.wfe.webservice.ExecutorWebService;
 import ru.runa.wfe.webservice.Permission;
+import ru.runa.wfe.webservice.SecuredObjectType;
 import ru.runa.wfe.webservice.User;
 import ru.runa.wfe.webservice.WfExecutor;
 
@@ -19,7 +20,7 @@ public class CheckPermissionOnExecutor {
             AuthorizationAPI authorizationAPI = new AuthorizationWebService().getAuthorizationAPIPort();
             Permission permission = new Permission();
             permission.setName("permission.read");
-            System.out.println("check=" + authorizationAPI.isAllowed(user, permission, executor));
+            System.out.println("check=" + authorizationAPI.isAllowedWS(user, permission, SecuredObjectType.GROUP, executor.getId()));
         } catch (Exception e) {
             e.printStackTrace();
         }
