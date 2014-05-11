@@ -65,7 +65,7 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
         }
         return version;
     }
-    
+
     @Override
     public void connect() {
         AuthenticationAPI authenticationAPI = new AuthenticationWebService(getUrl("Authentication")).getAuthenticationAPIPort();
@@ -109,9 +109,9 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
 
     @Override
     public Map<String, Boolean> getExecutors() {
-        List<WfExecutor> executors = getExecutorService().getExecutors(getUser(), null);
+        List executors = getExecutorService().getExecutors(getUser(), null);
         Map<String, Boolean> result = Maps.newHashMapWithExpectedSize(executors.size());
-        for (Executor executor : executors) {
+        for (Executor executor : (List<WfExecutor>) executors) {
             // group sign
             result.put(executor.getName(), executor.getFullName() == null);
         }

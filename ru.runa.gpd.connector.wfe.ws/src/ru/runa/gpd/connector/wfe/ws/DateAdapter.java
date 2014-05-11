@@ -10,6 +10,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import com.google.common.base.Throwables;
 
 public class DateAdapter {
+
     public static Date toDTO(XMLGregorianCalendar calendar) {
         if (calendar == null) {
             return null;
