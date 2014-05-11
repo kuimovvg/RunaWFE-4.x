@@ -7,10 +7,12 @@ import ru.runa.wfe.bot.BotTask;
 import com.google.common.collect.Lists;
 
 public class BotTaskAdapter {
+
     public static BotTask toDTO(ru.runa.wfe.webservice.BotTask botTask) {
         BotTask result = new BotTask();
-        result.setConfiguration(botTask.getConfiguration());
         result.setId(botTask.getId());
+        result.setCreateDate(DateAdapter.toDTO(botTask.getCreateDate()));
+        result.setConfiguration(botTask.getConfiguration());
         result.setName(botTask.getName());
         result.setTaskHandlerClassName(botTask.getTaskHandlerClassName());
         result.setVersion(botTask.getVersion());
