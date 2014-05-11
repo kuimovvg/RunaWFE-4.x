@@ -10,6 +10,7 @@ import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
@@ -67,20 +68,21 @@ public abstract class FilesSupplierConfig {
             throw new InternalApplicationException("Variable '" + inputFileVariableName + "' should contains a file");
         }
         if (inputFilePath != null) {
-            if (inputFilePath.startsWith(IFileDataProvider.PROCESS_FILE_PROTOCOL)) {
-                String fileName = inputFilePath.substring(IFileDataProvider.PROCESS_FILE_PROTOCOL.length());
-                byte[] data = fileDataProvider.getFileDataNotNull(fileName);
+            if (inputFilePath.startsWith(IFileDataProvider.PROCESS_FILE_PROTOCOL) || 
+            	inputFilePath.startsWith(IFileDataProvider.BOT_TASK_FILE_PROTOCOL)) {
+                byte[] data = fileDataProvider.getFileDataNotNull(inputFilePath);
                 return new ByteArrayInputStream(data);
             }
-            File file = new File(inputFilePath);
+            String path = (String) ExpressionEvaluator.evaluateVariableNotNull(variableProvider, inputFilePath);
+            File file = new File(path);
             if (file.exists() && !file.isDirectory()) {
                 try {
                     return Files.newInputStreamSupplier(file).getInput();
                 } catch (IOException e) {
-                    throw new InternalApplicationException("Unable to read input file from location '" + inputFilePath + "'");
+                    throw new InternalApplicationException("Unable to read input file from location '" + path + "'");
                 }
             }
-            return ClassLoaderUtil.getAsStreamNotNull(inputFilePath, getClass());
+            return ClassLoaderUtil.getAsStreamNotNull(path, getClass());
         }
         if (required) {
             throw new InternalApplicationException("No input file defined in configuration");

@@ -18,7 +18,7 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
 
     @Override
     protected void executeAction(AlfConnection alfConnection, AlfHandlerData handlerData) throws Exception {
-        WebScriptExecutor webScriptExecutor = new WebScriptExecutor(getWebScriptUri(handlerData), getWebScriptParameters(handlerData));
+        WebScriptExecutor webScriptExecutor = new WebScriptExecutor(getWebScriptUri(handlerData), getWebScriptParameters(alfConnection, handlerData));
         webScriptExecutor.setUseHttpPost(useHttpPost());
         webScriptExecutor.setThrowExceptionOnErrorState(throwExceptionOnErrorState());
         byte[] response = webScriptExecutor.doRequest();
@@ -42,6 +42,6 @@ public abstract class AlfExecuteWebScriptHandler extends AlfHandler {
 
     }
 
-    protected abstract Map<String, Object> getWebScriptParameters(AlfHandlerData alfHandlerData);
+    protected abstract Map<String, Object> getWebScriptParameters(AlfConnection alfConnection, AlfHandlerData alfHandlerData);
 
 }

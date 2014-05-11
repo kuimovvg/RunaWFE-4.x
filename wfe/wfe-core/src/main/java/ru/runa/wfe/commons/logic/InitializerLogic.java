@@ -39,6 +39,7 @@ import ru.runa.wfe.commons.dao.LocalizationDAO;
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 import ru.runa.wfe.commons.dbpatch.UnsupportedPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddCreateDateColumns;
+import ru.runa.wfe.commons.dbpatch.impl.AddEmbeddedFileForBotTask;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
@@ -113,6 +114,9 @@ public class InitializerLogic {
         dbPatches.add(AddSubProcessIndexColumn.class);
         // 4.1.1
         dbPatches.add(AddCreateDateColumns.class);
+        // 4.2.0
+        dbPatches.add(AddEmbeddedFileForBotTask.class);
+
     };
 
     @Autowired

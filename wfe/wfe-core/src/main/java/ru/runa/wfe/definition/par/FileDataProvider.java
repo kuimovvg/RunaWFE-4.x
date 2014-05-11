@@ -3,8 +3,6 @@ package ru.runa.wfe.definition.par;
 import ru.runa.wfe.definition.DefinitionFileDoesNotExistException;
 import ru.runa.wfe.definition.IFileDataProvider;
 
-import com.google.common.base.Preconditions;
-
 public abstract class FileDataProvider implements IFileDataProvider {
 
     @Override
@@ -13,7 +11,6 @@ public abstract class FileDataProvider implements IFileDataProvider {
         if (data == null) {
             throw new DefinitionFileDoesNotExistException(fileName);
         }
-        Preconditions.checkNotNull(data, "no '" + fileName + "' inside process archive");
         return data;
     }
 

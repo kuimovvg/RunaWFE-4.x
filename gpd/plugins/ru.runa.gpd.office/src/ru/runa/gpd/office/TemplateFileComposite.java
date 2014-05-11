@@ -5,14 +5,14 @@ import java.io.InputStream;
 import org.eclipse.swt.widgets.Composite;
 
 import ru.runa.gpd.ui.custom.ProcessFileComposite;
-import ru.runa.gpd.util.ProcessFileUtils;
+import ru.runa.gpd.util.EmbeddedFileUtils;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 
 public class TemplateFileComposite extends ProcessFileComposite {
     private final String fileExtension;
 
     public TemplateFileComposite(Composite parent, String fileName, String fileExtension) {
-        super(parent, ProcessFileUtils.getProcessFile(fileName));
+        super(parent, EmbeddedFileUtils.getProcessFile(fileName));
         this.fileExtension = fileExtension;
     }
 

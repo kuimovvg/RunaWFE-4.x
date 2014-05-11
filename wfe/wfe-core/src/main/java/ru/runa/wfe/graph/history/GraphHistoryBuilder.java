@@ -56,9 +56,12 @@ import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
+import ru.runa.wfe.lang.EmbeddedSubprocessStartNode;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SubProcessState;
+import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Actor;
@@ -69,10 +72,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-/**
- * Modified on 26.02.2009 by gavrusev_sergei TODO adapt for EXCLUSIVE_GATEWAY,
- * PARALLEL_GATEWAY
- */
 public class GraphHistoryBuilder {
     private static final int heightBetweenNode = 40;
     private static final int heightForkJoinNode = 4;
@@ -92,12 +91,30 @@ public class GraphHistoryBuilder {
 
     private final List<GraphElementPresentation> logElements = new ArrayList<GraphElementPresentation>();
 
+    // PARALLEL_GATEWAY
+    private final Set<String> parallelGatewayIsForkNodes = new HashSet<String>();
+
     public GraphHistoryBuilder(List<Executor> executors, WfTaskFactory taskObjectFactory, ProcessDefinition processDefinition,
-            List<ProcessLog> processLogs) {
+            List<ProcessLog> fullProcessLogs) {
+        List<ProcessLog> processLogsExceptComposition = new ArrayList<ProcessLog>();
+        boolean processLogs = true;
+        for (ProcessLog processLog : fullProcessLogs) {
+            if (processLog instanceof NodeEnterLog && NodeType.START_EVENT == ((NodeEnterLog) processLog).getNodeType()) {
+                processLogs = false;
+            }
+            if (processLog instanceof NodeLeaveLog && NodeType.END_PROCESS == ((NodeLeaveLog) processLog).getNodeType()) {
+                processLogs = true;
+                continue;
+            }
+            if (processLogs) {
+                processLogsExceptComposition.add(processLog);
+            }
+        }
+
         this.executors = executors;
         this.processDefinition = processDefinition;
 
-        for (ProcessLog processLog : processLogs) {
+        for (ProcessLog processLog : processLogsExceptComposition) {
             if (processLog instanceof TransitionLog) {
                 transitionLogs.add((TransitionLog) processLog);
             } else if (processLog instanceof NodeLog) {
@@ -107,7 +124,27 @@ public class GraphHistoryBuilder {
             }
         }
 
-        this.processLogs.addAll(processLogs);
+        String forkNodeId = null;
+        int countLeaveLog = 0;
+        for (ProcessLog processLog : processLogsExceptComposition) {
+            if (processLog instanceof NodeEnterLog && ((NodeEnterLog) processLog).getNodeType() == NodeType.PARALLEL_GATEWAY) {
+                countLeaveLog = 0;
+                forkNodeId = processLog.getNodeId();
+            }
+            if (forkNodeId != null) {
+                if (processLog instanceof NodeLeaveLog && processLog.getNodeId().equals(forkNodeId)) {
+                    countLeaveLog++;
+                } else if (processLog instanceof NodeLeaveLog && !processLog.getNodeId().equals(forkNodeId)) {
+                    if (countLeaveLog > 1) {
+                        parallelGatewayIsForkNodes.add(forkNodeId);
+                    }
+                    forkNodeId = null;
+                    countLeaveLog = 0;
+                }
+            }
+        }
+
+        this.processLogs.addAll(processLogsExceptComposition);
         diagramModel = DiagramModel.load(processDefinition);
         factory = new UMLFigureFactory();
     }
@@ -146,10 +183,10 @@ public class GraphHistoryBuilder {
                             nodeFigures.put(nodeFigure, new RenderHits(DrawProperties.getBaseColor()));
                         }
 
-                        if (log instanceof NodeLeaveLog && !(log instanceof SubprocessEndLog && NodeType.MULTI_SUBPROCESS == log.getNodeType())) {
+                        if (log instanceof NodeLeaveLog && !(log instanceof SubprocessEndLog && (NodeType.MULTI_SUBPROCESS == log.getNodeType()))) {
                             Long tokenId = log.getTokenId();
 
-                            if (NodeType.FORK == log.getNodeType()) {
+                            if (isForkNode(log.getNodeId(), log.getTokenId(), log.getNodeType())) {
                                 for (ProcessLog correctTokenLog : processLogs) {
                                     if (correctTokenLog.getId().equals(log.getId())) {
                                         break;
@@ -181,44 +218,53 @@ public class GraphHistoryBuilder {
 
                                 TransitionModel transitionModel = nodeModel.getTransition(transition.getName());
                                 transitionModel.getBendpoints().clear();
-                                Date transitionLeaveDate = findNextTransitionLog(log, correctNodeId).getCreateDate();
-                                transitionModel.setName(CalendarUtil.formatDateTime(transitionLeaveDate));
+
+                                if (findNextTransitionLog(log, correctNodeId) != null) {
+                                    Date transitionLeaveDate = findNextTransitionLog(log, correctNodeId).getCreateDate();
+                                    transitionModel.setName(CalendarUtil.formatDateTime(transitionLeaveDate));
+                                }
+
                                 if (diagramModel.isShowActions()) {
                                     transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition));
                                 }
 
-                                Long duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":" + log.getTokenId());
+                                String toNodeId = null;
+                                Node toNode = transition.getTo();
+                                if (toNode instanceof EmbeddedSubprocessStartNode) {
+                                    toNodeId = ((EmbeddedSubprocessStartNode) toNode).getTransitionNodeId(true);
+                                } else {
+                                    toNodeId = toNode.getNodeId();
+                                }
+                                Long duplicateTransitionCount = nodeRepetitionCount.get(toNodeId + ":" + log.getTokenId());
                                 if (duplicateTransitionCount == null) {
                                     duplicateTransitionCount = new Long(0);
                                 }
                                 duplicateTransitionCount = duplicateTransitionCount + 1;
 
-                                AbstractFigure figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + log.getTokenId() + ":"
-                                        + duplicateTransitionCount);
-                                if (diagramModel.getNodeNotNull(transition.getTo().getNodeId()).getType() == NodeType.JOIN) {
+                                AbstractFigure figureTo = allNodeFigures.get(toNodeId + ":" + log.getTokenId() + ":" + duplicateTransitionCount);
+
+                                if (isJoinNode(toNodeId, log.getTokenId(), diagramModel.getNodeNotNull(toNodeId).getType())) {
                                     for (ProcessLog tempLog : processLogs) {
                                         if (tempLog.getId() > log.getId() && tempLog instanceof NodeLeaveLog
-                                                && ((NodeLeaveLog) tempLog).getNodeId().equals(transition.getTo().getNodeId())) {
-                                            duplicateTransitionCount = nodeRepetitionCount.get(transition.getTo().getNodeId() + ":"
-                                                    + tempLog.getTokenId());
+                                                && ((NodeLeaveLog) tempLog).getNodeId().equals(toNodeId)) {
+                                            duplicateTransitionCount = nodeRepetitionCount.get(toNodeId + ":" + tempLog.getTokenId());
                                             if (duplicateTransitionCount == null) {
                                                 duplicateTransitionCount = new Long(0);
                                             }
                                             duplicateTransitionCount = duplicateTransitionCount + 1;
-                                            figureTo = allNodeFigures.get(transition.getTo().getNodeId() + ":" + tempLog.getTokenId() + ":"
-                                                    + duplicateTransitionCount);
+                                            figureTo = allNodeFigures.get(toNodeId + ":" + tempLog.getTokenId() + ":" + duplicateTransitionCount);
                                             break;
                                         }
                                     }
                                 }
                                 if (figureTo != null) {
-                                    if (nodeModel.getType() == NodeType.FORK) {
+                                    if (isForkNode(nodeModel.getNodeId(), log.getTokenId(), nodeModel.getType())) {
                                         BendpointModel bendpointModel = new BendpointModel();
                                         bendpointModel.setX(figureTo.getCoords()[0] + figureTo.getCoords()[2] / 2);
                                         bendpointModel.setY(nodeModel.getY() + nodeModel.getHeight() / 2);
                                         transitionModel.addBendpoint(bendpointModel);
                                     }
-                                    if (figureTo.getType() == NodeType.JOIN) {
+                                    if (isJoinNode(nodeModel.getNodeId(), log.getTokenId(), nodeModel.getType())) {
                                         BendpointModel bendpointModel = new BendpointModel();
                                         bendpointModel.setX(nodeModel.getX() + nodeModel.getWidth() / 2);
                                         bendpointModel.setY(figureTo.getCoords()[1]);
@@ -255,6 +301,14 @@ public class GraphHistoryBuilder {
         return graphImage.getImageBytes();
     }
 
+    private boolean isForkNode(String nodeId, Long tokenId, NodeType nodeType) {
+        return NodeType.FORK == nodeType || (NodeType.PARALLEL_GATEWAY == nodeType && parallelGatewayIsForkNodes.contains(nodeId));
+    }
+
+    private boolean isJoinNode(String nodeId, Long tokenId, NodeType nodeType) {
+        return NodeType.JOIN == nodeType || (NodeType.PARALLEL_GATEWAY == nodeType && !parallelGatewayIsForkNodes.contains(nodeId));
+    }
+
     private String getNodeIdIncludeRepetition(String nodeId, Map<String, Long> nodeRepetitionCount) {
         Long duplicateCount = nodeRepetitionCount.get(nodeId);
         if (duplicateCount == null) {
@@ -267,8 +321,7 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates the width of tokens. Token is line that contains nodes
-     * and transitions. Fork node creates subtokens. Join node finishes all
+     * Method calculates the width of tokens. Token is line that contains nodes and transitions. Fork node creates subtokens. Join node finishes all
      * subtokens node and continue the main token.
      * 
      * @param startTokenNodeId
@@ -292,7 +345,7 @@ public class GraphHistoryBuilder {
 
             if (!firstNodeInit) {
                 parentNodeInTokenForNodeMap.put(nodeId, startTokenNodeId);
-                if (nodeModel.getType() == NodeType.JOIN) {
+                if (isJoinNode(nodeId.split(":")[0], Long.valueOf(nodeId.split(":")[1]), nodeModel.getType())) {
                     boolean startFind = false;
                     for (NodeLog joinEnter : nodeLogs) {
                         if (joinEnter instanceof NodeEnterLog && ((NodeEnterLog) joinEnter).getNodeId().equals(nodeId.split(":")[0])
@@ -312,7 +365,7 @@ public class GraphHistoryBuilder {
 
             setCurrentTokenWidth(tokenWidth, startTokenNodeId, nodeModel.getWidth());
 
-            if (nodeModel.getType() == NodeType.FORK) {
+            if (isForkNode(nodeId.split(":")[0], Long.valueOf(nodeId.split(":")[1]), nodeModel.getType())) {
                 List<String> nextNodeIds = getNextNodesInGraphForFork(logId, nodeId);
 
                 for (String nextNodeId : nextNodeIds) {
@@ -345,7 +398,7 @@ public class GraphHistoryBuilder {
                 }
 
                 // return joinNodeId;
-            } else if (nodeModel.getType() == NodeType.JOIN) {
+            } else if (isJoinNode(nodeId.split(":")[0], Long.valueOf(nodeId.split(":")[1]), nodeModel.getType())) {
                 // parentNodeInTokenForNodeMap.put(nodeId, startTokenNodeId);
                 return nodeId;
             }
@@ -390,7 +443,8 @@ public class GraphHistoryBuilder {
     }
 
     private Long getNodeLeaveLog(Long currentLogId, String nodeId) {
-        boolean isJoin = diagramModel.getNodeNotNull(nodeId.split(":")[0]).getType() == NodeType.JOIN;
+        boolean isJoin = isJoinNode(nodeId.split(":")[0], Long.valueOf(nodeId.split(":")[1]), diagramModel.getNodeNotNull(nodeId.split(":")[0])
+                .getType());
 
         if (isJoin) {
             for (ProcessLog log : nodeLogs) {
@@ -442,7 +496,8 @@ public class GraphHistoryBuilder {
     private List<String> getNextNodesInGraph(Long currentLogId, String nodeId) {
         Set<String> returnNodes = new HashSet<String>();
 
-        boolean isJoin = diagramModel.getNodeNotNull(nodeId.split(":")[0]).getType() == NodeType.JOIN;
+        boolean isJoin = isJoinNode(nodeId.split(":")[0], Long.valueOf(nodeId.split(":")[1]), diagramModel.getNodeNotNull(nodeId.split(":")[0])
+                .getType());
 
         if (isJoin) {
             // transition only in period leave and enter
@@ -485,15 +540,14 @@ public class GraphHistoryBuilder {
 
     private boolean isNodePresentInGraph(NodeLog log) {
         return !(log instanceof ReceiveMessageLog || log instanceof SendMessageLog)
-                && !((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && (NodeType.MULTI_SUBPROCESS == log.getNodeType()) || NodeType.SUBPROCESS == log
-                        .getNodeType())
-                && ((log instanceof NodeEnterLog && NodeType.JOIN != log.getNodeType()) || (log instanceof NodeLeaveLog && (NodeType.START_EVENT == log
-                        .getNodeType() || NodeType.JOIN == log.getNodeType())));
+                && !((log instanceof SubprocessStartLog || log instanceof SubprocessEndLog) && (NodeType.MULTI_SUBPROCESS == log.getNodeType() || NodeType.SUBPROCESS == log
+                        .getNodeType()))
+                && ((log instanceof NodeEnterLog && !isJoinNode(log.getNodeId(), log.getTokenId(), log.getNodeType())) || (log instanceof NodeLeaveLog && (NodeType.START_EVENT == log
+                        .getNodeType() || isJoinNode(log.getNodeId(), log.getTokenId(), log.getNodeType()))));
     }
 
     /**
-     * Method calculates X and Y coordinates for figures which present nodes in
-     * the graph.
+     * Method calculates X and Y coordinates for figures which present nodes in the graph.
      * 
      * @param widthTokens
      *            - object contains start node in token and the width of token.
@@ -561,7 +615,7 @@ public class GraphHistoryBuilder {
 
                         x = addedLeftTokenWidthIfExist(width / 2, forkNodes, widthTokens, rootNodeId);
 
-                        if (NodeType.JOIN == log.getNodeType()) {
+                        if (isJoinNode(log.getNodeId(), log.getTokenId(), log.getNodeType())) {
                             for (String forkRootNodeId : forkNodes.keySet()) {
                                 List<String> nodes = forkNodes.get(forkRootNodeId);
                                 if (nodes != null && nodes.contains(rootNodeId)) {
@@ -577,7 +631,7 @@ public class GraphHistoryBuilder {
 
                         }
 
-                        if (NodeType.FORK == log.getNodeType()) {
+                        if (isForkNode(log.getNodeId(), log.getTokenId(), log.getNodeType())) {
                             List<String> nodes = getNextNodesInGraphForFork(log.getId(), correctNodeId);
                             forkNodes.put(rootNodeId, nodes);
 
@@ -585,7 +639,7 @@ public class GraphHistoryBuilder {
                             nodeModel.setHeight(heightForkJoinNode);
                         }
 
-                        if (NodeType.JOIN == log.getNodeType()) {
+                        if (isJoinNode(log.getNodeId(), log.getTokenId(), log.getNodeType())) {
                             for (String forkRootNodeId : forkNodes.keySet()) {
                                 List<String> nodes = forkNodes.get(forkRootNodeId);
                                 if (nodes != null && nodes.contains(rootNodeId)) {
@@ -601,9 +655,9 @@ public class GraphHistoryBuilder {
                         nodeModel.setY(height);
                         nodeModel.setX(x - nodeModel.getWidth() / 2);
 
-                        if (NodeType.JOIN != log.getNodeType()) {
+                        if (!isJoinNode(log.getNodeId(), log.getTokenId(), log.getNodeType())) {
                             if (NodeType.SUBPROCESS == log.getNodeType()) {
-                                if (isLastSubprocessLog(log)) {
+                                if (isLastSubprocessLogForMultiinstanceOnly(log)) {
                                     height += (nodeModel.getHeight() + heightBetweenNode);
                                     heightTokens.put(rootNodeId, height);
                                 }
@@ -615,6 +669,18 @@ public class GraphHistoryBuilder {
 
                         correctNodeId = getNodeIdIncludeRepetition(correctNodeId, nodeRepetitionCount);
                         allNodes.put(correctNodeId, nodeModel);
+                        if (NodeType.PARALLEL_GATEWAY == nodeModel.getType()) {
+                            if (!parallelGatewayIsForkNodes.contains(nodeId)) {
+                                nodeModel.setType(NodeType.JOIN);
+                            }
+                            if (parallelGatewayIsForkNodes.contains(nodeId)) {
+                                nodeModel.setType(NodeType.FORK);
+                            }
+                        }
+                        if (NodeType.EXCLUSIVE_GATEWAY == nodeModel.getType()) {
+                            nodeModel.setType(NodeType.DECISION);
+                        }
+
                         AbstractFigure nodeFigure = factory.createFigure(nodeModel, false);
                         allNodeFigures.put(correctNodeId, nodeFigure);
                         if (log instanceof NodeEnterLog) {
@@ -676,10 +742,16 @@ public class GraphHistoryBuilder {
         return null;
     }
 
-    private boolean isLastSubprocessLog(NodeLog log) {
+    private boolean isLastSubprocessLogForMultiinstanceOnly(NodeLog log) {
+        boolean multiinstance = false;
         for (ProcessLog processLog : processLogs) {
+            if (processLog instanceof NodeEnterLog && ((NodeEnterLog) processLog).getNodeType() == NodeType.MULTI_SUBPROCESS) {
+                multiinstance = true;
+            } else if (processLog instanceof NodeEnterLog) {
+                multiinstance = false;
+            }
             if (processLog.getId() >= log.getId()) {
-                if (processLog instanceof NodeEnterLog && ((NodeEnterLog) processLog).getNodeType() == NodeType.SUBPROCESS) {
+                if (processLog instanceof NodeEnterLog && ((NodeEnterLog) processLog).getNodeType() == NodeType.SUBPROCESS && multiinstance) {
                     return false;
                 } else {
                     return true;
@@ -714,18 +786,38 @@ public class GraphHistoryBuilder {
                     ((SubprocessGraphElementPresentation) presentation).setSubprocessId(((SubprocessStartLog) nodeLog).getSubprocessId());
                     break;
                 }
+
+                if (nodeLog instanceof NodeEnterLog && nodeEnterlog.getNodeId().equals(((NodeEnterLog) nodeLog).getNodeId())
+                        && ((NodeEnterLog) nodeLog).getNodeType() == NodeType.SUBPROCESS && node instanceof SubProcessState) {
+                    ((SubprocessGraphElementPresentation) presentation).setSubprocessId(((NodeEnterLog) nodeLog).getProcessId());
+
+                    if (((SubProcessState) node).isEmbedded()) {
+                        SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
+                                .getSubProcessName());
+                        ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessId(subprocessDefinition.getNodeId());
+                        ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessGraphWidth(subprocessDefinition
+                                .getGraphConstraints()[2]);
+                        ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessGraphHeight(subprocessDefinition
+                                .getGraphConstraints()[3]);
+                    }
+
+                    break;
+                }
             }
 
             break;
         case MULTI_SUBPROCESS:
             presentation = new MultiinstanceGraphElementPresentation();
             Iterator<ProcessLog> logIterator = processLogs.iterator();
+            boolean subProcessStartedLog = false;
             while (logIterator.hasNext()) {
                 ProcessLog processLog = logIterator.next();
                 if (processLog.getId() > nodeEnterlog.getId() && processLog instanceof SubprocessStartLog) {
-                    ((MultiinstanceGraphElementPresentation) presentation).addSubprocessInfo(
-                            ((SubprocessStartLog) processLog).getSubprocessId(), true, false);
-                } else if (processLog.getId() > nodeEnterlog.getId() && !(processLog instanceof SubprocessStartLog)) {
+                    ((MultiinstanceGraphElementPresentation) presentation).addSubprocessInfo(((SubprocessStartLog) processLog).getSubprocessId(),
+                            true, false);
+                    subProcessStartedLog = true;
+                } else if (processLog.getId() > nodeEnterlog.getId() && !(processLog instanceof SubprocessStartLog) && subProcessStartedLog) {
+                    subProcessStartedLog = false;
                     break;
                 }
             }

@@ -11,7 +11,7 @@ public class WfDefinitionAdapter {
     public static WfDefinition toDTO(ru.runa.wfe.webservice.WfDefinition definition) {
         Deployment deployment = new Deployment();
         deployment.setCategories(definition.getCategories());
-        deployment.setDeployedDate(DateAdapter.toDTO(definition.getDeployedDate()));
+        deployment.setCreateDate(DateAdapter.toDTO(definition.getDeployedDate()));
         deployment.setDescription(definition.getDescription());
         deployment.setId(definition.getId());
         deployment.setName(definition.getName());

@@ -169,6 +169,12 @@
 				<groupId>cglib</groupId>
 				<artifactId>cglib</artifactId>
 				<version>3.0</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>asm</artifactId>
+						<groupId>asm</groupId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 
 			<dependency>

@@ -5,9 +5,11 @@ import java.util.List;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableUtils;
 
+import com.google.common.base.Strings;
+
 public class GroovyValidationModel {
     public static Expr fromCode(String code, List<Variable> variables) {
-        if (code.length() == 0) {
+        if (Strings.isNullOrEmpty(code)) {
             return null;
         }
         String[] strings = code.split(" ");
@@ -68,9 +70,9 @@ public class GroovyValidationModel {
     }
 
     public static class Expr {
-        private Variable variable1;
-        private Variable variable2;
-        private Operation operation;
+        private final Variable variable1;
+        private final Variable variable2;
+        private final Operation operation;
 
         public Expr(Variable var1, Variable var2, Operation operation) {
             this.variable1 = var1;

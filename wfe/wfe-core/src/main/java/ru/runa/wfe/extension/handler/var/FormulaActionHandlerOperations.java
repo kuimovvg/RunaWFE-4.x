@@ -330,6 +330,10 @@ public class FormulaActionHandlerOperations {
     private String wordCaseRussian(String word, int caseNumber, boolean sex, int wordType, boolean onlyOneChar) {
         // sex : male = true, female = false
         // wordType : 1 = family name, 2 = name, 3 = parent
+    	
+    	// http://sourceforge.net/p/runawfe/bugs/624/
+    	if ((word == null) || (word.length() == 0)) return "";
+    	
         if (onlyOneChar) {
             return "" + Character.toUpperCase(word.replaceAll(" ", "").charAt(0)) + '.';
         }

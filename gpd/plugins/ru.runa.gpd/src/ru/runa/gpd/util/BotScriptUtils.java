@@ -6,6 +6,9 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
 import ru.runa.gpd.lang.model.BotTask;
 
 import com.google.common.base.Charsets;
@@ -14,6 +17,7 @@ import com.google.common.collect.Lists;
 
 public class BotScriptUtils {
     private final static String NAME_ATTRIBUTE_NAME = "name";
+    private final static String EMBEDDED_FILE_ATTRIBUTE_NAME = "embeddedFile";
     private final static String PASSWORD_ATTRIBUTE_NAME = "password";
     private final static String STARTTIMEOUT_ATTRIBUTE_NAME = "startTimeout";
     private final static String HANDLER_ATTRIBUTE_NAME = "handler";
@@ -41,7 +45,13 @@ public class BotScriptUtils {
                 Element taskElement = addTasks.addElement(BOT_CONFIGURATION_ELEMENT_NAME);
                 taskElement.addAttribute(NAME_ATTRIBUTE_NAME, task.getName());
                 taskElement.addAttribute(HANDLER_ATTRIBUTE_NAME, task.getDelegationClassName());
+
                 if (!Strings.isNullOrEmpty(task.getDelegationClassName())) {
+                    DelegableProvider provider = HandlerRegistry.getProvider(task.getDelegationClassName());
+                    if (provider instanceof IBotFileSupportProvider) {
+                        IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
+                        taskElement.addAttribute(EMBEDDED_FILE_ATTRIBUTE_NAME, botFileProvider.getEmbeddedFileName(task));
+                    }
                     taskElement.addAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
                 }
             }
@@ -51,7 +61,8 @@ public class BotScriptUtils {
 
     /**
      * 
-     * @param inputStream xml script stream
+     * @param inputStream
+     *            xml script stream
      * @return map of bot task without configuration set -> configuration file name
      */
     public static List<BotTask> getBotTasksFromScript(byte[] scriptXml, Map<String, byte[]> files) {

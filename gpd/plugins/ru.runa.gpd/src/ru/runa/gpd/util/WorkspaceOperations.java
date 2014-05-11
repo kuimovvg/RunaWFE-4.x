@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.dom4j.Document;
+import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -37,6 +38,9 @@ import ru.runa.gpd.editor.BotTaskEditor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
@@ -66,6 +70,7 @@ import ru.runa.gpd.ui.wizard.NewFolderWizard;
 import ru.runa.gpd.ui.wizard.NewProcessDefinitionWizard;
 import ru.runa.gpd.ui.wizard.NewProcessProjectWizard;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 import com.google.common.base.Charsets;
@@ -455,6 +460,7 @@ public class WorkspaceOperations {
                 showDependentTasksDialog(dependentDefinitions);
                 return;
             }
+                     
             String newName = dialog.getName();
             try {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
@@ -467,8 +473,28 @@ public class WorkspaceOperations {
                 botTaskFile.copy(newPath, true, null);
                 IFile confFile = ResourcesPlugin.getWorkspace().getRoot().getFile(botTaskFile.getParent().getFullPath().append(new Path(botTaskFile.getName() + ".conf")));
                 if (confFile.exists()) {
-                    BotTask botTask = BotCache.getBotTaskNotNull(botTaskFile);
+                	BotTask botTask = BotCache.getBotTaskNotNull(botTaskFile);
+                	String oldName = botTask.getName();
+                	
+                	if(! Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
+                		DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
+                		if(provider instanceof IBotFileSupportProvider) {
+                			IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider)provider;
+			               	// Move templates if them exist
+                			String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
+                			if ( ! Strings.isNullOrEmpty(oldEmbeddedFileName) && oldEmbeddedFileName.startsWith(oldName)) {
+                				IFile embeddedFile = ((IFolder)botTaskFile.getParent()).getFile(oldEmbeddedFileName);
+                				if(embeddedFile.exists()) {
+                					String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length()); 
+                					IPath newEmbeddedFilePath = embeddedFile.getParent().getFullPath().append(newEmbeddedFileName);
+                					embeddedFile.move(newEmbeddedFilePath, true, null);
+                				}
+                			}
+			   				botFileProvider.taskRenamed(botTask, oldName, newName);
+                		}
+                	}
                     botTask.setName(newName);
+
                     botTaskFile = ResourcesPlugin.getWorkspace().getRoot().getFile(newPath);
                     saveBotTask(botTaskFile, botTask);
                     confFile.delete(true, null);
