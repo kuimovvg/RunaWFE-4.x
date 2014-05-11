@@ -8,6 +8,7 @@ import ru.runa.wfe.definition.dto.WfDefinition;
 import com.google.common.collect.Lists;
 
 public class WfDefinitionAdapter {
+
     public static WfDefinition toDTO(ru.runa.wfe.webservice.WfDefinition definition) {
         Deployment deployment = new Deployment();
         deployment.setCategories(definition.getCategories());
