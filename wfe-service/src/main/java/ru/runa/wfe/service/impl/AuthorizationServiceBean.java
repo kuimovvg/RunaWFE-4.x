@@ -41,6 +41,7 @@ import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.security.logic.AuthorizationLogic;
 import ru.runa.wfe.service.decl.AuthorizationServiceLocal;
 import ru.runa.wfe.service.decl.AuthorizationServiceRemote;
+import ru.runa.wfe.service.decl.AuthorizationServiceRemoteWS;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.service.interceptors.PerformanceObserver;
@@ -57,7 +58,7 @@ import com.google.common.base.Preconditions;
 @Interceptors({ EjbExceptionSupport.class, PerformanceObserver.class, EjbTransactionSupport.class, SpringBeanAutowiringInterceptor.class })
 @WebService(name = "AuthorizationAPI", serviceName = "AuthorizationWebService")
 @SOAPBinding
-public class AuthorizationServiceBean implements AuthorizationServiceLocal, AuthorizationServiceRemote {
+public class AuthorizationServiceBean implements AuthorizationServiceLocal, AuthorizationServiceRemote, AuthorizationServiceRemoteWS {
     @Autowired
     private AuthorizationLogic authorizationLogic;
 
@@ -169,6 +170,17 @@ public class AuthorizationServiceBean implements AuthorizationServiceLocal, Auth
         Preconditions.checkArgument(permission != null, "Permission");
         Preconditions.checkArgument(securedObjectTypes != null, "Secured object class");
         return (List<T>) authorizationLogic.getPersistentObjects(user, batchPresentation, permission, securedObjectTypes, enablePaging);
+    }
+
+    @Override
+    @WebResult(name = "result")
+    public boolean isAllowedWS(@WebParam(name = "user") User user, @WebParam(name = "permission") Permission permission,
+            @WebParam(name = "securedObjectType") SecuredObjectType securedObjectType, @WebParam(name = "identifiableId") Long identifiableId) {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(permission != null);
+        Preconditions.checkArgument(securedObjectType != null);
+        Preconditions.checkArgument(identifiableId != null);
+        return authorizationLogic.isAllowed(user, permission, securedObjectType, identifiableId);
     }
 
 }
