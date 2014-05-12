@@ -13,6 +13,8 @@ import ru.runa.gpd.Activator;
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.handler.ParamDef;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.lang.Language;
@@ -324,13 +326,34 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
             }
         } else {
             // validate against simple bot task
-            // String botName = getSwimlaneBotName();
-            // if (botName != null) {
-            // BotTask botTask = BotCache.getBotTask(botName, getName());
-            // if (botTask != null && botTask.getType() == BotTaskType.SIMPLE) {
-            // cache.add(new BotTaskConfigRenameProvider(botTask));
-            // }
-            // }
+            String botName = getSwimlaneBotName();
+            if (botName != null) {
+                BotTask botTask = BotCache.getBotTask(botName, getName());
+                if (botTask != null) {
+                    if (botTask.getDelegationClassName() != null) {
+                        DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
+                        if (provider != null) {
+                            try {
+                                List<String> handlerVariableNames = provider.getUsedVariableNames(botTask);
+                                List<String> processVariableNames = getVariableNames(true);
+                                for (String variableName : handlerVariableNames) {
+                                    if (!processVariableNames.contains(variableName)) {
+                                        errors.add(ValidationError.createLocalizedWarning(this, "taskState.simpleBotTask.usedInvalidVariable", variableName));
+                                    }
+                                }
+                            } catch (Exception e) {
+                                errors.add(ValidationError.createWarning(this, e.toString()));
+                            }
+                        } else {
+                            errors.add(ValidationError.createLocalizedWarning(this, "taskState.simpleBotTask.invalidClassName"));
+                        }
+                    } else {
+                        errors.add(ValidationError.createLocalizedWarning(this, "taskState.simpleBotTask.emptyClassName"));
+                    }
+                } else if (BotCache.getAllBotNames().contains(botName)) {
+                    errors.add(ValidationError.createLocalizedWarning(this, "taskState.simpleBotTask.notFoundByName", botName, getName()));
+                }
+            }
         }
         if (isAsync() && getTimer() != null) {
             errors.add(ValidationError.createLocalizedError(this, "taskState.timerInAsyncTask"));
