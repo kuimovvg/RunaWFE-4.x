@@ -1515,6 +1515,16 @@
             enabled="true"
             label="%ru.runa.wfe.extension.handler.process.AddReadProcessPermissionsHandler">
       </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.file.LoadFileVariableFromFileSystemHandler"
+            decisionHandler="false"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.file.LoadFileVariableFromFileSystemHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
