@@ -27,6 +27,10 @@ public enum AppServerType {
                 InputStreamReader reader = new InputStreamReader(url.openStream());
                 String type = CharStreams.toString(reader);
                 reader.close();
+                int colonIndex = type.indexOf(":");
+                if (colonIndex != -1) {
+                    type = type.substring(colonIndex + 1);
+                }
                 return AppServerType.valueOf(type).getUrlPattern();
             } catch (IOException e) {
                 throw Throwables.propagate(e);

@@ -176,6 +176,10 @@ public class ResourcesManager {
                 try {
                     InputStreamReader reader = new InputStreamReader(new URL(versionUrl).openStream());
                     value = CharStreams.toString(reader);
+                    int colonIndex = value.indexOf(":");
+                    if (colonIndex != -1) {
+                        value = value.substring(colonIndex + 1);
+                    }
                     reader.close();
                 } catch (Exception e) {
                     throw new RuntimeException("Unable to acquire version using " + versionUrl);
