@@ -20,6 +20,7 @@ public class CheckPermissionOnExecutor {
             AuthorizationAPI authorizationAPI = new AuthorizationWebService().getAuthorizationAPIPort();
             Permission permission = new Permission();
             permission.setName("permission.read");
+            permission.setMask(1);
             System.out.println("check=" + authorizationAPI.isAllowedWS(user, permission, SecuredObjectType.GROUP, executor.getId()));
         } catch (Exception e) {
             e.printStackTrace();
