@@ -32,7 +32,16 @@ public class TaskDefinition extends GraphElement {
     protected String deadlineDuration;
     protected InteractionNode node;
     protected SwimlaneDefinition swimlaneDefinition;
+    /**
+     * reassign swimlane value to evaluated swimlane initializer due to task
+     * create
+     */
     protected boolean reassignSwimlane;
+    // TODO switch reassignSwimlane to useSwimlaneInitializerForTaskExecutor;
+    /**
+     * reassign swimlane value to actor who completed task on task end
+     */
+    protected boolean reassignSwimlaneToTaskPerformer = true;
     protected boolean ignoreSubsitutionRules;
 
     @Override
@@ -53,8 +62,20 @@ public class TaskDefinition extends GraphElement {
         this.swimlaneDefinition = swimlaneDefinition;
     }
 
+    public boolean isReassignSwimlane() {
+        return reassignSwimlane;
+    }
+
     public void setReassignSwimlane(boolean reassignSwimlane) {
         this.reassignSwimlane = reassignSwimlane;
+    }
+
+    public boolean isReassignSwimlaneToTaskPerformer() {
+        return reassignSwimlaneToTaskPerformer;
+    }
+
+    public void setReassignSwimlaneToTaskPerformer(boolean reassignSwimlaneToTaskExecutor) {
+        this.reassignSwimlaneToTaskPerformer = reassignSwimlaneToTaskExecutor;
     }
 
     public boolean isIgnoreSubsitutionRules() {
@@ -72,10 +93,6 @@ public class TaskDefinition extends GraphElement {
 
     public SwimlaneDefinition getSwimlane() {
         return swimlaneDefinition;
-    }
-
-    public boolean isReassignSwimlane() {
-        return reassignSwimlane;
     }
 
     public InteractionNode getNode() {

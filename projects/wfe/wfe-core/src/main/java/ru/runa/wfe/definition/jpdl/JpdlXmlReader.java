@@ -66,7 +66,7 @@ public class JpdlXmlReader {
 
     private final Document document;
     // TODO move to Spring (or GPD process setting)
-    private boolean waitStateCompatibility = true;
+    private final boolean waitStateCompatibility = true;
 
     private static final String INVALID_ATTR = "invalid";
     private static final String ACCESS_ATTR = "access";
@@ -83,7 +83,8 @@ public class JpdlXmlReader {
     private static final String TRANSITION_ATTR = "transition";
     private static final String TASK_NODE = "task";
     private static final String SWIMLANE_NODE = "swimlane";
-    private static final String REASSIGN_ATTR = "reassign";
+    private static final String REASSIGN = "reassign";
+    private static final String REASSIGN_SWIMLANE_TO_TASK_PERFORMER = "reassignSwimlaneToTaskPerformer";
     private static final String TO_ATTR = "to";
     private static final String CLASS_ATTR = "class";
     private static final String EVENT_NODE = "event";
@@ -255,7 +256,8 @@ public class JpdlXmlReader {
         } else {
             SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
             taskDefinition.setSwimlane(swimlaneDefinition);
-            taskDefinition.setReassignSwimlane(Boolean.valueOf(element.attributeValue(REASSIGN_ATTR, "false")));
+            taskDefinition.setReassignSwimlane(Boolean.valueOf(element.attributeValue(REASSIGN, "false")));
+            taskDefinition.setReassignSwimlaneToTaskPerformer(Boolean.valueOf(element.attributeValue(REASSIGN_SWIMLANE_TO_TASK_PERFORMER, "true")));
             taskDefinition.setIgnoreSubsitutionRules(Boolean.valueOf(element.attributeValue(IGNORE_SUBSTITUTION_RULES, "false")));
         }
     }

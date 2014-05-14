@@ -34,7 +34,6 @@ import ru.runa.wfe.task.TasklistBuilder;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Actor;
-import ru.runa.wfe.user.ActorPermission;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.User;
@@ -69,11 +68,12 @@ public class TaskLogic extends WFCommonLogic {
             ProcessDefinition processDefinition = getDefinition(task);
             ExecutionContext executionContext = new ExecutionContext(processDefinition, task);
             TaskCompletionBy completionBy = checkCanParticipate(user.getActor(), task);
-            checkPermissionsOnExecutor(user, user.getActor(), ActorPermission.READ);
+            InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
             if (swimlaneActorId != null) {
                 Actor swimlaneActor = executorDAO.getActor(swimlaneActorId);
                 checkCanParticipate(swimlaneActor, task);
-                assignmentHelper.reassignTask(executionContext, task, swimlaneActor, true);
+                boolean reassignSwimlane = node.getFirstTaskNotNull().isReassignSwimlaneToTaskPerformer();
+                assignmentHelper.reassignTask(executionContext, task, swimlaneActor, reassignSwimlane);
             }
             // don't persist selected transition name
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
@@ -86,7 +86,6 @@ public class TaskLogic extends WFCommonLogic {
             validateVariables(user, processDefinition, task.getNodeId(), variables, validationVariableProvider);
             executionContext.setVariableValues(variables);
             Transition transition;
-            InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(task.getNodeId());
             if (transitionName != null) {
                 transition = node.getLeavingTransitionNotNull(transitionName);
             } else {
