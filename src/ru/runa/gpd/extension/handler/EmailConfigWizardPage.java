@@ -79,8 +79,12 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         super("email", Localization.getString("EmailDialog.title"), SharedImages.getImageDescriptor("/icons/send_email.png"));
         this.initValue = delegable.getDelegationConfiguration();
         this.delegable = delegable;
-        GraphElement parent = ((GraphElement) delegable).getParent();
-        this.bodyInlinedEnabled = (parent instanceof FormNode) && ((FormNode) parent).hasForm();
+        if (delegable instanceof GraphElement) {
+            GraphElement parent = ((GraphElement) delegable).getParent();
+            this.bodyInlinedEnabled = (parent instanceof FormNode) && ((FormNode) parent).hasForm();
+        } else /* BotTask */{
+            this.bodyInlinedEnabled = true;
+        }
         this.commonConfig = getParamConfig(bundle, "/conf/email.common.xml");
         this.connectionConfig = getParamConfig(bundle, "/conf/email.connection.xml");
         this.messageConfig = getParamConfig(bundle, "/conf/email.message.xml");
@@ -102,21 +106,23 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         commonComposite.createUI();
         scrolledComposite.setContent(commonComposite);
         scrolledComposite = createScrolledTab(Localization.getString("EmailDialog.title.connection"));
-        connectionComposite = new ParamDefDynaComposite(scrolledComposite, delegable, connectionConfig, connectionConfig.parseConfiguration(initValue), connectionConfig
-                .getGroups().get(0), Localization.getString("EmailDialog.connection.descDynaParams"));
+        connectionComposite = new ParamDefDynaComposite(scrolledComposite, delegable, connectionConfig,
+                connectionConfig.parseConfiguration(initValue), connectionConfig.getGroups().get(0),
+                Localization.getString("EmailDialog.connection.descDynaParams"));
         connectionComposite.setMenuForSettingVariable(true);
         connectionComposite.createUI();
         connectionComposite.setMessageDisplay(this);
         scrolledComposite.setContent(connectionComposite);
         scrolledComposite = createScrolledTab(Localization.getString("EmailDialog.title.message"));
-        messageComposite = new ParamDefDynaComposite(scrolledComposite, delegable, messageConfig, messageConfig.parseConfiguration(initValue), messageConfig.getGroups().get(0),
-                Localization.getString("EmailDialog.message.descDynaParams"));
+        messageComposite = new ParamDefDynaComposite(scrolledComposite, delegable, messageConfig, messageConfig.parseConfiguration(initValue),
+                messageConfig.getGroups().get(0), Localization.getString("EmailDialog.message.descDynaParams"));
         messageComposite.setMenuForSettingVariable(true);
         messageComposite.createUI();
         messageComposite.setMessageDisplay(this);
         scrolledComposite.setContent(messageComposite);
         scrolledComposite = createScrolledTab(Localization.getString("EmailDialog.title.content"));
-        contentComposite = new ContentComposite(scrolledComposite, contentConfig.parseConfiguration(initValue), EmailAttachmentsConfig.parseAttachments(initValue));
+        contentComposite = new ContentComposite(scrolledComposite, contentConfig.parseConfiguration(initValue),
+                EmailAttachmentsConfig.parseAttachments(initValue));
         scrolledComposite.setContent(contentComposite);
         styledText = new StyledText(tabFolder, SWT.MULTI | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
         styledText.addLineStyleListener(new XmlHighlightTextStyling());
