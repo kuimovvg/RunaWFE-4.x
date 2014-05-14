@@ -25,8 +25,8 @@ import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 
 public class BotTaskParamDefWizardPage extends WizardPage {
-    private ParamDefGroup paramDefGroup;
-    private ParamDef paramDef;
+    private final ParamDefGroup paramDefGroup;
+    private final ParamDef paramDef;
     private Text nameText;
     private Combo typeCombo;
     private Button useVariableButton;
@@ -65,6 +65,7 @@ public class BotTaskParamDefWizardPage extends WizardPage {
             useVariableButton.setSelection(paramDef.isUseVariable());
             requiredButton.setSelection(!paramDef.isOptional());
         } else {
+            typeCombo.setText(VariableFormatRegistry.getInstance().getFilterLabel(String.class.getName()));
             useVariableButton.setSelection(true);
             requiredButton.setSelection(true);
         }

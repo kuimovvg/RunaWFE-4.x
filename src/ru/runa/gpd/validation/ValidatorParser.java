@@ -55,11 +55,8 @@ public class ValidatorParser {
                     }
                 }
             }
-            if (!validationFile.exists()) {
-                IOUtils.createFile(validationFile);
-            }
             byte[] bytes = XmlUtil.writeXml(document);
-            validationFile.setContents(new ByteArrayInputStream(bytes), true, false, null);
+            IOUtils.createOrUpdateFile(validationFile, new ByteArrayInputStream(bytes));
         } catch (Exception e) {
             PluginLogger.logError("Validation file update error", e);
         }
