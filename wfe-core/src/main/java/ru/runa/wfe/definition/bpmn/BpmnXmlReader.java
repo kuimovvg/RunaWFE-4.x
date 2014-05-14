@@ -81,7 +81,8 @@ public class BpmnXmlReader {
     private static final String LANE = "lane";
     private static final String FLOW_NODE_REF = "flowNodeRef";
     public static final String SHOW_WIMLANE = "showSwimlane";
-    private static final String REASSIGN = "reassign";//
+    private static final String REASSIGN = "reassign";
+    private static final String REASSIGN_SWIMLANE_TO_TASK_PERFORMER = "reassignSwimlaneToTaskPerformer";
     private static final String CLASS = "class";
     private static final String SEQUENCE_FLOW = "sequenceFlow";
     private static final String DOCUMENTATION = "documentation";
@@ -124,7 +125,7 @@ public class BpmnXmlReader {
         nodeTypes.put(PARALLEL_GATEWAY, ParallelGateway.class);
         nodeTypes.put(TEXT_ANNOTATION, TextAnnotation.class);
     }
-    
+
     private String defaultTaskDeadline;
 
     public BpmnXmlReader(Document document) {
@@ -444,6 +445,9 @@ public class BpmnXmlReader {
         taskDefinition.setSwimlane(swimlaneDefinition);
         if (properties.containsKey(REASSIGN)) {
             taskDefinition.setReassignSwimlane(Boolean.parseBoolean(properties.get(REASSIGN)));
+        }
+        if (properties.containsKey(REASSIGN_SWIMLANE_TO_TASK_PERFORMER)) {
+            taskDefinition.setReassignSwimlaneToTaskPerformer(Boolean.parseBoolean(properties.get(REASSIGN_SWIMLANE_TO_TASK_PERFORMER)));
         }
         if (properties.containsKey(IGNORE_SUBSTITUTION_RULES)) {
             taskDefinition.setReassignSwimlane(Boolean.parseBoolean(properties.get(IGNORE_SUBSTITUTION_RULES)));
