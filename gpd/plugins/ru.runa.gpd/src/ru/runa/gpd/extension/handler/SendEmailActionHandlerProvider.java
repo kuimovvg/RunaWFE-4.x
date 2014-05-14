@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Display;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.DelegableProvider;
-import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -40,9 +39,6 @@ import com.google.common.collect.Lists;
 public class SendEmailActionHandlerProvider extends DelegableProvider {
     @Override
     public String showConfigurationDialog(Delegable delegable) {
-        if (!HandlerArtifact.ACTION.equals(delegable.getDelegationType())) {
-            throw new IllegalArgumentException("For action handler only");
-        }
         final EmailConfigWizardPage wizardPage = new EmailConfigWizardPage(bundle, delegable);
         final ConfigurationWizard wizard = new ConfigurationWizard(wizardPage);
         CompactWizardDialog wizardDialog = new CompactWizardDialog(wizard) {
@@ -130,8 +126,17 @@ public class SendEmailActionHandlerProvider extends DelegableProvider {
             if (configuration.trim().length() > 0) {
                 EmailConfig config = EmailConfigParser.parse(configuration, false);
                 GraphElement parent = ((GraphElement) delegable).getParent();
-                if (config.isUseMessageFromTaskForm() && (!(parent instanceof TaskState))) {
-                    errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.email.taskformmissed"));
+                if (config.isUseMessageFromTaskForm()) {
+                    if (parent instanceof TaskState) {
+                        TaskState taskState = (TaskState) parent;
+                        if (!taskState.hasForm()) {
+                            errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.email.taskform.empty"));
+                        } else if (!"ftl".equals(taskState.getFormType())) {
+                            errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.email.taskform.notftl"));
+                        }
+                    } else {
+                        errors.add(ValidationError.createLocalizedError((GraphElement) delegable, "delegable.email.taskform.nocontext"));
+                    }
                 }
             }
         } catch (Exception e) {
