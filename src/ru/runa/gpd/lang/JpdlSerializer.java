@@ -9,6 +9,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 
+import ru.runa.gpd.Application;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.PluginLogger;
@@ -49,7 +50,6 @@ import ru.runa.gpd.util.MultiinstanceParameters;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 import ru.runa.wfe.lang.TaskExecutionMode;
@@ -122,7 +122,7 @@ public class JpdlSerializer extends ProcessSerializer {
             root.addAttribute(ID, definition.getId());
         }
         root.addAttribute(NAME, definition.getName());
-        root.addAttribute(VERSION, SystemProperties.getVersion());
+        root.addAttribute(VERSION, Application.getVersion().toString());
         root.addAttribute(ACCESS_TYPE, definition.getAccessType().name());
         if (definition.getDefaultTaskTimeoutDelay().hasDuration()) {
             root.addAttribute(DEFAULT_TASK_DUEDATE, definition.getDefaultTaskTimeoutDelay().getDuration());
@@ -273,8 +273,11 @@ public class JpdlSerializer extends ProcessSerializer {
         setAttribute(taskElement, SWIMLANE, swimlanedNode.getSwimlaneName());
         if (swimlanedNode instanceof TaskState) {
             TaskState taskState = (TaskState) swimlanedNode;
-            if (taskState.isReassignmentEnabled()) {
+            if (taskState.isReassignSwimlaneToInitializerValue()) {
                 setAttribute(taskElement, REASSIGN, "true");
+            }
+            if (!taskState.isReassignSwimlaneToTaskPerformer()) {
+                setAttribute(taskElement, REASSIGN_SWIMLANE_TO_TASK_PERFORMER, "false");
             }
             if (taskState.isIgnoreSubstitutionRules()) {
                 setAttribute(taskElement, IGNORE_SUBSTITUTION_RULES, "true");
@@ -548,7 +551,11 @@ public class JpdlSerializer extends ProcessSerializer {
                         String reassign = stateNodeChild.attributeValue(REASSIGN);
                         if (reassign != null) {
                             boolean forceReassign = Boolean.parseBoolean(reassign);
-                            ((TaskState) state).setReassignmentEnabled(forceReassign);
+                            ((TaskState) state).setReassignSwimlaneToInitializerValue(forceReassign);
+                        }
+                        String reassignSwimlaneToTaskPerformer = stateNodeChild.attributeValue(REASSIGN_SWIMLANE_TO_TASK_PERFORMER);
+                        if (reassignSwimlaneToTaskPerformer != null) {
+                            ((TaskState) state).setReassignSwimlaneToTaskPerformer(Boolean.parseBoolean(reassignSwimlaneToTaskPerformer));
                         }
                     }
                     String ignore = stateNodeChild.attributeValue(IGNORE_SUBSTITUTION_RULES);

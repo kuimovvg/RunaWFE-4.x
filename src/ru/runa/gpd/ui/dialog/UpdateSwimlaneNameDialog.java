@@ -39,8 +39,8 @@ public class UpdateSwimlaneNameDialog extends Dialog {
         this.name = swimlane != null ? swimlane.getName() : definition.getNextSwimlaneName();
         this.createMode = swimlane == null;
         this.swimlane = swimlane;
-        this.scriptingName = swimlane != null && swimlane.getScriptingName() != null ? swimlane.getScriptingName() : VariableUtils.generateNameForScripting(definition, name,
-                swimlane);
+        this.scriptingName = swimlane != null && swimlane.getScriptingName() != null ? swimlane.getScriptingName() : VariableUtils
+                .generateNameForScripting(definition, name, swimlane);
     }
 
     @Override
@@ -95,11 +95,13 @@ public class UpdateSwimlaneNameDialog extends Dialog {
         scriptingNameField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         scriptingNameField.setEditable(false);
         scriptingNameField.setText(scriptingName);
-        Text saveAllEditorsLabel = new Text(composite, SWT.MULTI | SWT.READ_ONLY);
-        GridData gridData = new GridData(GridData.GRAB_HORIZONTAL);
-        gridData.horizontalSpan = 2;
-        saveAllEditorsLabel.setLayoutData(gridData);
-        saveAllEditorsLabel.setText(Localization.getString("warning.allEditorsWillBeSaved"));
+        if (!createMode) {
+            Text saveAllEditorsLabel = new Text(composite, SWT.MULTI | SWT.READ_ONLY);
+            GridData gridData = new GridData(GridData.GRAB_HORIZONTAL);
+            gridData.horizontalSpan = 2;
+            saveAllEditorsLabel.setLayoutData(gridData);
+            saveAllEditorsLabel.setText(Localization.getString("warning.allEditorsWillBeSaved"));
+        }
         return area;
     }
 
