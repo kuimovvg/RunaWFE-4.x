@@ -39,7 +39,6 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 
 public class EmailUtils {
-
     private static final Log log = LogFactory.getLog(EmailConfig.class);
 
     private static final String MAIL_TRANSPORT = "mail.transport.protocol";
@@ -142,6 +141,9 @@ public class EmailUtils {
         if (config.isUseMessageFromTaskForm()) {
             if (interaction.hasForm()) {
                 formTemplate = new String(interaction.getFormData(), Charsets.UTF_8);
+                if (!"ftl".equals(interaction.getType())) {
+                    throw new Exception("Property 'UseMessageFromTaskForm' is applicable only to free form layout form (ftl)");
+                }
             } else {
                 if (SystemProperties.isV3CompatibilityMode()) {
                     formTemplate = " ";
