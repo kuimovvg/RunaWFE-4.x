@@ -40,20 +40,32 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
     private AsyncCompletionMode asyncCompletionMode = AsyncCompletionMode.ON_MAIN_PROCESS_END;
     private BotTaskLink botTaskLink;
     private Duration timeOutDelay = new Duration();
-    private boolean reassignmentEnabled = false;
+    private boolean reassignSwimlaneToInitializerValue = false;
+    private boolean reassignSwimlaneToTaskPerformer = true;
 
     @Override
     public Timer getTimer() {
         return getFirstChild(Timer.class);
     }
 
-    public boolean isReassignmentEnabled() {
-        return reassignmentEnabled;
+    public boolean isReassignSwimlaneToInitializerValue() {
+        return reassignSwimlaneToInitializerValue;
     }
 
-    public void setReassignmentEnabled(boolean forceReassign) {
-        this.reassignmentEnabled = forceReassign;
-        firePropertyChange(PROPERTY_SWIMLANE_REASSIGN, !reassignmentEnabled, reassignmentEnabled);
+    public void setReassignSwimlaneToInitializerValue(boolean reassignSwimlaneToInitializerValue) {
+        boolean old = this.reassignSwimlaneToInitializerValue;
+        this.reassignSwimlaneToInitializerValue = reassignSwimlaneToInitializerValue;
+        firePropertyChange(PROPERTY_SWIMLANE_REASSIGN, old, this.reassignSwimlaneToInitializerValue);
+    }
+
+    public boolean isReassignSwimlaneToTaskPerformer() {
+        return reassignSwimlaneToTaskPerformer;
+    }
+
+    public void setReassignSwimlaneToTaskPerformer(boolean reassignSwimlaneToTaskPerformer) {
+        boolean old = this.reassignSwimlaneToTaskPerformer;
+        this.reassignSwimlaneToTaskPerformer = reassignSwimlaneToTaskPerformer;
+        firePropertyChange(PROPERTY_SWIMLANE_REASSIGN, old, this.reassignSwimlaneToTaskPerformer);
     }
 
     public String getTimeOutDueDate() {
@@ -75,7 +87,8 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
 
     @Override
     public String getNextTransitionName() {
-        if (getProcessDefinition().getLanguage() == Language.JPDL && getTimer() != null && getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME) == null) {
+        if (getProcessDefinition().getLanguage() == Language.JPDL && getTimer() != null
+                && getTransitionByName(PluginConstants.TIMER_TRANSITION_NAME) == null) {
             return PluginConstants.TIMER_TRANSITION_NAME;
         }
         return super.getNextTransitionName();
@@ -194,10 +207,12 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = super.getCustomPropertyDescriptors();
         list.add(new PropertyDescriptor(PROPERTY_IGNORE_SUBSTITUTION_RULES, Localization.getString("property.ignoreSubstitution")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, getProcessDefinition(), getTimeOutDelay(), Localization.getString("property.deadline")));
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, getProcessDefinition(), getTimeOutDelay(), Localization
+                .getString("property.deadline")));
         if (useEscalation) {
             list.add(new EscalationActionPropertyDescriptor(PROPERTY_ESCALATION_ACTION, Localization.getString("escalation.action"), this));
-            list.add(new DurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, getProcessDefinition(), getEscalationDelay(), Localization.getString("escalation.duration")));
+            list.add(new DurationPropertyDescriptor(PROPERTY_ESCALATION_DURATION, getProcessDefinition(), getEscalationDelay(), Localization
+                    .getString("escalation.duration")));
         }
         if (botTaskLink != null) {
             list.add(new PropertyDescriptor(PROPERTY_BOT_TASK_NAME, Localization.getString("property.botTaskName")));
@@ -268,7 +283,7 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
             copy.setEscalationDelay(new Duration(getEscalationDelay()));
         }
         copy.setIgnoreSubstitutionRules(ignoreSubstitutionRules);
-        copy.setReassignmentEnabled(reassignmentEnabled);
+        copy.setReassignSwimlaneToInitializerValue(reassignSwimlaneToInitializerValue);
         if (getTimeOutDelay() != null) {
             copy.setTimeOutDelay(new Duration(getTimeOutDelay()));
         }
@@ -297,7 +312,8 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
         if (getBotTaskLink() != null) {
             BotTask botTask = BotCache.getBotTask(getSwimlaneBotName(), getBotTaskLink().getBotTaskName());
             if (botTask == null) {
-                errors.add(ValidationError.createLocalizedWarning(this, "taskState.botTaskLink.botTaskNotFound", getSwimlaneBotName(), getBotTaskLink().getBotTaskName()));
+                errors.add(ValidationError.createLocalizedWarning(this, "taskState.botTaskLink.botTaskNotFound", getSwimlaneBotName(),
+                        getBotTaskLink().getBotTaskName()));
                 return;
             }
             if (botTask.getParamDefConfig() == null) {
@@ -317,7 +333,8 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
                     botTaskConfigParameterNames.remove(parameter.getKey());
                     ParamDef paramDef = botTask.getParamDefConfig().getParamDef(parameter.getKey());
                     if (paramDef != null && paramDef.isUseVariable() && !variableNames.contains(parameter.getValue())) {
-                        errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.variable.doesnotexist", paramDef.getLabel(), parameter.getValue()));
+                        errors.add(ValidationError.createLocalizedError(this, "taskState.botTaskLinkConfig.variable.doesnotexist",
+                                paramDef.getLabel(), parameter.getValue()));
                     }
                 }
             }
@@ -338,7 +355,8 @@ public class TaskState extends FormNode implements Active, ITimed, Synchronizabl
                                 List<String> processVariableNames = getVariableNames(true);
                                 for (String variableName : handlerVariableNames) {
                                     if (!processVariableNames.contains(variableName)) {
-                                        errors.add(ValidationError.createLocalizedWarning(this, "taskState.simpleBotTask.usedInvalidVariable", variableName));
+                                        errors.add(ValidationError.createLocalizedWarning(this, "taskState.simpleBotTask.usedInvalidVariable",
+                                                variableName));
                                     }
                                 }
                             } catch (Exception e) {

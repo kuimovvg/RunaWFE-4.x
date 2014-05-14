@@ -13,7 +13,8 @@ import org.eclipse.swt.widgets.MenuItem;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.editor.ProcessEditorBase;
-import ru.runa.gpd.editor.gef.command.EnableReassignmentCommand;
+import ru.runa.gpd.editor.gef.command.EnableReassignSwimlaneToInitializerCommand;
+import ru.runa.gpd.editor.gef.command.EnableReassignSwimlaneToTaskPerformerCommand;
 import ru.runa.gpd.editor.gef.command.IgnoreSubstitutionCommand;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -76,8 +77,12 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
         }
         if (swimlanedNode instanceof TaskState) {
             if (selectedSwimlane != null) {
-                action = new EnableReassignmentAction();
-                action.setChecked(((TaskState) swimlanedNode).isReassignmentEnabled());
+                action = new EnableReassignSwimlaneToInitializerAction();
+                action.setChecked(((TaskState) swimlanedNode).isReassignSwimlaneToInitializerValue());
+                item = new ActionContributionItem(action);
+                item.fill(menu, -1);
+                action = new EnableReassignSwimlaneToTaskPerformerAction();
+                action.setChecked(((TaskState) swimlanedNode).isReassignSwimlaneToTaskPerformer());
                 item = new ActionContributionItem(action);
                 item.fill(menu, -1);
             }
@@ -121,14 +126,14 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
         }
     }
 
-    public class SetSwimlaneAction extends Action {
+    private class SetSwimlaneAction extends Action {
         @Override
         public void run() {
             setSwimlane(getText());
         }
     }
 
-    public class CreateSwimlaneAction extends Action {
+    private class CreateSwimlaneAction extends Action {
         public CreateSwimlaneAction() {
             setText(Localization.getString("Swimlane.createSimpleNew"));
         }
@@ -139,7 +144,7 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
         }
     }
 
-    public class ClearSwimlaneAction extends Action {
+    private class ClearSwimlaneAction extends Action {
         public ClearSwimlaneAction() {
             setText(Localization.getString("Swimlane.clear"));
         }
@@ -150,7 +155,7 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
         }
     }
 
-    public class GotoSwimlaneAction extends Action {
+    private class GotoSwimlaneAction extends Action {
         public GotoSwimlaneAction() {
             setText(Localization.getString("Swimlane.gotoEdit"));
         }
@@ -161,19 +166,31 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
         }
     }
 
-    public class EnableReassignmentAction extends Action {
-        public EnableReassignmentAction() {
-            setText(Localization.getString("Swimlane.enableReassignment"));
+    private class EnableReassignSwimlaneToInitializerAction extends Action {
+
+        public EnableReassignSwimlaneToInitializerAction() {
+            setText(Localization.getString("Swimlane.reassignSwimlaneToInitializerValue"));
         }
 
         @Override
         public void run() {
-            EnableReassignmentCommand command = new EnableReassignmentCommand((TaskState) swimlanedNode);
-            executeCommand(command);
+            executeCommand(new EnableReassignSwimlaneToInitializerCommand((TaskState) swimlanedNode));
         }
     }
 
-    public class IgnoreSubstitutionAction extends Action {
+    private class EnableReassignSwimlaneToTaskPerformerAction extends Action {
+
+        public EnableReassignSwimlaneToTaskPerformerAction() {
+            setText(Localization.getString("Swimlane.reassignSwimlaneToTaskPerformer"));
+        }
+
+        @Override
+        public void run() {
+            executeCommand(new EnableReassignSwimlaneToTaskPerformerCommand((TaskState) swimlanedNode));
+        }
+    }
+
+    private class IgnoreSubstitutionAction extends Action {
         public IgnoreSubstitutionAction() {
             setText(Localization.getString("property.ignoreSubstitution"));
         }
