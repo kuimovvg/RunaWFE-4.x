@@ -30,9 +30,9 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.dialog.MultipleSelectionDialog;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableUtils;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -127,7 +127,8 @@ public class CopyGraphCommand extends Command {
             }
             if (userConfirmedActions.size() > 0) {
                 // display dialog with collisions
-                MultipleSelectionDialog dialog = new MultipleSelectionDialog(Localization.getString("CopyGraphRewriteDialog.title"), userConfirmedActions);
+                MultipleSelectionDialog dialog = new MultipleSelectionDialog(Localization.getString("CopyGraphRewriteDialog.title"),
+                        userConfirmedActions);
                 if (dialog.open() != IDialogConstants.OK_ID) {
                     for (ExtraCopyAction copyAction : userConfirmedActions) {
                         copyAction.setEnabled(false);
@@ -238,11 +239,7 @@ public class CopyGraphCommand extends Command {
             PluginLogger.logInfo("copying " + sourceFileName + " to " + targetFileName);
             InputStream is = sourceFolder.getFile(sourceFileName).getContents();
             IFile file = targetFolder.getFile(targetFileName);
-            if (file.exists()) {
-                file.delete(true, null);
-            }
-            file.create(is, true, null);
-            file.setCharset(Charsets.UTF_8.name(), null);
+            IOUtils.createOrUpdateFile(file, is);
             return file;
         }
 
@@ -266,7 +263,7 @@ public class CopyGraphCommand extends Command {
 
     private class CopySwimlaneAction extends ExtraCopyAction {
         private final Swimlane sourceSwimlane;
-        private Swimlane oldSwimlane;
+        private final Swimlane oldSwimlane;
         private Swimlane addedSwimlane;
 
         public CopySwimlaneAction(Swimlane sourceSwimlane) {
@@ -312,7 +309,7 @@ public class CopyGraphCommand extends Command {
 
     private class CopyVariableAction extends ExtraCopyAction {
         private final Variable sourceVariable;
-        private Variable oldVariable;
+        private final Variable oldVariable;
         private Variable addedVariable;
         private VariableUserType addedUserType;
 

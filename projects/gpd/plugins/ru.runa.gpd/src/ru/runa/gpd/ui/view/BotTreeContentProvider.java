@@ -20,7 +20,6 @@ public class BotTreeContentProvider implements ITreeContentProvider {
     @Override
     public Object[] getChildren(Object parentElement) {
         if (parentElement instanceof IProject) {
-            // TODO comparator file.getParent().getName()
             List<IFolder> botFolders = IOUtils.getBotFolders((IProject) parentElement);
             return botFolders.toArray();
         } else if (parentElement instanceof IFolder) {

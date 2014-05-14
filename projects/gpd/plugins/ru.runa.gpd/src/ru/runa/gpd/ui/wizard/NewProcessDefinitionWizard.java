@@ -31,7 +31,6 @@ import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
@@ -116,7 +115,7 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                 if (cssTemplateName != null) {
                     FormCSSTemplate template = FormCSSTemplateRegistry.getTemplateNotNull(cssTemplateName);
                     IFile cssFile = IOUtils.getAdjacentFile(definitionFile, ParContentProvider.FORM_CSS_FILE_NAME);
-                    IOUtils.createFileSafely(cssFile, template.getContentAsStream());
+                    IOUtils.createFile(cssFile, template.getContentAsStream());
                 }
                 monitor.worked(1);
                 ProcessCache.newProcessDefinitionWasCreated(definitionFile);
@@ -135,12 +134,12 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
             try {
                 monitor.beginTask(Localization.getString("NewProcessDefinitionWizard.monitor.title"), 4);
                 int subprocessIndex = 1;
-                definitionFile = parentProcessDefinitionFolder.getFile(
-                        ParContentProvider.SUBPROCESS_DEFINITION_PREFIX + "1." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                definitionFile = parentProcessDefinitionFolder.getFile(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX + "1."
+                        + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
                 while (definitionFile.exists()) {
                     subprocessIndex++;
-                    definitionFile = parentProcessDefinitionFolder.getFile(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX + 
-                            subprocessIndex +"." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                    definitionFile = parentProcessDefinitionFolder.getFile(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessIndex + "."
+                            + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
                 }
                 monitor.worked(1);
                 String processName = page.getProcessName();
@@ -148,7 +147,8 @@ public class NewProcessDefinitionWizard extends Wizard implements INewWizard {
                 properties.put(BpmnSerializer.SHOW_SWIMLANE, SwimlaneDisplayMode.none.name());
                 properties.put(ProcessSerializer.ID, ParContentProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessIndex);
                 properties.put(ProcessSerializer.ACCESS_TYPE, accessType.name());
-                Document document = parentProcessDefinition.getLanguage().getSerializer().getInitialProcessDefinitionDocument(processName, properties);
+                Document document = parentProcessDefinition.getLanguage().getSerializer()
+                        .getInitialProcessDefinitionDocument(processName, properties);
                 byte[] bytes = XmlUtil.writeXml(document);
                 definitionFile.create(new ByteArrayInputStream(bytes), true, null);
                 monitor.worked(1);

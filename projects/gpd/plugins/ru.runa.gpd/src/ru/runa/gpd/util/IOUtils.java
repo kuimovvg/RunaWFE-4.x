@@ -101,19 +101,14 @@ public class IOUtils {
 
     public static void copyFile(InputStream source, IFile destinationFile) {
         try {
-            if (destinationFile.exists()) {
-                destinationFile.setContents(source, true, false, null);
-            } else {
-                destinationFile.create(source, true, null);
-                destinationFile.setCharset(Charsets.UTF_8.name(), null);
-            }
+            createOrUpdateFile(destinationFile, source);
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("Unable to copy to file " + destinationFile, e);
         } finally {
             Closeables.closeQuietly(source);
         }
     }
-    
+
     public static void copyFile(InputStream source, File destinationFile) {
         try {
             byte[] from = ByteStreams.toByteArray(source);
@@ -172,51 +167,6 @@ public class IOUtils {
         }
     }
 
-    public static IFile createFileSafely(IFile file) throws CoreException {
-        return createFileSafely(file, EMPTY_STREAM);
-    }
-
-    public static IFile createFileSafely(IFile file, InputStream stream) throws CoreException {
-        IFolder folder = (IFolder) file.getParent();
-        String fileName = file.getName();
-        if (file.exists()) {
-            throw new CoreException(new Status(IStatus.WARNING, "ru.runa.gpd", 0, "File already exist", null));
-        }
-        try {
-            file.create(stream, true, null);
-        } catch (CoreException e) {
-            // If error caused by many symbols in fileName - decreasing it
-            if (fileName.length() < 10) {
-                throw e;
-            }
-            int index = fileName.indexOf(" ");
-            if (index <= 0) {
-                index = 10;
-            }
-            String ext = getExtension(fileName);
-            if (ext.length() > 30) {
-                // omit extension
-                ext = null;
-            }
-            fileName = fileName.substring(0, index);
-            for (int i = 0; i < 100; i++) {
-                String tryFileName = fileName + i;
-                if (ext != null) {
-                    tryFileName += "." + ext;
-                }
-                file = folder.getFile(tryFileName);
-                if (!file.exists()) {
-                    break;
-                }
-            }
-            if (!file.exists()) {
-                file.create(stream, true, null);
-            }
-        }
-        file.setCharset(Charsets.UTF_8.name(), null);
-        return file;
-    }
-
     public static void createFile(IFile file) throws CoreException {
         createFile(file, EMPTY_STREAM);
     }
@@ -227,6 +177,15 @@ public class IOUtils {
         }
         file.create(stream, true, null);
         file.setCharset(Charsets.UTF_8.name(), null);
+    }
+
+    public static void createOrUpdateFile(IFile file, InputStream stream) throws CoreException {
+        if (file.exists()) {
+            file.setContents(stream, true, false, null);
+        } else {
+            file.create(stream, true, null);
+            file.setCharset(Charsets.UTF_8.name(), null);
+        }
     }
 
     public static IFile moveFileSafely(IFile file, String fileName) throws CoreException {
@@ -300,7 +259,6 @@ public class IOUtils {
             }
         }
     }
-
 
     public static IFile getCurrentFile() {
         IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -390,7 +348,7 @@ public class IOUtils {
         List<IProject> result = new ArrayList<IProject>();
         try {
             for (IProject project : getWorkspaceProjects()) {
-                if (project.getNature(BotStationNature.NATURE_ID) == null) {
+                if (project.isOpen() && project.getNature(BotStationNature.NATURE_ID) == null) {
                     result.add(project);
                 }
             }
@@ -480,7 +438,7 @@ public class IOUtils {
             }
         }
     }
-    
+
     public static IFolder getProcessFolder(IContainer container, String definitionName) {
         if (container instanceof IProject) {
             return ((IProject) container).getFolder(definitionName);
@@ -490,7 +448,7 @@ public class IOUtils {
         }
         throw new IllegalArgumentException("Unexpected " + container);
     }
-    
+
     public static boolean isProjectHasProcessNature(IProject project) {
         try {
             return project != null && project.getNature(ProcessProjectNature.NATURE_ID) != null;
@@ -500,7 +458,7 @@ public class IOUtils {
     }
 
     public static String getProcessContainerName(IContainer container) {
-        IProject project =  container.getProject();
+        IProject project = container.getProject();
         if (isProjectHasProcessNature(project)) {
             String path = container.getFullPath().toString();
             if (path.startsWith("/")) {
