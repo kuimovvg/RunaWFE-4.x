@@ -117,7 +117,8 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
 
     @Override
     public void dispose() {
-        // If bot task has been changed but not saved we should reload it from XML
+        // If bot task has been changed but not saved we should reload it from
+        // XML
         if (isDirty()) {
             try {
                 BotCache.invalidateBotTask(botTaskFile, botTask);
@@ -306,10 +307,10 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         Composite buttonArea = new Composite(dynaConfComposite, SWT.NONE);
         buttonArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttonArea.setLayout(new GridLayout(3, false));
-        Button addedParamDefButton = new Button(buttonArea, SWT.NONE);
-        addedParamDefButton.setText(Localization.getString("button.add"));
-        addedParamDefButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED);
-        addedParamDefButton.addSelectionListener(new LoggingSelectionAdapter() {
+        Button addParameterButton = new Button(buttonArea, SWT.NONE);
+        addParameterButton.setText(Localization.getString("button.add"));
+        addParameterButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED);
+        addParameterButton.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 for (ParamDefGroup group : botTask.getParamDefConfig().getGroups()) {
@@ -324,11 +325,11 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 }
             }
         });
-        final Button editParamDefButton = new Button(buttonArea, SWT.NONE);
-        editParamDefButton.setText(Localization.getString("button.edit"));
-        editParamDefButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED
+        final Button editParameterButton = new Button(buttonArea, SWT.NONE);
+        editParameterButton.setText(Localization.getString("button.edit"));
+        editParameterButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED
                 && ((IStructuredSelection) getParamTableViewer(parameterType).getSelection()).getFirstElement() != null);
-        editParamDefButton.addSelectionListener(new LoggingSelectionAdapter() {
+        editParameterButton.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 for (ParamDefGroup group : botTask.getParamDefConfig().getGroups()) {
@@ -353,11 +354,11 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 }
             }
         });
-        final Button deleteParamDefButton = new Button(buttonArea, SWT.NONE);
-        deleteParamDefButton.setText(Localization.getString("button.delete"));
-        deleteParamDefButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED
+        final Button deleteParameterButton = new Button(buttonArea, SWT.NONE);
+        deleteParameterButton.setText(Localization.getString("button.delete"));
+        deleteParameterButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED
                 && ((IStructuredSelection) getParamTableViewer(parameterType).getSelection()).getFirstElement() != null);
-        deleteParamDefButton.addSelectionListener(new LoggingSelectionAdapter() {
+        deleteParameterButton.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 for (ParamDefGroup group : botTask.getParamDefConfig().getGroups()) {
@@ -383,8 +384,8 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
             @Override
             protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
                 IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-                editParamDefButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED && selection.getFirstElement() != null);
-                deleteParamDefButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED && selection.getFirstElement() != null);
+                editParameterButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED && selection.getFirstElement() != null);
+                deleteParameterButton.setEnabled(botTask.getType() != BotTaskType.PARAMETERIZED && selection.getFirstElement() != null);
             }
         });
     }

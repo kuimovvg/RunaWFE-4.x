@@ -46,7 +46,7 @@ public class BotStationImportCommand extends BotImportCommand {
                     botStationName = r.readLine();
                     String rmiAddress = r.readLine();
                     if (BotCache.getAllBotStationNames().contains(botStationName)) {
-                        throw new Exception(Localization.getString("ImportParWizardPage.error.processWithSameNameExists"));
+                        throw new Exception(Localization.getString("ImportBotStationWizardPage.error.botstationWithSameNameExists"));
                     }
                     IProject newProject = ResourcesPlugin.getWorkspace().getRoot().getProject(botStationName);
                     IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(botStationName);
@@ -57,10 +57,10 @@ public class BotStationImportCommand extends BotImportCommand {
                     IFolder folder = newProject.getFolder("/src/botstation/");
                     IOUtils.createFolder(folder);
                     IFile file = folder.getFile("botstation");
-                    IOUtils.createFile(file, BotTaskUtils.createBotStationInfo(botStationName, rmiAddress));
+                    IOUtils.createOrUpdateFile(file, BotTaskUtils.createBotStationInfo(botStationName, rmiAddress));
                     continue;
                 }
-                //deploy bot
+                // deploy bot
                 this.botName = entry.getName();
                 this.botStationName = botStationName;
                 this.inputStream = new ByteArrayInputStream(ByteStreams.toByteArray(zin));

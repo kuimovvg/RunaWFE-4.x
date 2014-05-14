@@ -10,7 +10,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -54,17 +53,11 @@ public class NewBotStationWizard extends Wizard implements INewWizard {
                         monitor.beginTask(Localization.getString("NewBotStationWizard.monitor.title"), 3);
                         newBotStation = createNewBotStation();
                         monitor.worked(1);
-                        if (!newBotStation.exists()) {
-                            newBotStation.create(null);
-                        }
-                        if (!newBotStation.isOpen()) {
-                            newBotStation.open(null);
-                        }
                         IFolder folder = newBotStation.getProject().getFolder("/src/botstation/");
                         IOUtils.createFolder(folder);
                         monitor.worked(1);
                         IFile file = folder.getFile("botstation");
-                        IOUtils.createFile(file, BotTaskUtils.createBotStationInfo(page.getProjectName(), page.getRmiAddress()));
+                        IOUtils.createOrUpdateFile(file, BotTaskUtils.createBotStationInfo(page.getProjectName(), page.getRmiAddress()));
                         monitor.worked(1);
                         monitor.done();
                     } catch (Exception e) {
@@ -93,9 +86,6 @@ public class NewBotStationWizard extends Wizard implements INewWizard {
                 try {
                     monitor.beginTask("", 3000);
                     newProject.create(description, new SubProgressMonitor(monitor, 1000));
-                    if (monitor.isCanceled()) {
-                        throw new OperationCanceledException();
-                    }
                     newProject.open(IResource.BACKGROUND_REFRESH, new SubProgressMonitor(monitor, 1000));
                     newProject.refreshLocal(IResource.DEPTH_INFINITE, new SubProgressMonitor(monitor, 1000));
                 } finally {

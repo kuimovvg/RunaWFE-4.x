@@ -15,18 +15,12 @@ public class OpenFormScriptDelegate extends BaseModelActionDelegate {
     public void run(IAction action) {
         try {
             FormNode formNode = getSelection();
-            String fileName;
             if (!formNode.hasFormScript()) {
-                fileName = formNode.getId() + "." + FormNode.SCRIPT_SUFFIX;
-            } else {
-                fileName = formNode.getScriptFileName();
+                setNewScriptFormFile(formNode, formNode.getId() + "." + FormNode.SCRIPT_SUFFIX);
             }
-            IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);
+            IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), formNode.getScriptFileName());
             if (!file.exists()) {
-                file = IOUtils.createFileSafely(file, getClass().getResourceAsStream("/conf/form.template.js"));
-            }
-            if (!formNode.hasFormScript()) {
-                setNewScriptFormFile(formNode, file.getName());
+                IOUtils.createFile(file, getClass().getResourceAsStream("/conf/form.template.js"));
             }
             IDE.openEditor(getWorkbenchPage(), file, true);
         } catch (Exception e) {

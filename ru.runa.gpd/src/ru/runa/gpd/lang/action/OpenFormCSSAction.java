@@ -15,7 +15,7 @@ public class OpenFormCSSAction extends BaseModelActionDelegate {
         try {
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), ParContentProvider.FORM_CSS_FILE_NAME);
             if (!file.exists()) {
-                file = IOUtils.createFileSafely(file);
+                IOUtils.createFile(file);
             }
             IDE.openEditor(getWorkbenchPage(), file, true);
         } catch (Exception e) {

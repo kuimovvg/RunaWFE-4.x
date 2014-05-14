@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +42,7 @@ import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
+import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
@@ -246,7 +246,8 @@ public class WorkspaceOperations {
             } else {
                 editorId = GEFProcessEditor.ID;
             }
-            IEditorPart editorPart = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), definitionFile, editorId, true);
+            IEditorPart editorPart = IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), definitionFile, editorId,
+                    true);
             if (editorPart instanceof ProcessEditorBase) {
                 return (ProcessEditorBase) editorPart;
             }
@@ -299,12 +300,16 @@ public class WorkspaceOperations {
                 if (Dialogs.confirm(Localization.getString(getConfirmMessage(resource), resource.getName()))) {
                     if (resource instanceof IFile) {
                         IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-                        IEditorPart editor = page.findEditor(new FileEditorInput((IFile) resource));
+                        IFile botTaskFile = (IFile) resource;
+                        IEditorPart editor = page.findEditor(new FileEditorInput(botTaskFile));
                         if (editor != null) {
                             page.closeEditor(editor, false);
                         }
+                        BotTask botTask = BotCache.getBotTaskNotNull(botTaskFile.getParent().getName(), botTaskFile.getName());
+                        deleteBotTask(botTaskFile, botTask);
+                    } else {
+                        resource.delete(true, null);
                     }
-                    resource.delete(true, null);
                 }
             } catch (CoreException e) {
                 PluginLogger.logError("Error deleting", e);
@@ -348,21 +353,27 @@ public class WorkspaceOperations {
                 String configurationFileName = botTask.getName() + ".conf";
                 IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
                 ByteArrayInputStream stream = new ByteArrayInputStream(configuration.getBytes(Charsets.UTF_8));
-                if (configurationFile.exists()) {
-                    configurationFile.setContents(stream, true, true, null);
-                } else {
-                    configurationFile.create(stream, true, null);
-                }
+                IOUtils.createOrUpdateFile(configurationFile, stream);
                 info.append(configurationFileName);
             }
             info.append("\n");
             InputStream infoStream = new ByteArrayInputStream(info.toString().getBytes(Charsets.UTF_8));
-            if (botTaskFile.exists()) {
-                botTaskFile.setContents(infoStream, true, true, null);
-            } else {
-                IOUtils.createFile(botTaskFile, infoStream);
-            }
+            IOUtils.createOrUpdateFile(botTaskFile, infoStream);
             BotCache.invalidateBotTask(botTaskFile, botTask);
+        } catch (CoreException e) {
+            throw new InternalApplicationException(e);
+        }
+    }
+
+    public static void deleteBotTask(IFile botTaskFile, BotTask botTask) {
+        try {
+            botTaskFile.delete(true, null);
+            String configurationFileName = botTask.getName() + ".conf";
+            IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
+            if (configurationFile.exists()) {
+                configurationFile.delete(true, null);
+            }
+            BotCache.botTaskHasBeenDeleted(botTaskFile, botTask);
         } catch (CoreException e) {
             throw new InternalApplicationException(e);
         }
@@ -423,11 +434,11 @@ public class WorkspaceOperations {
                     botStationProject = ResourcesPlugin.getWorkspace().getRoot().getProject(newName);
                     // rename in file
                     IFile file = botStationProject.getFolder("/src/botstation/").getFile("botstation");
-                    file.setContents(BotTaskUtils.createBotStationInfo(newName, newRmi), true, true, null);
+                    IOUtils.createOrUpdateFile(file, BotTaskUtils.createBotStationInfo(newName, newRmi));
                     ResourcesPlugin.getWorkspace().getRoot().getProject(oldName).delete(true, null);
                 } else if (!newRmi.equals(oldRmi)) {
                     IFile file = botStationProject.getFolder("/src/botstation/").getFile("botstation");
-                    file.setContents(BotTaskUtils.createBotStationInfo(newName, newRmi), true, true, null);
+                    IOUtils.createOrUpdateFile(file, BotTaskUtils.createBotStationInfo(newName, newRmi));
                     refreshResources(selection.toList());
                 }
             }
@@ -470,7 +481,8 @@ public class WorkspaceOperations {
         dialog.setName(botTaskFile.getName());
         if (dialog.open() == IDialogConstants.OK_ID) {
             IFolder botFolder = (IFolder) botTaskFile.getParent();
-            List<String> dependentDefinitions = validateDependentTasks(botFolder, botTaskFile.getName());
+            BotTask botTask = BotCache.getBotTaskNotNull(botTaskFile);
+            List<String> dependentDefinitions = findDependentProcessDefinitions(botFolder, botTask);
             if (dependentDefinitions.size() > 0) {
                 showDependentTasksDialog(dependentDefinitions);
                 return;
@@ -481,54 +493,49 @@ public class WorkspaceOperations {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.findEditor(new FileEditorInput(botTaskFile));
                 if (editor != null) {
-                    page.closeEditor(editor, false);
+                    page.closeEditor(editor, true);
                 }
-                IPath oldPath = botTaskFile.getFullPath();
-                IPath newPath = botTaskFile.getParent().getFullPath().append(newName);
-                botTaskFile.copy(newPath, true, null);
-                IFile confFile = ResourcesPlugin.getWorkspace().getRoot().getFile(botTaskFile.getParent().getFullPath().append(new Path(botTaskFile.getName() + ".conf")));
-                if (confFile.exists()) {
-                    BotTask botTask = BotCache.getBotTaskNotNull(botTaskFile);
-                    String oldName = botTask.getName();
-
-                    if (!Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
-                        DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
-                        if (provider instanceof IBotFileSupportProvider) {
-                            IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
-                            // Move templates if them exist
-                            String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
-                            if (!Strings.isNullOrEmpty(oldEmbeddedFileName) && oldEmbeddedFileName.startsWith(oldName)) {
-                                IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
-                                if (embeddedFile.exists()) {
-                                    String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
-                                    IPath newEmbeddedFilePath = embeddedFile.getParent().getFullPath().append(newEmbeddedFileName);
-                                    embeddedFile.move(newEmbeddedFilePath, true, null);
-                                }
+                deleteBotTask(botTaskFile, botTask);
+                String oldName = botTask.getName();
+                if (!Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
+                    DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
+                    if (provider instanceof IBotFileSupportProvider) {
+                        IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
+                        // Move templates if them exist
+                        String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
+                        if (!Strings.isNullOrEmpty(oldEmbeddedFileName) && oldEmbeddedFileName.startsWith(oldName)) {
+                            IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
+                            if (embeddedFile.exists()) {
+                                String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
+                                IPath newEmbeddedFilePath = embeddedFile.getParent().getFullPath().append(newEmbeddedFileName);
+                                embeddedFile.move(newEmbeddedFilePath, true, null);
                             }
-                            botFileProvider.taskRenamed(botTask, oldName, newName);
                         }
+                        botFileProvider.taskRenamed(botTask, oldName, newName);
                     }
-                    botTask.setName(newName);
-
-                    botTaskFile = ResourcesPlugin.getWorkspace().getRoot().getFile(newPath);
-                    saveBotTask(botTaskFile, botTask);
-                    confFile.delete(true, null);
                 }
-                ResourcesPlugin.getWorkspace().getRoot().getFile(oldPath).delete(true, null);
-                BotCache.reload();
+                botTask.setName(newName);
+                saveBotTask(((IFolder) botTaskFile.getParent()).getFile(newName), botTask);
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
         }
     }
 
-    private static List<String> validateDependentTasks(IFolder botFolder, String botTaskName) {
+    private static List<String> findDependentProcessDefinitions(IFolder botFolder, BotTask botTask) {
         List<String> dependentDefinitions = new ArrayList<String>();
         Set<ProcessDefinition> definitions = ProcessCache.getAllProcessDefinitions();
         for (ProcessDefinition definition : definitions) {
             for (TaskState taskState : definition.getChildren(TaskState.class)) {
-                if (botTaskName.equals(taskState.getName())) {
-                    if (Objects.equal(botFolder.getName(), taskState.getSwimlaneBotName())) {
+                if (botTask.getType() == BotTaskType.SIMPLE) {
+                    if (Objects.equal(botTask.getName(), taskState.getName())) {
+                        if (Objects.equal(botFolder.getName(), taskState.getSwimlaneBotName())) {
+                            dependentDefinitions.add(definition.getName());
+                            break;
+                        }
+                    }
+                } else {
+                    if (taskState.getBotTaskLink() != null && Objects.equal(botTask.getName(), taskState.getBotTaskLink().getBotTaskName())) {
                         dependentDefinitions.add(definition.getName());
                         break;
                     }
@@ -540,12 +547,10 @@ public class WorkspaceOperations {
 
     private static void showDependentTasksDialog(List<String> dependentDefinitions) {
         StringBuffer detailsMessage = new StringBuffer();
-        Iterator<String> iterator = dependentDefinitions.iterator();
         detailsMessage.append(Localization.getString("DependentTasksDialog.detailsMessage"));
-        detailsMessage.append(iterator.next());
-        while (iterator.hasNext()) {
-            detailsMessage.append(", ");
-            detailsMessage.append(iterator.next());
+        for (String processDefinitionName : dependentDefinitions) {
+            detailsMessage.append("\n");
+            detailsMessage.append(processDefinitionName);
         }
         Dialogs.error(Localization.getString("DependentTasksDialog.errorMessage"), detailsMessage.toString());
     }
