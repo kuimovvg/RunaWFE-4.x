@@ -19,6 +19,7 @@ public abstract class ProcessSerializer {
     public static final String ASYNC_COMPLETION_MODE = "asyncCompletionMode";
     public static final String VARIABLE = "variable";
     public static final String REASSIGN = "reassign";
+    public static final String REASSIGN_SWIMLANE_TO_TASK_PERFORMER = "reassignSwimlaneToTaskPerformer";
     public static final String CLASS = "class";
     public static final String IGNORE_SUBSTITUTION_RULES = "ignoreSubstitutionRules";
     public static final String EMBEDDED = "embedded";
@@ -44,5 +45,5 @@ public abstract class ProcessSerializer {
             node.addCDATA(nodeValue);
         }
     }
-    
+
 }

@@ -8,6 +8,7 @@ import org.dom4j.Element;
 import org.dom4j.QName;
 import org.eclipse.core.resources.IFile;
 
+import ru.runa.gpd.Application;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Delegable;
@@ -39,7 +40,6 @@ import ru.runa.gpd.util.MultiinstanceParameters;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.XmlUtil;
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.AsyncCompletionMode;
 
@@ -132,7 +132,7 @@ public class BpmnSerializer extends ProcessSerializer {
             processProperties.put(ID, definition.getId());
         }
         processProperties.put(ACCESS_TYPE, definition.getAccessType().name());
-        processProperties.put(VERSION, SystemProperties.getVersion());
+        processProperties.put(VERSION, Application.getVersion().toString());
         if (definition.isInvalid()) {
             process.addAttribute(EXECUTABLE, "false");
         }
@@ -282,8 +282,11 @@ public class BpmnSerializer extends ProcessSerializer {
         }
         if (swimlanedNode instanceof TaskState) {
             TaskState taskState = (TaskState) swimlanedNode;
-            if (taskState.isReassignmentEnabled()) {
+            if (taskState.isReassignSwimlaneToInitializerValue()) {
                 properties.put(REASSIGN, "true");
+            }
+            if (!taskState.isReassignSwimlaneToTaskPerformer()) {
+                properties.put(REASSIGN_SWIMLANE_TO_TASK_PERFORMER, "false");
             }
             if (taskState.isIgnoreSubstitutionRules()) {
                 properties.put(IGNORE_SUBSTITUTION_RULES, "true");
@@ -531,7 +534,11 @@ public class BpmnSerializer extends ProcessSerializer {
                 state.setSwimlane(swimlane);
                 String reassign = properties.get(REASSIGN);
                 if (reassign != null) {
-                    state.setReassignmentEnabled(Boolean.parseBoolean(reassign));
+                    state.setReassignSwimlaneToInitializerValue(Boolean.parseBoolean(reassign));
+                }
+                String reassignSwimlaneToTaskPerformer = properties.get(REASSIGN_SWIMLANE_TO_TASK_PERFORMER);
+                if (reassignSwimlaneToTaskPerformer != null) {
+                    state.setReassignSwimlaneToTaskPerformer(Boolean.parseBoolean(reassignSwimlaneToTaskPerformer));
                 }
                 String ignore = properties.get(IGNORE_SUBSTITUTION_RULES);
                 if (ignore != null) {
@@ -630,8 +637,8 @@ public class BpmnSerializer extends ProcessSerializer {
             Node source = definition.getGraphElementByIdNotNull(transitionElement.attributeValue(SOURCE_REF));
             Node target = definition.getGraphElementById(transitionElement.attributeValue(TARGET_REF));
             if (target == null) {
-                PluginLogger.logInfo("ERROR: Unable to restore transition " + transitionElement.attributeValue(ID) + 
-                        " due to missed target node " + transitionElement.attributeValue(TARGET_REF));
+                PluginLogger.logInfo("ERROR: Unable to restore transition " + transitionElement.attributeValue(ID) + " due to missed target node "
+                        + transitionElement.attributeValue(TARGET_REF));
                 continue;
             }
             Transition transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source, false);
