@@ -30,9 +30,9 @@ public class CreateFormDelegate extends FormDelegate {
             String fileName = formNode.getId().concat(".").concat(formNode.getFormType());
             IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), fileName);
             if (!file.exists()) {
-                file = IOUtils.createFileSafely(file);
+                IOUtils.createFile(file);
             }
-            setNewFormFile(formNode, file.getName());
+            setNewFormFile(formNode, fileName);
             openForm(action, chooseFormTypeDialog.getEditorType());
         } catch (CoreException e) {
             PluginLogger.logError(e);

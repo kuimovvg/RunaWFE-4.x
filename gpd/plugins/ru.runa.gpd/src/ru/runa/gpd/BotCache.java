@@ -112,17 +112,22 @@ public class BotCache {
     public static synchronized void invalidateBotTask(IFile botTaskFile, BotTask botTask) {
         String botName = botTaskFile.getParent().getName();
         List<BotTask> botTasks = BOT_TASKS.get(botName);
+        if (botTasks == null) {
+            botTasks = Lists.newArrayList();
+            BOT_TASKS.put(botName, botTasks);
+        }
         botTasks.remove(botTask);
         BOT_TASK_FILES.remove(botTask);
         cacheBotTask(botTaskFile, botTasks);
     }
 
-    /**
-     * Notify cache about new bot task.
-     */
-    public static synchronized void newBotTaskHasBeenCreated(String botName, IFile botTaskFile, BotTask botTask) {
-        BOT_TASKS.get(botName).add(botTask);
-        BOT_TASK_FILES.put(botTask, botTaskFile);
+    public static synchronized void botTaskHasBeenDeleted(IFile botTaskFile, BotTask botTask) {
+        String botName = botTaskFile.getParent().getName();
+        List<BotTask> botTasks = BOT_TASKS.get(botName);
+        if (botTasks != null) {
+            botTasks.remove(botTask);
+        }
+        BOT_TASK_FILES.remove(botTask);
     }
 
     /**

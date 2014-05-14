@@ -52,15 +52,15 @@ public class CopyBotTaskWizard extends Wizard implements INewWizard {
                         IFile sourceBotTask = (IFile) selection.getFirstElement();
                         sourceBotTask.copy(botFolder.getFullPath().append(page.getBotTaskName()), true, monitor);
                         monitor.worked(1);
-                        //rename
+                        // rename
                         IFile confFile = ResourcesPlugin.getWorkspace().getRoot()
                                 .getFile(sourceBotTask.getParent().getFullPath().append(new Path(sourceBotTask.getName() + ".conf")));
                         if (confFile.exists()) {
                             BotTask botTaskCopy = BotCache.getBotTaskNotNull(sourceBotTask);
                             botTaskCopy.setName(page.getBotTaskName());
-                            IFile botTaskFileCopy = ResourcesPlugin.getWorkspace().getRoot().getFile(botFolder.getFullPath().append(page.getBotTaskName()));
+                            IFile botTaskFileCopy = ResourcesPlugin.getWorkspace().getRoot()
+                                    .getFile(botFolder.getFullPath().append(page.getBotTaskName()));
                             WorkspaceOperations.saveBotTask(botTaskFileCopy, botTaskCopy);
-                            BotCache.newBotTaskHasBeenCreated(botFolder.getName(), botTaskFileCopy, botTaskCopy);
                         }
                         monitor.done();
                     } catch (Exception e) {

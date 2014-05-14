@@ -13,7 +13,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
 
-import ru.runa.gpd.BotCache;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.BotTaskEditor;
 import ru.runa.gpd.lang.model.BotTask;
@@ -23,7 +22,7 @@ import ru.runa.gpd.util.WorkspaceOperations;
 
 public class NewBotTaskWizard extends Wizard implements INewWizard {
     private NewBotTaskWizardPage page;
-    private boolean extendedMode;
+    private final boolean extendedMode;
     private IStructuredSelection selection;
     private IWorkbench workbench;
 
@@ -55,7 +54,6 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
                         }
                         IFile botTaskFile = botFolder.getFile(botTask.getName());
                         WorkspaceOperations.saveBotTask(botTaskFile, botTask);
-                        BotCache.newBotTaskHasBeenCreated(botFolder.getName(), botTaskFile, botTask);
                         monitor.worked(1);
                         BotTaskEditor editor = (BotTaskEditor) IDE.openEditor(getActivePage(), botTaskFile, BotTaskEditor.ID, true);
                         editor.setExtendedMode(extendedMode);

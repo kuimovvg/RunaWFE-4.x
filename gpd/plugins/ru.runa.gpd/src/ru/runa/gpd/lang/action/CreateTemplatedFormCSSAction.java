@@ -35,16 +35,13 @@ public class CreateTemplatedFormCSSAction extends BaseModelDropDownActionDelegat
         public void run() {
             try {
                 IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), ParContentProvider.FORM_CSS_FILE_NAME);
-                if (!file.exists()) {
-                    file = IOUtils.createFileSafely(file);
-                }
                 FormCSSTemplate template = FormCSSTemplateRegistry.getTemplateNotNull(name);
-                file.setContents(template.getContentAsStream(), true, false, null);
+                IOUtils.createOrUpdateFile(file, template.getContentAsStream());
                 IDE.openEditor(getWorkbenchPage(), file, true);
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
         }
     }
-    
+
 }

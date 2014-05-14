@@ -79,11 +79,7 @@ public class ParContentProvider {
                         contentBytes = XmlUtil.writeXml(document);
                     }
                     InputStream content = new ByteArrayInputStream(contentBytes);
-                    if (!file.exists()) {
-                        file.create(content, true, null);
-                    } else {
-                        file.setContents(content, true, true, null);
-                    }
+                    IOUtils.createOrUpdateFile(file, content);
                 } else {
                     if (file.exists()) {
                         file.delete(true, null);
