@@ -15,8 +15,10 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.upload.FormFile;
 
+import ru.runa.common.WebResources;
 import ru.runa.wf.web.servlet.UploadedFile;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
 import ru.runa.wfe.form.Interaction;
@@ -175,7 +177,7 @@ public class FormSubmissionUtils {
             ComplexVariable complexVariable = new ComplexVariable();
             for (VariableDefinition expandedDefinition : expandedDefinitions) {
                 Object componentValue = extractVariable(request, userInput, expandedDefinition, formatErrorsForFields);
-                String attributeName = expandedDefinition.getName().substring(variableDefinition.getName().length()+1);
+                String attributeName = expandedDefinition.getName().substring(variableDefinition.getName().length() + 1);
                 complexVariable.put(attributeName, componentValue);
             }
             variableValue = complexVariable;
@@ -216,6 +218,9 @@ public class FormSubmissionUtils {
                         contentType = "application/octet-stream";
                     }
                     return new FileVariable(formFile.getFileName(), formFile.getFileData(), contentType);
+                }
+                if (SystemProperties.isV3CompatibilityMode() || !WebResources.isAjaxFileInputEnabled()) {
+                    return IGNORED_VALUE;
                 }
             } else if (value instanceof UploadedFile) {
                 UploadedFile uploadedFile = (UploadedFile) value;
