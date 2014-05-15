@@ -157,7 +157,9 @@ public class FormSubmissionUtils {
                     VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
                     componentDefinition.setUserTypes(variableDefinition.getUserTypes());
                     Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
-                    list.add(componentValue);
+                    if (!Objects.equal(IGNORED_VALUE, componentValue)) {
+                        list.add(componentValue);
+                    }
                 }
                 variableValue = list;
             } else {
@@ -177,8 +179,10 @@ public class FormSubmissionUtils {
             ComplexVariable complexVariable = new ComplexVariable();
             for (VariableDefinition expandedDefinition : expandedDefinitions) {
                 Object componentValue = extractVariable(request, userInput, expandedDefinition, formatErrorsForFields);
-                String attributeName = expandedDefinition.getName().substring(variableDefinition.getName().length() + 1);
-                complexVariable.put(attributeName, componentValue);
+                if (!Objects.equal(IGNORED_VALUE, componentValue)) {
+                    String attributeName = expandedDefinition.getName().substring(variableDefinition.getName().length() + 1);
+                    complexVariable.put(attributeName, componentValue);
+                }
             }
             variableValue = complexVariable;
         } else {
