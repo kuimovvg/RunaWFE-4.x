@@ -68,9 +68,18 @@ public abstract class FilesSupplierConfig {
             throw new InternalApplicationException("Variable '" + inputFileVariableName + "' should contains a file");
         }
         if (inputFilePath != null) {
-            if (inputFilePath.startsWith(IFileDataProvider.PROCESS_FILE_PROTOCOL) || 
-            	inputFilePath.startsWith(IFileDataProvider.BOT_TASK_FILE_PROTOCOL)) {
-                byte[] data = fileDataProvider.getFileDataNotNull(inputFilePath);
+            if (inputFilePath.startsWith(IFileDataProvider.PROCESS_FILE_PROTOCOL)
+                    || inputFilePath.startsWith(IFileDataProvider.BOT_TASK_FILE_PROTOCOL)) {
+
+                String inputFilePathWithoutProtocol = inputFilePath;
+                if (inputFilePath.startsWith(IFileDataProvider.PROCESS_FILE_PROTOCOL)) {
+                    inputFilePathWithoutProtocol = inputFilePath.substring(IFileDataProvider.PROCESS_FILE_PROTOCOL.length());
+                }
+                if (inputFilePath.startsWith(IFileDataProvider.BOT_TASK_FILE_PROTOCOL)) {
+                    inputFilePathWithoutProtocol = inputFilePath.substring(IFileDataProvider.BOT_TASK_FILE_PROTOCOL.length());
+                }
+
+                byte[] data = fileDataProvider.getFileDataNotNull(inputFilePathWithoutProtocol);
                 return new ByteArrayInputStream(data);
             }
             String path = (String) ExpressionEvaluator.evaluateVariableNotNull(variableProvider, inputFilePath);
