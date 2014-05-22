@@ -1,5 +1,6 @@
 package ru.runa.gpd.bot;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.Path;
 
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.util.BotScriptUtils;
+import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 
 import com.google.common.base.Preconditions;
@@ -44,7 +46,7 @@ public class BotImportCommand extends BotSyncCommand {
                 byte[] bytes = ByteStreams.toByteArray(botZin);
                 files.put(botEntry.getName(), bytes);
             }
-            //create bot
+            // create bot
             String botFolderName = botName.replaceAll(Pattern.quote(".bot"), "");
             IPath path = new Path(botStationName).append("/src/botstation/").append(botFolderName);
             IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getFolder(path);
@@ -54,9 +56,19 @@ public class BotImportCommand extends BotSyncCommand {
             byte[] scriptXml = files.remove("script.xml");
             Preconditions.checkNotNull(scriptXml, "No script.xml");
             List<BotTask> botTasks = BotScriptUtils.getBotTasksFromScript(scriptXml, files);
+
             for (BotTask botTask : botTasks) {
                 IFile file = folder.getFile(botTask.getName());
                 WorkspaceOperations.saveBotTask(file, botTask);
+
+                // Save embedded files too.
+                for (String fileToSave : botTask.getFilesToSave()) {
+                    if (files.get(fileToSave) == null) {
+                        continue;
+                    }
+                    IOUtils.createOrUpdateFile(folder.getFile(fileToSave), new ByteArrayInputStream(files.get(fileToSave)));
+                }
+                botTask.getFilesToSave().clear();
             }
         } catch (Exception e) {
             throw new InvocationTargetException(e);

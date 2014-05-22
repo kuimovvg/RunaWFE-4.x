@@ -408,6 +408,7 @@
 							<xs:extension base="xs:string">
 								<xs:attribute name="name" type="xs:string" use="required"/>
 								<xs:attribute name="handler" type="xs:string" use="optional"/>
+								<xs:attribute name="embeddedFile" type="xs:string" use="optional"/>
 								<xs:attribute name="configuration" type="xs:string"/>
 								<xs:attribute name="configurationContent" type="xs:string"/>
 							</xs:extension>
