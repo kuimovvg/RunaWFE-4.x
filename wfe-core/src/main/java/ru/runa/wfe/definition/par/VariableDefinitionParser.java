@@ -38,7 +38,7 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
 
     @Override
     public void readFromArchive(ProcessArchive archive, ProcessDefinition processDefinition) {
-        byte[] xml = archive.getFileDataNotNull(IFileDataProvider.VARIABLES_XML_FILE_NAME);
+        byte[] xml = processDefinition.getFileDataNotNull(IFileDataProvider.VARIABLES_XML_FILE_NAME);
         Document document = XmlUtils.parseWithoutValidation(xml);
         Element root = document.getRootElement();
         Map<String, VariableUserType> userTypes = Maps.newHashMap();

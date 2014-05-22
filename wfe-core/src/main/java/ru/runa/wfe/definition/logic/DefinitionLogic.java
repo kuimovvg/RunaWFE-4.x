@@ -34,6 +34,7 @@ import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.DefinitionNameMismatchException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.Deployment;
+import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.par.ProcessArchive;
@@ -250,7 +251,7 @@ public class DefinitionLogic extends WFCommonLogic {
         if (!ProcessArchive.UNSECURED_FILE_NAMES.contains(fileName)) {
             checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         }
-        if (ProcessArchive.PAR_FILE.equals(fileName)) {
+        if (IFileDataProvider.PAR_FILE.equals(fileName)) {
             return definition.getDeployment().getContent();
         }
         return definition.getFileData(fileName);

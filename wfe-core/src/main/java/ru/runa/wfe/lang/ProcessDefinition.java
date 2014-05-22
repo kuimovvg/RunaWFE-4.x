@@ -194,13 +194,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
     @Override
     public byte[] getFileData(String fileName) {
         Preconditions.checkNotNull(fileName, "fileName");
-        String realFileName;
-    	if(fileName.startsWith(PROCESS_FILE_PROTOCOL)) {
-    		realFileName = fileName.substring(PROCESS_FILE_PROTOCOL.length());
-    	} else {
-    		realFileName = fileName;
-    	}
-        return processFiles.get(realFileName);
+        return processFiles.get(fileName);
     }
 
     @Override

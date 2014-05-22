@@ -26,7 +26,7 @@ public class ProcessDefinitionParser implements ProcessArchiveParser {
         if (processDefinition instanceof SubprocessDefinition) {
             fileName = processDefinition.getNodeId() + "." + fileName;
         }
-        byte[] definitionXml = processArchive.getFileDataNotNull(fileName);
+        byte[] definitionXml = processDefinition.getFileDataNotNull(fileName);
         Document document = XmlUtils.parseWithoutValidation(definitionXml);
         Element root = document.getRootElement();
         if ("process-definition".equals(root.getName())) {
