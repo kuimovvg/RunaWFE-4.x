@@ -60,7 +60,7 @@ public class InteractionsParser implements ProcessArchiveParser {
             if (processDefinition instanceof SubprocessDefinition) {
                 formsFileName = processDefinition.getNodeId() + "." + formsFileName;
             }
-            byte[] formsXml = archive.getFileData(formsFileName);
+            byte[] formsXml = processDefinition.getFileData(formsFileName);
             if (formsXml == null) {
                 return;
             }
@@ -78,20 +78,20 @@ public class InteractionsParser implements ProcessArchiveParser {
 
                 byte[] formCode = null;
                 if (!Strings.isNullOrEmpty(fileName)) {
-                    formCode = archive.getFileDataNotNull(fileName);
+                    formCode = processDefinition.getFileDataNotNull(fileName);
                 }
                 byte[] validationXml = null;
                 if (!Strings.isNullOrEmpty(validationFileName)) {
-                    validationXml = archive.getFileDataNotNull(validationFileName);
+                    validationXml = processDefinition.getFileDataNotNull(validationFileName);
                 }
                 byte[] scriptJs = null;
                 if (!Strings.isNullOrEmpty(scriptFileName)) {
-                    scriptJs = archive.getFileDataNotNull(scriptFileName);
+                    scriptJs = processDefinition.getFileDataNotNull(scriptFileName);
                 }
-                byte[] css = archive.getFileData(IFileDataProvider.FORM_CSS_FILE_NAME);
+                byte[] css = processDefinition.getFileData(IFileDataProvider.FORM_CSS_FILE_NAME);
                 byte[] template = null;
                 if (!Strings.isNullOrEmpty(templateFileName)) {
-                    template = archive.getFileDataNotNull(templateFileName);
+                    template = processDefinition.getFileDataNotNull(templateFileName);
                 }
                 Interaction interaction = new Interaction(node, typeName, formCode, validationXml, jsValidationEnabled, scriptJs, css, template);
                 if (validationXml != null) {

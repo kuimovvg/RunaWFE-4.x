@@ -40,26 +40,26 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
-public class ProcessArchive extends FileDataProvider {
+public class ProcessArchive {
     private final Deployment deployment;
     public static List<String> UNSECURED_FILE_NAMES = Lists.newArrayList();
     static {
-        UNSECURED_FILE_NAMES.add(START_IMAGE_FILE_NAME);
-        UNSECURED_FILE_NAMES.add(START_DISABLED_IMAGE_FILE_NAME);
-        UNSECURED_FILE_NAMES.add(BOTS_XML_FILE);
+        UNSECURED_FILE_NAMES.add(IFileDataProvider.START_IMAGE_FILE_NAME);
+        UNSECURED_FILE_NAMES.add(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME);
+        UNSECURED_FILE_NAMES.add(IFileDataProvider.BOTS_XML_FILE);
     }
 
     static List<ProcessArchiveParser> processArchiveParsers = new ArrayList<ProcessArchiveParser>();
     static {
-        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new ProcessDefinitionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new FileArchiveParser()));
+        processArchiveParsers.add(ApplicationContextFactory.autowireBean(new ProcessDefinitionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new VariableDefinitionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new InteractionsParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new TaskSubsitutionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new GraphXmlParser()));
     }
 
-    private Map<String, byte[]> fileData = Maps.newHashMap();
+    private final Map<String, byte[]> fileData = Maps.newHashMap();
 
     public ProcessArchive(Deployment deployment) {
         try {
@@ -87,7 +87,7 @@ public class ProcessArchive extends FileDataProvider {
         }
         int subprocessCounter = 1;
         String testXml = IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + "1." + IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME;
-        while (getFileData(testXml) != null) {
+        while (processDefinition.getFileData(testXml) != null) {
             SubprocessDefinition subprocessDefinition = new SubprocessDefinition(processDefinition);
             subprocessDefinition.setNodeId(IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessCounter);
             for (ProcessArchiveParser processArchiveParser : processArchiveParsers) {
@@ -105,11 +105,6 @@ public class ProcessArchive extends FileDataProvider {
 
     public Map<String, byte[]> getFileData() {
         return fileData;
-    }
-
-    @Override
-    public byte[] getFileData(String fileName) {
-        return fileData.get(fileName);
     }
 
 }

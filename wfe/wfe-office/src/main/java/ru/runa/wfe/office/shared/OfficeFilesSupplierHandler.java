@@ -2,7 +2,7 @@ package ru.runa.wfe.office.shared;
 
 import java.util.Map;
 
-import ru.runa.wf.logic.bot.EmbeddedFileDataProvider;
+import ru.runa.wf.logic.bot.BotFileDataProvider;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandler;
@@ -35,6 +35,6 @@ public abstract class OfficeFilesSupplierHandler<T extends FilesSupplierConfig> 
 
     @Override
     public Map<String, Object> handle(User user, IVariableProvider variableProvider, WfTask task) throws Exception {
-        return executeAction(variableProvider, new EmbeddedFileDataProvider(user, task.getDefinitionId(), embeddedFile));
+        return executeAction(variableProvider, new BotFileDataProvider(embeddedFile));
     }
 }
