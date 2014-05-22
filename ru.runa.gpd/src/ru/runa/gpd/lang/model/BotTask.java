@@ -22,8 +22,10 @@ public class BotTask implements Delegable, Comparable<BotTask> {
     private String delegationClassName = "";
     private String delegationConfiguration = "";
     private ParamDefConfig paramDefConfig;
+    private final List<String> filesToSave;
 
     public BotTask() {
+        filesToSave = Lists.newArrayList();
     }
 
     public BotTaskType getType() {
@@ -32,6 +34,10 @@ public class BotTask implements Delegable, Comparable<BotTask> {
 
     public void setType(BotTaskType type) {
         this.type = type;
+    }
+
+    public List<String> getFilesToSave() {
+        return filesToSave;
     }
 
     public String getName() {
