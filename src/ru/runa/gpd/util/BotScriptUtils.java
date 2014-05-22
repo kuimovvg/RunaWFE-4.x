@@ -77,10 +77,15 @@ public class BotScriptUtils {
                     continue;
                 }
                 String handler = botElement.attributeValue(HANDLER_ATTRIBUTE_NAME, "");
+                String embeddedFileName = botElement.attributeValue(EMBEDDED_FILE_ATTRIBUTE_NAME, "");
                 String configurationFileName = botElement.attributeValue(CONFIGURATION_STRING_ATTRIBUTE_NAME);
                 byte[] configurationFileData = files.remove(configurationFileName);
                 String configuration = configurationFileData != null ? new String(configurationFileData, Charsets.UTF_8) : "";
-                botTasks.add(BotTaskUtils.createBotTask(name, handler, configuration));
+                BotTask botTask = BotTaskUtils.createBotTask(name, handler, configuration);
+                if (!Strings.isNullOrEmpty(embeddedFileName)) {
+                    botTask.getFilesToSave().add(embeddedFileName);
+                }
+                botTasks.add(botTask);
             }
         }
         return botTasks;
