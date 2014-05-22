@@ -31,6 +31,8 @@ import ru.runa.wfe.script.AdminScriptRunner;
 import ru.runa.wfe.service.utils.AdminScriptUtils;
 import ru.runa.wfe.user.User;
 
+import com.google.common.base.Strings;
+
 public class WfeScriptForBotStations extends AdminScriptRunner {
 
     private final boolean replace;
@@ -68,6 +70,11 @@ public class WfeScriptForBotStations extends AdminScriptRunner {
                 Element taskElement = addTasks.addElement("botConfiguration");
                 taskElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, task.getName());
                 taskElement.addAttribute(AdminScriptConstants.HANDLER_ATTRIBUTE_NAME, task.getTaskHandlerClassName());
+
+                if (!Strings.isNullOrEmpty(task.getEmbeddedFileName())) {
+                    taskElement.addAttribute(AdminScriptConstants.EMBEDDED_FILE_ATTRIBUTE_NAME, task.getEmbeddedFileName());
+                }
+
                 if (task.getConfiguration() != null) {
                     taskElement.addAttribute(AdminScriptConstants.CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
                 }

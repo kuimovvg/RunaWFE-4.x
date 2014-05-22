@@ -960,17 +960,20 @@ public class AdminScriptRunner {
         Bot bot = botLogic.getBotNotNull(user, botStation.getId(), botName);
         List<Element> taskNodeList = element.elements(AdminScriptConstants.BOT_CONFIGURATION_ELEMENT_NAME);
         for (Element taskElement : taskNodeList) {
-            
-        	String name = taskElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
+
+            String name = taskElement.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
             String handler = taskElement.attributeValue(AdminScriptConstants.HANDLER_ATTRIBUTE_NAME, "");
-            String embeddedFile = taskElement.attributeValue(AdminScriptConstants.EMBEDDED_FILE_ATTRIBUTE_NAME, "");
-            
+            String embeddedFileName = taskElement.attributeValue(AdminScriptConstants.EMBEDDED_FILE_ATTRIBUTE_NAME, "");
+
             BotTask task = new BotTask(bot, name);
             task.setTaskHandlerClassName(handler);
-            
+
             // Add BotTask embedded file if exists
-            if(! Strings.isNullOrEmpty(embeddedFile)) task.setEmbeddedFile(configs.get(embeddedFile));
-            
+            if (!Strings.isNullOrEmpty(embeddedFileName)) {
+                task.setEmbeddedFile(configs.get(embeddedFileName));
+                task.setEmbeddedFileName(embeddedFileName);
+            }
+
             String config = taskElement.attributeValue(AdminScriptConstants.CONFIGURATION_STRING_ATTRIBUTE_NAME);
             byte[] configuration;
             if (Strings.isNullOrEmpty(config)) {

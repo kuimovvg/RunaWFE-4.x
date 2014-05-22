@@ -39,6 +39,7 @@ import ru.runa.wfe.user.User;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
@@ -197,11 +198,16 @@ public class BotServiceBean implements BotServiceLocal, BotServiceRemote {
             zipStream.write(script);
             for (BotTask task : tasks) {
                 byte[] conf = task.getConfiguration();
-                if (conf == null || conf.length == 0) {
-                    continue;
+                if (conf != null && conf.length != 0) {
+                    zipStream.putNextEntry(new ZipEntry(task.getName() + ".conf"));
+                    zipStream.write(conf);
                 }
-                zipStream.putNextEntry(new ZipEntry(task.getName() + ".conf"));
-                zipStream.write(conf);
+
+                byte[] embeddedFile = task.getEmbeddedFile();
+                if (embeddedFile != null && !Strings.isNullOrEmpty(task.getEmbeddedFileName())) {
+                    zipStream.putNextEntry(new ZipEntry(task.getEmbeddedFileName()));
+                    zipStream.write(embeddedFile);
+                }
             }
             zipStream.close();
             baos.flush();
