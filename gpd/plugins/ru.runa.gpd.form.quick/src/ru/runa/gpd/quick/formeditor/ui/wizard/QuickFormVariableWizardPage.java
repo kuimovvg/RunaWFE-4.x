@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import com.google.common.base.Strings;
-
 import ru.runa.gpd.formeditor.ftl.MethodTag;
 import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
@@ -37,11 +35,13 @@ import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.util.VariableUtils;
 
+import com.google.common.base.Strings;
+
 public class QuickFormVariableWizardPage extends WizardPage {
     private ComboViewer tagType;
     private Combo variableCombo;
-    private ProcessDefinition processDefinition;
-    private QuickFormGpdVariable variableDef;
+    private final ProcessDefinition processDefinition;
+    private final QuickFormGpdVariable variableDef;
     private String paramValue;
 
     protected QuickFormVariableWizardPage(ProcessDefinition processDefinition, QuickFormGpdVariable variableDef) {
@@ -53,6 +53,8 @@ public class QuickFormVariableWizardPage extends WizardPage {
         if (variableDef != null) {
             this.variableDef.setTagName(variableDef.getTagName());
             this.variableDef.setName(variableDef.getName());
+            this.variableDef.setScriptingName(variableDef.getScriptingName());
+            this.variableDef.setDescription(variableDef.getDescription());
             this.variableDef.setFormatLabel(variableDef.getFormatLabel());
             this.variableDef.setParams(variableDef.getParams());
         }

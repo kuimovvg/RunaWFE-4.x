@@ -45,38 +45,38 @@ import ru.runa.gpd.util.VariableUtils;
 
 public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
 
-	private ProcessDefinition processDefinition;
-	private Button checkAllCheckbox;
-	private List<QuickFormGpdVariable> selectedVariables = new ArrayList<QuickFormGpdVariable>();
-	private List<QuickFormGpdVariable> initialVariables = new ArrayList<QuickFormGpdVariable>();
-	private List<Button> checkboxes = new ArrayList<Button>();
-	private Map<String, Boolean> sectionState = new HashMap<String, Boolean>();
-	private ScrolledComposite scrolledComposite;
-	
-	protected QuickFormVariabliesToDisplayWizardPage(ProcessDefinition processDefinition, List<QuickFormGpdVariable> quickFormVariableDefs) {
-		super(Messages.getString("QuickFormVariabliesToDisplayWizardPage.page.title"));
+    private final ProcessDefinition processDefinition;
+    private Button checkAllCheckbox;
+    private final List<QuickFormGpdVariable> selectedVariables = new ArrayList<QuickFormGpdVariable>();
+    private final List<QuickFormGpdVariable> initialVariables = new ArrayList<QuickFormGpdVariable>();
+    private final List<Button> checkboxes = new ArrayList<Button>();
+    private final Map<String, Boolean> sectionState = new HashMap<String, Boolean>();
+    private ScrolledComposite scrolledComposite;
+
+    protected QuickFormVariabliesToDisplayWizardPage(ProcessDefinition processDefinition, List<QuickFormGpdVariable> quickFormVariableDefs) {
+        super(Messages.getString("QuickFormVariabliesToDisplayWizardPage.page.title"));
         setTitle(Messages.getString("QuickFormVariabliesToDisplayWizardPage.page.title"));
         setDescription(Messages.getString("QuickFormVariabliesToDisplayWizardPage.page.description"));
-		this.processDefinition = processDefinition;
-		if(quickFormVariableDefs != null && quickFormVariableDefs.size() > 0) {
-			for(QuickFormGpdVariable variable : quickFormVariableDefs) {
-				selectedVariables.add(variable);
-				initialVariables.add(variable);
-			}
-		}		
-	}
+        this.processDefinition = processDefinition;
+        if (quickFormVariableDefs != null && quickFormVariableDefs.size() > 0) {
+            for (QuickFormGpdVariable variable : quickFormVariableDefs) {
+                selectedVariables.add(variable);
+                initialVariables.add(variable);
+            }
+        }
+    }
 
-	@Override
-	public void createControl(Composite parent) {
-		initializeDialogUnits(parent);
-		createView(parent);        
-	}
-	
-	private void createView(Composite parent) {
+    @Override
+    public void createControl(Composite parent) {
+        initializeDialogUnits(parent);
+        createView(parent);
+    }
+
+    private void createView(Composite parent) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout());
         composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        
+
         createCheckAllVariables(composite);
         createVariableCheckboxes(composite);
         checkAllCheckbox.setSelection(selectedVariables.size() == checkboxes.size());
@@ -87,66 +87,68 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
         parent.layout(true, true);
         setPageComplete(false);
     }
-	
-	private void createCheckAllVariables(final Composite parent) {
-		checkAllCheckbox = new Button(parent, SWT.CHECK);
+
+    private void createCheckAllVariables(final Composite parent) {
+        checkAllCheckbox = new Button(parent, SWT.CHECK);
         checkAllCheckbox.setText(Messages.getString("QuickFormVariabliesToDisplayWizardPage.selectall.label"));
         checkAllCheckbox.addSelectionListener(new LoggingSelectionAdapter() {
-        	@Override
+            @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-        		for(Button checkbox : checkboxes) {
-        			if(!checkbox.getSelection()) {
-        				checkbox.setSelection(true);
-            			checkbox.notifyListeners(SWT.Selection, new Event());
-        			}        			
-        		}
-        		setPageComplete(true);
-        	}
+                for (Button checkbox : checkboxes) {
+                    if (!checkbox.getSelection()) {
+                        checkbox.setSelection(true);
+                        checkbox.notifyListeners(SWT.Selection, new Event());
+                    }
+                }
+                setPageComplete(true);
+            }
         });
-	}
-	
-	private void createVariableCheckboxes(final Composite parent) {
-		scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
+    }
+
+    private void createVariableCheckboxes(final Composite parent) {
+        scrolledComposite = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
         scrolledComposite.setExpandHorizontal(true);
         scrolledComposite.setExpandVertical(true);
         scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
         final Composite checkboxesArea = new Composite(scrolledComposite, SWT.NONE);
-        
-		checkboxesArea.setLayout(new GridLayout(1, true));
+
+        checkboxesArea.setLayout(new GridLayout(1, true));
         GridData gridData = new GridData(GridData.FILL_BOTH);
         gridData.horizontalAlignment = SWT.LEFT;
         gridData.verticalAlignment = SWT.TOP;
         checkboxesArea.setLayoutData(gridData);
-        
-		List<String> names = processDefinition.getVariableNames(true);
-		
-		for(String name : names) {
-			QuickFormGpdVariable paramVariable = null; 
-			for(QuickFormGpdVariable variable : initialVariables) {
-				if(name.equals(variable.getName())) {
-					paramVariable = variable;
-					break;
-				}
-			}
-			if(paramVariable == null) {
-				paramVariable = new QuickFormGpdVariable();
-				Variable variable = VariableUtils.getVariableByName(processDefinition, name);
-				paramVariable.setTagName(QuickFormType.READ_TAG);
-				paramVariable.setName(variable.getName());
-				paramVariable.setFormatLabel(variable.getFormatLabel());
-				paramVariable.setParams(new String[] { "false" });
-			}
-			createCheckbox(checkboxesArea, paramVariable);	        
-		}
+
+        List<String> names = processDefinition.getVariableNames(true);
+
+        for (String name : names) {
+            QuickFormGpdVariable paramVariable = null;
+            for (QuickFormGpdVariable variable : initialVariables) {
+                if (name.equals(variable.getName())) {
+                    paramVariable = variable;
+                    break;
+                }
+            }
+            if (paramVariable == null) {
+                paramVariable = new QuickFormGpdVariable();
+                Variable variable = VariableUtils.getVariableByName(processDefinition, name);
+                paramVariable.setTagName(QuickFormType.READ_TAG);
+                paramVariable.setName(variable.getName());
+                paramVariable.setScriptingName(variable.getScriptingName());
+                paramVariable.setDescription(variable.getDescription());
+                paramVariable.setFormatLabel(variable.getFormatLabel());
+                paramVariable.setParams(new String[] { "false" });
+            }
+            createCheckbox(checkboxesArea, paramVariable);
+        }
 
         scrolledComposite.setContent(checkboxesArea);
-        scrolledComposite.setMinSize(checkboxesArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));        
-	}
-	
-	private void createCheckbox(final Composite parent, final QuickFormGpdVariable variableDef) {
-		
-		Section section = new Section(parent, ExpandableComposite.COMPACT | ExpandableComposite.TWISTIE);
-		section.marginHeight = 5;
+        scrolledComposite.setMinSize(checkboxesArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+    }
+
+    private void createCheckbox(final Composite parent, final QuickFormGpdVariable variableDef) {
+
+        Section section = new Section(parent, ExpandableComposite.COMPACT | ExpandableComposite.TWISTIE);
+        section.marginHeight = 5;
         section.marginWidth = 5;
         section.setText(variableDef.getName());
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -154,10 +156,10 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
         gridData.minimumHeight = 100;
         section.setLayoutData(gridData);
         Composite clientArea = new Composite(section, SWT.NONE);
-        section.setClient(clientArea); 
-        if(sectionState.get(variableDef.getName()) != null) {
-        	section.setExpanded(sectionState.get(variableDef.getName()));
-        }        
+        section.setClient(clientArea);
+        if (sectionState.get(variableDef.getName()) != null) {
+            section.setExpanded(sectionState.get(variableDef.getName()));
+        }
         gridData = new GridData(GridData.FILL_HORIZONTAL);
         clientArea.setLayoutData(gridData);
         GridLayout layout = new GridLayout(3, false);
@@ -165,56 +167,56 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
         clientArea.setLayout(layout);
         section.addExpansionListener(new ExpansionAdapter() {
             @Override
-            public void expansionStateChanged(ExpansionEvent e) {                
+            public void expansionStateChanged(ExpansionEvent e) {
                 sectionState.put(variableDef.getName(), e.getState());
                 scrolledComposite.setMinSize(parent.computeSize(SWT.DEFAULT, SWT.DEFAULT));
             }
         });
-        
+
         final Button variableCheckbox = new Button(clientArea, SWT.CHECK);
         variableCheckbox.setSelection(selectedVariables.contains(variableDef));
         variableCheckbox.setEnabled(!initialVariables.contains(variableDef));
-        //variableCheckbox.setText(name);
+        // variableCheckbox.setText(name);
         variableCheckbox.addSelectionListener(new LoggingSelectionAdapter() {
-        	@Override
+            @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-        		if(selectedVariables.contains(variableDef)) {
-        			selectedVariables.remove(variableDef);
-        		} else {
-        			selectedVariables.add(variableDef);
-        		}    
-        		checkAllCheckbox.setSelection(selectedVariables.size() == checkboxes.size());
-        		checkAllCheckbox.setEnabled(selectedVariables.size() != checkboxes.size());
-        		setPageComplete(true);
-        	}
+                if (selectedVariables.contains(variableDef)) {
+                    selectedVariables.remove(variableDef);
+                } else {
+                    selectedVariables.add(variableDef);
+                }
+                checkAllCheckbox.setSelection(selectedVariables.size() == checkboxes.size());
+                checkAllCheckbox.setEnabled(selectedVariables.size() != checkboxes.size());
+                setPageComplete(true);
+            }
         });
         checkboxes.add(variableCheckbox);
-        
-		createClientArea(clientArea, variableDef);
-	}
-	
-	private void createClientArea(Composite clientArea, final QuickFormGpdVariable variableDef) {
-		for (Control control : clientArea.getChildren()) {
-			if(control instanceof Button && checkboxes.contains(control)) {
-				continue;
-			}
+
+        createClientArea(clientArea, variableDef);
+    }
+
+    private void createClientArea(Composite clientArea, final QuickFormGpdVariable variableDef) {
+        for (Control control : clientArea.getChildren()) {
+            if (control instanceof Button && checkboxes.contains(control)) {
+                continue;
+            }
             control.dispose();
         }
-        
-        ComboViewer tagType = createTagTypeField(clientArea, variableDef);  
+
+        ComboViewer tagType = createTagTypeField(clientArea, variableDef);
         tagType.getCombo().setEnabled(!initialVariables.contains(variableDef));
-        
+
         String paramValue = "";
         if (variableDef != null && variableDef.getParams() != null && variableDef.getParams().length > 0) {
             paramValue = variableDef.getParams()[0];
         }
-        
-        createParamField(clientArea, tagType, paramValue, variableDef); 
-        
-        clientArea.layout(true, true);        
-	}
-	
-	private ComboViewer createTagTypeField(final Composite parent, final QuickFormGpdVariable variableDef) {
+
+        createParamField(clientArea, tagType, paramValue, variableDef);
+
+        clientArea.layout(true, true);
+    }
+
+    private ComboViewer createTagTypeField(final Composite parent, final QuickFormGpdVariable variableDef) {
         List<SelectItem> types = new ArrayList<SelectItem>();
         FreemarkerConfigurationGpdWrap freemarkerConfiguration = FreemarkerConfigurationGpdWrap.getInstance();
 
@@ -252,7 +254,7 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
                 createClientArea(parent, variableDef);
             }
         });
-        
+
         if (variableDef != null && variableDef.getTagName() != null) {
             SelectItem[] selectItems = (SelectItem[]) tagType.getInput();
             for (SelectItem selectItem : selectItems) {
@@ -262,11 +264,11 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
                 }
             }
         }
-        
+
         return tagType;
     }
-	
-	private void createParamField(Composite parent, ComboViewer tagType, String paramValue, final QuickFormGpdVariable variableDef) {
+
+    private void createParamField(Composite parent, ComboViewer tagType, String paramValue, final QuickFormGpdVariable variableDef) {
         Map<String, MethodTag> methodTags = MethodTag.getAll();
         if (methodTags != null) {
             for (MethodTag methodTag : methodTags.values()) {
@@ -312,7 +314,7 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
                                 @Override
                                 protected void onSelectionChanged(SelectionChangedEvent e) throws Exception {
                                     IStructuredSelection selection = (IStructuredSelection) e.getSelection();
-                                    SelectItem selectItem = (SelectItem) selection.getFirstElement();                                    
+                                    SelectItem selectItem = (SelectItem) selection.getFirstElement();
                                     List<String> param = new ArrayList<String>();
                                     param.add(selectItem.getValue().toString());
                                     variableDef.setParams(param.toArray(new String[0]));
@@ -341,9 +343,9 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
             }
         }
     }
-	
-	public List<QuickFormGpdVariable> getSelectedVariables() {
-		selectedVariables.removeAll(initialVariables);
-		return selectedVariables;
-	}
+
+    public List<QuickFormGpdVariable> getSelectedVariables() {
+        selectedVariables.removeAll(initialVariables);
+        return selectedVariables;
+    }
 }

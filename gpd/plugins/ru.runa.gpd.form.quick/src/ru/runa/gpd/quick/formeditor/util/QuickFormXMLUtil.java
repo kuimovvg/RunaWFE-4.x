@@ -53,18 +53,18 @@ public class QuickFormXMLUtil {
 
     public static final byte[] convertQuickFormToXML(IFolder folder, QuickForm form, String templateFileName) throws UnsupportedEncodingException, CoreException {
         Document document = XmlUtil.createDocument(ELEMENT_FORM);
-        
+
         saveTemplateToProcessDefinition(folder, form, templateFileName);
 
         Element tagsElement = document.getRootElement().addElement(ELEMENT_TAGS);
-        
+
         for (QuickFormGpdVariable templatedVariableDef : form.getVariables()) {
             populateQuickFormVariable(tagsElement.addElement(ELEMENT_TAG), templatedVariableDef);
         }
-        
+
         Element propertiesElement = document.getRootElement().addElement(ELEMENT_PROPERTIES);
         for (QuickFormGpdProperty quickFormGpdProperty : form.getProperties()) {
-        	Element element = propertiesElement.addElement(ELEMENT_PROPERTY);            
+            Element element = propertiesElement.addElement(ELEMENT_PROPERTY);
             element.addElement(ATTRIBUTE_NAME).addText(getNotNullValue(quickFormGpdProperty.getName()));
             element.addElement(ATTRIBUTE_VALUE).addText(getNotNullValue(quickFormGpdProperty.getValue()));
         }
@@ -94,73 +94,75 @@ public class QuickFormXMLUtil {
         if (file.exists() && getContentLenght(file.getLocation().toString()) != 0) {
             try {
                 Document document = XmlUtil.parseWithoutValidation(file.getContents());
-                
-                if(!Strings.isNullOrEmpty(templateFileName)) {
-                	IFile confFile = ((IFolder) file.getParent()).getFile(templateFileName);
+
+                if (!Strings.isNullOrEmpty(templateFileName)) {
+                    IFile confFile = ((IFolder) file.getParent()).getFile(templateFileName);
                     if (confFile.exists()) {
                         String configuration = IOUtils.readStream(confFile.getContents());
                         quickForm.setDelegationConfiguration(configuration);
                     }
                 }
-                
+
                 Element tagsElement = document.getRootElement().element(ELEMENT_TAGS);
                 List<Element> varElementsList = tagsElement.elements(ELEMENT_TAG);
                 for (Element varElement : varElementsList) {
                     QuickFormGpdVariable templatedVariableDef = new QuickFormGpdVariable();
                     templatedVariableDef.setTagName(varElement.elementText(ATTRIBUTE_NAME));
-                    
+
                     List<Element> paramElements = varElement.elements(ELEMENT_PARAM);
                     if (paramElements != null && paramElements.size() > 0) {
                         List<String> params = new ArrayList<String>();
                         int index = 0;
                         Variable variable = null;
                         for (Element paramElement : paramElements) {
-                        	if(index == 0) {
-                        		templatedVariableDef.setName(paramElement.getText());
-                        		variable = VariableUtils.getVariableByName(processDefinition, templatedVariableDef.getName());
+                            if (index == 0) {
+                                templatedVariableDef.setName(paramElement.getText());
+                                variable = VariableUtils.getVariableByName(processDefinition, templatedVariableDef.getName());
                                 if (variable == null) {
                                     break;
                                 }
-                                templatedVariableDef.setFormatLabel(variable.getFormatLabel());                              
-                        	} else {
-                        		params.add(paramElement.getText());
-                        	}
-                            
+                                templatedVariableDef.setFormatLabel(variable.getFormatLabel());
+                                templatedVariableDef.setScriptingName(variable.getScriptingName());
+                                templatedVariableDef.setDescription(variable.getDescription());
+                            } else {
+                                params.add(paramElement.getText());
+                            }
+
                             index++;
                         }
-                        
+
                         if (variable == null) {
                             continue;
                         }
-                        
-                        templatedVariableDef.setParams(params.toArray(new String[0]));
+
+                        templatedVariableDef.setParams(params.toArray(new String[params.size()]));
                     }
 
                     quickForm.getVariables().add(templatedVariableDef);
                 }
-                
+
                 Element propertiesElement = document.getRootElement().element(ELEMENT_PROPERTIES);
-                if(propertiesElement != null) {
-                	List<Element> varPrElementsList = propertiesElement.elements(ELEMENT_PROPERTY);
+                if (propertiesElement != null) {
+                    List<Element> varPrElementsList = propertiesElement.elements(ELEMENT_PROPERTY);
                     for (Element varElement : varPrElementsList) {
-                    	QuickFormGpdProperty quickFormGpdProperty = new QuickFormGpdProperty();
-                    	quickFormGpdProperty.setName(varElement.elementText(ATTRIBUTE_NAME));
-                    	quickFormGpdProperty.setValue(varElement.elementText(ATTRIBUTE_VALUE));
-                    	for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
-                        	if(templateFileName != null && templateFileName.equals(artifact.getFileName())) {
-                        		for(Artifact parameter : artifact.getParameters()) {
-                        			if (quickFormGpdProperty.getName() != null && quickFormGpdProperty.getName().equalsIgnoreCase(parameter.getName())) {
-                        				quickFormGpdProperty.setLabel(parameter.getLabel());
+                        QuickFormGpdProperty quickFormGpdProperty = new QuickFormGpdProperty();
+                        quickFormGpdProperty.setName(varElement.elementText(ATTRIBUTE_NAME));
+                        quickFormGpdProperty.setValue(varElement.elementText(ATTRIBUTE_VALUE));
+                        for (QuickTemplateArtifact artifact : QuickTemplateRegister.getInstance().getAll(true)) {
+                            if (templateFileName != null && templateFileName.equals(artifact.getFileName())) {
+                                for (Artifact parameter : artifact.getParameters()) {
+                                    if (quickFormGpdProperty.getName() != null && quickFormGpdProperty.getName().equalsIgnoreCase(parameter.getName())) {
+                                        quickFormGpdProperty.setLabel(parameter.getLabel());
                                         break;
                                     }
-                        		}
-                        		break;
-                        	}                
+                                }
+                                break;
+                            }
                         }
-                    	quickForm.getProperties().add(quickFormGpdProperty);
+                        quickForm.getProperties().add(quickFormGpdProperty);
                     }
                 }
-                
+
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
