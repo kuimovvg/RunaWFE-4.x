@@ -39,6 +39,7 @@ public class VariableDefinition implements Serializable {
 
     private boolean synthetic;
     private String name;
+    private String description;
     private String format;
     private boolean publicAccess;
     private String defaultValue;
@@ -79,6 +80,14 @@ public class VariableDefinition implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getScriptingName() {

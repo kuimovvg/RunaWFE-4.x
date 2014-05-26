@@ -13,6 +13,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.dto.QuickFormProperty;
 import ru.runa.wfe.var.dto.QuickFormVariable;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -44,13 +45,16 @@ public class QuickFormBuilder extends FtlFormBuilder {
                 int index = 0;
                 for (Element paramElement : paramElements) {
                     if (index == 0) {
-                        quickFormVariable.setName(paramElement.getText());
+                        WfVariable variable = variableProvider.getVariableNotNull(paramElement.getText());
+                        quickFormVariable.setName(variable.getDefinition().getName());
+                        quickFormVariable.setScriptingName(variable.getDefinition().getScriptingName());
+                        quickFormVariable.setDescription(variable.getDefinition().getDescription());
                     } else {
                         params.add(paramElement.getText());
                     }
                     index++;
                 }
-                quickFormVariable.setParams(params.toArray(new String[0]));
+                quickFormVariable.setParams(params.toArray(new String[params.size()]));
             }
             templateVariables.add(quickFormVariable);
         }
