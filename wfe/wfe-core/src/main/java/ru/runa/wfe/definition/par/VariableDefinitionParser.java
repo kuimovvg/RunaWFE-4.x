@@ -27,6 +27,7 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
     private static final String DEFAULT_VALUE = "defaultValue";
     private static final String SCRIPTING_NAME = "scriptingName";
     private static final String USER_TYPE = "usertype";
+    private static final String DESCRIPTION = "description";
 
     @Autowired
     private LocalizationDAO localizationDAO;
@@ -73,6 +74,7 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
         String name = element.attributeValue(NAME);
         String scriptingName = element.attributeValue(SCRIPTING_NAME, name);
         VariableDefinition variable = new VariableDefinition(false, name, scriptingName);
+        variable.setDescription(element.attributeValue(DESCRIPTION));
         String userTypeName = element.attributeValue(USER_TYPE);
         if (userTypeName != null) {
             variable.setFormat(userTypeName);
