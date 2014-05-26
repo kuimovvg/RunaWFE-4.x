@@ -12,9 +12,13 @@
 }
 .taskform th, .taskform caption {
 	background: #fbb040;
+	font-size: 13pt;
 }
 .taskform th, .taskform td, .taskform caption {
 	padding: 10px;
+}
+.taskform th p, .taskform td p {
+	margin: 5px 0px 5px 0px;
 }
 .taskform td {
 	border: 1px solid white;
@@ -48,10 +52,14 @@
 	color: red;
 	font-style: italic;
 }
+.taskform p.warning {
+	background: url('/wfe/images/error.png') no-repeat;
+	padding-left: 30px;
+}
 .title {
 	font-size: 13pt;
 }
-.warning {
+.subtitle {
 	font-size: 11pt;
-	color: brown;
+	color: blue;
 }
