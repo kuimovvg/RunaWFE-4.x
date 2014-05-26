@@ -32,8 +32,26 @@
       <template
             enabled="true"
             filename="divContainerLayout.ftl.template"
-            label="div container layout (for demo processes)"
+            label="%template.divContainerLayout"
             name="divContainerLayout">
+      </template>
+      <template
+            enabled="true"
+            filename="table2ColumnsProcessLayout.ftl.template"
+            label="%template.table2ColumnsProcessLayout"
+            name="table2ColumnsProcessLayout">
+         <parameter
+               label="%parameter.processName"
+               name="ProcessName">
+         </parameter>
+         <parameter
+               label="%parameter.title"
+               name="Title">
+         </parameter>
+         <parameter
+               label="%parameter.warning"
+               name="Warning">
+         </parameter>
       </template>
    	</extension>
 </plugin>

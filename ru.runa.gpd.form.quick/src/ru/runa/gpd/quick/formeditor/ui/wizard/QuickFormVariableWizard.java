@@ -8,17 +8,17 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
-import com.google.common.base.Preconditions;
-
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
 
+import com.google.common.base.Preconditions;
+
 public class QuickFormVariableWizard extends Wizard implements INewWizard {
     private QuickFormVariableWizardPage page;
-    private ProcessDefinition processDefinition;
+    private final ProcessDefinition processDefinition;
     private int editIndex = -1;
-    private List<QuickFormGpdVariable> quickFormVariableDefs;
+    private final List<QuickFormGpdVariable> quickFormVariableDefs;
 
     public QuickFormVariableWizard(ProcessDefinition processDefinition, List<QuickFormGpdVariable> templatedVariableDefs, int editIndex) {
         this.processDefinition = processDefinition;
@@ -54,6 +54,8 @@ public class QuickFormVariableWizard extends Wizard implements INewWizard {
         Variable variable = page.getVariable();
         Preconditions.checkNotNull(variable, "Variable is null");
         variableDef.setName(variable.getName());
+        variableDef.setScriptingName(variableDef.getScriptingName());
+        variableDef.setDescription(variableDef.getDescription());
         variableDef.setFormatLabel(variable.getFormatLabel());
         if (page.getParamValue() != null && !page.getParamValue().isEmpty()) {
             List<String> param = new ArrayList<String>();
