@@ -15,7 +15,7 @@ public class MSWordConfig extends Observable {
     private static final String OUTPUT_VARIABLE = "output-variable";
     private static final String TEMPLATE_PATH = "template-path";
     private static final String STRICT_MODE = "strict-mode";
-    private boolean strictMode = false;
+    private boolean strictMode = true;
     private String templatePath = "";
     private String resultVariableName = "";
     private String resultFileName = "";
@@ -97,7 +97,7 @@ public class MSWordConfig extends Observable {
         Element root = document.getRootElement();
         Element reportElement = root.element(REPORT);
         if (reportElement != null) {
-            model.setStrictMode(Boolean.parseBoolean(reportElement.attributeValue(STRICT_MODE, "false")));
+            model.setStrictMode(Boolean.parseBoolean(reportElement.attributeValue(STRICT_MODE, "true")));
             model.templatePath = reportElement.attributeValue(TEMPLATE_PATH);
             model.resultVariableName = reportElement.attributeValue(OUTPUT_VARIABLE);
             model.resultFileName = reportElement.attributeValue(OUTPUT_VARIABLE_FILE_NAME);
