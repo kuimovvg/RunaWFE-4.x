@@ -58,7 +58,17 @@ public class BotCache {
                         for (IResource taskResource : botFolder.members()) {
                             if (taskResource instanceof IFile && taskResource.getFileExtension() == null) {
                                 IFile botTaskFile = (IFile) taskResource;
-                                cacheBotTask(botTaskFile, botTasks);
+                                try {
+                                    cacheBotTask(botTaskFile, botTasks);
+                                } catch (Exception e) {
+                                    if (e.getMessage() != null && e.getMessage().startsWith("Resource is out of sync with the file system")) {
+                                        // Workaround for 'resource out of sync'
+                                        botTaskFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+                                        cacheBotTask(botTaskFile, botTasks);
+                                    } else {
+                                        PluginLogger.logError(e);
+                                    }
+                                }
                             }
                         }
                         BOT_TASKS.put(botName, botTasks);
