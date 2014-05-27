@@ -20,6 +20,8 @@ package ru.runa.wf.logic.bot.mswordreport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 
@@ -50,6 +52,9 @@ public abstract class MSWordReportBuilder {
             return null;
         }
         try {
+            if (SystemProperties.isV3CompatibilityMode() && variable.getValue() instanceof Actor) {
+                return String.valueOf(((Actor) variable.getValue()).getCode());
+            }
             return variable.getStringValue();
         } catch (Exception e) {
             log.warn("Unable to format " + variable + ": " + e.getMessage());
