@@ -18,7 +18,6 @@
 package ru.runa.wfe.service.delegate;
 
 import java.util.Map;
-import java.util.Properties;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.service.AuthenticationService;
@@ -43,7 +42,6 @@ import com.google.common.collect.Maps;
  * @since 4.0
  */
 public class Delegates {
-    private static final Properties PROPERTIES = ClassLoaderUtil.getProperties("ejb.properties", true);
     private static Map<Class<?>, Object> delegates = Maps.newHashMap();
 
     @SuppressWarnings("unchecked")
@@ -56,10 +54,7 @@ public class Delegates {
     }
 
     public static <T extends EJB3Delegate> T createDelegate(Class<T> delegateClass) {
-        T delegate = ClassLoaderUtil.instantiate(delegateClass);
-        delegate.setEjbType(PROPERTIES.getProperty("ejb.type"), false);
-        delegate.setEjbJndiNameFormat(PROPERTIES.getProperty("ejb.jndiName.format"));
-        return delegate;
+        return ClassLoaderUtil.instantiate(delegateClass);
     }
 
     public static AuthenticationService getAuthenticationService() {
