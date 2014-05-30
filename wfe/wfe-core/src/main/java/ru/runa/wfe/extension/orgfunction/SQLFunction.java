@@ -19,9 +19,6 @@ package ru.runa.wfe.extension.orgfunction;
 
 import java.util.List;
 
-import ru.runa.wfe.commons.ArraysCommons;
-import ru.runa.wfe.commons.TypeConversionUtil;
-
 /**
  * Uses first argument as SQL and the rest arguments as actor codes
  * 
@@ -32,7 +29,10 @@ public class SQLFunction extends GetActorsOrgFunctionBase {
 
     @Override
     protected List<Long> getActorCodes(Object... parameters) {
-        String sql = TypeConversionUtil.convertTo(String.class, parameters[0]);
-        return SQLFunctionDAO.getActorCodes(sql, ArraysCommons.remove(parameters, 0));
+        throw new UnsupportedOperationException("Since RunaWFE v4.1.2 this orgfunction is disabled");
+        // String sql = TypeConversionUtil.convertTo(String.class,
+        // parameters[0]);
+        // return SQLFunctionDAO.getActorCodes(sql,
+        // ArraysCommons.remove(parameters, 0));
     }
 }
