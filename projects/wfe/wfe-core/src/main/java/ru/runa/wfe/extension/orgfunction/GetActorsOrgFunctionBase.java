@@ -24,6 +24,7 @@ import ru.runa.wfe.extension.OrgFunctionException;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 08.01.2007
@@ -33,9 +34,17 @@ public abstract class GetActorsOrgFunctionBase extends OrgFunction {
     @Override
     public final List<? extends Executor> getExecutors(Object... parameters) throws OrgFunctionException {
         try {
-            List<Long> codes = getActorCodes(parameters);
-            log.debug("Actor codes result: " + codes);
-            return executorDAO.getActorsByCodes(codes);
+            List<Executor> result = Lists.newArrayListWithExpectedSize(parameters.length);
+            for (Object parameter : parameters) {
+                if (parameter instanceof Executor) {
+                    result.add((Executor) parameter);
+                } else {
+                    List<Long> codes = getActorCodes(parameter);
+                    result.addAll(executorDAO.getActorsByCodes(codes));
+                }
+            }
+            log.debug("Executors result: " + result);
+            return result;
         } catch (Exception e) {
             Throwables.propagateIfPossible(e, OrgFunctionException.class);
             throw new OrgFunctionException(e);
