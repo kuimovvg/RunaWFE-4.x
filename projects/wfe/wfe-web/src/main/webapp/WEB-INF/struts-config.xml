@@ -529,6 +529,14 @@
 			<forward name="failure" path="/WEB-INF/af/edit_substitution.jsp"
 				redirect="false" />
 		</action>
+		<action path="/bulkDeployProcessDefinition"
+			type="ru.runa.wf.web.action.BulkDeployProcessDefinitionAction" name="fileForm"
+			scope="request" unknown="false" validate="false">
+			<forward name="success" path="/manage_process_definitions.do"
+				redirect="true" />
+			<forward name="failure" path="/manage_process_definitions.do"
+				redirect="false" />
+		</action>
 		<action path="/deployProcessDefinition"
 			type="ru.runa.wf.web.action.DeployProcessDefinitionAction" name="fileForm"
 			scope="request" unknown="false" validate="false">

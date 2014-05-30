@@ -17,6 +17,7 @@
  */
 package ru.runa.wf.web.tag;
 
+import ru.runa.common.WebResources;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
@@ -34,7 +35,8 @@ public class DeployDefinitionLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        return Delegates.getAuthorizationService().isAllowed(getUser(), WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
+        return !WebResources.isBulkDeploymentDefinitions() 
+        		&& Delegates.getAuthorizationService().isAllowed(getUser(), WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
     }
 
     @Override
