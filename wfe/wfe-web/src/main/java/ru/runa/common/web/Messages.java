@@ -144,6 +144,9 @@ public class Messages {
 
     public static final String LABEL_SHOW_CONTROLS = "label.show_controls";
     public static final String LABEL_HIDE_CONTROLS = "label.hide_controls";
+    
+    public static final String LABEL_SHOW_DEPLOY_DEFINITION_CONTROLS = "label.show_deploy_definition_controls";
+    public static final String LABEL_HIDE_DEPLOY_DEFINITION_CONTROLS = "label.hide_deploy_definition_controls";
 
     public static final String LABEL_SUBSTITUTORS = "label.substitutors";
     public static final String LABEL_SUBSTITUTORS_CRITERIA = "label.substitutors_criteria";
