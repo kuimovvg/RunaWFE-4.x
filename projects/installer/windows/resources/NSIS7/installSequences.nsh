@@ -11,6 +11,7 @@ var installDesctopLinks
 var newSimulationDatabase
 var newWorkspace
 var simulationWebLinks
+var cleanAllOldData ; Remove all artifacts from old installation if exists
 
 #=======================================Macros for creating shortcuts and URLs (support create desktop icons)=======================================
 !macro createMenuShortcut ShortcutName ShortcutTarget ShortcutParameters ShortcutDir ShortcutIcon ShortcutDesc
@@ -52,6 +53,15 @@ var simulationWebLinks
   FileWrite $0 "cd /D $\"%DIRNAME%$\"$\r$\n"
   FileWrite $0 "mkdir $\"%TEMP%\runawfe/jboss$\"$\r$\n"
   FileWrite $0 "mkdir $\"%APPDATA%\runawfe/jboss$\"$\r$\n"
+  ${if} "$cleanAllOldData" == "1"
+    FileWrite $0 "if not exist $\"%APPDATA%\runawfe\jboss\runawfe-clean-ver-$2$\" ($\r$\n"
+    FileWrite $0 "  del /F /S /Q $\"%APPDATA%\runawfe\jboss$\"$\r$\n"
+    FileWrite $0 "  rd /S /Q $\"%APPDATA%\runawfe\jboss$\"$\r$\n"
+    FileWrite $0 "  mkdir $\"%APPDATA%\runawfe\jboss$\"$\r$\n"
+    FileWrite $0 "  del /S /Q $\"%APPDATA%\runawfe\jboss\runawfe-clean-ver-*$\" $\r$\n"
+    FileWrite $0 "  time /T >$\"%APPDATA%\runawfe\jboss\runawfe-clean-ver-$2$\" $\r$\n"
+    FileWrite $0 ")$\r$\n"
+  ${endif}
   FileWrite $0 "del /F /S /Q $\"%APPDATA%\runawfe\jboss\configuration$\"$\r$\n"
   FileWrite $0 "del /F /S /Q $\"%APPDATA%\runawfe\jboss\deployments$\"$\r$\n"
   FileWrite $0 "del /F /S /Q $\"%APPDATA%\runawfe\jboss\wfe.custom$\"$\r$\n"
@@ -93,6 +103,15 @@ var simulationWebLinks
   FileWrite $0 "if $\"%OS%$\" == $\"Windows_NT$\" set DIRNAME=%~dp0%$\r$\n"
   FileWrite $0 "cd /D $\"%DIRNAME%$\"$\r$\n"
   FileWrite $0 "mkdir $\"%APPDATA%\runawfe\gpd$\"$\r$\n"
+  ${if} "$cleanAllOldData" == "1"
+    FileWrite $0 "if not exist $\"%APPDATA%\runawfe\gpd\runawfe-clean-ver-$2$\" ($\r$\n"
+    FileWrite $0 "  del /F /S /Q $\"%APPDATA%\runawfe\gpd$\"$\r$\n"
+    FileWrite $0 "  rd /S /Q $\"%APPDATA%\runawfe\gpd$\"$\r$\n"
+    FileWrite $0 "  mkdir $\"%APPDATA%\runawfe\gpd$\"$\r$\n"
+    FileWrite $0 "  del /S /Q $\"%APPDATA%\runawfe\gpd\runawfe-clean-ver-*$\" $\r$\n"
+    FileWrite $0 "  time /T >$\"%APPDATA%\runawfe\gpd\runawfe-clean-ver-$2$\" $\r$\n"
+    FileWrite $0 ")$\r$\n"
+  ${endif}
   ${if} "$newWorkspace" == "1"
     FileWrite $0 "if not exist $\"%APPDATA%\runawfe\gpd\runawfe-ver-$2$\" ($\r$\n"
     FileWrite $0 "  del /S /Q $\"%APPDATA%\runawfe\gpd\runawfe-ver-*$\" $\r$\n"

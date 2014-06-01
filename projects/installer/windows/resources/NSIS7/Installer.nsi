@@ -64,7 +64,7 @@ Page custom installDesktopLinks installDesktopLinksLeave
 Page custom getHostAndPort getHostAndPortLeave                 ;Main wfe server port and host if selected rtn, web, botstation (and installing client components)
 Page custom checkJDKinit_My checkAndInstallJDK                 ;Check for java and install java
 Page custom setJavaHomeInit_My setJavaHomeleave                ;Check for java_home and install java_home to jdk if necessary
-Page instfiles "" "" rebootIfNeeded                            ;Install files
+Page instfiles cleanAllDataFunc "" rebootIfNeeded                            ;Install files
 
 UninstPage uninstconfirm un.installBrandingImage
 UninstPage instFiles
@@ -349,6 +349,7 @@ Function installDesktopLinks
   !insertmacro MUI_INSTALLOPTIONS_WRITE "DesktopLinks.ini" "Field 2" "Text" $(installNewDatabase)
   !insertmacro MUI_INSTALLOPTIONS_WRITE "DesktopLinks.ini" "Field 3" "Text" $(installNewWorkspace)
   !insertmacro MUI_INSTALLOPTIONS_WRITE "DesktopLinks.ini" "Field 4" "Text" $(installSimulationLoginLinks)
+  !insertmacro MUI_INSTALLOPTIONS_WRITE "DesktopLinks.ini" "Field 5" "Text" $(installCleanAllOldData)
   !insertmacro isSectionSelected "${${ID_PREFIX}ComponentSIM}" +4 0
   !insertmacro MUI_INSTALLOPTIONS_WRITE "DesktopLinks.ini" "Field 2" "Flags" "DISABLED"
   !insertmacro MUI_INSTALLOPTIONS_WRITE "DesktopLinks.ini" "Field 4" "Flags" "DISABLED"
@@ -366,7 +367,15 @@ Function installDesktopLinksLeave
   !insertmacro MUI_INSTALLOPTIONS_READ $newSimulationDatabase "DesktopLinks.ini" "Field 2" "State"
   !insertmacro MUI_INSTALLOPTIONS_READ $newWorkspace "DesktopLinks.ini" "Field 3" "State"
   !insertmacro MUI_INSTALLOPTIONS_READ $simulationWebLinks "DesktopLinks.ini" "Field 4" "State"
+  !insertmacro MUI_INSTALLOPTIONS_READ $cleanAllOldData "DesktopLinks.ini" "Field 5" "State"
 FunctionEnd
+
+Function cleanAllDataFunc
+  ${if} "$cleanAllOldData" == "1"
+    RMDir /r "$INSTDIR"
+  ${endif}
+FunctionEnd
+
 Function rebootIfNeeded
   ${if} $installationType == ${RUNA_SERVER}
     IfRebootFlag 0 noreboot
