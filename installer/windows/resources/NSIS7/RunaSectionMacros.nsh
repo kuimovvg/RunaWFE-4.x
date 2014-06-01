@@ -116,7 +116,14 @@ FunctionEnd
 
 !macro generateInstallComponent sectionLangName sectionInstallMacro customizableMacro
     !insertmacro ${customizableMacro} ${sectionLangName}
-    !insertmacro isSectionInstalled "${ID_PREFIX}${sectionLangName}" "installationComplette_${sectionLangName}" 0
+    !insertmacro isSectionInstalled "${ID_PREFIX}${sectionLangName}" "checkMustCleanReinstall_${sectionLangName}" "doInstall_${sectionLangName}"
+    "checkMustCleanReinstall_${sectionLangName}:"
+    ${if} "$cleanAllOldData" == "1"
+      goto "doInstall_${sectionLangName}"
+    ${else}
+      goto "installationComplette_${sectionLangName}"
+    ${endif}
+    "doInstall_${sectionLangName}:"
     StrCpy $UNINST_DAT "${RUNA_UNINSTALL_LOG}_${sectionLangName}.dat"
     !insertmacro UNINSTALL.LOG_PREPARE_INSTALL "${RUNA_UNINSTALL_LOG}_${sectionLangName}.dat"
     !insertmacro ${sectionInstallMacro}

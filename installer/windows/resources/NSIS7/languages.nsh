@@ -71,6 +71,8 @@ LangString installSimulationLoginLinks ${LANG_ENGLISH} "Install web links to ent
 LangString installSimulationLoginLinks ${LANG_RUSSIAN} "Установить ссылки в web интерфейсе для входа в симулятор под демо пользователями"
 LangString applyToInstalledComponents ${LANG_ENGLISH} "Apply settings to installed components"
 LangString applyToInstalledComponents ${LANG_RUSSIAN} "Применить настройки к установленным компонентам"
+LangString installCleanAllOldData ${LANG_ENGLISH} "Remove all data/artifacts from old installation (clean install)"
+LangString installCleanAllOldData ${LANG_RUSSIAN} "Удалить все данные и настройки, оставшиеся от предыдущей установки"
 
 LangString rebootIsRequired ${LANG_ENGLISH} "Reboot is required for correct service start. Reboot now?"
 LangString rebootIsRequired ${LANG_RUSSIAN} "Для корректной работы рекомендуется перезагрузить компьютер. Перезагрузить немедленно?"
