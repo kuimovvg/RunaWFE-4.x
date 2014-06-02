@@ -56,10 +56,6 @@ public class FileVariable implements Serializable {
         return data;
     }
 
-    public int getDataLength() {
-        return data.length;
-    }
-
     public String getName() {
         return name;
     }

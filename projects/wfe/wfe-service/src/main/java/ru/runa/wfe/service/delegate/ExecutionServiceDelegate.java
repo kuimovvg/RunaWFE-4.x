@@ -23,6 +23,7 @@ import java.util.Map;
 import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.audit.SystemLog;
+import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
@@ -150,6 +151,15 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     public WfVariable getVariable(User user, Long processId, String variableName) {
         try {
             return getExecutionService().getVariable(user, processId, variableName);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public byte[] getFileVariableValue(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
+        try {
+            return getExecutionService().getFileVariableValue(user, processId, variableName);
         } catch (Exception e) {
             throw handleException(e);
         }
