@@ -142,7 +142,10 @@ public class EmailUtils {
             if (interaction.hasForm()) {
                 formTemplate = new String(interaction.getFormData(), Charsets.UTF_8);
                 if (!"ftl".equals(interaction.getType())) {
-                    throw new Exception("Property 'UseMessageFromTaskForm' is applicable only to free form layout form (ftl)");
+                    // TODO turn off for V3 in 01.07.2014
+                    if (!SystemProperties.isV3CompatibilityMode()) {
+                        throw new Exception("Property 'UseMessageFromTaskForm' is applicable only to free form layout form (ftl)");
+                    }
                 }
             } else {
                 if (SystemProperties.isV3CompatibilityMode()) {

@@ -49,6 +49,7 @@ public class CreateTimerAction extends Action {
         timer.setRepeatDurationString(repeatDurationString);
         timer.setOutTransitionName(transitionName);
         jobDAO.create(timer);
+        log.debug("Created " + timer + " for duration '" + dueDate + "'");
         executionContext.addLog(new CreateTimerActionLog(this, timer.getDueDate()));
     }
 
