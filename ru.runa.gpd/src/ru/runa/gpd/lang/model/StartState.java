@@ -4,10 +4,19 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 
+import ru.runa.gpd.editor.graphiti.HasTextDecorator;
+import ru.runa.gpd.editor.graphiti.TextDecoratorEmulation;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
-public class StartState extends FormNode {
+public class StartState extends FormNode implements HasTextDecorator {
+
+    protected TextDecoratorEmulation decoratorEmulation;
+
+    public StartState() {
+        decoratorEmulation = new TextDecoratorEmulation(this);
+    }
+
     @Override
     protected boolean allowArrivingTransition(Node source, List<Transition> transitions) {
         return false;
@@ -22,7 +31,7 @@ public class StartState extends FormNode {
     protected boolean isSwimlaneDisabled() {
         return getProcessDefinition() instanceof SubprocessDefinition;
     }
-    
+
     @Override
     public void validate(List<ValidationError> errors, IFile definitionFile) {
         super.validate(errors, definitionFile);
@@ -47,4 +56,10 @@ public class StartState extends FormNode {
             errors.add(ValidationError.createLocalizedError(this, "startState.swimlaneIsNotUsableInEmbeddedSubprocess"));
         }
     }
+
+    @Override
+    public TextDecoratorEmulation getTextDecoratorEmulation() {
+        return decoratorEmulation;
+    }
+
 }

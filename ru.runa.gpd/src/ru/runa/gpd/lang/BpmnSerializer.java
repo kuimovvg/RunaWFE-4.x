@@ -92,6 +92,8 @@ public class BpmnSerializer extends ProcessSerializer {
     private static final String CANCEL_ACTIVITY = "cancelActivity";
     private static final String ATTACHED_TO_REF = "attachedToRef";
     private static final String TIME_DURATION = "timeDuration";
+    public static final String START_TEXT_DECORATION = "startTextDecoration";
+    public static final String END_TEXT_DECORATION = "endTextDecoration";
 
     @Override
     public boolean isSupported(Document document) {

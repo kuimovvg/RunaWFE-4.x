@@ -5,23 +5,23 @@ import org.eclipse.graphiti.features.context.IUpdateContext;
 import org.eclipse.graphiti.features.impl.Reason;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
-import ru.runa.gpd.lang.model.StartTextDecoration.StartDefinitionUI;
-import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.editor.graphiti.GaProperty;
+import ru.runa.gpd.editor.graphiti.PropertyUtil;
+import ru.runa.gpd.lang.model.EndState;
 
 import com.google.common.base.Objects;
 
-public class UpdateStartNodeFeature extends UpdateFeatureWithTextDecorator {
+public class UpdateEndNodeFeature extends UpdateFeatureWithTextDecorator {
+
     @Override
     public IReason updateNeeded(IUpdateContext context) {
         // retrieve name from pictogram element
         PictogramElement pe = context.getPictogramElement();
         // retrieve name from business model
-        StartState bo = (StartState) getBusinessObjectForPictogramElement(pe);
-        StartDefinitionUI definition = (StartDefinitionUI) bo.getTextDecoratorEmulation().getDefinition().getUiContainer();
-        if (!Objects.equal(definition.getSwimlaneName(), bo.getSwimlaneLabel())) {
-            return Reason.createTrueReason();
-        }
-        if (!Objects.equal(definition.getName(), bo.getName())) {
+        EndState bo = (EndState) getBusinessObjectForPictogramElement(pe);
+        String name = PropertyUtil.findTextValueRecursive(pe, GaProperty.NAME);
+
+        if (!Objects.equal(name, bo.getName())) {
             return Reason.createTrueReason();
         }
         return Reason.createFalseReason();

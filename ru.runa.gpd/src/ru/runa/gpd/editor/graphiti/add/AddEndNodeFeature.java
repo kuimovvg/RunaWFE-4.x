@@ -14,18 +14,19 @@ import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
-import ru.runa.gpd.lang.model.StartTextDecoration;
-import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.lang.model.EndTextDecoration;
+import ru.runa.gpd.lang.model.EndState;
 
-public class AddStartNodeFeature extends AddNodeWithImageFeature {
+public class AddEndNodeFeature extends AddNodeWithImageFeature {
+
     @Override
     public PictogramElement add(IAddContext context) {
-        PictogramElement containerShape = super.add(context);
-        StartState node = (StartState) context.getNewObject();
+        PictogramElement container = super.add(context);
+        EndState node = (EndState) context.getNewObject();
         Dimension bounds = adjustBounds(context);
 
-        // create independent text label graph element for start point
-        StartTextDecoration element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, BpmnSerializer.START_TEXT_DECORATION).createElement(node.getParent(),
+        // create independent text label graph element for end point
+        EndTextDecoration element = NodeRegistry.getNodeTypeDefinition(Language.BPMN, BpmnSerializer.END_TEXT_DECORATION).createElement(node.getParent(),
                 false);
 
         node.getTextDecoratorEmulation().link(element);
@@ -35,23 +36,22 @@ public class AddStartNodeFeature extends AddNodeWithImageFeature {
             // get saved position
             tempArea.setLocation(node.getTextDecoratorEmulation().getDefinitionLocation().x(), node.getTextDecoratorEmulation().getDefinitionLocation().y());
         } else {
-            // calc position under start point image
+            // calc position under end point image
             Font defFont = Graphiti.getGaService().manageDefaultFont(getDiagram());
-            IDimension swimlaneDim = GraphitiUi.getUiLayoutService().calculateTextSize(node.getSwimlaneLabel(), defFont);
             IDimension nameDim = GraphitiUi.getUiLayoutService().calculateTextSize(node.getName(), defFont);
-            int y = context.getY() - swimlaneDim.getHeight() - nameDim.getHeight();
-            int maxWidth = Math.max(swimlaneDim.getWidth(), nameDim.getWidth());
-            int x = (context.getX() + bounds.width / 2) - maxWidth / 2;
+            int y = context.getY() + bounds.height;
+            int x = (context.getX() + bounds.width / 2) - nameDim.getWidth() / 2;
             tempArea.setLocation(x, y);
         }
 
         // put new element in run-time
         AddContext myAddContext = new AddContext(tempArea, element);
         myAddContext.setTargetContainer(context.getTargetContainer());
-        AddStartTextDecorationFeature textDefinition = new AddStartTextDecorationFeature();
+        AddEndTextDecorationFeature textDefinition = new AddEndTextDecorationFeature();
         textDefinition.setFeatureProvider((DiagramFeatureProvider) getFeatureProvider());
         textDefinition.add(myAddContext);
 
-        return containerShape;
+        return container;
     }
+
 }
