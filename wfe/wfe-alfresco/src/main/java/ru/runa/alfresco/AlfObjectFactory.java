@@ -129,17 +129,21 @@ public class AlfObjectFactory {
         public Object intercept(Object object, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
             Collection<AlfObject> result = (Collection<AlfObject>) methodProxy.invokeSuper(object, objects);
             if (result.isEmpty()) {
-                AlfObject alfObject = (AlfObject) object;
-                String fieldName = getFieldName(method.getName());
-                AlfTypeDesc typeDesc = Mappings.getMapping(alfObject.getClass(), alfObject.conn);
-                AlfPropertyDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
-                if (desc == null) {
-                    throw new NullPointerException("No association defined for " + fieldName);
-                }
-                try {
-                    alfObject.loadCollection(desc, result);
-                } catch (Exception e) {
-                    throw new InternalApplicationException(fieldName + " in " + alfObject + " (" + alfObject.getUuidRef() + ")", e);
+                synchronized (result) {
+                    if (result.isEmpty()) {
+                        AlfObject alfObject = (AlfObject) object;
+                        String fieldName = getFieldName(method.getName());
+                        AlfTypeDesc typeDesc = Mappings.getMapping(alfObject.getClass(), alfObject.conn);
+                        AlfPropertyDesc desc = typeDesc.getPropertyDescByFieldName(fieldName);
+                        if (desc == null) {
+                            throw new NullPointerException("No association defined for " + fieldName);
+                        }
+                        try {
+                            alfObject.loadCollection(desc, result);
+                        } catch (Exception e) {
+                            throw new InternalApplicationException(fieldName + " in " + alfObject + " (" + alfObject.getUuidRef() + ")", e);
+                        }
+                    }
                 }
             }
             return result;
