@@ -8,6 +8,7 @@ import org.eclipse.draw2d.geometry.Dimension;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.Rectangle;
 
+import ru.runa.gpd.editor.graphiti.HasTextDecorator;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
@@ -40,12 +41,13 @@ public class GpdXmlContentProvider extends AuxContentProvider {
     private static final String TRANSITION = "transition";
     private static final String BENDPOINT = "bendpoint";
     private static final String LABEL = "label";
+    private static final String TEXT_DECORATION = "textDecoration";
 
     @Override
     public String getFileName() {
         return XML_FILE_NAME;
     }
-    
+
     @Override
     public void read(Document document, ProcessDefinition definition) throws Exception {
         Element processDiagramInfo = document.getRootElement();
@@ -87,6 +89,14 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                             break;
                         }
                     }
+                }
+            }
+            if (graphElement instanceof HasTextDecorator) {
+                HasTextDecorator node = (HasTextDecorator) graphElement;
+                Element definitionPoint = element.element(TEXT_DECORATION);
+                if (definitionPoint != null) {
+                    Point point = new Point(getIntAttribute(definitionPoint, X, 0), getIntAttribute(definitionPoint, Y, 0));
+                    node.getTextDecoratorEmulation().setDefinitionLocation(point);
                 }
             }
         }
@@ -195,6 +205,13 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                         addAttribute(bendpointElement, Y, String.valueOf(y));
                     }
                 }
+            }
+            if (graphElement instanceof HasTextDecorator) {
+                HasTextDecorator node = (HasTextDecorator) graphElement;
+                Element pointDefinition = element.addElement(TEXT_DECORATION);
+                addAttribute(pointDefinition, X, String.valueOf(node.getTextDecoratorEmulation().getDefinition().getConstraint().x));
+                addAttribute(pointDefinition, Y, String.valueOf(node.getTextDecoratorEmulation().getDefinition().getConstraint().y));
+
             }
         }
         return document;

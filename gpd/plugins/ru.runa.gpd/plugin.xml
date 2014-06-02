@@ -566,6 +566,32 @@
          </graphiti>
       </element>
       <element
+      		bpmn="startTextDecoration"
+      		label="%label.element.textAnnotation"
+      		model="ru.runa.gpd.lang.model.StartTextDecoration"
+      		type="artifact">
+      	<graphiti
+      		add="ru.runa.gpd.editor.graphiti.add.AddStartTextDecorationFeature"
+      		create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+      		fixedSize="true"
+      		height="3"
+      		width="8">
+      	</graphiti>
+      </element>
+      <element
+      		bpmn="endTextDecoration"
+      		label="%label.element.textAnnotation"
+      		model="ru.runa.gpd.lang.model.EndTextDecoration"
+      		type="artifact">
+      	<graphiti
+      		add="ru.runa.gpd.editor.graphiti.add.AddEndTextDecorationFeature"
+      		create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+      		fixedSize="true"
+      		height="3"
+      		width="8">
+      	</graphiti>
+      </element>
+      <element
             bpmn="lane"
             jpdl="swimlane"
             label="%default.swimlane.name"
@@ -598,8 +624,9 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.StartStateTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddStartNodeFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateStartNodeFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateStartNodeFeature"
                fixedSize="true"
                height="4"
                width="4">
@@ -919,8 +946,9 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddEndNodeFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateEndNodeFeature"
                fixedSize="true"
                height="4"
                width="4">
