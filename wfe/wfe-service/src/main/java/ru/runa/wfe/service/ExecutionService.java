@@ -255,10 +255,24 @@ public interface ExecutionService {
      *            process id
      * @param variableName
      *            variable name
-     * @return not <code>null</code>
+     * @return variable or <code>null</code>
      * @throws ProcessDoesNotExistException
      */
     public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
+
+    /**
+     * Gets file variable value by name from process.
+     * 
+     * @param user
+     *            authorized user
+     * @param processId
+     *            process id
+     * @param variableName
+     *            variable name
+     * @return byte array or <code>null</code>
+     * @throws ProcessDoesNotExistException
+     */
+    public byte[] getFileVariableValue(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
 
     /**
      * Gets variables by name from different processes.

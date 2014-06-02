@@ -41,6 +41,7 @@ import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
+import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
@@ -187,7 +188,25 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public WfVariable getVariable(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "variableName") String variableName) {
         Preconditions.checkArgument(user != null);
-        return variableLogic.getVariable(user, processId, variableName);
+        Preconditions.checkArgument(processId != null);
+        Preconditions.checkArgument(variableName != null);
+        WfVariable variable = variableLogic.getVariable(user, processId, variableName);
+        convertValueToProxy(user, processId, variable);
+        return variable;
+    }
+
+    @Override
+    @WebResult(name = "result")
+    public byte[] getFileVariableValue(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
+            @WebParam(name = "variableName") String variableName) throws ProcessDoesNotExistException {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(processId != null);
+        Preconditions.checkArgument(variableName != null);
+        WfVariable variable = variableLogic.getVariable(user, processId, variableName);
+        if (variable != null) {
+            return ((FileVariable) variable.getValue()).getData();
+        }
+        return null;
     }
 
     @WebMethod(exclude = true)

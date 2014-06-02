@@ -11,7 +11,6 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.common.base.Charsets;
-import com.google.common.io.ByteStreams;
 
 public class MultipartRequestHandler {
 
@@ -55,7 +54,7 @@ public class MultipartRequestHandler {
                             name = name.substring(index + 1);
                         }
                         file.setName(name);
-                        file.setContent(ByteStreams.toByteArray(item.getInputStream()));
+                        file.setContent(item.get());
                         file.setMimeType(item.getContentType());
                     }
                 }
@@ -66,14 +65,16 @@ public class MultipartRequestHandler {
         return inputId;
     }
 
-//    private static String getFilename(Part part) {
-//        for (String cd : part.getHeader("content-disposition").split(";")) {
-//            if (cd.trim().startsWith("filename")) {
-//                String filename = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-//                // MSIE fix.
-//                return filename.substring(filename.lastIndexOf('/') + 1).substring(filename.lastIndexOf('\\') + 1);
-//            }
-//        }
-//        return null;
-//    }
+    // private static String getFilename(Part part) {
+    // for (String cd : part.getHeader("content-disposition").split(";")) {
+    // if (cd.trim().startsWith("filename")) {
+    // String filename = cd.substring(cd.indexOf('=') + 1).trim().replace("\"",
+    // "");
+    // // MSIE fix.
+    // return filename.substring(filename.lastIndexOf('/') +
+    // 1).substring(filename.lastIndexOf('\\') + 1);
+    // }
+    // }
+    // return null;
+    // }
 }
