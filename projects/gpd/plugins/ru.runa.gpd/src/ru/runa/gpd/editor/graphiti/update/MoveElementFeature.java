@@ -5,7 +5,10 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.services.Graphiti;
 
+import ru.runa.gpd.editor.graphiti.HasTextDecorator;
+import ru.runa.gpd.lang.model.TextDecorationNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -50,6 +53,23 @@ public class MoveElementFeature extends DefaultMoveShapeFeature {
                 }
                 ((SwimlanedNode) element).setSwimlane(swimlane);
             }
+        }
+        // move definition with point
+        if (element instanceof HasTextDecorator) {
+            HasTextDecorator withDefinition = (HasTextDecorator) element;
+            Rectangle defPosition = withDefinition.getTextDecoratorEmulation().getDefinition().getConstraint().getCopy();
+            defPosition.setX(defPosition.x + context.getDeltaX());
+            defPosition.setY(defPosition.y + context.getDeltaY());
+            withDefinition.getTextDecoratorEmulation().getDefinition().setConstraint(defPosition);
+            Graphiti.getGaService().setLocation(withDefinition.getTextDecoratorEmulation().getDefinition().getUiContainer().getOwner().getGraphicsAlgorithm(),
+                    defPosition.x, defPosition.y);
+            withDefinition.getTextDecoratorEmulation().setDefinitionLocation(defPosition.getLocation());
+        }
+        // if text decoration moved
+        if (element instanceof TextDecorationNode) {
+            TextDecorationNode graph = (TextDecorationNode) element;
+            HasTextDecorator withText = (HasTextDecorator) graph.getTarget();
+            withText.getTextDecoratorEmulation().setDefinitionLocation(newConstraint.getLocation());
         }
     }
 }
