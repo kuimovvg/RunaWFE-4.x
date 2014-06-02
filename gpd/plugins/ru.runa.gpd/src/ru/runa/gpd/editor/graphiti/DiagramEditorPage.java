@@ -111,13 +111,13 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         super.createPartControl(parent);
         updateGridLayerVisibility(editor.getDefinition().isShowGrid());
     }
-    
+
     protected void updateGridLayerVisibility(boolean enabled) {
         if (getGraphicalViewer() != null && getGraphicalViewer().getEditPartRegistry() != null) {
             ScalableFreeformRootEditPart rootEditPart = (ScalableFreeformRootEditPart) getGraphicalViewer().getEditPartRegistry().get(LayerManager.ID);
             IFigure gridFigure = ((LayerManager) rootEditPart).getLayer(LayerConstants.GRID_LAYER);
             gridFigure.setVisible(enabled);
-        //gridFigure.setEnabled(editor.getDefinition().isShowGrid());
+            // gridFigure.setEnabled(editor.getDefinition().isShowGrid());
         }
     }
 
@@ -130,12 +130,10 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         return new DiagramContextMenuProvider(getGraphicalViewer(), getActionRegistry(), getDiagramTypeProvider());
     }
 
-    
     @Override
     protected KeyHandler getCommonKeyHandler() {
         if (keyHandler == null) {
-            keyHandler = ((ProcessEditorContributor) getEditor().getEditorSite().
-                    getActionBarContributor()).createKeyHandler(getActionRegistry());
+            keyHandler = ((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).createKeyHandler(getActionRegistry());
         }
         return keyHandler;
     }
@@ -153,6 +151,7 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
                 getDiagramTypeProvider().getFeatureProvider().link(diagram, editor.getDefinition());
                 drawElements(diagram);
                 drawTransitions();
+                getDefinition().setDirty(false);
             }
         });
     }
