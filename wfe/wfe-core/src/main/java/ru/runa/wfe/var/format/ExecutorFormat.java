@@ -1,21 +1,35 @@
 package ru.runa.wfe.var.format;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.MapDelegableVariableProvider;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class ExecutorFormat extends VariableFormat implements VariableDisplaySupport {
+    private static Map<Class<?>, String> tooltipTemplates = Maps.newHashMap();
+    static {
+        tooltipTemplates.put(Executor.class, ClassLoaderUtil.getAsString(Executor.class.getName() + ".tooltip.template", ExecutorFormat.class));
+        tooltipTemplates.put(Actor.class, ClassLoaderUtil.getAsString(Actor.class.getName() + ".tooltip.template", ExecutorFormat.class));
+        tooltipTemplates.put(Group.class, ClassLoaderUtil.getAsString(Group.class.getName() + ".tooltip.template", ExecutorFormat.class));
+    }
 
     @Override
     public Class<? extends Executor> getJavaClass() {
@@ -72,7 +86,17 @@ public class ExecutorFormat extends VariableFormat implements VariableDisplaySup
             HashMap<String, Object> params = Maps.newHashMap();
             params.put("id", executor.getId());
             String href = webHelper.getActionUrl("/manage_executor", params);
-            return "<a href=\"" + href + "\">" + executor.getLabel() + "</a>";
+            String html = "<a href=\"" + href + "\"";
+            String tooltipTemplate = tooltipTemplates.get(executor.getClass());
+            if (!Strings.isNullOrEmpty(tooltipTemplate)) {
+                Map<String, Object> map = Maps.newHashMap();
+                map.put("object", object);
+                IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
+                String title = ExpressionEvaluator.process(user, tooltipTemplate, variableProvider, webHelper);
+                html += " title=\"" + title + "\"";
+            }
+            html += ">" + executor.getLabel() + "</a>";
+            return html;
         } else {
             return executor.getLabel();
         }
