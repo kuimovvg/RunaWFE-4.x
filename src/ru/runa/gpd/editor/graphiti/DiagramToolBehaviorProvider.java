@@ -20,6 +20,7 @@ import ru.runa.gpd.editor.graphiti.create.CreateSwimlaneFeature;
 import ru.runa.gpd.editor.graphiti.update.OpenSubProcessFeature;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
+import ru.runa.gpd.lang.model.TextDecorationNode;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.EndTokenState;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -48,13 +49,13 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         if (element instanceof Subprocess) {
             return new OpenSubProcessFeature(getFeatureProvider());
         }
-        // TODO 
-//        if (element instanceof Node) {
-//            return new DirectEditNodeNameFeature(getFeatureProvider());
-//        }
-//        if (element instanceof TextAnnotation) {
-//            return new DirectEditDescriptionFeature(getFeatureProvider());
-//        }
+        // TODO
+        // if (element instanceof Node) {
+        // return new DirectEditNodeNameFeature(getFeatureProvider());
+        // }
+        // if (element instanceof TextAnnotation) {
+        // return new DirectEditDescriptionFeature(getFeatureProvider());
+        // }
         return super.getDoubleClickFeature(context);
     }
 
@@ -63,7 +64,7 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         IContextButtonPadData data = super.getContextButtonPad(context);
         PictogramElement pe = context.getPictogramElement();
         GraphElement element = (GraphElement) getFeatureProvider().getBusinessObjectForPictogramElement(pe);
-        if (element == null || element instanceof Swimlane) {
+        if (element == null || element instanceof Swimlane || element instanceof TextDecorationNode) {
             return null;
         }
         setGenericContextButtons(data, pe, CONTEXT_BUTTON_DELETE);
@@ -71,7 +72,8 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         CreateConnectionContext createConnectionContext = new CreateConnectionContext();
         createConnectionContext.setSourcePictogramElement(pe);
         boolean allowTargetNodeCreation = !(element instanceof EndState) && !(element instanceof EndTokenState)
-                && !(element instanceof Timer && element.getParent() instanceof ITimed) && !(element instanceof Swimlane) && !(element instanceof TextAnnotation);
+                && !(element instanceof Timer && element.getParent() instanceof ITimed) && !(element instanceof Swimlane)
+                && !(element instanceof TextAnnotation);
         //
         CreateContext createContext = new CreateContext();
         createContext.setTargetContainer((ContainerShape) pe.eContainer());
@@ -101,7 +103,7 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         if (createTransitionButton.getDragAndDropFeatures().size() > 0) {
             data.getDomainSpecificContextButtons().add(createTransitionButton);
         }
-        //        
+        //
         if (allowTargetNodeCreation) {
             ContextButtonEntry createElementButton = new ContextButtonEntry(null, null);
             createElementButton.setText("new element");
@@ -124,4 +126,5 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         }
         return data;
     }
+
 }

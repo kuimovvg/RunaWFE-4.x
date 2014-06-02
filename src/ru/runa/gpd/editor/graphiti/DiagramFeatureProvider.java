@@ -43,6 +43,7 @@ import ru.runa.gpd.editor.graphiti.update.MoveTransitionBendpointFeature;
 import ru.runa.gpd.editor.graphiti.update.MoveTransitionLabelFeature;
 import ru.runa.gpd.editor.graphiti.update.ReconnectSequenceFlowFeature;
 import ru.runa.gpd.editor.graphiti.update.RemoveTransitionBendpointFeature;
+import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -86,6 +87,12 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
                         if (SwimlaneDisplayMode.none == processDefinition.getSwimlaneDisplayMode()) {
                             continue;
                         }
+                    }
+                    if (BpmnSerializer.START_TEXT_DECORATION.equals(definition.getBpmnElementName())) {
+                        continue;
+                    }
+                    if (BpmnSerializer.END_TEXT_DECORATION.equals(definition.getBpmnElementName())) {
+                        continue;
                     }
                     list.add((ICreateFeature) definition.getGraphitiEntry().createCreateFeature(this));
                 }
@@ -155,7 +162,7 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
     public IMoveConnectionDecoratorFeature getMoveConnectionDecoratorFeature(IMoveConnectionDecoratorContext context) {
         return new MoveTransitionLabelFeature(this);
     }
-    
+
     @Override
     public IMoveBendpointFeature getMoveBendpointFeature(IMoveBendpointContext context) {
         return new MoveTransitionBendpointFeature(this);
@@ -202,18 +209,19 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
         return super.getUpdateFeature(context);
     }
     //
-    //    @Override
-    //    public IFeature[] getDragAndDropFeatures(IPictogramElementContext context) {
-    //        // simply return all create connection features
-    //        return getCreateConnectionFeatures();
-    //    }
-    //    @Override
-    //    public ICopyFeature getCopyFeature(ICopyContext context) {
-    //        return new CopyFlowElementFeature(this);
-    //    }
-    //    @Override
-    //    public IPasteFeature getPasteFeature(IPasteContext context) {
-    //        return new PasteFlowElementFeature(this);
-    //    }
-    //    
+    // @Override
+    // public IFeature[] getDragAndDropFeatures(IPictogramElementContext
+    // context) {
+    // // simply return all create connection features
+    // return getCreateConnectionFeatures();
+    // }
+    // @Override
+    // public ICopyFeature getCopyFeature(ICopyContext context) {
+    // return new CopyFlowElementFeature(this);
+    // }
+    // @Override
+    // public IPasteFeature getPasteFeature(IPasteContext context) {
+    // return new PasteFlowElementFeature(this);
+    // }
+    //
 }
