@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
-import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.dao.ConstantDAO;
@@ -220,41 +219,19 @@ public class InitializerLogic {
      * Apply patches to initialized database.
      */
     protected void applyPatches(UserTransaction transaction, int dbVersion) {
-        log.info("database is initialized, checking patches...");
-        DBType dbType = ApplicationContextFactory.getDBType();
-        boolean isDDLTransacted = (dbType == DBType.MSSQL || dbType == DBType.POSTGRESQL);
-        String isDDLTransactedProperty = System.getProperty("runawfe.transacted.ddl");
-        if (isDDLTransactedProperty != null) {
-            try {
-                isDDLTransacted = Boolean.valueOf(isDDLTransactedProperty);
-            } catch (Exception e) {
-                log.warn("Unable to parse system property 'runawfe.transacted.ddl' as boolean: " + e);
-            }
-        }
         log.info("Database version: " + dbVersion + ", code version: " + dbPatches.size());
         while (dbVersion < dbPatches.size()) {
             DBPatch patch = ApplicationContextFactory.createAutowiredBean(dbPatches.get(dbVersion));
             dbVersion++;
             log.info("Applying patch " + patch + " (" + dbVersion + ")");
             try {
-                if (isDDLTransacted) {
-                    transaction.begin();
-                }
-                patch.executeDDLBefore(isDDLTransacted);
-                if (!isDDLTransacted) {
-                    transaction.begin();
-                }
+                transaction.begin();
+                patch.executeDDLBefore();
                 patch.executeDML();
-                if (!isDDLTransacted) {
-                    constantDAO.setDatabaseVersion(dbVersion);
-                    transaction.commit();
-                }
-                patch.executeDDLAfter(isDDLTransacted);
-                if (isDDLTransacted) {
-                    constantDAO.setDatabaseVersion(dbVersion);
-                    transaction.commit();
-                }
-                log.info("Patch " + patch.getClass().getName() + "(" + dbVersion + ") is applied to database successfuly.");
+                patch.executeDDLAfter();
+                constantDAO.setDatabaseVersion(dbVersion);
+                transaction.commit();
+                log.info("Patch " + patch.getClass().getName() + "(" + dbVersion + ") is applied to database successfully.");
             } catch (Throwable th) {
                 log.error("Can't apply patch " + patch.getClass().getName() + "(" + dbVersion + ").", th);
                 Utils.rollbackTransaction(transaction);
