@@ -3,7 +3,6 @@ package ru.runa.wfe.service.client;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
-import ru.runa.wfe.var.dto.WfVariable;
 
 /**
  * This class eliminates byte[] data transferring without usage.
@@ -30,9 +29,7 @@ public class FileVariableProxy extends FileVariable {
     @Override
     public byte[] getData() {
         if (super.getData() == null) {
-            WfVariable variable = Delegates.getExecutionService().getVariable(user, processId, variableName);
-            FileVariable fileVariable = (FileVariable) variable.getValue();
-            setData(fileVariable.getData());
+            setData(Delegates.getExecutionService().getFileVariableValue(user, processId, variableName));
         }
         return super.getData();
     }

@@ -36,10 +36,19 @@ public class FileVariableToByteArrayConverter extends SerializableToByteArrayCon
         return value instanceof FileVariable;
     }
 
-    private File getContentFile(FileVariableDescriptor descriptor) throws IOException {
+    private File getContentFile(FileVariableDescriptor descriptor, boolean create) {
         File file = new File(storageDir, descriptor.getVariablePath());
-        file.getParentFile().mkdirs();
-        file.createNewFile();
+        if (create) {
+            file.getParentFile().mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new InternalApplicationException("Unable to create file '" + file + "'");
+            }
+        }
+        if (!file.exists()) {
+            throw new InternalApplicationException("No file found by path '" + file + "'");
+        }
         return file;
     }
 
@@ -49,7 +58,7 @@ public class FileVariableToByteArrayConverter extends SerializableToByteArrayCon
         if (SystemProperties.isLocalFileStorageEnabled() && fileVariable.getData().length > SystemProperties.getLocalFileStorageFileLimit()) {
             try {
                 FileVariableDescriptor descriptor = new FileVariableDescriptor(variable, fileVariable);
-                Files.write(descriptor.getData(), getContentFile(descriptor));
+                Files.write(descriptor.getData(), getContentFile(descriptor, true));
                 return super.convert(variable, descriptor);
             } catch (IOException e) {
                 throw new InternalApplicationException("Unable to save file variable to local drive", e);
@@ -63,11 +72,7 @@ public class FileVariableToByteArrayConverter extends SerializableToByteArrayCon
         FileVariable fileVariable = (FileVariable) super.revert(o);
         if (fileVariable instanceof FileVariableDescriptor) {
             FileVariableDescriptor descriptor = (FileVariableDescriptor) fileVariable;
-            try {
-                descriptor.setData(Files.toByteArray(getContentFile(descriptor)));
-            } catch (IOException e) {
-                throw new InternalApplicationException("Unable to read file variable from local drive", e);
-            }
+            descriptor.setFile(getContentFile(descriptor, false));
             return descriptor;
         }
         return fileVariable;
