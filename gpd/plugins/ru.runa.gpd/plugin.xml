@@ -1553,6 +1553,16 @@
             enabled="true"
             label="%ru.runa.wfe.extension.handler.file.LoadFileVariableFromFileSystemHandler">
       </handler>
+      <handler
+            actionHandler="true"
+            assignmentHandler="false"
+            botTaskHandler="true"
+            cellEditorProvider="ru.runa.gpd.extension.handler.ConfigBasedProvider"
+            className="ru.runa.wfe.extension.handler.file.SaveFileToFileSystemHandler"
+            decisionHandler="false"
+            enabled="true"
+            label="%ru.runa.wfe.extension.handler.file.SaveFileToFileSystemHandler">
+      </handler>
    </extension>
    <extension
          point="ru.runa.gpd.swimlaneElements">
