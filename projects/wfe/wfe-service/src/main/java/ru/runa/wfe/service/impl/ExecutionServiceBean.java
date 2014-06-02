@@ -41,7 +41,6 @@ import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
-import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
@@ -198,7 +197,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     @WebResult(name = "result")
     public byte[] getFileVariableValue(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
-            @WebParam(name = "variableName") String variableName) throws ProcessDoesNotExistException {
+            @WebParam(name = "variableName") String variableName) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(processId != null);
         Preconditions.checkArgument(variableName != null);
