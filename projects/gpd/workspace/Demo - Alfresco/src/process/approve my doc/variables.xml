@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<variables>
-  <variable name="uuid" format="ru.runa.wfe.var.format.StringFormat"/>
-  <variable name="file" format="ru.runa.wfe.var.format.FileFormat"/>
-  <variable name="initiator" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
-  <variable name="manager" format="ru.runa.wfe.var.format.ExecutorFormat" swimlane="true"/>
-</variables>

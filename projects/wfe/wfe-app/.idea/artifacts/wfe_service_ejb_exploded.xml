@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="exploded-ejb" name="wfe-service:ejb exploded">
-    <output-path>$PROJECT_DIR$/../wfe-service/target/wfe-service-4.0.6-SNAPSHOT</output-path>
-    <root id="root">
-      <element id="javaee-facet-resources" facet="wfe-service/ejb/EJB" />
-      <element id="module-output" name="wfe-service" />
-    </root>
-  </artifact>
-</component>

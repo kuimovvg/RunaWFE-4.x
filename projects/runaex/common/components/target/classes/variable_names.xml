@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<properties>
-  <entry key="defaultSchema">Схема</entry>
-  <entry key="navigateVariable">navigation</entry>
-  <entry key="rowIdVariable">rowid</entry>
-</properties>

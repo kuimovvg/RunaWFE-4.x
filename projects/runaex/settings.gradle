@@ -1,2 +1,0 @@
-rootProject.name = 'runaex'
-include 'components-core', 'components:handler', 'components:tag', 'components-dao', 'components', 'runaex-web'
