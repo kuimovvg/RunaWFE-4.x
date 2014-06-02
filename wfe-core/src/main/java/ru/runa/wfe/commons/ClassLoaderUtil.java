@@ -42,6 +42,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
 
 /**
  * Utils.
@@ -188,7 +189,7 @@ public class ClassLoaderUtil {
         try {
             return url != null ? url.openStream() : null;
         } catch (IOException e) {
-            return null;
+            throw Throwables.propagate(e);
         }
     }
 
@@ -207,6 +208,29 @@ public class ClassLoaderUtil {
             throw new InternalApplicationException("No resource found by name '" + resourceName + "'");
         }
         return stream;
+    }
+
+    /**
+     * Get resource as string.
+     * 
+     * @param resourceName
+     *            classpath resource name
+     * @param callingClass
+     *            package of this class will be inspected for resources
+     * @return resource string content or <code>null</code> if no resource
+     *         exists
+     */
+    public static String getAsString(String resourceName, Class<?> callingClass) {
+        InputStream stream = getAsStream(resourceName, callingClass);
+        if (stream != null) {
+            try {
+                byte[] bs = ByteStreams.toByteArray(stream);
+                return new String(bs, Charsets.UTF_8);
+            } catch (IOException e) {
+                Throwables.propagate(e);
+            }
+        }
+        return null;
     }
 
     public static Object instantiate(String className, Object... params) {
