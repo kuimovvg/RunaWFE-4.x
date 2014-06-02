@@ -34,8 +34,8 @@ public abstract class DBPatch {
      * Execute patch DDL statements before DML (non-transacted mode in most
      * databases).
      */
-    public final void executeDDLBefore(boolean inTransaction) throws Exception {
-        executeDDL("[DDLBefore]", getDDLQueriesBefore(), inTransaction);
+    public final void executeDDLBefore() throws Exception {
+        executeDDL("[DDLBefore]", getDDLQueriesBefore());
     }
 
     protected List<String> getDDLQueriesBefore() {
@@ -58,23 +58,19 @@ public abstract class DBPatch {
      * Execute patch DDL statements after DML (non-transacted mode in most
      * databases).
      */
-    public final void executeDDLAfter(boolean inTransaction) throws Exception {
-        executeDDL("[DDLAfter]", getDDLQueriesAfter(), inTransaction);
+    public final void executeDDLAfter() throws Exception {
+        executeDDL("[DDLAfter]", getDDLQueriesAfter());
     }
 
     protected List<String> getDDLQueriesAfter() {
         return Lists.newArrayList();
     }
 
-    private void executeDDL(String category, List<String> queries, boolean inTransaction) throws Exception {
+    private void executeDDL(String category, List<String> queries) throws Exception {
         for (String query : queries) {
             if (!Strings.isNullOrEmpty(query)) {
                 log.info(category + ": " + query);
-                if (inTransaction) {
-                    ApplicationContextFactory.getCurrentSession().createSQLQuery(query).executeUpdate();
-                } else {
-                    ApplicationContextFactory.getDataSource().getConnection().createStatement().executeUpdate(query);
-                }
+                ApplicationContextFactory.getCurrentSession().createSQLQuery(query).executeUpdate();
             }
         }
     }
