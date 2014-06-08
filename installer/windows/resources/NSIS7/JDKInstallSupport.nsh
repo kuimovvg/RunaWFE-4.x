@@ -3,6 +3,7 @@
 
 !include "AddToPathEnvironment.nsh"
 !include x64.nsh
+!include WinVer.nsh
 
 !define JAVA_VERSION "1.5.0"
 
@@ -50,7 +51,11 @@ Function checkAndInstallJDK
   Strcmp $InstallJava "yes" InstallJava JavaPathStorage
 InstallJava:
   ${if} ${RunningX64} 
-    ReadINIStr $JdkInstaller ".\runawfe.ini" "JDK" "JDK_PATH_64"
+    ${If} ${AtLeastWin2000}
+      ReadINIStr $JdkInstaller ".\runawfe.ini" "JDK" "JDK_PATH_64"
+    ${else}
+      ReadINIStr $JdkInstaller ".\runawfe.ini" "JDK" "JDK_PATH_32"
+    ${EndIf}
   ${else}
     ReadINIStr $JdkInstaller ".\runawfe.ini" "JDK" "JDK_PATH_32"
   ${endif}
