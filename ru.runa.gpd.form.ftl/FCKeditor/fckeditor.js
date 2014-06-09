@@ -364,10 +364,14 @@ function FCKeditor_IsCompatibleBrowser(debug)
 			alert ("Checking as Gecko");
 		}
 		if ((productSub || productSub.length == 0 || productSub >= 20030210) && !isOpera) {
-			alert("Defined as Gecko");
+			if (debug) {
+				alert("Defined as Gecko");
+			}
 			return true;
 		} else {
-			alert ("Not a Gecko: navigator.productSub=" + productSub + ", opera=" + isOpera);
+			if (debug) {
+				alert ("Not a Gecko: navigator.productSub=" + productSub + ", opera=" + isOpera);
+			}
 		}
 	}
 	// Opera 9.50+
