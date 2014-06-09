@@ -28,7 +28,7 @@ public class CalendarUtil {
     private static final Calendar UNLIMITED_DATE = getZeroTimeCalendar(Calendar.getInstance());
     private static final Calendar ZERO_DATE = getZeroTimeCalendar(Calendar.getInstance());
     static {
-        ZERO_DATE.set(Calendar.YEAR, 1900);
+        ZERO_DATE.set(Calendar.YEAR, 1970);
         ZERO_DATE.set(Calendar.DAY_OF_YEAR, 1);
         UNLIMITED_DATE.set(Calendar.YEAR, 2100);
         UNLIMITED_DATE.set(Calendar.DAY_OF_YEAR, 1);
@@ -331,6 +331,12 @@ public class CalendarUtil {
 
     public static boolean areCalendarsEqualIgnoringTime(Calendar c1, Calendar c2) {
         return compareOnlyDate(c1, c2) == 0;
+    }
+
+    public static boolean areDatesEqualIgnoringTime(Date d1, Date d2) {
+        Calendar c1 = dateToCalendar(d1);
+        Calendar c2 = dateToCalendar(d2);
+        return areCalendarsEqualIgnoringTime(c1, c2);
     }
 
     protected static List<Calendar> transformToCalendarList(List<CalendarInterval> list) {
