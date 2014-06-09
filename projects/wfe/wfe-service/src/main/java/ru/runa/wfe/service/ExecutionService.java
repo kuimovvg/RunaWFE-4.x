@@ -199,8 +199,7 @@ public interface ExecutionService {
      * @param variables
      *            variable value
      * @param swimlaneActorId
-     *            actor id who will be assigned to task swimlane, can be
-     *            <code>null</code>
+     *            actor id who will be assigned to task swimlane, can be <code>null</code>
      * @throws TaskDoesNotExistException
      * @throws ValidationException
      */
@@ -343,10 +342,12 @@ public interface ExecutionService {
      *            process id
      * @param taskId
      *            active task id
+     * @param subprocessId
+     *            TODO
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId)
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId, String subprocessId)
             throws ProcessDoesNotExistException;
 
     /**
@@ -361,7 +362,7 @@ public interface ExecutionService {
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) throws ProcessDoesNotExistException;
+    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId, String subprocessId) throws ProcessDoesNotExistException;
 
     /**
      * Marks task as read.

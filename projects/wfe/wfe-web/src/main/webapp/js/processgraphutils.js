@@ -18,13 +18,22 @@ $(document).ready(function() {
 
 function showEmbeddedSubprocessDefinition(definitionId, subprocessId, width, height) {
 	//var src = "/wfe/processDefinitionGraphImage.do?id=" + definitionId + "&name=" + subprocessId;
-	var src = "/wfe/definition_graph_component.do?id=" + definitionId + "&subprocessId=" + subprocessId;
+	var jsId = getJsessionidValue();
+	var src = "/wfe/definition_graph_component.do;jsessionid=" + jsId + "?id=" + definitionId + "&subprocessId=" + subprocessId;
 	showImageDialog(src, width, height);
 }
 
 function showEmbeddedSubprocess(processId, subprocessId, width, height) {
 	//var src = "/wfe/processGraphImage.do?id=" + processId + "&name=" + subprocessId;
-	var src = "/wfe/process_graph_component.do?id=" + processId + "&subprocessId=" + subprocessId;
+	var jsId = getJsessionidValue();
+	var src = "/wfe/process_graph_component.do;jsessionid=" + jsId + "?id=" + processId + "&subprocessId=" + subprocessId;
+	showImageDialog(src, width, height);
+}
+
+function showEmbeddedSubprocessGraphHistory(processId, subprocessId, width, height) {
+	//var src = "/wfe/processGraphImage.do?id=" + processId + "&name=" + subprocessId;
+	var jsId = getJsessionidValue();
+	var src = "/wfe/process_graph_component_history.do;jsessionid=" + jsId + "?id=" + processId + "&subprocessId=" + subprocessId;
 	showImageDialog(src, width, height);
 }
 
@@ -43,4 +52,9 @@ function showImageDialog(src, w, h) {
    	$("#" + graphDialogDivId).html("<br/><br/>&nbsp;&nbsp;&nbsp;<img src='/wfe/images/loading.gif' align='absmiddle' />");
 	$.graphDialog.dialog("open");
 	$("#" + graphDialogDivId).load(unify(src));
+}
+
+function getJsessionidValue()
+{
+	return document.location.href.match(/jsessionid=(.*?)\?id/i)[1];
 }

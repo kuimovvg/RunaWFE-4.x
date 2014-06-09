@@ -7,6 +7,7 @@ import ru.runa.wfe.job.CancelTimerAction;
 import ru.runa.wfe.job.CreateTimerAction;
 import ru.runa.wfe.job.Timer;
 import ru.runa.wfe.lang.Action;
+import ru.runa.wfe.lang.EmbeddedSubprocessStartNode;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.InteractionNode;
@@ -53,6 +54,9 @@ public class GraphImageHelper {
         nodeModel.setType(node.getNodeType());
         // nodeModel contains only id
         nodeModel.setName(node.getName());
+        if (node instanceof EmbeddedSubprocessStartNode) {
+            return;
+        }
         for (CreateTimerAction createTimerAction : node.getTimerActions(false)) {
             nodeModel.setTimerTransitionName(createTimerAction.getTransitionName());
             break;
