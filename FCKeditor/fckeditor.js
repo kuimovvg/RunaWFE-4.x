@@ -357,9 +357,19 @@ function FCKeditor_IsCompatibleBrowser(debug)
 	}
 
 	// Gecko (Opera 9 tries to behave like Gecko at this point).
-	if ( navigator.product == "Gecko" && navigator.productSub >= 20030210 && !( typeof(opera) == 'object' && opera.postError ) )
-		return true ;
-
+	if (navigator.product == "Gecko") {
+		var isOpera = typeof(opera) == 'object' && opera.postError;
+		var productSub = navigator.productSub;
+		if (debug) {
+			alert ("Checking as Gecko");
+		}
+		if ((productSub || productSub.length == 0 || productSub >= 20030210) && !isOpera) {
+			alert("Defined as Gecko");
+			return true;
+		} else {
+			alert ("Not a Gecko: navigator.productSub=" + productSub + ", opera=" + isOpera);
+		}
+	}
 	// Opera 9.50+
 	if ( window.opera && window.opera.version && parseFloat( window.opera.version() ) >= 9.5 )
 		return true ;
