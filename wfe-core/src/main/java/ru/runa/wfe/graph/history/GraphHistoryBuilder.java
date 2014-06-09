@@ -95,29 +95,64 @@ public class GraphHistoryBuilder {
     private final Set<String> parallelGatewayIsForkNodes = new HashSet<String>();
 
     public GraphHistoryBuilder(List<Executor> executors, WfTaskFactory taskObjectFactory, ProcessDefinition processDefinition,
-            List<ProcessLog> fullProcessLogs) {
+            List<ProcessLog> fullProcessLogs, String subProcessId) {
+
         List<ProcessLog> processLogsExceptComposition = new ArrayList<ProcessLog>();
+        Map<String, List<ProcessLog>> processLogsComposition = new HashMap<String, List<ProcessLog>>();
         boolean processLogs = true;
+        String subProcessName = null;
         for (ProcessLog processLog : fullProcessLogs) {
-            if (processLog instanceof NodeEnterLog && NodeType.START_EVENT == ((NodeEnterLog) processLog).getNodeType()) {
-                processLogs = false;
+            if (processLog instanceof NodeEnterLog && NodeType.SUBPROCESS == ((NodeEnterLog) processLog).getNodeType()) {
+
+                for (Node node : processDefinition.getNodes(true)) {
+                    if (node.getNodeId().equals(((NodeEnterLog) processLog).getNodeId())) {
+                        // NodeModel nodeModelForClone = diagramModel.getNodeNotNull(node.getNodeId());
+                        if (node instanceof SubProcessState && ((SubProcessState) node).isEmbedded()) {
+                            // subProcessName = ((SubProcessState) node).getSubProcessName();
+                            SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
+                                    .getSubProcessName());
+                            subProcessName = subprocessDefinition.getNodeId();
+                            processLogs = false;
+                            processLogsExceptComposition.add(processLog);
+                            break;
+                        }
+                    }
+                }
+                if (subProcessName != null) {
+                    continue;
+                }
+                // subProcessName = ((NodeEnterLog) processLog).getNodeName();
             }
-            if (processLog instanceof NodeLeaveLog && NodeType.END_PROCESS == ((NodeLeaveLog) processLog).getNodeType()) {
+            if (processLog instanceof NodeLeaveLog && NodeType.SUBPROCESS == ((NodeLeaveLog) processLog).getNodeType() && !processLogs) {
                 processLogs = true;
-                continue;
+                subProcessName = null;
+                // continue;
             }
             if (processLogs) {
                 processLogsExceptComposition.add(processLog);
+            } else {
+                List<ProcessLog> subProcessLogs = processLogsComposition.get(subProcessName);
+                if (subProcessLogs == null) {
+                    subProcessLogs = new ArrayList<ProcessLog>();
+                }
+                subProcessLogs.add(processLog);
+                processLogsComposition.put(subProcessName, subProcessLogs);
             }
         }
 
         this.executors = executors;
         this.processDefinition = processDefinition;
 
-        for (ProcessLog processLog : processLogsExceptComposition) {
+        List<ProcessLog> processLogForProcessing = (subProcessId != null && !"null".equals(subProcessId)) ? processLogsComposition.get(subProcessId)
+                : processLogsExceptComposition;
+        for (ProcessLog processLog : processLogForProcessing) {
             if (processLog instanceof TransitionLog) {
                 transitionLogs.add((TransitionLog) processLog);
             } else if (processLog instanceof NodeLog) {
+                if (subProcessId != null && !"null".equals(subProcessId) && processLog instanceof NodeEnterLog
+                        && NodeType.START_EVENT == ((NodeLog) processLog).getNodeType()) {
+                    continue;
+                }
                 nodeLogs.add((NodeLog) processLog);
             } else if (processLog instanceof TaskLog) {
                 taskLogs.add((TaskLog) processLog);
@@ -126,7 +161,7 @@ public class GraphHistoryBuilder {
 
         String forkNodeId = null;
         int countLeaveLog = 0;
-        for (ProcessLog processLog : processLogsExceptComposition) {
+        for (ProcessLog processLog : processLogForProcessing) {
             if (processLog instanceof NodeEnterLog && ((NodeEnterLog) processLog).getNodeType() == NodeType.PARALLEL_GATEWAY) {
                 countLeaveLog = 0;
                 forkNodeId = processLog.getNodeId();
@@ -144,8 +179,9 @@ public class GraphHistoryBuilder {
             }
         }
 
-        this.processLogs.addAll(processLogsExceptComposition);
-        diagramModel = DiagramModel.load(processDefinition);
+        this.processLogs.addAll(processLogForProcessing);
+        diagramModel = (subProcessId != null && !"null".equals(subProcessId)) ? DiagramModel.load(processDefinition
+                .getEmbeddedSubprocessById(subProcessId)) : DiagramModel.load(processDefinition);
         factory = new UMLFigureFactory();
     }
 
@@ -172,7 +208,7 @@ public class GraphHistoryBuilder {
             if (log instanceof NodeEnterLog || log instanceof NodeLeaveLog) {
                 String nodeId = log.getNodeId();
 
-                for (Node node : processDefinition.getNodes(false)) {
+                for (Node node : processDefinition.getNodes(true)) {
                     if (node.getNodeId().equals(nodeId)) {
                         if (isNodePresentInGraph(log)) {
                             String correctNodeId = getNodeIdIncludeRepetition(nodeId + ":" + log.getTokenId(), nodeRepetitionCount);
@@ -418,7 +454,7 @@ public class GraphHistoryBuilder {
     }
 
     private void initNodeModel(NodeModel nodeModel, String nodeId) {
-        for (Node node : processDefinition.getNodes(false)) {
+        for (Node node : processDefinition.getNodes(true)) {
             if (node.getNodeId().equals(nodeId)) {
                 GraphImageHelper.initNodeModel(node, nodeModel);
 
@@ -580,7 +616,7 @@ public class GraphHistoryBuilder {
                     }
                 }
 
-                for (Node node : processDefinition.getNodes(false)) {
+                for (Node node : processDefinition.getNodes(true)) {
                     if (node.getNodeId().equals(nodeId)) {
                         NodeModel nodeModelForClone = diagramModel.getNodeNotNull(node.getNodeId());
                         NodeModel nodeModel = new NodeModel();
@@ -789,9 +825,17 @@ public class GraphHistoryBuilder {
 
                 if (nodeLog instanceof NodeEnterLog && nodeEnterlog.getNodeId().equals(((NodeEnterLog) nodeLog).getNodeId())
                         && ((NodeEnterLog) nodeLog).getNodeType() == NodeType.SUBPROCESS && node instanceof SubProcessState) {
-                    ((SubprocessGraphElementPresentation) presentation).setSubprocessId(((NodeEnterLog) nodeLog).getProcessId());
+                    //
+                    // find first SubprocessStartLog
+                    for (NodeLog nodeLog2 : nodeLogs) {
+                        if (nodeLog2.getId() >= nodeLog.getId() && nodeLog2 instanceof SubprocessStartLog) {
+                            ((SubprocessGraphElementPresentation) presentation).setSubprocessId(((SubprocessStartLog) nodeLog2).getSubprocessId());
+                            break;
+                        }
+                    }
 
                     if (((SubProcessState) node).isEmbedded()) {
+                        ((SubprocessGraphElementPresentation) presentation).setSubprocessId(((NodeEnterLog) nodeLog).getProcessId());
                         SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
                                 .getSubProcessName());
                         ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessId(subprocessDefinition.getNodeId());

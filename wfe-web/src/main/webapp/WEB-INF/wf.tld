@@ -956,6 +956,13 @@
 
       </attribute>
       <attribute>
+         <name>subprocessId</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
          <name>identifiableId</name>
          <required>false</required>
 

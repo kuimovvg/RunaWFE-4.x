@@ -52,8 +52,7 @@ public class GraphElementPresentationHelper {
     private final org.apache.ecs.html.Map map = new org.apache.ecs.html.Map();
 
     /**
-     * Creates instance of helper class to create links to subprocesses in graph
-     * elements.
+     * Creates instance of helper class to create links to subprocesses in graph elements.
      * 
      * @param taskId
      *            Current task identity. May be <= 0 if not applicable.
@@ -81,8 +80,7 @@ public class GraphElementPresentationHelper {
     }
 
     /**
-     * Creates links to subprocesses, forked in given multiple instance graph
-     * element.
+     * Creates links to subprocesses, forked in given multiple instance graph element.
      * 
      * @param element
      *            Multiple instance graph element to create links.
@@ -129,13 +127,13 @@ public class GraphElementPresentationHelper {
      *            Subprocess graph element to create link.
      * @return
      */
-    public Area createSubprocessLink(SubprocessGraphElementPresentation element, String action) {
+    public Area createSubprocessLink(SubprocessGraphElementPresentation element, String action, String jsFunction) {
         if (!element.isSubprocessAccessible()) {
             return null;
         }
         String url;
         if (element.isEmbedded()) {
-            url = "javascript:showEmbeddedSubprocess(" + element.getSubprocessId() + ", '" + element.getEmbeddedSubprocessId() + "', "
+            url = jsFunction + "(" + element.getSubprocessId() + ", '" + element.getEmbeddedSubprocessId() + "', "
                     + element.getEmbeddedSubprocessGraphWidth() + ", " + element.getEmbeddedSubprocessGraphHeight() + ");";
         } else {
             url = getSubprocessUrl(action, element.getSubprocessId());
@@ -183,8 +181,7 @@ public class GraphElementPresentationHelper {
      * 
      * @param element
      *            Graph element, to create tool tip.
-     * @return {@link Area} instance with tool tip or null, if {@link Area} not
-     *         created.
+     * @return {@link Area} instance with tool tip or null, if {@link Area} not created.
      */
     public Area createTaskTooltip(TaskGraphElementPresentation element) {
         if (!element.isMinimized()) {

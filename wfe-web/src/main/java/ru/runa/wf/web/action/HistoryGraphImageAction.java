@@ -33,8 +33,7 @@ import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
- * @struts:action path="/historyGraphImage" name="taskIdForm" validate="true"
- *                input = "/WEB-INF/wf/show_graph_history.jsp"
+ * @struts:action path="/historyGraphImage" name="taskIdForm" validate="true" input = "/WEB-INF/wf/show_graph_history.jsp"
  */
 public class HistoryGraphImageAction extends ActionBase {
 
@@ -45,7 +44,8 @@ public class HistoryGraphImageAction extends ActionBase {
         TaskIdForm idForm = (TaskIdForm) form;
         try {
             ExecutionService executionService = Delegates.getExecutionService();
-            byte[] diagramBytes = executionService.getProcessHistoryDiagram(getLoggedUser(request), idForm.getId(), idForm.getTaskId());
+            byte[] diagramBytes = executionService.getProcessHistoryDiagram(getLoggedUser(request), idForm.getId(), idForm.getTaskId(),
+                    idForm.getName());
             response.setContentType("image/png");
             OutputStream os = response.getOutputStream();
             os.write(diagramBytes);

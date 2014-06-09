@@ -230,21 +230,21 @@ public class ExecutionLogic extends WFCommonLogic {
         return getDefinitionGraphElements(user, definition, visitor);
     }
 
-    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId) throws ProcessDoesNotExistException {
+    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId, String subprocessId) throws ProcessDoesNotExistException {
         try {
             Process process = processDAO.getNotNull(processId);
             checkPermissionAllowed(user, process, ProcessPermission.READ);
             ProcessDefinition processDefinition = getDefinition(process);
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
-            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs);
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs, subprocessId);
             return converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
     }
 
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId)
+    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId, String subprocessId)
             throws ProcessDoesNotExistException {
         try {
             Process process = processDAO.getNotNull(processId);
@@ -252,7 +252,7 @@ public class ExecutionLogic extends WFCommonLogic {
             ProcessDefinition processDefinition = getDefinition(process);
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
-            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs);
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs, "" + subprocessId);
             converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
             return converter.getLogElements();
         } catch (Exception e) {

@@ -50,9 +50,9 @@ public class GraphHistoryElementPresentationVisitor extends GraphElementPresenta
      * @param tdFormElement
      *            Main TD element of form, containing graph history.
      */
-    public GraphHistoryElementPresentationVisitor(PageContext pageContext, TD td) {
+    public GraphHistoryElementPresentationVisitor(PageContext pageContext, TD td, String subprocessId) {
         this.td = td;
-        presentationHelper = new GraphElementPresentationHelper(pageContext, null);
+        presentationHelper = new GraphElementPresentationHelper(pageContext, subprocessId);
     }
 
     @Override
@@ -63,7 +63,8 @@ public class GraphHistoryElementPresentationVisitor extends GraphElementPresenta
 
     @Override
     protected void onSubprocess(SubprocessGraphElementPresentation element) {
-        Area area = presentationHelper.createSubprocessLink(element, WebResources.ACTION_SHOW_GRAPH_HISTORY);
+        Area area = presentationHelper.createSubprocessLink(element, WebResources.ACTION_SHOW_GRAPH_HISTORY,
+                "javascript:showEmbeddedSubprocessGraphHistory");
         presentationHelper.addTooltip(element, area);
     }
 
