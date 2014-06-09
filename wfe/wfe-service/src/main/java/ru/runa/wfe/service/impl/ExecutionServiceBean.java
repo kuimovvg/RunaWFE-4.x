@@ -262,17 +262,17 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     @WebResult(name = "result")
     public byte[] getProcessHistoryDiagram(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
-            @WebParam(name = "taskId") Long taskId) {
+            @WebParam(name = "taskId") Long taskId, @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
-        return executionLogic.getProcessHistoryDiagram(user, processId, taskId);
+        return executionLogic.getProcessHistoryDiagram(user, processId, taskId, subprocessId);
     }
 
     @Override
     @WebResult(name = "result")
     public List<GraphElementPresentation> getProcessHistoryDiagramElements(@WebParam(name = "user") User user,
-            @WebParam(name = "processId") Long processId, @WebParam(name = "taskId") Long taskId) {
+            @WebParam(name = "processId") Long processId, @WebParam(name = "taskId") Long taskId, @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
-        return executionLogic.getProcessHistoryDiagramElements(user, processId, taskId);
+        return executionLogic.getProcessHistoryDiagramElements(user, processId, taskId, subprocessId);
     }
 
     @Override

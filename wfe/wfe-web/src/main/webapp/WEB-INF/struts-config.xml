@@ -739,6 +739,9 @@
 			parameter="/WEB-INF/wf/show_process_graph.jsp" />
 		<action path="/process_graph_component" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/wf/process_graph_component.jsp" />
+		<action path="/process_graph_component_history" type="org.apache.struts.actions.ForwardAction"
+			parameter="/WEB-INF/wf/show_graph_component_history.jsp" />
+			
 
 		<action path="/version" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/common/version.jsp" />
