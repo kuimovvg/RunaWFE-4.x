@@ -207,11 +207,12 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                 }
             }
             if (graphElement instanceof HasTextDecorator) {
-                HasTextDecorator node = (HasTextDecorator) graphElement;
-                Element pointDefinition = element.addElement(TEXT_DECORATION);
-                addAttribute(pointDefinition, X, String.valueOf(node.getTextDecoratorEmulation().getDefinition().getConstraint().x));
-                addAttribute(pointDefinition, Y, String.valueOf(node.getTextDecoratorEmulation().getDefinition().getConstraint().y));
-
+                HasTextDecorator decorator = (HasTextDecorator) graphElement;
+                if (decorator.getTextDecoratorEmulation().getDefinition() != null) {
+                    Element pointDefinition = element.addElement(TEXT_DECORATION);
+                    addAttribute(pointDefinition, X, String.valueOf(decorator.getTextDecoratorEmulation().getDefinition().getConstraint().x));
+                    addAttribute(pointDefinition, Y, String.valueOf(decorator.getTextDecoratorEmulation().getDefinition().getConstraint().y));
+                }
             }
         }
         return document;
