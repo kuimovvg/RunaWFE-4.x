@@ -19,21 +19,40 @@ $(document).ready(function() {
 function showEmbeddedSubprocessDefinition(definitionId, subprocessId, width, height) {
 	//var src = "/wfe/processDefinitionGraphImage.do?id=" + definitionId + "&name=" + subprocessId;
 	var jsId = getJsessionidValue();
-	var src = "/wfe/definition_graph_component.do;jsessionid=" + jsId + "?id=" + definitionId + "&subprocessId=" + subprocessId;
+	
+	var src;
+	if(jsId) {
+		src = "/wfe/definition_graph_component.do;jsessionid=" + jsId + "?id=" + definitionId + "&subprocessId=" + subprocessId;
+	} else {
+		src = "/wfe/definition_graph_component.do?id=" + definitionId + "&subprocessId=" + subprocessId;
+	}
 	showImageDialog(src, width, height);
 }
 
 function showEmbeddedSubprocess(processId, subprocessId, width, height) {
 	//var src = "/wfe/processGraphImage.do?id=" + processId + "&name=" + subprocessId;
 	var jsId = getJsessionidValue();
-	var src = "/wfe/process_graph_component.do;jsessionid=" + jsId + "?id=" + processId + "&subprocessId=" + subprocessId;
+	
+	var src;
+	if(jsId) {
+		src = "/wfe/process_graph_component.do;jsessionid=" + jsId + "?id=" + processId + "&subprocessId=" + subprocessId;
+	} else {
+		src = "/wfe/process_graph_component.do?id=" + processId + "&subprocessId=" + subprocessId;
+	}
+	
 	showImageDialog(src, width, height);
 }
 
 function showEmbeddedSubprocessGraphHistory(processId, subprocessId, width, height) {
 	//var src = "/wfe/processGraphImage.do?id=" + processId + "&name=" + subprocessId;
 	var jsId = getJsessionidValue();
-	var src = "/wfe/process_graph_component_history.do;jsessionid=" + jsId + "?id=" + processId + "&subprocessId=" + subprocessId;
+	
+	var src;
+	if(jsId) {
+		src = "/wfe/process_graph_component_history.do;jsessionid=" + jsId + "?id=" + processId + "&subprocessId=" + subprocessId;
+	} else {
+		src = "/wfe/process_graph_component_history.do?id=" + processId + "&subprocessId=" + subprocessId;
+	}
 	showImageDialog(src, width, height);
 }
 
