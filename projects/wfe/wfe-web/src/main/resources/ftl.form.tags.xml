@@ -16,4 +16,5 @@
 	<ftltag name="MultipleSelectFromList" class="ru.runa.wf.web.ftl.method.MultipleSelectFromListTag" />
 	<ftltag name="SelectFromList" class="ru.runa.wf.web.ftl.method.SelectFromListTag" />
 	<ftltag name="ViewFile" class="ru.runa.wf.web.ftl.method.FileTag" />
+	<ftltag name="TreeviewSupport" class="ru.runa.wf.web.ftl.method.TreeviewSupportTag" />
 </configuration>
