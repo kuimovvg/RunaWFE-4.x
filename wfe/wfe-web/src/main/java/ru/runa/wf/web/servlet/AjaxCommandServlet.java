@@ -69,7 +69,7 @@ public class AjaxCommandServlet extends HttpServlet {
             Element root = document.getRootElement();
             List<Element> tagElements = root.elements(COMMAND_ELEMENT);
             for (Element tagElement : tagElements) {
-                String name = tagElement.attributeValue(NAME_ATTR).toLowerCase();
+                String name = tagElement.attributeValue(NAME_ATTR);
                 try {
                     String className = tagElement.attributeValue(CLASS_ATTR);
                     Class<? extends AjaxCommand> commandClass = (Class<? extends AjaxCommand>) ClassLoaderUtil.loadClass(className);
@@ -88,15 +88,21 @@ public class AjaxCommandServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Got ajax request: " + request.getQueryString());
         try {
-            String command = request.getParameter("command").toLowerCase();
+            String command = request.getParameter("command");
             User user = Commons.getUser(request.getSession());
             Class<? extends AjaxCommand> ajaxCommandClass = commands.get(command);
+            AjaxCommand ajaxCommand;
             if (ajaxCommandClass == null) {
-                log.error("Request not handled, unknown command '" + command + "'");
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                return;
+                if (ApplicationContextFactory.getContext().containsBean(command)) {
+                    ajaxCommand = ApplicationContextFactory.getContext().getBean(command, AjaxCommand.class);
+                } else {
+                    log.error("Request not handled, unknown command '" + command + "'");
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    return;
+                }
+            } else {
+                ajaxCommand = ApplicationContextFactory.createAutowiredBean(ajaxCommandClass);
             }
-            AjaxCommand ajaxCommand = ApplicationContextFactory.createAutowiredBean(ajaxCommandClass);
             ajaxCommand.execute(user, request, response);
         } catch (Exception e) {
             log.error("command", e);
