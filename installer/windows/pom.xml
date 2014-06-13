@@ -105,7 +105,7 @@
 
                 <exec executable="cmd" dir="../../rtn" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86 -P excludeRtnProperties"/>
                 </exec>
                 <copy toDir="target/artifacts/rtn/32">
                   <fileset dir="../../rtn/target">
@@ -114,11 +114,14 @@
                   <fileset dir="../../rtn/src/main/assembly">
                     <include name="*"/>
                   </fileset>
+                  <fileset dir="../../rtn/src/main/resources">
+                    <include name="*.properties"/>
+                  </fileset>
                 </copy>
 
                 <exec executable="cmd" dir="../../rtn" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86_64"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86_64 -P excludeRtnProperties"/>
                 </exec>
                 <copy toDir="target/artifacts/rtn/64">
                   <fileset dir="../../rtn/target">
@@ -126,6 +129,9 @@
                   </fileset>
                   <fileset dir="../../rtn/src/main/assembly">
                     <include name="*"/>
+                  </fileset>
+                  <fileset dir="../../rtn/src/main/resources">
+                    <include name="*.properties"/>
                   </fileset>
                 </copy>
 
