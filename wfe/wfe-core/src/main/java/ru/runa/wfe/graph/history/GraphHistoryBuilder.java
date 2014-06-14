@@ -97,51 +97,41 @@ public class GraphHistoryBuilder {
     public GraphHistoryBuilder(List<Executor> executors, WfTaskFactory taskObjectFactory, ProcessDefinition processDefinition,
             List<ProcessLog> fullProcessLogs, String subProcessId) {
 
+        this.executors = executors;
+        this.processDefinition = processDefinition;
+
         List<ProcessLog> processLogsExceptComposition = new ArrayList<ProcessLog>();
         Map<String, List<ProcessLog>> processLogsComposition = new HashMap<String, List<ProcessLog>>();
-        boolean processLogs = true;
-        String subProcessName = null;
-        for (ProcessLog processLog : fullProcessLogs) {
+
+        Iterator<ProcessLog> processLogIterator = fullProcessLogs.iterator();
+        while (processLogIterator.hasNext()) {
+            ProcessLog processLog = processLogIterator.next();
+
             if (processLog instanceof NodeEnterLog && NodeType.SUBPROCESS == ((NodeEnterLog) processLog).getNodeType()) {
 
                 for (Node node : processDefinition.getNodes(true)) {
                     if (node.getNodeId().equals(((NodeEnterLog) processLog).getNodeId())) {
-                        // NodeModel nodeModelForClone = diagramModel.getNodeNotNull(node.getNodeId());
+
                         if (node instanceof SubProcessState && ((SubProcessState) node).isEmbedded()) {
-                            // subProcessName = ((SubProcessState) node).getSubProcessName();
+                            processLogsExceptComposition.add(processLog);
+
                             SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
                                     .getSubProcessName());
-                            subProcessName = subprocessDefinition.getNodeId();
-                            processLogs = false;
-                            processLogsExceptComposition.add(processLog);
+                            String subProcessName = subprocessDefinition.getNodeId();
+
+                            ProcessLog processLogFinish = parseEmbeddedLogs(processLogIterator, processLogsComposition, subProcessName);
+                            if (processLogFinish != null) {
+                                processLogsExceptComposition.add(processLogFinish);
+                            }
+
                             break;
                         }
                     }
                 }
-                if (subProcessName != null) {
-                    continue;
-                }
-                // subProcessName = ((NodeEnterLog) processLog).getNodeName();
-            }
-            if (processLog instanceof NodeLeaveLog && NodeType.SUBPROCESS == ((NodeLeaveLog) processLog).getNodeType() && !processLogs) {
-                processLogs = true;
-                subProcessName = null;
-                // continue;
-            }
-            if (processLogs) {
-                processLogsExceptComposition.add(processLog);
             } else {
-                List<ProcessLog> subProcessLogs = processLogsComposition.get(subProcessName);
-                if (subProcessLogs == null) {
-                    subProcessLogs = new ArrayList<ProcessLog>();
-                }
-                subProcessLogs.add(processLog);
-                processLogsComposition.put(subProcessName, subProcessLogs);
+                processLogsExceptComposition.add(processLog);
             }
         }
-
-        this.executors = executors;
-        this.processDefinition = processDefinition;
 
         List<ProcessLog> processLogForProcessing = (subProcessId != null && !"null".equals(subProcessId)) ? processLogsComposition.get(subProcessId)
                 : processLogsExceptComposition;
@@ -183,6 +173,48 @@ public class GraphHistoryBuilder {
         diagramModel = (subProcessId != null && !"null".equals(subProcessId)) ? DiagramModel.load(processDefinition
                 .getEmbeddedSubprocessById(subProcessId)) : DiagramModel.load(processDefinition);
         factory = new UMLFigureFactory();
+    }
+
+    private ProcessLog parseEmbeddedLogs(Iterator<ProcessLog> processLogIterator, Map<String, List<ProcessLog>> processLogsComposition,
+            String subProcessName) {
+        List<ProcessLog> subProcessLogs = processLogsComposition.get(subProcessName);
+        if (subProcessLogs == null) {
+            subProcessLogs = new ArrayList<ProcessLog>();
+            processLogsComposition.put(subProcessName, subProcessLogs);
+        }
+
+        while (processLogIterator.hasNext()) {
+            ProcessLog processLog = processLogIterator.next();
+
+            if (processLog instanceof NodeEnterLog && NodeType.SUBPROCESS == ((NodeEnterLog) processLog).getNodeType()) {
+
+                for (Node node : processDefinition.getNodes(true)) {
+                    if (node.getNodeId().equals(((NodeEnterLog) processLog).getNodeId())) {
+
+                        if (node instanceof SubProcessState && ((SubProcessState) node).isEmbedded()) {
+                            subProcessLogs.add(processLog);
+
+                            SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
+                                    .getSubProcessName());
+                            String subProcessNameEmb = subprocessDefinition.getNodeId();
+
+                            ProcessLog processLogFinish = parseEmbeddedLogs(processLogIterator, processLogsComposition, subProcessNameEmb);
+                            if (processLogFinish != null) {
+                                subProcessLogs.add(processLogFinish);
+                            }
+
+                            break;
+                        }
+                    }
+                }
+            } else if (processLog instanceof NodeLeaveLog && NodeType.SUBPROCESS == ((NodeLeaveLog) processLog).getNodeType()) {
+                return processLog;
+            } else {
+                subProcessLogs.add(processLog);
+            }
+        }
+
+        return null;
     }
 
     public byte[] createDiagram(Process process, List<Transition> passedTransitions) throws Exception {
