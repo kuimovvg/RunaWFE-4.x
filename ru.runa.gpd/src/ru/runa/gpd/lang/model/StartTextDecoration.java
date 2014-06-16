@@ -1,6 +1,7 @@
 package ru.runa.gpd.lang.model;
 
 import org.eclipse.graphiti.datatypes.IDimension;
+import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
@@ -10,6 +11,7 @@ import org.eclipse.graphiti.services.IGaService;
 import org.eclipse.graphiti.ui.services.GraphitiUi;
 
 import ru.runa.gpd.editor.graphiti.UIContainer;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 public class StartTextDecoration extends TextDecorationNode {
 
@@ -43,9 +45,14 @@ public class StartTextDecoration extends TextDecorationNode {
                 labelSwimline = node.getSwimlaneLabel();
             }
 
-            IDimension swimlineDim = GraphitiUi.getUiLayoutService().calculateTextSize(labelSwimline, swimlane.getFont());
-            int maxRectWidth = swimlineDim.getWidth();
-            swimlane.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+            int maxRectWidth = 0;
+            IDimension swimlineDim = new DimensionImpl(0, 0);
+
+            if (SwimlaneDisplayMode.none != target.getProcessDefinition().getSwimlaneDisplayMode()) {
+                swimlineDim = GraphitiUi.getUiLayoutService().calculateTextSize(labelSwimline, swimlane.getFont());
+                maxRectWidth = swimlineDim.getWidth();
+                swimlane.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
+            }
 
             IDimension nameDim = GraphitiUi.getUiLayoutService().calculateTextSize(labelName, name.getFont());
             maxRectWidth = Math.max(nameDim.getWidth(), maxRectWidth);
