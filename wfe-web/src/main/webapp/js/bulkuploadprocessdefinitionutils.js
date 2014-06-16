@@ -42,7 +42,7 @@ function initFileInput(dropzone) {
 		},
 		dataType: "html",
 		success: function (e, msg, data) { 
-			addInputRows(msg, JSON.parse(data.responseText), progressBar, progressBarLine, inputId);
+			addInputRows(msg, jQuery.parseJSON(data.responseText), progressBar, progressBarLine, inputId);
 		}
 	});	
 	
