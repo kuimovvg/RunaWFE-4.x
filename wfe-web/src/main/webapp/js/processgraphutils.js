@@ -75,5 +75,9 @@ function showImageDialog(src, w, h) {
 
 function getJsessionidValue()
 {
-	return document.location.href.match(/jsessionid=(.*?)\?id/i)[1];
+	var jsession = document.location.href.match(/jsessionid=(.*?)\?id/i);
+	if(jsession) {
+		return jsession[1];
+	}
+	return null;
 }
