@@ -1,6 +1,7 @@
 package ru.runa.wf.web.action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -81,8 +82,9 @@ public class BulkDeployProcessDefinitionAction extends ActionBase {
        	 		successKeys.add((String) entry.getKey());
        	 	} catch (DefinitionAlreadyExistException e) {        		 
        	 		try {
-	    			 WfDefinition wfDefinition = Delegates.getDefinitionService().getLatestProcessDefinition(getLoggedUser(request), e.getName());
-	    			 Delegates.getDefinitionService().redeployProcessDefinition(getLoggedUser(request), wfDefinition.getId(), uploadedFile.getContent(), fullType);
+	    			 WfDefinition wfDefinition = Delegates.getDefinitionService().getLatestProcessDefinition(getLoggedUser(request), e.getName());	    			 	
+	    			 List<String> categories = new ArrayList<String>(Arrays.asList(wfDefinition.getCategories()));
+	    			 Delegates.getDefinitionService().redeployProcessDefinition(getLoggedUser(request), wfDefinition.getId(), uploadedFile.getContent(), categories);
 	    			 successKeys.add((String) entry.getKey());
        	 		} catch (Exception ex) {
                     addError(request, ex);
