@@ -150,32 +150,34 @@ public class CKEditorDialogCreatorHelper {
         {
             CKSelectElement selectElement = new CKSelectElement();
             selectElement.setId("ELEMENT_TAG_TYPE").setLabel("editor.lang.FreemarkerTags.MethodTitle");
-            if (PrefConstants.FORM_CK_EDITOR3.equals(ckeditorType)) {
-                selectElement.setDefaultValue(tagsList.isEmpty() ? null : "'" + tagsList.get(0).id + "'");
-            } else {
-                selectElement.setDefaultValue("''");
-                selectElement.addItem("''", "''");
-            }
+            selectElement.setDefaultValue("''");
+            selectElement.addItem("''", "''");
             for (MethodTag tagInfo : tagsList) {
                 selectElement.addItem("'" + tagInfo.name + "'", "'" + tagInfo.id + "'");
             }
-            selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+            selectElement.addCallback(/*
+                                       * Setup function is called to set element
+                                       * value (if we want to look at freemarker
+                                       * tag properties)
+                                       */
             "setup : function( element ){	\n" + "	this.setValue( element.getAttribute( 'ftltagname' ) || '' );\n" + "}\n");
             selectElement.addCallback(/*
-                                       * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
-                                       * element)
+                                       * Commit function is called if OK button
+                                       * pressed (selected value must be stored
+                                       * at real freemarker html element)
                                        */
             "commit : function( data ){\n" + "	if( this.getValue() )\n" + "		data.element.setAttribute( 'ftltagname', this.getValue() );\n" + "	else\n"
                     + "		data.element.removeAttribute( 'ftltagname' );\n" + "}\n");
             selectElement.addCallback(/*
-                                       * onChange is called if selection is changed. We need to show appriciate parameters for currently selected
+                                       * onChange is called if selection is
+                                       * changed. We need to show appriciate
+                                       * parameters for currently selected
                                        * freemarker function
                                        */
             "onChange : function(){\n" + "    var test = function(e){\n" + "        if(e.id.indexOf('FtlTagVBox') == e.id.length-10){\n"
                     + "            e.getElement().getParent().getParent().hide();\n" + "        };\n" + "    };\n" + "    this.getDialog().foreach(test);\n"
                     + "    if (this.getValue() && this.getValue() != '') {\n"
-                    + "    this.getDialog().getContentElement( 'mainTab', this.getValue() + 'FtlTagVBox' ).getElement().getParent().getParent().show();\n" + "}\n"
-                    + "    }\n");
+                    + "    this.getDialog().getContentElement( 'mainTab', this.getValue() + 'FtlTagVBox' ).getElement().getParent().getParent().show();\n" + "}\n" + "    }\n");
             selectElement.write(result, 4);
         }
         for (MethodTag tagInfo : tagsList) {
@@ -202,15 +204,22 @@ public class CKEditorDialogCreatorHelper {
                             selectElement.addItem("'" + option.value + "'", "'" + option.name + "'");
                         }
                     }
-                    selectElement.addCallback(/* Setup function is called to set element value (if we want to look at freemarker tag properties) */
+                    selectElement.addCallback(/*
+                                               * Setup function is called to set
+                                               * element value (if we want to
+                                               * look at freemarker tag
+                                               * properties)
+                                               */
                     "setup : function( element ){	\n" + "	if (this.id.indexOf(element.getAttribute( 'ftltagname' )) == 0){\n"
                             + "		var paramCount = this.id.charAt(this.id.length - 1);\n" + "		var start = 0; var end = -1;\n" + "		while(paramCount >= 0) {\n"
                             + "			if(end != -1){start = end + 1;}\n" + "			end = element.getAttribute( 'ftltagparams' ).indexOf('|', start);\n" + "			paramCount--;\n" + "		}\n"
                             + "		if(end == -1) end = element.getAttribute( 'ftltagparams' ).length;\n"
                             + "		this.setValue( element.getAttribute( 'ftltagparams' ).substring(start, end) );\n" + "	}\n" + "}\n");
                     selectElement.addCallback(/*
-                                               * Commit function is called if OK button pressed (selected value must be stored at real freemarker html
-                                               * element)
+                                               * Commit function is called if OK
+                                               * button pressed (selected value
+                                               * must be stored at real
+                                               * freemarker html element)
                                                */
                     "commit : function( data ){\n" + "	if(!this.isVisible()) return;" + "	if(data.element.getAttribute('ftltagparams') != null)"
                             + "		data.element.setAttribute( 'ftltagparams', data.element.getAttribute('ftltagparams') + '|' + this.getValue() );\n" + "	else\n"

@@ -31,9 +31,7 @@ public class WebServerUtils {
      */
     private static String getEditorDirectoryName() {
         String pref = Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR);
-        if (PrefConstants.FORM_CK_EDITOR3.equals(pref)) {
-            return "CKEditor";
-        } else if (PrefConstants.FORM_CK_EDITOR4.equals(pref)) {
+        if (PrefConstants.FORM_CK_EDITOR4.equals(pref)) {
             return "CKeditor4";
         } else {
             return "FCKeditor";
@@ -56,9 +54,7 @@ public class WebServerUtils {
     public static String getEditorURL() {
         String url = "http://localhost:" + SERVER_PORT;
         String pref = Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR);
-        if (PrefConstants.FORM_CK_EDITOR3.equals(pref)) {
-            url += "/ckeditor.html";
-        } else if (PrefConstants.FORM_CK_EDITOR4.equals(pref)) {
+        if (PrefConstants.FORM_CK_EDITOR4.equals(pref)) {
             url += "/editor.html";
         } else {
             if (EditorsPlugin.DEBUG) {
@@ -75,9 +71,9 @@ public class WebServerUtils {
 
     public static boolean useCKEditor() {
         String pref = Activator.getPrefString(PrefConstants.P_FORM_DEFAULT_FCK_EDITOR);
-        return PrefConstants.FORM_CK_EDITOR3.equals(pref) || PrefConstants.FORM_CK_EDITOR4.equals(pref);
+        return PrefConstants.FORM_CK_EDITOR4.equals(pref);
     }
-    
+
     private static IPath getStateLocation() {
         return EditorsPlugin.getDefault().getStateLocation();
     }
@@ -164,6 +160,5 @@ public class WebServerUtils {
         }
         return result;
     }
-
 
 }
