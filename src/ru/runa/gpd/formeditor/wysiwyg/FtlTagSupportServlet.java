@@ -195,7 +195,6 @@ public class FtlTagSupportServlet extends HttpServlet {
                 resultHtml.append(MethodTag.getTagNotNull(tagName).height);
             } else if ("IsAvailable".equals(commandStr)) {
                 resultHtml.append(WYSIWYGHTMLEditor.getCurrent().isFtlFormat());
-                WYSIWYGHTMLEditor.getCurrent().setBrowserLoaded(true);
             } else if ("GetVariableNames".equals(commandStr)) {
                 String filterClassName = Object.class.getName();
                 if ("checkbox".equals(request.getParameter("elementType"))) {

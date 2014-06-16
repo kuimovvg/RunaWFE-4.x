@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -54,6 +51,7 @@ import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Preconditions;
 
@@ -75,15 +73,13 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     private boolean dirty = false;
     private boolean browserLoaded = false;
     private static final Pattern pattern = Pattern.compile("^(.*?<(body|BODY).*?>)(.*?)(</(body|BODY)>.*?)$", Pattern.DOTALL);
-    private Timer updateSaveButtonTimer;
-    private String savedHTML = "";
     private static WYSIWYGHTMLEditor lastInitializedInstance;
 
-    protected synchronized boolean isBrowserLoaded() {
+    private synchronized boolean isBrowserLoaded() {
         return browserLoaded;
     }
 
-    protected synchronized void setBrowserLoaded(boolean browserLoaded) {
+    private synchronized void setBrowserLoaded(boolean browserLoaded) {
         this.browserLoaded = browserLoaded;
     }
 
@@ -127,7 +123,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     }
 
     private int cachedForVariablesCount = -1;
-    private Map<String, Map<String, Variable>> cachedVariables = new HashMap<String, Map<String, Variable>>();
+    private final Map<String, Map<String, Variable>> cachedVariables = new HashMap<String, Map<String, Variable>>();
 
     public synchronized Map<String, Variable> getVariables(boolean filterVariablesWithSpaces, String typeClassNameFilter) {
         if (formNode == null) {
@@ -189,20 +185,12 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             browser.addOpenWindowListener(new BrowserWindowHelper(getContainer().getDisplay()));
             new GetHTMLCallbackFunction(browser);
             new OnLoadCallbackFunction(browser);
+            new MarkEditorDirtyCallbackFunction(browser);
             browser.addProgressListener(new ProgressAdapter() {
                 @Override
                 public void completed(ProgressEvent event) {
                     if (EditorsPlugin.DEBUG) {
                         PluginLogger.logInfo("completed " + event);
-                    }
-                    if (updateSaveButtonTimer == null) {
-                        updateSaveButtonTimer = new Timer("updateSaveButtonTimer");
-                        updateSaveButtonTimer.schedule(new UpdateSaveButtonTimerTask(), 1000, 1000);
-                        if (EditorsPlugin.DEBUG) {
-                            PluginLogger.logInfo("Started updateSaveButtonTimer");
-                        }
-                    } else if (EditorsPlugin.DEBUG) {
-                        PluginLogger.logInfo("tried to start timer more than once!");
                     }
                 }
             });
@@ -269,7 +257,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                     }
                 }
             });
-            savedHTML = getSourceDocumentHTML();
         } catch (Exception e) {
             MessageDialog.openError(getContainer().getShell(), Messages.getString("wysiwyg.design.create_error"), e.getCause().getMessage());
             EditorsPlugin.logError("Web editor page", e);
@@ -304,17 +291,19 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     @Override
     public void doSave(IProgressMonitor monitor) {
         if (getActivePage() == 0) {
-            syncBrowser2Editor();
+            if (!syncBrowser2Editor()) {
+                throw new InternalApplicationException(Messages.getString("wysiwyg.design.save_error"));
+            }
         }
         sourceEditor.doSave(monitor);
-        savedHTML = getSourceDocumentHTML();
         if (formNode != null) {
             formNode.setDirty();
             createOrUpdateFormValidation();
         }
+        browser.execute("setHTMLSaved()");
         setDirty(false);
     }
-    
+
     private void createOrUpdateFormValidation() {
         String op = "create";
         try {
@@ -332,15 +321,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
     }
 
     @Override
-    public boolean isSaveOnCloseNeeded() {
-        if (getActivePage() == 0) {
-            syncBrowser2Editor();
-            return true;
-        }
-        return super.isSaveOnCloseNeeded();
-    }
-
-    @Override
     public boolean isSaveAsAllowed() {
         return false;
     }
@@ -351,9 +331,6 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
 
     @Override
     public void dispose() {
-        if (updateSaveButtonTimer != null) {
-            updateSaveButtonTimer.cancel();
-        }
         firePropertyChange(CLOSED);
         ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
         super.dispose();
@@ -361,25 +338,31 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
 
     @Override
     protected void pageChange(int newPageIndex) {
-        if (newPageIndex == 1) {
-            syncBrowser2Editor();
-        } else if (newPageIndex == 0) {
-            syncEditor2Browser();
+        if (isBrowserLoaded()) {
+            if (newPageIndex == 1) {
+                syncBrowser2Editor();
+            } else if (newPageIndex == 0) {
+                syncEditor2Browser();
+            }
+        } else if (EditorsPlugin.DEBUG) {
+            PluginLogger.logInfo("pageChange to = " + newPageIndex + " but editor is not loaded yet");
         }
         super.pageChange(newPageIndex);
     }
 
-    private void syncBrowser2Editor() {
+    private boolean syncBrowser2Editor() {
         if (browser != null) {
-            boolean result = browser.execute("getHTML(false)");
+            boolean result = browser.execute("getHTML()");
             if (EditorsPlugin.DEBUG) {
                 PluginLogger.logInfo("syncBrowser2Editor = " + result);
             }
+            return result;
         }
+        return false;
     }
 
     private void syncEditor2Browser() {
-        String html = getSourceDocumentHTML();
+        String html = sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).get();
         Matcher matcher = pattern.matcher(html);
         if (matcher.find()) {
             html = matcher.group(3);
@@ -390,6 +373,8 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             } catch (Exception e) {
                 EditorsPlugin.logError("ftl WYSIWYGHTMLEditor.syncEditor2Browser()", e);
             }
+        } else {
+            html = VarTagUtil.toHtml(html);
         }
         html = html.replaceAll("\r\n", "\n");
         html = html.replaceAll("\r", "\n");
@@ -403,105 +388,41 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         }
     }
 
-    private String getDesignDocumentHTML(String html) {
-        if (isFtlFormat()) {
-            try {
-                html = FreemarkerUtil.transformFromHtml(html, getVariables(false, null));
-                Matcher matcher = pattern.matcher(html);
-                if (matcher.find()) {
-                    html = matcher.group(3);
-                }
-                if (EditorsPlugin.DEBUG) {
-                    PluginLogger.logInfo("Designer html = " + html);
-                }
-                return html;
-            } catch (Exception e) {
-                PluginLogger.logErrorWithoutDialog("freemarker html transform", e);
-                return null;
-            }
-        } else {
-            // bug in closing customtag tag
-            return VarTagUtil.fromHtml(html);
-        }
-    }
-
-    private String getSourceDocumentHTML() {
-        String html = sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).get();
-        if (!isFtlFormat()) {
-            return VarTagUtil.toHtml(html);
-        }
-        return html;
-    }
-
-    private class UpdateSaveButtonTimerTask extends TimerTask {
-        @Override
-        public void run() {
-            try {
-                if (getActivePage() == 0 && browser != null) {
-                    Display.getDefault().asyncExec(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                browser.execute("getHTML(true)");
-                            } catch (Throwable e) {
-                                if (EditorsPlugin.DEBUG) {
-                                    PluginLogger.logInfo(e.getMessage());
-                                }
-                            }
-                        }
-                    });
-                }
-            } catch (Throwable e) {
-                if (EditorsPlugin.DEBUG) {
-                    PluginLogger.logInfo(e.getMessage());
-                }
-            }
-        }
-    }
-
     private class GetHTMLCallbackFunction extends BrowserFunction {
+
         public GetHTMLCallbackFunction(Browser browser) {
             super(browser, "getHTMLCallback");
         }
 
         @Override
         public Object function(Object[] arguments) {
-            boolean sync = (Boolean) arguments[0];
-            String text = (String) arguments[1];
+            String text = (String) arguments[0];
             if (text.length() == 0) {
                 if (EditorsPlugin.DEBUG) {
-                    PluginLogger.logInfo("empty text received in callback for sync=" + sync);
+                    PluginLogger.logInfo("empty text received in callback");
                 }
                 return null;
             }
-            if (sync) {
-                String html = getDesignDocumentHTML(text);
-                if (html == null) {
-                    return null;
-                }
-                String oldContent = getSourceDocumentHTML();
-                if (!oldContent.equals(html)) {
-                    sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
-                    setDirty(true);
-                } else if (EditorsPlugin.DEBUG) {
-                    PluginLogger.logInfo("Nothing to change: " + html);
+            String html;
+            if (isFtlFormat()) {
+                try {
+                    html = FreemarkerUtil.transformFromHtml(text, getVariables(false, null));
+                    Matcher matcher = pattern.matcher(html);
+                    if (matcher.find()) {
+                        html = matcher.group(3);
+                    }
+                    if (EditorsPlugin.DEBUG) {
+                        PluginLogger.logInfo("Designer html = " + html);
+                    }
+                } catch (Exception e) {
+                    PluginLogger.logErrorWithoutDialog("freemarker html transform", e);
+                    throw new InternalApplicationException(Messages.getString("wysiwyg.design.transform_to_source_error"));
                 }
             } else {
-                String html = getDesignDocumentHTML(text);
-                if (html == null) {
-                    return null;
-                }
-                String diff = StringUtils.difference(savedHTML, html);
-                boolean setDirty = (diff.length() != 0);
-                if (setDirty != isDirty()) {
-                    setDirty(setDirty);
-                } else if (EditorsPlugin.DEBUG) {
-                    PluginLogger.logInfo("Dirty state did not changed: " + setDirty);
-                }
-                if (setDirty) {
-                    sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
-                }
+                // bug in closing customtag tag
+                html = VarTagUtil.fromHtml(text);
             }
+            sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
             return null;
         }
     }
@@ -520,4 +441,18 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
             return null;
         }
     }
+
+    private class MarkEditorDirtyCallbackFunction extends BrowserFunction {
+
+        public MarkEditorDirtyCallbackFunction(Browser browser) {
+            super(browser, "markEditorDirtyCallback");
+        }
+
+        @Override
+        public Object function(Object[] arguments) {
+            setDirty(true);
+            return null;
+        }
+    }
+
 }

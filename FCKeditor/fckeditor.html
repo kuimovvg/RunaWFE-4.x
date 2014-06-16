@@ -6,9 +6,9 @@
 		<link href="sample.css" rel="stylesheet" type="text/css" />
 		<script type="text/javascript" src="fckeditor.js"></script>
 		<script type="text/javascript">
-		var inited;
-		var bufferedHtml = "";
 		var displayedErrors = new Object();
+		var modificationFlagSent = true;
+		var lastModificationLength = 0;
 		function alertError(e, method) {
 			if (displayedErrors[e.message] == undefined) {
 				displayedErrors[e.message] = true;
@@ -22,40 +22,50 @@
 				alert(errorInfo);
 			}
 		}
-		function getHTML(sync) {
+		function getHTML() {
+			// passing exception to caller to prevent saving old content
+			var editor = FCKeditorAPI.GetInstance("editor");
+			var content = editor.GetXHTML(true);
+			getHTMLCallback(content);
+		}
+		function setHTMLSaved() {
 			try {
-				if (inited) {
-					var editor = FCKeditorAPI.GetInstance('editor');
-					getHTMLCallback(sync, editor.GetXHTML(true));
-				}
+				var editor = FCKeditorAPI.GetInstance("editor");
+				markContent(editor);
 			} catch (e) {
-				alertError(e, "getHTML");
+				alertError(e, "setHTMLSaved");
 			}
 		}
 		function setHTML(html) {
 			try {
-				bufferedHtml = html;
-				if (inited) {
-					window.setTimeout(internalSetHtml, 250);
-				}
+				var editor = FCKeditorAPI.GetInstance("editor");
+				editor.SetHTML(html);
 			} catch (e) {
 				alertError(e, "setHTML");
 			}
 		}
-		function internalSetHtml() {
-			try {
-				var editor = FCKeditorAPI.GetInstance('editor');
-				editor.SetHTML(bufferedHtml);
-			} catch (e) {
-				alertError(e, "internalSetHtml");
-			}
-		}
 		function FCKeditor_OnComplete(editor) {
 			try {
-				inited = true;
-				setHTML(bufferedHtml);
+				onLoadCallback();
+				editor.Events.AttachEvent("OnAfterSetHTML", markContent) ;
+				window.setInterval("findModifications()", 1000);
 			} catch (e) {
 				alertError(e, "FCKeditor_OnComplete");
+			}
+		}
+		function markContent(editor) {
+			lastModificationLength = editor.GetXHTML(true).length;
+			modificationFlagSent = false;
+		}
+		function findModifications() {
+			if (!modificationFlagSent) {
+				var editor = FCKeditorAPI.GetInstance("editor");
+				var contentLength = editor.GetXHTML(true).length;
+				if (contentLength != lastModificationLength) {
+					markEditorDirtyCallback();
+					lastModificationLength = contentLength;
+					modificationFlagSent = true;
+				}
 			}
 		}
 		</script>
