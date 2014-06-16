@@ -4,9 +4,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<script type="text/javascript" src="ckeditor.js"></script>
 		<script type="text/javascript">
-		var inited = false;
-		var bufferedHtml = "";
 		var displayedErrors = new Object();
+		var modificationFlagSent = true;
+		var lastModificationLength = 0;
 		function alertError(e, method) {
 			if (displayedErrors[e.message] == undefined) {
 				displayedErrors[e.message] = true;
@@ -20,33 +20,53 @@
 				alert(errorInfo);
 			}
 		}
-		function getHTML(sync) {
-			try {
-				if (inited) {
-					var editor = CKEDITOR.instances.editor;
-					getHTMLCallback(sync, editor.getData());
-				}
-			} catch (e) {
-				alertError(e, "getHTML");
-			}
+		function getHTML() {
+			// passing exception to caller to prevent saving old content
+			var editor = CKEDITOR.instances.editor;
+			getHTMLCallback(editor.getData());
 		}
-		function setHTML(html){
+		function setHTML(html) {
 			try {
-				bufferedHtml = html;
-				CKEDITOR.instances.editor.setData(bufferedHtml);
+				var editor = CKEDITOR.instances.editor;
+				editor.setData(html, function() {
+					markContent(editor);
+				});				
 			} catch (e) {
 				alertError(e, "setHTML");
 			}
 		}
+		function setHTMLSaved() {
+			try {
+				var editor = CKEDITOR.instances.editor;
+				markContent(editor);
+			} catch (e) {
+				alertError(e, "setHTMLSaved");
+			}
+		}
+		function markContent(editor) {
+			lastModificationLength = editor.getData().length;
+			modificationFlagSent = false;
+		}
+		function findModifications() {
+			if (!modificationFlagSent) {
+				var editor = CKEDITOR.instances.editor;
+				var contentLength = editor.getData().length;
+				if (contentLength != lastModificationLength) {
+					markEditorDirtyCallback();
+					lastModificationLength = contentLength;
+					modificationFlagSent = true;
+				}
+			}
+		}
 		</script>
 	</head>
-	<body style="margin: 0px; padding: 0px;" class="taskform" onload="javascript:onLoadCallback();">
+	<body style="margin: 0px; padding: 0px;" class="taskform">
 		<textarea id="editor"></textarea>
-		<!--div id="editor"/-->
 		<script type="text/javascript">
 		try {
 			CKEDITOR.replace("editor");
-			inited = true;
+			onLoadCallback();
+			window.setInterval("findModifications()", 1000);
 		} catch (e) {
 			alertError(e, "CKEDITOR.replace");
 		}
