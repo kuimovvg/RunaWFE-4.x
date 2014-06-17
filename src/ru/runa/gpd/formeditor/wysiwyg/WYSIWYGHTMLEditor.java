@@ -400,17 +400,10 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
 
         @Override
         public Object function(Object[] arguments) {
-            String text = (String) arguments[0];
-            if (text.length() == 0) {
-                if (EditorsPlugin.DEBUG) {
-                    PluginLogger.logInfo("empty text received in callback");
-                }
-                return null;
-            }
-            String html;
+            String html = (String) arguments[0];
             if (isFtlFormat()) {
                 try {
-                    html = FreemarkerUtil.transformFromHtml(text, getVariables(false, null));
+                    html = FreemarkerUtil.transformFromHtml(html, getVariables(false, null));
                     Matcher matcher = pattern.matcher(html);
                     if (matcher.find()) {
                         html = matcher.group(3);
@@ -424,7 +417,7 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 }
             } else {
                 // bug in closing customtag tag
-                html = VarTagUtil.fromHtml(text);
+                html = VarTagUtil.fromHtml(html);
             }
             sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
             return null;
