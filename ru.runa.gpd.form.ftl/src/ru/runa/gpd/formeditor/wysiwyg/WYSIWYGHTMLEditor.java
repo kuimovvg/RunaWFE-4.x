@@ -224,7 +224,9 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                             @Override
                             public void run() {
                                 monitorDialog.setCancelable(true);
-                                browser.setUrl(WebServerUtils.getEditorURL());
+                                if (!browser.isDisposed()) {
+                                    browser.setUrl(WebServerUtils.getEditorURL());
+                                }
                             }
                         });
                         monitorDialog.setCancelable(true);
@@ -235,7 +237,9 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                         display.asyncExec(new Runnable() {
                             @Override
                             public void run() {
-                                setActivePage(0);
+                                if (!browser.isDisposed()) {
+                                    setActivePage(0);
+                                }
                             }
                         });
                     } catch (Exception e) {
