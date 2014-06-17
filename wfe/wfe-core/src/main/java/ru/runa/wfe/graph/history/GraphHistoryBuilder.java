@@ -125,6 +125,10 @@ public class GraphHistoryBuilder {
                             }
 
                             break;
+                        } else {
+
+                            processLogsExceptComposition.add(processLog);
+                            break;
                         }
                     }
                 }
@@ -205,6 +209,10 @@ public class GraphHistoryBuilder {
 
                             break;
                         }
+                    } else {
+
+                        subProcessLogs.add(processLog);
+                        break;
                     }
                 }
             } else if (processLog instanceof NodeLeaveLog && NodeType.SUBPROCESS == ((NodeLeaveLog) processLog).getNodeType()) {
