@@ -28,14 +28,12 @@ public class FormPreferencePage extends FieldEditorPreferencePage implements IWo
     @Override
     public void createFieldEditors() {
         addField(new BooleanFieldEditor(P_FORM_USE_EXTERNAL_EDITOR, Localization.getString("pref.form.useExternalEditor"), getFieldEditorParent()));
-        formExternalPathEditor = new FileFieldEditor(P_FORM_EXTERNAL_EDITOR_PATH, Localization.getString("pref.form.externalEditorPath"), true,
-                getFieldEditorParent());
+        formExternalPathEditor = new FileFieldEditor(P_FORM_EXTERNAL_EDITOR_PATH, Localization.getString("pref.form.externalEditorPath"), true, getFieldEditorParent());
         boolean enabled = Activator.getPrefBoolean(P_FORM_USE_EXTERNAL_EDITOR);
         formExternalPathEditor.setEnabled(enabled, getFieldEditorParent());
         addField(formExternalPathEditor);
-        addField(new RadioGroupFieldEditor(P_FORM_DEFAULT_FCK_EDITOR, Localization.getString("pref.form.defaultFCKEditor"), 2, new String[][] {
-                { "FCKEditor 2", FORM_FCK_EDITOR }, { "CKEditor 3", FORM_CK_EDITOR3 }, { "CKEditor 4", FORM_CK_EDITOR4 } }, 
-                getFieldEditorParent()));
+        addField(new RadioGroupFieldEditor(P_FORM_DEFAULT_FCK_EDITOR, Localization.getString("pref.form.defaultFCKEditor"), 2, new String[][] { { "FCKEditor 2", FORM_FCK_EDITOR },
+                { "CKEditor 4", FORM_CK_EDITOR4 } }, getFieldEditorParent()));
     }
 
     @Override
