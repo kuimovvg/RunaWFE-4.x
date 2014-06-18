@@ -419,7 +419,9 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
                 // bug in closing customtag tag
                 html = VarTagUtil.fromHtml(html);
             }
-            sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
+            if (!html.equals(sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).get())) {
+                sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput()).set(html);
+            }
             return null;
         }
     }
