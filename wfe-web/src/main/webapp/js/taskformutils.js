@@ -22,6 +22,7 @@ $(function() {
 	$(document).delegate(".inputFileDelete", "click", function() {
 		deleteFile($(this).attr("inputId"));
 	});
+	$(".tabs").tabs();
 });
 
 function initFileInput(dropzone) {
