@@ -8,7 +8,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 	
-	config.extraPlugins = "FreemarkerTags";
+	config.extraPlugins = "divarea,FreemarkerTags,tabs";
 	config.contentsCss = "form.css";
 	config.bodyClass = "taskform";
 	config.height = "500px";
@@ -20,7 +20,8 @@ CKEDITOR.editorConfig = function( config ) {
 		['Cut','Copy','Paste','PasteText','PasteFromWord','-','Print','SpellChecker','Scayt'],
 		['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 		['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
-		['FreemarkerMethod'],
+		['FreemarkerMethod'], 
+		['InsertTab','DeleteTab'], 
 		'/',
 		['Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
 		['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'],
