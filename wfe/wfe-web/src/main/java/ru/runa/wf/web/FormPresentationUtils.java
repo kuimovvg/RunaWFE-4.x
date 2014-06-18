@@ -120,7 +120,7 @@ public class FormPresentationUtils {
                 continue;
             }
             String href = hrefNode.getNodeValue();
-            if (href == null || href.length() == 0 || "#".equals(href) || href.startsWith("javascript")) {
+            if (href == null || href.length() == 0 || href.startsWith("#") || href.startsWith("javascript")) {
                 continue;
             }
             if (isHrefRelative(href)) {
