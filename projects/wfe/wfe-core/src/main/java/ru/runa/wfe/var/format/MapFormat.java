@@ -119,11 +119,11 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
             b.append(value);
             b.append("</td><td>");
             Object valueValue = TypeConversionUtil.convertTo(valueFormat.getJavaClass(), entry.getValue());
-            if (keyFormat instanceof VariableDisplaySupport) {
-                String componentName = name + "[" + keyValue + "]";
-                value = ((VariableDisplaySupport) keyFormat).formatHtml(user, webHelper, processId, componentName, valueValue);
+            if (valueFormat instanceof VariableDisplaySupport) {
+                String componentName = name + "[" + keyFormat.format(keyValue) + "]";
+                value = ((VariableDisplaySupport) valueFormat).formatHtml(user, webHelper, processId, componentName, valueValue);
             } else {
-                value = keyFormat.format(valueValue);
+                value = valueFormat.format(valueValue);
             }
             b.append(value);
             b.append("</td></tr>");

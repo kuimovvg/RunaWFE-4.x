@@ -5,9 +5,8 @@ import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.VariableFormat;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -19,8 +18,6 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws TemplateModelException {
         List<WfVariable> variables = Lists.newArrayList();
-        List<VariableFormat> componentFormats = Lists.newArrayList();
-        List<Map<?, ?>> maps = Lists.newArrayList();
         String firstParameter = getParameterAsString(0);
         boolean componentView = "true".equals(firstParameter);
         int i = ("false".equals(firstParameter) || "true".equals(firstParameter)) ? 1 : 0;
@@ -30,28 +27,22 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                 break;
             }
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
-            VariableFormat componentFormat = FormatCommons.createComponent(variable, 1);
-            Map<?, ?> map = (Map<?, ?>) variableProvider.getValue(variableName);
-            if (map == null) {
-                map = Maps.newHashMap();
+            if (variable.getValue() == null) {
+                variable.setValue(Maps.newHashMap());
             }
+            Preconditions.checkArgument(variable.getValue() instanceof Map, variable);
             variables.add(variable);
-            componentFormats.add(componentFormat);
-            maps.add(map);
             i++;
         }
-        if (maps.size() > 0) {
+        if (variables.size() > 0) {
             StringBuffer html = new StringBuffer();
             html.append("<table class=\"displayLinkedMaps\">");
             html.append(ViewUtil.generateTableHeader(variables, variableProvider, null));
-            for (Map.Entry<?, ?> entry : maps.get(0).entrySet()) {
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) variables.get(0).getValue()).entrySet()) {
                 html.append("<tr>");
-                for (int column = 0; column < maps.size(); column++) {
-                    Map<?, ?> map = maps.get(column);
-                    Object o = map.get(entry.getKey());
+                for (int column = 0; column < variables.size(); column++) {
                     WfVariable containerVariable = variables.get(column);
-                    VariableFormat componentFormat = componentFormats.get(column);
-                    WfVariable componentVariable = ViewUtil.createComponentVariable(containerVariable, null, componentFormat, o);
+                    WfVariable componentVariable = ViewUtil.createMapComponentVariable(containerVariable, entry.getKey());
                     String value;
                     if (componentView) {
                         value = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);

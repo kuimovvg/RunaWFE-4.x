@@ -35,6 +35,9 @@ import ru.runa.wf.web.form.VariableForm;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Objects;
 
@@ -70,19 +73,24 @@ public class VariableDownloaderAction extends ActionBase {
     private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
         String qualifier = null;
+        VariableFormat qualifierFormat = null;
         Object object;
         if (form.getLogId() != null) {
             object = Delegates.getExecutionService().getProcessLogValue(getLoggedUser(request), form.getLogId());
         } else {
             String variableName = form.getVariableName();
-            if (variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_START) && 
-                    variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_END)) {
+            if (variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_START)
+                    && variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_END)) {
                 int is = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_START);
                 int ie = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_END);
                 qualifier = variableName.substring(is + 1, ie);
                 variableName = variableName.substring(0, is);
             }
-            object = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), variableName).getValue();
+            WfVariable variable = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), variableName);
+            object = variable.getValue();
+            if (object instanceof Map) {
+                qualifierFormat = FormatCommons.createComponent(variable, 0);
+            }
         }
         if (object instanceof FileVariable) {
             return (FileVariable) object;
@@ -100,7 +108,12 @@ public class VariableDownloaderAction extends ActionBase {
                 throw new InternalApplicationException("No key for map was specified");
             }
             for (Map.Entry<Object, FileVariable> entry : map.entrySet()) {
-                if (Objects.equal(String.valueOf(entry.getKey()), qualifier)) {
+                if (qualifierFormat != null) {
+                    String keyInQualifierFormat = qualifierFormat.format(entry.getKey());
+                    if (Objects.equal(keyInQualifierFormat, qualifier)) {
+                        return entry.getValue();
+                    }
+                } else if (Objects.equal(String.valueOf(entry.getKey()), qualifier)) {
                     return entry.getValue();
                 }
             }
