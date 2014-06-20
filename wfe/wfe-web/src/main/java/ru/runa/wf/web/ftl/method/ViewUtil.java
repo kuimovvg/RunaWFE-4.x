@@ -125,6 +125,19 @@ public class ViewUtil {
         return createComponentVariable(containerVariable, nameSuffix, componentFormat, value);
     }
 
+    public static WfVariable createMapComponentVariable(WfVariable mapVariable, Object key) {
+        Map<?, ?> map = (Map<?, ?>) mapVariable.getValue();
+        Object object = map.get(key);
+        VariableFormat keyFormat = FormatCommons.createComponent(mapVariable, 0);
+        VariableFormat valueFormat = FormatCommons.createComponent(mapVariable, 1);
+        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        if (key != null) {
+            nameSuffix += keyFormat.format(key);
+        }
+        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        return createComponentVariable(mapVariable, nameSuffix, valueFormat, object);
+    }
+
     public static WfVariable createListSizeVariable(WfVariable complexVariable, Object value) {
         return createComponentVariable(complexVariable, FormSubmissionUtils.SIZE_SUFFIX, new StringFormat(), value);
     }

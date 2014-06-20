@@ -348,7 +348,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     private boolean convertValueToProxy(User user, Long processId, WfVariable variable) {
-        if (variable.getValue() instanceof FileVariable) {
+        if (variable != null && variable.getValue() instanceof FileVariable) {
             FileVariable fileVariable = (FileVariable) variable.getValue();
             FileVariableProxy proxy = new FileVariableProxy(user, processId, variable.getDefinition().getName(), fileVariable);
             variable.setValue(proxy);
