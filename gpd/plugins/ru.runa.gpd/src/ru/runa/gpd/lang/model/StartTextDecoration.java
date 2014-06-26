@@ -48,7 +48,7 @@ public class StartTextDecoration extends TextDecorationNode {
             int maxRectWidth = 0;
             IDimension swimlineDim = new DimensionImpl(0, 0);
 
-            if (SwimlaneDisplayMode.none != target.getProcessDefinition().getSwimlaneDisplayMode()) {
+            if (SwimlaneDisplayMode.none == target.getProcessDefinition().getSwimlaneDisplayMode()) {
                 swimlineDim = GraphitiUi.getUiLayoutService().calculateTextSize(labelSwimline, swimlane.getFont());
                 maxRectWidth = swimlineDim.getWidth();
                 swimlane.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
