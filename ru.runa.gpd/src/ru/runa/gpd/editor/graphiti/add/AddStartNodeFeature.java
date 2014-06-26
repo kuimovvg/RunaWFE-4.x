@@ -5,6 +5,7 @@ import org.eclipse.graphiti.datatypes.IDimension;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.context.impl.AddContext;
 import org.eclipse.graphiti.features.context.impl.AreaContext;
+import org.eclipse.graphiti.internal.datatypes.impl.DimensionImpl;
 import org.eclipse.graphiti.mm.algorithms.styles.Font;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
@@ -16,6 +17,7 @@ import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.StartTextDecoration;
 import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 public class AddStartNodeFeature extends AddNodeWithImageFeature {
     @Override
@@ -37,7 +39,12 @@ public class AddStartNodeFeature extends AddNodeWithImageFeature {
         } else {
             // calc position under start point image
             Font defFont = Graphiti.getGaService().manageDefaultFont(getDiagram());
-            IDimension swimlaneDim = GraphitiUi.getUiLayoutService().calculateTextSize(node.getSwimlaneLabel(), defFont);
+            
+            IDimension swimlaneDim = new DimensionImpl(0, 0);
+            if (SwimlaneDisplayMode.none == node.getProcessDefinition().getSwimlaneDisplayMode() ) {
+            	swimlaneDim = GraphitiUi.getUiLayoutService().calculateTextSize(node.getSwimlaneLabel(), defFont);
+        	}
+            
             IDimension nameDim = GraphitiUi.getUiLayoutService().calculateTextSize(node.getName(), defFont);
             int y = context.getY() - swimlaneDim.getHeight() - nameDim.getHeight();
             int maxWidth = Math.max(swimlaneDim.getWidth(), nameDim.getWidth());
