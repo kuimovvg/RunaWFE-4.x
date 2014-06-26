@@ -297,6 +297,11 @@
              id="editDescription"
              label="%label.action.editDescription">
        </action>
+       <action
+             class="ru.runa.gpd.ui.action.CreateProcessRegulation"
+             id="ru.runa.gpd.createProcessRegulation"
+             label="%label.menu.createProcessRegulation">
+       </action>
        <menu
              id="formCss"
              label="%label.action.formCSS"
