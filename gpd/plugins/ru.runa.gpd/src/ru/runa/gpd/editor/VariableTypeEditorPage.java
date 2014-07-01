@@ -113,7 +113,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
 
         Composite rightComposite = createSection(sashForm, "VariableUserType.attributes");
         rightComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-        attributeTableViewer = new TableViewer(rightComposite, SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        attributeTableViewer = new TableViewer(rightComposite, SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.MULTI);
         getToolkit().adapt(attributeTableViewer.getControl(), false, false);
         attributeTableViewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
         attributeTableViewer.setLabelProvider(new AttributeLabelProvider());
@@ -155,10 +155,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
             @Override
             public void onDropElement(Variable beforeElement, Variable element) {
                 List<Variable> attributes = getTypeSelection().getAttributes();
-                int index = attributes.indexOf(beforeElement);
-                if (index != -1 && attributes.remove(element)) {
-                    attributes.add(index, element);
-                }
+                getTypeSelection().changeAttributePosition(element, attributes.indexOf(beforeElement));
             }
         });
         updateTypeViewer();
@@ -207,12 +204,14 @@ public class VariableTypeEditorPage extends EditorPartBase {
         enableAction(moveDownTypeButton, selectedType != null
                 && getDefinition().getVariableUserTypes().indexOf(selectedType) < getDefinition().getVariableUserTypes().size() - 1);
         enableAction(createAttributeButton, selectedType != null);
-        Variable attribute = getAttributeSelection();
-        enableAction(changeAttributeButton, attribute != null);
-        enableAction(moveUpAttributeButton, selectedType != null && attribute != null && selectedType.getAttributes().indexOf(attribute) > 0);
-        enableAction(moveDownAttributeButton, selectedType != null && attribute != null
-                && selectedType.getAttributes().indexOf(attribute) < selectedType.getAttributes().size() - 1);
-        enableAction(deleteAttributeButton, attribute != null);
+        List<Variable> attributes = ((IStructuredSelection) attributeTableViewer.getSelection()).toList();
+        enableAction(changeAttributeButton, attributes.size() == 1);
+        enableAction(moveUpAttributeButton, selectedType != null && attributes.size() == 1
+                && selectedType.getAttributes().indexOf(attributes.get(0)) > 0);
+        enableAction(moveDownAttributeButton,
+                selectedType != null && attributes.size() == 1
+                        && selectedType.getAttributes().indexOf(attributes.get(0)) < selectedType.getAttributes().size() - 1);
+        enableAction(deleteAttributeButton, attributes.size() > 0);
     }
 
     @Override
@@ -339,7 +338,9 @@ public class VariableTypeEditorPage extends EditorPartBase {
             VariableWizard wizard = new VariableWizard(getDefinition(), type, variable, true, true, false);
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
+                variable.setScriptingName(wizard.getVariable().getScriptingName());
                 variable.setFormat(wizard.getVariable().getFormat());
+                variable.setUserType(wizard.getVariable().getUserType());
                 variable.setName(wizard.getVariable().getName());
                 variable.setDefaultValue(wizard.getVariable().getDefaultValue());
                 getDefinition().setDirty();
@@ -362,7 +363,6 @@ public class VariableTypeEditorPage extends EditorPartBase {
             Variable attribute = getAttributeSelection();
             int index = userType.getAttributes().indexOf(attribute);
             userType.changeAttributePosition(attribute, up ? index - 1 : index + 1);
-            // updateAttributeViewer();
             attributeTableViewer.setSelection(new StructuredSelection(attribute));
         }
     }
@@ -370,27 +370,32 @@ public class VariableTypeEditorPage extends EditorPartBase {
     private class DeleteAttributeSelectionListener extends LoggingSelectionAdapter {
         @Override
         protected void onSelection(SelectionEvent e) throws Exception {
-            Variable attribute = getAttributeSelection();
-            Map<String, List<FormNode>> variableFormNodesMapping = Maps.newHashMap();
-            String suffix = attribute.getName();
-            // TODO recursion will not work
-            for (Variable variable : getDefinition().getVariables(false, false, getTypeSelection().getName())) {
-                String name = variable.getName() + VariableUserType.DELIM + suffix;
-                variableFormNodesMapping.put(name, ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), name));
-            }
-            StringBuffer formNames = new StringBuffer(Localization.getString("Variable.ExistInForms")).append("\n");
-            if (variableFormNodesMapping.size() > 0) {
-                for (Map.Entry<String, List<FormNode>> entry : variableFormNodesMapping.entrySet()) {
-                    if (entry.getValue().size() > 0) {
-                        formNames.append(" ").append(entry.getKey()).append("\n");
-                        for (FormNode node : entry.getValue()) {
-                            formNames.append(" - ").append(node.getName()).append("\n");
+            List<Variable> attributes = ((IStructuredSelection) attributeTableViewer.getSelection()).toList();
+            for (Variable attribute : attributes) {
+                Map<String, List<FormNode>> variableFormNodesMapping = Maps.newHashMap();
+                String suffix = attribute.getName();
+                // TODO recursion will not work
+                for (Variable variable : getDefinition().getVariables(false, false, getTypeSelection().getName())) {
+                    String name = variable.getName() + VariableUserType.DELIM + suffix;
+                    variableFormNodesMapping.put(name,
+                            ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), name));
+                }
+                StringBuffer formNames = new StringBuffer(Localization.getString("Variable.ExistInForms")).append("\n");
+                if (variableFormNodesMapping.size() > 0) {
+                    for (Map.Entry<String, List<FormNode>> entry : variableFormNodesMapping.entrySet()) {
+                        if (entry.getValue().size() > 0) {
+                            formNames.append(" ").append(entry.getKey()).append("\n");
+                            for (FormNode node : entry.getValue()) {
+                                formNames.append(" - ").append(node.getName()).append("\n");
+                            }
                         }
                     }
+                    formNames.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
+                    if (!MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"),
+                            formNames.toString())) {
+                        continue;
+                    }
                 }
-                formNames.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
-            }
-            if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), formNames.toString())) {
                 // remove variable from form validations
                 for (Map.Entry<String, List<FormNode>> entry : variableFormNodesMapping.entrySet()) {
                     ParContentProvider.rewriteFormValidationsRemoveVariable(editor.getDefinitionFile(), entry.getValue(), entry.getKey());
