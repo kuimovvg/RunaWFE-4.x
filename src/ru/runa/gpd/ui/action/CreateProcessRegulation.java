@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.ide.IDE;
 import org.osgi.framework.Bundle;
 
@@ -101,6 +102,11 @@ public class CreateProcessRegulation extends BaseModelActionDelegate {
 		template.process(map, writer);
 		return writer.toString();
 		
+	}
+	
+	@Override
+    public void selectionChanged(IAction action, ISelection selection) {
+		action.setEnabled(!getActiveDesignerEditor().getDefinition().isInvalid());
 	}
 
 }
