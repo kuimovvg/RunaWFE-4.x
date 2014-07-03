@@ -19,6 +19,7 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.FormNode;
+import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
@@ -41,7 +42,7 @@ public class CopyGraphCommand extends Command {
     private final ProcessDefinition targetDefinition;
     private final IFolder targetFolder;
     private final CopyBuffer copyBuffer;
-    private final Map<String, Node> targetNodeMap = Maps.newHashMap();
+    private final Map<String, NamedGraphElement> targetNodeMap = Maps.newHashMap();
     private final List<ExtraCopyAction> executedCopyActions = Lists.newArrayList();
 
     public CopyGraphCommand(ProcessDefinition targetDefinition, IFolder targetFolder) {
@@ -68,15 +69,15 @@ public class CopyGraphCommand extends Command {
                 return;
             }
             Set<ExtraCopyAction> copyActions = new HashSet<ExtraCopyAction>();
-            List<Node> sourceNodeList = copyBuffer.getSourceNodes();
+            List<NamedGraphElement> sourceNodeList = copyBuffer.getSourceNodes();
             // add nodes
-            for (Node node : sourceNodeList) {
+            for (NamedGraphElement node : sourceNodeList) {
                 if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() != 0) {
                     continue;
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() != 0) {
                     continue;
                 }
-                Node copy = node.getCopy(targetDefinition);
+                NamedGraphElement copy = node.getCopy(targetDefinition);
                 for (Variable variable : node.getUsedVariables(copyBuffer.getSourceFolder())) {
                     CopyVariableAction copyAction = new CopyVariableAction(variable);
                     copyActions.add(copyAction);
@@ -101,14 +102,14 @@ public class CopyGraphCommand extends Command {
                 }
             }
             // add transitions
-            for (Node node : sourceNodeList) {
+            for (NamedGraphElement node : sourceNodeList) {
                 List<Transition> transitions = node.getChildren(Transition.class);
                 for (Transition transition : transitions) {
-                    Node source = targetNodeMap.get(transition.getSource().getId());
-                    Node target = targetNodeMap.get(transition.getTarget().getId());
+                	NamedGraphElement source = targetNodeMap.get(transition.getSource().getId());
+                	NamedGraphElement target = targetNodeMap.get(transition.getTarget().getId());
                     if (source != null && target != null) {
                         Transition copy = transition.getCopy(source);
-                        copy.setTarget(target);
+                        copy.setTarget((Node) target);
                     }
                     for (Variable variable : transition.getUsedVariables(copyBuffer.getSourceFolder())) {
                         CopyVariableAction copyAction = new CopyVariableAction(variable);
@@ -146,7 +147,7 @@ public class CopyGraphCommand extends Command {
                 }
             }
             // set swimlanes
-            for (Map.Entry<String, Node> entry : targetNodeMap.entrySet()) {
+            for (Map.Entry<String, NamedGraphElement> entry : targetNodeMap.entrySet()) {
                 if (entry.getValue() instanceof SwimlanedNode) {
                     boolean ignoreSwimlane = targetDefinition instanceof SubprocessDefinition && entry.getValue() instanceof StartState;
                     if (!ignoreSwimlane) {
@@ -164,7 +165,7 @@ public class CopyGraphCommand extends Command {
     @Override
     public void undo() {
         // remove nodes
-        for (Node node : targetNodeMap.values()) {
+        for (NamedGraphElement node : targetNodeMap.values()) {
             targetDefinition.removeChild(node);
         }
         // undo actions
@@ -175,6 +176,10 @@ public class CopyGraphCommand extends Command {
                 PluginLogger.logError("Unable undo operation for action " + extraCopyAction, e);
             }
         }
+    }
+    
+    public List<NamedGraphElement> getFilteredElements() {
+    	return  new ArrayList<NamedGraphElement>( targetNodeMap.values());
     }
 
     private class CopyFormFilesAction extends ExtraCopyAction {
