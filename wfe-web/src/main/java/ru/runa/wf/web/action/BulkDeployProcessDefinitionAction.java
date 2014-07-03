@@ -54,7 +54,6 @@ public class BulkDeployProcessDefinitionAction extends ActionBase {
 
         List<String> fullType;
 
-        FileForm fileForm = (FileForm) form;
         try {
             ProcessTypesIterator iter = new ProcessTypesIterator(getLoggedUser(request));
             if (paramTypeSelected == null || paramTypeSelected.equals("_default_type_")) {

@@ -61,16 +61,14 @@ public class FormSubmissionUtils {
     }
 
     /**
-     * @return saved in request values from previous form submit (used to
-     *         re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
      */
     public static Map<String, String[]> getUserFormInput(ServletRequest request) {
         return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
     }
 
     /**
-     * @return saved in request values from previous form submit (used to
-     *         re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
      */
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
@@ -131,6 +129,21 @@ public class FormSubmissionUtils {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public static Object extractVariable(HttpServletRequest request, ActionForm actionForm, VariableDefinition variableDefinition) throws Exception {
+
+        List<String> formatErrorsForFields = new ArrayList<String>();
+        Map<String, Object> inputs = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
+        inputs.putAll(getUploadedFilesMap(request));
+        Object variableValue = extractVariable(request, inputs, variableDefinition, formatErrorsForFields);
+        if (formatErrorsForFields.size() > 0) {
+            throw new VariablesFormatException(formatErrorsForFields);
+        }
+        if (!Objects.equal(IGNORED_VALUE, variableValue)) {
+            return variableValue;
+        }
+        return variableValue;
     }
 
     private static Object extractVariable(HttpServletRequest request, Map<String, ? extends Object> userInput, VariableDefinition variableDefinition,

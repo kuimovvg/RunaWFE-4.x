@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import ru.runa.wfe.audit.AdminActionLog;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -118,6 +119,8 @@ public class VariableLogic extends WFCommonLogic {
         checkPermissionAllowed(user, process, ProcessPermission.READ);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+
+        processLogDAO.addLog(new AdminActionLog(user.getActor(), AdminActionLog.ACTION_UPDATE_VARIABLES), process);
         executionContext.setVariableValues(variables);
     }
 

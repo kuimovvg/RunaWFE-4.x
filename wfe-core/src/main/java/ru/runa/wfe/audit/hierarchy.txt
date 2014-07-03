@@ -3,6 +3,7 @@
     <!-- B : ru.runa.bpm.log.SubprocessStartLog -->
     <!-- C : ru.runa.bpm.log.CreateTimerActionLog -->
     <!-- D : ru.runa.bpm.log.VariableDeleteLog -->
+    <!-- E : ru.runa.bpm.log.AdminActionLog -->
     
     <!-- I : ru.runa.bpm.log.ProcessCreateLog -->
     

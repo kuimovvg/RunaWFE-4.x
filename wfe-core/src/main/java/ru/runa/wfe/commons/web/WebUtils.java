@@ -18,10 +18,9 @@ public class WebUtils {
     }
 
     public static String getFreemarkerTagScript(WebHelper webHelper, String javascript, Map<String, String> substitutions) {
-        if (webHelper == null) {
-            return "";
-        }
-        substitutions.put("jsonUrl", webHelper.getUrl("/form.fp?json=true"));
+    	
+    	String url = webHelper != null ? webHelper.getUrl("/form.fp?json=true") : "/wfe/form.fp?json=true";
+        substitutions.put("jsonUrl", url);
         for (String sKey : substitutions.keySet()) {
             String v = substitutions.get(sKey);
             javascript = javascript.replaceAll(Pattern.quote(sKey), Matcher.quoteReplacement(v));

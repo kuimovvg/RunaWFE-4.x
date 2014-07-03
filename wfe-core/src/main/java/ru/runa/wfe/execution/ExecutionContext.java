@@ -21,7 +21,6 @@
  */
 package ru.runa.wfe.execution;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -205,8 +204,7 @@ public class ExecutionContext {
     }
 
     /**
-     * Adds all the given variables. It doesn't remove any existing variables
-     * unless they are overwritten by the given variables.
+     * Adds all the given variables. It doesn't remove any existing variables unless they are overwritten by the given variables.
      */
     public void setVariableValues(Map<String, Object> variables) {
         for (Map.Entry<String, Object> entry : variables.entrySet()) {
@@ -222,13 +220,7 @@ public class ExecutionContext {
     }
 
     public void addLog(ProcessLog processLog) {
-        processLog.setProcessId(getProcess().getId());
-        processLog.setTokenId(getToken().getId());
-        if (processLog.getNodeId() == null) {
-            processLog.setNodeId(getToken().getNodeId());
-        }
-        processLog.setCreateDate(new Date());
-        processLogDAO.create(processLog);
+        processLogDAO.addLog(processLog, getProcess());
     }
 
     @Override
