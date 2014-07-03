@@ -18,32 +18,57 @@
 package ru.runa.wf.web.tag;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ecs.html.A;
 import org.apache.ecs.html.TD;
+import org.apache.ecs.html.TR;
+import org.apache.ecs.html.Table;
 
 import ru.runa.common.WebResources;
+import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.html.HeaderBuilder;
 import ru.runa.common.web.html.RowBuilder;
 import ru.runa.common.web.html.StringsHeaderBuilder;
 import ru.runa.common.web.html.TableBuilder;
 import ru.runa.wf.web.html.ProcessVariablesRowBuilder;
+import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.ProcessPermission;
+import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Group;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Created on 29.11.2004
  * 
  * 
- * @jsp.tag name = "processVariableMonitor" body-content = "empty"
+ * @jsp.tag name = "processVariableMonitor" body-content = "JSP"
  */
 public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
 
     private static final long serialVersionUID = 161759402000861245L;
+
+    private Long identifiableId;
+
+    @Override
+    public void setIdentifiableId(Long id) {
+        identifiableId = id;
+    }
+
+    /**
+     * @jsp.attribute required = "false" rtexprvalue = "true"
+     */
+    @Override
+    public Long getIdentifiableId() {
+        return identifiableId;
+    }
 
     @Override
     protected boolean isFormButtonVisible() {
@@ -52,6 +77,26 @@ public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
+        WfProcess process = Delegates.getExecutionService().getProcess(getUser(), getIdentifiableId());
+        List<WfVariable> variables = Delegates.getExecutionService().getVariables(getUser(), getIdentifiableId());
+        Group administratorsGroup = Delegates.getExecutorService().getExecutorByName(getUser(), SystemProperties.getAdministratorsGroupName());
+        if (SystemProperties.getResources().getBooleanProperty("executionServiceAPI.updateVariables.enabled", false)
+                && Delegates.getExecutorService().isExecutorInGroup(getUser(), getUser().getActor(), administratorsGroup)
+                && Delegates.getDefinitionService().getVariableDefinitions(getUser(), process.getDefinitionId()).size() > 0) {
+            Table table = new Table();
+            tdFormElement.addElement(table);
+            table.addAttribute("width", "100%");
+
+            TR updateVariableTR = new TR();
+            table.addElement(updateVariableTR);
+
+            Map<String, Object> params = Maps.newHashMap();
+            params.put("id", identifiableId);
+            String updateVariableUrl = Commons.getActionUrl(WebResources.ACTION_UPDATE_PROCESS_VARIABLES, params, pageContext, PortletUrlType.Render);
+            A a = new A(updateVariableUrl, Messages.getMessage(Messages.LINK_UPDATE_VARIABLE, pageContext));
+            updateVariableTR.addElement(new TD(a).addAttribute("align", "right"));
+        }
+
         List<String> headerNames = Lists.newArrayList();
         headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_NAME, pageContext));
         headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_TYPE, pageContext));
@@ -60,7 +105,7 @@ public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
         }
         headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_VALUE, pageContext));
         HeaderBuilder headerBuilder = new StringsHeaderBuilder(headerNames);
-        List<WfVariable> variables = Delegates.getExecutionService().getVariables(getUser(), getIdentifiableId());
+
         RowBuilder rowBuilder = new ProcessVariablesRowBuilder(getIdentifiableId(), variables, pageContext);
         tdFormElement.addElement(new TableBuilder().build(headerBuilder, rowBuilder));
     }

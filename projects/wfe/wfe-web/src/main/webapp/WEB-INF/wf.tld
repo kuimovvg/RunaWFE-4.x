@@ -367,7 +367,7 @@
 
       </attribute>
 
-   </tag>
+   </tag>      
    <tag>
 
       <icon>    
@@ -3532,7 +3532,7 @@
       </icon>
       <name>processVariableMonitor</name>
       <tag-class>ru.runa.wf.web.tag.ProcessVariableMonitorTag</tag-class>
-      <body-content>empty</body-content>
+      <body-content>JSP</body-content>
 
       <attribute>
          <name>identifiableId</name>
@@ -5471,5 +5471,74 @@
    	  <name>importDataFile</name>
    	  <tag-class>ru.runa.wf.web.tag.ImportDataFileTag</tag-class>
    	  <body-content>JSP</body-content>
+   </tag>
+   <tag>
+
+      <icon>    
+      </icon>
+      <name>updateProcessVariables</name>
+      <tag-class>ru.runa.wf.web.tag.UpdateProcessVariablesFormTag</tag-class>
+      <body-content>empty</body-content>
+
+      <attribute>
+         <name>action</name>
+         <required>false</required>
+
+      </attribute>
+      <attribute>
+         <name>processId</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
+         <name>align</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
+         <name>height</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
+         <name>title</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
+         <name>valign</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
+         <name>width</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
+         <name>buttonAlignment</name>
+         <required>false</required>
+
+           <rtexprvalue>true</rtexprvalue>
+
+      </attribute>
+      <attribute>
+         <name>method</name>
+         <required>false</required>
+
+      </attribute>
+
    </tag>
 </taglib>

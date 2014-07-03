@@ -96,6 +96,11 @@
 		<servlet-class>ru.runa.wf.web.servlet.BulkUploadProcessDefinitionServlet</servlet-class>
 	</servlet>
  
+    <servlet>
+		<servlet-name>getComponentInput</servlet-name>            
+		<servlet-class>ru.runa.wf.web.servlet.GetComponentInputServlet</servlet-class>
+	</servlet>
+	
 	<servlet>
 		<servlet-name>version</servlet-name>            
 		<servlet-class>ru.runa.wf.web.servlet.VersionServlet</servlet-class>
@@ -141,6 +146,11 @@
 	<servlet-mapping>
 		<servlet-name>bulkUpload</servlet-name>
 		<url-pattern>/bulkUpload</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>getComponentInput</servlet-name>
+		<url-pattern>/getComponentInput</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

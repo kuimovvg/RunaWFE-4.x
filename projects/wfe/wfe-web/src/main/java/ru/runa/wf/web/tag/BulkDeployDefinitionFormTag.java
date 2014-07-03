@@ -164,37 +164,26 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
        
         String attachImageUrl = "";
         String loadingImageUrl = "";
-        String deleteImageUrl = "";
         String uploadFileTitle = Commons.getMessage("message.upload.file", webHelper.getPageContext());
         String loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
         if (webHelper != null) {
             attachImageUrl = webHelper.getUrl(Resources.IMAGE_ATTACH);
             loadingImageUrl = webHelper.getUrl(Resources.IMAGE_LOADING);
-            deleteImageUrl = webHelper.getUrl(Resources.IMAGE_DELETE);
             loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
         }
         String hideStyle = "style=\"display: none;\"";
         String html = "<div class=\"inputFileContainer\">";
-        html += "<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
+        html += "<div class=\"dropzone\" >";
         html += "<label class=\"inputFileAttach\">";
         html += "<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
         html += "<input class=\"inputFile inputFileAjax \" name=\"" + variableName + "\" type=\"file\" multiple>";
         html += "</label></div>";
-        html += "<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
-        html += "<div class=\"line\" style=\"width: " + (file != null ? "10" : "") + "0%;\"></div>";
+        html += "<div class=\"progressbar\" " +  hideStyle + ">";
+        html += "<div class=\"line\" style=\"width: 0%;\"></div>";
         html += "<div class=\"status\">";
-        if (file != null) {
-            html += "<img src=\"" + deleteImageUrl + "\" class=\"inputFileDelete\" inputId=\"" + variableName + "\">";
-        } else {
-            html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
-        }
+        html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
         html += "<span class=\"statusText\">";
-        if (file != null && webHelper != null) {
-            String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName);
-            html += "<a href='" + viewUrl + "'>" + file.getName() + " - " + file.getSize() + "</a>";
-        } else {
-            html += loadingMessage;
-        }
+        html += loadingMessage;
         html += "</span></div></div></div>";
         return html;
     }
