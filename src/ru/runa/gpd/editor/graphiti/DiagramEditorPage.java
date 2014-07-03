@@ -2,6 +2,7 @@ package ru.runa.gpd.editor.graphiti;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -14,6 +15,8 @@ import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.commands.CommandStack;
 import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
+import org.eclipse.gef.editparts.ZoomManager;
+import org.eclipse.gef.ui.parts.GraphicalViewerKeyHandler;
 import org.eclipse.graphiti.features.IAddFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -33,6 +36,7 @@ import org.eclipse.ui.PartInitException;
 
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.ProcessEditorContributor;
+import ru.runa.gpd.editor.gef.GEFActionBarContributor;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -150,7 +154,7 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
             protected void doExecute() {
                 getDiagramTypeProvider().getFeatureProvider().link(diagram, editor.getDefinition());
                 drawElements(diagram);
-                drawTransitions();
+                drawTransitions(editor.getDefinition().getChildrenRecursive(Transition.class));
                 getDefinition().setDirty(false);
             }
         });
@@ -175,7 +179,7 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         drawElements(parentShape, graphElements);
     }
 
-    private void drawElements(ContainerShape parentShape, List<? extends GraphElement> graphElements) {
+    public void drawElements(ContainerShape parentShape, List<? extends GraphElement> graphElements) {
         IFeatureProvider featureProvider = getDiagramTypeProvider().getFeatureProvider();
         for (GraphElement graphElement : graphElements) {
             if (graphElement.getConstraint() == null) {
@@ -201,8 +205,8 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         }
     }
 
-    private void drawTransitions() {
-        for (Transition transition : editor.getDefinition().getChildrenRecursive(Transition.class)) {
+    public void drawTransitions(List<Transition> transitions) {
+        for (Transition transition : transitions) {
             Anchor sourceAnchor = null;
             Anchor targetAnchor = null;
             AnchorContainer sourceShape = (AnchorContainer) getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(transition.getSource());
@@ -232,4 +236,11 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
             getDiagramTypeProvider().getFeatureProvider().addIfPossible(addContext);
         }
     }
+    
+    @Override
+    protected void initActionRegistry(ZoomManager zoomManager) {
+    	super.initActionRegistry(zoomManager);
+    	GEFActionBarContributor.createCustomGEFActions(getActionRegistry(), editor, getSelectionActions());
+    }
+   
 }

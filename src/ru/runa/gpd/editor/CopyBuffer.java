@@ -5,12 +5,12 @@ import java.util.List;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.gef.ui.actions.Clipboard;
 
-import com.google.common.base.Objects;
-
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.SelectionItem;
+
+import com.google.common.base.Objects;
 
 public class CopyBuffer {
 	public static final String GROUP_ACTION_HANDLERS = Localization.getString("CopyBuffer.ActionHandler");
@@ -20,7 +20,7 @@ public class CopyBuffer {
 	
     private IFolder sourceFolder;
     private ProcessDefinition sourceDefinition;
-    private List<Node> sourceNodes;
+    private List<NamedGraphElement> sourceNodes;
     
 	public CopyBuffer() {
         Object contents = Clipboard.getDefault().getContents();
@@ -29,12 +29,12 @@ public class CopyBuffer {
             if (array.length == 3) {
     	        sourceFolder = (IFolder) array[0];
     	        sourceDefinition = (ProcessDefinition) array[1];
-    	        sourceNodes = (List<Node>) array[2];
+    	        sourceNodes = (List<NamedGraphElement>) array[2];
             }
         }
 	}
 
-    public CopyBuffer(IFolder sourceFolder, ProcessDefinition sourceDefinition, List<Node> sourceNodes) {
+    public CopyBuffer(IFolder sourceFolder, ProcessDefinition sourceDefinition, List<NamedGraphElement> sourceNodes) {
         this.sourceFolder = sourceFolder;
         this.sourceDefinition = sourceDefinition;
         this.sourceNodes = sourceNodes;
@@ -44,7 +44,7 @@ public class CopyBuffer {
         Clipboard.getDefault().setContents(new Object[] { sourceFolder, sourceDefinition, sourceNodes });
     }
 
-    public List<Node> getSourceNodes() {
+    public List<NamedGraphElement> getSourceNodes() {
         return sourceNodes;
     }
     
