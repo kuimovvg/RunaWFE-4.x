@@ -44,6 +44,7 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.gef.GEFImageHelper;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.gef.part.graph.ElementGraphicalEditPart;
+import ru.runa.gpd.editor.graphiti.DiagramEditorPage;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -344,5 +345,9 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     @Override
     protected void pageChange(int newPageIndex) {
         super.pageChange(newPageIndex);
+    }
+    
+    public DiagramEditorPage getDiagramEditorPage(){
+    	return (DiagramEditorPage) graphPage;
     }
 }
