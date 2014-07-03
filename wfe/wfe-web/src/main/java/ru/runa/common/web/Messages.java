@@ -71,6 +71,8 @@ public class Messages {
     public static final String TITLE_INSANCE_SWINLANE_LIST = "title.process_swimlane_list";
     public static final String TITLE_INSANCE_TASKS_LIST = "title.process_tasks_list";
     public static final String TITLE_INSANCE_VARIABLE_LIST = "title.process_variable_list";
+    public static final String LINK_UPDATE_VARIABLE = "link.update_variable";
+    public static final String BUTTON_UPDATE_VARIABLE = "button.update_variable";
     public static final String TITLE_PROCESS = "title.process";
     public static final String TITLE_PROCESS_DEFINITION = "title.process_definition";
     public static final String TITLE_TASKS = "title.tasks";
@@ -87,7 +89,7 @@ public class Messages {
     public static final String BUTTON_LOGOUT = "button.logout";
 
     public static final String BUTTON_CANCEL_PROCESS = "button.cancel_process";
-    public static final String BUTTON_UNDEPLOY_DEFINITION = "button.undeploy_definition";
+    public static final String BUTTON_UNDEPLOY_DEFINITION = "button.undeploy_definition";    
 
     public static final String BUTTON_ACCEPT_TASK = "button.accept_task";
 
@@ -101,7 +103,7 @@ public class Messages {
     public static final String LABEL_ACTOR_IS_ACTIVE = "label.actor_is_active";
     public static final String LABEL_ACTOR_EMAIL = "label.actor_email";
     public static final String LABEL_ACTOR_PHONE = "label.actor_phone";
-    public static final String LABEL_GROUP_AD = "label.group_ad";
+    public static final String LABEL_GROUP_AD = "label.group_ad";    
 
     public static final String DYNAMIC_GROUP_NAME = "dynamic_group.name";
     public static final String ESCALATION_GROUP_NAME = "escalation_group.name";
@@ -138,10 +140,16 @@ public class Messages {
     public static final String LABEL_STATE_NAME = "label.state_name";
     public static final String LABEL_PARENT_PROCESS = "label.parent_process";
 
-    public static final String LABEL_VARIABLE_NAME = "label.variable_name";
+    public static final String TITLE_UPDATE_VARIABLE = "title.update_variable";
+    public static final String LABEL_VARIABLE_NAME = "label.variable_name";    
     public static final String LABEL_VARIABLE_VALUE = "label.variable_value";
     public static final String LABEL_VARIABLE_TYPE = "label.variable_type";
-
+    public static final String LABEL_VARIABLE_SCRIPTING_VALUE = "label.variable_script_value";
+    public static final String LABEL_VARIABLE = "label.variable";
+    public static final String LABEL_VARIABLE_NULL_VALUE = "label.variable_null_value";
+    public static final String LABEL_VARIABLE_OLD_VALUE = "label.variable_old_value";
+    public static final String LABEL_VARIABLE_NEW_VALUE = "label.variable_new_value";
+    public static final String LABEL_NO_VARIABLES ="label.no_variables";
     public static final String LABEL_SHOW_CONTROLS = "label.show_controls";
     public static final String LABEL_HIDE_CONTROLS = "label.hide_controls";
     

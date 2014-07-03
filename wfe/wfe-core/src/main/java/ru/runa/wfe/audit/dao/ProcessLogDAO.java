@@ -1,5 +1,6 @@
 package ru.runa.wfe.audit.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -37,8 +38,7 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
     }
 
     /**
-     * @return process logs for embedded subprocess or for main process without
-     *         embedded subprocesses.
+     * @return process logs for embedded subprocess or for main process without embedded subprocesses.
      */
     public List<ProcessLog> get(Long processId, ProcessDefinition definition) {
         // List<ProcessLog> result = Lists.newArrayList();
@@ -148,6 +148,16 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
 
     public boolean isNodeEntered(Process process, String nodeId) {
         return getHibernateTemplate().find("from NodeEnterLog where processId=? and nodeId=?", process.getId(), nodeId).size() > 0;
+    }
+
+    public void addLog(ProcessLog processLog, Process process) {
+        processLog.setProcessId(process.getId());
+        processLog.setTokenId(process.getRootToken().getId());
+        if (processLog.getNodeId() == null) {
+            processLog.setNodeId(process.getRootToken().getNodeId());
+        }
+        processLog.setCreateDate(new Date());
+        this.create(processLog);
     }
 
 }
