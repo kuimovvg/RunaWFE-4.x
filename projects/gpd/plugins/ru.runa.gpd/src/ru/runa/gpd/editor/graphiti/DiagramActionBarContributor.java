@@ -10,6 +10,7 @@ import org.eclipse.graphiti.ui.services.GraphitiUi;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.RetargetAction;
 
 import ru.runa.gpd.editor.ProcessEditorContributor;
@@ -84,6 +85,9 @@ public class DiagramActionBarContributor extends ProcessEditorContributor {
         tbm.add(getAction(GEFActionConstants.ZOOM_IN));
         ZoomComboContributionItem zoomCombo = new ZoomComboContributionItem(getPage());
         tbm.add(zoomCombo);
+        
+        tbm.add(getAction(ActionFactory.COPY.getId()));
+        tbm.add(getAction(ActionFactory.PASTE.getId()));
 
         tbm.add(new Separator());
     }

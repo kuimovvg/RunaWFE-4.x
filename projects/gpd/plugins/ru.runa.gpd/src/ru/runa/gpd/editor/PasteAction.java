@@ -5,6 +5,7 @@ import org.eclipse.gef.commands.Command;
 import org.eclipse.gef.ui.actions.SelectionAction;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.editor.graphiti.DrawAfterPastCommand;
 
 public class PasteAction extends SelectionAction {
     private final ProcessEditorBase editor;
@@ -20,12 +21,15 @@ public class PasteAction extends SelectionAction {
         return createCommand().canExecute();
     }
 
-    private Command createCommand() {
+    private CopyGraphCommand createCommand() {
         return new CopyGraphCommand(editor.getDefinition(), (IFolder) editor.getDefinitionFile().getParent());
     }
 
     @Override
     public void run() {
-        execute(createCommand());
+    	CopyGraphCommand copy = createCommand();
+        execute(copy);
+        execute(new DrawAfterPastCommand(copy.getFilteredElements(), editor.getDefinition(), editor.getDiagramEditorPage()));
+        
     }
 }
