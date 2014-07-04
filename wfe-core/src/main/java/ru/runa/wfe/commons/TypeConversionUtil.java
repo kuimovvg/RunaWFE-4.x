@@ -19,6 +19,7 @@ package ru.runa.wfe.commons;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -92,6 +93,9 @@ public class TypeConversionUtil {
                     // treating as null
                     return Defaults.defaultValue(classConvertTo);
                 }
+                if (classConvertTo == BigDecimal.class) {
+                    return (T) new BigDecimal(s);
+                }
                 // try to use 'valueOf(String)'
                 try {
                     Method valueOfMethod = classConvertTo.getMethod("valueOf", String.class);
@@ -115,6 +119,9 @@ public class TypeConversionUtil {
                 }
                 if (classConvertTo == Float.class) {
                     return (T) new Float(n.floatValue());
+                }
+                if (classConvertTo == BigDecimal.class) {
+                    return (T) new BigDecimal(n.toString());
                 }
             }
             if (classConvertTo.isArray()) {
