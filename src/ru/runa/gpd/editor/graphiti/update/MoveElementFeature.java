@@ -5,9 +5,11 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IMoveShapeContext;
 import org.eclipse.graphiti.features.impl.DefaultMoveShapeFeature;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.graphiti.mm.pictograms.impl.ContainerShapeImpl;
 import org.eclipse.graphiti.services.Graphiti;
 
 import ru.runa.gpd.editor.graphiti.HasTextDecorator;
+import ru.runa.gpd.editor.graphiti.TextDecoratorEmulation;
 import ru.runa.gpd.lang.model.TextDecorationNode;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.ITimed;
@@ -63,7 +65,15 @@ public class MoveElementFeature extends DefaultMoveShapeFeature {
             withDefinition.getTextDecoratorEmulation().getDefinition().setConstraint(defPosition);
             Graphiti.getGaService().setLocation(withDefinition.getTextDecoratorEmulation().getDefinition().getUiContainer().getOwner().getGraphicsAlgorithm(),
                     defPosition.x, defPosition.y);
-            withDefinition.getTextDecoratorEmulation().setDefinitionLocation(defPosition.getLocation());
+            
+            // re-attach TextDecorator parent on graphical layer
+            // https://sourceforge.net/p/runawfe/bugs/685/
+            TextDecoratorEmulation textDecoratorEmulation = withDefinition.getTextDecoratorEmulation();
+            if (context.getSourceContainer() != context.getTargetContainer()) {
+                Shape textShape = (Shape) textDecoratorEmulation.getDefinition().getUiContainer().getOwner();
+                textShape.setContainer(shape.getContainer());
+            }
+            textDecoratorEmulation.setDefinitionLocation(defPosition.getLocation());
         }
         // if text decoration moved
         if (element instanceof TextDecorationNode) {
