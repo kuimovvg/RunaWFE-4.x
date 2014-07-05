@@ -206,12 +206,10 @@ public class GraphHistoryBuilder {
                             if (processLogFinish != null) {
                                 subProcessLogs.add(processLogFinish);
                             }
-
-                            break;
+                        } else {
+                            subProcessLogs.add(processLog);
                         }
-                    } else {
 
-                        subProcessLogs.add(processLog);
                         break;
                     }
                 }
@@ -848,10 +846,6 @@ public class GraphHistoryBuilder {
             }
         }
 
-        if (nodeLeaveLog == null) {
-            return;
-        }
-
         GraphElementPresentation presentation;
         switch (nodeModel.getType()) {
         case SUBPROCESS:
@@ -883,6 +877,13 @@ public class GraphHistoryBuilder {
                                 .getGraphConstraints()[2]);
                         ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessGraphHeight(subprocessDefinition
                                 .getGraphConstraints()[3]);
+
+                        if (nodeLeaveLog == null) {
+                            presentation.initialize(node, nodeModel.getConstraints());
+                            presentation.setData("");
+                            logElements.add(presentation);
+                            return;
+                        }
                     }
 
                     break;
@@ -912,6 +913,11 @@ public class GraphHistoryBuilder {
         default:
             presentation = new GraphElementPresentation();
         }
+
+        if (nodeLeaveLog == null) {
+            return;
+        }
+
         presentation.initialize(node, nodeModel.getConstraints());
 
         Calendar startCal = Calendar.getInstance();
