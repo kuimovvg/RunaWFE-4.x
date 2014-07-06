@@ -74,10 +74,10 @@ public abstract class AjaxFreemarkerTag extends FreemarkerTag {
                 return "";
             }
             if (globalScope) {
-                if (webHelper.getPageContext().getAttribute(path) != null) {
+                if (webHelper.getRequest().getAttribute(path) != null) {
                     return "";
                 }
-                webHelper.getPageContext().setAttribute(path, Boolean.TRUE);
+                webHelper.getRequest().setAttribute(path, Boolean.TRUE);
             }
             InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull(path, getClass());
             return WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions);

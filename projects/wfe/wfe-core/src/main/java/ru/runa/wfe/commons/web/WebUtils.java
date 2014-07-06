@@ -18,7 +18,7 @@ public class WebUtils {
     }
 
     public static String getFreemarkerTagScript(WebHelper webHelper, String javascript, Map<String, String> substitutions) {
-    	
+    	// TODO
     	String url = webHelper != null ? webHelper.getUrl("/form.fp?json=true") : "/wfe/form.fp?json=true";
         substitutions.put("jsonUrl", url);
         for (String sKey : substitutions.keySet()) {
@@ -39,10 +39,10 @@ public class WebUtils {
     }
 
     public static String getExternalScript(WebHelper webHelper, String src) {
-        if (webHelper == null || webHelper.getPageContext().getAttribute(src) != null) {
+        if (webHelper == null || webHelper.getRequest().getAttribute(src) != null) {
             return "";
         }
-        webHelper.getPageContext().setAttribute(src, Boolean.TRUE);
+        webHelper.getRequest().setAttribute(src, Boolean.TRUE);
         String url = webHelper.getUrl(src);
         return "<script type=\"text/javascript\" src=\"" + url + "\"></script>";
     }

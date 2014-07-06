@@ -46,7 +46,7 @@ public class FileTag extends FreemarkerTag {
             return fileVariable;
         } else if ("drawimage".equals(view)) {
             String fileName = fileVariable.getName();
-            webHelper.getSession().setAttribute(fileName, fileVariable);
+            webHelper.getRequest().getSession().setAttribute(fileName, fileVariable);
             Map<String, String> params = Maps.newHashMap();
             params.put("fileName", fileName);
             String actionUrl = webHelper.getActionUrl("/getSessionFile", params);

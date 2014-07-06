@@ -58,7 +58,7 @@ import com.google.common.collect.Sets;
  * 
  */
 public class FormPresentationUtils {
-    private static final Log log = LogFactory.getLog(HTMLUtils.class);
+    private static final Log log = LogFactory.getLog(FormPresentationUtils.class);
 
     private static final String PROTOCOL_SEPARATOR = "//";
     /**

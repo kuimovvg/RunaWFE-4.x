@@ -13,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.common.WebResources;
-import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.servlet.UploadedFile;
@@ -458,8 +457,8 @@ public class ViewUtil {
             attachImageUrl = webHelper.getUrl(Resources.IMAGE_ATTACH);
             loadingImageUrl = webHelper.getUrl(Resources.IMAGE_LOADING);
             deleteImageUrl = webHelper.getUrl(Resources.IMAGE_DELETE);
-            uploadFileTitle = Commons.getMessage("message.upload.file", webHelper.getPageContext());
-            loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
+            uploadFileTitle = webHelper.getMessage("message.upload.file");
+            loadingMessage = webHelper.getMessage("message.loading");
         }
         String hideStyle = "style=\"display: none;\"";
         String html = "<div class=\"inputFileContainer\">";

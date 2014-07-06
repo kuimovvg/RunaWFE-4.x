@@ -57,7 +57,7 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
     }
 
     protected void registerVariableHandler(String variableName) {
-        webHelper.getSession().setAttribute(FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableName, this);
+        webHelper.getRequest().getSession().setAttribute(FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableName, this);
     }
 
     protected abstract Object executeTag() throws Exception;
