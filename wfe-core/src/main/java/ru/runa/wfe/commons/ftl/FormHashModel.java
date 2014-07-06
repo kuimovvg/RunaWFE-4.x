@@ -1,5 +1,10 @@
 package ru.runa.wfe.commons.ftl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.web.WebHelper;
@@ -23,8 +28,18 @@ public class FormHashModel extends SimpleHash {
         this.user = user;
         this.variableProvider = variableProvider;
         this.webHelper = webHelper;
-        if (this.webHelper != null) {
-            this.webHelper.removeAllTags();
+        if (webHelper != null && webHelper.getRequest() != null) {
+            HttpSession session = webHelper.getRequest().getSession();
+            java.util.Enumeration<String> attributeNames = session.getAttributeNames();
+            while (attributeNames.hasMoreElements()) {
+                String attributeName = attributeNames.nextElement();
+                if (attributeName.startsWith(AjaxFreemarkerTag.TAG_SESSION_PREFIX)) {
+                    session.removeAttribute(attributeName);
+                }
+                if (attributeName.startsWith(FtlTagVariableHandler.HANDLER_KEY_PREFIX)) {
+                    session.removeAttribute(attributeName);
+                }
+            }
         }
     }
 
@@ -46,8 +61,15 @@ public class FormHashModel extends SimpleHash {
             FreemarkerTag tag = FreemarkerConfiguration.getInstance().getTag(key);
             if (tag != null) {
                 tag.init(user, webHelper, variableProvider, key.startsWith(FreemarkerTag.TARGET_PROCESS_PREFIX));
-                if (webHelper != null && tag instanceof AjaxFreemarkerTag) {
-                    webHelper.setTag(key, (AjaxFreemarkerTag) tag);
+                if (webHelper != null && webHelper.getRequest() != null && tag instanceof AjaxFreemarkerTag) {
+                    HttpSession session = webHelper.getRequest().getSession();
+                    String sessionKey = AjaxFreemarkerTag.TAG_SESSION_PREFIX + key;
+                    List<AjaxFreemarkerTag> tags = (List<AjaxFreemarkerTag>) session.getAttribute(sessionKey);
+                    if (tags == null) {
+                        tags = new ArrayList<AjaxFreemarkerTag>();
+                        session.setAttribute(sessionKey, tags);
+                    }
+                    tags.add((AjaxFreemarkerTag) tag);
                 }
                 return tag;
             }

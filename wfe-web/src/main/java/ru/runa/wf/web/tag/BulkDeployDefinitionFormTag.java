@@ -14,7 +14,6 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
-import ru.runa.common.web.Commons;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Messages;
@@ -23,8 +22,6 @@ import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.wf.web.ProcessTypesIterator;
 import ru.runa.wf.web.action.RedeployProcessDefinitionAction;
-import ru.runa.wf.web.servlet.UploadedFile;
-import ru.runa.wf.web.tag.ProcessDefinitionBaseFormTag;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.security.Permission;
@@ -36,8 +33,8 @@ import ru.runa.wfe.user.User;
  * 
  */
 public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
-	
-	private static final long serialVersionUID = 5106978254165128752L;
+
+    private static final long serialVersionUID = 5106978254165128752L;
     private static final String TYPE_DEFAULT = "_default_type_";
 
     private static Select getTypeSelectElement(String selectedValue, String[] definitionTypes, User user, PageContext pageContext) {
@@ -87,8 +84,8 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
         Table table = new Table();
         table.setClass(Resources.CLASS_LIST_TABLE);
-        table.addElement(createFileInputRow(Messages.getMessage("process_definition.archive", pageContext), FileForm.FILE_INPUT_NAME, "", true,
-                true, Input.FILE, strutsWebHelper));
+        table.addElement(createFileInputRow(Messages.getMessage("process_definition.archive", pageContext), FileForm.FILE_INPUT_NAME, "", true, true,
+                Input.FILE, strutsWebHelper));
         TD td = new TD();
         Select select = getTypeSelectElement(selectedValue, definitionTypes, user, pageContext);
         td.addElement(select);
@@ -139,37 +136,36 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
     protected boolean isVisible() {
         return Delegates.getAuthorizationService().isAllowed(getUser(), DefinitionPermission.REDEPLOY_DEFINITION, getIdentifiable());
     }
-    
-    private static TR createFileInputRow(String label, String name, String value, boolean enabled, boolean required, String type, WebHelper strutsWebHelper)  {
-    	TR tr = new TR();
+
+    private static TR createFileInputRow(String label, String name, String value, boolean enabled, boolean required, String type,
+            WebHelper strutsWebHelper) {
+        TR tr = new TR();
         TD labelTd = new TD(label);
         labelTd.setClass(Resources.CLASS_LIST_TABLE_TD);
         tr.addElement(labelTd);
-        
+
         String fileInput = getFileInput(strutsWebHelper, name);
-        
+
         Input input = new Input(type, name, String.valueOf(value));
         input.setDisabled(!enabled);
         input.addAttribute("multiple", true);
         if (required) {
             input.setClass(Resources.CLASS_REQUIRED);
         }
-        
+
         tr.addElement(new TD(fileInput).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
-    
+
     private static String getFileInput(WebHelper webHelper, String variableName) {
-        UploadedFile file = null;
-       
         String attachImageUrl = "";
         String loadingImageUrl = "";
-        String uploadFileTitle = Commons.getMessage("message.upload.file", webHelper.getPageContext());
-        String loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
+        String uploadFileTitle = webHelper.getMessage("message.upload.file");
+        String loadingMessage = webHelper.getMessage("message.loading");
         if (webHelper != null) {
             attachImageUrl = webHelper.getUrl(Resources.IMAGE_ATTACH);
             loadingImageUrl = webHelper.getUrl(Resources.IMAGE_LOADING);
-            loadingMessage = Commons.getMessage("message.loading", webHelper.getPageContext());
+            loadingMessage = webHelper.getMessage("message.loading");
         }
         String hideStyle = "style=\"display: none;\"";
         String html = "<div class=\"inputFileContainer\">";
@@ -178,7 +174,7 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         html += "<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
         html += "<input class=\"inputFile inputFileAjax \" name=\"" + variableName + "\" type=\"file\" multiple>";
         html += "</label></div>";
-        html += "<div class=\"progressbar\" " +  hideStyle + ">";
+        html += "<div class=\"progressbar\" " + hideStyle + ">";
         html += "<div class=\"line\" style=\"width: 0%;\"></div>";
         html += "<div class=\"status\">";
         html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
