@@ -1,5 +1,6 @@
 package ru.runa.wfe.var;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,7 +10,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VariableUserType {
+public class VariableUserType implements Serializable {
     public static final String DELIM = ".";
     private String name;
     private final List<VariableDefinition> attributes = Lists.newArrayList();
