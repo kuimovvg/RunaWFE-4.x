@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.xml.XmlUtils;
@@ -76,7 +75,7 @@ public class FreemarkerConfiguration {
     private void addTag(String name, Class<? extends FreemarkerTag> tagClass) {
         if (tagClass != null) {
             // test creation
-            ApplicationContextFactory.createAutowiredBean(tagClass);
+            ClassLoaderUtil.instantiate(tagClass);
         }
         tags.put(name, tagClass);
         log.debug("Registered tag " + name + " as " + tagClass);
@@ -85,7 +84,7 @@ public class FreemarkerConfiguration {
     public FreemarkerTag getTag(String name) {
         Class<? extends FreemarkerTag> tagClass = tags.get(name);
         if (tagClass != null) {
-            return ApplicationContextFactory.createAutowiredBean(tagClass);
+            return ClassLoaderUtil.instantiate(tagClass);
         }
         return null;
     }
