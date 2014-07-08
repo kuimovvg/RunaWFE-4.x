@@ -154,8 +154,8 @@ public class ExecutionContext {
             swimlane.assignExecutor(this, TypeConversionUtil.convertTo(Executor.class, value), true);
             return;
         }
+        VariableDefinition variableDefinition = getProcessDefinition().getVariable(name, false);
         if (!SystemProperties.isV3CompatibilityMode()) {
-            VariableDefinition variableDefinition = getProcessDefinition().getVariable(name, false);
             if (variableDefinition == null && !SystemProperties.isAllowedNotDefinedVariables()) {
                 throw new InternalApplicationException("Variable '" + name
                         + "' is not defined in process definition and setting 'undefined.variables.allowed'=false");
@@ -177,6 +177,12 @@ public class ExecutionContext {
             for (Map.Entry<String, Object> entry : complexVariable.entrySet()) {
                 String fullName = name + "." + entry.getKey();
                 setVariableValue(fullName, entry.getValue());
+            }
+            return;
+        }
+        if (value == null && variableDefinition.getUserType() != null) {
+            for (VariableDefinition definition : variableDefinition.expandComplexVariable()) {
+                setVariableValue(definition.getName(), null);
             }
             return;
         }
@@ -204,7 +210,8 @@ public class ExecutionContext {
     }
 
     /**
-     * Adds all the given variables. It doesn't remove any existing variables unless they are overwritten by the given variables.
+     * Adds all the given variables. It doesn't remove any existing variables
+     * unless they are overwritten by the given variables.
      */
     public void setVariableValues(Map<String, Object> variables) {
         for (Map.Entry<String, Object> entry : variables.entrySet()) {
