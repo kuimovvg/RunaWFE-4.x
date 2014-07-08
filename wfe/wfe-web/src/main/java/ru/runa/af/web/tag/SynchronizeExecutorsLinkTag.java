@@ -20,10 +20,8 @@ package ru.runa.af.web.tag;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.LinkTag;
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.Group;
 
 /**
  * Created on 03.09.2004
@@ -41,8 +39,7 @@ public class SynchronizeExecutorsLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        Group administratorsGroup = Delegates.getExecutorService().getExecutorByName(getUser(), SystemProperties.getAdministratorsGroupName());
-        return Delegates.getExecutorService().isExecutorInGroup(getUser(), getUser().getActor(), administratorsGroup);
+        return Delegates.getExecutorService().isAdministrator(getUser());
     }
 
     @Override

@@ -162,11 +162,9 @@ public interface ExecutorService {
     /**
      * Gets all executors from group.
      * <p>
-     * For example G1 contains G2 and A0, G2 contins A1 and A2. In this case:
-     * Only actor (non-group) executors are returned.
+     * For example G1 contains G2 and A0, G2 contins A1 and A2. In this case: Only actor (non-group) executors are returned.
      * </p>
-     * <code> getAllNonGroupExecutorsFromGroup(G2) returns {A1, A2}</code>;
-     * <code> getAllNonGroupExecutorsFromGroup(G1) returns {A0} </code>
+     * <code> getAllNonGroupExecutorsFromGroup(G2) returns {A1, A2}</code>; <code> getAllNonGroupExecutorsFromGroup(G1) returns {A0} </code>
      * 
      * @param group
      *            a group
@@ -175,8 +173,7 @@ public interface ExecutorService {
     public List<Executor> getAllExecutorsFromGroup(User user, Group group) throws ExecutorDoesNotExistException;
 
     /**
-     * Loads first level group children's (not recursive). <b>Paging is enabled
-     * on executors loading.</b>
+     * Loads first level group children's (not recursive). <b>Paging is enabled on executors loading.</b>
      * 
      * @param user
      *            Current user {@linkplain User}.
@@ -185,8 +182,7 @@ public interface ExecutorService {
      * @param batchPresentation
      *            {@linkplain BatchPresentation} for loading executors.
      * @param isExclude
-     *            Flag, equals true, if must be loaded executors, which not yet
-     *            group children's; false to load group children's.
+     *            Flag, equals true, if must be loaded executors, which not yet group children's; false to load group children's.
      * @return Array of loaded executors.
      */
     public List<Executor> getGroupChildren(User user, Group group, BatchPresentation batchPresentation, boolean isExclude);
@@ -201,8 +197,7 @@ public interface ExecutorService {
      * @param batchPresentation
      *            {@linkplain BatchPresentation} for loading executors.
      * @param isExclude
-     *            Flag, equals true, if must be loaded executors, which not yet
-     *            group children's; false to load group children's.
+     *            Flag, equals true, if must be loaded executors, which not yet group children's; false to load group children's.
      * @return Executors count.
      */
     public int getGroupChildrenCount(User user, Group group, BatchPresentation batchPresentation, boolean isExclude);
@@ -212,8 +207,7 @@ public interface ExecutorService {
      * <p>
      * For example G1 contains G2, A3, G2 contains A1 and A2. In this case:
      * </p>
-     * <code> getGroupActors(G2) returns {A1, A2}</code>;
-     * <code> getGroupActors(G1) returns {A1, A2, A3} </code>
+     * <code> getGroupActors(G2) returns {A1, A2}</code>; <code> getGroupActors(G1) returns {A1, A2, A3} </code>
      * 
      * @param user
      *            Current user {@linkplain User}.
@@ -224,8 +218,7 @@ public interface ExecutorService {
     public List<Actor> getGroupActors(User user, Group group) throws ExecutorDoesNotExistException;
 
     /**
-     * Load first level executor groups (not recursive). <b>Paging is enabled on
-     * executors loading.</b>
+     * Load first level executor groups (not recursive). <b>Paging is enabled on executors loading.</b>
      * 
      * @param user
      *            Current user {@linkplain User}.
@@ -234,9 +227,7 @@ public interface ExecutorService {
      * @param batchPresentation
      *            {@linkplain BatchPresentation} to load groups.
      * @param isExclude
-     *            Flag, equals true, if must be loaded groups, which not yet
-     *            contains executor; false to load groups, which contains
-     *            executor.
+     *            Flag, equals true, if must be loaded groups, which not yet contains executor; false to load groups, which contains executor.
      * @return Array of loaded groups.
      */
     public List<Group> getExecutorGroups(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude);
@@ -251,9 +242,7 @@ public interface ExecutorService {
      * @param batchPresentation
      *            {@linkplain BatchPresentation} to load groups.
      * @param isExclude
-     *            Flag, equals true, if must be loaded groups, which not yet
-     *            contains executor; false to load groups, which contains
-     *            executor.
+     *            Flag, equals true, if must be loaded groups, which not yet contains executor; false to load groups, which contains executor.
      * @return Groups count.
      */
     public int getExecutorGroupsCount(User user, Executor executor, BatchPresentation batchPresentation, boolean isExclude);
@@ -267,6 +256,14 @@ public interface ExecutorService {
      * @return
      */
     public boolean isExecutorInGroup(User user, Executor executor, Group group);
+
+    /**
+     * Whether user is administrator.
+     * 
+     * @param user
+     * @return
+     */
+    public boolean isAdministrator(User user);
 
     /**
      * Whether executor exists.
@@ -289,7 +286,7 @@ public interface ExecutorService {
 
     /**
      * Updates actor presence status.
-     *
+     * 
      * @param user
      * @param actor
      * @param active

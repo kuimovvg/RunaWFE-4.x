@@ -36,10 +36,8 @@ import ru.runa.wf.web.html.ProcessVariablesRowBuilder;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.ProcessPermission;
-import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.Group;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
@@ -77,12 +75,8 @@ public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        WfProcess process = Delegates.getExecutionService().getProcess(getUser(), getIdentifiableId());
-        List<WfVariable> variables = Delegates.getExecutionService().getVariables(getUser(), getIdentifiableId());
-        Group administratorsGroup = Delegates.getExecutorService().getExecutorByName(getUser(), SystemProperties.getAdministratorsGroupName());
-        if (SystemProperties.getResources().getBooleanProperty("executionServiceAPI.updateVariables.enabled", false)
-                && Delegates.getExecutorService().isExecutorInGroup(getUser(), getUser().getActor(), administratorsGroup)
-                && Delegates.getDefinitionService().getVariableDefinitions(getUser(), process.getDefinitionId()).size() > 0) {
+
+        if (SystemProperties.isUpdateVariablesEnabled() && Delegates.getExecutorService().isAdministrator(getUser())) {
             Table table = new Table();
             tdFormElement.addElement(table);
             table.addAttribute("width", "100%");
@@ -96,7 +90,7 @@ public class ProcessVariableMonitorTag extends ProcessBaseFormTag {
             A a = new A(updateVariableUrl, Messages.getMessage(Messages.LINK_UPDATE_VARIABLE, pageContext));
             updateVariableTR.addElement(new TD(a).addAttribute("align", "right"));
         }
-
+        List<WfVariable> variables = Delegates.getExecutionService().getVariables(getUser(), getIdentifiableId());
         List<String> headerNames = Lists.newArrayList();
         headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_NAME, pageContext));
         headerNames.add(Messages.getMessage(Messages.LABEL_VARIABLE_TYPE, pageContext));

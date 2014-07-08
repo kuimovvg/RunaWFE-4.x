@@ -269,4 +269,11 @@ public class ExecutorServiceBean implements ExecutorServiceLocal, ExecutorServic
         return executorLogic.getActorByCode(user, code);
     }
 
+    @Override
+    @WebResult(name = "result")
+    public boolean isAdministrator(@WebParam(name = "user") User user) {
+        Preconditions.checkArgument(user != null);
+        return executorLogic.isAdministrator(user);
+    }
+
 }
