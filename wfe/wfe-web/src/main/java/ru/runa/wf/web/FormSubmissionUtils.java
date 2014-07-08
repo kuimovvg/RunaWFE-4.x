@@ -61,14 +61,16 @@ public class FormSubmissionUtils {
     }
 
     /**
-     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
      */
     public static Map<String, String[]> getUserFormInput(ServletRequest request) {
         return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
     }
 
     /**
-     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
      */
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
@@ -189,7 +191,7 @@ public class FormSubmissionUtils {
             }
         } else if (format instanceof UserTypeFormat) {
             List<VariableDefinition> expandedDefinitions = variableDefinition.expandComplexVariable();
-            ComplexVariable complexVariable = new ComplexVariable();
+            ComplexVariable complexVariable = new ComplexVariable(variableDefinition);
             for (VariableDefinition expandedDefinition : expandedDefinitions) {
                 Object componentValue = extractVariable(request, userInput, expandedDefinition, formatErrorsForFields);
                 if (!Objects.equal(IGNORED_VALUE, componentValue)) {
