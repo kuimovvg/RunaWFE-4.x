@@ -60,7 +60,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
     @Override
     protected ComplexVariable convertFromJSONValue(Object jsonValue) {
         JSONObject object = (JSONObject) jsonValue;
-        ComplexVariable result = new ComplexVariable();
+        ComplexVariable result = new ComplexVariable(userType);
         for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             try {
                 VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);

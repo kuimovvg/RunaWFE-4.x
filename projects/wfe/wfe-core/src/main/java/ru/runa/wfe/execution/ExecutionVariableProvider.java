@@ -50,7 +50,7 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
     }
 
     private ComplexVariable loadComplexVariable(String prefix, VariableDefinition variableDefinition) {
-        ComplexVariable complexVariable = new ComplexVariable();
+        ComplexVariable complexVariable = new ComplexVariable(variableDefinition);
         for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
             String fullName = prefix + VariableUserType.DELIM + attributeDefinition.getName();
             Object value;
@@ -63,5 +63,5 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
         }
         return complexVariable;
     }
-    
+
 }
