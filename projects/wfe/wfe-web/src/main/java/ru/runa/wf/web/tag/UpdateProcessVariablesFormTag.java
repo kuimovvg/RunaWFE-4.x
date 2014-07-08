@@ -16,6 +16,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wf.web.action.UpdateProcessVariableAction;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.var.VariableDefinition;
@@ -36,100 +37,108 @@ public class UpdateProcessVariablesFormTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-        getForm().setEncType(Form.ENC_UPLOAD);
-        String labelTDWidth = "150px";
         WfProcess process = Delegates.getExecutionService().getProcess(getUser(), getProcessId());
         List<VariableDefinition> variables = Delegates.getDefinitionService().getVariableDefinitions(getUser(), process.getDefinitionId());
+        if (!variables.isEmpty()) {
+            if (SystemProperties.isUpdateVariablesEnabled() && Delegates.getExecutorService().isAdministrator(getUser())) {
+                getForm().setEncType(Form.ENC_UPLOAD);
+                String labelTDWidth = "150px";
 
-        Table table = new Table();
-        table.setClass(Resources.CLASS_LIST_TABLE);
-        tdFormElement.addElement(table);
+                Table table = new Table();
+                table.setClass(Resources.CLASS_LIST_TABLE);
+                tdFormElement.addElement(table);
 
-        TR variableComboboxTr = new TR();
-        variableComboboxTr.setClass("variableSelect");
+                TR variableComboboxTr = new TR();
+                variableComboboxTr.setClass("variableSelect");
 
-        TD labelTd = new TD();
-        Label labelVariable = new Label("variableSel");
-        labelVariable.addElement(Messages.getMessage(Messages.LABEL_VARIABLE, pageContext) + "&nbsp;");
-        labelTd.addElement(labelVariable);
-        labelTd.setWidth(labelTDWidth);
-        variableComboboxTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-        Select variablesSelect = new Select("variableSelect");
-        variablesSelect.setID("variableSelect");
-        for (VariableDefinition variable : variables) {
-            Option option = new Option();
-            option.setValue(variable.getName());
-            option.addElement(variable.getName());
+                TD labelTd = new TD();
+                Label labelVariable = new Label("variableSel");
+                labelVariable.addElement(Messages.getMessage(Messages.LABEL_VARIABLE, pageContext) + "&nbsp;");
+                labelTd.addElement(labelVariable);
+                labelTd.setWidth(labelTDWidth);
+                variableComboboxTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+                Select variablesSelect = new Select("variableSelect");
+                variablesSelect.setID("variableSelect");
+                for (VariableDefinition variable : variables) {
+                    Option option = new Option();
+                    option.setValue(variable.getName());
+                    option.addElement(variable.getName());
 
-            variablesSelect.addElement(option);
+                    variablesSelect.addElement(option);
+                }
+
+                TD selectTd = new TD();
+                selectTd.addElement(variablesSelect);
+                variableComboboxTr.addElement(selectTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+                table.addElement(variableComboboxTr);
+
+                TR variableScriptingValueTr = new TR();
+
+                labelTd = new TD();
+                Label labelScriptingValue = new Label("variableScriptingValue");
+                labelScriptingValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_SCRIPTING_VALUE, pageContext) + ":&nbsp;");
+                labelTd.addElement(labelScriptingValue);
+                labelTd.setWidth(labelTDWidth);
+                variableScriptingValueTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+
+                TD scriptingValueTd = new TD();
+                Div variableScriptingInfoDiv = new Div();
+                variableScriptingInfoDiv.setID("variableScriptingInfo");
+                scriptingValueTd.addElement(variableScriptingInfoDiv);
+                variableScriptingValueTr.addElement(scriptingValueTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+
+                table.addElement(variableScriptingValueTr);
+
+                TR variableCurrentValueTr = new TR();
+
+                labelTd = new TD();
+                Label labelCurrentValue = new Label("variableCurrentValue");
+                labelCurrentValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_OLD_VALUE, pageContext) + ":&nbsp;");
+                labelTd.addElement(labelCurrentValue);
+                labelTd.setWidth(labelTDWidth);
+                variableCurrentValueTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+
+                TD currentValueTd = new TD();
+                Div variableCurrentInfoDiv = new Div();
+                variableCurrentInfoDiv.setID("variableCurrentInfo");
+                currentValueTd.addElement(variableCurrentInfoDiv);
+                variableCurrentValueTr.addElement(currentValueTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+
+                table.addElement(variableCurrentValueTr);
+
+                TR variableInputTr = new TR();
+                variableInputTr.setClass("variableInputRegion");
+
+                labelTd = new TD();
+                Label labelInputValue = new Label("variableInput");
+                labelInputValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_NEW_VALUE, pageContext) + ":&nbsp;");
+                labelTd.addElement(labelInputValue);
+                labelTd.setWidth(labelTDWidth);
+                variableInputTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+
+                TD inputTd = new TD();
+                Div inputDiv = new Div();
+                inputDiv.setID("variableInput");
+                inputTd.addElement(inputDiv);
+
+                Input nullValue = new Input(Input.CHECKBOX, "isNullValue");
+                nullValue.setID("nullValueCheckbox");
+                nullValue.setChecked(false);
+                inputTd.addElement(nullValue);
+
+                Label labelNullValue = new Label("isNullValue");
+                labelNullValue.setID("nullValueLabel");
+                labelNullValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_NULL_VALUE, pageContext) + "&nbsp;");
+                inputTd.addElement(labelNullValue);
+
+                variableInputTr.addElement(inputTd.setClass(Resources.CLASS_LIST_TABLE_TD));
+                table.addElement(variableInputTr);
+            }
+        } else {
+            Label variablesExist = new Label("variables");
+            variablesExist.addElement(Messages.getMessage(Messages.LABEL_NO_VARIABLES, pageContext) + "&nbsp;");
+            tdFormElement.addElement(variablesExist);
         }
-
-        TD selectTd = new TD();
-        selectTd.addElement(variablesSelect);
-        variableComboboxTr.addElement(selectTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-        table.addElement(variableComboboxTr);
-
-        TR variableScriptingValueTr = new TR();
-
-        labelTd = new TD();
-        Label labelScriptingValue = new Label("variableScriptingValue");
-        labelScriptingValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_SCRIPTING_VALUE, pageContext) + ":&nbsp;");
-        labelTd.addElement(labelScriptingValue);
-        labelTd.setWidth(labelTDWidth);
-        variableScriptingValueTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-
-        TD scriptingValueTd = new TD();
-        Div variableScriptingInfoDiv = new Div();
-        variableScriptingInfoDiv.setID("variableScriptingInfo");
-        scriptingValueTd.addElement(variableScriptingInfoDiv);
-        variableScriptingValueTr.addElement(scriptingValueTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-
-        table.addElement(variableScriptingValueTr);
-
-        TR variableCurrentValueTr = new TR();
-
-        labelTd = new TD();
-        Label labelCurrentValue = new Label("variableCurrentValue");
-        labelCurrentValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_OLD_VALUE, pageContext) + ":&nbsp;");
-        labelTd.addElement(labelCurrentValue);
-        labelTd.setWidth(labelTDWidth);
-        variableCurrentValueTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-
-        TD currentValueTd = new TD();
-        Div variableCurrentInfoDiv = new Div();
-        variableCurrentInfoDiv.setID("variableCurrentInfo");
-        currentValueTd.addElement(variableCurrentInfoDiv);
-        variableCurrentValueTr.addElement(currentValueTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-
-        table.addElement(variableCurrentValueTr);
-
-        TR variableInputTr = new TR();
-        variableInputTr.setClass("variableInputRegion");
-
-        labelTd = new TD();
-        Label labelInputValue = new Label("variableInput");
-        labelInputValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_NEW_VALUE, pageContext) + ":&nbsp;");
-        labelTd.addElement(labelInputValue);
-        labelTd.setWidth(labelTDWidth);
-        variableInputTr.addElement(labelTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-
-        TD inputTd = new TD();
-        Div inputDiv = new Div();
-        inputDiv.setID("variableInput");
-        inputTd.addElement(inputDiv);
-
-        Input nullValue = new Input(Input.CHECKBOX, "isNullValue");
-        nullValue.setID("nullValueCheckbox");
-        nullValue.setChecked(false);
-        inputTd.addElement(nullValue);
-
-        Label labelNullValue = new Label("isNullValue");
-        labelNullValue.setID("nullValueLabel");
-        labelNullValue.addElement(Messages.getMessage(Messages.LABEL_VARIABLE_NULL_VALUE, pageContext) + "&nbsp;");
-        inputTd.addElement(labelNullValue);
-
-        variableInputTr.addElement(inputTd.setClass(Resources.CLASS_LIST_TABLE_TD));
-        table.addElement(variableInputTr);
     }
 
     @Override

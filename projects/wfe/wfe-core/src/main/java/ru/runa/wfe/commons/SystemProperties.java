@@ -73,6 +73,10 @@ public class SystemProperties {
         return RESOURCES.getIntegerProperty("file.variable.local.storage.enableforfilesgreaterthan", 100000);
     }
 
+    public static boolean isUpdateVariablesEnabled() {
+        return RESOURCES.getBooleanProperty("executionServiceAPI.updateVariables.enabled", false);
+    }
+
     /**
      * @return value between 0..100 [%]
      */
@@ -120,7 +124,7 @@ public class SystemProperties {
     public static boolean isEscalationEnabled() {
         return RESOURCES.getBooleanProperty("escalation.enabled", true);
     }
-    
+
     public static String getEscalationDefaultHierarchyLoader() {
         return RESOURCES.getStringProperty("escalation.default.hierarchy.loader");
     }
