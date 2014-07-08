@@ -14,6 +14,7 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
+import ru.runa.gpd.lang.model.TextDecorationNode;
 import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.util.XmlUtil;
 
@@ -208,11 +209,11 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                 }
             }
             if (graphElement instanceof HasTextDecorator) {
-                HasTextDecorator decorator = (HasTextDecorator) graphElement;
-                if (decorator.getTextDecoratorEmulation().getDefinition() != null) {
+                TextDecorationNode decorationNode = ((HasTextDecorator) graphElement).getTextDecoratorEmulation().getDefinition();
+                if (decorationNode != null && decorationNode.getConstraint() != null) {
                     Element pointDefinition = element.addElement(TEXT_DECORATION);
-                    addAttribute(pointDefinition, X, String.valueOf(decorator.getTextDecoratorEmulation().getDefinition().getConstraint().x));
-                    addAttribute(pointDefinition, Y, String.valueOf(decorator.getTextDecoratorEmulation().getDefinition().getConstraint().y));
+                    addAttribute(pointDefinition, X, String.valueOf(decorationNode.getConstraint().x - xOffset));
+                    addAttribute(pointDefinition, Y, String.valueOf(decorationNode.getConstraint().y - yOffset));
                 }
             }
         }
