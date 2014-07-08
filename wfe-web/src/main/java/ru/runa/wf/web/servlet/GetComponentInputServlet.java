@@ -20,7 +20,7 @@ import ru.runa.wfe.var.dto.WfVariable;
 import com.google.common.base.Charsets;
 
 public class GetComponentInputServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -33,54 +33,58 @@ public class GetComponentInputServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    	Long processId = Long.valueOf(request.getParameter("processId"));
-    	String variableName = request.getParameter("variableName");
-    	
-    	JSONObject variableObject = new JSONObject();
-    	User user = Commons.getUser(request.getSession());
-    	WfVariable variable = Delegates.getExecutionService().getVariable(user, processId, variableName);
-    	String scriptingName = "";
-    	String variableIsNullString = "";
-    	String variableValue = "";
-    	    			
-    	if(variable != null) {
-    		Object value = variable.getValue();
-			String formattedValue = "null";
-			Boolean variableIsNull = true;
-			if (value != null) {
-				variableIsNull = false;
-	            formattedValue = ViewUtil.getOutput(user, null, processId, variable);
-	        }	
-			scriptingName = variable.getDefinition().getScriptingName(); 
-			variableIsNullString = variableIsNull.toString();
-			variableValue = formattedValue;
-    	} else {
-    		WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
-    		List<VariableDefinition> variables = Delegates.getDefinitionService().getVariableDefinitions(user, process.getDefinitionId());
-    		for(VariableDefinition vd : variables) {
-    			if(vd.getName().equals(variableName)) {
-    				scriptingName = vd.getScriptingName(); 
-    				variableIsNullString = "true";
-    				variableValue = "null";		
-    				variable = new WfVariable(vd, null);
-					break;
-    			}
-    		}
-    		
-    	}
-    	variableObject.put("scriptingName", scriptingName);
-		variableObject.put("variableIsNull", variableIsNullString);
-		variableObject.put("variableValue", variableValue);   
-		try {
-			String componentInput = ViewUtil.getComponentInput(user, null, variable);
-			variableObject.put("input", componentInput);
-		} catch(Exception e) {
-			variableObject.put("input", e.getLocalizedMessage());
-		} finally {
-			response.setContentType("text/html");
-	        response.setCharacterEncoding(Charsets.UTF_8.name());
-	        response.getOutputStream().write(variableObject.toString().getBytes(Charsets.UTF_8));
-	        response.getOutputStream().flush();
-		}     
+        Long processId = Long.valueOf(request.getParameter("processId"));
+        String variableName = request.getParameter("variableName");
+
+        JSONObject variableObject = new JSONObject();
+        User user = Commons.getUser(request.getSession());
+        WfVariable variable = Delegates.getExecutionService().getVariable(user, processId, variableName);
+        String scriptingName = "";
+        String variableIsNullString = "";
+        String variableValue = "";
+
+        if (variable != null) {
+            Object value = variable.getValue();
+            String formattedValue = "null";
+            Boolean variableIsNull = true;
+            if (value != null) {
+                variableIsNull = false;
+                formattedValue = ViewUtil.getOutput(user, null, processId, variable);
+            }
+            scriptingName = variable.getDefinition().getScriptingName();
+            variableIsNullString = variableIsNull.toString();
+            if (variable.getDefinition().isComplex()) {
+                variableValue = ViewUtil.getComponentInput(user, null, variable);
+            } else {
+                variableValue = formattedValue;
+            }
+        } else {
+            WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
+            List<VariableDefinition> variables = Delegates.getDefinitionService().getVariableDefinitions(user, process.getDefinitionId());
+            for (VariableDefinition vd : variables) {
+                if (vd.getName().equals(variableName)) {
+                    scriptingName = vd.getScriptingName();
+                    variableIsNullString = "true";
+                    variableValue = "null";
+                    variable = new WfVariable(vd, null);
+                    break;
+                }
+            }
+
+        }
+        variableObject.put("scriptingName", scriptingName);
+        variableObject.put("variableIsNull", variableIsNullString);
+        variableObject.put("variableValue", variableValue);
+        try {
+            String componentInput = ViewUtil.getComponentInput(user, null, variable);
+            variableObject.put("input", componentInput);
+        } catch (Exception e) {
+            variableObject.put("input", e.getLocalizedMessage());
+        } finally {
+            response.setContentType("text/html");
+            response.setCharacterEncoding(Charsets.UTF_8.name());
+            response.getOutputStream().write(variableObject.toString().getBytes(Charsets.UTF_8));
+            response.getOutputStream().flush();
+        }
     }
 }

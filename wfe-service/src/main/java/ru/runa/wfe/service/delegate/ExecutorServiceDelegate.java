@@ -246,4 +246,13 @@ public class ExecutorServiceDelegate extends EJB3Delegate implements ExecutorSer
         }
     }
 
+    @Override
+    public boolean isAdministrator(User user) {
+        try {
+            return getExecutorService().isAdministrator(user);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
 }

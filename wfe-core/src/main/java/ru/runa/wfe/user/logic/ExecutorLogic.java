@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -122,6 +123,16 @@ public class ExecutorLogic extends CommonLogic {
 
     public Executor getExecutor(User user, String name) {
         return checkPermissionsOnExecutor(user, executorDAO.getExecutor(name), Permission.READ);
+    }
+
+    public boolean isAdministrator(User user) {
+        try {
+            Group administratorsGroup = (Group) getExecutor(user, SystemProperties.getAdministratorsGroupName());
+            return isExecutorInGroup(user, user.getActor(), administratorsGroup);
+        } catch (AuthorizationException e) {
+            log.debug(e);
+            return false;
+        }
     }
 
     public void remove(User user, List<Long> ids) {
