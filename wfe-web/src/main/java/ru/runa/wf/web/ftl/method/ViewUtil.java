@@ -230,11 +230,11 @@ public class ViewUtil {
             return ViewUtil.createExecutorSelect(user, variableName, variableFormat, value, true);
         }
         if (variableFormat instanceof UserTypeFormat) {
+            VariableUserType userType = ((UserTypeFormat) variableFormat).getUserType();
             ComplexVariable complexVariable = (ComplexVariable) value;
             if (complexVariable == null) {
-                complexVariable = new ComplexVariable();
+                complexVariable = new ComplexVariable(userType);
             }
-            VariableUserType userType = ((UserTypeFormat) variableFormat).getUserType();
             StringBuffer b = new StringBuffer();
             b.append("<table class=\"list\">");
             for (VariableDefinition attributeDefinition : userType.getAttributes()) {

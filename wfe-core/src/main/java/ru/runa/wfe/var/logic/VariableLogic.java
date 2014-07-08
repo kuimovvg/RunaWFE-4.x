@@ -69,7 +69,7 @@ public class VariableLogic extends WFCommonLogic {
     }
 
     private ComplexVariable buildComplexVariable(VariableDefinition variableDefinition, Map<String, Object> values, String prefix) {
-        ComplexVariable variable = new ComplexVariable();
+        ComplexVariable variable = new ComplexVariable(variableDefinition);
         for (VariableDefinition attributeDefinition : variableDefinition.getUserType().getAttributes()) {
             String variableName = prefix + VariableUserType.DELIM + attributeDefinition.getName();
             if (attributeDefinition.isComplex()) {
@@ -84,9 +84,9 @@ public class VariableLogic extends WFCommonLogic {
                 }
             }
         }
-        // if (variable.isEmpty()) {
-        // return null;
-        // }
+        if (variable.isEmpty()) {
+            return null;
+        }
         return variable;
     }
 
