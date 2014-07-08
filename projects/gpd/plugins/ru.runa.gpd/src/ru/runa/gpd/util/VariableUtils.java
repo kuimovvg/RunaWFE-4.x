@@ -79,7 +79,7 @@ public class VariableUtils {
     public static List<String> getVariableNamesForScripting(List<Variable> variables) {
         List<String> result = Lists.newArrayListWithExpectedSize(variables.size());
         for (Variable variable : variables) {
-            // this is here due to strage NPE
+            // this is here due to strange NPE
             Preconditions.checkNotNull(variable.getScriptingName(), variable.getName());
             result.add(variable.getScriptingName());
         }
