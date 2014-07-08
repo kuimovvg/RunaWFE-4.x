@@ -19,6 +19,8 @@ package ru.runa.wfe.extension.assign;
 
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.execution.ExecutionContext;
@@ -31,18 +33,23 @@ import ru.runa.wfe.user.Executor;
  * Created on 09.12.2004
  */
 public class DefaultAssignmentHandler implements AssignmentHandler {
+    protected static final Log log = LogFactory.getLog(AssignmentHelper.class);
     @Autowired
     protected AssignmentHelper assignmentHelper;
-    private String configuration;
+    protected String configuration;
 
     @Override
     public void setConfiguration(String configuration) {
         this.configuration = configuration;
     }
 
+    protected List<? extends Executor> calculateExecutors(ExecutionContext executionContext, Assignable assignable) {
+        return SwimlaneInitializerHelper.evaluate(configuration, executionContext.getVariableProvider());
+    }
+
     @Override
     public void assign(ExecutionContext executionContext, Assignable assignable) {
-        List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(configuration, executionContext.getVariableProvider());
+        List<? extends Executor> executors = calculateExecutors(executionContext, assignable);
         assignmentHelper.assignSwimlane(executionContext, assignable, executors);
     }
 }
