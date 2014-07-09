@@ -3,12 +3,12 @@ package ru.runa.gpd.util;
 import java.util.List;
 import java.util.Map;
 
+import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableContainer;
 import ru.runa.gpd.lang.model.VariableUserType;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -79,9 +79,12 @@ public class VariableUtils {
     public static List<String> getVariableNamesForScripting(List<Variable> variables) {
         List<String> result = Lists.newArrayListWithExpectedSize(variables.size());
         for (Variable variable : variables) {
-            // this is here due to strange NPE
-            Preconditions.checkNotNull(variable.getScriptingName(), variable.getName());
-            result.add(variable.getScriptingName());
+            if (variable.getScriptingName() != null) {
+                result.add(variable.getScriptingName());
+            } else {
+                // this is here due to strange NPE
+                PluginLogger.logInfo("ERROR: No scriptingName attribute in " + variable.getName());
+            }
         }
         return result;
     }
