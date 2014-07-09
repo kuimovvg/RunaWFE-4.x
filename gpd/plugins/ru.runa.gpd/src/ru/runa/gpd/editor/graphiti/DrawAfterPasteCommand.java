@@ -15,13 +15,13 @@ import ru.runa.gpd.util.SwimlaneDisplayMode;
 /**
  * This is second part of Paste method. But EMF need to do it on other transaction/command
  */
-public class DrawAfterPastCommand extends Command {
+public class DrawAfterPasteCommand extends Command {
 	
 	private List<NamedGraphElement> elementList;
 	private ProcessDefinition processDefinition;
 	private DiagramEditorPage diagramPage;
 	
-	public DrawAfterPastCommand( List<NamedGraphElement> elementList, ProcessDefinition processDefinition, DiagramEditorPage diagramPage) {
+	public DrawAfterPasteCommand( List<NamedGraphElement> elementList, ProcessDefinition processDefinition, DiagramEditorPage diagramPage) {
 		this.elementList = elementList;
 		this.processDefinition = processDefinition;
 		this.diagramPage = diagramPage;
@@ -50,6 +50,8 @@ public class DrawAfterPastCommand extends Command {
 		for ( NamedGraphElement element : elementList) {
 			if ( element instanceof Swimlane ) {
 				toRemove.add(element);
+				// this crazy line created because element.getConstraint() == null is checking of visibility for swimlane in many places
+				element.setConstraint(null);
 			}
 		}
 		elementList.removeAll(toRemove);
