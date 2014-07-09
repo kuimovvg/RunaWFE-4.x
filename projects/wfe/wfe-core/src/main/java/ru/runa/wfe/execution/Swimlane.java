@@ -44,6 +44,8 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.SwimlaneAssignLog;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
@@ -140,6 +142,12 @@ public class Swimlane implements Serializable, Assignable {
 
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
+        if (executor != null) {
+            ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), name);
+        } else {
+            ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.SWIMLANE_ASSIGNMENT_FAILED, name);
+            ProcessExecutionErrors.addProcessError(executionContext.getProcess().getId(), name, name, null, pee);
+        }
         if (!Objects.equal(getExecutor(), executor)) {
             log.debug("assigning swimlane '" + getName() + "' to '" + executor + "'");
             executionContext.addLog(new SwimlaneAssignLog(this, executor));

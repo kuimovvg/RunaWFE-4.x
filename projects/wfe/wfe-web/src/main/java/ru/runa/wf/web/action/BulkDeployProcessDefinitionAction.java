@@ -1,9 +1,7 @@
 package ru.runa.wf.web.action;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,19 +12,16 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.common.web.form.FileForm;
 import ru.runa.wf.web.ProcessTypesIterator;
 import ru.runa.wf.web.servlet.UploadedFile;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.user.User;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 26.05.2014
@@ -39,9 +34,9 @@ import ru.runa.wfe.user.User;
  *                        redirect = "false"
  */
 public class BulkDeployProcessDefinitionAction extends ActionBase {
-	public static final String ACTION_PATH = "/bulkDeployProcessDefinition";
-	 public static final String UPLOADED_PAR_FILES = "UploadedParFiles";
-	 	 
+    public static final String ACTION_PATH = "/bulkDeployProcessDefinition";
+    public static final String UPLOADED_PAR_FILES = "UploadedParFiles";
+
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
         String paramType = request.getParameter("type");
@@ -73,31 +68,32 @@ public class BulkDeployProcessDefinitionAction extends ActionBase {
             return getErrorForward(mapping);
         }
         Map<String, UploadedFile> uploadedParFiles = (Map<String, UploadedFile>) request.getSession().getAttribute(UPLOADED_PAR_FILES);
-    	List<String> successKeys = new ArrayList<String>();
-    	for (Map.Entry<String, UploadedFile> entry : uploadedParFiles.entrySet()) {
-    		UploadedFile uploadedFile = (UploadedFile) entry.getValue();
-       	 	try {
-       	 		Delegates.getDefinitionService().deployProcessDefinition(getLoggedUser(request), uploadedFile.getContent(), fullType);
-       	 		successKeys.add((String) entry.getKey());
-       	 	} catch (DefinitionAlreadyExistException e) {        		 
-       	 		try {
-	    			 WfDefinition wfDefinition = Delegates.getDefinitionService().getLatestProcessDefinition(getLoggedUser(request), e.getName());	    			 	
-	    			 List<String> categories = new ArrayList<String>(Arrays.asList(wfDefinition.getCategories()));
-	    			 Delegates.getDefinitionService().redeployProcessDefinition(getLoggedUser(request), wfDefinition.getId(), uploadedFile.getContent(), categories);
-	    			 successKeys.add((String) entry.getKey());
-       	 		} catch (Exception ex) {
+        List<String> successKeys = new ArrayList<String>();
+        for (Map.Entry<String, UploadedFile> entry : uploadedParFiles.entrySet()) {
+            UploadedFile uploadedFile = entry.getValue();
+            try {
+                Delegates.getDefinitionService().deployProcessDefinition(getLoggedUser(request), uploadedFile.getContent(), fullType);
+                successKeys.add(entry.getKey());
+            } catch (DefinitionAlreadyExistException e) {
+                try {
+                    WfDefinition wfDefinition = Delegates.getDefinitionService().getLatestProcessDefinition(getLoggedUser(request), e.getName());
+                    List<String> categories = Lists.newArrayList(wfDefinition.getCategories());
+                    Delegates.getDefinitionService().redeployProcessDefinition(getLoggedUser(request), wfDefinition.getId(),
+                            uploadedFile.getContent(), categories);
+                    successKeys.add(entry.getKey());
+                } catch (Exception ex) {
                     addError(request, ex);
                 }
             } catch (Exception e) {
                 addError(request, e);
             }
-    	}
-        for(String key : successKeys) {
-        	if(uploadedParFiles.containsKey(key)) {
-        		uploadedParFiles.remove(key);
-        	} 
         }
-       
+        for (String key : successKeys) {
+            if (uploadedParFiles.containsKey(key)) {
+                uploadedParFiles.remove(key);
+            }
+        }
+
         return getSuccessAction(mapping);
     }
 

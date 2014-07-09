@@ -36,7 +36,6 @@ public class AssignmentHelper {
         try {
             if (executors == null || executors.size() == 0) {
                 log.warn("Assigning null executor in " + executionContext + ": " + assignable + ", check swimlane initializer");
-                // TODO display in ProcessErrors
                 assignable.assignExecutor(executionContext, null, true);
                 return;
             }
