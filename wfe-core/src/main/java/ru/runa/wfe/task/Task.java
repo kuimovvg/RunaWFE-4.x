@@ -58,6 +58,8 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.lang.Event;
 import ru.runa.wfe.lang.InteractionNode;
@@ -233,6 +235,12 @@ public class Task implements Assignable {
 
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
+        if (executor != null) {
+            ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), nodeId);
+        } else {
+            ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.TASK_ASSIGNMENT_FAILED, name);
+            ProcessExecutionErrors.addProcessError(executionContext.getProcess().getId(), nodeId, name, null, pee);
+        }
         if (!Objects.equal(getExecutor(), executor)) {
             log.debug("assigning " + this + " to " + executor);
             // log this assignment

@@ -22,7 +22,7 @@ public class JavaScriptActionHandler extends ActionHandlerBase {
         List<VariableDefinition> rawDefinitions = Lists.newArrayList();
         for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
             if (definition.isComplex()) {
-                rawDefinitions.addAll(definition.expandComplexVariable());
+                rawDefinitions.addAll(definition.expandComplexVariable(false));
             } else {
                 rawDefinitions.add(definition);
             }

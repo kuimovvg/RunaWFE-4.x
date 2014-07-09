@@ -39,7 +39,7 @@ public class DelegateDefinitionVariableProvider extends AbstractVariableProvider
         for (VariableDefinition variableDefinition : variableDefinitions) {
             expanded.put(variableDefinition.getName(), variableDefinition);
             if (variableDefinition.isComplex()) {
-                for (VariableDefinition child : variableDefinition.expandComplexVariable()) {
+                for (VariableDefinition child : variableDefinition.expandComplexVariable(true)) {
                     expanded.put(child.getName(), child);
                 }
             }
