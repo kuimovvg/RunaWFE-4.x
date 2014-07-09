@@ -9,12 +9,12 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
-import com.google.common.collect.Lists;
-
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.FormatCommons;
+
+import com.google.common.collect.Lists;
 
 public class RhinoJSActionHandler extends ActionHandlerBase {
 
@@ -24,7 +24,7 @@ public class RhinoJSActionHandler extends ActionHandlerBase {
             List<VariableDefinition> rawDefinitions = Lists.newArrayList();
             for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
                 if (definition.isComplex()) {
-                    rawDefinitions.addAll(definition.expandComplexVariable());
+                    rawDefinitions.addAll(definition.expandComplexVariable(false));
                 } else {
                     rawDefinitions.add(definition);
                 }

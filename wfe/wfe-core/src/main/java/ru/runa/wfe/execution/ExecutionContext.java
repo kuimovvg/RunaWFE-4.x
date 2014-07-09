@@ -181,7 +181,7 @@ public class ExecutionContext {
             return;
         }
         if (value == null && variableDefinition.getUserType() != null) {
-            for (VariableDefinition definition : variableDefinition.expandComplexVariable()) {
+            for (VariableDefinition definition : variableDefinition.expandComplexVariable(false)) {
                 setVariableValue(definition.getName(), null);
             }
             return;

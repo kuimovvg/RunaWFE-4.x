@@ -129,7 +129,10 @@ public class Deployment extends Identifiable {
 
     @Transient
     public String[] getCategories() {
-        return category.split("/");
+        if (category != null) {
+            return category.split("/");
+        }
+        return new String[] {};
     }
 
     public void setCategories(List<String> categories) {

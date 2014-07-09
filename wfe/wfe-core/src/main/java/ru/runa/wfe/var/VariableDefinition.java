@@ -176,18 +176,22 @@ public class VariableDefinition implements Serializable {
         return userTypes != null ? userTypes.get(format) : null;
     }
 
-    public List<VariableDefinition> expandComplexVariable() {
-        return expandComplexVariable(this, this);
+    public List<VariableDefinition> expandComplexVariable(boolean preserveComplex) {
+        return expandComplexVariable(this, this, preserveComplex);
     }
 
-    private List<VariableDefinition> expandComplexVariable(VariableDefinition superVariable, VariableDefinition complexVariable) {
+    private List<VariableDefinition> expandComplexVariable(VariableDefinition superVariable, VariableDefinition complexVariable,
+            boolean preserveComplex) {
         List<VariableDefinition> result = Lists.newArrayList();
         for (VariableDefinition attributeDefinition : complexVariable.getUserType().getAttributes()) {
             String name = superVariable.getName() + VariableUserType.DELIM + attributeDefinition.getName();
             String scriptingName = superVariable.getScriptingName() + VariableUserType.DELIM + attributeDefinition.getScriptingName();
             VariableDefinition variable = new VariableDefinition(name, scriptingName, attributeDefinition);
             if (variable.isComplex()) {
-                result.addAll(expandComplexVariable(variable, attributeDefinition));
+                if (preserveComplex) {
+                    result.add(variable);
+                }
+                result.addAll(expandComplexVariable(variable, attributeDefinition, preserveComplex));
             } else {
                 result.add(variable);
             }
