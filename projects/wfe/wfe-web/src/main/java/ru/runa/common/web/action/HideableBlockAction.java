@@ -43,7 +43,6 @@ public class HideableBlockAction extends Action {
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         IdNameForm form = (IdNameForm) actionForm;
         BatchPresentationsVisibility.get(request.getSession()).changeBlockVisibility(form.getName());
-        // http://sourceforge.net/tracker/?func=detail&aid=3461404&group_id=125156&atid=701698
-        return new ActionForward(form.getAction(), false);
+        return null;
     }
 }

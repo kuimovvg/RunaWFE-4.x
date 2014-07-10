@@ -99,7 +99,7 @@ function openSubstitutionCriteriasConfirmPopup(message, allMethod, allButton, on
 }
 
 var visibleBlock = false; // TODO unimplementd; use jQuery.Collection plugin for this
-function viewBlock(blockId, returnAction) {
+function viewBlock(blockId) {
 	var controlId = blockId + "Controls";
 	if (visibleBlock) {
 		$("#"+controlId).hide();
@@ -113,10 +113,7 @@ function viewBlock(blockId, returnAction) {
 	jQuery.ajax({
 	    type: "POST",
 	    url: "/wfe/hideableBlock.do",
-	    data: {
-	    	action: returnAction,
-	    	name: blockId
-	    }
+	    data: { name: blockId }
     });
 }
 

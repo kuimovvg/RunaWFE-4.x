@@ -94,7 +94,7 @@ public class ViewControlsHideableBlockAjaxTag extends AbstractReturningTag {
 
             String id = getHideableBlockId() + "Controls";
 
-            A link = new A("javascript:viewBlock('" + getHideableBlockId() + "', '" + getReturnAction() + "');");
+            A link = new A("javascript:viewBlock('" + getHideableBlockId() + "');");
             headerTD.addElement(link);
             link.setID(id + "Link");
             link.setClass(Resources.CLASS_HIDEABLEBLOCK);
