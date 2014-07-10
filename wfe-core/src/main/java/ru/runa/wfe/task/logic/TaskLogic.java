@@ -125,7 +125,7 @@ public class TaskLogic extends WFCommonLogic {
 
     public WfTask getTask(User user, Long taskId) {
         Task task = taskDAO.getNotNull(taskId);
-        return taskObjectFactory.create(task, user.getActor(), false);
+        return taskObjectFactory.create(task, user.getActor(), false, null);
     }
 
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
@@ -137,7 +137,7 @@ public class TaskLogic extends WFCommonLogic {
         Process process = processDAO.getNotNull(processId);
         checkPermissionAllowed(user, process, ProcessPermission.READ);
         for (Task task : process.getTasks()) {
-            result.add(taskObjectFactory.create(task, user.getActor(), false));
+            result.add(taskObjectFactory.create(task, user.getActor(), false, null));
         }
         return result;
     }

@@ -97,6 +97,7 @@ public class VariableLogic extends WFCommonLogic {
         return executionContext.getVariableProvider().getVariable(variableName);
     }
 
+    @Deprecated
     public HashMap<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
         // TODO potential performance bottleneck
         HashMap<Long, WfVariable> map = Maps.newHashMapWithExpectedSize(processIds.size());

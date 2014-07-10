@@ -20,6 +20,7 @@ package ru.runa.wfe.task.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,8 +30,10 @@ import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * Process task.
@@ -59,6 +62,9 @@ public final class WfTask implements Serializable {
     private boolean escalated;
     private boolean firstOpen;
     private boolean acquiredBySubstitution;
+
+    // map is not usable in web services
+    private List<WfVariable> variables = Lists.newArrayList();
 
     public WfTask() {
     }
@@ -149,6 +155,27 @@ public final class WfTask implements Serializable {
 
     public boolean isAcquiredBySubstitution() {
         return acquiredBySubstitution;
+    }
+
+    public void addVariable(WfVariable variable) {
+        variables.add(variable);
+    }
+
+    public WfVariable getVariable(String name) {
+        for (WfVariable variable : variables) {
+            if (Objects.equal(name, variable.getDefinition().getName())) {
+                return variable;
+            }
+        }
+        return null;
+    }
+
+    public Object getVariableValue(String name) {
+        WfVariable variable = getVariable(name);
+        if (variable != null) {
+            return variable.getValue();
+        }
+        return null;
     }
 
     @Override

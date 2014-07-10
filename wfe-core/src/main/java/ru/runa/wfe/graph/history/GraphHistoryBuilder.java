@@ -63,7 +63,6 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.Transition;
-import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 
@@ -94,8 +93,7 @@ public class GraphHistoryBuilder {
     // PARALLEL_GATEWAY
     private final Set<String> parallelGatewayIsForkNodes = new HashSet<String>();
 
-    public GraphHistoryBuilder(List<Executor> executors, WfTaskFactory taskObjectFactory, ProcessDefinition processDefinition,
-            List<ProcessLog> fullProcessLogs, String subProcessId) {
+    public GraphHistoryBuilder(List<Executor> executors, ProcessDefinition processDefinition, List<ProcessLog> fullProcessLogs, String subProcessId) {
 
         this.executors = executors;
         this.processDefinition = processDefinition;
@@ -395,7 +393,8 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates the width of tokens. Token is line that contains nodes and transitions. Fork node creates subtokens. Join node finishes all
+     * Method calculates the width of tokens. Token is line that contains nodes
+     * and transitions. Fork node creates subtokens. Join node finishes all
      * subtokens node and continue the main token.
      * 
      * @param startTokenNodeId
@@ -621,7 +620,8 @@ public class GraphHistoryBuilder {
     }
 
     /**
-     * Method calculates X and Y coordinates for figures which present nodes in the graph.
+     * Method calculates X and Y coordinates for figures which present nodes in
+     * the graph.
      * 
      * @param widthTokens
      *            - object contains start node in token and the width of token.
