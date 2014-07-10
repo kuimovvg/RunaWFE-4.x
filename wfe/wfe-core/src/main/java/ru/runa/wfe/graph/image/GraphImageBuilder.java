@@ -40,7 +40,7 @@ import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.Transition;
-import ru.runa.wfe.task.dto.WfTaskFactory;
+import ru.runa.wfe.task.TaskDeadlineUtils;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -50,7 +50,6 @@ import com.google.common.collect.Maps;
  * Modified on 26.02.2009 by gavrusev_sergei
  */
 public class GraphImageBuilder {
-    private final WfTaskFactory taskObjectFactory;
     private final ProcessDefinition processDefinition;
     private Token highlightedToken;
     private final Map<String, AbstractFigure> allNodeFigures = Maps.newHashMap();
@@ -58,8 +57,7 @@ public class GraphImageBuilder {
     private final Map<AbstractFigure, RenderHits> nodeFigures = Maps.newHashMap();
     private final boolean smoothTransitions;
 
-    public GraphImageBuilder(WfTaskFactory taskObjectFactory, ProcessDefinition processDefinition) {
-        this.taskObjectFactory = taskObjectFactory;
+    public GraphImageBuilder(ProcessDefinition processDefinition) {
         this.processDefinition = processDefinition;
         this.smoothTransitions = DrawProperties.isSmoothLinesEnabled() && processDefinition.getDeployment().getLanguage() == Language.BPMN2;
     }
@@ -154,7 +152,7 @@ public class GraphImageBuilder {
                 // tasks
                 continue;
             }
-            Date deadlineWarningDate = taskObjectFactory.getDeadlineWarningDate(entry.getKey().getCreateDate(), deadlineDate);
+            Date deadlineWarningDate = TaskDeadlineUtils.getDeadlineWarningDate(entry.getKey().getCreateDate(), deadlineDate);
             Color color = null;
             if (activeTask) {
                 color = DrawProperties.getBaseColor();

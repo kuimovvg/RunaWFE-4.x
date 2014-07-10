@@ -50,10 +50,10 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SecuredObjectType;
 import ru.runa.wfe.task.Task;
-import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -67,8 +67,6 @@ import com.google.common.collect.Maps;
  * @since 2.0
  */
 public class ExecutionLogic extends WFCommonLogic {
-    @Autowired
-    private WfTaskFactory taskObjectFactory;
     @Autowired
     private ProcessFactory processFactory;
 
@@ -87,13 +85,13 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
         List<Process> list = getPersistentObjects(user, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES, true);
-        return getProcesses(list);
+        return getProcesses(list, batchPresentation.getDynamicFieldsToDisplay());
     }
 
     public List<WfProcess> getProcesses(User user, ProcessFilter filter) {
         List<Process> process = processDAO.getProcesses(filter);
         process = filterIdentifiable(user, process, ProcessPermission.READ);
-        return getProcesses(process);
+        return getProcesses(process, null);
     }
 
     public void deleteProcesses(User user, final ProcessFilter filter) {
@@ -139,13 +137,24 @@ public class ExecutionLogic extends WFCommonLogic {
             subprocesses = nodeProcessDAO.getSubprocesses(process);
         }
         subprocesses = filterIdentifiable(user, subprocesses, ProcessPermission.READ);
-        return getProcesses(subprocesses);
+        return getProcesses(subprocesses, null);
     }
 
-    private List<WfProcess> getProcesses(List<Process> processes) {
+    private List<WfProcess> getProcesses(List<Process> processes, List<String> variableNamesToInclude) {
         List<WfProcess> result = Lists.newArrayListWithExpectedSize(processes.size());
         for (Process process : processes) {
-            result.add(new WfProcess(process));
+            WfProcess wfProcess = new WfProcess(process);
+            if (variableNamesToInclude != null) {
+                ProcessDefinition processDefinition = getDefinition(process);
+                ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+                for (String variableName : variableNamesToInclude) {
+                    WfVariable variable = executionContext.getVariableProvider().getVariable(variableName);
+                    if (variable != null) {
+                        wfProcess.addVariable(variable);
+                    }
+                }
+            }
+            result.add(wfProcess);
         }
         return result;
     }
@@ -202,7 +211,7 @@ public class ExecutionLogic extends WFCommonLogic {
             }
             ProcessLogs processLogs = new ProcessLogs(processId);
             processLogs.addLogs(processLogDAO.get(processId, processDefinition), false);
-            GraphImageBuilder builder = new GraphImageBuilder(taskObjectFactory, processDefinition);
+            GraphImageBuilder builder = new GraphImageBuilder(processDefinition);
             builder.setHighlightedToken(highlightedToken);
             return builder.createDiagram(process, processLogs);
         } catch (Exception e) {
@@ -237,7 +246,7 @@ public class ExecutionLogic extends WFCommonLogic {
             ProcessDefinition processDefinition = getDefinition(process);
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
-            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs, subprocessId);
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, processDefinition, logs, subprocessId);
             return converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
         } catch (Exception e) {
             throw Throwables.propagate(e);
@@ -252,7 +261,7 @@ public class ExecutionLogic extends WFCommonLogic {
             ProcessDefinition processDefinition = getDefinition(process);
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
-            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, taskObjectFactory, processDefinition, logs, "" + subprocessId);
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, processDefinition, logs, "" + subprocessId);
             converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
             return converter.getLogElements();
         } catch (Exception e) {

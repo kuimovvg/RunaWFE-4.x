@@ -18,6 +18,7 @@
 package ru.runa.wfe.execution.dto;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,8 +26,10 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.security.IdentifiableBase;
 import ru.runa.wfe.security.SecuredObjectType;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * Created on 02.11.2004
@@ -44,6 +47,8 @@ public class WfProcess extends IdentifiableBase {
     private int version;
     private Long definitionId;
     private String hierarchyIds;
+    // map is not usable in web services
+    private List<WfVariable> variables = Lists.newArrayList();
 
     public WfProcess() {
     }
@@ -97,6 +102,27 @@ public class WfProcess extends IdentifiableBase {
 
     public String getHierarchyIds() {
         return hierarchyIds;
+    }
+
+    public void addVariable(WfVariable variable) {
+        variables.add(variable);
+    }
+
+    public WfVariable getVariable(String name) {
+        for (WfVariable variable : variables) {
+            if (Objects.equal(name, variable.getDefinition().getName())) {
+                return variable;
+            }
+        }
+        return null;
+    }
+
+    public Object getVariableValue(String name) {
+        WfVariable variable = getVariable(name);
+        if (variable != null) {
+            return variable.getValue();
+        }
+        return null;
     }
 
     @Override

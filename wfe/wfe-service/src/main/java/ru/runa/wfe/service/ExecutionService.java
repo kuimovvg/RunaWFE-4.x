@@ -199,7 +199,8 @@ public interface ExecutionService {
      * @param variables
      *            variable value
      * @param swimlaneActorId
-     *            actor id who will be assigned to task swimlane, can be <code>null</code>
+     *            actor id who will be assigned to task swimlane, can be
+     *            <code>null</code>
      * @throws TaskDoesNotExistException
      * @throws ValidationException
      */
@@ -276,6 +277,9 @@ public interface ExecutionService {
     /**
      * Gets variables by name from different processes.
      * 
+     * @deprecated Since 4.1.2 WfTask and WfProcess are extended to include
+     *             requested variables
+     * 
      * @param user
      *            authorized user
      * @param processId
@@ -284,6 +288,7 @@ public interface ExecutionService {
      *            variable name
      * @return not <code>null</code>
      */
+    @Deprecated
     public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName);
 
     /**
