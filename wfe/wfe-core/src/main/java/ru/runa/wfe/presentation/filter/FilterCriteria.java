@@ -97,4 +97,9 @@ public abstract class FilterCriteria implements Serializable {
     public int hashCode() {
         return Objects.hashCode((Object[]) filterTemplates);
     }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("filters", filterTemplates).toString();
+    }
 }
