@@ -494,6 +494,17 @@ public final class BatchPresentation implements Cloneable, Serializable {
         return storage;
     }
 
+    @Transient
+    public List<String> getDynamicFieldsToDisplay() {
+        List<String> result = Lists.newArrayList();
+        for (int i = 0; i < getFields().dynamics.size(); i++) {
+            if (ArraysCommons.contains(getFields().displayIds, i)) {
+                result.add(getFields().dynamics.get(i).getDynamicValue());
+            }
+        }
+        return result;
+    }
+
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Fields implements Serializable {
         private static final long serialVersionUID = 1L;

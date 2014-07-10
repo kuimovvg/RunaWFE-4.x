@@ -21,30 +21,15 @@ import org.apache.ecs.html.TD;
 
 import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.html.TDBuilder;
-import ru.runa.common.web.html.TDBuilder.Env.IdentifiableExtractor;
 import ru.runa.wf.web.ftl.method.ViewUtil;
-import ru.runa.wfe.execution.Process;
-import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.dto.WfVariable;
 
 public class TaskVariableTDBuilder implements TDBuilder {
+    private final String variableName;
 
-    class ProcessIdExtractor implements IdentifiableExtractor {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public Identifiable getIdentifiable(final Object o, final Env env) {
-            Process identifiable = new Process();
-            identifiable.setId(((WfTask) o).getProcessId());
-            return identifiable;
-        }
-    }
-
-    private String variableName = null;
-
-    public TaskVariableTDBuilder(String varName) {
-        variableName = varName;
+    public TaskVariableTDBuilder(String variableName) {
+        this.variableName = variableName;
     }
 
     @Override
@@ -57,9 +42,9 @@ public class TaskVariableTDBuilder implements TDBuilder {
 
     @Override
     public String getValue(Object object, Env env) {
-        WfVariable variable = env.getProcessVariable(object, new ProcessIdExtractor(), variableName);
+        WfTask task = (WfTask) object;
+        WfVariable variable = task.getVariable(variableName);
         if (variable != null && variable.getValue() != null) {
-            WfTask task = (WfTask) object;
             return ViewUtil.getOutput(env.getUser(), new StrutsWebHelper(env.getPageContext()), task.getProcessId(), variable);
         }
         return "";

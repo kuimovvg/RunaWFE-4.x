@@ -27,7 +27,6 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.dto.WfVariable;
 
 /**
  * @author Gordienko_m
@@ -54,7 +53,6 @@ public interface TDBuilder {
 
         public boolean hasProcessDefinitionPermission(Permission permission, Long processDefinitionId);
 
-        public WfVariable getProcessVariable(Object object, IdentifiableExtractor processIdExtractor, String variableName);
     }
 
     public TD build(Object object, Env env);

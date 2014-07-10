@@ -18,19 +18,23 @@
 
 package ru.runa.wfe.task.dto;
 
-import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.Deployment;
+import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
+import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.task.TaskDeadlineUtils;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.EscalationGroup;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Objects;
 
@@ -42,13 +46,34 @@ import com.google.common.base.Objects;
  */
 public class WfTaskFactory {
     @Autowired
+    private ProcessDefinitionLoader processDefinitionLoader;
+    @Autowired
     private ExecutorDAO executorDAO;
 
-    public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution) {
-        return create(task, targetActor, acquiredBySubstitution, !task.getOpenedByExecutorIds().contains(targetActor.getId()));
+    /**
+     * 
+     * @param task
+     * @param targetActor
+     * @param acquiredBySubstitution
+     * @param variableNamesToInclude
+     *            can be <code>null</code>
+     * @return
+     */
+    public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution, List<String> variableNamesToInclude) {
+        return create(task, targetActor, acquiredBySubstitution, variableNamesToInclude, !task.getOpenedByExecutorIds().contains(targetActor.getId()));
     }
 
-    public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution, boolean firstOpen) {
+    /**
+     * 
+     * @param task
+     * @param targetActor
+     * @param acquiredBySubstitution
+     * @param variableNamesToInclude
+     *            can be <code>null</code>
+     * @param firstOpen
+     * @return
+     */
+    public WfTask create(Task task, Actor targetActor, boolean acquiredBySubstitution, List<String> variableNamesToInclude, boolean firstOpen) {
         Process process = task.getProcess();
         Deployment deployment = process.getDeployment();
         boolean escalated = false;
@@ -64,20 +89,19 @@ public class WfTaskFactory {
                 }
             }
         }
-        return new WfTask(task, deployment, process.getId(), targetActor, getDeadlineWarningDate(task), escalated, acquiredBySubstitution, firstOpen);
-    }
-
-    public Date getDeadlineWarningDate(Task task) {
-        return getDeadlineWarningDate(task.getCreateDate(), task.getDeadlineDate());
-    }
-
-    public Date getDeadlineWarningDate(Date createDate, Date deadlineDate) {
-        if (createDate == null || deadlineDate == null) {
-            return null;
+        WfTask wfTask = new WfTask(task, deployment, process.getId(), targetActor, TaskDeadlineUtils.getDeadlineWarningDate(task), escalated,
+                acquiredBySubstitution, firstOpen);
+        if (variableNamesToInclude != null) {
+            ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(deployment.getId());
+            ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+            for (String variableName : variableNamesToInclude) {
+                WfVariable variable = executionContext.getVariableProvider().getVariable(variableName);
+                if (variable != null) {
+                    wfTask.addVariable(variable);
+                }
+            }
         }
-        int percents = SystemProperties.getTaskAlmostDeadlineInPercents();
-        long duration = deadlineDate.getTime() - createDate.getTime();
-        return new Date(createDate.getTime() + duration * percents / 100);
+        return wfTask;
     }
 
 }
