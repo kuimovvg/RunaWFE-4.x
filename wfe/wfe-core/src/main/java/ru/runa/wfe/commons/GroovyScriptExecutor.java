@@ -13,6 +13,7 @@ import org.codehaus.groovy.GroovyExceptionInterface;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
+import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
@@ -62,6 +63,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     public static class GroovyScriptBinding extends Binding {
         private final IVariableProvider variableProvider;
         private final Map<String, String> variableScriptingNameToNameMap = Maps.newHashMap();
+        // complex variables does not returned from binding...
+        private final Map<String, ComplexVariable> complexVariables = Maps.newHashMap();
 
         public GroovyScriptBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
             this.variableProvider = variableProvider;
@@ -110,6 +113,9 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             if (value == null) {
                 log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
             }
+            if (value instanceof ComplexVariable) {
+                complexVariables.put(name, (ComplexVariable) value);
+            }
             log.debug("Passing to script '" + name + "' as '" + value + "'" + (value != null ? " of " + value.getClass() : ""));
             return value;
         }
@@ -126,6 +132,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 String variableName = getVariableNameByScriptingName(scriptingEntry.getKey());
                 result.put(variableName, scriptingEntry.getValue());
             }
+            result.putAll(complexVariables);
             return result;
         }
     }
