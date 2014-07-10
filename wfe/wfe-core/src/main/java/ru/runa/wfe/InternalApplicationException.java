@@ -17,12 +17,14 @@
  */
 package ru.runa.wfe;
 
+import javax.ejb.ApplicationException;
 
 /**
  * Signals about inappropriate application usage.
  * 
  * @author Dofs
  */
+@ApplicationException(inherited = true, rollback = true)
 public class InternalApplicationException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
