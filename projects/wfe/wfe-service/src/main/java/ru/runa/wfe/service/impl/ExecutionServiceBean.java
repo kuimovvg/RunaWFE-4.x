@@ -100,7 +100,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         if (batchPresentation == null) {
             batchPresentation = BatchPresentationFactory.PROCESSES.createNonPaged();
         }
-        return executionLogic.getAllProcessesCount(user, batchPresentation);
+        return executionLogic.getProcessesCount(user, batchPresentation);
     }
 
     @Override

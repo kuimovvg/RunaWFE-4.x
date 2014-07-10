@@ -77,7 +77,7 @@ public class ExecutionLogic extends WFCommonLogic {
         cancelProcesses(user, filter);
     }
 
-    public int getAllProcessesCount(User user, BatchPresentation batchPresentation) {
+    public int getProcessesCount(User user, BatchPresentation batchPresentation) {
         return getPersistentObjectCount(user, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES);
     }
 
