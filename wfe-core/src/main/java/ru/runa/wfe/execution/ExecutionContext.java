@@ -223,7 +223,7 @@ public class ExecutionContext {
      * @return variable provider for this process.
      */
     public IVariableProvider getVariableProvider() {
-        return new ExecutionVariableProvider(this);
+        return new ExecutionVariableProvider(this, false);
     }
 
     public void addLog(ProcessLog processLog) {
