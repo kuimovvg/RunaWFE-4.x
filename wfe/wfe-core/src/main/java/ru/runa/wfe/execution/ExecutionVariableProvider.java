@@ -2,17 +2,22 @@ package ru.runa.wfe.execution;
 
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.lang.ProcessDefinition;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.base.Objects;
+
 public class ExecutionVariableProvider extends AbstractVariableProvider {
     private final ExecutionContext executionContext;
+    private final boolean findVariableByScriptingName;
 
-    public ExecutionVariableProvider(ExecutionContext executionContext) {
+    public ExecutionVariableProvider(ExecutionContext executionContext, boolean findVariableByScriptingName) {
         this.executionContext = executionContext;
+        this.findVariableByScriptingName = findVariableByScriptingName;
     }
 
     @Override
@@ -33,12 +38,29 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
         if (variableDefinition == null || !variableDefinition.isPublicAccess()) {
             // TODO checkReadToVariablesAllowed(subject, task);
         }
+        if (variableDefinition == null && findVariableByScriptingName) {
+            // TODO unify
+            for (VariableDefinition definition : processDefinition.getVariables()) {
+                if (Objects.equal(variableName, definition.getScriptingName())) {
+                    variableDefinition = definition;
+                    break;
+                }
+            }
+            if (variableDefinition == null) {
+                for (SwimlaneDefinition definition : processDefinition.getSwimlanes().values()) {
+                    if (Objects.equal(variableName, definition.getScriptingName())) {
+                        variableDefinition = definition.toVariableDefinition();
+                        break;
+                    }
+                }
+            }
+        }
         if (variableDefinition != null) {
             Object variableValue;
             if (variableDefinition.isComplex()) {
                 variableValue = loadComplexVariable(variableDefinition.getName(), variableDefinition);
             } else {
-                variableValue = executionContext.getVariableValue(variableName);
+                variableValue = executionContext.getVariableValue(variableDefinition.getName());
             }
             return new WfVariable(variableDefinition, variableValue);
         }
