@@ -32,6 +32,7 @@ import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.dialog.MultipleSelectionDialog;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
@@ -44,6 +45,7 @@ public class CopyGraphCommand extends Command {
     private final CopyBuffer copyBuffer;
     private final Map<String, NamedGraphElement> targetNodeMap = Maps.newHashMap();
     private final List<ExtraCopyAction> executedCopyActions = Lists.newArrayList();
+    private final Map<String,String> nodeToSwimlaneNameMap = Maps.newHashMap();
 
     public CopyGraphCommand(ProcessDefinition targetDefinition, IFolder targetFolder) {
         this.targetDefinition = targetDefinition;
@@ -98,6 +100,7 @@ public class CopyGraphCommand extends Command {
                     if (swimlane != null && !ignoreSwimlane) {
                         CopySwimlaneAction copyAction = new CopySwimlaneAction(swimlane);
                         copyActions.add(copyAction);
+                        nodeToSwimlaneNameMap.put(node.getId(), swimlane.getName());
                     }
                 }
             }
@@ -151,8 +154,11 @@ public class CopyGraphCommand extends Command {
                 if (entry.getValue() instanceof SwimlanedNode) {
                     boolean ignoreSwimlane = targetDefinition instanceof SubprocessDefinition && entry.getValue() instanceof StartState;
                     if (!ignoreSwimlane) {
-                        SwimlanedNode sourceNode = copyBuffer.getSourceDefinition().getGraphElementByIdNotNull(entry.getKey());
-                        Swimlane swimlane = targetDefinition.getSwimlaneByName(sourceNode.getSwimlaneName());
+                        Swimlane swimlane = targetDefinition.getSwimlaneByName(nodeToSwimlaneNameMap.get(entry.getKey()));
+                        // this crazy line created because element.getConstraint() == null is checking of visibility for swimlane in many places
+                        if ( targetDefinition.getSwimlaneDisplayMode().equals(SwimlaneDisplayMode.none)) {
+                        	swimlane.setConstraint(null);
+                        }
                         ((SwimlanedNode) entry.getValue()).setSwimlane(swimlane);
                     }
                 }
