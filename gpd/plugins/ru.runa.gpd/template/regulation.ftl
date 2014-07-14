@@ -113,16 +113,27 @@
 				<hr color="#e3f4ff"><br/>
 			
 				<#-- name -->
-				<p id="${node.getId()}" > <font color="#005D85" size="3" face="Verdana, Geneva, sans-serif"> <strong> Шаг: Разделение ${node.getName()} </strong> </font> </p>
+				<p id="${node.getId()}" > <font color="#005D85" size="3" face="Verdana, Geneva, sans-serif"> <strong> Шаг: Параллельный шлюз ${node.getName()} </strong> </font> </p>
 				
 				<#-- type -->
-				<p>Тип шага: Разделение<br/>
+				<#if ( node.getLeavingTransitions()?size > node.getArrivingTransitions()?size ) >
+					<p>Тип шага: Разделение<br/>
+				<#else>
+					<p>Тип шага: Слияние<br/>
+				</#if>
 				
 				<#-- transitions -->
-				Далее создается ${node.getLeavingTransitions()?size} точек управления, которые переходят в</p>    
-				<#list node.getLeavingTransitions() as transition>
-					<p> <a href="#${transition.getTarget().getId()}">${transition.getTarget().getName()}</a> </p>
-				</#list> 
+				<#if node.getLeavingTransitions()?size == 1>
+					<#assign afterTask = node.getLeavingTransitions()?first >
+					Далее управление переходит к шагу <a href="#${afterTask.getTarget().getId()}">${afterTask.getTarget().getName()}</a></p>
+				<#else>
+					Далее управление переходит:</p>    
+					<ul>
+						<#list node.getLeavingTransitions() as transition>
+							<p>в случае ${transition.getName()} <a href="#${transition.getTarget().getId()}">${transition.getTarget().getName()}</a> </p>
+						</#list> 
+					</ul>
+				</#if>
 			</#if>
 			
 			<#-- Join -->
