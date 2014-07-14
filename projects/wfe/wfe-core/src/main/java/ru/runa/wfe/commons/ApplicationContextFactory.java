@@ -64,7 +64,7 @@ public class ApplicationContextFactory {
     }
 
     public static ProcessDAO getProcessDAO() {
-        return getContext().getBean(ProcessDAO.class);
+        return getContext().getBean("processDAO", ProcessDAO.class);
     }
 
     public static ProcessLogDAO getProcessLogDAO() {
@@ -85,7 +85,7 @@ public class ApplicationContextFactory {
 
     // TODO avoid static methods, inject
     public static SessionFactory getSessionFactory() {
-        return getContext().getBean(SessionFactory.class);
+        return getContext().getBean("sessionFactory", SessionFactory.class);
     }
 
     public static Session getCurrentSession() {
@@ -96,7 +96,7 @@ public class ApplicationContextFactory {
         LocalSessionFactoryBean factoryBean = (LocalSessionFactoryBean) getContext().getBean("&sessionFactory");
         return factoryBean.getConfiguration();
     }
-
+    
     public static DataSource getDataSource() throws NamingException {
         String dsName = getConfiguration().getProperty("hibernate.connection.datasource");
         return (DataSource) new InitialContext().lookup(dsName);
@@ -129,15 +129,15 @@ public class ApplicationContextFactory {
     }
 
     public static ExecutorDAO getExecutorDAO() {
-        return getContext().getBean(ExecutorDAO.class);
+        return getContext().getBean("executorDAO", ExecutorDAO.class);
     }
 
     public static DeploymentDAO getDeploymentDAO() {
-        return getContext().getBean(DeploymentDAO.class);
+        return getContext().getBean("deploymentDAO", DeploymentDAO.class);
     }
 
     public static PermissionDAO getPermissionDAO() {
-        return getContext().getBean(PermissionDAO.class);
+        return getContext().getBean("permissionDAO", PermissionDAO.class);
     }
 
     public static RelationDAO getRelationDAO() {
