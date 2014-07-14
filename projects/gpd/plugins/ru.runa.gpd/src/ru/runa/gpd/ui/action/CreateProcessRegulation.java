@@ -49,7 +49,7 @@ public class CreateProcessRegulation extends BaseModelActionDelegate {
 			
 			SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy.mm.dd_hh-mm");
 			IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), proccDefinition.getName()+"_"+dataFormat.format(new Date())+".html");
-			IOUtils.createFile(file,new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
+			IOUtils.createOrUpdateFile(file,new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
 			IDE.openEditor(getWorkbenchPage(), file);
 		 } catch (Exception e) {
 	            PluginLogger.logError(e);
