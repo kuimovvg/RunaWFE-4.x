@@ -125,8 +125,8 @@
 				</#list> 
 			</#if>
 			
-			<#-- ExclusiveGateway -->
-			<#if node.class.simpleName == "ExclusiveGateway" || node.class.simpleName == "Join">
+			<#-- Join -->
+			<#if node.class.simpleName == "Join">
 				<tr><td>
 				<hr color="#e3f4ff"><br/>
 				
@@ -140,6 +140,27 @@
 				<#assign afterNode = node.getLeavingTransitions()?first >
 				Далее cоединяются ${node.getArrivingTransitions()?size} точек управления, и управление переходит к шагу
 				<a href="#${afterNode.getTarget().getId()}">${afterNode.getTarget().getName()}</a> 
+				</p>    
+			</#if>
+			
+			<#-- ExclusiveGateway -->
+			<#if node.class.simpleName == "ExclusiveGateway">
+				<tr><td>
+				<hr color="#e3f4ff"><br/>
+				
+				<#-- name -->
+				<p id="${node.getId()}" > <font color="#005D85" size="3" face="Verdana, Geneva, sans-serif"> <strong> Шаг:  ${node.getName()} </strong> </font> </p>
+				
+				<#-- type -->
+				<p>Тип шага: Исключающий шлюз<br/>
+				
+				<#-- transitions -->
+				Далее управление переходит:</p>    
+					<ul>
+						<#list node.getLeavingTransitions() as transition>
+							<p>в случае ${transition.getName()} <a href="#${transition.getTarget().getId()}">${transition.getTarget().getName()}</a> </p>
+						</#list> 
+					</ul>
 				</p>    
 			</#if>
 			
