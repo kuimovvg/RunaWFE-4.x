@@ -71,7 +71,7 @@ import com.google.common.collect.Lists;
 public class InitializerLogic {
     protected static final Log log = LogFactory.getLog(InitializerLogic.class);
 
-    private static final List<Class<? extends DBPatch>> dbPatches = Lists.newArrayList();
+    public static final List<Class<? extends DBPatch>> dbPatches = Lists.newArrayList();
 
     static {
         dbPatches.add(UnsupportedPatch.class);
