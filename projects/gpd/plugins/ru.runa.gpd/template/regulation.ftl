@@ -263,6 +263,19 @@
 				
 				<#-- type -->
 				<p>Тип шага: Выполнение сценария</p>
+				
+				<#-- transitions -->
+				<#if node.getLeavingTransitions()?size == 1>
+					<#assign afterTask = node.getLeavingTransitions()?first >
+					Далее управление переходит к шагу <a href="#${afterTask.getTarget().getId()}">${afterTask.getTarget().getName()}</a></p>
+				<#else>
+					Далее управление переходит:</p>    
+					<ul>
+						<#list node.getLeavingTransitions() as transition>
+							<p>в случае ${transition.getName()} <a href="#${transition.getTarget().getId()}">${transition.getTarget().getName()}</a> </p>
+						</#list> 
+					</ul>
+				</#if>
 			</#if>
 					
 			
