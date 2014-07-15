@@ -221,7 +221,11 @@
 				
 				<#-- transitions -->
 				<#assign afterNode = node.getLeavingTransitions()?first >
-					После отправки сообщения управление переходит к шагу 
+				<#if node.class.simpleName == "ReceiveMessageNode">
+					После приема сообщения управление переходит к шагу
+				<#else>
+					После отправки сообщения управление переходит к шагу
+				</#if>
 					<a href="#${afterNode.getTarget().getId()}">${afterNode.getTarget().getName()}</a>
 				</p>
 				
