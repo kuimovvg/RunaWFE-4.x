@@ -34,9 +34,9 @@
 		<br>
 		
 		<#-- VARIABLES -->
-		<p> Cписок переменных бизнес-процесса: </p>
+		<p> <strong> Cписок переменных бизнес-процесса: </strong> </p>
 		<ul>
-			<#list proc.getVariables(true,false,null) as var>
+			<#list proc.getVariables(false,false,null) as var>
 				<li> ${var.getName()} </li>
 			</#list>
 		</ul>
@@ -188,7 +188,12 @@
 				
 				<#-- transitions -->
 				<#assign afterNode = node.getLeavingTransitions()?first >
-					После истечении ${node.getPropertyValue("timerDelay").toString()} времени управление переходит к шагу 
+				<#assign timerDelay = node.getPropertyValue("timerDelay") >
+				<#if timerDelay.hasDuration() >
+					После истечения ${node.getPropertyValue("timerDelay").toString()} времени управление переходит к шагу 
+				<#else>
+					${timerDelay.toString()} времени управление переходит к шагу
+				</#if>
 					<a href="#${afterNode.getTarget().getId()}">${afterNode.getTarget().getName()}</a>
 				</p>
 			</#if>
