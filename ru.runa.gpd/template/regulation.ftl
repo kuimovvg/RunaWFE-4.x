@@ -263,7 +263,7 @@
 				
 				<#-- suprocess name -->
 				<#if node.getSubProcessName() != "">
-					<p> Имья подпроцесса ${node.getSubProcessName()} </p>
+					<p> Имя подпроцесса ${node.getSubProcessName()} </p>
 				</#if>
 			</#if>
 			
