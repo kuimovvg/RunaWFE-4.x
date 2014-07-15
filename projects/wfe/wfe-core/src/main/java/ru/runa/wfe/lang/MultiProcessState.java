@@ -47,7 +47,7 @@ public class MultiProcessState extends SubProcessState {
                 // if this variable access is readable
                 String variableName = variableMapping.getName();
                 if (variableMapping.isReadable()) {
-                    Object value = executionContext.getVariableValue(variableName);
+                    Object value = executionContext.getVariableProvider().getValue(variableName);
                     String mappedName = variableMapping.getMappedName();
                     if (value != null) {
                         log.debug("copying super process var '" + variableName + "' to sub process var '" + mappedName + "': " + value + " of "
@@ -113,9 +113,9 @@ public class MultiProcessState extends SubProcessState {
                         while (list.size() <= nodeProcess.getIndex()) {
                             list.add(null);
                         }
-                        list.set(nodeProcess.getIndex(), subExecutionContext.getVariableValue(subprocessVariableName));
+                        list.set(nodeProcess.getIndex(), subExecutionContext.getVariableProvider().getValue(subprocessVariableName));
                     } else {
-                        value = subExecutionContext.getVariableValue(subprocessVariableName);
+                        value = subExecutionContext.getVariableProvider().getValue(subprocessVariableName);
                     }
                     log.debug("copying sub process var '" + subprocessVariableName + "' to process var '" + processVariableName + "': " + value);
                     executionContext.setVariableValue(processVariableName, value);

@@ -75,7 +75,7 @@ public class SubProcessState extends VariableContainerNode {
                 // the variable is copied from the super process variable
                 // name to the sub process mapped name
                 String variableName = variableMapping.getName();
-                Object value = executionContext.getVariableValue(variableName);
+                Object value = executionContext.getVariableProvider().getValue(variableName);
                 if (value != null) {
                     String mappedName = variableMapping.getMappedName();
                     log.debug("copying super process var '" + variableName + "' to sub process var '" + mappedName + "': " + value
@@ -100,7 +100,7 @@ public class SubProcessState extends VariableContainerNode {
                     // the variable is copied from the sub process mapped name
                     // to the super process variable name
                     String mappedName = variableMapping.getMappedName();
-                    Object value = subExecutionContext.getVariableValue(mappedName);
+                    Object value = subExecutionContext.getVariableProvider().getValue(mappedName);
                     if (value != null) {
                         String variableName = variableMapping.getName();
                         log.debug("copying sub process var '" + mappedName + "' to super process var '" + variableName + "': " + value);

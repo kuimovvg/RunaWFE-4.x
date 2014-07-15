@@ -59,7 +59,7 @@ public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
             }
             executor = swimlane.getExecutor();
         } else {
-            Object variableValue = executionContext.getVariableValue(variableName);
+            Object variableValue = executionContext.getVariableProvider().getValue(variableName);
             if (variableValue == null) {
                 return true;
             }

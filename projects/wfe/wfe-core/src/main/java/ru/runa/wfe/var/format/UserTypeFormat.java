@@ -53,8 +53,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
 
     @Override
     protected String convertToStringValue(Object obj) {
-        // TODO
-        return String.valueOf(obj);
+        return convertToJSONValue(obj).toString();
     }
 
     @Override
