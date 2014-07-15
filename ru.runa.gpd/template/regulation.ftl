@@ -267,6 +267,34 @@
 				</#if>
 			</#if>
 			
+			<#-- Multi task state -->
+			<#if node.class.simpleName == "MultiTaskState">
+				<tr><td>
+				<hr color="#e3f4ff"><br/>
+				
+				<#-- name -->
+				<p id="${node.getId()}" > <font color="#005D85" size="3" face="Verdana, Geneva, sans-serif"> <strong> Шаг: ${node.getName()} </strong> </font> </p>
+				
+				<#-- type -->
+				<p>
+					Тип шага: Запуск мультидействия <br/>
+				</p>
+				
+				<#-- transitions -->
+				<#if node.getLeavingTransitions()?size == 1>
+					<#assign afterTask = node.getLeavingTransitions()?first >
+					Далее управление переходит к шагу <a href="#${afterTask.getTarget().getId()}">${afterTask.getTarget().getName()}</a></p>
+				<#else>
+					Далее управление переходит:</p>    
+					<ul>
+						<#list node.getLeavingTransitions() as transition>
+							<p>в случае ${transition.getName()} <a href="#${transition.getTarget().getId()}">${transition.getTarget().getName()}</a> </p>
+						</#list> 
+					</ul>
+				</#if>	
+				
+			</#if>
+			
 			<#--  ScriptTask -->
 			<#if node.class.simpleName == "ScriptTask">
 				<tr><td>
