@@ -97,13 +97,18 @@
 				</#if>
 				
 				<#-- timer option -->
-				<#if node.getTimer() ?? >
+				<#if node.getTimer()?? >
 					<#assign timer = node.getTimer() >
-					<#assign afterTimer = timer.getLeavingTransitions()?first>
-					<p> 
-						В случае задержки задания на ${timer.getPropertyValue("timerDelay").toString()} времени управление переходит к шагу 
+					<#if timer.getLeavingTransitions()?? && ( timer.getLeavingTransitions()?size > 0) >
+						<#assign afterTimer = timer.getLeavingTransitions()?first>
+						<#if timer.getDelay().hasDuration() >
+							После истечения ${node.getPropertyValue("timerDelay").toString()} времени управление переходит к шагу 
+						<#else>
+							${timerDelay.toString()} времени управление переходит к шагу
+						</#if>
 						<a href="#${afterTimer.getTarget().getId()}">${afterTimer.getTarget().getName()}</a>
-					</p>
+						</p>
+					</#if>
 				</#if>
 			</#if>
 			
