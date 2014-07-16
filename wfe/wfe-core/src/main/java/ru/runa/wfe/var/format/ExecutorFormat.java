@@ -84,8 +84,8 @@ public class ExecutorFormat extends VariableFormat implements VariableDisplaySup
         }
         if (link) {
             HashMap<String, Object> params = Maps.newHashMap();
-            params.put("id", executor.getId());
-            String href = webHelper.getActionUrl("/manage_executor", params);
+            params.put(WebHelper.PARAM_ID, executor.getId());
+            String href = webHelper.getActionUrl(WebHelper.ACTION_VIEW_EXECUTOR, params);
             String html = "<a href=\"" + href + "\"";
             String tooltipTemplate = tooltipTemplates.get(executor.getClass());
             if (!Strings.isNullOrEmpty(tooltipTemplate)) {

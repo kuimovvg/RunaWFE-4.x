@@ -20,6 +20,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.var.FileVariable;
 
 import com.google.common.base.Charsets;
@@ -48,8 +49,8 @@ public class FileTag extends FreemarkerTag {
             String fileName = fileVariable.getName();
             webHelper.getRequest().getSession().setAttribute(fileName, fileVariable);
             Map<String, String> params = Maps.newHashMap();
-            params.put("fileName", fileName);
-            String actionUrl = webHelper.getActionUrl("/getSessionFile", params);
+            params.put(WebHelper.PARAM_FILE_NAME, fileName);
+            String actionUrl = webHelper.getActionUrl(WebHelper.ACTION_DOWNLOAD_SESSION_FILE, params);
             return "<img src='" + actionUrl + "' />";
         } else {
             throw new TemplateModelException("Unexpected value of VIEW parameter: " + view);
