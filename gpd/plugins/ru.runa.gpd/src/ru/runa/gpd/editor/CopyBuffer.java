@@ -6,6 +6,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.gef.ui.actions.Clipboard;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.SelectionItem;
@@ -19,7 +20,7 @@ public class CopyBuffer {
     public static final String GROUP_VARIABLES = Localization.getString("CopyBuffer.Variable");
 	
     private IFolder sourceFolder;
-    private ProcessDefinition sourceDefinition;
+    private Language sourceLanguage;
     private List<NamedGraphElement> sourceNodes;
     
 	public CopyBuffer() {
@@ -28,20 +29,20 @@ public class CopyBuffer {
             Object[] array = (Object[]) contents;
             if (array.length == 3) {
     	        sourceFolder = (IFolder) array[0];
-    	        sourceDefinition = (ProcessDefinition) array[1];
+    	        sourceLanguage = (Language) array[1];
     	        sourceNodes = (List<NamedGraphElement>) array[2];
             }
         }
 	}
 
-    public CopyBuffer(IFolder sourceFolder, ProcessDefinition sourceDefinition, List<NamedGraphElement> sourceNodes) {
+    public CopyBuffer(IFolder sourceFolder, Language sourceLanguage, List<NamedGraphElement> sourceNodes) {
         this.sourceFolder = sourceFolder;
-        this.sourceDefinition = sourceDefinition;
+        this.sourceLanguage = sourceLanguage;
         this.sourceNodes = sourceNodes;
     }
 
     public void setToClipboard() {
-        Clipboard.getDefault().setContents(new Object[] { sourceFolder, sourceDefinition, sourceNodes });
+        Clipboard.getDefault().setContents(new Object[] { sourceFolder, sourceLanguage, sourceNodes });
     }
 
     public List<NamedGraphElement> getSourceNodes() {
@@ -56,8 +57,8 @@ public class CopyBuffer {
 		return sourceFolder;
 	}
 
-	public ProcessDefinition getSourceDefinition() {
-		return sourceDefinition;
+	public Language getLanguage() {
+		return sourceLanguage;
 	}
 
 	public static abstract class ExtraCopyAction extends SelectionItem implements Comparable<ExtraCopyAction> {

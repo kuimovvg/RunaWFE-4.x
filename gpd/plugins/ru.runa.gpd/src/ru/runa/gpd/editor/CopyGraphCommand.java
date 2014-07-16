@@ -55,7 +55,7 @@ public class CopyGraphCommand extends Command {
 
     @Override
     public boolean canExecute() {
-        return copyBuffer.isValid() && !copyBuffer.getSourceDefinition().equals(targetDefinition);
+        return copyBuffer.isValid();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class CopyGraphCommand extends Command {
     @Override
     public void execute() {
         try {
-            if (!copyBuffer.getSourceDefinition().getLanguage().equals(targetDefinition.getLanguage())) {
+            if (!copyBuffer.getLanguage().equals(targetDefinition.getLanguage())) {
                 Dialogs.warning(Localization.getString("CopyBuffer.DifferentVersion.warning"));
                 return;
             }
