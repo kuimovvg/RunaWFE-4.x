@@ -60,7 +60,7 @@ public class CopyAction extends SelectionAction {
 
     @Override
     public void run() {
-        CopyBuffer copyBuffer = new CopyBuffer((IFolder) editor.getDefinitionFile().getParent(), editor.getDefinition(), extractNodes());
+        CopyBuffer copyBuffer = new CopyBuffer((IFolder) editor.getDefinitionFile().getParent(), editor.getDefinition().getLanguage(), extractNodes());
         copyBuffer.setToClipboard();
     }
 }
