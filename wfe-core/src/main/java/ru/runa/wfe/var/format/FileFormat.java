@@ -23,12 +23,12 @@ import javax.xml.bind.DatatypeConverter;
 
 import org.json.simple.JSONObject;
 
-import com.google.common.collect.Maps;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
+
+import com.google.common.collect.Maps;
 
 /**
  * This class is marker class for validation.
@@ -64,7 +64,7 @@ public class FileFormat extends VariableFormat implements VariableDisplaySupport
         jsonObject.put("data", DatatypeConverter.printBase64Binary(fileVariable.getData()));
         return jsonObject;
     }
-    
+
     @Override
     protected Object convertFromJSONValue(Object jsonValue) {
         JSONObject object = (JSONObject) jsonValue;
@@ -90,10 +90,10 @@ public class FileFormat extends VariableFormat implements VariableDisplaySupport
         }
         FileVariable value = (FileVariable) object;
         HashMap<String, Object> params = Maps.newHashMap();
-        params.put("id", processId);
-        params.put("variableName", name);
-        String href = webHelper.getActionUrl("/variableDownloader", params);
+        params.put(WebHelper.PARAM_ID, processId);
+        params.put(WebHelper.PARAM_VARIABLE_NAME, name);
+        String href = webHelper.getActionUrl(WebHelper.ACTION_DOWNLOAD_PROCESS_FILE, params);
         return "<a href=\"" + href + "\">" + value.getName() + "</>";
     }
-    
+
 }

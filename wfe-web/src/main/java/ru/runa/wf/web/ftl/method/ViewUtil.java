@@ -505,8 +505,8 @@ public class ViewUtil {
 
     public static String getFileLogOutput(WebHelper webHelper, Long logId, String fileName) {
         HashMap<String, Object> params = Maps.newHashMap();
-        params.put("logId", logId);
-        String href = webHelper.getActionUrl("/variableDownloader", params);
+        params.put(WebHelper.PARAM_ID, logId);
+        String href = webHelper.getActionUrl(WebHelper.ACTION_DOWNLOAD_LOG_FILE, params);
         return "<a href=\"" + href + "\">" + fileName + "</>";
     }
 
