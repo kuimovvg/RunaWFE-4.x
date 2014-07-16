@@ -66,7 +66,9 @@ public class TaskAssigner extends TransactionalExecutor {
             }
             ProcessExecutionErrors.removeProcessError(unassignedTask.getProcess().getId(), unassignedTask.getNodeId());
         } catch (Throwable th) {
-            log.warn("Unable to assign task '" + unassignedTask + "' with swimlane '" + unassignedTask.getSwimlane() + "'", th);
+            log.warn(
+                    "Unable to assign task '" + unassignedTask + "' in " + unassignedTask.getProcess() + " with swimlane '"
+                            + unassignedTask.getSwimlane() + "'", th);
             ProcessExecutionException e = new ProcessExecutionException(ProcessExecutionException.TASK_ASSIGNMENT_FAILED, th,
                     unassignedTask.getName());
             ProcessExecutionErrors.addProcessError(unassignedTask, e);

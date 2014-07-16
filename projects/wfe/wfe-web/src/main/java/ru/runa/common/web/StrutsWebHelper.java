@@ -8,6 +8,8 @@ import javax.servlet.jsp.PageContext;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.commons.web.WebHelper;
 
+import com.google.common.collect.Maps;
+
 public class StrutsWebHelper implements WebHelper {
     private final PageContext pageContext;
 
@@ -32,6 +34,14 @@ public class StrutsWebHelper implements WebHelper {
 
     @Override
     public String getActionUrl(String relativeUrl, Map<String, ? extends Object> params) {
+        if (ACTION_DOWNLOAD_PROCESS_FILE.equals(relativeUrl)) {
+            return Commons.getActionUrl("/variableDownloader", params, pageContext, PortletUrlType.Render);
+        }
+        if (ACTION_DOWNLOAD_LOG_FILE.equals(relativeUrl)) {
+            Map<String, Object> adjusted = Maps.newHashMap();
+            adjusted.put("logId", params.remove(PARAM_ID));
+            return Commons.getActionUrl("/variableDownloader", adjusted, pageContext, PortletUrlType.Render);
+        }
         return Commons.getActionUrl(relativeUrl, params, pageContext, PortletUrlType.Render);
     }
 

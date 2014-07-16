@@ -33,8 +33,8 @@ public class ProcessIdFormat extends LongFormat implements VariableDisplaySuppor
         }
         if (link) {
             HashMap<String, Object> params = Maps.newHashMap();
-            params.put("id", processId);
-            String href = webHelper.getActionUrl("/manage_process", params);
+            params.put(WebHelper.PARAM_ID, processId);
+            String href = webHelper.getActionUrl(WebHelper.ACTION_VIEW_PROCESS, params);
             return "<a href=\"" + href + "\" title=\"" + title + "\">" + processId + "</a>";
         } else {
             return "<span title=\"" + title + "\">" + processId + "</span>";
