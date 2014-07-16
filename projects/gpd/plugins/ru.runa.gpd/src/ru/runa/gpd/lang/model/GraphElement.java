@@ -17,6 +17,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.editor.GEFConstants;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.Language;
@@ -419,7 +420,16 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
                 copy.addAction(action.getCopy(copy), -1);
             }
         }
-        copy.setConstraint(getConstraint());
+        Rectangle old = getConstraint();
+        // a little shift for making visible copy on same diagram
+        if ( old != null) {
+        	Rectangle rect = old.getCopy();
+        	rect.setX(rect.x()+GEFConstants.GRID_SIZE);
+        	rect.setY(rect.y()+GEFConstants.GRID_SIZE);
+        	copy.setConstraint(rect);
+        } else {
+        	copy.setConstraint(null);
+        }
         fillCopyCustomFields(copy);
         parent.addChild(copy);
         return copy;
