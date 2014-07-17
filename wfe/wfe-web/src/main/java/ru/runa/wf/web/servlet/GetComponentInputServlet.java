@@ -9,8 +9,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.simple.JSONObject;
 
+import ru.runa.common.web.AjaxWebHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.wf.web.ftl.method.ViewUtil;
+import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
@@ -42,22 +44,17 @@ public class GetComponentInputServlet extends HttpServlet {
         String scriptingName = "";
         String variableIsNullString = "";
         String variableValue = "";
+        WebHelper webHelper = new AjaxWebHelper(request);
 
         if (variable != null) {
             Object value = variable.getValue();
-            String formattedValue = "null";
             Boolean variableIsNull = true;
             if (value != null) {
                 variableIsNull = false;
-                formattedValue = ViewUtil.getOutput(user, null, processId, variable);
+                variableValue = ViewUtil.getComponentOutput(user, webHelper, processId, variable);
             }
             scriptingName = variable.getDefinition().getScriptingName();
             variableIsNullString = variableIsNull.toString();
-            if (variable.getDefinition().isComplex()) {
-                variableValue = ViewUtil.getComponentInput(user, null, variable);
-            } else {
-                variableValue = formattedValue;
-            }
         } else {
             WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
             List<VariableDefinition> variables = Delegates.getDefinitionService().getVariableDefinitions(user, process.getDefinitionId());
@@ -76,7 +73,7 @@ public class GetComponentInputServlet extends HttpServlet {
         variableObject.put("variableIsNull", variableIsNullString);
         variableObject.put("variableValue", variableValue);
         try {
-            String componentInput = ViewUtil.getComponentInput(user, null, variable);
+            String componentInput = ViewUtil.getComponentInput(user, webHelper, variable);
             variableObject.put("input", componentInput);
         } catch (Exception e) {
             variableObject.put("input", e.getLocalizedMessage());

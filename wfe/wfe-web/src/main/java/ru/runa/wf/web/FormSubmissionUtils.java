@@ -28,6 +28,7 @@ import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.BooleanFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.ListFormat;
+import ru.runa.wfe.var.format.MapFormat;
 import ru.runa.wfe.var.format.UserTypeFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -61,16 +62,14 @@ public class FormSubmissionUtils {
     }
 
     /**
-     * @return saved in request values from previous form submit (used to
-     *         re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
      */
     public static Map<String, String[]> getUserFormInput(ServletRequest request) {
         return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
     }
 
     /**
-     * @return saved in request values from previous form submit (used to
-     *         re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
      */
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
@@ -189,6 +188,36 @@ public class FormSubmissionUtils {
                 }
                 variableValue = list;
             }
+        } else if (format instanceof MapFormat) {
+            String sizeInputName = variableDefinition.getName() + SIZE_SUFFIX;
+            MapFormat mapFormat = (MapFormat) format;
+            VariableFormat componentKeyFormat = FormatCommons.createComponent(mapFormat, 0);
+            VariableFormat componentValueFormat = FormatCommons.createComponent(mapFormat, 1);
+            String[] strings = (String[]) userInput.get(sizeInputName);
+            if (strings == null || strings.length != 1) {
+                log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
+                return null;
+            }
+            int mapSize = TypeConversionUtil.convertTo(int.class, strings[0]);
+            Map<Object, Object> map = Maps.newHashMapWithExpectedSize(mapSize);
+            for (int i = 0; i < mapSize; i++) {
+                String nameKey = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END + ".key";
+                String scriptingNameKey = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END + ".key";
+                VariableDefinition componentKeyDefinition = new VariableDefinition(true, nameKey, scriptingNameKey, componentKeyFormat);
+                componentKeyDefinition.setUserTypes(variableDefinition.getUserTypes());
+                Object componentKeyValue = extractVariable(request, userInput, componentKeyDefinition, formatErrorsForFields);
+
+                String nameValue = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END + ".value";
+                String scriptingNameValue = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END
+                        + ".value";
+                VariableDefinition componentValueDefinition = new VariableDefinition(true, nameValue, scriptingNameValue, componentValueFormat);
+                componentValueDefinition.setUserTypes(variableDefinition.getUserTypes());
+                Object componentValueValue = extractVariable(request, userInput, componentValueDefinition, formatErrorsForFields);
+                if (!Objects.equal(IGNORED_VALUE, componentKeyValue)) {
+                    map.put(componentKeyValue, componentValueValue);
+                }
+            }
+            variableValue = map;
         } else if (format instanceof UserTypeFormat) {
             List<VariableDefinition> expandedDefinitions = variableDefinition.expandComplexVariable(false);
             ComplexVariable complexVariable = new ComplexVariable(variableDefinition);

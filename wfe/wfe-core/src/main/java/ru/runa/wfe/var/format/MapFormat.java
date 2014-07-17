@@ -117,7 +117,7 @@ public class MapFormat extends VariableFormat implements VariableFormatContainer
                 value = keyFormat.format(keyValue);
             }
             b.append(value);
-            b.append("</td><td>");
+            b.append("</td><td class=\"list\">");
             Object valueValue = TypeConversionUtil.convertTo(valueFormat.getJavaClass(), entry.getValue());
             if (valueFormat instanceof VariableDisplaySupport) {
                 String componentName = name + "[" + keyFormat.format(keyValue) + "]";
