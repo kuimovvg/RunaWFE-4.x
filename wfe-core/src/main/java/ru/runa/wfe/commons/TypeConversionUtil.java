@@ -124,6 +124,14 @@ public class TypeConversionUtil {
                     return (T) new BigDecimal(n.toString());
                 }
             }
+            if (classConvertTo == Long.class) {
+                if (object instanceof Date) {
+                    return (T) (Long) ((Date) object).getTime();
+                }
+                if (object instanceof Calendar) {
+                    return (T) (Long) ((Calendar) object).getTimeInMillis();
+                }
+            }
             if (classConvertTo.isArray()) {
                 List<?> list = convertTo(List.class, object, preConvertor, postConvertor);
                 Class<?> componentType = classConvertTo.getComponentType();
