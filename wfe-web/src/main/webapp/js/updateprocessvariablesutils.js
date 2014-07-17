@@ -58,8 +58,6 @@ function getVariableInfo(value) {
 				$(".inputTime").timepicker({ ampm: false, seconds: false });
 				$(".inputDate").datepicker({ dateFormat: "dd.mm.yy", buttonImage: "/wfe/images/calendar.gif" });
 				$(".inputDateTime").datetimepicker({ dateFormat: "dd.mm.yy" });
-				
-				$(".inputFileAttachButtonDiv").css("display", "none");
 			}
 		});	
 	} else {
