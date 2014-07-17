@@ -1,15 +1,17 @@
 
-var componentInputUNIQUENAME = "COMPONENT_INPUT";
+var componentInputUNIQUENAMEKey = "COMPONENT_INPUT_KEY";
+var componentInputUNIQUENAMEValue = "COMPONENT_INPUT_VALUE";
 
 $(document).ready(function() {
-    $("#btnAddUNIQUENAME").click(function() {
+    $("#btnAddMapUNIQUENAME").click(function() {
         var rowIndex = getSizeUNIQUENAME();
 		console.log("Adding row " + rowIndex);
         var e = "<div row='" + rowIndex + "' name='VARIABLE' style='margin-bottom:4px;'>";
-        e += componentInputUNIQUENAME.replace(/\[\]/g, "[" + rowIndex + "]");
-        e += "<input type='button' value=' - ' onclick='removeUNIQUENAME(this);' style='width: 30px;' />";
+        e += componentInputUNIQUENAMEKey.replace(/\[\]/g, "[" + rowIndex + "]");
+        e += componentInputUNIQUENAMEValue.replace(/\[\]/g, "[" + rowIndex + "]");
+        e += "<input type='button' value=' - ' onclick='removeUNIQUENAME(this);' style='width: 30px; margin-top: 6px;' />";
         e += "</div>";
-        $("#btnAddUNIQUENAME").before(e);
+        $("#btnAddMapUNIQUENAME").before(e);
         updateSizeUNIQUENAME(1);
         COMPONENT_JS_HANDLER
         $("#UNIQUENAME").trigger("onRowAdded", [rowIndex]);

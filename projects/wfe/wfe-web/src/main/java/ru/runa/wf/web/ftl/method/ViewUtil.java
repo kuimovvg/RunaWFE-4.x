@@ -45,6 +45,7 @@ import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.GroupFormat;
 import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.LongFormat;
+import ru.runa.wfe.var.format.MapFormat;
 import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.TextFormat;
 import ru.runa.wfe.var.format.TimeFormat;
@@ -135,6 +136,29 @@ public class ViewUtil {
         }
         nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
         return createComponentVariable(mapVariable, nameSuffix, valueFormat, object);
+    }
+
+    public static WfVariable createMapKeyComponentVariable(WfVariable mapVariable, int index, Object key) {
+        Map<?, ?> map = (Map<?, ?>) mapVariable.getValue();
+        VariableFormat keyFormat = FormatCommons.createComponent(mapVariable, 0);
+        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        if (index != -1) {
+            nameSuffix += index;
+        }
+        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        return createComponentVariable(mapVariable, nameSuffix + ".key", keyFormat, key);
+    }
+
+    public static WfVariable createMapValueComponentVariable(WfVariable mapVariable, int index, Object key) {
+        Map<?, ?> map = (Map<?, ?>) mapVariable.getValue();
+        Object value = key != null ? map.get(key) : null;
+        VariableFormat valueFormat = FormatCommons.createComponent(mapVariable, 1);
+        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        if (index != -1) {
+            nameSuffix += index;
+        }
+        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        return createComponentVariable(mapVariable, nameSuffix + ".value", valueFormat, value);
     }
 
     public static WfVariable createListSizeVariable(WfVariable complexVariable, Object value) {
@@ -285,6 +309,50 @@ public class ViewUtil {
             html.append("</span>");
             return html.toString();
         }
+        if (variableFormat instanceof MapFormat) {
+            String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
+            Map<String, String> substitutions = new HashMap<String, String>();
+            substitutions.put("VARIABLE", variableName);
+            substitutions.put("UNIQUENAME", scriptingVariableName);
+            WfVariable templateComponentVariableKey = ViewUtil.createMapKeyComponentVariable(variable, -1, null);
+            String inputKeyTag = ViewUtil.getComponentInput(user, webHelper, templateComponentVariableKey);
+            inputKeyTag = inputKeyTag.replaceAll("\"", "'").replaceAll("\t", "").replaceAll("\n", "");
+            substitutions.put("COMPONENT_INPUT_KEY", inputKeyTag);
+            WfVariable templateComponentVariableValue = ViewUtil.createMapValueComponentVariable(variable, -1, null);
+            String inputValueTag = ViewUtil.getComponentInput(user, webHelper, templateComponentVariableValue);
+            inputValueTag = inputValueTag.replaceAll("\"", "'").replaceAll("\t", "").replaceAll("\n", "");
+            substitutions.put("COMPONENT_INPUT_VALUE", inputValueTag);
+            VariableFormat keyFormat = FormatCommons.createComponent(variable, 0);
+            VariableFormat valueFormat = FormatCommons.createComponent(variable, 1);
+            substitutions.put("COMPONENT_JS_HANDLER",
+                    ViewUtil.getComponentJSFunction(keyFormat) + "\n" + ViewUtil.getComponentJSFunction(valueFormat));
+            StringBuffer html = new StringBuffer();
+            InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.EditMapTag.js", ViewUtil.class);
+            html.append(WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions));
+            Map<Object, Object> map = TypeConversionUtil.convertTo(Map.class, variable.getValue());
+            if (map == null) {
+                map = new HashMap<Object, Object>();
+            }
+            html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
+            WfVariable sizeVariables = ViewUtil.createListSizeVariable(variable, map.size());
+            html.append(ViewUtil.getHiddenInput(sizeVariables));
+            int row = -1;
+            for (Object key : map.keySet()) {
+                row++;
+                html.append("<div row=\"").append(row).append("\">");
+                WfVariable keyComponentVariable = ViewUtil.createMapKeyComponentVariable(variable, row, key);
+                html.append(ViewUtil.getComponentInput(user, webHelper, keyComponentVariable));
+                WfVariable valueComponentVariable = ViewUtil.createMapValueComponentVariable(variable, row, key);
+                html.append(ViewUtil.getComponentInput(user, webHelper, valueComponentVariable));
+                html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
+                        .append("(this);\" style=\"width: 30px;\" />");
+                html.append("</div>");
+            }
+            html.append("<div><input type=\"button\" id=\"btnAddMap").append(scriptingVariableName)
+                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
+            html.append("</span>");
+            return html.toString();
+        }
         throw new InternalApplicationException("No input method implemented for " + variableFormat);
     }
 
@@ -388,6 +456,29 @@ public class ViewUtil {
                     html.append("</div>");
                 }
             }
+            html.append("</span>");
+            return html.toString();
+        }
+        if (variableFormat instanceof MapFormat) {
+            StringBuffer html = new StringBuffer();
+            Map<Object, Object> map = TypeConversionUtil.convertTo(Map.class, value);
+            html.append("<span class=\"viewList\" id=\"").append(variable.getDefinition().getScriptingName()).append("\">");
+            html.append("<table class=\"list\">");
+            if (map != null) {
+                int row = -1;
+                for (Object key : map.keySet()) {
+                    row++;
+                    html.append("<tr><td class=\"list\">");
+                    html.append("<div row=\"").append(row).append("\">");
+                    WfVariable keyComponentVariable = ViewUtil.createMapKeyComponentVariable(variable, row, key);
+                    html.append(ViewUtil.getComponentOutput(user, webHelper, processId, keyComponentVariable));
+                    html.append("</td><td class=\"list\">");
+                    WfVariable valueComponentVariable = ViewUtil.createMapValueComponentVariable(variable, row, key);
+                    html.append(ViewUtil.getComponentOutput(user, webHelper, processId, valueComponentVariable));
+                    html.append("</td></div></tr>");
+                }
+            }
+            html.append("</table>");
             html.append("</span>");
             return html.toString();
         }
