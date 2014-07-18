@@ -45,16 +45,16 @@ function removeAllUNIQUENAME() {
 }
 
 function updateRowIndexesUNIQUENAME(oldIndex, newIndex) {
-	$("input[name='VARIABLE["+oldIndex+"]']").each(function() {
+	$("input[name^='VARIABLE["+oldIndex+"]']").each(function() {
 		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
 	});
-	$("select[name='VARIABLE["+oldIndex+"]']").each(function() {
+	$("select[name^='VARIABLE["+oldIndex+"]']").each(function() {
 		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
 	});
-	$("textarea[name='VARIABLE["+oldIndex+"]']").each(function() {
+	$("textarea[name^='VARIABLE["+oldIndex+"]']").each(function() {
 		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
 	});
-	$("div[row='"+oldIndex+"'][name='VARIABLE']").attr("row", newIndex);
+	$("div[row='"+oldIndex+"'][name^='VARIABLE']").attr("row", newIndex);
 }
 
 function updateIndexedNameUNIQUENAME(element, oldIndex, newIndex) {
