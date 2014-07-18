@@ -297,7 +297,7 @@ public class ViewUtil {
             html.append(ViewUtil.getHiddenInput(sizeVariable));
             for (int row = 0; row < list.size(); row++) {
                 Object o = list.get(row);
-                html.append("<div row=\"").append(row).append("\">");
+                html.append("<div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                 WfVariable componentVariable = ViewUtil.createListComponentVariable(variable, row, componentFormat, o);
                 html.append(ViewUtil.getComponentInput(user, webHelper, componentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
@@ -339,7 +339,7 @@ public class ViewUtil {
             int row = -1;
             for (Object key : map.keySet()) {
                 row++;
-                html.append("<div row=\"").append(row).append("\">");
+                html.append("<div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                 WfVariable keyComponentVariable = ViewUtil.createMapKeyComponentVariable(variable, row, key);
                 html.append(ViewUtil.getComponentInput(user, webHelper, keyComponentVariable));
                 WfVariable valueComponentVariable = ViewUtil.createMapValueComponentVariable(variable, row, key);
@@ -348,8 +348,7 @@ public class ViewUtil {
                         .append("(this);\" style=\"width: 30px;\" />");
                 html.append("</div>");
             }
-            html.append("<div><input type=\"button\" id=\"btnAddMap").append(scriptingVariableName)
-                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
+            html.append("<input type=\"button\" id=\"btnAddMap").append(scriptingVariableName).append("\" value=\" + \" style=\"width: 30px;\" />");
             html.append("</span>");
             return html.toString();
         }
@@ -450,7 +449,7 @@ public class ViewUtil {
             if (list != null) {
                 for (int row = 0; row < list.size(); row++) {
                     Object listValue = list.get(row);
-                    html.append("<div row=\"").append(row).append("\">");
+                    html.append("<div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                     WfVariable componentVariable = createListComponentVariable(variable, row, componentFormat, listValue);
                     html.append(ViewUtil.getComponentOutput(user, webHelper, processId, componentVariable));
                     html.append("</div>");
@@ -469,7 +468,7 @@ public class ViewUtil {
                 for (Object key : map.keySet()) {
                     row++;
                     html.append("<tr><td class=\"list\">");
-                    html.append("<div row=\"").append(row).append("\">");
+                    html.append("<div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                     WfVariable keyComponentVariable = ViewUtil.createMapKeyComponentVariable(variable, row, key);
                     html.append(ViewUtil.getComponentOutput(user, webHelper, processId, keyComponentVariable));
                     html.append("</td><td class=\"list\">");
