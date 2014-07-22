@@ -2,6 +2,7 @@ package ru.runa.common.web.tag;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,9 @@ public class ViewLogsTag extends TagSupport {
             File dirFile = new File(logDirPath);
             if (dirFile.exists() && dirFile.isDirectory()) {
                 if (Delegates.getAuthorizationService().isAllowed(getUser(), SystemPermission.VIEW_LOGS, ASystem.INSTANCE)) {
-                    for (File file : dirFile.listFiles()) {
+                    File[] logFiles = dirFile.listFiles();
+                    Arrays.sort(logFiles);
+                    for (File file : logFiles) {
                         if (file.isFile()) {
                             long kiloBytes = file.length() / 1024;
                             Map<String, String> params = new HashMap<String, String>();
