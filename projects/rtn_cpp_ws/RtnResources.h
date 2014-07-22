@@ -16,5 +16,32 @@ public:
 	static wstring GetLogFile();
 	static wstring GetApplicationTitle();
 
+	/**
+	* Ask user for login and password or use default
+	*/
+	static bool GetUserInputLoginSilenty();
+	
+	/**
+	* User default login
+	*/
+	static wstring GetUserInputDefaultLogin();
+
+	/**
+	* User default password
+	*/
+	static wstring GetUserInputDefaultPassword();
+
+	/**
+	* Get auth type that will be used by client
+	*/
+	static wstring GetAuthenticationType();
+
+	static wstring GetButtonLoginText();
+
+	static wstring GetLabelLoginText();
+
+	static wstring GetLabelPasswordText();
+
+	static wstring GetLabelLoginTitle();
 };
 

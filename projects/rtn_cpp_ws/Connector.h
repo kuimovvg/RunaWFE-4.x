@@ -1,6 +1,7 @@
 #pragma once
 #include "ws/ServerAPIBindingProxy.h"
 #include "RtnResources.h"
+#include "RtnCredentials.h"
 using namespace std;
 namespace Server {
 
@@ -30,7 +31,7 @@ public:
 
 class Connector {
 public:
-	Connector();
+	Connector(Auth::RtnCredentials* appCredentials);
 	~Connector();
 	void Initialize();
 	void Reset();
@@ -41,6 +42,7 @@ public:
 	HICON GetNotificationIcon();
 	wstring GetNotificationMessageAboutNewTasks();
 private:
+	Auth::RtnCredentials* appCredentials;
 	bool initialized;
 	wstring serverType;
 	wstring serverVersion;
@@ -48,8 +50,12 @@ private:
 	State* currentState;
 	ns1__user* user;
 	ns1__user* AuthenticateByKerberos();
+	ns1__user* AuthenticateByLoginAndPassword();
 	State* GetTasks();
 	State* Connector::RequestState();
+	char login[200];
+	char password[200];
+	wstring authtype;
 };
 
 }

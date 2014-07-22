@@ -220,7 +220,7 @@ wstring IO::GetVersionByUrl(const string& url) {
     WSACleanup();
 	if (!version.empty()) {
 		return ToWideString(version);
-	}
+	}	
 	string message = "No version found by URL '" + url + "'";
     throw message;
 }

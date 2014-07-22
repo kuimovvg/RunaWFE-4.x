@@ -4,6 +4,9 @@
 #include "Logger.h"
 #include "RtnResources.h"
 
+#define BASIC_AUTH L"userinput"
+
+
 Server::State::State(ConnectionState connectionState) {
 	this->connectionState = connectionState;
 	this->unreadTasksCount = 0;
@@ -97,10 +100,11 @@ wstring Server::State::GetNotificationMessageAboutNewTasks(State* previousState)
 	return L"";
 }
 
-Server::Connector::Connector(void) {
+Server::Connector::Connector(Auth::RtnCredentials* appCredentials) {
+	this->appCredentials=appCredentials;
 	user = NULL;
 	previousState = new State(CONNECTION_STATE_INITIALIZING);
-	currentState = new State(CONNECTION_STATE_INITIALIZING);
+	currentState = new State(CONNECTION_STATE_INITIALIZING);	
 	initialized = false;
 }
 
@@ -116,6 +120,7 @@ void Server::Connector::Initialize() {
 		this->currentState = new State(CONNECTION_STATE_INITIALIZING);
 		serverType = RtnResources::GetServerType();
 		serverVersion = RtnResources::GetServerVersion();
+		authtype = RtnResources::GetAuthenticationType();
 		initialized = true;
 	}
 }
@@ -161,12 +166,35 @@ ns1__user* Server::Connector::AuthenticateByKerberos() {
 	// TODO authProxy.destroy(); if copy constructor for class ns1__user will be available
 }
 
+ns1__user* Server::Connector::AuthenticateByLoginAndPassword() {
+	LOG_DEBUG("call AuthenticateByLogin ...");
+	ns1__authenticateByLoginPassword request;
+	wchar_t loginBuffer[200];
+	wchar_t passBuffer[200];
+	swprintf(loginBuffer,appCredentials->getLogin().length()+1,L"%s",appCredentials->getLogin().c_str());
+	swprintf(passBuffer,appCredentials->getPassword().length()+1,L"%s",appCredentials->getPassword().c_str());
+	request.name = loginBuffer;
+	request.password = passBuffer;
+	string authenticationUrl = IO::ToString(RtnResources::GetWebServiceURL(serverType, serverVersion, L"Authentication"));
+	ServerAPIBindingProxy authProxy(authenticationUrl.c_str());
+	ns1__authenticateByLoginPasswordResponse response;
+	int result = authProxy.authenticateByLoginPassword(&request, &response);
+    if (result == SOAP_OK) {
+        LOG_DEBUG("call AuthenticateByKerberos completed");
+		return response.result;
+    } else {
+		LOG_ERROR("call AuthenticateByKerberos failed by '%s'", authenticationUrl.c_str());
+		Logger::LogWebServiceError(&authProxy);
+		return NULL;
+	}
+}
+
 Server::State* Server::Connector::GetTasks() {
 	LOG_DEBUG("call GetTasks ...");
-	ns1__getTasks request;
-	request.user = user;
+	ns1__getTasks request;	
 	string executionUrl = IO::ToString(RtnResources::GetWebServiceURL(serverType, serverVersion, L"Execution"));
 	ServerAPIBindingProxy executionProxy(executionUrl.c_str());
+	request.user = user;	
 	ns1__getTasksResponse response;
 	int result = executionProxy.getTasks(&request, &response);
 	State* state;
@@ -188,7 +216,11 @@ Server::State* Server::Connector::RequestState() {
 		LOG_DEBUG("call RequestState ...");
 		Initialize();
 		if (user == NULL) {
-			this->user = AuthenticateByKerberos();
+			if(authtype.compare(BASIC_AUTH)==0){
+				this->user = AuthenticateByLoginAndPassword();
+			}else{
+				this->user = AuthenticateByKerberos();
+			}
 			if (user == NULL) {
 				throw "User is NULL";
 			}
