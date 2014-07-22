@@ -6,6 +6,7 @@
 #include "Utils.h"
 #include "RtnResources.h"
 #include "Connector.h"
+#include "LoginForm.h"
 using namespace std;
 
 //------------------------------------------------------
@@ -18,9 +19,13 @@ using namespace std;
 #define WINDOW_CLASS_NAME		L"RtnLauncherWndClass"
 #define PROGRAM_MUTEX_NAME		L"RtnLauncherMutex"
 
+
 //------------------------------------------------------
 
 HINSTANCE				hInstance = NULL;
+HWND mainHWnd;
+UI::LoginForm loginForm = NULL;
+Auth::RtnCredentials credentials = Auth::RtnCredentials();
 // Following variable is used to handle case when explorer.exe is restarted.
 // In this case our app will create systray icon again.
 // To get more info about TaskbarCreated window message read here:
@@ -28,13 +33,26 @@ HINSTANCE				hInstance = NULL;
 UINT					taskbarCreatedMessageId = 0;
 Server::Connector* connector;
 
+/**
+* if this flag false, programm will ask user to enter login and password;
+* if true = programm wil sync with server;
+*/
+bool startSync = false;
+
 void SynchronizeWithServer(HWND hWnd) {
-	connector->UpdateState();
-	UI::UpdateNotificationIcon(hWnd, connector);
+	if(startSync){
+		connector->UpdateState();
+		UI::UpdateNotificationIcon(hWnd, connector);
+	}
 }
 
 void OnTimer(HWND hWnd) {
 	SynchronizeWithServer(hWnd);
+}
+
+
+void ShowEnterPasswordWindow(HWND hWnd){	
+	loginForm.Show(hInstance, hWnd);
 }
 
 void ShowContextMenu(HWND hWnd, POINT pt) {
@@ -68,10 +86,16 @@ LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	switch (uMsg) {
 	case WM_CREATE: {
 			taskbarCreatedMessageId = RegisterWindowMessage(L"TaskbarCreated"); 
-			connector = new Server::Connector();
+			connector = new Server::Connector(&credentials);
+			//Set connector properties
 			if (!UI::UpdateNotificationIcon(hWnd, connector, true)) {
 				UI::QuitApplication(hWnd, connector, "systray not initialized");
 				return -1;
+			}
+			startSync = RtnResources::GetUserInputLoginSilenty();
+			if(!startSync){
+				//Show enter login window
+				ShowEnterPasswordWindow(hWnd);
 			}
 			SynchronizeWithServer(hWnd);
 			const int timeoutInSeconds = RtnResources::GetOptionInt(L"check.tasks.timeout", 60);
@@ -105,6 +129,10 @@ LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			break;
 		case ID__BROWSE:
 			UI::LaunchBrowser(hWnd);
+			break;
+		case ID_LOGIN_READY:
+			startSync=true;
+			SynchronizeWithServer(hWnd);
 			break;
 		}
 		break;
@@ -155,6 +183,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	_CrtSetBreakAlloc(1);
 	hInstance = hInstance;
 	RtnResources::Init(L"application.properties");
+	credentials.setLogin(RtnResources::GetUserInputDefaultLogin());
+	credentials.setPassword(RtnResources::GetUserInputDefaultPassword());	
+	loginForm = UI::LoginForm(&credentials);
 	Logger::Init();
 	//SetAssertMessageBoxHandler(OnAssertMessageBox, NULL);
 	LOG_INFO("===============================================================================\n");
@@ -174,14 +205,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	//	LOG_ERROR("Failed to initialize COM library. Error code = 0x%08X", hr);
 	//	return 1;
 	//}
+
 	MSG msg;
 	ZeroMemory(&msg, sizeof(msg));
 	if (!RegisterMainWindowClass()) {
 		return 1;
 	}
 	DWORD dwStyle = 0;
-	HWND hWnd = CreateWindowW(WINDOW_CLASS_NAME, L"RunaWFE tasks notifier", dwStyle, 100, 100, 200, 200, NULL, NULL, hInstance, NULL);
-	if (hWnd != NULL) {
+	mainHWnd = CreateWindowW(WINDOW_CLASS_NAME, L"RunaWFE tasks notifier", dwStyle, 100, 100, 200, 200, NULL, NULL, hInstance, NULL);
+	if (mainHWnd != NULL) {
 		BOOL bRet = FALSE;
 		while ((bRet = GetMessageW(&msg, NULL, 0, 0))) {
 			if (bRet == -1) {
@@ -195,7 +227,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		DWORD error = GetLastError();
 		int i = 0;
 	}
+
+
 	//CoUninitialize();
 	CloseHandle(hSingleObject);
 	return 0;
 }
+
+
+

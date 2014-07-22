@@ -16,6 +16,8 @@
     <ClCompile Include="ws\soapC.cpp">
       <Filter>ws</Filter>
     </ClCompile>
+    <ClCompile Include="LoginForm.cpp" />
+    <ClCompile Include="RtnCredentials.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -37,6 +39,8 @@
     <ClInclude Include="ws\soapStub.h">
       <Filter>ws</Filter>
     </ClInclude>
+    <ClInclude Include="LoginForm.h" />
+    <ClInclude Include="RtnCredentials.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resources">
@@ -50,20 +54,20 @@
     <None Include="application.properties">
       <Filter>Resources</Filter>
     </None>
-    <None Include="rtn.error.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="rtn.connected.has.new.tasks.ico">
-      <Filter>Resources</Filter>
-    </None>
-    <None Include="rtn.initializing.ico">
-      <Filter>Resources</Filter>
-    </None>
     <None Include="rtn.app.ico">
       <Filter>Resources</Filter>
     </None>
     <None Include="ws\ServerAPIBinding.nsmap">
       <Filter>ws</Filter>
+    </None>
+    <None Include="rtn.connected.has.new.tasks.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="rtn.error.ico">
+      <Filter>Resources</Filter>
+    </None>
+    <None Include="rtn.initializing.ico">
+      <Filter>Resources</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

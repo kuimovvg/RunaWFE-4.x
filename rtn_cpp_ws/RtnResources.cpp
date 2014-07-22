@@ -75,3 +75,39 @@ wstring RtnResources::GetLogFile() {
 wstring RtnResources::GetApplicationTitle() {
 	return GetOption(L"application.title", L"RunaWFE tasks notifier");
 }
+
+bool RtnResources::GetUserInputLoginSilenty(){
+	wstring debug = RtnResources::GetOption(L"userinput.login.silently", L"false");
+	return debug.compare(L"true") == 0;
+}
+
+wstring RtnResources::GetUserInputDefaultLogin(){
+	return GetOption(L"userinput.default.login", L"");
+}
+
+wstring RtnResources::GetUserInputDefaultPassword(){
+	return GetOption(L"userinput.default.password", L"RunaWFE tasks notifier");
+}
+
+wstring RtnResources::GetAuthenticationType(){
+		return GetOption(L"authentication.type", L"RunaWFE tasks notifier");
+}
+
+
+wstring  RtnResources::GetButtonLoginText(){
+	return GetOption(L"button.login", L"Enter");
+}
+
+wstring  RtnResources::GetLabelLoginText(){
+	return GetOption(L"label.login ", L"Login");
+}
+
+wstring  RtnResources::GetLabelPasswordText(){
+	return GetOption(L"label.password", L"Password");
+}
+
+wstring  RtnResources::GetLabelLoginTitle(){
+	return GetOption(L"label.login.title", L"Please log in");
+}
+
+
