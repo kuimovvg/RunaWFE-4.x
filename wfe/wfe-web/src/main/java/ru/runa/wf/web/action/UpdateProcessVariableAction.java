@@ -61,6 +61,7 @@ public class UpdateProcessVariableAction extends ActionBase {
             addError(request, e);
             return getErrorForward(mapping, params);
         }
+        FormSubmissionUtils.getUploadedFilesMap(request).clear();
         return getSuccessAction(mapping, params);
     }
 
