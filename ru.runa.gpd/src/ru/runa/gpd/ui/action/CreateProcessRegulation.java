@@ -106,7 +106,13 @@ public class CreateProcessRegulation extends BaseModelActionDelegate {
 	
 	@Override
     public void selectionChanged(IAction action, ISelection selection) {
-		action.setEnabled(!getActiveDesignerEditor().getDefinition().isInvalid());
+		super.selectionChanged(action, selection);
+		if ( getSelection() != null && getSelection().getClass().equals(ProcessDefinition.class)) {
+			action.setEnabled(!getActiveDesignerEditor().getDefinition().isInvalid());
+		} else {
+			action.setEnabled(false);
+		}
 	}
+	
 
 }
