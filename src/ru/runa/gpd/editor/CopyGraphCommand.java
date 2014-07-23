@@ -156,7 +156,7 @@ public class CopyGraphCommand extends Command {
                     if (!ignoreSwimlane) {
                         Swimlane swimlane = targetDefinition.getSwimlaneByName(nodeToSwimlaneNameMap.get(entry.getKey()));
                         // this crazy line created because element.getConstraint() == null is checking of visibility for swimlane in many places
-                        if ( targetDefinition.getSwimlaneDisplayMode().equals(SwimlaneDisplayMode.none)) {
+                        if ( targetDefinition.getSwimlaneDisplayMode().equals(SwimlaneDisplayMode.none) && swimlane !=null ) {
                         	swimlane.setConstraint(null);
                         }
                         ((SwimlanedNode) entry.getValue()).setSwimlane(swimlane);
