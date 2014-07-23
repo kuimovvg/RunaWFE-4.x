@@ -7,7 +7,7 @@ import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 
 import ru.runa.gpd.editor.graphiti.GaProperty;
 import ru.runa.gpd.editor.graphiti.PropertyUtil;
-import ru.runa.gpd.lang.model.EndState;
+import ru.runa.gpd.lang.model.AbstractEndTextDecorated;
 
 import com.google.common.base.Objects;
 
@@ -18,7 +18,7 @@ public class UpdateEndNodeFeature extends UpdateFeatureWithTextDecorator {
         // retrieve name from pictogram element
         PictogramElement pe = context.getPictogramElement();
         // retrieve name from business model
-        EndState bo = (EndState) getBusinessObjectForPictogramElement(pe);
+        AbstractEndTextDecorated bo = (AbstractEndTextDecorated) getBusinessObjectForPictogramElement(pe);
         String name = PropertyUtil.findTextValueRecursive(pe, GaProperty.NAME);
 
         if (!Objects.equal(name, bo.getName())) {

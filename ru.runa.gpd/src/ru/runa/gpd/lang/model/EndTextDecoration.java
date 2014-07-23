@@ -10,8 +10,8 @@ import ru.runa.gpd.editor.graphiti.UIContainer;
 public class EndTextDecoration extends TextDecorationNode {
 
     @Override
-    public EndState getTarget() {
-        return (EndState) target;
+    public AbstractEndTextDecorated getTarget() {
+        return (AbstractEndTextDecorated) target;
     }
 
     public class EndDefinitionUI implements UIContainer {
