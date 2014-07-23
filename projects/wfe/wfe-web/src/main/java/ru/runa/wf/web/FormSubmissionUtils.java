@@ -165,9 +165,23 @@ public class FormSubmissionUtils {
                 }
                 int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
                 List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
-                for (int i = 0; i < listSize; i++) {
-                    String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
-                    String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                List<Integer> indexes = Lists.newArrayListWithExpectedSize(listSize);
+                for (int i = 0; indexes.size() < listSize && i < 1000; i++) {
+                    String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                    for (String key : userInput.keySet()) {
+                        if (key.startsWith(checkString)) {
+                            indexes.add(i);
+                            break;
+                        }
+                    }
+                }
+                if (indexes.size() != listSize) {
+                    throw new InternalApplicationException("Incorrect'" + variableDefinition.getName()
+                            + "' value. Not all list items found. Expected:'" + listSize + "', found:'" + indexes.size());
+                }
+                for (Integer index : indexes) {
+                    String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
+                    String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
                     VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
                     componentDefinition.setUserTypes(variableDefinition.getUserTypes());
                     Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
@@ -200,15 +214,30 @@ public class FormSubmissionUtils {
             }
             int mapSize = TypeConversionUtil.convertTo(int.class, strings[0]);
             Map<Object, Object> map = Maps.newHashMapWithExpectedSize(mapSize);
-            for (int i = 0; i < mapSize; i++) {
-                String nameKey = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END + ".key";
-                String scriptingNameKey = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END + ".key";
+            List<Integer> indexes = Lists.newArrayListWithExpectedSize(mapSize);
+            for (int i = 0; indexes.size() < mapSize && i < 1000; i++) {
+                String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                for (String key : userInput.keySet()) {
+                    if (key.startsWith(checkString)) {
+                        indexes.add(i);
+                        break;
+                    }
+                }
+            }
+            if (indexes.size() != mapSize) {
+                throw new InternalApplicationException("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'"
+                        + mapSize + "', found:'" + indexes.size());
+            }
+            for (Integer index : indexes) {
+                String nameKey = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END + ".key";
+                String scriptingNameKey = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END
+                        + ".key";
                 VariableDefinition componentKeyDefinition = new VariableDefinition(true, nameKey, scriptingNameKey, componentKeyFormat);
                 componentKeyDefinition.setUserTypes(variableDefinition.getUserTypes());
                 Object componentKeyValue = extractVariable(request, userInput, componentKeyDefinition, formatErrorsForFields);
 
-                String nameValue = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END + ".value";
-                String scriptingNameValue = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END
+                String nameValue = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END + ".value";
+                String scriptingNameValue = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END
                         + ".value";
                 VariableDefinition componentValueDefinition = new VariableDefinition(true, nameValue, scriptingNameValue, componentValueFormat);
                 componentValueDefinition.setUserTypes(variableDefinition.getUserTypes());
