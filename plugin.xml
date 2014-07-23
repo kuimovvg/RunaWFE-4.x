@@ -931,8 +931,9 @@
             treeEditPart="ru.runa.gpd.editor.gef.part.tree.NodeTreeEditPart">
          </gef>
          <graphiti
-               add="ru.runa.gpd.editor.graphiti.add.AddNodeWithImageFeature"
+               add="ru.runa.gpd.editor.graphiti.add.AddEndNodeFeature"
                create="ru.runa.gpd.editor.graphiti.create.CreateElementFeature"
+               update="ru.runa.gpd.editor.graphiti.update.UpdateEndNodeFeature"
                fixedSize="true"
                height="4"
                width="4">
