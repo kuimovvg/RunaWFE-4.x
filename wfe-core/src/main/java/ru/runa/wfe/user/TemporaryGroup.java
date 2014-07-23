@@ -1,5 +1,7 @@
 package ru.runa.wfe.user;
 
+import java.util.Date;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
@@ -21,6 +23,7 @@ public class TemporaryGroup extends Group {
 
     public static TemporaryGroup create(String nameSuffix, String description) {
         TemporaryGroup temporaryGroup = new TemporaryGroup();
+        temporaryGroup.setCreateDate(new Date());
         temporaryGroup.setName(GROUP_PREFIX + nameSuffix);
         temporaryGroup.setDescription(description);
         return temporaryGroup;
