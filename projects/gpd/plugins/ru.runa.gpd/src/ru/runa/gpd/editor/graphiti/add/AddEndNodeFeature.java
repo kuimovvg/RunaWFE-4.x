@@ -14,15 +14,15 @@ import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
+import ru.runa.gpd.lang.model.AbstractEndTextDecorated;
 import ru.runa.gpd.lang.model.EndTextDecoration;
-import ru.runa.gpd.lang.model.EndState;
 
 public class AddEndNodeFeature extends AddNodeWithImageFeature {
 
     @Override
     public PictogramElement add(IAddContext context) {
         PictogramElement container = super.add(context);
-        EndState node = (EndState) context.getNewObject();
+        AbstractEndTextDecorated node = (AbstractEndTextDecorated) context.getNewObject();
         Dimension bounds = adjustBounds(context);
 
         // create independent text label graph element for end point
