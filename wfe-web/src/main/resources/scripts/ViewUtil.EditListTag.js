@@ -1,9 +1,12 @@
 
 var componentInputUNIQUENAME = "COMPONENT_INPUT";
+var lastIndexUNIQUENAME = -1;
 
 $(document).ready(function() {
+	lastIndexUNIQUENAME = parseInt(getSizeUNIQUENAME()) - 1;	
     $("#btnAddUNIQUENAME").click(function() {
-        var rowIndex = getSizeUNIQUENAME();
+        var rowIndex = parseInt(lastIndexUNIQUENAME) + 1;
+        lastIndexUNIQUENAME = rowIndex;
 		console.log("Adding row " + rowIndex);
         var e = "<div row='" + rowIndex + "' name='VARIABLE' style='margin-bottom:4px;'>";
         e += componentInputUNIQUENAME.replace(/\[\]/g, "[" + rowIndex + "]");
@@ -23,12 +26,11 @@ function getSizeUNIQUENAME() {
 function removeUNIQUENAME(button) {
 	var div = $(button).closest("div");
 	var rowIndex = parseInt(div.attr("row"));
-	var size = getSizeUNIQUENAME();
 	console.log("Removing row ", rowIndex);
+	div.find(".inputFileDelete").each(function() {
+		$(this).click();
+	});
 	div.remove();
-	for (var i = rowIndex; i < size - 1; i++) {
-		updateRowIndexesUNIQUENAME(i + 1, i);
-	}
 	updateSizeUNIQUENAME(-1);
     $("#UNIQUENAME").trigger("onRowRemoved", [rowIndex]);
 }
@@ -42,32 +44,8 @@ function removeAllUNIQUENAME() {
 	console.log("Removed all rows");
 }
 
-function updateRowIndexesUNIQUENAME(oldIndex, newIndex) {
-	$("input[name='VARIABLE["+oldIndex+"]']").each(function() {
-		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
-	});
-	$("select[name='VARIABLE["+oldIndex+"]']").each(function() {
-		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
-	});
-	$("textarea[name='VARIABLE["+oldIndex+"]']").each(function() {
-		updateIndexedNameUNIQUENAME($(this), oldIndex, newIndex);
-	});
-	$("div[row='"+oldIndex+"'][name='VARIABLE']").attr("row", newIndex);
-}
-
-function updateIndexedNameUNIQUENAME(element, oldIndex, newIndex) {
-	var name = element.attr("name");
-	if (name == null) {
-		console.log("name is null in ", element);
-		return;
-	}
-	name = name.replace("[" + oldIndex + "]", "[" + newIndex + "]");
-	element.attr("name", name);
-}
-
 function updateSizeUNIQUENAME(delta) {
 	var sizeInput = $("input[name='VARIABLE.size']");
 	sizeInput.val(parseInt(sizeInput.val()) + delta);
 	console.log("List size = " + getSizeUNIQUENAME());
 }
-

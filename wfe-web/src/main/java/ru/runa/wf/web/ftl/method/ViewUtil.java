@@ -297,12 +297,12 @@ public class ViewUtil {
             html.append(ViewUtil.getHiddenInput(sizeVariable));
             for (int row = 0; row < list.size(); row++) {
                 Object o = list.get(row);
-                html.append("<div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
+                html.append("<div><div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                 WfVariable componentVariable = ViewUtil.createListComponentVariable(variable, row, componentFormat, o);
                 html.append(ViewUtil.getComponentInput(user, webHelper, componentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
                         .append("(this);\" style=\"width: 30px;\" />");
-                html.append("</div>");
+                html.append("</div></div>");
             }
             html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName)
                     .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
@@ -339,16 +339,17 @@ public class ViewUtil {
             int row = -1;
             for (Object key : map.keySet()) {
                 row++;
-                html.append("<div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
+                html.append("<div><div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                 WfVariable keyComponentVariable = ViewUtil.createMapKeyComponentVariable(variable, row, key);
                 html.append(ViewUtil.getComponentInput(user, webHelper, keyComponentVariable));
                 WfVariable valueComponentVariable = ViewUtil.createMapValueComponentVariable(variable, row, key);
                 html.append(ViewUtil.getComponentInput(user, webHelper, valueComponentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
                         .append("(this);\" style=\"width: 30px;\" />");
-                html.append("</div>");
+                html.append("</div></div>");
             }
-            html.append("<input type=\"button\" id=\"btnAddMap").append(scriptingVariableName).append("\" value=\" + \" style=\"width: 30px;\" />");
+            html.append("<div><input type=\"button\" id=\"btnAddMap").append(scriptingVariableName)
+                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
             html.append("</span>");
             return html.toString();
         }
