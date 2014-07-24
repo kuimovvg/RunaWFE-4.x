@@ -78,6 +78,9 @@ public class CopyGraphCommand extends Command {
                     continue;
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() != 0) {
                     continue;
+                // if swimlane is copied as graph element twice
+                } else if (node instanceof Swimlane && targetDefinition.getSwimlaneByName(node.getName()) != null) {
+                	continue;
                 }
                 NamedGraphElement copy = node.getCopy(targetDefinition);
                 for (Variable variable : node.getUsedVariables(copyBuffer.getSourceFolder())) {
