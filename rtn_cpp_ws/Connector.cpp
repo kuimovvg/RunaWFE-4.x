@@ -4,9 +4,6 @@
 #include "Logger.h"
 #include "RtnResources.h"
 
-#define BASIC_AUTH L"userinput"
-
-
 Server::State::State(ConnectionState connectionState) {
 	this->connectionState = connectionState;
 	this->unreadTasksCount = 0;
@@ -111,7 +108,7 @@ Server::Connector::Connector(Auth::RtnCredentials* appCredentials) {
 Server::Connector::~Connector(void) {
 	Reset();
 	delete previousState;
-	delete currentState;
+	delete currentState;	
 }
 
 void Server::Connector::Initialize() {
@@ -273,11 +270,16 @@ wstring Server::Connector::GetNotificationTooltipMessage() {
 	case CONNECTION_STATE_CONNECTED: {
 		message.append(RtnResources::GetOption(L"connection.state.connected.total.tasks", L"Total tasks"));
 		message.append(L": ");
-		message.append(std::to_wstring(long double(currentState->GetTotalTasksCount())));
+		wchar_t buf[2 * _MAX_INT_DIG];
+		std::swprintf(buf, L"%d", currentState->GetTotalTasksCount());
+		message.append(wstring(buf));
 		message.append(L"\n");
+		
 		message.append(RtnResources::GetOption(L"connection.state.connected.unread.tasks", L"Unread tasks"));
 		message.append(L": ");
-		message.append(std::to_wstring(long double(currentState->GetUnreadTasksCount())));
+		wchar_t buf1[2 * _MAX_INT_DIG];
+		std::swprintf(buf1, L"%d", currentState->GetUnreadTasksCount());
+		message.append(wstring(buf1));
 		break;
 	}
 	case CONNECTION_STATE_ERROR:

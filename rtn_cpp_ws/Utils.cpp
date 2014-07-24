@@ -240,6 +240,15 @@ void UI::LaunchBrowser(HWND hWnd) {
 	ShellExecute(hWnd, L"open", command.c_str(), RtnResources::GetBrowserStartURL().c_str(), NULL, show);
 }
 
+void UI::LaunchBrowser(HWND hWnd, wstring login, wstring password) {
+	LOG_DEBUG("LaunchBrowser with login and password");
+	// use empty string to use default system browser, L"IEXPLORE.EXE" for MSIE:
+	const wstring command = RtnResources::GetOption(L"browser.command", L"");
+	const int show = RtnResources::GetOptionInt(L"browser.command.show", SW_SHOWMAXIMIZED);
+	wstring url = RtnResources::GetBrowserStartURL() + L"?login="+login+L"&"+L"password="+password;
+	ShellExecute(hWnd, L"open", command.c_str(), url.c_str(), NULL, show);
+}
+
 void UI::SetMenuLabel(HMENU hMenu, int nID, const wstring& label) {
 	ModifyMenu(hMenu, nID, MF_BYCOMMAND | MF_STRING, nID, label.c_str());
 }

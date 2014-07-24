@@ -82,6 +82,14 @@ void ShowContextMenu(HWND hWnd, POINT pt) {
 	}
 }
 
+void StartBrowse(HWND hwnd){
+	if(RtnResources::GetAuthenticationType().compare(BASIC_AUTH)==0){
+				UI::LaunchBrowser(hwnd,credentials.getLogin(),credentials.getPassword());
+			}else{
+				UI::LaunchBrowser(hwnd);
+			}
+}
+
 LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 	switch (uMsg) {
 	case WM_CREATE: {
@@ -110,7 +118,7 @@ LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		switch (LOWORD(lParam)) {
 		case NIN_BALLOONUSERCLICK:
 		case WM_LBUTTONDBLCLK:
-			UI::LaunchBrowser(hWnd);
+			StartBrowse(hWnd);
 			break;
 		case WM_RBUTTONUP:
 			POINT pt;
@@ -128,7 +136,7 @@ LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 			SynchronizeWithServer(hWnd);
 			break;
 		case ID__BROWSE:
-			UI::LaunchBrowser(hWnd);
+			StartBrowse(hWnd);
 			break;
 		case ID_LOGIN_READY:
 			startSync=true;
@@ -157,6 +165,8 @@ LRESULT CALLBACK WindowProcMain(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 	}
 	return 0;
 }
+
+
 
 BOOL RegisterMainWindowClass() {
 	WNDCLASSEXW wc;
