@@ -66,12 +66,14 @@ function initFileInput(dropzone) {
 		};
 		dropzone.hide();
 		progressBar.show();
+		$(".inputFileContainer").focus();
 	}).bind('fileuploadfail', function (e, data) {
 		var statusText = progressBar.find(".statusText");
 		var statusImg = progressBar.find("img");
 		statusImg.attr("src", "/wfe/images/error.gif");
 		statusImg.addClass("inputFileDelete");
 		statusText.html(data.textStatus);
+		$(".inputFileContainer").focus();
 	});
 }
 
