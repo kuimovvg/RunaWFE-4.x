@@ -19,6 +19,7 @@ package ru.runa.wfe.service.delegate;
 
 import java.util.List;
 
+import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -132,6 +133,15 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
+    public byte[] getProcessDefinitionGraph(User user, Long definitionId, String subprocessId) throws DefinitionDoesNotExistException {
+        try {
+            return getDefinitionService().getProcessDefinitionGraph(user, definitionId, subprocessId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
     public List<SwimlaneDefinition> getSwimlaneDefinitions(User user, Long definitionId) {
         try {
             return getDefinitionService().getSwimlaneDefinitions(user, definitionId);
@@ -144,6 +154,15 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     public List<VariableDefinition> getVariableDefinitions(User user, Long definitionId) {
         try {
             return getDefinitionService().getVariableDefinitions(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public VariableDefinition getVariableDefinition(User user, Long definitionId, String variableName) throws DefinitionDoesNotExistException {
+        try {
+            return getDefinitionService().getVariableDefinition(user, definitionId, variableName);
         } catch (Exception e) {
             throw handleException(e);
         }

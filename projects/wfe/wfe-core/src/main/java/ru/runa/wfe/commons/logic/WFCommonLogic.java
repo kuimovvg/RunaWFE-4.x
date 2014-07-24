@@ -30,7 +30,6 @@ import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
 import ru.runa.wfe.execution.Process;
-import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dao.NodeProcessDAO;
 import ru.runa.wfe.execution.dao.TokenDAO;
 import ru.runa.wfe.form.Interaction;
@@ -150,15 +149,7 @@ public class WFCommonLogic extends CommonLogic {
         if (canParticipateAsSubstitutor(actor, task)) {
             return TaskCompletionBy.SUBSTITUTOR;
         }
-        throw new AuthorizationException(actor + " has no pemission to participate as " + taskExecutor + " in task " + task);
-    }
-
-    // TODO unused: variable permissions check
-    protected void checkReadToVariablesAllowed(User user, Task task) {
-        if (isPermissionAllowed(user, task.getProcess(), ProcessPermission.READ)) {
-            return;
-        }
-        checkCanParticipate(user.getActor(), task);
+        throw new AuthorizationException(actor + " has no pemission to participate as " + taskExecutor + " in " + task);
     }
 
     private Set<Actor> getAssignedActors(Task task) {

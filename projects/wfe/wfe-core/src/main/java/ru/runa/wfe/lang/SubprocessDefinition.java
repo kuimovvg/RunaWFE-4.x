@@ -74,11 +74,13 @@ public class SubprocessDefinition extends ProcessDefinition {
     public byte[] getGraphImageBytesNotNull() {
         byte[] graphBytes = processDefinition.getFileData(getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME);
         if (graphBytes == null) {
-            graphBytes = processDefinition.getFileData(getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME);
+            graphBytes = processDefinition.getFileData(getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_OLD2_FILE_NAME);
         }
         if (graphBytes == null) {
-            throw new InternalApplicationException("Neither " + getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME + " and "
-                    + getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME + " not found in process");
+            graphBytes = processDefinition.getFileData(getNodeId() + "." + IFileDataProvider.GRAPH_IMAGE_OLD1_FILE_NAME);
+        }
+        if (graphBytes == null) {
+            throw new InternalApplicationException("No process graph image file found in embedded process definition");
         }
         return graphBytes;
     }

@@ -257,6 +257,14 @@ public class DefinitionLogic extends WFCommonLogic {
         return definition.getFileData(fileName);
     }
 
+    public byte[] getGraph(User user, Long definitionId, String subprocessId) {
+        ProcessDefinition definition = getDefinition(definitionId);
+        if (subprocessId != null) {
+            definition = definition.getEmbeddedSubprocessById(subprocessId);
+        }
+        return definition.getGraphImageBytesNotNull();
+    }
+
     public Interaction getStartInteraction(User user, Long definitionId) {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
@@ -278,6 +286,12 @@ public class DefinitionLogic extends WFCommonLogic {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         return definition.getVariables();
+    }
+
+    public VariableDefinition getProcessDefinitionVariable(User user, Long definitionId, String variableName) {
+        ProcessDefinition definition = getDefinition(definitionId);
+        checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
+        return definition.getVariable(variableName, true);
     }
 
     private ProcessDefinition parseProcessDefinition(byte[] data) {

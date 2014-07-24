@@ -15,17 +15,21 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.form.ProcessForm;
-import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Created on 24.06.2014
  * 
- * @struts:action path="/updateProcessVariable" name="commonProcessForm" validate="false"
- * @struts.action-forward name="success" path="/manage_process.do" redirect = "true"
- * @struts.action-forward name="failure" path="/update_process_variables.do" redirect = "false"
+ * @struts:action path="/updateProcessVariable" name="commonProcessForm"
+ *                validate="false"
+ * @struts.action-forward name="success" path="/manage_process.do" redirect =
+ *                        "true"
+ * @struts.action-forward name="failure" path="/update_process_variables.do"
+ *                        redirect = "false"
  */
 public class UpdateProcessVariableAction extends ActionBase {
 
@@ -42,16 +46,10 @@ public class UpdateProcessVariableAction extends ActionBase {
 
         try {
             String variableName = request.getParameter("variableSelect");
-            VariableDefinition variableDefinition = null;
-            WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
-            for (VariableDefinition variable : Delegates.getDefinitionService().getVariableDefinitions(user, process.getDefinitionId())) {
-                if (variable.getName().equals(variableName)) {
-                    variableDefinition = variable;
-                }
-            }
-
+            Long definitionId = Delegates.getExecutionService().getProcess(user, processId).getDefinitionId();
+            VariableDefinition variableDefinition = Delegates.getDefinitionService().getVariableDefinition(user, definitionId, variableName);
+            Preconditions.checkNotNull(variableDefinition, variableName);
             boolean nullValue = "on".equals(request.getParameter("isNullValue"));
-
             Object variableValue = FormSubmissionUtils.extractVariable(request, form, variableDefinition);
             HashMap<String, Object> variable = new HashMap<String, Object>();
             variableValue = nullValue ? null : variableValue;

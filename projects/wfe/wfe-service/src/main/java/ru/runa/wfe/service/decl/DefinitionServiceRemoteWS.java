@@ -9,7 +9,9 @@ import ru.runa.wfe.user.User;
 
 @Remote
 public interface DefinitionServiceRemoteWS {
-    
+
     public List<Variable> getVariableDefinitionsWS(User user, Long definitionId);
-    
+
+    public Variable getVariableDefinitionWS(User user, Long definitionId, String variableName);
+
 }
