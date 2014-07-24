@@ -52,7 +52,7 @@ public class GEFImageHelper {
             } else {
                 imageLoader.data = new ImageData[] { image.getImageData() };
             }
-            imageLoader.save(filePath, SWT.IMAGE_JPEG);
+            imageLoader.save(filePath, SWT.IMAGE_PNG);
         } catch (Exception e) {
             PluginLogger.logError("graphimage: saving failed", e);
         } finally {

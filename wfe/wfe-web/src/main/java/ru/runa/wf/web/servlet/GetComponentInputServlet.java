@@ -1,7 +1,6 @@
 package ru.runa.wf.web.servlet;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +12,6 @@ import ru.runa.common.web.AjaxWebHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.wf.web.ftl.method.ViewUtil;
 import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.VariableDefinition;
@@ -56,18 +54,14 @@ public class GetComponentInputServlet extends HttpServlet {
             scriptingName = variable.getDefinition().getScriptingName();
             variableIsNullString = variableIsNull.toString();
         } else {
-            WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
-            List<VariableDefinition> variables = Delegates.getDefinitionService().getVariableDefinitions(user, process.getDefinitionId());
-            for (VariableDefinition vd : variables) {
-                if (vd.getName().equals(variableName)) {
-                    scriptingName = vd.getScriptingName();
-                    variableIsNullString = "true";
-                    variableValue = "null";
-                    variable = new WfVariable(vd, null);
-                    break;
-                }
+            Long definitionId = Delegates.getExecutionService().getProcess(user, processId).getDefinitionId();
+            VariableDefinition variableDefinition = Delegates.getDefinitionService().getVariableDefinition(user, definitionId, variableName);
+            if (variableDefinition != null) {
+                scriptingName = variableDefinition.getScriptingName();
+                variableIsNullString = "true";
+                variableValue = "null";
+                variable = new WfVariable(variableDefinition, null);
             }
-
         }
         variableObject.put("scriptingName", scriptingName);
         variableObject.put("variableIsNull", variableIsNullString);

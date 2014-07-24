@@ -10,7 +10,6 @@ public class Variable {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return Objects.toStringHelper(getClass()).add("name", name).add("value", value).toString();
     }
 }
