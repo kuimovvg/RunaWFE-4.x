@@ -28,7 +28,6 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.IdNameForm;
-import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -42,25 +41,11 @@ public class ProcessDefinitionGraphImageAction extends ActionBase {
     public static final String ACTION_PATH = "/processDefinitionGraphImage";
 
     @Override
-    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         IdNameForm form = (IdNameForm) actionForm;
         try {
-            String fileName = IFileDataProvider.GRAPH_IMAGE_NEW_FILE_NAME;
-            if (form.getName() != null) {
-                fileName = form.getName() + "." + fileName;
-            }
-            byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionFile(getLoggedUser(request), form.getId(), fileName);
-            if (bytes == null) {
-                fileName = IFileDataProvider.GRAPH_IMAGE_OLD_FILE_NAME;
-                if (form.getName() != null) {
-                    fileName = form.getName() + "." + fileName;
-                }
-                bytes = Delegates.getDefinitionService().getProcessDefinitionFile(getLoggedUser(request), form.getId(), fileName);
-            }
-            if (bytes == null) {
-                throw new NullPointerException("No graph stream found.");
-            }
-            response.setContentType("image/jpg");
+            byte[] bytes = Delegates.getDefinitionService().getProcessDefinitionGraph(getLoggedUser(request), form.getId(), form.getName());
+            response.setContentType("image/png");
             OutputStream os = response.getOutputStream();
             os.write(bytes);
             os.flush();

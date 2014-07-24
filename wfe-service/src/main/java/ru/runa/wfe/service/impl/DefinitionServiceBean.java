@@ -32,6 +32,7 @@ import javax.jws.soap.SOAPBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.form.Interaction;
@@ -152,6 +153,15 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
 
     @Override
     @WebResult(name = "result")
+    public byte[] getProcessDefinitionGraph(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId,
+            @WebParam(name = "subprocessId") String subprocessId) throws DefinitionDoesNotExistException {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
+        return definitionLogic.getGraph(user, definitionId, subprocessId);
+    }
+
+    @Override
+    @WebResult(name = "result")
     public List<SwimlaneDefinition> getSwimlaneDefinitions(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
@@ -161,7 +171,18 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     @Override
     @WebMethod(exclude = true)
     public List<VariableDefinition> getVariableDefinitions(User user, Long definitionId) {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
         return definitionLogic.getProcessDefinitionVariables(user, definitionId);
+    }
+
+    @Override
+    @WebMethod(exclude = true)
+    public VariableDefinition getVariableDefinition(User user, Long definitionId, String variableName) throws DefinitionDoesNotExistException {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
+        Preconditions.checkArgument(variableName != null);
+        return definitionLogic.getProcessDefinitionVariable(user, definitionId, variableName);
     }
 
     @Override
@@ -186,6 +207,17 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     public List<Variable> getVariableDefinitionsWS(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId) {
         List<VariableDefinition> variableDefinitions = getVariableDefinitions(user, definitionId);
         return VariableConverter.marshalDefinitions(variableDefinitions);
+    }
+
+    @Override
+    @WebResult(name = "result")
+    public Variable getVariableDefinitionWS(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId,
+            @WebParam(name = "variableName") String variableName) throws DefinitionDoesNotExistException {
+        VariableDefinition variableDefinition = getVariableDefinition(user, definitionId, variableName);
+        if (variableDefinition != null) {
+            return VariableConverter.marshal(variableDefinition, null);
+        }
+        return null;
     }
 
 }

@@ -111,7 +111,8 @@ public interface DefinitionService {
     public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException;
 
     /**
-     * Deletes process definition by name. If version is not specified all versions will be deleted.
+     * Deletes process definition by name. If version is not specified all
+     * versions will be deleted.
      * 
      * @param user
      *            authorized user
@@ -139,7 +140,23 @@ public interface DefinitionService {
     public byte[] getProcessDefinitionFile(User user, Long definitionId, String fileName) throws DefinitionDoesNotExistException;
 
     /**
-     * Gets available output transition names. Process definition id or task id is required.
+     * Retrieves processimage.png (or earlier equivalent) file data from process
+     * definition archive.
+     * 
+     * @param user
+     *            authorized user
+     * @param definitionId
+     *            process definition id
+     * @param subprocessId
+     *            subprocess id, can be <code>null</code>
+     * @return file data, not <code>null</code>
+     * @throws DefinitionDoesNotExistException
+     */
+    public byte[] getProcessDefinitionGraph(User user, Long definitionId, String subprocessId) throws DefinitionDoesNotExistException;
+
+    /**
+     * Gets available output transition names. Process definition id or task id
+     * is required.
      * 
      * @param user
      *            authorized user
@@ -200,6 +217,20 @@ public interface DefinitionService {
      * @throws DefinitionDoesNotExistException
      */
     public List<VariableDefinition> getVariableDefinitions(User user, Long definitionId) throws DefinitionDoesNotExistException;
+
+    /**
+     * Gets variable definition for process definition by name.
+     * 
+     * @param user
+     *            authorized user
+     * @param definitionId
+     *            process definition id
+     * @param variableName
+     *            variable name
+     * @return variable definition or <code>null</code>
+     * @throws DefinitionDoesNotExistException
+     */
+    public VariableDefinition getVariableDefinition(User user, Long definitionId, String variableName) throws DefinitionDoesNotExistException;
 
     /**
      * Gets all graph elements for process definition by id.
