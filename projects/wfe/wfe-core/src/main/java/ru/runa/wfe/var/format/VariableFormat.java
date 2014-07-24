@@ -34,7 +34,7 @@ public abstract class VariableFormat {
         try {
             return convertFromStringValue(source);
         } catch (Exception e) {
-            throw new InternalApplicationException("Unable to parse '" + source + " in " + this, e);
+            throw new InternalApplicationException("Unable to parse '" + source + "' in " + this, e);
         }
     }
 
