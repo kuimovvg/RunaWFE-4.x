@@ -82,15 +82,15 @@ bool RtnResources::GetUserInputLoginSilenty(){
 }
 
 wstring RtnResources::GetUserInputDefaultLogin(){
-	return GetOption(L"userinput.default.login", L"");
+	return GetOption(L"userinput.default.login", L"Administrator");
 }
 
 wstring RtnResources::GetUserInputDefaultPassword(){
-	return GetOption(L"userinput.default.password", L"RunaWFE tasks notifier");
+	return GetOption(L"userinput.default.password", L"wf");
 }
 
 wstring RtnResources::GetAuthenticationType(){
-		return GetOption(L"authentication.type", L"RunaWFE tasks notifier");
+		return GetOption(L"authentication.type", L"userinput");
 }
 
 
