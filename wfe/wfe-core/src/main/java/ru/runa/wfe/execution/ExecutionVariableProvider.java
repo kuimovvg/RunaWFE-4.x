@@ -13,11 +13,9 @@ import com.google.common.base.Objects;
 
 public class ExecutionVariableProvider extends AbstractVariableProvider {
     private final ExecutionContext executionContext;
-    private final boolean findVariableByScriptingName;
 
-    public ExecutionVariableProvider(ExecutionContext executionContext, boolean findVariableByScriptingName) {
+    public ExecutionVariableProvider(ExecutionContext executionContext) {
         this.executionContext = executionContext;
-        this.findVariableByScriptingName = findVariableByScriptingName;
     }
 
     @Override
@@ -38,8 +36,8 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
         if (variableDefinition == null || !variableDefinition.isPublicAccess()) {
             // TODO checkReadToVariablesAllowed(subject, task);
         }
-        if (variableDefinition == null && findVariableByScriptingName) {
-            // TODO unify
+        if (variableDefinition == null) {
+            // find variable by scripting name
             for (VariableDefinition definition : processDefinition.getVariables()) {
                 if (Objects.equal(variableName, definition.getScriptingName())) {
                     variableDefinition = definition;
