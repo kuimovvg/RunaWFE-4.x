@@ -17,8 +17,16 @@
  */
 package ru.runa.wfe.commons.dao;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.springframework.orm.hibernate3.HibernateCallback;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
 
@@ -30,13 +38,26 @@ public class ConstantDAO extends GenericDAO<Constant> {
     private static final Log log = LogFactory.getLog(ConstantDAO.class);
     private static final String DATABASE_VERSION_VARIABLE_NAME = "ru.runa.database_version";
 
-    public Integer getDatabaseVersion() {
-        try {
-            return TypeConversionUtil.convertTo(int.class, getValue(DATABASE_VERSION_VARIABLE_NAME));
-        } catch (Exception e) {
-            log.warn("Unable to get database version", e);
-            return null;
-        }
+    public Integer getDatabaseVersion() throws Exception {
+        return getHibernateTemplate().executeWithNativeSession(new HibernateCallback<Integer>() {
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public Integer doInHibernate(Session session) throws HibernateException, SQLException {
+                // test connection is opened
+                Connection connection = session.connection();
+                DatabaseMetaData metaData = connection.getMetaData();
+                log.info("Running with " + metaData.getDatabaseProductName() + " " + metaData.getDatabaseProductVersion());
+                try {
+                    SQLQuery query = session.createSQLQuery("SELECT VALUE FROM WFE_CONSTANTS WHERE NAME=:name");
+                    query.setString("name", DATABASE_VERSION_VARIABLE_NAME);
+                    return TypeConversionUtil.convertTo(Integer.class, query.uniqueResult());
+                } catch (Exception e) {
+                    log.warn("Unable to get database version", e);
+                    return null;
+                }
+            }
+        });
     }
 
     public void setDatabaseVersion(int version) {
