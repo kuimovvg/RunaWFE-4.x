@@ -173,7 +173,7 @@ public class ArchivingApplication {
             AuthenticationService authenticationService = Delegates.getAuthenticationService();
             ArchivingService archivingService = ArchivingServiceDelegate.getArchivingServiceStatic();
 
-            User user = authenticationService.authenticateByLoginPassword(USER_NAME, USER_NAME);
+            User user = authenticationService.authenticateByLoginPassword(USER_NAME, PASSWORD);
 
             try {
                 log.info(String.format("start restore process with id = %s ...", processId));
@@ -219,7 +219,7 @@ public class ArchivingApplication {
             AuthenticationService authenticationService = Delegates.getAuthenticationService();
             ArchivingService archivingService = ArchivingServiceDelegate.getArchivingServiceStatic();
 
-            User user = authenticationService.authenticateByLoginPassword(USER_NAME, USER_NAME);
+            User user = authenticationService.authenticateByLoginPassword(USER_NAME, PASSWORD);
             try {
                 log.info(String.format("start restore process definition with name = %s and version = %s ...", definitionName, version));
                 archivingService.restoreProcessDefinition(user, definitionName, version);
