@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
+import ru.runa.gpd.util.TextEditorInput;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
@@ -47,10 +49,8 @@ public class CreateProcessRegulation extends BaseModelActionDelegate {
 			ProcessDefinition proccDefinition = getActiveDesignerEditor().getDefinition();
 			String html = generateRegulation(proccDefinition);
 			
-			SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy.mm.dd_hh-mm");
-			IFile file = IOUtils.getAdjacentFile(getDefinitionFile(), proccDefinition.getName()+"_"+dataFormat.format(new Date())+".html");
-			IOUtils.createOrUpdateFile(file,new ByteArrayInputStream(html.getBytes(StandardCharsets.UTF_8)));
-			IDE.openEditor(getWorkbenchPage(), file);
+			TextEditorInput input = new TextEditorInput(proccDefinition.getName() +".rgl", html);
+			IDE.openEditor(getWorkbenchPage(), input,"ru.runa.gpd.wysiwyg.RegulationHTMLEditor");
 		 } catch (Exception e) {
 	            PluginLogger.logError(e);
 	     }
