@@ -15,7 +15,8 @@ namespace IO {
 	string ToString(const wstring& string);
 	wstring GetFilePath(const wstring& relativeFileName);
 	wstring GetTemporaryFilePath(const wstring& relativeFileName);
-	wstring GetVersionByUrl(const string& url);
+	wstring GetRunaVersionByUrl(const string& url);
+	wstring GetServerTypeByUrl(const string& url);
 	string UriEncode(const string & sSrc);
 }
 
