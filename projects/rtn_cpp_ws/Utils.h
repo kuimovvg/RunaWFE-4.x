@@ -16,6 +16,7 @@ namespace IO {
 	wstring GetFilePath(const wstring& relativeFileName);
 	wstring GetTemporaryFilePath(const wstring& relativeFileName);
 	wstring GetVersionByUrl(const string& url);
+	string UriEncode(const string & sSrc);
 }
 
 namespace UI {
