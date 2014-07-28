@@ -46,6 +46,13 @@
             icon="icons/web.gif"
             id="ru.runa.gpd.htmleditor.editors.WebBrowser"
             name="%plugin.editor.webbrowser"/>
+      <editor
+            class="ru.runa.gpd.formeditor.wysiwyg.RegulationHTMLEditor"
+            extensions="rgl"
+            icon="icons/html.png"
+            id="ru.runa.gpd.wysiwyg.RegulationHTMLEditor"
+            name="%editor.name">
+      </editor>
    </extension>
 
 
