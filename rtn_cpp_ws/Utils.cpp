@@ -13,6 +13,55 @@ typedef unsigned long gss_uint32;
 typedef gss_uint32      OM_uint32;
 #endif
 
+
+const char SAFE[256] =
+{
+    /*      0 1 2 3  4 5 6 7  8 9 A B  C D E F */
+    /* 0 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* 1 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* 2 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* 3 */ 1,1,1,1, 1,1,1,1, 1,1,0,0, 0,0,0,0,
+    
+    /* 4 */ 0,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
+    /* 5 */ 1,1,1,1, 1,1,1,1, 1,1,1,0, 0,0,0,0,
+    /* 6 */ 0,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1,
+    /* 7 */ 1,1,1,1, 1,1,1,1, 1,1,1,0, 0,0,0,0,
+    
+    /* 8 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* 9 */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* A */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* B */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    
+    /* C */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* D */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* E */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0,
+    /* F */ 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0
+};
+
+const char HEX2DEC[256] = 
+{
+    /*       0  1  2  3   4  5  6  7   8  9  A  B   C  D  E  F */
+    /* 0 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* 1 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* 2 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* 3 */  0, 1, 2, 3,  4, 5, 6, 7,  8, 9,-1,-1, -1,-1,-1,-1,
+    
+    /* 4 */ -1,10,11,12, 13,14,15,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* 5 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* 6 */ -1,10,11,12, 13,14,15,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* 7 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    
+    /* 8 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* 9 */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* A */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* B */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    
+    /* C */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* D */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* E */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+    /* F */ -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1
+};
+
 int EstablishSecurityContext(wchar_t *service_name, OM_uint32 deleg_flag, CtxtHandle *gss_context, OM_uint32 *ret_flags, OUT string& Token) {
 	SecBuffer sendToken, recv_tok;
 	SecBufferDesc input_desc, output_desc;
@@ -225,6 +274,36 @@ wstring IO::GetVersionByUrl(const string& url) {
     throw message;
 }
 
+
+std::string IO::UriEncode(const string & sSrc)
+{
+   const char DEC2HEX[16 + 1] = "0123456789ABCDEF";
+   const unsigned char * pSrc = (const unsigned char *)sSrc.c_str();
+   const int SRC_LEN = sSrc.length();
+   unsigned char * const pStart = new unsigned char[SRC_LEN * 3];
+   unsigned char * pEnd = pStart;
+   const unsigned char * const SRC_END = pSrc + SRC_LEN;
+
+   for (; pSrc < SRC_END; ++pSrc)
+   {
+      if (SAFE[*pSrc]) 
+         *pEnd++ = *pSrc;
+      else
+      {
+         // escape this char
+         *pEnd++ = '%';
+         *pEnd++ = DEC2HEX[*pSrc >> 4];
+         *pEnd++ = DEC2HEX[*pSrc & 0x0F];
+      }
+   }
+
+   std::string sResult((char *)pStart, (char *)pEnd);   
+   delete [] pStart;
+   return sResult;
+}
+
+
+
 void UI::QuitApplication(HWND hWnd, Server::Connector* connector, const char* cause) {
 	LOG_DEBUG("QuitApplication, cause: %s", cause);
 	DestroyWindow(hWnd);
@@ -240,12 +319,36 @@ void UI::LaunchBrowser(HWND hWnd) {
 	ShellExecute(hWnd, L"open", command.c_str(), RtnResources::GetBrowserStartURL().c_str(), NULL, show);
 }
 
+std::string wstring_to_utf8_hex(const std::wstring &input)
+{
+  std::string output;
+  int cbNeeded = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
+  if (cbNeeded > 0) {
+    char *utf8 = new char[cbNeeded];
+    if (WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, utf8, cbNeeded, NULL, NULL) != 0) {
+      for (char *p = utf8; *p; *p++) {
+        char onehex[5];
+        _snprintf(onehex, sizeof(onehex), "%%%02.2X", (unsigned char)*p);
+        output.append(onehex);
+      }
+    }
+    delete[] utf8;
+  }
+  return output;
+}
+
 void UI::LaunchBrowser(HWND hWnd, wstring login, wstring password) {
 	LOG_DEBUG("LaunchBrowser with login and password");
 	// use empty string to use default system browser, L"IEXPLORE.EXE" for MSIE:
 	const wstring command = RtnResources::GetOption(L"browser.command", L"");
 	const int show = RtnResources::GetOptionInt(L"browser.command.show", SW_SHOWMAXIMIZED);
-	wstring url = RtnResources::GetBrowserStartURL() + L"?login="+login+L"&"+L"password="+password;
+	string ePassword= wstring_to_utf8_hex(password);		
+	string eLogin =  wstring_to_utf8_hex(login);
+	wstring tPassword = IO::ToWideString(ePassword);
+	wstring tLogin = IO::ToWideString(eLogin);
+	wstring path =L"login="+tLogin+L"&"+L"password="+tPassword; 	
+	wstring url = RtnResources::GetBrowserStartURL();
+	url+=L"?"+path;
 	ShellExecute(hWnd, L"open", command.c_str(), url.c_str(), NULL, show);
 }
 
