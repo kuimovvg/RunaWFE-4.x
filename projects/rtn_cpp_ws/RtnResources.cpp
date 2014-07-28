@@ -30,7 +30,7 @@ wstring RtnResources::GetServerType() {
 	wstring serverType = GetOption(L"application.server.type", L"jboss4");
 	if (L"auto" == serverType) {
 		LOG_DEBUG("determining server type");
-		serverType = IO::GetVersionByUrl("/version/");
+		serverType = IO::GetServerTypeByUrl("/version/");
 		LOG_DEBUG_W(L"server type is '" + serverType + L"'");
 	}
 	if (L"jboss4" != serverType && L"jboss7" != serverType) {
@@ -43,7 +43,7 @@ wstring RtnResources::GetServerVersion() {
 	wstring serverVersion = GetOption(L"server.version", L"auto");
 	if (L"auto" == serverVersion) {
 		LOG_DEBUG("determining server version");
-		serverVersion = IO::GetVersionByUrl("/wfe/version");
+		serverVersion = IO::GetRunaVersionByUrl("/wfe/version");
 		LOG_DEBUG_W(L"server version is '" + serverVersion + L"'");
 	}
 	return serverVersion;

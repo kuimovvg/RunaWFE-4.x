@@ -233,7 +233,7 @@ bool recvline(int s, string* buf) {
 }
 
 // TODO? http://www.rsdn.ru/article/inet/wininet.xml
-wstring IO::GetVersionByUrl(const string& url) {
+wstring IO::GetRunaVersionByUrl(const string& url) {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) {
         throw "WSAStartup failed";
@@ -258,8 +258,54 @@ wstring IO::GetVersionByUrl(const string& url) {
 	string buffer;
 	string version;
 	bool readResponse = true;
+	bool nextVersion=false;
 	while (readResponse) {
+		
 		readResponse = recvline(clientSocket, &buffer);
+		if(nextVersion){
+			version = buffer;
+		}
+		if(buffer.length() == 0){
+			nextVersion = true;
+		}		
+		buffer.clear();
+	}
+    closesocket(clientSocket);
+    WSACleanup();
+	if (!version.empty()) {
+		return ToWideString(version);
+	}	
+	string message = "No version found by URL '" + url + "'";
+    throw message;
+}
+
+wstring IO::GetServerTypeByUrl(const string& url) {
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != 0) {
+        throw "WSAStartup failed";
+    }
+    SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	string serverName = ToString(RtnResources::GetOption(L"server.name", L""));
+	struct hostent *host = gethostbyname(serverName.c_str());
+	if (host == NULL) {
+		throw "Could not find host by name '" + serverName + "'";
+	}
+    SOCKADDR_IN socketAddress;
+	socketAddress.sin_port = htons(RtnResources::GetOptionInt(L"server.port", 80));
+    socketAddress.sin_family = AF_INET;
+    socketAddress.sin_addr.s_addr = *((unsigned long*) host->h_addr);
+	int resultCode = connect(clientSocket, (SOCKADDR*) &socketAddress, sizeof(socketAddress));
+    if (resultCode != 0) {
+		LOG_ERROR("Could not connect to %s, resultCode = %d", serverName.c_str(), resultCode);
+        throw "Could not connect to '" + serverName + "'";
+	}
+	string request = "GET " + url + " HTTP/1.1\r\nHost: " + serverName + "\r\nConnection: close\r\n\r\n";
+	send(clientSocket, request.c_str(), request.length(), 0);
+	string buffer;
+	string version;
+	bool readResponse = true;
+	bool nextVersion=false;
+	while (readResponse) {
 		if (buffer.find("VERSION:") == 0) {
 			version = buffer.substr(8, buffer.length() - 8);
 		}
@@ -273,6 +319,7 @@ wstring IO::GetVersionByUrl(const string& url) {
 	string message = "No version found by URL '" + url + "'";
     throw message;
 }
+
 
 
 std::string IO::UriEncode(const string & sSrc)
