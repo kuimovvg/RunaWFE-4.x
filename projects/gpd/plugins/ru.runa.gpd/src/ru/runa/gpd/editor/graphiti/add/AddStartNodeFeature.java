@@ -15,8 +15,8 @@ import ru.runa.gpd.editor.graphiti.DiagramFeatureProvider;
 import ru.runa.gpd.lang.BpmnSerializer;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
-import ru.runa.gpd.lang.model.StartTextDecoration;
 import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.lang.model.StartTextDecoration;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 
 public class AddStartNodeFeature extends AddNodeWithImageFeature {
