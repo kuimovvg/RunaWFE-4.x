@@ -8,7 +8,6 @@ import org.eclipse.gef.ui.actions.Clipboard;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.model.NamedGraphElement;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.SelectionItem;
 
 import com.google.common.base.Objects;

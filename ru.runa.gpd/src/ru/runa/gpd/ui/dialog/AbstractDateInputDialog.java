@@ -3,9 +3,7 @@ package ru.runa.gpd.ui.dialog;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import ru.runa.gpd.Activator;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.settings.PrefConstants;
 
 public abstract class AbstractDateInputDialog extends UserInputDialog {
     private final SimpleDateFormat dateFormat = new SimpleDateFormat(getFormatPattern());

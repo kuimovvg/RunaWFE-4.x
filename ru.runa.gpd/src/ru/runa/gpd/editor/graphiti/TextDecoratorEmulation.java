@@ -2,8 +2,8 @@ package ru.runa.gpd.editor.graphiti;
 
 import org.eclipse.draw2d.geometry.Point;
 
-import ru.runa.gpd.lang.model.TextDecorationNode;
 import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.TextDecorationNode;
 
 public class TextDecoratorEmulation {
 
