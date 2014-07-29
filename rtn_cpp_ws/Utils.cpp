@@ -259,11 +259,17 @@ wstring IO::GetRunaVersionByUrl(const string& url) {
 	string version;
 	bool readResponse = true;
 	bool nextVersion=false;
-	while (readResponse) {
-		
+	while (readResponse) {		
 		readResponse = recvline(clientSocket, &buffer);
 		if(nextVersion){
-			version = buffer;
+			if(!buffer.empty()){
+				int versionSt= buffer.find(":");
+				if(versionSt >-1 ){
+					version = buffer.substr(versionSt);
+				}else{
+					version = buffer;
+				}
+			}
 		}
 		if(buffer.length() == 0){
 			nextVersion = true;
