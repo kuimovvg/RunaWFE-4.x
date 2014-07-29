@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Objects;
-
 import ru.runa.gpd.Localization;
+
+import com.google.common.base.Objects;
 
 public class Duration {
     public static final String CURRENT_DATE_MESSAGE = Localization.getString("duration.baseDateNow");

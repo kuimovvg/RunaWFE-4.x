@@ -1,14 +1,9 @@
 package ru.runa.gpd.search;
 
-import java.text.MessageFormat;
-
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
-import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.NamedGraphElement;
 
 public class SearchLabelProvider extends LabelProvider {
     private final SearchPage page;

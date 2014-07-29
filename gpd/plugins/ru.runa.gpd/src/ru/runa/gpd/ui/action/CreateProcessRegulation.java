@@ -1,16 +1,11 @@
 package ru.runa.gpd.ui.action;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IFile;
@@ -42,77 +37,71 @@ import freemarker.template.TemplateExceptionHandler;
 
 public class CreateProcessRegulation extends BaseModelActionDelegate {
 
-	@Override
-	public void run(IAction action) {
-		
-		try {
-			ProcessDefinition proccDefinition = getActiveDesignerEditor().getDefinition();
-			String html = generateRegulation(proccDefinition);
-			
-			TextEditorInput input = new TextEditorInput(proccDefinition.getName() +".rgl", html);
-			IDE.openEditor(getWorkbenchPage(), input,"ru.runa.gpd.wysiwyg.RegulationHTMLEditor");
-		 } catch (Exception e) {
-	            PluginLogger.logError(e);
-	     }
+    @Override
+    public void run(IAction action) {
 
-	}
-	
+        try {
+            ProcessDefinition proccDefinition = getActiveDesignerEditor().getDefinition();
+            String html = generateRegulation(proccDefinition);
 
-	private String generateRegulation(ProcessDefinition definition)
-			throws Exception {
+            TextEditorInput input = new TextEditorInput(proccDefinition.getName() + ".rgl", html);
+            IDE.openEditor(getWorkbenchPage(), input, "ru.runa.gpd.wysiwyg.RegulationHTMLEditor");
+        } catch (Exception e) {
+            PluginLogger.logError(e);
+        }
 
-		Configuration config = new Configuration();
+    }
 
-		config.setObjectWrapper(ObjectWrapper.DEFAULT_WRAPPER);
-		config.setDefaultEncoding("UTF-8");
-		config.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
+    private String generateRegulation(ProcessDefinition definition) throws Exception {
 
-		// TODO need localization
-		Path path = new Path("template/regulation.ftl");
+        Configuration config = new Configuration();
 
-		Bundle bundl = Activator.getDefault().getBundle();
-		URL url = FileLocator.find(bundl, path, Collections.EMPTY_MAP);
-		URL fileUrl = FileLocator.toFileURL(url);
-		InputStream input = fileUrl.openConnection().getInputStream();
-		Template template = new Template("regulation", new StringReader(
-				IOUtils.readStream(input)), config);
+        config.setObjectWrapper(ObjectWrapper.DEFAULT_WRAPPER);
+        config.setDefaultEncoding("UTF-8");
+        config.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
 
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("proc", definition);
+        // TODO need localization
+        Path path = new Path("template/regulation.ftl");
 
-		IFile htmlDefinition = IOUtils.getAdjacentFile(
-				getActiveDesignerEditor().getDefinitionFile(),
-				ParContentProvider.PROCESS_DEFINITION_DESCRIPTION_FILE_NAME);
-		if (htmlDefinition.exists()) {
-			map.put("brief", IOUtils.readStream(htmlDefinition.getContents()));
-		}
+        Bundle bundl = Activator.getDefault().getBundle();
+        URL url = FileLocator.find(bundl, path, Collections.EMPTY_MAP);
+        URL fileUrl = FileLocator.toFileURL(url);
+        InputStream input = fileUrl.openConnection().getInputStream();
+        Template template = new Template("regulation", new StringReader(IOUtils.readStream(input)), config);
 
-		// freeMarker can't work with params like StartState.class directly
-		HashMap<String, Object> model = new HashMap<String, Object>();
-		map.put("model", model);
-		model.put("start", StartState.class);
-		model.put("task", TaskState.class);
-		model.put("node", Node.class);
-		model.put("end", EndState.class);
-		model.put("variable", Variable.class);
-		model.put("timer", Timer.class);
-		model.put("endToken", EndTokenState.class);
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("proc", definition);
 
-		Writer writer = new StringWriter();
-		template.process(map, writer);
-		return writer.toString();
-		
-	}
-	
-	@Override
+        IFile htmlDefinition = IOUtils.getAdjacentFile(getActiveDesignerEditor().getDefinitionFile(), ParContentProvider.PROCESS_DEFINITION_DESCRIPTION_FILE_NAME);
+        if (htmlDefinition.exists()) {
+            map.put("brief", IOUtils.readStream(htmlDefinition.getContents()));
+        }
+
+        // freeMarker can't work with params like StartState.class directly
+        HashMap<String, Object> model = new HashMap<String, Object>();
+        map.put("model", model);
+        model.put("start", StartState.class);
+        model.put("task", TaskState.class);
+        model.put("node", Node.class);
+        model.put("end", EndState.class);
+        model.put("variable", Variable.class);
+        model.put("timer", Timer.class);
+        model.put("endToken", EndTokenState.class);
+
+        Writer writer = new StringWriter();
+        template.process(map, writer);
+        return writer.toString();
+
+    }
+
+    @Override
     public void selectionChanged(IAction action, ISelection selection) {
-		super.selectionChanged(action, selection);
-		if ( getSelection() != null && getSelection().getClass().equals(ProcessDefinition.class)) {
-			action.setEnabled(!getActiveDesignerEditor().getDefinition().isInvalid());
-		} else {
-			action.setEnabled(false);
-		}
-	}
-	
+        super.selectionChanged(action, selection);
+        if (getSelection() != null && getSelection().getClass().equals(ProcessDefinition.class)) {
+            action.setEnabled(!getActiveDesignerEditor().getDefinition().isInvalid());
+        } else {
+            action.setEnabled(false);
+        }
+    }
 
 }
