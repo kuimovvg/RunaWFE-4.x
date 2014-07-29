@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 
-import com.google.common.collect.Lists;
-
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.VariableUtils;
+
+import com.google.common.collect.Lists;
 
 public class MessagingNode extends Node implements Active {
     protected final List<VariableMapping> variableMappings = new ArrayList<VariableMapping>();
