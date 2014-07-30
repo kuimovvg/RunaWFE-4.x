@@ -40,6 +40,9 @@ function removeUNIQUENAME(button) {
 
 function removeAllUNIQUENAME() {
 	$("#UNIQUENAME div[row]").each(function() {
+		$(this).find(".inputFileDelete").each(function() {
+			$(this).click();
+		});
 		$(this).remove();
 	});
 	$("input[name='VARIABLE.size']").val("0");
