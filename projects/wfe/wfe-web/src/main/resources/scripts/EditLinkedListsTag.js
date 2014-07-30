@@ -1,10 +1,13 @@
 
 var ellUNIQUENAMEVariableNames = [VARIABLE_NAMES];
 var ellUNIQUENAMERowTemplate = "ROW_TEMPLATE";
+var lastIndexUNIQUENAME = -1;
 
 $(document).ready(function() {
+	lastIndexUNIQUENAME = parseInt(ellUNIQUENAMEGetSize()) - 1;
     $('#ellUNIQUENAMEButtonAdd').click(function() {
-        var rowIndex = ellUNIQUENAMEGetSize();
+        var rowIndex = parseInt(lastIndexUNIQUENAME) + 1;
+	lastIndexUNIQUENAME = rowIndex;
 		console.log("UNIQUENAME: Adding row " + rowIndex);
         var e = "<tr row='" + rowIndex + "'>";
         e += ellUNIQUENAMERowTemplate.replace(/\[\]/g, "[" + rowIndex + "]");
@@ -24,43 +27,19 @@ function ellUNIQUENAMEGetSize() {
 function ellUNIQUENAMERemoveRow(button) {
 	var tr = $(button).closest("tr");
 	var rowIndex = parseInt(tr.attr("row"));
-	var size = ellUNIQUENAMEGetSize();
 	console.log("UNIQUENAME: Removing row " + rowIndex);
+	tr.find(".inputFileDelete").each(function() {
+		$(this).click();
+	});
 	tr.remove();
-	for (var i = rowIndex; i < size - 1; i++) {
-		ellUNIQUENAMEUpdateRowIndexes(i + 1, i);
-	}
 	ellUNIQUENAMEUpdateSize(-1);
     $("#ellUNIQUENAME").trigger("onRowRemoved", [rowIndex]);
-}
-
-function ellUNIQUENAMEUpdateRowIndexes(oldIndex, newIndex) {
-	$("tr[row='"+oldIndex+"'] input").each(function() {
-		ellUNIQUENAMEUpdateIndexedName($(this), oldIndex, newIndex);
-	});
-	$("tr[row='"+oldIndex+"'] select").each(function() {
-		ellUNIQUENAMEUpdateIndexedName($(this), oldIndex, newIndex);
-	});
-	$("tr[row='"+oldIndex+"'] textarea").each(function() {
-		ellUNIQUENAMEUpdateIndexedName($(this), oldIndex, newIndex);
-	});
-	$("tr[row='"+oldIndex+"']").attr("row", newIndex);
-}
-
-function ellUNIQUENAMEUpdateIndexedName(element, oldIndex, newIndex) {
-	var name = element.attr("name");
-	if (name == null) {
-		console.log("UNIQUENAME: Name is null in ", element);
-		return;
-	}
-	name = name.replace("[" + oldIndex + "]", "[" + newIndex + "]");
-	element.attr("name", name);
 }
 
 function ellUNIQUENAMEUpdateSize(delta) {
     for (i in ellUNIQUENAMEVariableNames) {
 		var sizeInput = $("input[name='" + ellUNIQUENAMEVariableNames[i] + ".size']");
-		sizeInput.val(parseInt(sizeInput.val()) + delta);
+		sizeInput.val(parseInt(ellUNIQUENAMEGetSize()) + delta);
 	}
 	$("#ellUNIQUENAME").attr("rowsCount", ellUNIQUENAMEGetSize() + delta);
 	console.log("UNIQUENAME: Lists size = " + ellUNIQUENAMEGetSize());
