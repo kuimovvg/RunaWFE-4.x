@@ -312,6 +312,7 @@ wstring IO::GetServerTypeByUrl(const string& url) {
 	bool readResponse = true;
 	bool nextVersion=false;
 	while (readResponse) {
+		readResponse = recvline(clientSocket, &buffer);
 		if (buffer.find("VERSION:") == 0) {
 			version = buffer.substr(8, buffer.length() - 8);
 		}
