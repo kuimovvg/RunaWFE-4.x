@@ -16,7 +16,7 @@ import ru.runa.wfe.var.ComplexVariable;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 
-public class Variable extends NamedGraphElement {
+public class Variable extends NamedGraphElement implements Describable {
     public static final String FORMAT_COMPONENT_TYPE_START = "(";
     public static final String FORMAT_COMPONENT_TYPE_END = ")";
     public static final String FORMAT_COMPONENT_TYPE_CONCAT = ", ";
@@ -28,7 +28,7 @@ public class Variable extends NamedGraphElement {
 
     public Variable() {
     }
-    
+
     public Variable(String name, String scriptingName, String format, boolean publicVisibility, String defaultValue) {
         super(name);
         setScriptingName(scriptingName);
@@ -48,7 +48,7 @@ public class Variable extends NamedGraphElement {
     public VariableUserType getUserType() {
         return userType;
     }
-    
+
     public void setUserType(VariableUserType userType) {
         this.userType = userType;
         if (userType != null) {
@@ -118,15 +118,15 @@ public class Variable extends NamedGraphElement {
         }
         return LocalizationRegistry.getLabel(format);
     }
-    
+
     public boolean isComplex() {
-    	return userType != null;
+        return userType != null;
     }
 
     public String getJavaClassName() {
-    	if (isComplex()) {
-    		return ComplexVariable.class.getName();
-    	}
+        if (isComplex()) {
+            return ComplexVariable.class.getName();
+        }
         return VariableFormatRegistry.getInstance().getArtifactNotNull(getFormatClassName()).getJavaClassName();
     }
 
@@ -183,12 +183,12 @@ public class Variable extends NamedGraphElement {
     public Image getEntryImage() {
         return SharedImages.getImage("icons/obj/variable.gif");
     }
-    
+
     @Override
     public int hashCode() {
         return Objects.hashCode(getName(), getFormat());
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Variable)) {
