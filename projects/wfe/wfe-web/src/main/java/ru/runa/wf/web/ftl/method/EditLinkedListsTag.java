@@ -48,7 +48,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             }
             WfVariable variable = variableProvider.getVariableNotNull(variableName);
             if (rowsCount == 0) {
-                uniqueName = variable.getDefinition().getScriptingName();
+                uniqueName = variable.getDefinition().getScriptingNameWithoutDots();
             }
             VariableFormat componentFormat = FormatCommons.createComponent(variable, 0);
             List<Object> list = TypeConversionUtil.convertTo(List.class, variable.getValue());
