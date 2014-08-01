@@ -32,7 +32,6 @@ import javax.jws.soap.SOAPBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.form.Interaction;
@@ -154,7 +153,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     @Override
     @WebResult(name = "result")
     public byte[] getProcessDefinitionGraph(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId,
-            @WebParam(name = "subprocessId") String subprocessId) throws DefinitionDoesNotExistException {
+            @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
         return definitionLogic.getGraph(user, definitionId, subprocessId);
@@ -178,7 +177,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
 
     @Override
     @WebMethod(exclude = true)
-    public VariableDefinition getVariableDefinition(User user, Long definitionId, String variableName) throws DefinitionDoesNotExistException {
+    public VariableDefinition getVariableDefinition(User user, Long definitionId, String variableName) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
         Preconditions.checkArgument(variableName != null);
@@ -212,7 +211,7 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
     @Override
     @WebResult(name = "result")
     public Variable getVariableDefinitionWS(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId,
-            @WebParam(name = "variableName") String variableName) throws DefinitionDoesNotExistException {
+            @WebParam(name = "variableName") String variableName) {
         VariableDefinition variableDefinition = getVariableDefinition(user, definitionId, variableName);
         if (variableDefinition != null) {
             return VariableConverter.marshal(variableDefinition, null);
