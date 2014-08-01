@@ -41,7 +41,7 @@ public class FileVariable implements Serializable {
     }
 
     public FileVariable(FileVariable fileVariable) {
-        this(fileVariable.name, fileVariable.data.clone(), fileVariable.contentType);
+        this(fileVariable.name, fileVariable.getData().clone(), fileVariable.contentType);
     }
 
     public FileVariable(String name, String contentType) {
