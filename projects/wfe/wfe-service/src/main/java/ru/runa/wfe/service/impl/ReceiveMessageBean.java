@@ -47,6 +47,7 @@ import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dao.TokenDAO;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.ReceiveMessage;
@@ -136,6 +137,7 @@ public class ReceiveMessageBean implements MessageListener {
     private void handleMessage(final ReceiveMessageData data, final ObjectMessage message) {
         try {
             acquireLock(data.processId);
+            ProcessExecutionErrors.removeProcessError(data.processId, data.node.getNodeId());
             new TransactionalExecutor(context.getUserTransaction()) {
 
                 @Override
@@ -159,6 +161,9 @@ public class ReceiveMessageBean implements MessageListener {
                     data.node.leave(executionContext);
                 }
             }.executeInTransaction(true);
+        } catch (Throwable th) {
+            ProcessExecutionErrors.addProcessError(data.processId, data.node.getNodeId(), data.node.getName(), null, th);
+            Throwables.propagate(th);
         } finally {
             releaseLock(data.processId);
         }
@@ -199,6 +204,11 @@ public class ReceiveMessageBean implements MessageListener {
             this.processId = executionContext.getProcess().getId();
             this.tokenId = executionContext.getToken().getId();
             this.node = node;
+        }
+
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(getClass()).add("processId", processId).add("tokenId", tokenId).add("node", node).toString();
         }
     }
 

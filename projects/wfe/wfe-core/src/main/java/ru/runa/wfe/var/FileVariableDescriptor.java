@@ -16,7 +16,6 @@ import com.google.common.io.Files;
 public class FileVariableDescriptor extends FileVariable {
     private static final long serialVersionUID = 1L;
     private String variablePath;
-    private transient File file;
     private transient byte[] localData;
 
     public FileVariableDescriptor() {
@@ -41,13 +40,10 @@ public class FileVariableDescriptor extends FileVariable {
         return variablePath;
     }
 
-    public void setFile(File file) {
-        this.file = file;
-    }
-
     @Override
     public byte[] getData() {
         if (localData == null) {
+            File file = FileVariableStorage.getContentFile(this, false);
             try {
                 localData = Files.toByteArray(file);
             } catch (IOException e) {
