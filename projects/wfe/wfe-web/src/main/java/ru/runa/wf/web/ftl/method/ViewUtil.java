@@ -212,7 +212,7 @@ public class ViewUtil {
             return html;
         }
         if (FileFormat.class == variableFormat.getClass()) {
-            return getFileInput(webHelper, variableName, (FileVariable) value);
+            return getFileComponent(webHelper, variableName, (FileVariable) value, true);
         }
         if (BooleanFormat.class == variableFormat.getClass()) {
             String html = "";
@@ -362,7 +362,7 @@ public class ViewUtil {
         Object value = variable.getValue();
         if (FileFormat.class == variableFormat.getClass()) {
             // because component is not usable
-            return getOutput(user, webHelper, processId, variable);
+            return getFileComponent(webHelper, variableName, (FileVariable) value, false);
         }
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
@@ -527,7 +527,7 @@ public class ViewUtil {
         }
     }
 
-    public static String getFileInput(WebHelper webHelper, String variableName, FileVariable value) {
+    private static String getFileComponent(WebHelper webHelper, String variableName, FileVariable value, boolean enabled) {
         if (!WebResources.isAjaxFileInputEnabled()) {
             return "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" />";
         }
@@ -561,11 +561,14 @@ public class ViewUtil {
         html += "<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
         html += "<div class=\"line\" style=\"width: " + (file != null ? "10" : "") + "0%;\"></div>";
         html += "<div class=\"status\">";
-        if (file != null) {
-            html += "<img src=\"" + deleteImageUrl + "\" class=\"inputFileDelete\" inputId=\"" + variableName + "\">";
-        } else {
-            html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
+        if (enabled) {
+            if (file != null) {
+                html += "<img src=\"" + deleteImageUrl + "\" class=\"inputFileDelete\" inputId=\"" + variableName + "\">";
+            } else {
+                html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
+            }
         }
+
         html += "<span class=\"statusText\">";
         if (file != null && webHelper != null) {
             String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName);

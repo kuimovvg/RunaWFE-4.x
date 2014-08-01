@@ -176,8 +176,10 @@ public class FormSubmissionUtils {
                     }
                 }
                 if (indexes.size() != listSize) {
-                    throw new InternalApplicationException("Incorrect'" + variableDefinition.getName()
-                            + "' value. Not all list items found. Expected:'" + listSize + "', found:'" + indexes.size());
+                    formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'"
+                            + listSize + "', found:'" + indexes.size());
+                    log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'" + listSize + "', found:'"
+                            + indexes.size());
                 }
                 for (Integer index : indexes) {
                     String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
@@ -225,8 +227,10 @@ public class FormSubmissionUtils {
                 }
             }
             if (indexes.size() != mapSize) {
-                throw new InternalApplicationException("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'"
-                        + mapSize + "', found:'" + indexes.size());
+                formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize
+                        + "', found:'" + indexes.size());
+                log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize + "', found:'"
+                        + indexes.size());
             }
             for (Integer index : indexes) {
                 String nameKey = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END + ".key";
