@@ -225,7 +225,8 @@ public class SwimlaneEditorPage extends EditorPartBase {
         if (searchResult.getMatchCount() > 0) {
             confirmationInfo.append(Localization.getString("Swimlane.ExistInProcess")).append("\n");
             for (Object element : searchResult.getElements()) {
-                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element).append("\n");
+                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element)
+                        .append("\n");
             }
             confirmationRequired = true;
         }
@@ -368,6 +369,10 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 if (newSwimlane == null) {
                     newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition(), false);
                     newSwimlane.setName(swimlane.getName());
+                    if (newSwimlane.getName() == null) {
+                        // variable of that name already exists
+                        continue;
+                    }
                     add = true;
                 }
                 newSwimlane.setDelegationClassName(swimlane.getDelegationClassName());
