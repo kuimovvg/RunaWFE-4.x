@@ -18,6 +18,7 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -64,7 +65,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         private final IVariableProvider variableProvider;
         private final Map<String, String> variableScriptingNameToNameMap = Maps.newHashMap();
         // complex variables does not returned from binding...
-        private final Map<String, ComplexVariable> complexVariables = Maps.newHashMap();
+        private final Map<String, ScriptingComplexVariable> complexVariables = Maps.newHashMap();
 
         public GroovyScriptBinding(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
             this.variableProvider = variableProvider;
@@ -114,7 +115,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
             }
             if (value instanceof ComplexVariable) {
-                complexVariables.put(name, (ComplexVariable) value);
+                value = new ScriptingComplexVariable((ComplexVariable) value);
+                complexVariables.put(name, (ScriptingComplexVariable) value);
             }
             log.debug("Passing to script '" + name + "' as '" + value + "'" + (value != null ? " of " + value.getClass() : ""));
             return value;
@@ -135,6 +137,48 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             result.putAll(complexVariables);
             return result;
         }
+    }
+
+    public static class ScriptingComplexVariable extends ComplexVariable {
+
+        public ScriptingComplexVariable(ComplexVariable complexVariable) {
+            super(complexVariable.getUserType());
+            putAll(complexVariable);
+        }
+
+        @Override
+        public Object get(Object key) {
+            Object object = super.get(key);
+            if (object == null) {
+                for (VariableDefinition definition : getUserType().getAttributes()) {
+                    if (Objects.equal(key, definition.getScriptingName())) {
+                        return super.get(definition.getName());
+                    }
+                }
+            }
+            return object;
+        }
+
+        @Override
+        public Object put(String key, Object value) {
+            String variableName = null;
+            for (VariableDefinition definition : getUserType().getAttributes()) {
+                if (Objects.equal(key, definition.getName())) {
+                    variableName = definition.getName();
+                    break;
+                }
+                if (Objects.equal(key, definition.getScriptingName())) {
+                    variableName = definition.getName();
+                    break;
+                }
+            }
+            if (variableName == null) {
+                variableName = key;
+                LogFactory.getLog(getClass()).warn("Trying to set undefined '" + variableName + "' in " + this);
+            }
+            return super.put(variableName, value);
+        }
+
     }
 
 }
