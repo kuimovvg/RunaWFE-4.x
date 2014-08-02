@@ -70,6 +70,10 @@ public class ClassLoaderUtil {
         }
     }
 
+    public static ClassLoader getExtensionClassLoader() {
+        return extensionClassLoader;
+    }
+
     public static Class<?> loadClass(String className, Class<?> callingClass) throws ClassNotFoundException {
         try {
             className = BackCompatibilityClassNames.getClassName(className);
