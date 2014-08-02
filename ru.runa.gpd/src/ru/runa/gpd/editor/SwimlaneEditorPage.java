@@ -369,6 +369,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 if (newSwimlane == null) {
                     newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(getDefinition(), false);
                     newSwimlane.setName(swimlane.getName());
+                    newSwimlane.setScriptingName(swimlane.getScriptingName());
                     if (newSwimlane.getName() == null) {
                         // variable of that name already exists
                         continue;
