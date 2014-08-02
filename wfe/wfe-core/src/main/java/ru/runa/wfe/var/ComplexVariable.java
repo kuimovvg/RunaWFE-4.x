@@ -3,7 +3,6 @@ package ru.runa.wfe.var;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class ComplexVariable extends HashMap<String, Object> {
@@ -18,17 +17,8 @@ public class ComplexVariable extends HashMap<String, Object> {
         this(variableDefinition.getUserType());
     }
 
-    @Override
-    public Object get(Object key) {
-        Object object = super.get(key);
-        if (object == null) {
-            for (VariableDefinition definition : userType.getAttributes()) {
-                if (Objects.equal(key, definition.getScriptingName())) {
-                    return super.get(definition.getName());
-                }
-            }
-        }
-        return object;
+    public VariableUserType getUserType() {
+        return userType;
     }
 
     public Map<String, Object> expand(String prefix) {
