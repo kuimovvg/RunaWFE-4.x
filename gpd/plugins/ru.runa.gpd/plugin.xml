@@ -1997,6 +1997,8 @@
             <groupMarker name="group"/>
             <separator name="saves"/>
             <groupMarker name="group"/>
+            <separator name="project"/>
+            <groupMarker name="group"/>
             <separator name="export"/>
             <groupMarker name="group"/>
             <separator name="command"/>
@@ -2139,6 +2141,21 @@
                label="%label.menu.exit"
                menubarPath="file/exit"
                style="push"/>
+          
+         <action
+               class="ru.runa.gpd.ui.action.ExportProject"
+               icon="icons/export_bot.gif"
+               id="ru.runa.gpd.ui.action.exportProject"
+               label="%label.menu.exportProject"
+               menubarPath="file/project"
+               style="push"/>   
+          <action
+               class="ru.runa.gpd.ui.action.ImportProject"
+               icon="icons/import_bot.gif"
+               id="ru.runa.gpd.ui.action.importProject"
+               label="%label.menu.importProject"
+               menubarPath="file/project"
+               style="push"/>       
          <action
                class="ru.runa.gpd.ui.action.EnableAntialiasingAction"
                id="enableAntialiasing"
