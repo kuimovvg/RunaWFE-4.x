@@ -22,7 +22,6 @@ package ru.runa.wfe.task;
 
 import java.util.Date;
 
-import ru.runa.wfe.job.Job;
 import ru.runa.wfe.presentation.ClassPresentation;
 import ru.runa.wfe.presentation.DefaultDBSource;
 import ru.runa.wfe.presentation.FieldDescriptor;
@@ -58,17 +57,6 @@ public class TaskClassPresentation extends ClassPresentation {
         }
     }
 
-    private static class DeadlineDBSource extends DefaultDBSource {
-        public DeadlineDBSource(Class<?> sourceObject, String valueDBPath) {
-            super(sourceObject, valueDBPath);
-        }
-
-        @Override
-        public String getJoinExpression(String alias) {
-            return classNameSQL + ".token=" + alias + ".token";
-        }
-    }
-
     private TaskClassPresentation() {
         super(Task.class, "", false, new FieldDescriptor[] {
                 // display name field type DB source isSort filter mode
@@ -87,8 +75,8 @@ public class TaskClassPresentation extends ClassPresentation {
                         FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskRoleTDBuilder", new Object[] {}),
                 new FieldDescriptor(TASK_VARIABLE, String.class.getName(), new VariableDBSource(Variable.class), true, FieldFilterMode.DATABASE,
                         "ru.runa.wf.web.html.TaskVariableTDBuilder", new Object[] {}, true),
-                new FieldDescriptor(TASK_DEADLINE, Date.class.getName(), new DeadlineDBSource[] { new DeadlineDBSource(Job.class, "dueDate") }, true,
-                        FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskDeadlineTDBuilder", new Object[] {}, true) });
+                new FieldDescriptor(TASK_DEADLINE, Date.class.getName(), new DefaultDBSource(Task.class, "deadlineDate"), true,
+                        FieldFilterMode.DATABASE, "ru.runa.wf.web.html.TaskDeadlineTDBuilder", new Object[] {}) });
     }
 
     public static final ClassPresentation getInstance() {
