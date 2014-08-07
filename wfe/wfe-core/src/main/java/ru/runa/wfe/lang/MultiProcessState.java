@@ -121,11 +121,11 @@ public class MultiProcessState extends SubProcessState {
                     executionContext.setVariableValue(processVariableName, value);
                 }
             }
-        }
-        executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), nodeProcess.getSubProcess()));
-        if (executionContext.getActiveSubprocesses().size() == 0) {
-            log.debug("Leaving multisubprocess state");
-            super.leave(executionContext, transition);
+            executionContext.addLog(new SubprocessEndLog(this, executionContext.getToken(), nodeProcess.getSubProcess()));
+            if (executionContext.getActiveSubprocesses().size() == 0) {
+                log.debug("Leaving multisubprocess state");
+                super.leave(executionContext, transition);
+            }
         }
     }
 
