@@ -7,6 +7,10 @@ import javax.servlet.jsp.PageContext;
 
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Maps;
 
@@ -43,6 +47,11 @@ public class StrutsWebHelper implements WebHelper {
             return Commons.getActionUrl("/variableDownloader", adjusted, pageContext, PortletUrlType.Render);
         }
         return Commons.getActionUrl(relativeUrl, params, pageContext, PortletUrlType.Render);
+    }
+
+    @Override
+    public boolean useLinkForExecutor(User user, Executor executor) {
+        return Delegates.getAuthorizationService().isAllowed(user, Permission.READ, executor);
     }
 
 }

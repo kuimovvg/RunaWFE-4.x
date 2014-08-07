@@ -95,7 +95,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
     public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
         ComplexVariable complexVariable = (ComplexVariable) object;
         StringBuffer b = new StringBuffer();
-        b.append("<table class=\"list\">");
+        b.append("<table class=\"list usertype\">");
         for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             b.append("<tr>");
             b.append("<td class=\"list\">").append(attributeDefinition.getName()).append("</td>");
