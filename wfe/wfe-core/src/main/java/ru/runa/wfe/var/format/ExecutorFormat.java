@@ -7,12 +7,10 @@ import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
@@ -78,9 +76,9 @@ public class ExecutorFormat extends VariableFormat implements VariableDisplaySup
         Executor executor = (Executor) object;
         boolean link = false;
         try {
-            link = ApplicationContextFactory.getPermissionDAO().isAllowed(user, Permission.READ, executor);
+            link = webHelper.useLinkForExecutor(user, executor);
         } catch (Exception e) {
-            LogFactory.getLog(getClass()).warn("Unable to determine permission", e);
+            LogFactory.getLog(getClass()).warn("Unable to determine whether useLinkForExecutor", e);
         }
         if (link) {
             HashMap<String, Object> params = Maps.newHashMap();

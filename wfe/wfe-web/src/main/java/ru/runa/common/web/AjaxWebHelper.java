@@ -17,14 +17,17 @@ import org.apache.struts.util.ModuleUtils;
 import org.apache.struts.util.RequestUtils;
 
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
 
 import com.google.common.collect.Maps;
 
 public class AjaxWebHelper implements WebHelper {
-
-    private final HttpServletRequest request;
     private final Log log = LogFactory.getLog(AjaxWebHelper.class);
     private final TagUtils tagUtils = TagUtils.getInstance();
+    private final HttpServletRequest request;
 
     public AjaxWebHelper(HttpServletRequest request) {
         this.request = request;
@@ -101,14 +104,9 @@ public class AjaxWebHelper implements WebHelper {
         if ((params != null) && (params.size() > 0)) {
             String temp = url.toString();
             int hash = temp.indexOf(35);
-
-            String anchor = null;
             if (hash >= 0) {
-                anchor = temp.substring(hash + 1);
                 url.setLength(hash);
                 temp = url.toString();
-            } else {
-                anchor = null;
             }
 
             String separator = "&";
@@ -222,6 +220,11 @@ public class AjaxWebHelper implements WebHelper {
             value.append(url);
         }
         return value.toString();
+    }
+
+    @Override
+    public boolean useLinkForExecutor(User user, Executor executor) {
+        return Delegates.getAuthorizationService().isAllowed(user, Permission.READ, executor);
     }
 
 }

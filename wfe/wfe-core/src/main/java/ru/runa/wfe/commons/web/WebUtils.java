@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
 public class WebUtils {
@@ -20,6 +21,9 @@ public class WebUtils {
     public static String getFreemarkerTagScript(WebHelper webHelper, String javascript, Map<String, String> substitutions) {
         if (webHelper == null) {
             return "";
+        }
+        if (substitutions == null) {
+            substitutions = Maps.newHashMap();
         }
         substitutions.put("jsonUrl", webHelper.getUrl("/form.fp?json=true"));
         for (String sKey : substitutions.keySet()) {

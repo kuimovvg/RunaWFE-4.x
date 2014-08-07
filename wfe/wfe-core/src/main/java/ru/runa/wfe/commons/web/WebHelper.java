@@ -4,6 +4,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.User;
+
 public interface WebHelper {
     public static final String ACTION_VIEW_EXECUTOR = "/manage_executor";
     public static final String ACTION_VIEW_PROCESS = "/manage_process";
@@ -21,5 +24,7 @@ public interface WebHelper {
     String getUrl(String relativeUrl);
 
     String getActionUrl(String relativeUrl, Map<String, ? extends Object> params);
+
+    boolean useLinkForExecutor(User user, Executor executor);
 
 }
