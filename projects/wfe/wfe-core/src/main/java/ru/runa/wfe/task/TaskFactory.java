@@ -93,7 +93,7 @@ public class TaskFactory {
                 taskNotifier.onNewTask(new ExecutionContext(executionContext.getProcessDefinition(), task));
             }
         } catch (Exception e) {
-            log.info("Task notifier error", e);
+            log.warn("Task notifier error", e);
         }
     }
 

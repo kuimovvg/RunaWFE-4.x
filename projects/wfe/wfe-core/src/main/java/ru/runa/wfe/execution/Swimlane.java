@@ -34,6 +34,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.apache.commons.logging.Log;
@@ -44,7 +45,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.audit.SwimlaneAssignLog;
-import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.task.Task;
@@ -99,6 +99,7 @@ public class Swimlane implements Serializable, Assignable {
         this.version = version;
     }
 
+    @Override
     @Column(name = "NAME")
     public String getName() {
         return name;
@@ -140,14 +141,14 @@ public class Swimlane implements Serializable, Assignable {
         this.createDate = createDate;
     }
 
+    @Transient
+    @Override
+    public String getErrorMessageKey() {
+        return ProcessExecutionException.SWIMLANE_ASSIGNMENT_FAILED;
+    }
+
     @Override
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
-        if (executor != null) {
-            ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), name);
-        } else {
-            ProcessExecutionException pee = new ProcessExecutionException(ProcessExecutionException.SWIMLANE_ASSIGNMENT_FAILED, name);
-            ProcessExecutionErrors.addProcessError(executionContext.getProcess().getId(), name, name, null, pee);
-        }
         if (!Objects.equal(getExecutor(), executor)) {
             log.debug("assigning swimlane '" + getName() + "' to '" + executor + "'");
             executionContext.addLog(new SwimlaneAssignLog(this, executor));

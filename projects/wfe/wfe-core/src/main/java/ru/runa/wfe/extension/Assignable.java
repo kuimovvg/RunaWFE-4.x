@@ -27,12 +27,19 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.user.Executor;
 
 /**
- * common superclass for {@link ru.runa.wfe.task.Task}s and {@link ru.runa.wfe.execution.Swimlane}s used by the {@link ru.runa.wfe.extension.AssignmentHandler} interface.
+ * common superclass for {@link ru.runa.wfe.task.Task}s and
+ * {@link ru.runa.wfe.execution.Swimlane}s used by the
+ * {@link ru.runa.wfe.extension.AssignmentHandler} interface.
  */
 public interface Assignable extends Serializable {
 
+    public String getName();
+
+    public String getErrorMessageKey();
+
     /**
-     * sets the responsible for this assignable object. Use this method to assign the task into a user's personal task list.
+     * sets the responsible for this assignable object. Use this method to
+     * assign the task into a user's personal task list.
      * 
      * @param cascadeUpdate
      *            for task: update swimlane; for swimlane: update tasks

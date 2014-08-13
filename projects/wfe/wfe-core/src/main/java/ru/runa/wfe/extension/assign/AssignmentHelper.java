@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
@@ -37,8 +39,11 @@ public class AssignmentHelper {
             if (executors == null || executors.size() == 0) {
                 log.warn("Assigning null executor in " + executionContext + ": " + assignable + ", check swimlane initializer");
                 assignable.assignExecutor(executionContext, null, true);
+                ProcessExecutionException pee = new ProcessExecutionException(assignable.getErrorMessageKey(), assignable.getName());
+                ProcessExecutionErrors.addProcessError(executionContext.getProcess().getId(), assignable.getName(), assignable.getName(), null, pee);
                 return;
             }
+            ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), assignable.getName());
             if (executors.size() == 1) {
                 Executor aloneExecutor = (executors.iterator().next());
                 assignable.assignExecutor(executionContext, aloneExecutor, true);
