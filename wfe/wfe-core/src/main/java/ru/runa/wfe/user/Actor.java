@@ -45,35 +45,24 @@ public class Actor extends Executor {
     protected Actor() {
     }
 
-    /**
-     * Creates an {@link Actor}
-     * 
-     * @param name
-     *            {@link Actor}name
-     * @param description
-     *            {@link Actor}description. If description is null, constructor
-     *            changes it to empty String value
-     * @throws NullPointerException
-     *             if {@link Actor}name is null
-     */
-    public Actor(String name, String description) {
-        this(name, description, null);
+    public Actor(String name, String description, String fullName, Long code, String email, String phone) {
+        super(name, description);
+        setFullName(fullName != null ? fullName : "");
+        setCode(code);
+        setEmail(email != null ? email : "");
+        setPhone(phone != null ? phone : "");
+    }
+
+    public Actor(String name, String description, String fullName, Long code) {
+        this(name, description, fullName, code, null, null);
     }
 
     public Actor(String name, String description, String fullName) {
         this(name, description, fullName, null);
     }
 
-    public Actor(String name, String description, String fullName, Long code) {
-        super(name, description);
-        setFullName(fullName == null ? "" : fullName);
-        setCode(code);
-    }
-
-    public Actor(String name, String description, String fullName, Long code, String email, String phone) {
-        this(name, description, fullName, code);
-        this.email = email;
-        this.phone = phone;
+    public Actor(String name, String description) {
+        this(name, description, null);
     }
 
     @Override
