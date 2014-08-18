@@ -23,6 +23,8 @@ import java.util.TimerTask;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,6 +37,8 @@ import ru.runa.wfe.service.delegate.Delegates;
 
 @Stateless
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+@WebService(name = "BotInvokerAPI", serviceName = "BotInvokerWebService")
+@SOAPBinding
 public class BotInvokerServiceBean implements BotInvokerService {
     private static final Log log = LogFactory.getLog(BotInvokerServiceBean.class);
     private transient static Timer timer;
