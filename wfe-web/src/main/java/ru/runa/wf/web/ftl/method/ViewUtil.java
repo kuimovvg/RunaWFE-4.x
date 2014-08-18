@@ -552,7 +552,7 @@ public class ViewUtil {
             loadingMessage = webHelper.getMessage("message.loading");
         }
         String hideStyle = "style=\"display: none;\"";
-        String html = "<div class=\"inputFileContainer\">";
+        String html = "<div class=\"inputFileContainer\"" + (!enabled && file == null ? hideStyle : "") + ">";
         html += "<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
         html += "<label class=\"inputFileAttach\">";
         html += "<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
