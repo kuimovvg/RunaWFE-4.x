@@ -13,6 +13,7 @@ import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorParticipatesInProcessesException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.TemporaryGroup;
 import ru.runa.wfe.user.logic.ExecutorLogic;
@@ -30,7 +31,12 @@ public class AssignmentHelper {
 
     public void removeIfTemporaryGroup(Executor oldExecutor) {
         if (oldExecutor instanceof TemporaryGroup) {
-            executorLogic.remove(oldExecutor);
+            try {
+                executorLogic.remove(oldExecutor);
+            } catch (ExecutorParticipatesInProcessesException e) {
+                // will be removed at process end
+                log.debug(e);
+            }
         }
     }
 
