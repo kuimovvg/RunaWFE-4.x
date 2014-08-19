@@ -6,10 +6,12 @@ import java.util.List;
 
 import org.dom4j.Element;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 
 @SuppressWarnings("unchecked")
@@ -94,6 +96,7 @@ public class EmailConfigParser {
             }
             return config;
         } catch (Exception e) {
+            Throwables.propagateIfInstanceOf(e, InternalApplicationException.class);
             throw new RuntimeException("Invalid XML: " + configuration, e);
         }
     }
