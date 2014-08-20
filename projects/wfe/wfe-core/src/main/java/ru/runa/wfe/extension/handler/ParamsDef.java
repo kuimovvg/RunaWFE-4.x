@@ -6,6 +6,7 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -66,7 +67,7 @@ public class ParamsDef {
     public ParamDef getInputParamNotNull(String name) {
         ParamDef result = getInputParam(name);
         if (result == null) {
-            throw new NullPointerException("Input parameter '" + name + "' is not defined.");
+            throw new InternalApplicationException("Input parameter '" + name + "' is not defined.");
         }
         return result;
     }
@@ -91,7 +92,7 @@ public class ParamsDef {
         if (result == null) {
             // for more appropriate exception
             getInputParamNotNull(name);
-            throw new NullPointerException("Input parameter '" + name + "' resolved as null.");
+            throw new InternalApplicationException("Input parameter '" + name + "' resolved as null.");
         }
         return (T) result;
     }
@@ -103,7 +104,7 @@ public class ParamsDef {
     public ParamDef getOutputParamNotNull(String name) {
         ParamDef result = getOutputParam(name);
         if (result == null) {
-            throw new NullPointerException("Output parameter '" + name + "' is not defined.");
+            throw new InternalApplicationException("Output parameter '" + name + "' is not defined.");
         }
         return result;
     }

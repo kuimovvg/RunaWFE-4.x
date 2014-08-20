@@ -77,7 +77,7 @@ public abstract class BaseProcessFormAction extends ActionBase {
             addError(request, e);
             forward = mapping.findForward(Resources.FORWARD_SUCCESS);
         } catch (ValidationException e) {
-            userInputErrors = e.getConcatenatedFieldErrors();
+            userInputErrors = e.getConcatenatedFieldErrors("<br>");
             if (e.getGlobalErrors().size() > 0) {
                 for (String message : e.getGlobalErrors()) {
                     if (Strings.isNullOrEmpty(message)) {

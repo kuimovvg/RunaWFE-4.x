@@ -56,10 +56,10 @@ public class ValidationException extends InternalApplicationException {
         return globalErrors;
     }
 
-    public HashMap<String, String> getConcatenatedFieldErrors() {
+    public HashMap<String, String> getConcatenatedFieldErrors(String delimiter) {
         HashMap<String, String> concatenated = Maps.newHashMap();
         for (Map.Entry<String, List<String>> entry : fieldErrors.entrySet()) {
-            String concat = Joiner.on("<br>").join(entry.getValue());
+            String concat = Joiner.on(delimiter).join(entry.getValue());
             concatenated.put(entry.getKey(), concat);
         }
         return concatenated;
