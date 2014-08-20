@@ -54,7 +54,6 @@ public class FreemarkerConfiguration {
             is = ClassLoaderUtil.getAsStream(fileName, getClass());
         }
         if (is != null) {
-            log.info("Using " + is);
             Document document = XmlUtils.parseWithoutValidation(is);
             Element root = document.getRootElement();
             List<Element> tagElements = root.elements(TAG_ELEMENT);
