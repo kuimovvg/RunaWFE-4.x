@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.dto.WfTask;
@@ -133,11 +132,21 @@ public class HandlerData {
         return paramsDef.getOutputParamNotNull(name);
     }
 
-    public void setOutputParam(String name, Object value) {
+    public void setOutputOptionalParam(String name, Object value) {
         ParamDef paramDef = paramsDef.getOutputParam(name);
         if (paramDef == null) {
-            throw new InternalApplicationException(processId + ": Output parameter is not defined: '" + name + "'");
+            log.debug("Optional output parameter " + name + " does not defined in configuration.");
+            return;
         }
+        if (paramDef.getVariableName() == null) {
+            log.warn("Variable not set for output parameter " + paramDef + " in configuration.");
+            return;
+        }
+        setOutputVariable(paramDef.getVariableName(), value);
+    }
+
+    public void setOutputParam(String name, Object value) {
+        ParamDef paramDef = paramsDef.getOutputParamNotNull(name);
         if (paramDef.getVariableName() == null) {
             log.warn("Variable not set for output parameter " + paramDef + " in configuration.");
             return;
