@@ -1146,8 +1146,20 @@ public class AdminScriptRunner {
     }
 
     public void stopProcess(Element element) {
-        String id = element.attributeValue(AdminScriptConstants.ID_ATTRIBUTE_NAME);
-        Long processId = Strings.isNullOrEmpty(id) ? null : Long.parseLong(id);
-        executionLogic.cancelProcess(user, processId);
+        ProcessFilter filter = new ProcessFilter();
+        String idString = element.attributeValue(AdminScriptConstants.ID_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(idString)) {
+            filter.setId(Long.parseLong(idString));
+        } else {
+            String idFromString = element.attributeValue(AdminScriptConstants.ID_FROM_ATTRIBUTE_NAME);
+            if (!Strings.isNullOrEmpty(idFromString)) {
+                filter.setIdFrom(Long.parseLong(idFromString));
+            }
+            String idToString = element.attributeValue(AdminScriptConstants.ID_TO_ATTRIBUTE_NAME);
+            if (!Strings.isNullOrEmpty(idToString)) {
+                filter.setIdTo(Long.parseLong(idToString));
+            }
+        }
+        executionLogic.cancelProcesses(user, filter);
     }
 }
