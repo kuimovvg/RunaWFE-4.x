@@ -21,6 +21,23 @@ public class ComplexVariable extends HashMap<String, Object> {
         return userType;
     }
 
+    public void mergeAttribute(String name, Object value) {
+        int firstDotIndex = name.indexOf(VariableUserType.DELIM);
+        if (firstDotIndex != -1) {
+            String attributeName = name.substring(0, firstDotIndex);
+            String nameRemainder = name.substring(firstDotIndex + 1);
+            Object existing = get(attributeName);
+            if (existing instanceof ComplexVariable) {
+                ((ComplexVariable) existing).mergeAttribute(nameRemainder, value);
+            } else {
+                // TODO create and put new ComplexVariable
+                put(attributeName, value);
+            }
+        } else {
+            put(name, value);
+        }
+    }
+
     public Map<String, Object> expand(String prefix) {
         Map<String, Object> result = Maps.newHashMap();
         for (Map.Entry<String, Object> entry : entrySet()) {
