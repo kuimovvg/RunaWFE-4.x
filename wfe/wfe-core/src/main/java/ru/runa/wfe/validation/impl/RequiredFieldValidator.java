@@ -17,9 +17,15 @@
  */
 package ru.runa.wfe.validation.impl;
 
+import java.util.List;
+import java.util.Map;
+
+import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.validation.FieldValidator;
 
 public class RequiredFieldValidator extends FieldValidator {
+    private static final boolean oracleDatabase = ApplicationContextFactory.getDBType() == DBType.ORACLE;
 
     @Override
     public void validate() {
@@ -31,6 +37,20 @@ public class RequiredFieldValidator extends FieldValidator {
         if (value instanceof String) {
             String s = (String) value;
             if (s.length() == 0) {
+                addError();
+            } else if (oracleDatabase && " ".equals(s)) {
+                addError();
+            }
+        }
+        if (value instanceof List) {
+            List s = (List) value;
+            if (s.size() == 0) {
+                addError();
+            }
+        }
+        if (value instanceof Map) {
+            Map s = (Map) value;
+            if (s.size() == 0) {
                 addError();
             }
         }
