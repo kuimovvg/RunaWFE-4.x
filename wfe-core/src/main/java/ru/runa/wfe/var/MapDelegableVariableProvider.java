@@ -33,7 +33,18 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
         if (object != null) {
             return object;
         }
-        return super.getValue(variableName);
+        object = super.getValue(variableName);
+        if (object instanceof ComplexVariable) {
+            // merge local values
+            ComplexVariable complexVariable = (ComplexVariable) object;
+            for (Map.Entry<String, Object> entry : values.entrySet()) {
+                if (entry.getKey().startsWith(variableName + VariableUserType.DELIM)) {
+                    String attributeName = entry.getKey().substring(variableName.length() + VariableUserType.DELIM.length());
+                    complexVariable.mergeAttribute(attributeName, entry.getValue());
+                }
+            }
+        }
+        return object;
     }
 
     @Override
@@ -52,7 +63,7 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
         }
         return super.getVariable(variableName);
     }
-    
+
     @Override
     public AbstractVariableProvider getSameProvider(Long processId) {
         if (delegate instanceof AbstractVariableProvider) {
