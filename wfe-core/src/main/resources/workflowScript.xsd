@@ -633,7 +633,9 @@
 	
 	<xs:element name="stopProcess">
 		<xs:complexType>
-			<xs:attribute name="id" type="xs:long"/>
+			<xs:attribute name="id" type="xs:long" use="optional"/>
+			<xs:attribute name="idFrom" type="xs:long" use="optional"/>
+			<xs:attribute name="idTo" type="xs:long" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 </xs:schema>
