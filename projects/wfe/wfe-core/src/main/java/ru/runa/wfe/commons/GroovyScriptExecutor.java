@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.GroovyExceptionInterface;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.var.ComplexVariable;
@@ -102,7 +103,9 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         private String getVariableNameByScriptingName(String name) {
             String variableName = variableScriptingNameToNameMap.get(name);
             if (variableName == null) {
-                log.warn("No variable name found by scripting name '" + name + "'");
+                if (!WfProcess.SELECTED_TRANSITION_KEY.equals(name)) {
+                    log.warn("No variable name found by scripting name '" + name + "'");
+                }
                 return name;
             }
             return variableName;
