@@ -26,7 +26,7 @@
 
 FCKConfig.CustomConfigurationsPath = '' ;
 
-FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'form.css' ;
+FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'css/jquery-ui-1.11.0.custom.css';
 FCKConfig.EditorAreaStyles = '' ;
 FCKConfig.ToolbarComboPreviewCSS = '' ;
 
@@ -57,6 +57,7 @@ FCKConfig.AutoGrowMax = 400 ;
 FCKConfig.Plugins.Add( 'FileUpload', 'ru' ) ;
 //FCKConfig.Plugins.Add( 'RunaVarTags', 'ru' ) ;
 FCKConfig.Plugins.Add( 'FreemarkerTags', 'ru' ) ;
+FCKConfig.Plugins.Add( 'tabs', 'ru' ) ;
 
 // FCKConfig.ProtectedSource.Add( /<%[\s\S]*?%>/g ) ;	// ASP style server side code <%...%>
 // FCKConfig.ProtectedSource.Add( /<\?[\s\S]*?\?>/g ) ;	// PHP style server side code
@@ -103,8 +104,9 @@ FCKConfig.ToolbarSets["Default"] = [
 	['Source','-','Templates'],
 	['Cut','Copy','Paste','PasteText','PasteWord'],
 	['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
-	['Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField','UploadFile'],
+	['Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField','UploadFile'],	
 	['FreemarkerMethod'],
+	['InsertTab','DeleteTab'],
 	'/',
 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList','-','Outdent','Indent','Blockquote'],
