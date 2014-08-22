@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthenticationExpiredException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.service.impl.MessagePostponedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
@@ -30,6 +31,7 @@ public class EjbExceptionSupport {
 
     private static final List<Class<? extends Exception>> warnExceptionClasses = Lists.newArrayList();
     static {
+        warnExceptionClasses.add(AuthenticationExpiredException.class);
         warnExceptionClasses.add(AuthenticationException.class);
         warnExceptionClasses.add(AuthorizationException.class);
         warnExceptionClasses.add(ValidationException.class);
