@@ -4,6 +4,8 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<link href="sample.css" rel="stylesheet" type="text/css" />
+		<script src="jquery-1.11.1.min.js"></script>
+		<script src="jquery-ui-1.11.0.custom.min.js"></script>
 		<script type="text/javascript" src="fckeditor.js"></script>
 		<script type="text/javascript">
 		var displayedErrors = new Object();
@@ -25,8 +27,21 @@
 		function getHTML() {
 			// passing exception to caller to prevent saving old content
 			var editor = FCKeditorAPI.GetInstance("editor");
-			var content = editor.GetXHTML(true);
+			var content = convertTabsHTML(editor.GetXHTML(true));
 			getHTMLCallback(content);
+		}
+		function convertTabsHTML(content) {			
+			var doc = $("<p>").append(content);
+			$(doc).find('.tabs').each(function() {
+				$(this).removeAttr("class");	
+				$(this).find("a").each(function() {
+					$(this).attr("href", "#tabs" + $(this).attr("href").split("#tabs")[1]);
+				});
+				$(this).find("a").removeAttr("id");
+				$(this).find("ul,li,div,a").removeAttr("class tabIndex aria-live aria-busy aria-selected aria-labelledby aria-hidden aria-expanded role aria-controls");
+				$(this).attr("class", "tabs");
+			});
+			return $(doc).find('.tabs').length > 0 ? doc.html() : content;
 		}
 		function setHTMLSaved() {
 			try {
