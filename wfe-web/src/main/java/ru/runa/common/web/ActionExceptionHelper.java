@@ -42,6 +42,7 @@ import ru.runa.wfe.presentation.filter.FilterFormatException;
 import ru.runa.wfe.relation.RelationAlreadyExistException;
 import ru.runa.wfe.relation.RelationDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthenticationExpiredException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.security.WeakPasswordException;
 import ru.runa.wfe.ss.SubstitutionDoesNotExistException;
@@ -86,7 +87,7 @@ public class ActionExceptionHelper {
 
     public static ActionMessage getActionMessage(Throwable e) {
         ActionMessage actionMessage;
-        if (e instanceof AuthenticationException || e instanceof LoginException) {
+        if (e instanceof AuthenticationException || e instanceof LoginException || e instanceof AuthenticationExpiredException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_AUTHENTICATION);
         } else if (e instanceof AuthorizationException) {
             actionMessage = new ActionMessage(Messages.EXCEPTION_AUTHORIZATION);

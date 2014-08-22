@@ -302,7 +302,8 @@
 				<value>ru.runa.wfe.security.auth.InternalDBPasswordLoginModule</value>
 				<!-- value>ru.runa.wfe.security.auth.LdapLoginModule</value -->
 				<value>ru.runa.wfe.security.auth.KerberosLoginModule</value>
-				<value>ru.runa.wfe.security.auth.PrincipalLoginModule</value>
+				<!-- value>ru.runa.wfe.security.auth.PrincipalLoginModule</value -->
+				<value>ru.runa.wfe.security.auth.TrustedLoginModule</value>
 			</list>
 		</property>
 	</bean>

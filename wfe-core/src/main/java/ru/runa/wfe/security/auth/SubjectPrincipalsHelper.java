@@ -29,6 +29,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthenticationExpiredException;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;
 
@@ -70,16 +71,16 @@ public class SubjectPrincipalsHelper {
         }
     }
 
-    public static void validateUser(User user) throws AuthenticationException {
+    public static void validateUser(User user) throws AuthenticationExpiredException {
         try {
             Cipher cipher = Cipher.getInstance(encryptionType);
             cipher.init(Cipher.DECRYPT_MODE, securedKey);
             if (!Arrays.equals(getActorKey(user.getActor()), cipher.doFinal(user.getSecuredKey()))) {
-                throw new AuthenticationException("Incorrect user principal: secured key validation has been failed");
+                throw new AuthenticationExpiredException("Incorrect user principal: secured key validation has been failed");
             }
         } catch (Exception e) {
             log.warn("Error in subject decryption", e);
-            throw new AuthenticationException("Error in subject decryption");
+            throw new AuthenticationExpiredException("Error in subject decryption");
         }
     }
 

@@ -1,5 +1,5 @@
 package ru.runa.wfe.security.logic;
 
 public enum AuthType {
-    DB, KERBEROS, NTLM, OTHER
+    DB, KERBEROS, NTLM, TRUSTED, OTHER
 }

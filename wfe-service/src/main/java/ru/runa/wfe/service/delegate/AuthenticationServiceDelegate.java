@@ -56,4 +56,13 @@ public class AuthenticationServiceDelegate extends EJB3Delegate implements Authe
             throw handleException(e);
         }
     }
+
+    @Override
+    public User authenticateByTrsustedPrincipal(User serviceUser, String login) {
+        try {
+            return getAuthenticationService().authenticateByTrsustedPrincipal(serviceUser, login);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
 }
