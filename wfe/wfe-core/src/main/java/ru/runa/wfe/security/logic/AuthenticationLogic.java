@@ -37,12 +37,12 @@ import ru.runa.wfe.security.auth.LoginModuleConfiguration;
 import ru.runa.wfe.security.auth.PasswordLoginModuleCallbackHandler;
 import ru.runa.wfe.security.auth.PrincipalCallbackHandler;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
+import ru.runa.wfe.security.auth.TrustedLoginModuleCallbackHandler;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.User;
 
 /**
  * Created on 14.03.2005
- * 
  */
 public class AuthenticationLogic extends CommonLogic {
     private static final Log log = LogFactory.getLog(AuthenticationLogic.class);
@@ -63,6 +63,10 @@ public class AuthenticationLogic extends CommonLogic {
 
     public User authenticate(String name, String password) throws AuthenticationException {
         return authenticate(new PasswordLoginModuleCallbackHandler(name, password), AuthType.DB);
+    }
+
+    public User authenticate(User serviceUser, String login) throws AuthenticationException {
+        return authenticate(new TrustedLoginModuleCallbackHandler(serviceUser, login), AuthType.TRUSTED);
     }
 
     private User authenticate(CallbackHandler callbackHandler, AuthType authType) throws AuthenticationException {

@@ -129,4 +129,8 @@ public class SystemProperties {
         return RESOURCES.getStringProperty("escalation.default.hierarchy.loader");
     }
 
+    public static boolean isTrustedAuthenticationEnabled() {
+        return RESOURCES.getBooleanProperty("trusted.authentication.enabled", false);
+    }
+
 }

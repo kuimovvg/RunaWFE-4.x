@@ -17,38 +17,36 @@
  */
 package ru.runa.wfe.security.auth;
 
-import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Group;
 
 /**
- * LoginModule for based on actor name and password information provided by
- * ExecutorService.
+ * Trusted authentication based on service user and login using internal
+ * database.
  * 
+ * @since 4.2.0
  */
-public class InternalDBPasswordLoginModule extends LoginModuleBase {
+public class TrustedLoginModule extends LoginModuleBase {
 
     @Override
     protected Actor login(CallbackHandler callbackHandler) throws Exception {
-        Callback[] callbacks = new Callback[2];
-        callbacks[0] = new NameCallback("actor name: ");
-        callbacks[1] = new PasswordCallback("password: ", false);
-        callbackHandler.handle(callbacks);
-        String actorName = ((NameCallback) callbacks[0]).getName();
-        char[] passwordChars = ((PasswordCallback) callbacks[1]).getPassword();
-        if (actorName == null || passwordChars == null) {
-            return null;
+        if (callbackHandler instanceof TrustedLoginModuleCallbackHandler) {
+            if (!SystemProperties.isTrustedAuthenticationEnabled()) {
+                log.warn("trusted auth is disabled in system.properties");
+                return null;
+            }
+            TrustedLoginModuleCallbackHandler handler = (TrustedLoginModuleCallbackHandler) callbackHandler;
+            Group administratorsGroup = executorDAO.getGroup(SystemProperties.getAdministratorsGroupName());
+            if (!executorDAO.isExecutorInGroup(handler.getServiceUser().getActor(), administratorsGroup)) {
+                throw new LoginException("Service user does not belongs to administrators");
+            }
+            return executorDAO.getActor(handler.getLogin());
         }
-        String password = new String(passwordChars);
-        Actor actor = executorDAO.getActor(actorName);
-        if (executorDAO.isPasswordValid(actor, password)) {
-            return actor;
-        }
-        throw new LoginException("Invalid login or password");
+        return null;
     }
 
 }

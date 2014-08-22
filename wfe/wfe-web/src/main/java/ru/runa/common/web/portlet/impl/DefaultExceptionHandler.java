@@ -33,6 +33,7 @@ import ru.runa.common.web.portlet.PortletExceptionHandler;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthenticationExpiredException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 
@@ -41,7 +42,7 @@ public class DefaultExceptionHandler implements PortletExceptionHandler {
     public boolean processError(Exception exception, ServletContext servletContext, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
-        if (exception instanceof AuthenticationException) {
+        if (exception instanceof AuthenticationException || exception instanceof AuthenticationExpiredException) {
             ActionExceptionHelper.addException(getActionErrors(request), exception);
             servletContext.getRequestDispatcher("/start.do").forward(request, response);
             return true;
