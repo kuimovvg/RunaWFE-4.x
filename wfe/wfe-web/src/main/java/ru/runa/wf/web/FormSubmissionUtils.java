@@ -45,6 +45,7 @@ public class FormSubmissionUtils {
     public static final String UPLOADED_FILES = "UploadedFiles";
     public static final Object IGNORED_VALUE = new Object();
     public static final String SIZE_SUFFIX = ".size";
+    public static final String INDEXES_SUFFIX = ".indexes";
     public static final String COMPONENT_QUALIFIER_START = "[";
     public static final String COMPONENT_QUALIFIER_END = "]";
     public static final String FORM_NODE_ID_KEY = "UserDefinedVariablesForFormNodeId";
@@ -153,33 +154,47 @@ public class FormSubmissionUtils {
         Object variableValue = null;
         boolean forceSetVariableValue = false;
         if (format instanceof ListFormat) {
+            List<Integer> indexes = null;
             String sizeInputName = variableDefinition.getName() + SIZE_SUFFIX;
+            String indexesInputName = variableDefinition.getName() + INDEXES_SUFFIX;
             ListFormat listFormat = (ListFormat) format;
             VariableFormat componentFormat = FormatCommons.createComponent(listFormat, 0);
             if (userInput.containsKey(sizeInputName)) {
                 // js dynamic way
-                String[] strings = (String[]) userInput.get(sizeInputName);
-                if (strings == null || strings.length != 1) {
-                    log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
-                    return null;
-                }
-                int listSize = TypeConversionUtil.convertTo(int.class, strings[0]);
-                List<Object> list = Lists.newArrayListWithExpectedSize(listSize);
-                List<Integer> indexes = Lists.newArrayListWithExpectedSize(listSize);
-                for (int i = 0; indexes.size() < listSize && i < 1000; i++) {
-                    String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
-                    for (String key : userInput.keySet()) {
-                        if (key.startsWith(checkString)) {
-                            indexes.add(i);
-                            break;
+                List<Object> list = null;
+                String[] stringsIndexes = (String[]) userInput.get(indexesInputName);
+                if (stringsIndexes == null || stringsIndexes.length != 1) {
+                    String[] stringsSize = (String[]) userInput.get(sizeInputName);
+                    if (stringsSize == null || stringsSize.length != 1) {
+                        log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(stringsSize));
+                        return null;
+                    }
+                    int listSize = TypeConversionUtil.convertTo(int.class, stringsSize[0]);
+                    list = Lists.newArrayListWithExpectedSize(listSize);
+                    indexes = Lists.newArrayListWithExpectedSize(listSize);
+                    for (int i = 0; indexes.size() < listSize && i < 1000; i++) {
+                        String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                        for (String key : userInput.keySet()) {
+                            if (key.startsWith(checkString)) {
+                                indexes.add(i);
+                                break;
+                            }
                         }
                     }
-                }
-                if (indexes.size() != listSize) {
-                    formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'"
-                            + listSize + "', found:'" + indexes.size());
-                    log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'" + listSize + "', found:'"
-                            + indexes.size());
+                    if (indexes.size() != listSize) {
+                        formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'"
+                                + listSize + "', found:'" + indexes.size());
+                        log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'" + listSize
+                                + "', found:'" + indexes.size());
+                    }
+                } else {
+                    int listSize = stringsIndexes[0].toString().split(",").length;
+                    list = Lists.newArrayListWithExpectedSize(listSize);
+                    indexes = Lists.newArrayListWithExpectedSize(listSize);
+                    String[] stringIndexes = stringsIndexes[0].toString().split(",");
+                    for (String index : stringIndexes) {
+                        indexes.add(TypeConversionUtil.convertTo(int.class, index));
+                    }
                 }
                 for (Integer index : indexes) {
                     String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
@@ -205,32 +220,46 @@ public class FormSubmissionUtils {
                 variableValue = list;
             }
         } else if (format instanceof MapFormat) {
+            Map<Object, Object> map = null;
             String sizeInputName = variableDefinition.getName() + SIZE_SUFFIX;
+            String indexesInputName = variableDefinition.getName() + INDEXES_SUFFIX;
             MapFormat mapFormat = (MapFormat) format;
             VariableFormat componentKeyFormat = FormatCommons.createComponent(mapFormat, 0);
             VariableFormat componentValueFormat = FormatCommons.createComponent(mapFormat, 1);
-            String[] strings = (String[]) userInput.get(sizeInputName);
-            if (strings == null || strings.length != 1) {
-                log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(strings));
-                return null;
-            }
-            int mapSize = TypeConversionUtil.convertTo(int.class, strings[0]);
-            Map<Object, Object> map = Maps.newHashMapWithExpectedSize(mapSize);
-            List<Integer> indexes = Lists.newArrayListWithExpectedSize(mapSize);
-            for (int i = 0; indexes.size() < mapSize && i < 1000; i++) {
-                String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
-                for (String key : userInput.keySet()) {
-                    if (key.startsWith(checkString)) {
-                        indexes.add(i);
-                        break;
+            String[] stringsIndexes = (String[]) userInput.get(indexesInputName);
+            List<Integer> indexes = null;
+            if (stringsIndexes == null || stringsIndexes.length != 1) {
+                String[] stringsSize = (String[]) userInput.get(sizeInputName);
+                if (stringsSize == null || stringsSize.length != 1) {
+                    log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(stringsSize));
+                    return null;
+                }
+                int mapSize = TypeConversionUtil.convertTo(int.class, stringsSize[0]);
+                map = Maps.newHashMapWithExpectedSize(mapSize);
+                indexes = Lists.newArrayListWithExpectedSize(mapSize);
+                for (int i = 0; indexes.size() < mapSize && i < 1000; i++) {
+                    String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                    for (String key : userInput.keySet()) {
+                        if (key.startsWith(checkString)) {
+                            indexes.add(i);
+                            break;
+                        }
                     }
                 }
-            }
-            if (indexes.size() != mapSize) {
-                formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize
-                        + "', found:'" + indexes.size());
-                log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize + "', found:'"
-                        + indexes.size());
+                if (indexes.size() != mapSize) {
+                    formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize
+                            + "', found:'" + indexes.size());
+                    log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize + "', found:'"
+                            + indexes.size());
+                }
+            } else {
+                int mapSize = stringsIndexes[0].toString().split(",").length;
+                map = Maps.newHashMapWithExpectedSize(mapSize);
+                indexes = Lists.newArrayListWithExpectedSize(mapSize);
+                String[] stringIndexes = stringsIndexes[0].toString().split(",");// Error
+                for (String index : stringIndexes) {
+                    indexes.add(TypeConversionUtil.convertTo(int.class, index));
+                }
             }
             for (Integer index : indexes) {
                 String nameKey = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END + ".key";
