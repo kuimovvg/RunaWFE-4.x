@@ -13,14 +13,14 @@ $(document).ready(function() {
         e += "<input type='button' value=' - ' onclick='removeUNIQUENAME(this);' style='width: 30px;' />";
         e += "</div>";
         $("#btnAddUNIQUENAME").before(e);
-        updateSizeUNIQUENAME(1);
+        updateIndexesUNIQUENAME();
         COMPONENT_JS_HANDLER
         $("#UNIQUENAME").trigger("onRowAdded", [rowIndex]);
     });
 });
 
 function getSizeUNIQUENAME() {
-	return parseInt($("input[name='VARIABLE.size']").val());
+	return parseInt($("input[name='VARIABLE.indexes']").val().split(',').length);
 }
 
 function removeUNIQUENAME(button) {
@@ -31,7 +31,7 @@ function removeUNIQUENAME(button) {
 		$(this).click();
 	});
 	div.remove();
-	updateSizeUNIQUENAME(-1);
+	updateIndexesUNIQUENAME();
     $("#UNIQUENAME").trigger("onRowRemoved", [rowIndex]);
 }
 
@@ -42,13 +42,17 @@ function removeAllUNIQUENAME() {
 		});
 		$(this).remove();
 	});
-	$("input[name='VARIABLE.size']").val("0");
+	$("input[name='VARIABLE.indexes']").val("");
     $("#UNIQUENAME").trigger("onAllRowsRemoved");
 	console.log("Removed all rows");
 }
 
-function updateSizeUNIQUENAME(delta) {
-	var sizeInput = $("input[name='VARIABLE.size']");
-	sizeInput.val(parseInt(sizeInput.val()) + delta);
+function updateIndexesUNIQUENAME() {
+	var ids = "";
+	$("#UNIQUENAME div[row]").each(function() {
+		ids == "" ? ids = $(this).attr('row') : ids += "," + $(this).attr('row') ; 
+	});
+	var indexesInput = $("input[name='VARIABLE.indexes']");
+	indexesInput.val(ids);
 	console.log("List size = " + getSizeUNIQUENAME());
 }
