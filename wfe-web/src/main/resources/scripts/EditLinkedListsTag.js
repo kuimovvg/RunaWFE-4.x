@@ -14,7 +14,7 @@ $(document).ready(function() {
         e += "<td><input type='button' value=' - ' onclick='ellUNIQUENAMERemoveRow(this);' /></td>";
         e += "</tr>";
         $('#ellUNIQUENAME').append(e);
-        ellUNIQUENAMEUpdateSize(1);
+        ellUNIQUENAMEUpdateIndexes(1);
         JS_HANDLERS
         $("#ellUNIQUENAME").trigger("onRowAdded", [rowIndex]);
     });
@@ -32,14 +32,18 @@ function ellUNIQUENAMERemoveRow(button) {
 		$(this).click();
 	});
 	tr.remove();
-	ellUNIQUENAMEUpdateSize(-1);
+	ellUNIQUENAMEUpdateIndexes(-1);
     $("#ellUNIQUENAME").trigger("onRowRemoved", [rowIndex]);
 }
 
-function ellUNIQUENAMEUpdateSize(delta) {
+function ellUNIQUENAMEUpdateIndexes(delta) {
+	var ids = "";
+	$("#ellUNIQUENAME tr[row]").each(function() {
+		ids == "" ? ids = $(this).attr('row') : ids += "," + $(this).attr('row') ; 
+	});
     for (i in ellUNIQUENAMEVariableNames) {
-		var sizeInput = $("input[name='" + ellUNIQUENAMEVariableNames[i] + ".size']");
-		sizeInput.val(parseInt(ellUNIQUENAMEGetSize()) + delta);
+		var indexesInput = $("input[name='" + ellUNIQUENAMEVariableNames[i] + ".indexes']");
+		indexesInput.val(ids);
 	}
 	$("#ellUNIQUENAME").attr("rowsCount", ellUNIQUENAMEGetSize() + delta);
 	console.log("UNIQUENAME: Lists size = " + ellUNIQUENAMEGetSize());

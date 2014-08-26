@@ -93,8 +93,8 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             }
             html.append(ViewUtil.generateTableHeader(variables, variableProvider, operationsColumn));
             for (WfVariable containerVariable : variables) {
-                WfVariable sizeVariable = ViewUtil.createListSizeVariable(containerVariable, rowsCount);
-                html.append(ViewUtil.getHiddenInput(sizeVariable));
+                WfVariable indexesVariable = ViewUtil.createListIndexesVariable(containerVariable, rowsCount);
+                html.append(ViewUtil.getHiddenInput(indexesVariable));
             }
             for (int row = 0; row < rowsCount; row++) {
                 renderRow(html, uniqueName, variables, lists, componentFormats, row, allowToChangeElements, allowToDeleteElements);

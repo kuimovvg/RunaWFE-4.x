@@ -165,6 +165,10 @@ public class ViewUtil {
         return createComponentVariable(complexVariable, FormSubmissionUtils.SIZE_SUFFIX, new StringFormat(), value);
     }
 
+    public static WfVariable createListIndexesVariable(WfVariable complexVariable, Object value) {
+        return createComponentVariable(complexVariable, FormSubmissionUtils.INDEXES_SUFFIX, new StringFormat(), value);
+    }
+
     public static WfVariable createUserTypeComponentVariable(WfVariable complexVariable, VariableDefinition attributeDefinition, Object value) {
         String name = complexVariable.getDefinition().getName() + VariableUserType.DELIM + attributeDefinition.getName();
         String scriptingName = complexVariable.getDefinition().getScriptingName() + VariableUserType.DELIM + attributeDefinition.getScriptingName();
@@ -293,8 +297,8 @@ public class ViewUtil {
                 list = new ArrayList<Object>();
             }
             html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
-            WfVariable sizeVariable = ViewUtil.createListSizeVariable(variable, list.size());
-            html.append(ViewUtil.getHiddenInput(sizeVariable));
+            WfVariable indexesVariable = ViewUtil.createListIndexesVariable(variable, list.size());
+            html.append(ViewUtil.getHiddenInput(indexesVariable));
             for (int row = 0; row < list.size(); row++) {
                 Object o = list.get(row);
                 html.append("<div><div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
@@ -334,8 +338,8 @@ public class ViewUtil {
                 map = new HashMap<Object, Object>();
             }
             html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
-            WfVariable sizeVariables = ViewUtil.createListSizeVariable(variable, map.size());
-            html.append(ViewUtil.getHiddenInput(sizeVariables));
+            WfVariable indexesVariable = ViewUtil.createListIndexesVariable(variable, map.size());
+            html.append(ViewUtil.getHiddenInput(indexesVariable));
             int row = -1;
             for (Object key : map.keySet()) {
                 row++;
