@@ -275,23 +275,6 @@ public interface ExecutionService {
     public byte[] getFileVariableValue(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
 
     /**
-     * Gets variables by name from different processes.
-     * 
-     * @deprecated Since 4.1.2 WfTask and WfProcess are extended to include
-     *             requested variables
-     * 
-     * @param user
-     *            authorized user
-     * @param processId
-     *            process ids
-     * @param variableName
-     *            variable name
-     * @return not <code>null</code>
-     */
-    @Deprecated
-    public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName);
-
-    /**
      * Updates process variables without any signalling.
      * 
      * @param user
@@ -348,7 +331,7 @@ public interface ExecutionService {
      * @param taskId
      *            active task id
      * @param subprocessId
-     *            TODO
+     *            embedded subprocess id, can be <code>null</code>
      * @return not <code>null</code>
      * @throws ProcessDoesNotExistException
      */

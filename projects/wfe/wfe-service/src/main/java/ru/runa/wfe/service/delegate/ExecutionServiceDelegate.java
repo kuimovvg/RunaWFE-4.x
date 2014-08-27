@@ -166,15 +166,6 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
-        try {
-            return getExecutionService().getVariablesFromProcesses(user, processIds, variableName);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    @Override
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         try {
             getExecutionService().updateVariables(user, processId, variables);

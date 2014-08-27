@@ -79,7 +79,7 @@ public class SubjectPrincipalsHelper {
                 throw new AuthenticationExpiredException("Incorrect user principal: secured key validation has been failed");
             }
         } catch (Exception e) {
-            log.warn("Error in subject decryption", e);
+            log.warn("Error in subject decryption: " + e);
             throw new AuthenticationExpiredException("Error in subject decryption");
         }
     }

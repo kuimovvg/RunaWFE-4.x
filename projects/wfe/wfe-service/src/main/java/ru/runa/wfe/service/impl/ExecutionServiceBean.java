@@ -171,17 +171,6 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return list;
     }
 
-    @WebMethod(exclude = true)
-    @Override
-    public Map<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
-        Preconditions.checkArgument(user != null);
-        Map<Long, WfVariable> map = variableLogic.getVariablesFromProcesses(user, processIds, variableName);
-        for (Map.Entry<Long, WfVariable> entry : map.entrySet()) {
-            convertValueToProxy(user, entry.getKey(), entry.getValue());
-        }
-        return map;
-    }
-
     @Override
     @WebResult(name = "result")
     public WfVariable getVariable(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
