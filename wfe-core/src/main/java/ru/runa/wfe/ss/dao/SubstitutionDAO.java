@@ -64,7 +64,7 @@ public class SubstitutionDAO extends GenericDAO<Substitution> {
         if (substitutionIds.size() == 0) {
             return Lists.newArrayList();
         }
-        return getHibernateTemplate().executeFind(new HibernateCallback<List<Substitution>>() {
+        return (List<Substitution>) getHibernateTemplate().executeFind(new HibernateCallback<List<Substitution>>() {
 
             @Override
             public List<Substitution> doInHibernate(Session session) {
@@ -86,7 +86,7 @@ public class SubstitutionDAO extends GenericDAO<Substitution> {
      */
     public List<Substitution> getByActorId(Long actorId, boolean orderByPositionAscending) {
         String order = orderByPositionAscending ? "asc" : "desc";
-        return getHibernateTemplate().find("from Substitution where actorId=? order by position " + order, actorId);
+        return (List<Substitution>) getHibernateTemplate().find("from Substitution where actorId=? order by position " + order, actorId);
     }
 
     public void deleteAllActorSubstitutions(Long actorId) {

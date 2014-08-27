@@ -49,7 +49,7 @@ public class BotTaskDAO extends GenericDAO<BotTask> {
      * @return list, not <code>null</code>.
      */
     public List<BotTask> getAll(Bot bot) {
-        return getHibernateTemplate().find("from BotTask where bot=?", bot);
+        return (List<BotTask>) getHibernateTemplate().find("from BotTask where bot=?", bot);
     }
 
 }

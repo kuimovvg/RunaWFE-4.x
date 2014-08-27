@@ -71,7 +71,7 @@ public class RelationDAO extends GenericDAO<Relation> {
     @Override
     public void delete(Long id) {
         Relation relation = getNotNull(id);
-        List<RelationPair> relationPairs = getHibernateTemplate().find("from RelationPair where relation=?", relation);
+        List<RelationPair> relationPairs = (List<RelationPair>) getHibernateTemplate().find("from RelationPair where relation=?", relation);
         for (RelationPair relationPair : relationPairs) {
             getHibernateTemplate().delete(relationPair);
         }

@@ -24,6 +24,7 @@
 		<downloadJavadocs>true</downloadJavadocs>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.organization.name>runawfe.org</project.organization.name>
+		<spring.version>3.1.2.RELEASE</spring.version>
 	</properties>
 
 	<profiles>
@@ -108,7 +109,12 @@
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
-				<version>3.1.2.RELEASE</version>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>freemarker</groupId>
