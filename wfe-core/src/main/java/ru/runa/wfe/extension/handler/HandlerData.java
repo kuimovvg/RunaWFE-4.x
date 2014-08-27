@@ -24,6 +24,7 @@ public class HandlerData {
     private boolean failOnError = true;
     private final Long processId;
     private final String taskName;
+    private final String definitionName;
     private final IVariableProvider variableProvider;
     private final Map<String, Object> outputVariables = new HashMap<String, Object>();
 
@@ -31,6 +32,7 @@ public class HandlerData {
         this.paramsDef = paramsDef;
         processId = context.getProcess().getId();
         taskName = getClass().getSimpleName();
+        definitionName = context.getProcessDefinition().getName();
         variableProvider = context.getVariableProvider();
     }
 
@@ -38,6 +40,7 @@ public class HandlerData {
         this.paramsDef = paramsDef;
         processId = task.getProcessId();
         taskName = task.getName();
+        definitionName = task.getDefinitionName();
         this.variableProvider = variableProvider;
     }
 
@@ -51,6 +54,10 @@ public class HandlerData {
 
     public String getTaskName() {
         return taskName;
+    }
+
+    public String getDefinitionName() {
+        return definitionName;
     }
 
     public Map<String, Object> getOutputVariables() {
