@@ -159,6 +159,10 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                     }
                 }
             }
+            if (object instanceof ComplexVariable) {
+                object = new ScriptingComplexVariable((ComplexVariable) object);
+                put((String) key, object);
+            }
             return object;
         }
 
