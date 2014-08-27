@@ -70,7 +70,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      * 
      * @param executorName
      *            Executor name to check.
-     * @return Returns true, if executor with given name exists; false otherwise.
+     * @return Returns true, if executor with given name exists; false
+     *         otherwise.
      */
     public boolean isExecutorExist(String executorName) {
         return getExecutorByName(Executor.class, executorName) != null;
@@ -81,7 +82,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      * 
      * @param code
      *            {@linkplain Actor} code to check.
-     * @return Returns true, if {@linkplain Actor} with given name exists; false otherwise.
+     * @return Returns true, if {@linkplain Actor} with given name exists; false
+     *         otherwise.
      */
     public boolean isActorExist(Long code) {
         return getActorByCodeInternal(code) != null;
@@ -99,7 +101,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load {@linkplain Executor} by name. Throws exception if load is impossible.
+     * Load {@linkplain Executor} by name. Throws exception if load is
+     * impossible.
      * 
      * @param name
      *            Loaded executor name.
@@ -111,7 +114,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load {@linkplain Executor} by identity. Throws exception if load is impossible.
+     * Load {@linkplain Executor} by identity. Throws exception if load is
+     * impossible.
      * 
      * @param name
      *            Loaded executor identity.
@@ -123,7 +127,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load {@linkplain Actor} by name. Throws exception if load is impossible, or exist group with same name.
+     * Load {@linkplain Actor} by name. Throws exception if load is impossible,
+     * or exist group with same name.
      * 
      * @param name
      *            Loaded actor name.
@@ -134,8 +139,10 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load {@linkplain Actor} by name without case check. This method is a big shame for us. It should never have its way out of DAO! It only purpose
-     * is to use with stupid Microsoft Active Directory authentication, which is case insensitive. <b>Never use it! </b>
+     * Load {@linkplain Actor} by name without case check. This method is a big
+     * shame for us. It should never have its way out of DAO! It only purpose is
+     * to use with stupid Microsoft Active Directory authentication, which is
+     * case insensitive. <b>Never use it! </b>
      * 
      * @param name
      *            Loaded actor name.
@@ -155,7 +162,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load {@linkplain Actor} by identity. Throws exception if load is impossible, or exist group with same identity.
+     * Load {@linkplain Actor} by identity. Throws exception if load is
+     * impossible, or exist group with same identity.
      * 
      * @param name
      *            Loaded actor identity.
@@ -179,7 +187,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load {@linkplain Group} by name. Throws exception if load is impossible, or exist actor with same name.
+     * Load {@linkplain Group} by name. Throws exception if load is impossible,
+     * or exist actor with same name.
      * 
      * @param name
      *            Loaded group name.
@@ -190,7 +199,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load {@linkplain Group} by identity. Throws exception if load is impossible, or exist actor with same identity.
+     * Load {@linkplain Group} by identity. Throws exception if load is
+     * impossible, or exist actor with same identity.
      * 
      * @param name
      *            Loaded group identity.
@@ -223,7 +233,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Returns Actors by array of executor identities. If id element belongs to group it is replaced by all actors in group recursively.
+     * Returns Actors by array of executor identities. If id element belongs to
+     * group it is replaced by all actors in group recursively.
      * 
      * @param ids
      *            Executors identities, to load actors.
@@ -253,13 +264,16 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Returns identities of {@linkplain Actor} and all his groups recursively. Actor identity is always result[0], but groups identities order is not
-     * specified. </br> For example G1 contains A1 and G2 contains G1. In this case:</br>
+     * Returns identities of {@linkplain Actor} and all his groups recursively.
+     * Actor identity is always result[0], but groups identities order is not
+     * specified. </br> For example G1 contains A1 and G2 contains G1. In this
+     * case:</br>
      * <code>getActorAndGroupsIds(A1) == {A1.id, G1.id, G2.id}.</code>
      * 
      * @param actor
      *            {@linkplain Actor}, which identity and groups must be loaded.
-     * @return Returns identities of {@linkplain Actor} and all his groups recursively.
+     * @return Returns identities of {@linkplain Actor} and all his groups
+     *         recursively.
      */
     public List<Long> getActorAndGroupsIds(Actor actor) {
         Set<Group> groupSet = getExecutorParentsAll(actor);
@@ -272,14 +286,15 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load available {@linkplain Actor}'s with given codes. If actor with some code not available, it will be ignored. Result order is not specified.
+     * Load available {@linkplain Actor}'s with given codes. If actor with some
+     * code not available, it will be ignored. Result order is not specified.
      * 
      * @param executorIds
      *            Loading {@linkplain Actor}'s codes.
      * @return Loaded actors.
      */
     public List<Actor> getAvailableActorsByCodes(List<Long> codes) {
-        return getHibernateTemplate().find("select actor from Actor as actor where actor.code in ?", codes);
+        return (List<Actor>) getHibernateTemplate().find("select actor from Actor as actor where actor.code in ?", codes);
     }
 
     /**
@@ -294,7 +309,7 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     public List<TemporaryGroup> getTemporaryGroups(final Long processId) {
-        return getHibernateTemplate().executeFind(new HibernateCallback<List<TemporaryGroup>>() {
+        return (List<TemporaryGroup>) getHibernateTemplate().executeFind(new HibernateCallback<List<TemporaryGroup>>() {
 
             @Override
             public List<TemporaryGroup> doInHibernate(Session session) {
@@ -306,7 +321,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Create executor (save it to database). Generate code property for {@linkplain Actor} with code == 0.
+     * Create executor (save it to database). Generate code property for
+     * {@linkplain Actor} with code == 0.
      * 
      * @param <T>
      *            Creating executor class.
@@ -352,7 +368,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      *            {@linkplain Actor}, which password is checking.
      * @param password
      *            Checking password.
-     * @return Returns true, if password is correct for actor and false otherwise.
+     * @return Returns true, if password is correct for actor and false
+     *         otherwise.
      */
     public boolean isPasswordValid(Actor actor, String password) {
         Preconditions.checkNotNull(password, "Password must be specified.");
@@ -367,7 +384,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      * @param actor
      *            {@linkplain Actor}, which active state is set.
      * @param isActive
-     *            Flag, equals true to set actor active and false, to set actor inactive.
+     *            Flag, equals true to set actor active and false, to set actor
+     *            inactive.
      */
     public Actor setStatus(Actor actor, boolean isActive) {
         actor.setActive(isActive);
@@ -416,30 +434,35 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Load all {@linkplain Executor}s according to {@linkplain BatchPresentation}.</br> <b>Paging is not enabled. Really ALL executors is
-     * loading.</b>
+     * Load all {@linkplain Executor}s according to
+     * {@linkplain BatchPresentation}.</br> <b>Paging is not enabled. Really ALL
+     * executors is loading.</b>
      * 
      * @param batchPresentation
      *            {@linkplain BatchPresentation} to load executors.
-     * @return {@linkplain Executor}s, loaded according to {@linkplain BatchPresentation}.
+     * @return {@linkplain Executor}s, loaded according to
+     *         {@linkplain BatchPresentation}.
      */
     public List<Executor> getAllExecutors(BatchPresentation batchPresentation) {
         return getAll(Executor.class, batchPresentation);
     }
 
     /**
-     * Load all {@linkplain Actor}s according to {@linkplain BatchPresentation} .</br> <b>Paging is not enabled. Really ALL actors is loading.</b>
+     * Load all {@linkplain Actor}s according to {@linkplain BatchPresentation}
+     * .</br> <b>Paging is not enabled. Really ALL actors is loading.</b>
      * 
      * @param batchPresentation
      *            {@linkplain BatchPresentation} to load actors.
-     * @return {@linkplain Actor}s, loaded according to {@linkplain BatchPresentation}.
+     * @return {@linkplain Actor}s, loaded according to
+     *         {@linkplain BatchPresentation}.
      */
     public List<Actor> getAllActors(BatchPresentation batchPresentation) {
         return getAll(Actor.class, batchPresentation);
     }
 
     /**
-     * Load all {@linkplain Group}s.</br> <b>Paging is not enabled. Really ALL groups is loading.</b>
+     * Load all {@linkplain Group}s.</br> <b>Paging is not enabled. Really ALL
+     * groups is loading.</b>
      * 
      * @return {@linkplain Group}s.
      */
@@ -524,21 +547,24 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Returns true if executor belongs to group recursively or false in any other case.</br> For example G1 contains G2, G2 contains A1. In this
+     * Returns true if executor belongs to group recursively or false in any
+     * other case.</br> For example G1 contains G2, G2 contains A1. In this
      * case:</br> <code>isExecutorInGroup(A1,G2) == true;</code>
      * 
      * @param executor
      *            An executor to check if it in group.
      * @param group
      *            A group to check if it contains executor.
-     * @return true if executor belongs to group recursively; false in any other case.
+     * @return true if executor belongs to group recursively; false in any other
+     *         case.
      */
     public boolean isExecutorInGroup(Executor executor, Group group) {
         return getExecutorParentsAll(executor).contains(group);
     }
 
     /**
-     * Returns group children (first level children, not recursively).</br> For example G1 contains G2, G2 contains A1 and A2. In this case:</br>
+     * Returns group children (first level children, not recursively).</br> For
+     * example G1 contains G2, G2 contains A1 and A2. In this case:</br>
      * <code> getGroupChildren(G2) == {A1, A2}</code><br/>
      * <code> getGroupChildren(G1) == {G2} </code>
      * 
@@ -561,11 +587,11 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     private List<ExecutorGroupMembership> getGroupMemberships(Group group) {
-        return getHibernateTemplate().find("from ExecutorGroupMembership where group=?", group);
+        return (List<ExecutorGroupMembership>) getHibernateTemplate().find("from ExecutorGroupMembership where group=?", group);
     }
 
     private List<ExecutorGroupMembership> getExecutorMemberships(Executor executor) {
-        return getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
+        return (List<ExecutorGroupMembership>) getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
     }
 
     private ExecutorGroupMembership getMembership(Group group, Executor executor) {
@@ -573,8 +599,10 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Returns all {@linkplain Actor}s from {@linkplain Group} recursively. All actors from subgroups is also added to result. For example G1 contains
-     * G2 and A3, G2 contains A1 and A2. In this case:</br> <code> getGroupActors(G2) == {A1, A2}</code><br/>
+     * Returns all {@linkplain Actor}s from {@linkplain Group} recursively. All
+     * actors from subgroups is also added to result. For example G1 contains G2
+     * and A3, G2 contains A1 and A2. In this case:</br>
+     * <code> getGroupActors(G2) == {A1, A2}</code><br/>
      * <code> getGroupActors(G1) == {A1, A2, A3} </code>
      * 
      * @param group
@@ -590,7 +618,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Returns all executor parent {@linkplain Groups}s recursively. For example G1 contains G2 and A3, G2 contains A1 and A2. In this case:</br>
+     * Returns all executor parent {@linkplain Groups}s recursively. For example
+     * G1 contains G2 and A3, G2 contains A1 and A2. In this case:</br>
      * <code> getExecutorParentsAll(A1) == {G1, G2}</code><br/>
      * <code> getExecutorParentsAll(A3) == {G1} </code>
      * 
@@ -603,8 +632,10 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Returns an array of actors from group (first level children, not recursively).</br> For example G1 contains G2 and A0, G2 contains A1 and A2.
-     * In this case: Only actor (non-group) executors are returned.</br> <code> getAllNonGroupExecutorsFromGroup(G2) returns {A1, A2}</code>;
+     * Returns an array of actors from group (first level children, not
+     * recursively).</br> For example G1 contains G2 and A0, G2 contains A1 and
+     * A2. In this case: Only actor (non-group) executors are returned.</br>
+     * <code> getAllNonGroupExecutorsFromGroup(G2) returns {A1, A2}</code>;
      * <code> getAllNonGroupExecutorsFromGroup(G1) returns {A0} </code>
      * 
      * @param group
@@ -638,8 +669,9 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     /**
-     * Generates code for actor, if code not set (equals 0). If code is already set, when throws {@linkplain ExecutorAlreadyExistsException} if
-     * executor with what code exists in database.
+     * Generates code for actor, if code not set (equals 0). If code is already
+     * set, when throws {@linkplain ExecutorAlreadyExistsException} if executor
+     * with what code exists in database.
      * 
      * @param actor
      *            Actor to generate code if not set.
@@ -736,7 +768,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      * @param identifiers
      *            Loaded executors identities or codes.
      * @param loadByCodes
-     *            Flag, equals true, to loading actors by codes; false to load executors by identity.
+     *            Flag, equals true, to loading actors by codes; false to load
+     *            executors by identity.
      * @return Loaded executors.
      */
     private <T extends Executor> List<T> getExecutors(final Class<T> clazz, final List<Long> identifiers, boolean loadByCodes) {
@@ -745,7 +778,7 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
         if (executors != null) {
             return executors;
         }
-        List<T> list = getHibernateTemplate().executeFind(new HibernateCallback<List<T>>() {
+        List<T> list = (List<T>) getHibernateTemplate().executeFind(new HibernateCallback<List<T>>() {
 
             @Override
             public List<T> doInHibernate(Session session) {
@@ -777,7 +810,8 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      * @param identifiers
      *            Loaded executors identities or codes.
      * @param loadByCodes
-     *            Flag, equals true, to loading actors by codes; false to load executors by identity.
+     *            Flag, equals true, to loading actors by codes; false to load
+     *            executors by identity.
      * @return Loaded executors or null, if executors couldn't load from cache.
      */
     private <T extends Executor> List<T> getExecutorsFromCache(Class<T> clazz, List<Long> identifiers, boolean loadByCodes) {

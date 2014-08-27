@@ -90,8 +90,8 @@ public abstract class GenericDAO<T extends Object> extends CommonDAO {
      * @return first entity from list or <code>null</code>
      */
     @Override
-    protected T findFirstOrNull(String hql, Object... parameters) {
-        List<T> list = getHibernateTemplate().find(hql, parameters);
+    protected T findFirstOrNull(String hql, Object... parameters) { 
+        List<T> list = (List<T>) getHibernateTemplate().find(hql, parameters);
         return getFirstOrNull(list);
     }
 

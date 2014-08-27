@@ -25,7 +25,7 @@ public class NodeProcessDAO extends GenericDAO<NodeProcess> {
     }
 
     public List<NodeProcess> getNodeProcesses(final Process process, final Token parentToken, final String nodeId, final Boolean active) {
-        return getHibernateTemplate().executeFind(new HibernateCallback<List<Process>>() {
+        return (List<NodeProcess>) getHibernateTemplate().executeFind(new HibernateCallback<List<Process>>() {
 
             @Override
             public List<Process> doInHibernate(Session session) {

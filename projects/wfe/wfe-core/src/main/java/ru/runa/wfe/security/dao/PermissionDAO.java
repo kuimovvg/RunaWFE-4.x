@@ -67,7 +67,7 @@ public class PermissionDAO extends CommonDAO {
             privelegedExecutors.put(type, new HashSet<Executor>());
         }
         try {
-            List<PrivelegedMapping> list = getHibernateTemplate().find("from PrivelegedMapping m");
+            List<PrivelegedMapping> list = (List<PrivelegedMapping>) getHibernateTemplate().find("from PrivelegedMapping m");
             for (PrivelegedMapping mapping : list) {
                 privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
                 privelegedExecutorIds.add(mapping.getExecutor().getId());
@@ -197,19 +197,20 @@ public class PermissionDAO extends CommonDAO {
             if (identifiableIds.isEmpty()) {
                 break;
             }
-            List<PermissionMapping> mappings = getHibernateTemplate().executeFind(new HibernateCallback<List<PermissionMapping>>() {
+            List<PermissionMapping> mappings = (List<PermissionMapping>) getHibernateTemplate().executeFind(
+                    new HibernateCallback<List<PermissionMapping>>() {
 
-                @Override
-                public List<PermissionMapping> doInHibernate(Session session) {
-                    Query query = session
-                            .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
-                    query.setParameterList("identifiableIds", identifiableIds);
-                    query.setParameter("type", securedObjectType);
-                    query.setParameter("mask", permission.getMask());
-                    query.setParameterList("executors", executorWithGroups);
-                    return query.list();
-                }
-            });
+                        @Override
+                        public List<PermissionMapping> doInHibernate(Session session) {
+                            Query query = session
+                                    .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
+                            query.setParameterList("identifiableIds", identifiableIds);
+                            query.setParameter("type", securedObjectType);
+                            query.setParameter("mask", permission.getMask());
+                            query.setParameterList("executors", executorWithGroups);
+                            return query.list();
+                        }
+                    });
             permissions.addAll(mappings);
         }
         Set<Long> allowedIdentifiableIdsSet = new HashSet<Long>(permissions.size());
@@ -251,7 +252,7 @@ public class PermissionDAO extends CommonDAO {
      * @return Loaded permissions.
      */
     private List<PermissionMapping> getOwnPermissionMappings(Executor executor, Identifiable identifiable) {
-        return getHibernateTemplate().find("from PermissionMapping where identifiableId=? and type=? and executor=?",
+        return (List<PermissionMapping>) getHibernateTemplate().find("from PermissionMapping where identifiableId=? and type=? and executor=?",
                 identifiable.getIdentifiableId(), identifiable.getSecuredObjectType(), executor);
     }
 
@@ -293,7 +294,7 @@ public class PermissionDAO extends CommonDAO {
      *         {@linkplain Identifiable}.
      */
     public Set<Executor> getExecutorsWithPermission(Identifiable identifiable) {
-        List<Executor> list = getHibernateTemplate().find(
+        List<Executor> list = (List<Executor>) getHibernateTemplate().find(
                 "select distinct(pm.executor) from PermissionMapping pm where pm.identifiableId=? and pm.type=?", identifiable.getIdentifiableId(),
                 identifiable.getSecuredObjectType());
         Set<Executor> result = Sets.newHashSet(list);

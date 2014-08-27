@@ -78,7 +78,7 @@ public class BotDAO extends GenericDAO<Bot> {
      * @return {@linkplain Bot}'s, defined for {@linkplain BotStation}.
      */
     public List<Bot> getAll(final BotStation botStation) {
-        return getHibernateTemplate().find("from Bot where botStation=?", botStation);
+        return (List<Bot>) getHibernateTemplate().find("from Bot where botStation=?", botStation);
     }
 
 }

@@ -45,7 +45,7 @@ public abstract class CommonDAO extends HibernateDaoSupport {
      * @return first entity from list or <code>null</code>
      */
     protected <T extends Object> T findFirstOrNull(String hql, Object... parameters) {
-        List<T> list = getHibernateTemplate().find(hql, parameters);
+        List<T> list = (List<T>) getHibernateTemplate().find(hql, parameters);
         return getFirstOrNull(list);
     }
 
