@@ -50,6 +50,6 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
     @Override
     public void assign(ExecutionContext executionContext, Assignable assignable) {
         List<? extends Executor> executors = calculateExecutors(executionContext, assignable);
-        assignmentHelper.assignSwimlane(executionContext, assignable, executors);
+        assignmentHelper.assign(executionContext, assignable, executors);
     }
 }

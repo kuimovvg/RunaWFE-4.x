@@ -40,7 +40,7 @@ public class AssignmentHelper {
         }
     }
 
-    public void assignSwimlane(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
+    public void assign(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
         try {
             if (executors == null || executors.size() == 0) {
                 log.warn("Assigning null executor in " + executionContext + ": " + assignable + ", check swimlane initializer");
@@ -67,6 +67,7 @@ public class AssignmentHelper {
             Group tmpGroup = TemporaryGroup.create(executionContext.getProcess().getId(), swimlaneName);
             executorLogic.saveTemporaryGroup(tmpGroup, executors);
             assignable.assignExecutor(executionContext, tmpGroup, true);
+            log.info("Cascaded assignment done in " + assignable);
         } catch (Exception e) {
             log.warn("Unable to assign " + assignable + " in " + executionContext.getProcess(), e);
         }

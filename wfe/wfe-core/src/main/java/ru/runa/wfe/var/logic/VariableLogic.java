@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.var.logic;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 /**
  * Process execution logic.
@@ -95,23 +93,6 @@ public class VariableLogic extends WFCommonLogic {
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         return executionContext.getVariableProvider().getVariable(variableName);
-    }
-
-    @Deprecated
-    public HashMap<Long, WfVariable> getVariablesFromProcesses(User user, List<Long> processIds, String variableName) {
-        // TODO potential performance bottleneck
-        HashMap<Long, WfVariable> map = Maps.newHashMapWithExpectedSize(processIds.size());
-        for (Long processId : processIds) {
-            try {
-                WfVariable variable = getVariable(user, processId, variableName);
-                if (variable != null) {
-                    map.put(processId, variable);
-                }
-            } catch (Exception e) {
-                log.error("Unable to get variable '" + variableName + "' from process " + processId, e);
-            }
-        }
-        return map;
     }
 
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
