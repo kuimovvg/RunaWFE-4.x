@@ -63,6 +63,6 @@ public class AssignSwimlaneActionHandler extends ActionHandlerBase {
         List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(swimlaneInitializer, executionContext.getVariableProvider());
         SwimlaneDefinition swimlaneDefinition = executionContext.getProcessDefinition().getSwimlaneNotNull(swimlaneName);
         Swimlane swimlane = executionContext.getProcess().getSwimlaneNotNull(swimlaneDefinition);
-        assignmentHelper.assignSwimlane(executionContext, swimlane, executors);
+        assignmentHelper.assign(executionContext, swimlane, executors);
     }
 }

@@ -31,7 +31,6 @@ import org.apache.ecs.html.Table;
 import ru.runa.common.web.form.ReturnActionForm;
 import ru.runa.wf.web.action.SetViewPageAction;
 import ru.runa.wf.web.form.PagingForm;
-import ru.runa.wfe.commons.PagingCommons;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.presentation.BatchPresentation;
 
@@ -51,22 +50,26 @@ public final class PagingNavigationHelper {
     private final PageContext pageContext;
 
     /**
-     * {@linkplain BatchPresentation} used to load objects. May be null if only objects count must be shown (without paging navigation).
+     * {@linkplain BatchPresentation} used to load objects. May be null if only
+     * objects count must be shown (without paging navigation).
      */
     private final BatchPresentation batchPresentation;
 
     /**
-     * All instances count (not only shown, but all available for {@linkplain BatchPresentation}).
+     * All instances count (not only shown, but all available for
+     * {@linkplain BatchPresentation}).
      */
     private final int instanceCount;
 
     /**
-     * Return action (current page). May be null if only instances count must be shown (without paging navigation).
+     * Return action (current page). May be null if only instances count must be
+     * shown (without paging navigation).
      */
     private final String returnAction;
 
     /**
-     * Flag equals true to show only instances count; false to show paging navigation and instances count.
+     * Flag equals true to show only instances count; false to show paging
+     * navigation and instances count.
      */
     private final boolean onlyCount;
 
@@ -78,7 +81,8 @@ public final class PagingNavigationHelper {
      * @param batchPresentation
      *            {@linkplain BatchPresentation} used to load objects.
      * @param instanceCount
-     *            All instances count (not only shown, but all available for {@linkplain BatchPresentation}).
+     *            All instances count (not only shown, but all available for
+     *            {@linkplain BatchPresentation}).
      * @param returnAction
      *            Return action (current page).
      */
@@ -97,7 +101,8 @@ public final class PagingNavigationHelper {
      * @param pageContext
      *            Processing request page context.
      * @param instanceCount
-     *            All instances count (not only shown, but all available for {@linkplain BatchPresentation}).
+     *            All instances count (not only shown, but all available for
+     *            {@linkplain BatchPresentation}).
      */
     public PagingNavigationHelper(PageContext pageContext, int instanceCount) {
         super();
@@ -116,7 +121,7 @@ public final class PagingNavigationHelper {
         pagingTable.setClass(ru.runa.common.web.Resources.CLASS_PAGING_TABLE);
         TR pagingTR = new TR();
         if (!onlyCount) {
-            int pageCount = PagingCommons.pageCount(instanceCount, batchPresentation.getRangeSize());
+            int pageCount = pageCount(instanceCount, batchPresentation.getRangeSize());
             if (pageCount > 1) {
                 pagingTR.addElement(createPagingNavigationTD(pageCount));
             }
@@ -124,6 +129,17 @@ public final class PagingNavigationHelper {
         pagingTR.addElement(createElementCountTD());
         pagingTable.addElement(pagingTR);
         pagingTableToBeAddedTD.addElement(pagingTable);
+    }
+
+    private static int pageCount(int objectCount, int pageSize) {
+        int result = objectCount / pageSize;
+        if (objectCount % pageSize > 0) {
+            result++;
+        }
+        if (result == 0) {
+            result = 1;
+        }
+        return result;
     }
 
     private TD createPagingNavigationTD(int pageCount) {

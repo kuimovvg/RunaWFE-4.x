@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.PagingCommons;
 import ru.runa.wfe.commons.TimeMeasurer;
 import ru.runa.wfe.commons.dao.CommonDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -67,7 +66,7 @@ public class PermissionDAO extends CommonDAO {
             privelegedExecutors.put(type, new HashSet<Executor>());
         }
         try {
-            List<PrivelegedMapping> list = (List<PrivelegedMapping>) getHibernateTemplate().find("from PrivelegedMapping m");
+            List<PrivelegedMapping> list = getHibernateTemplate().find("from PrivelegedMapping m");
             for (PrivelegedMapping mapping : list) {
                 privelegedExecutors.get(mapping.getType()).add(mapping.getExecutor());
                 privelegedExecutorIds.add(mapping.getExecutor().getId());
@@ -197,20 +196,19 @@ public class PermissionDAO extends CommonDAO {
             if (identifiableIds.isEmpty()) {
                 break;
             }
-            List<PermissionMapping> mappings = (List<PermissionMapping>) getHibernateTemplate().executeFind(
-                    new HibernateCallback<List<PermissionMapping>>() {
+            List<PermissionMapping> mappings = getHibernateTemplate().executeFind(new HibernateCallback<List<PermissionMapping>>() {
 
-                        @Override
-                        public List<PermissionMapping> doInHibernate(Session session) {
-                            Query query = session
-                                    .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
-                            query.setParameterList("identifiableIds", identifiableIds);
-                            query.setParameter("type", securedObjectType);
-                            query.setParameter("mask", permission.getMask());
-                            query.setParameterList("executors", executorWithGroups);
-                            return query.list();
-                        }
-                    });
+                @Override
+                public List<PermissionMapping> doInHibernate(Session session) {
+                    Query query = session
+                            .createQuery("from PermissionMapping where identifiableId in (:identifiableIds) and type=:type and mask=:mask and executor in (:executors)");
+                    query.setParameterList("identifiableIds", identifiableIds);
+                    query.setParameter("type", securedObjectType);
+                    query.setParameter("mask", permission.getMask());
+                    query.setParameterList("executors", executorWithGroups);
+                    return query.list();
+                }
+            });
             permissions.addAll(mappings);
         }
         Set<Long> allowedIdentifiableIdsSet = new HashSet<Long>(permissions.size());
@@ -252,7 +250,7 @@ public class PermissionDAO extends CommonDAO {
      * @return Loaded permissions.
      */
     private List<PermissionMapping> getOwnPermissionMappings(Executor executor, Identifiable identifiable) {
-        return (List<PermissionMapping>) getHibernateTemplate().find("from PermissionMapping where identifiableId=? and type=? and executor=?",
+        return getHibernateTemplate().find("from PermissionMapping where identifiableId=? and type=? and executor=?",
                 identifiable.getIdentifiableId(), identifiable.getSecuredObjectType(), executor);
     }
 
@@ -294,7 +292,7 @@ public class PermissionDAO extends CommonDAO {
      *         {@linkplain Identifiable}.
      */
     public Set<Executor> getExecutorsWithPermission(Identifiable identifiable) {
-        List<Executor> list = (List<Executor>) getHibernateTemplate().find(
+        List<Executor> list = getHibernateTemplate().find(
                 "select distinct(pm.executor) from PermissionMapping pm where pm.identifiableId=? and pm.type=?", identifiable.getIdentifiableId(),
                 identifiable.getSecuredObjectType());
         Set<Executor> result = Sets.newHashSet(list);
@@ -413,8 +411,8 @@ public class PermissionDAO extends CommonDAO {
                 securedObjectTypes);
         timeMeasurer.jobEnded("getObjects: " + result.size());
         if (result.size() == 0 && enablePaging && batchPresentation.getPageNumber() > 1) {
-            logger.debug("several objects were removed since we last time created batch presentation");
-            setLastPageNumber(user, batchPresentation, permission, securedObjectTypes);
+            logger.debug("resetting batch presentation to first page due to 0 results");
+            batchPresentation.setPageNumber(1);
             result = getPersistentObjects(user, batchPresentation, permission, securedObjectTypes, enablePaging);
         }
         return result;
@@ -445,12 +443,6 @@ public class PermissionDAO extends CommonDAO {
         int count = new BatchPresentationHibernateCompiler(batchPresentation).getCount(user, permission, securedObjectTypes);
         timeMeasurer.jobEnded("getCount: " + count);
         return count;
-    }
-
-    private void setLastPageNumber(User user, BatchPresentation batchPresentation, Permission permission, SecuredObjectType[] securedObjectTypes) {
-        int objectCount = getPersistentObjectCount(user, batchPresentation, permission, securedObjectTypes);
-        int maxPageNumber = PagingCommons.pageCount(objectCount, batchPresentation.getRangeSize());
-        batchPresentation.setPageNumber(maxPageNumber);
     }
 
 }
