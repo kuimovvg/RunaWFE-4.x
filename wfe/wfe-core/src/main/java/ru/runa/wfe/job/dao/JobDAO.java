@@ -19,12 +19,12 @@ import ru.runa.wfe.job.Timer;
 public class JobDAO extends GenericDAO<Job> {
 
     public List<Job> getExpiredJobs() {
-        return getHibernateTemplate().find("from Job where dueDate<=? order by dueDate", new Date());
+        return (List<Job>) getHibernateTemplate().find("from Job where dueDate<=? order by dueDate", new Date());
     }
 
     public void deleteTimersByName(String name, Token token) {
         log.debug("deleting timers by name '" + name + "' for " + token);
-        List<Timer> timers = getHibernateTemplate().find("from Timer where token=? and name=?", token, name);
+        List<Timer> timers = (List<Timer>) getHibernateTemplate().find("from Timer where token=? and name=?", token, name);
         getHibernateTemplate().deleteAll(timers);
         log.debug(timers.size() + " timers by name '" + name + "' for " + token + " were deleted");
     }

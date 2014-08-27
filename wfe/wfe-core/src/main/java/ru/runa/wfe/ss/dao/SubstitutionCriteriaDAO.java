@@ -27,7 +27,7 @@ public class SubstitutionCriteriaDAO extends GenericDAO<SubstitutionCriteria> {
     }
 
     public List<Substitution> getSubstitutionsByCriteria(SubstitutionCriteria criteria) {
-        return getHibernateTemplate().find("from Substitution where criteria=?", criteria);
+        return (List<Substitution>) getHibernateTemplate().find("from Substitution where criteria=?", criteria);
     }
 
 }
