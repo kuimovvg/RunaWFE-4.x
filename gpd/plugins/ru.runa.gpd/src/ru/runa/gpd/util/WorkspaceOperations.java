@@ -77,6 +77,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 public class WorkspaceOperations {
+
     public static void deleteResources(List<IResource> resources) {
         List<IFile> deletedDefinitions = new ArrayList<IFile>();
         for (IResource resource : resources) {
