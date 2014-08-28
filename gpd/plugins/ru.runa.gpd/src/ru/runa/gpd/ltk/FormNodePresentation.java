@@ -19,6 +19,8 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.IOUtils;
 
+import com.google.common.base.Objects;
+
 public class FormNodePresentation extends VariableRenameProvider<FormNode> {
     private final IFolder folder;
 
@@ -37,6 +39,10 @@ public class FormNodePresentation extends VariableRenameProvider<FormNode> {
         if (element.hasFormValidation()) {
             IFile file = folder.getFile(element.getValidationFileName());
             result.addAll(processFile(file, Localization.getString("Search.formNode.validation"), oldVariable.getName(), newVariable.getName()));
+            if (!Objects.equal(oldVariable.getName(), oldVariable.getScriptingName())) {
+                result.addAll(processFile(file, Localization.getString("Search.formNode.validation"), oldVariable.getScriptingName(),
+                        newVariable.getScriptingName()));
+            }
         }
         if (result.getChildren().length > 0) {
             return Arrays.asList((Change) result);

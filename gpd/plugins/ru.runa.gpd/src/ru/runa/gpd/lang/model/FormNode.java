@@ -1,6 +1,5 @@
 package ru.runa.gpd.lang.model;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -151,7 +150,7 @@ public abstract class FormNode extends SwimlanedNode {
                 FormType formType = FormTypeProvider.getFormType(this.formType);
                 Map<String, FormVariableAccess> formVars = formType.getFormVariableNames(formFile, this);
                 List<String> allVariableNames = getProcessDefinition().getVariableNames(true);
-                Set<String> validationVariables = getValidationVariables((IFolder) formFile.getParent());
+                Set<String> validationVariables = getValidationConfigs((IFolder) formFile.getParent()).keySet();
                 for (String formVarName : formVars.keySet()) {
                     if (formVars.get(formVarName) == FormVariableAccess.DOUBTFUL) {
                         errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableTagUnknown", formVarName));
@@ -180,12 +179,12 @@ public abstract class FormNode extends SwimlanedNode {
         }
     }
 
-    public Set<String> getValidationVariables(IFolder processFolder) throws Exception {
+    public Map<String, Map<String, ValidatorConfig>> getValidationConfigs(IFolder processFolder) throws Exception {
         if (!hasFormValidation()) {
-            return new HashSet<String>();
+            return Maps.newHashMap();
         }
         IFile validationFile = IOUtils.getFile(processFolder, this.validationFileName);
-        return ValidatorParser.parseValidatorConfigs(validationFile).keySet();
+        return ValidatorParser.parseValidatorConfigs(validationFile);
     }
 
     public Map<String, FormVariableAccess> getFormVariables(IFolder processFolder) throws Exception {
