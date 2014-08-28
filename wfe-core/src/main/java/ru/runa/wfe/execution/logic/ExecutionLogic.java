@@ -148,9 +148,13 @@ public class ExecutionLogic extends WFCommonLogic {
                 ProcessDefinition processDefinition = getDefinition(process);
                 ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
                 for (String variableName : variableNamesToInclude) {
-                    WfVariable variable = executionContext.getVariableProvider().getVariable(variableName);
-                    if (variable != null) {
-                        wfProcess.addVariable(variable);
+                    try {
+                        WfVariable variable = executionContext.getVariableProvider().getVariable(variableName);
+                        if (variable != null) {
+                            wfProcess.addVariable(variable);
+                        }
+                    } catch (Exception e) {
+                        log.error("Unable to get '" + variableName + "' in " + process, e);
                     }
                 }
             }
