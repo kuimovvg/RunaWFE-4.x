@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.wf.web.FormSubmissionUtils;
+import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Charsets;
 
@@ -26,8 +27,12 @@ public class FileUploadServlet extends HttpServlet {
 
         // 1. Upload File Using Apache FileUpload
         UploadedFile file = new UploadedFile();
+        String id = request.getParameter("id");
+        if (id == null) {
+            throw new InternalApplicationException("id not found");
+        }
         String inputId = MultipartRequestHandler.uploadByApacheFileUpload(request, file);
-        FormSubmissionUtils.getUploadedFilesMap(request).put(inputId, file);
+        FormSubmissionUtils.getUploadedFilesMap(request).put(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + inputId, file);
 
         // 2. Set response type to json
         // response.setContentType("application/json");
@@ -44,12 +49,16 @@ public class FileUploadServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
         String inputId = request.getParameter("inputId");
+        String id = request.getParameter("id");
+        if (id == null) {
+            throw new InternalApplicationException("id not found");
+        }
         if ("delete".equals(action)) {
-            FormSubmissionUtils.getUploadedFilesMap(request).remove(inputId);
+            FormSubmissionUtils.getUploadedFilesMap(request).remove(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + inputId);
         }
         if ("view".equals(action)) {
             Map<String, UploadedFile> map = FormSubmissionUtils.getUploadedFilesMap(request);
-            UploadedFile file = map.get(inputId);
+            UploadedFile file = map.get(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + inputId);
             if (file == null) {
                 LogFactory.getLog(getClass()).error("No session file found by '" + inputId + "', all files = " + map);
                 return;

@@ -3,12 +3,12 @@ var componentInputUNIQUENAME = "COMPONENT_INPUT";
 var lastIndexUNIQUENAME = -1;
 
 $(document).ready(function() {
-	lastIndexUNIQUENAME = parseInt(getSizeUNIQUENAME()) - 1;	
+	lastIndexUNIQUENAME = $("#UNIQUENAME div[row][current]").length - 1;	
     $("#btnAddUNIQUENAME").click(function() {
         var rowIndex = parseInt(lastIndexUNIQUENAME) + 1;
         lastIndexUNIQUENAME = rowIndex;
 		console.log("Adding row " + rowIndex);
-        var e = "<div row='" + rowIndex + "' name='VARIABLE' style='margin-bottom:4px;'>";
+        var e = "<div current row='" + rowIndex + "' name='VARIABLE' style='margin-bottom:4px;'>";
         e += componentInputUNIQUENAME.replace(/\[\]/g, "[" + rowIndex + "]");
         e += "<input type='button' value=' - ' onclick='removeUNIQUENAME(this);' style='width: 30px;' />";
         e += "</div>";
@@ -49,7 +49,7 @@ function removeAllUNIQUENAME() {
 
 function updateIndexesUNIQUENAME() {
 	var ids = "";
-	$("#UNIQUENAME div[row]").each(function() {
+	$("#UNIQUENAME div[row][current]").each(function() {
 		ids == "" ? ids = $(this).attr('row') : ids += "," + $(this).attr('row') ; 
 	});
 	var indexesInput = $("input[name='VARIABLE.indexes']");

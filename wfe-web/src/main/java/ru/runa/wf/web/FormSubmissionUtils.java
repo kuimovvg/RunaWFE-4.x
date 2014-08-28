@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,7 @@ public class FormSubmissionUtils {
     public static final String SIZE_SUFFIX = ".size";
     public static final String INDEXES_SUFFIX = ".indexes";
     public static final String COMPONENT_QUALIFIER_START = "[";
+    public static final String FILES_MAP_QUALIFIER = ":";
     public static final String COMPONENT_QUALIFIER_END = "]";
     public static final String FORM_NODE_ID_KEY = "UserDefinedVariablesForFormNodeId";
 
@@ -108,7 +110,7 @@ public class FormSubmissionUtils {
     public static Map<String, Object> extractVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
         List<String> formatErrorsForFields = new ArrayList<String>();
         Map<String, Object> userInput = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
-        userInput.putAll(getUploadedFilesMap(request));
+        userInput.putAll(getUploadedFilesInputsMap(request));
         Map<String, Object> variables = extractVariables(request, userInput, interaction, formatErrorsForFields);
         if (formatErrorsForFields.size() > 0) {
             throw new VariablesFormatException(formatErrorsForFields);
@@ -137,7 +139,7 @@ public class FormSubmissionUtils {
 
         List<String> formatErrorsForFields = new ArrayList<String>();
         Map<String, Object> inputs = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
-        inputs.putAll(getUploadedFilesMap(request));
+        inputs.putAll(getUploadedFilesInputsMap(request));
         Object variableValue = extractVariable(request, inputs, variableDefinition, formatErrorsForFields);
         if (formatErrorsForFields.size() > 0) {
             throw new VariablesFormatException(formatErrorsForFields);
@@ -159,11 +161,11 @@ public class FormSubmissionUtils {
             String indexesInputName = variableDefinition.getName() + INDEXES_SUFFIX;
             ListFormat listFormat = (ListFormat) format;
             VariableFormat componentFormat = FormatCommons.createComponent(listFormat, 0);
-            if (userInput.containsKey(sizeInputName)) {
-                // js dynamic way
-                List<Object> list = null;
-                String[] stringsIndexes = (String[]) userInput.get(indexesInputName);
-                if (stringsIndexes == null || stringsIndexes.length != 1) {
+            List<Object> list = null;
+            String[] stringsIndexes = (String[]) userInput.get(indexesInputName);
+            if (stringsIndexes == null || stringsIndexes.length != 1) {
+                if (userInput.containsKey(sizeInputName)) {
+                    // js dynamic way
                     String[] stringsSize = (String[]) userInput.get(sizeInputName);
                     if (stringsSize == null || stringsSize.length != 1) {
                         log.error("Incorrect '" + sizeInputName + "' value submitted: " + Arrays.toString(stringsSize));
@@ -187,14 +189,36 @@ public class FormSubmissionUtils {
                         log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'" + listSize
                                 + "', found:'" + indexes.size());
                     }
-                } else {
-                    int listSize = stringsIndexes[0].toString().split(",").length;
-                    list = Lists.newArrayListWithExpectedSize(listSize);
-                    indexes = Lists.newArrayListWithExpectedSize(listSize);
-                    String[] stringIndexes = stringsIndexes[0].toString().split(",");
-                    for (String index : stringIndexes) {
-                        indexes.add(TypeConversionUtil.convertTo(int.class, index));
+                    for (Integer index : indexes) {
+                        String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
+                        String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
+                        VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
+                        componentDefinition.setUserTypes(variableDefinition.getUserTypes());
+                        Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
+                        if (!Objects.equal(IGNORED_VALUE, componentValue)) {
+                            list.add(componentValue);
+                        }
                     }
+                    variableValue = list;
+                } else {
+                    // http old-style way
+                    String[] strings = (String[]) userInput.get(variableDefinition.getName());
+                    if (strings == null || strings.length == 0) {
+                        return null;
+                    }
+                    list = Lists.newArrayListWithExpectedSize(strings.length);
+                    for (String componentValue : strings) {
+                        list.add(convertComponent(variableDefinition.getName(), componentFormat, componentValue, formatErrorsForFields));
+                    }
+                    variableValue = list;
+                }
+            } else {
+                int listSize = stringsIndexes[0].toString().split(",").length;
+                list = Lists.newArrayListWithExpectedSize(listSize);
+                indexes = Lists.newArrayListWithExpectedSize(listSize);
+                String[] stringIndexes = stringsIndexes[0].toString().split(",");
+                for (String index : stringIndexes) {
+                    indexes.add(TypeConversionUtil.convertTo(int.class, index));
                 }
                 for (Integer index : indexes) {
                     String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
@@ -207,18 +231,8 @@ public class FormSubmissionUtils {
                     }
                 }
                 variableValue = list;
-            } else {
-                // http old-style way
-                String[] strings = (String[]) userInput.get(variableDefinition.getName());
-                if (strings == null || strings.length == 0) {
-                    return null;
-                }
-                List<Object> list = Lists.newArrayListWithExpectedSize(strings.length);
-                for (String componentValue : strings) {
-                    list.add(convertComponent(variableDefinition.getName(), componentFormat, componentValue, formatErrorsForFields));
-                }
-                variableValue = list;
             }
+
         } else if (format instanceof MapFormat) {
             Map<Object, Object> map = null;
             String sizeInputName = variableDefinition.getName() + SIZE_SUFFIX;
@@ -354,6 +368,16 @@ public class FormSubmissionUtils {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public static Map<String, UploadedFile> getUploadedFilesInputsMap(HttpServletRequest request) {
+        Map<String, UploadedFile> inputsMap = Maps.newHashMap();
+        for (Entry<String, UploadedFile> entry : getUploadedFilesMap(request).entrySet()) {
+            if (entry.getKey().split(FILES_MAP_QUALIFIER)[0].equals(request.getParameter("id"))) {
+                inputsMap.put(entry.getKey().split(FILES_MAP_QUALIFIER)[1], entry.getValue());
+            }
+        }
+        return inputsMap;
     }
 
     public static Map<String, UploadedFile> getUploadedFilesMap(HttpServletRequest request) {

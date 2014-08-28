@@ -29,10 +29,10 @@ function initFileInput(dropzone) {
 	var progressBar = dropzone.parent().find(".progressbar");
 	var progressBarLine = progressBar.find(".line");
 	var fileInput = dropzone.find(".inputFile");
-	var inputId = fileInput.attr("name");
+	var inputId = fileInput.attr("name");	
 	dropzone.fileupload({
 		dataType: "json",
-		url: "/wfe/upload",
+		url: "/wfe/upload?id=" + id,
 		fileInput: fileInput,
 		done: function (e, data) {
 			var statusText = progressBar.find(".statusText");
@@ -63,13 +63,14 @@ function initFileInput(dropzone) {
 }
 
 function deleteFile(inputId) {
-	var dropzone = $("input[name='" + inputId + "']").parent().parent();
+	var dropzone = $("input[name='" + inputId + "'][current]").parent().parent();
 	dropzone.show();
 	jQuery.ajax({
 		type: "GET",
-		url: "/wfe/upload",
+		url: "/wfe/upload",		
 		data: {
 			action: "delete", 
+			id: id,
 	    	inputId: inputId,
 	    	timestamp: new Date().getTime()
 		},

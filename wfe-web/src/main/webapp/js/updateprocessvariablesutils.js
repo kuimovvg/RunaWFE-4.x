@@ -17,7 +17,7 @@ function getVariableInfo(value) {
 			cache: false,
 			url: "/wfe/getComponentInput",
 			data: {
-				processId: decodeURI((RegExp('id=' + '(.+?)(&|$)').exec(location.search)||[,null])[1]),
+				id: id,			
 				variableName: value
 			},
 			dataType: "html",
