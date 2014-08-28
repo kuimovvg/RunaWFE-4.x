@@ -12,6 +12,7 @@
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.fileupload.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/taskformutils.js" />">c=0;</script> 
 	<script type="text/javascript" src="<html:rewrite page="/js/updateprocessvariablesutils.js" />">c=0;</script>	
+	<script type="text/javascript">var id = <%= Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME)) %>;</script>
 	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/fileupload.css" />">
 </tiles:put>
 
