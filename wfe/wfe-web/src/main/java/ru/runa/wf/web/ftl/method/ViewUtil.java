@@ -301,7 +301,7 @@ public class ViewUtil {
             html.append(ViewUtil.getHiddenInput(indexesVariable));
             for (int row = 0; row < list.size(); row++) {
                 Object o = list.get(row);
-                html.append("<div><div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
+                html.append("<div><div current row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                 WfVariable componentVariable = ViewUtil.createListComponentVariable(variable, row, componentFormat, o);
                 html.append(ViewUtil.getComponentInput(user, webHelper, componentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
@@ -343,7 +343,7 @@ public class ViewUtil {
             int row = -1;
             for (Object key : map.keySet()) {
                 row++;
-                html.append("<div><div row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
+                html.append("<div><div current row=\"").append(row).append("\" name=\"").append(variableName).append("\">");
                 WfVariable keyComponentVariable = ViewUtil.createMapKeyComponentVariable(variable, row, key);
                 html.append(ViewUtil.getComponentInput(user, webHelper, keyComponentVariable));
                 WfVariable valueComponentVariable = ViewUtil.createMapValueComponentVariable(variable, row, key);
@@ -537,10 +537,16 @@ public class ViewUtil {
         }
         UploadedFile file = null;
         if (webHelper != null) {
-            file = FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).get(variableName);
+            // TODO: taskId transmit to the method
+            String id = webHelper.getRequest().getParameter("id");
+            if (id == null) {
+                throw new InternalApplicationException("id not found");
+            }
+            file = FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).get(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName);
             if (value != null && file == null) {
                 file = new UploadedFile(value);
-                FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).put(variableName, file);
+                FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest())
+                        .put(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName, file);
             }
         }
         String attachImageUrl = "";
@@ -560,7 +566,7 @@ public class ViewUtil {
         html += "<div class=\"dropzone\" " + (file != null ? hideStyle : "") + ">";
         html += "<label class=\"inputFileAttach\">";
         html += "<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
-        html += "<input class=\"inputFile inputFileAjax\" name=\"" + variableName + "\" type=\"file\">";
+        html += "<input class=\"inputFile inputFileAjax\" name=\"" + variableName + "\" type=\"file\"" + (enabled ? "current" : "") + ">";
         html += "</label></div>";
         html += "<div class=\"progressbar\" " + (file == null ? hideStyle : "") + ">";
         html += "<div class=\"line\" style=\"width: " + (file != null ? "10" : "") + "0%;\"></div>";

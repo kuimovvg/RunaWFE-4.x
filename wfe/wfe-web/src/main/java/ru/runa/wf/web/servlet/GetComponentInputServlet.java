@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import ru.runa.common.web.AjaxWebHelper;
 import ru.runa.common.web.Commons;
 import ru.runa.wf.web.ftl.method.ViewUtil;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
@@ -33,8 +34,11 @@ public class GetComponentInputServlet extends HttpServlet {
     }
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Long processId = Long.valueOf(request.getParameter("processId"));
         String variableName = request.getParameter("variableName");
+        Long processId = Long.valueOf(request.getParameter("id"));
+        if (processId == null) {
+            throw new InternalApplicationException("id not found");
+        }
 
         JSONObject variableObject = new JSONObject();
         User user = Commons.getUser(request.getSession());
