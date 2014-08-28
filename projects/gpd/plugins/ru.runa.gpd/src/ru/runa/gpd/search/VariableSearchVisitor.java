@@ -49,6 +49,8 @@ import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableMapping;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.validation.ValidatorConfig;
+import ru.runa.gpd.validation.ValidatorDefinition;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -246,7 +248,8 @@ public class VariableSearchVisitor {
         if (discriminatorMapping.isMultiinstanceLinkByVariable() && Objects.equal(query.getSearchText(), discriminatorMapping.getName())) {
             matchesCount++;
         }
-        if (discriminatorMapping.isMultiinstanceLinkByGroup() && !discriminatorMapping.isText() && Objects.equal(query.getSearchText(), discriminatorMapping.getName())) {
+        if (discriminatorMapping.isMultiinstanceLinkByGroup() && !discriminatorMapping.isText()
+                && Objects.equal(query.getSearchText(), discriminatorMapping.getName())) {
             matchesCount++;
         }
         if (discriminatorMapping.isMultiinstanceLinkByRelation() && discriminatorMapping.getName().contains("(" + query.getSearchText() + ")")) {
@@ -280,12 +283,22 @@ public class VariableSearchVisitor {
             }
             if (formNode.hasFormValidation()) {
                 IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
-                Set<String> validationVariables = formNode.getValidationVariables((IFolder) definitionFile.getParent());
+                Map<String, Map<String, ValidatorConfig>> configs = formNode.getValidationConfigs((IFolder) definitionFile.getParent());
+                Map<String, ValidatorConfig> globalConfigs = configs.remove(ValidatorConfig.GLOBAL_FIELD_ID);
+                Set<String> validationVariables = configs.keySet();
                 ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM_VALIDATION);
                 elementMatch.setParent(nodeElementMatch);
                 int matchesCount = 0;
                 if (validationVariables.contains(query.getSearchText())) {
                     matchesCount++;
+                }
+                if (globalConfigs != null) {
+                    for (ValidatorConfig config : globalConfigs.values()) {
+                        String groovyCode = config.getParams().get(ValidatorDefinition.EXPRESSION_PARAM_NAME);
+                        if (groovyCode != null && groovyCode.contains(query.getSearchText())) {
+                            matchesCount++;
+                        }
+                    }
                 }
                 elementMatch.setMatchesCount(matchesCount);
                 List<Match> matches = findInFile(elementMatch, file, matcherWithBrackets);
