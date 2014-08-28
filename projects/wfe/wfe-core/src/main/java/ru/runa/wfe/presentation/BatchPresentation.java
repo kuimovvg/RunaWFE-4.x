@@ -498,7 +498,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
     public List<String> getDynamicFieldsToDisplay() {
         List<String> result = Lists.newArrayList();
         for (int i = 0; i < getFields().dynamics.size(); i++) {
-            if (ArraysCommons.contains(getFields().displayIds, i)) {
+            if (ArraysCommons.contains(getFields().displayIds, i) || ArraysCommons.contains(getFields().groupIds, i)) {
                 result.add(getFields().dynamics.get(i).getDynamicValue());
             }
         }
