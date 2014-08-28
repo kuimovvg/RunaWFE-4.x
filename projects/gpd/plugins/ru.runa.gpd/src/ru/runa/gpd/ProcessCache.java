@@ -28,21 +28,11 @@ public class ProcessCache {
     static {
         try {
             for (IFile file : IOUtils.getAllProcessDefinitionFiles()) {
-                List<IFile> subprocessFiles = Lists.newArrayList();
                 try {
                     ProcessDefinition definition = NodeRegistry.parseProcessDefinition(file);
                     cacheProcessDefinition(file, definition);
-                    findSubProcessFiles(file.getParent(), subprocessFiles);
                 } catch (Exception e) {
                     PluginLogger.logErrorWithoutDialog("parsing process " + file, e);
-                }
-                for (IFile subprocessFile : subprocessFiles) {
-                    try {
-                        ProcessDefinition definition = NodeRegistry.parseProcessDefinition(subprocessFile);
-                        cacheProcessDefinition(subprocessFile, definition);
-                    } catch (Exception e) {
-                        PluginLogger.logErrorWithoutDialog("parsing subprocess " + subprocessFile, e);
-                    }
                 }
             }
         } catch (Exception e) {
@@ -52,7 +42,8 @@ public class ProcessCache {
 
     private static void findSubProcessFiles(IContainer container, List<IFile> result) throws CoreException {
         for (IResource resource : container.members()) {
-            if (resource.getName().endsWith(ParContentProvider.PROCESS_DEFINITION_FILE_NAME) && !resource.getName().equals(ParContentProvider.PROCESS_DEFINITION_FILE_NAME)) {
+            if (resource.getName().endsWith(ParContentProvider.PROCESS_DEFINITION_FILE_NAME)
+                    && !resource.getName().equals(ParContentProvider.PROCESS_DEFINITION_FILE_NAME)) {
                 result.add((IFile) resource);
             }
         }
@@ -62,6 +53,18 @@ public class ProcessCache {
         ParContentProvider.readAuxInfo(file, definition);
         CACHE_BY_FILE.put(file, definition);
         CACHE_BY_NAME.put(definition.getName(), definition);
+        if (definition instanceof SubprocessDefinition) {
+            return;
+        }
+        List<IFile> subprocessFiles = Lists.newArrayList();
+        findSubProcessFiles(file.getParent(), subprocessFiles);
+        for (IFile subprocessFile : subprocessFiles) {
+            try {
+                cacheProcessDefinition(subprocessFile, NodeRegistry.parseProcessDefinition(subprocessFile));
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("parsing subprocess " + subprocessFile, e);
+            }
+        }
     }
 
     public static ProcessDefinition newProcessDefinitionWasCreated(IFile file) {
@@ -82,7 +85,7 @@ public class ProcessCache {
                 CACHE_BY_NAME.remove(definition.getName());
             }
         } catch (Exception e) {
-            PluginLogger.logError("Parsing process definition failed: " + file.toString(), e);
+            PluginLogger.logError("Unable to delete process definition from cache: " + file, e);
         }
     }
 
