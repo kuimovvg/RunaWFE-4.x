@@ -4,6 +4,7 @@ var componentInputUNIQUENAMEValue = "COMPONENT_INPUT_VALUE";
 var lastIndexUNIQUENAME = -1;
 
 $(document).ready(function() {
+	updateIndexesUNIQUENAME();
 	lastIndexUNIQUENAME = $("#UNIQUENAME div[row][current]").length - 1;
     $("#btnAddMapUNIQUENAME").click(function() {
     	var rowIndex = parseInt(lastIndexUNIQUENAME) + 1;
