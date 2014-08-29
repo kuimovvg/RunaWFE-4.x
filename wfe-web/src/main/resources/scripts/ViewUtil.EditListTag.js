@@ -3,6 +3,7 @@ var componentInputUNIQUENAME = "COMPONENT_INPUT";
 var lastIndexUNIQUENAME = -1;
 
 $(document).ready(function() {
+	updateIndexesUNIQUENAME();
 	lastIndexUNIQUENAME = $("#UNIQUENAME div[row][current]").length - 1;	
     $("#btnAddUNIQUENAME").click(function() {
         var rowIndex = parseInt(lastIndexUNIQUENAME) + 1;

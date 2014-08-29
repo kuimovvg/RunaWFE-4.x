@@ -4,6 +4,7 @@ var ellUNIQUENAMERowTemplate = "ROW_TEMPLATE";
 var lastIndexUNIQUENAME = -1;
 
 $(document).ready(function() {
+	ellUNIQUENAMEUpdateIndexes(0);
 	lastIndexUNIQUENAME = parseInt(ellUNIQUENAMEGetSize()) - 1;
     $('#ellUNIQUENAMEButtonAdd').click(function() {
         var rowIndex = parseInt(lastIndexUNIQUENAME) + 1;
