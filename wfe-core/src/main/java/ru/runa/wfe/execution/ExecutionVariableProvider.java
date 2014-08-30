@@ -24,6 +24,11 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
+    public String getProcessDefinitionName() {
+        return executionContext.getProcessDefinition().getName();
+    }
+
+    @Override
     public Object getValue(String variableName) {
         WfVariable variable = getVariable(variableName);
         return variable != null ? variable.getValue() : null;

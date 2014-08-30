@@ -18,6 +18,11 @@ public class DefinitionVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
+    public String getProcessDefinitionName() {
+        return processDefinition.getName();
+    }
+
+    @Override
     public Object getValue(String variableName) {
         return processDefinition.getDefaultVariableValues().get(variableName);
     }

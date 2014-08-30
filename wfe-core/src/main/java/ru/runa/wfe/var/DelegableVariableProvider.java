@@ -18,6 +18,14 @@ public class DelegableVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
+    public String getProcessDefinitionName() {
+        if (delegate != null) {
+            return delegate.getProcessDefinitionName();
+        }
+        return null;
+    }
+
+    @Override
     public Object getValue(String variableName) {
         if (delegate != null) {
             return delegate.getValue(variableName);

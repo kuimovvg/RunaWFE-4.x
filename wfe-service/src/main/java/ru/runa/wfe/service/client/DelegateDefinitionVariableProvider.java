@@ -26,6 +26,11 @@ public class DelegateDefinitionVariableProvider extends AbstractVariableProvider
     }
 
     @Override
+    public String getProcessDefinitionName() {
+        return Delegates.getDefinitionService().getProcessDefinition(user, definitionId).getName();
+    }
+
+    @Override
     public Object getValue(String variableName) {
         return null;
     }
