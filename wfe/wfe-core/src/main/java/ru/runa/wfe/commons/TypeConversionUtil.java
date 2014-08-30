@@ -32,6 +32,8 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.IExecutorLoader;
+import ru.runa.wfe.var.ComplexVariable;
+import ru.runa.wfe.var.format.UserTypeFormat;
 
 import com.google.common.base.Defaults;
 import com.google.common.base.Preconditions;
@@ -84,6 +86,12 @@ public class TypeConversionUtil {
                 }
                 if (object instanceof Calendar) {
                     return (T) CalendarUtil.formatDateTime((Calendar) object);
+                }
+                if (object instanceof ComplexVariable) {
+                    ComplexVariable complexVariable = (ComplexVariable) object;
+                    UserTypeFormat format = new UserTypeFormat(complexVariable.getUserType());
+                    return (T) format.formatJSON(object);
+
                 }
                 return (T) object.toString();
             }
