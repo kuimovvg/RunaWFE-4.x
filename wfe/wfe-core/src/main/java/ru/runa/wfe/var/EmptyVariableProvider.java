@@ -10,6 +10,11 @@ public class EmptyVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
+    public String getProcessDefinitionName() {
+        return null;
+    }
+
+    @Override
     public Object getValue(String variableName) {
         return null;
     }

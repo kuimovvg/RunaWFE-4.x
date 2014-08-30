@@ -40,6 +40,11 @@ public class TestVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
+    public String getProcessDefinitionName() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Object getValue(String variableName) {
         WfVariable variable = getVariable(variableName);
         if (variable != null) {

@@ -1,5 +1,6 @@
 package ru.runa.wfe.service.client;
 
+import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.IExecutorLoader;
 import ru.runa.wfe.user.User;
@@ -30,6 +31,12 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
     @Override
     public Long getProcessId() {
         return processId;
+    }
+
+    @Override
+    public String getProcessDefinitionName() {
+        WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
+        return process.getName();
     }
 
     @Override

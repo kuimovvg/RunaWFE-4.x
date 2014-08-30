@@ -18,7 +18,13 @@ public interface IVariableProvider {
      */
     Long getProcessId();
 
-    // TODO add String getVariableDefinition();
+    /**
+     * Access to current process definition name.
+     * 
+     * @return context definition name, can be <code>null</code> (if variables
+     *         does not linked with process definition)
+     */
+    String getProcessDefinitionName();
 
     /**
      * Access to variable value.
