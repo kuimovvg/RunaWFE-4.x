@@ -22,7 +22,7 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
-import ru.runa.af.web.action.RestoreDefaultPropertiesAction;
+import ru.runa.af.web.action.RestoreDefaultSettingsAction;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
@@ -46,9 +46,9 @@ public class SystemSettingsTag extends TitledFormTag {
     	if (!Delegates.getExecutorService().isAdministrator(getUser()))
     		throw new AuthorizationException("No permission on this page");
         Table table = new Table();
-        for (String resource : EditPropertiesTag.settingsList.descendingKeySet()) {
+        for (String resource : EditSettingsTag.settingsList.descendingKeySet()) {
         	TR tr = new TR();
-        	String title = EditPropertiesTag.getDescription(pageContext, resource);
+        	String title = EditSettingsTag.getDescription(pageContext, resource);
         	tr.addElement("<td><a href=edit_settings.do?resource="+resource+">" + title + "</a></td>");
         	table.addElement(tr);
         }
@@ -62,7 +62,7 @@ public class SystemSettingsTag extends TitledFormTag {
 
     @Override
     public String getAction() {
-    	return RestoreDefaultPropertiesAction.RESTORE_DEFAULT_PROPERTIES_ACTION_PATH;
+    	return RestoreDefaultSettingsAction.RESTORE_DEFAULT_SETTINGS_ACTION_PATH;
     }
 
     @Override

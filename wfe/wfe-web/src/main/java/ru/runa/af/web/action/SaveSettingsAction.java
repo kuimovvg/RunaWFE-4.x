@@ -14,7 +14,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.common.web.form.PropertiesFileForm;
+import ru.runa.common.web.form.SettingsFileForm;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.service.SystemService;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -22,19 +22,27 @@ import ru.runa.wfe.service.delegate.Delegates;
 /**
  * @author petrmikheev
  * 
- * @struts:action path="/restore_default_properties" input = "/WEB-INF/wf/manage_settings.jsp"
+ * @struts:action path="/save_settings" name="settingsFileForm" validate="false" input =
+ *                "/WEB-INF/wf/edit_settings.jsp"
  */
-public class RestoreDefaultPropertiesAction extends ActionBase {
+public class SaveSettingsAction extends ActionBase {
 
-    public static final String RESTORE_DEFAULT_PROPERTIES_ACTION_PATH = "/restore_default_properties";
+    public static final String SAVE_SETTINGS_ACTION_PATH = "/save_settings";
+    private static final Log log = LogFactory.getLog(SaveSettingsAction.class);
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
     	if (!Delegates.getExecutorService().isAdministrator(Commons.getUser(request.getSession())))
     		throw new AuthorizationException("No permission on this page");
         try {
+            SettingsFileForm pform = (SettingsFileForm)form;
+            String resource = pform.getResource();
+            Map<String, String> properties = pform.getModifiedSettings();
             SystemService service = Delegates.getSystemService();
-            service.clearSettings();
+            for (String p : properties.keySet()) {
+            	log.info(resource + "[" + p + "] = " + properties.get(p));
+            	service.setSetting(resource, p, properties.get(p));
+            }
         } catch (Exception e) {
             log.error("", e);
         }

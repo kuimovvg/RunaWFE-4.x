@@ -33,7 +33,7 @@
 		<form-bean name="taskIdForm" type="ru.runa.wf.web.form.TaskIdForm" />
 		<form-bean name="commonProcessForm" type="ru.runa.wf.web.form.CommonProcessForm" />
 		<form-bean name="fileForm" type="ru.runa.common.web.form.FileForm" />
-		<form-bean name="propertiesFileForm" type="ru.runa.common.web.form.PropertiesFileForm" />
+		<form-bean name="settingsFileForm" type="ru.runa.common.web.form.SettingsFileForm" />
 		<form-bean name="relationForm" type="ru.runa.af.web.form.RelationForm" />
 		<form-bean name="relationPairForm" type="ru.runa.af.web.form.RelationPairForm" />
 		<form-bean name="relationPairsForm" type="ru.runa.af.web.form.RelationPairsForm" />
@@ -114,12 +114,12 @@
 			name="idForm" scope="request" input="/WEB-INF/wf/bot.jsp" unknown="false"
 			validate="false">
 		</action>
-		<action path="/restore_default_properties" type="ru.runa.af.web.action.RestoreDefaultPropertiesAction"
+		<action path="/restore_default_settings" type="ru.runa.af.web.action.RestoreDefaultSettingsAction"
 			input="/WEB-INF/wf/manage_settings.jsp">
 			<forward name="success" path="/manage_settings.do" redirect="true" />
 		</action>
-		<action path="/save_properties" type="ru.runa.af.web.action.SavePropertiesAction"
-			name="propertiesFileForm" scope="request" input="/WEB-INF/wf/edit_settings.jsp" unknown="false"
+		<action path="/save_settings" type="ru.runa.af.web.action.SaveSettingsAction"
+			name="settingsFileForm" scope="request" input="/WEB-INF/wf/edit_settings.jsp" unknown="false"
 			validate="false">
 			<forward name="success" path="/manage_settings.do" redirect="true" />
 		</action>

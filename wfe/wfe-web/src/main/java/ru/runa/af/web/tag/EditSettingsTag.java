@@ -38,9 +38,9 @@ import org.apache.struts.taglib.TagUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
-import ru.runa.af.web.action.SavePropertiesAction;
+import ru.runa.af.web.action.SaveSettingsAction;
 import ru.runa.common.web.Messages;
-import ru.runa.common.web.form.PropertiesFileForm;
+import ru.runa.common.web.form.SettingsFileForm;
 import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.PropertyResources;
@@ -51,35 +51,35 @@ import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * @author: petrmikheev Date: 26.08.2012
- * @jsp.tag name = "editProperties" body-content = "JSP"
+ * @jsp.tag name = "editSettings" body-content = "JSP"
  */
 
-public class EditPropertiesTag extends TitledFormTag {
+public class EditSettingsTag extends TitledFormTag {
     private static final long serialVersionUID = -426375016105456L;
-    private static final Log log = LogFactory.getLog(EditPropertiesTag.class);
+    private static final Log log = LogFactory.getLog(EditSettingsTag.class);
 
-    private static class Property {
+    private static class Setting {
     	public String title;
     	public String pattern = null;
     	public List<String> values = new LinkedList<String>();
-    	public Property(String title) {
+    	public Setting(String title) {
     		this.title = title;
     	}
     }
     
-    private static class PropertiesFile {
-    	Property defaultProperty = new Property(null);
-    	List<Property> properties = new ArrayList<Property>();
+    private static class SettingsFile {
+    	Setting defaultSetting = new Setting(null);
+    	List<Setting> settings = new ArrayList<Setting>();
     }
     
-    public static TreeMap<String, PropertiesFile> settingsList = new TreeMap<String, PropertiesFile>();
+    public static TreeMap<String, SettingsFile> settingsList = new TreeMap<String, SettingsFile>();
 
     static {
         readSettingsList("settingsList.xml");
     }
 
     @SuppressWarnings("unchecked")
-	private static void parsePropertyType(Property p, Element el) {
+	private static void parseSettingType(Setting p, Element el) {
     	p.pattern = el.attributeValue("pattern");
     	List<Element> vlist = el.elements();
     	for (Element v : vlist) {
@@ -95,15 +95,15 @@ public class EditPropertiesTag extends TitledFormTag {
             Document document = XmlUtils.parseWithoutValidation(is);
             List<Element> files = document.getRootElement().elements();
             for (Element f : files) {
-            	PropertiesFile pf = new PropertiesFile();
+            	SettingsFile pf = new SettingsFile();
             	settingsList.put(f.attributeValue("title"), pf);
-            	parsePropertyType(pf.defaultProperty, f);
+            	parseSettingType(pf.defaultSetting, f);
             	List<Element> plist = f.elements();
             	for (Element p : plist) {
             		if (p.getName() != "property") continue;
-            		Property np = new Property(p.attributeValue("title"));
-            		parsePropertyType(np, p);
-            		pf.properties.add(np);
+            		Setting np = new Setting(p.attributeValue("title"));
+            		parseSettingType(np, p);
+            		pf.settings.add(np);
             	}
             }
         } catch (Exception e) {
@@ -136,9 +136,9 @@ public class EditPropertiesTag extends TitledFormTag {
     	if (!settingsList.containsKey(resource))
     		throw new IllegalArgumentException();
     	getForm().setMethod(Form.POST);
-    	tdFormElement.addElement(new Input(Input.hidden, PropertiesFileForm.RESOURCE_INPUT_NAME, resource));
+    	tdFormElement.addElement(new Input(Input.hidden, SettingsFileForm.RESOURCE_INPUT_NAME, resource));
     	tdFormElement.addElement(new Input(Input.hidden, "saveButtonText", Messages.getMessage(Messages.BUTTON_SAVE, pageContext)));
-    	PropertiesFile pf = settingsList.get(resource);
+    	SettingsFile pf = settingsList.get(resource);
     	PropertyResources properties = new PropertyResources(resource);
     	Table table = new Table();
     	table.setClass("list");
@@ -147,29 +147,29 @@ public class EditPropertiesTag extends TitledFormTag {
     	String header_value = Messages.getMessage(Messages.LABEL_SETTING_VALUE, pageContext);
     	table.addElement("<tr><th class='list'>"+header_title+"</th><th class='list'>"+header_description+
     			"</th><th class='list' style='width:300px'>"+header_value+"</th></tr>");
-    	List<Property> lp = pf.properties;
+    	List<Setting> lp = pf.settings;
     	if (lp.size() == 0) {
-    		lp = new LinkedList<Property>();
+    		lp = new LinkedList<Setting>();
     		for (Object k : properties.getAllPropertyNames()) {
-    			Property p = new Property(k.toString());
-    			p.pattern = pf.defaultProperty.pattern;
-    			p.values = pf.defaultProperty.values;
+    			Setting p = new Setting(k.toString());
+    			p.pattern = pf.defaultSetting.pattern;
+    			p.values = pf.defaultSetting.values;
     			lp.add(p);
     		}
     	}
-    	for (Property p : lp) {
+    	for (Setting p : lp) {
     		String description = getDescription(pageContext, resource + "_" + p.title);
     		String value = properties.getStringProperty(p.title, "");
-    		Input old_input = new Input(Input.hidden, PropertiesFileForm.OLD_VALUE_INPUT_NAME(p.title), value);
+    		Input old_input = new Input(Input.hidden, SettingsFileForm.OLD_VALUE_INPUT_NAME(p.title), value);
     		String input;
     		if (p.values.size() == 0) {
-    			Input i = new Input(Input.text, PropertiesFileForm.NEW_VALUE_INPUT_NAME(p.title), value);
+    			Input i = new Input(Input.text, SettingsFileForm.NEW_VALUE_INPUT_NAME(p.title), value);
     			i.addAttribute("style", "width: 290px");
     			if (p.pattern != null) i.addAttribute("pattern", p.pattern);
     			input = i.toString();
     		} else {
     			StringBuilder b = new StringBuilder();
-    			b.append("<select style='width: 300px' name='" + PropertiesFileForm.NEW_VALUE_INPUT_NAME(p.title) + "'>");
+    			b.append("<select style='width: 300px' name='" + SettingsFileForm.NEW_VALUE_INPUT_NAME(p.title) + "'>");
     			b.append("<option selected>");
     			b.append(value);
     			b.append("</option>");
@@ -196,7 +196,7 @@ public class EditPropertiesTag extends TitledFormTag {
 			if (res == null) res = "";
 			return res;
 		} catch (JspException e) {
-			e.printStackTrace();
+			log.error("Error at getDescription()", e);
 			return key; 
 		}
     }
@@ -208,7 +208,7 @@ public class EditPropertiesTag extends TitledFormTag {
 
     @Override
     public String getAction() {
-    	return SavePropertiesAction.SAVE_PROPERTIES_ACTION_PATH;
+    	return SaveSettingsAction.SAVE_SETTINGS_ACTION_PATH;
     }
     @Override
     protected boolean isCancelButtonEnabled() {

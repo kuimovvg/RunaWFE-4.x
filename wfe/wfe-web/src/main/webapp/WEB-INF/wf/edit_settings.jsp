@@ -5,7 +5,7 @@
 
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
 	<tiles:put name="body" type="string">
-		<wf:editProperties resource="${param.resource}" />
+		<wf:editSettings resource="${param.resource}" />
     </tiles:put>
     <tiles:put name="messages" value="../common/messages.jsp"/>
 </tiles:insert>
