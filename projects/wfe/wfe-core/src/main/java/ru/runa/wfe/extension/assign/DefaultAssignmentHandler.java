@@ -24,6 +24,8 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
+import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.Assignable;
 import ru.runa.wfe.extension.AssignmentHandler;
@@ -49,7 +51,13 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
 
     @Override
     public void assign(ExecutionContext executionContext, Assignable assignable) {
-        List<? extends Executor> executors = calculateExecutors(executionContext, assignable);
-        assignmentHelper.assign(executionContext, assignable, executors);
+        try {
+            List<? extends Executor> executors = calculateExecutors(executionContext, assignable);
+            assignmentHelper.assign(executionContext, assignable, executors);
+            ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), assignable.getName());
+        } catch (Exception e) {
+            ProcessExecutionException pee = new ProcessExecutionException(assignable.getErrorMessageKey(), e, assignable.getName());
+            ProcessExecutionErrors.addProcessError(executionContext.getProcess().getId(), assignable.getName(), assignable.getName(), null, pee);
+        }
     }
 }

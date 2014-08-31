@@ -236,6 +236,12 @@ public class Task implements Assignable {
 
     @Transient
     @Override
+    public String getSwimlaneName() {
+        return swimlane.getName();
+    }
+
+    @Transient
+    @Override
     public String getErrorMessageKey() {
         return ProcessExecutionException.TASK_ASSIGNMENT_FAILED;
     }

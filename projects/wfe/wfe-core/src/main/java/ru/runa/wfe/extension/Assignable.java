@@ -35,6 +35,8 @@ public interface Assignable extends Serializable {
 
     public String getName();
 
+    public String getSwimlaneName();
+
     public String getErrorMessageKey();
 
     /**

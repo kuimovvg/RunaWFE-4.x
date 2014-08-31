@@ -143,6 +143,12 @@ public class Swimlane implements Serializable, Assignable {
 
     @Transient
     @Override
+    public String getSwimlaneName() {
+        return name;
+    }
+
+    @Transient
+    @Override
     public String getErrorMessageKey() {
         return ProcessExecutionException.SWIMLANE_ASSIGNMENT_FAILED;
     }
