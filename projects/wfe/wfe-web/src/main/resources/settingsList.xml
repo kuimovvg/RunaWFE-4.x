@@ -206,13 +206,6 @@
 		<property title="weekday.sunday" pattern="\s*\d\d?:\d\d\-\d\d?:\d\d(\s*\&amp;\s*\d\d?:\d\d\-\d\d?:\d\d)*\s*"/>
 	</properties_file>	
 	
-	<properties_file title="cache.properties">
-		<property title="smart_cache">
-			<value>true</value>
-			<value>false</value>
-		</property>
-	</properties_file>
-	
 	<property_file title="botstation.properties">
 		<property title="botstation.invocation.period.seconds" pattern="\d*"/>
 		<property title="botstation.system.username" />
