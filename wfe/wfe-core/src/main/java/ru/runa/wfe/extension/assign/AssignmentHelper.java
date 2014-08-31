@@ -7,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionException;
 import ru.runa.wfe.extension.Assignable;
@@ -55,15 +54,7 @@ public class AssignmentHelper {
                 assignable.assignExecutor(executionContext, aloneExecutor, true);
                 return;
             }
-            String swimlaneName;
-            if (assignable instanceof Swimlane) {
-                swimlaneName = ((Swimlane) assignable).getName();
-            } else if (executionContext.getTask().getSwimlane() != null) {
-                swimlaneName = executionContext.getTask().getSwimlane().getName();
-            } else {
-                log.warn("Unable to get swimlane name; assignment postponed in " + assignable);
-                return;
-            }
+            String swimlaneName = assignable.getSwimlaneName();
             Group tmpGroup = TemporaryGroup.create(executionContext.getProcess().getId(), swimlaneName);
             executorLogic.saveTemporaryGroup(tmpGroup, executors);
             assignable.assignExecutor(executionContext, tmpGroup, true);
