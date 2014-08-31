@@ -29,7 +29,7 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@Table(name = "BPM_SETTINGS")
+@Table(name = "BPM_SETTING")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 class Setting {
     private Long id;
@@ -48,7 +48,7 @@ class Setting {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_SETTINGS")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_SETTING")
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

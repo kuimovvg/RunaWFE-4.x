@@ -36,7 +36,6 @@ import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.relation.RelationsGroupSecure;
-import ru.runa.wfe.security.Settings;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -66,7 +65,7 @@ public class TabHeaderTag extends TagSupport {
         FORWARDS.add(new MenuForward("manage_relations", RelationsGroupSecure.INSTANCE));
         FORWARDS.add(new MenuForward("configure_bot_station", BotStation.INSTANCE));
         FORWARDS.add(new MenuForward("manage_system", ASystem.INSTANCE));
-        FORWARDS.add(new MenuForward("manage_settings", Settings.INSTANCE));
+        FORWARDS.add(new MenuForward("manage_settings"));
         FORWARDS.add(new MenuForward("view_logs", ASystem.INSTANCE));
     }
 
@@ -88,7 +87,7 @@ public class TabHeaderTag extends TagSupport {
         headerTable.setClass(Resources.CLASS_TAB_TABLE);
         if (isVertical()) {
             for (int i = 0; i < FORWARDS.size(); i++) {
-                if (!isMenuForwardVisible(FORWARDS.get(i).getMenuSecuredObject())) {
+                if (!isMenuForwardVisible(FORWARDS.get(i))) {
                     continue;
                 }
                 A a = getHref(Messages.getMessage(FORWARDS.get(i).getMenuName(), pageContext), FORWARDS.get(i).getMenuName());
@@ -108,7 +107,7 @@ public class TabHeaderTag extends TagSupport {
             headerTable.addElement(tr);
             headerTable.setWidth("100%");
             for (int i = 0; i < FORWARDS.size(); i++) {
-                if (!isMenuForwardVisible(FORWARDS.get(i).getMenuSecuredObject())) {
+                if (!isMenuForwardVisible(FORWARDS.get(i))) {
                     continue;
                 }
                 A a = getHref(Messages.getMessage(FORWARDS.get(i).getMenuName(), pageContext), FORWARDS.get(i).getMenuName());
@@ -135,17 +134,16 @@ public class TabHeaderTag extends TagSupport {
         return Commons.getUser(pageContext.getSession());
     }
 
-    private boolean isMenuForwardVisible(Identifiable menuSecuredObject) {
-        if (menuSecuredObject != null) {
-            try {
-            	if (menuSecuredObject == Settings.INSTANCE)
-            		return Delegates.getExecutorService().isAdministrator(getUser());
-            	else
-            		return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.READ, menuSecuredObject);
-            } catch (Exception e) {
-                return false;
-            }
-        }
+    private boolean isMenuForwardVisible(MenuForward menuForward) {
+    	try {
+			if (menuForward.menuName.equals("manage_settings"))
+				return Delegates.getExecutorService().isAdministrator(getUser());
+			if (menuForward.menuSecuredObject != null) {
+				return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.READ, menuForward.menuSecuredObject);
+			}
+		} catch (Exception e) {
+			return false;
+		}
         return true;
     }
 

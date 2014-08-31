@@ -20,7 +20,7 @@ public class AddSettingsTable extends DBPatch {
         columns.add(new ColumnDef("FILE_NAME", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024), false));
         columns.add(new ColumnDef("NAME", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024), false));
         columns.add(new ColumnDef("VALUE", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024), true));
-        sql.add(getDDLCreateTable("BPM_SETTINGS", columns, null));
+        sql.add(getDDLCreateTable("BPM_SETTING", columns, null));
         return sql;
 	}
 	

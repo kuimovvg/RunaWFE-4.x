@@ -21,6 +21,8 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.timer.ScheduledTimerTask;
@@ -49,6 +51,7 @@ import com.google.common.collect.Lists;
  * Created on 14.03.2005
  */
 public class CommonLogic {
+	private static final Log log = LogFactory.getLog(CommonLogic.class);
     @Autowired
     protected PermissionDAO permissionDAO;
     @Autowired
@@ -178,7 +181,7 @@ public class CommonLogic {
 					ScheduledTimerTask t = ApplicationContextFactory.getContext().getBean(bean, ScheduledTimerTask.class);
 					t.setPeriod(period);
 				} catch (BeansException e) {
-					e.printStackTrace();
+					log.error("Can't renew TIMERTASK settings", e);
 				}
     		}
     	}
