@@ -116,7 +116,8 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
 
     protected void updateGridLayerVisibility(boolean enabled) {
         if (getGraphicalViewer() != null && getGraphicalViewer().getEditPartRegistry() != null) {
-            ScalableFreeformRootEditPart rootEditPart = (ScalableFreeformRootEditPart) getGraphicalViewer().getEditPartRegistry().get(LayerManager.ID);
+            ScalableFreeformRootEditPart rootEditPart = (ScalableFreeformRootEditPart) getGraphicalViewer().getEditPartRegistry()
+                    .get(LayerManager.ID);
             IFigure gridFigure = ((LayerManager) rootEditPart).getLayer(LayerConstants.GRID_LAYER);
             gridFigure.setVisible(enabled);
             // gridFigure.setEnabled(editor.getDefinition().isShowGrid());
@@ -142,7 +143,7 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
 
     @Override
     public boolean isDirty() {
-        return getCommandStack().isDirty();
+        return getCommandStack() != null ? getCommandStack().isDirty() : false;
     }
 
     private void importDiagram() {
@@ -207,7 +208,8 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
         for (Transition transition : transitions) {
             Anchor sourceAnchor = null;
             Anchor targetAnchor = null;
-            AnchorContainer sourceShape = (AnchorContainer) getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(transition.getSource());
+            AnchorContainer sourceShape = (AnchorContainer) getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(
+                    transition.getSource());
             if (sourceShape == null) {
                 continue;
             }
@@ -218,7 +220,8 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
                     break;
                 }
             }
-            AnchorContainer targetShape = (AnchorContainer) getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(transition.getTarget());
+            AnchorContainer targetShape = (AnchorContainer) getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(
+                    transition.getTarget());
             if (targetShape == null) {
                 continue;
             }
@@ -234,11 +237,11 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
             getDiagramTypeProvider().getFeatureProvider().addIfPossible(addContext);
         }
     }
-    
+
     @Override
     protected void initActionRegistry(ZoomManager zoomManager) {
-    	super.initActionRegistry(zoomManager);
-    	GEFActionBarContributor.createCustomGEFActions(getActionRegistry(), editor, getSelectionActions());
+        super.initActionRegistry(zoomManager);
+        GEFActionBarContributor.createCustomGEFActions(getActionRegistry(), editor, getSelectionActions());
     }
-   
+
 }
