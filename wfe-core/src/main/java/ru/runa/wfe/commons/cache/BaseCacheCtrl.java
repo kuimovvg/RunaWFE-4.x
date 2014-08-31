@@ -36,7 +36,7 @@ import ru.runa.wfe.commons.PropertyResources;
  *            Controlled cache implementation.
  */
 public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> implements CacheControl<CacheImpl>, ChangeListener {
-    private static final PropertyResources RESOURCES = new PropertyResources("cache.properties");
+    private static final PropertyResources RESOURCES = new PropertyResources("cache.properties", true, false);
 
     /**
      * Smart cache parameter name.
