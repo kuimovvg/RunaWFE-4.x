@@ -27,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
-import ru.runa.wfe.commons.PropertyResources;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
@@ -60,7 +59,6 @@ import com.google.common.collect.Sets;
 public class ExecutorLogic extends CommonLogic {
     private static final Log log = LogFactory.getLog(ExecutorLogic.class);
     private List<SetStatusHandler> setStatusHandlers;
-    private Pattern passwordCheckPattern = null;
 
     @Autowired
     private ProfileDAO profileDAO;
@@ -265,17 +263,8 @@ public class ExecutorLogic extends CommonLogic {
     }
 
     public void setPassword(User user, Actor actor, String password) {
-    	String strongPasswordsRegexp = SystemProperties.getStrongPasswordsRegexp();
-    	if (strongPasswordsRegexp != null && strongPasswordsRegexp.length() > 0) {
-    		if (passwordCheckPattern == null || passwordCheckPattern.pattern() != strongPasswordsRegexp) {
-	    		try {
-					passwordCheckPattern = Pattern.compile(strongPasswordsRegexp);
-				} catch (Exception e) {
-					log.warn("Invalid passwordCheckPattern " + passwordCheckPattern, e);
-				}
-    		}
-    	} else passwordCheckPattern = null;
-        if (passwordCheckPattern != null && !passwordCheckPattern.matcher(password).matches()) {
+        String passwordsRegexp = SystemProperties.getStrongPasswordsRegexp();
+        if (!Strings.isNullOrEmpty(passwordsRegexp) && !Pattern.compile(passwordsRegexp).matcher(password).matches()) {
             throw new WeakPasswordException();
         }
         if (!isPermissionAllowed(user, actor, ExecutorPermission.UPDATE)) {
