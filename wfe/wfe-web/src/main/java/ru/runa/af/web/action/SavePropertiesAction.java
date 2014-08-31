@@ -41,7 +41,7 @@ public class SavePropertiesAction extends ActionBase {
             SystemService service = Delegates.getSystemService();
             for (String p : properties.keySet()) {
             	log.info(resource + "[" + p + "] = " + properties.get(p));
-            	service.setWfProperty(resource, p, properties.get(p));
+            	service.setSetting(resource, p, properties.get(p));
             }
         } catch (Exception e) {
             log.error("", e);

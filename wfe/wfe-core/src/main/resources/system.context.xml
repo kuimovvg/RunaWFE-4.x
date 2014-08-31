@@ -222,7 +222,7 @@
 	<bean id="constantDAO" class="ru.runa.wfe.commons.dao.ConstantDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
-	<bean id="wfPropertyDAO" class="ru.runa.wfe.commons.dao.WfPropertyDAO">
+	<bean id="settingDAO" class="ru.runa.wfe.commons.dao.SettingDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
 	<bean id="deploymentDAO" class="ru.runa.wfe.definition.dao.DeploymentDAO">
@@ -283,7 +283,6 @@
 	</bean>
 
 	<bean id="taskFactory" class="ru.runa.wfe.task.TaskFactory">
-		<property name="defaultTaskDeadline" value="${task.default.deadline}" />
 		<!-- property name="taskNotifier"> <bean class="ru.runa.wfe.task.EmailTaskNotifier"> 
 			</bean> </property -->
 	</bean>
@@ -320,7 +319,6 @@
 	<bean id="authorizationLogic" class="ru.runa.wfe.security.logic.AuthorizationLogic" />
 	<bean id="botLogic" class="ru.runa.wfe.bot.logic.BotLogic" />
 	<bean id="executorLogic" class="ru.runa.wfe.user.logic.ExecutorLogic">
-		<property name="passwordCheckPattern" value="${strong.passwords.regexp}" />
 		<property name="setStatusHandlers">
 			<list>
 				<!-- bean class="ru.runa.wfe.synchronizer.online.ActorStatusSynchronizer" 

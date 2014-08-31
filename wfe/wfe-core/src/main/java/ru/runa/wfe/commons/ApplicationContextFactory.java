@@ -15,7 +15,7 @@ import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
 import ru.runa.wfe.commons.bc.BusinessCalendar;
-import ru.runa.wfe.commons.dao.WfPropertyDAO;
+import ru.runa.wfe.commons.dao.SettingDAO;
 import ru.runa.wfe.commons.hibernate.Converters;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.IProcessDefinitionLoader;
@@ -64,8 +64,8 @@ public class ApplicationContextFactory {
         return getContext().getBean(TokenDAO.class);
     }
 
-    public static WfPropertyDAO getWfPropertyDAO() {
-        return getContext().getBean("wfPropertyDAO", WfPropertyDAO.class);
+    public static SettingDAO getSettingDAO() {
+        return getContext().getBean("settingDAO", SettingDAO.class);
     }
     
     public static ProcessDAO getProcessDAO() {

@@ -34,7 +34,7 @@ public class RestoreDefaultPropertiesAction extends ActionBase {
     		throw new AuthorizationException("No permission on this page");
         try {
             SystemService service = Delegates.getSystemService();
-            service.clearWfProperties();
+            service.clearSettings();
         } catch (Exception e) {
             log.error("", e);
         }
