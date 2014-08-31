@@ -64,4 +64,27 @@ public interface SystemService {
      * @param localizations
      */
     public void saveLocalizations(User user, List<Localization> localizations);
+    
+    /**
+     * Get property value with key (fileName, name) from database
+     * 
+     * @param fileName
+     * @param name
+     * @return
+     */
+    public String getWfProperty(String fileName, String name);
+    
+    /**
+     * Get property value with key (fileName, name) in database
+     * 
+     * @param fileName
+     * @param name
+     * @param value
+     */
+    public void setWfProperty(String fileName, String name, String value);
+    
+    /**
+     * Remove all properties from database
+     */
+    public void clearWfProperties();
 }

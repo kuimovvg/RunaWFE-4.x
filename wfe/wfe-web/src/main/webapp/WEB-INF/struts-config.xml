@@ -33,6 +33,7 @@
 		<form-bean name="taskIdForm" type="ru.runa.wf.web.form.TaskIdForm" />
 		<form-bean name="commonProcessForm" type="ru.runa.wf.web.form.CommonProcessForm" />
 		<form-bean name="fileForm" type="ru.runa.common.web.form.FileForm" />
+		<form-bean name="propertiesFileForm" type="ru.runa.common.web.form.PropertiesFileForm" />
 		<form-bean name="relationForm" type="ru.runa.af.web.form.RelationForm" />
 		<form-bean name="relationPairForm" type="ru.runa.af.web.form.RelationPairForm" />
 		<form-bean name="relationPairsForm" type="ru.runa.af.web.form.RelationPairsForm" />
@@ -83,6 +84,7 @@
 			path="/configure_bot_station.do?tabForwardName=configure_bot_station" />
 		<forward name="bot_station_permission" path="/bot_station_permission.do" />
 		<forward name="grant_bot_station_permission" path="/grant_bot_station_permission.do" />
+		<forward name="edit_settings" path="/edit_settings.do" />
 	</global-forwards>
 
 	<!-- ========== Action Mapping Definitions =================================== -->
@@ -111,6 +113,15 @@
 		<action path="/save_bot" type="ru.runa.af.web.action.SaveBotAction"
 			name="idForm" scope="request" input="/WEB-INF/wf/bot.jsp" unknown="false"
 			validate="false">
+		</action>
+		<action path="/restore_default_properties" type="ru.runa.af.web.action.RestoreDefaultPropertiesAction"
+			input="/WEB-INF/wf/manage_settings.jsp">
+			<forward name="success" path="/manage_settings.do" redirect="true" />
+		</action>
+		<action path="/save_properties" type="ru.runa.af.web.action.SavePropertiesAction"
+			name="propertiesFileForm" scope="request" input="/WEB-INF/wf/edit_settings.jsp" unknown="false"
+			validate="false">
+			<forward name="success" path="/manage_settings.do" redirect="true" />
 		</action>
 		<action path="/setSorting" type="ru.runa.common.web.action.SetSortingAction"
 			name="setSortingForm" scope="request" unknown="false" validate="false">
@@ -718,6 +729,9 @@
 			
 		<action path="/configure_bot_station" type="ru.runa.common.web.action.TabHeaderForwardAction"
 			parameter="/WEB-INF/wf/configure_bot_station.jsp" />
+		
+		<action path="/edit_settings" type="org.apache.struts.actions.ForwardAction"
+			parameter="/WEB-INF/wf/edit_settings.jsp" />
 
 		<action path="/add_bot_station" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/wf/add_bot_station.jsp" />
@@ -779,6 +793,7 @@
 		locale="true" processorClass="ru.runa.common.web.UTF8RequestProcessor" />
 
 	<message-resources parameter="struts" />
+	<message-resources parameter="settingsDescriptions" key="settingsDescriptions" />
 
 	<!-- Define your Struts plugins in a file called struts-plugins.xml and 
 		place it in your merge directory. -->

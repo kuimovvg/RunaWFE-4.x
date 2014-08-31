@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import ru.runa.wfe.audit.TaskCreateLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -43,6 +44,7 @@ public class TaskFactory {
         if (timerActions.size() > 0) {
             return timerActions.get(0).getDueDate();
         }
+        setDefaultTaskDeadline(SystemProperties.getDefaultTaskDeadline());
         return defaultTaskDeadline;
     }
 

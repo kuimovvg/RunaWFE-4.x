@@ -85,4 +85,22 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
         auditLogic.saveLocalizations(user, localizations);
     }
 
+	@Override
+	public String getWfProperty(String fileName, String name) {
+		Preconditions.checkArgument(fileName != null);
+		Preconditions.checkArgument(name != null);
+		return auditLogic.getWfProperty(fileName, name);
+	}
+
+	@Override
+	public void setWfProperty(String fileName, String name, String value) {
+		Preconditions.checkArgument(fileName != null);
+		Preconditions.checkArgument(name != null);
+		auditLogic.setWfProperty(fileName, name, value);
+	}
+
+	@Override
+	public void clearWfProperties() {
+		auditLogic.clearWfProperties();
+	}
 }

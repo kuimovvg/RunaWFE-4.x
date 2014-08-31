@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Required;
 
+import ru.runa.wfe.commons.PropertyResources;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.logic.CommonLogic;
 import ru.runa.wfe.commons.logic.PresentationCompilerHelper;
@@ -275,6 +276,11 @@ public class ExecutorLogic extends CommonLogic {
     }
 
     public void setPassword(User user, Actor actor, String password) {
+    	String strong_passwords_regexp = SystemProperties.getStrongPasswordsRegexp();
+    	if (strong_passwords_regexp == null || strong_passwords_regexp.length() == 0)
+    		passwordCheckPattern = null;
+    	else if (passwordCheckPattern == null || passwordCheckPattern.pattern() != strong_passwords_regexp)
+    		setPasswordCheckPattern(strong_passwords_regexp);
         if (passwordCheckPattern != null && !passwordCheckPattern.matcher(password).matches()) {
             throw new WeakPasswordException();
         }

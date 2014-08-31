@@ -21,10 +21,15 @@ import java.util.List;
 
 import javax.security.auth.Subject;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.timer.ScheduledTimerTask;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
+import ru.runa.wfe.commons.dao.WfPropertyDAO;
 import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthorizationException;
@@ -52,6 +57,8 @@ public class CommonLogic {
     protected LocalizationDAO localizationDAO;
     @Autowired
     protected ProcessDAO processDAO;
+    @Autowired
+    protected WfPropertyDAO wfPropertyDAO;
 
     protected <T extends Executor> T checkPermissionsOnExecutor(User user, T executor, Permission permission) {
         if (executor.getName().equals(SystemExecutors.PROCESS_STARTER_NAME) && permission.equals(Permission.READ)) {
@@ -152,6 +159,33 @@ public class CommonLogic {
     public void saveLocalizations(User user, List<Localization> localizations) {
         // TODO permissions
         localizationDAO.saveLocalizations(localizations, true);
+    }
+    
+    public String getWfProperty(String fileName, String name) {
+    	return wfPropertyDAO.getValue(fileName, name);
+    }
+    
+    public void setWfProperty(String fileName, String name, String value) {
+    	wfPropertyDAO.setValue(fileName, name, value);
+    	if (fileName.equals("system.properties")) {
+    		String bean = null;
+    		if (name.equals("timertask.period.millis.job.execution")) bean = "jobExecutorTask";
+    		if (name.equals("timertask.period.millis.unassigned.tasks.execution")) bean = "tasksAssignTask";
+    		if (name.equals("timertask.period.millis.ldap.sync")) bean = "ldapSynchronizerTask";
+    		if (bean != null) {
+    			try {
+					Long period = SystemProperties.getResources().getLongProperty(name, 60000);
+					ScheduledTimerTask t = ApplicationContextFactory.getContext().getBean(bean, ScheduledTimerTask.class);
+					t.setPeriod(period);
+				} catch (BeansException e) {
+					e.printStackTrace();
+				}
+    		}
+    	}
+    }
+    
+    public void clearWfProperties() {
+    	wfPropertyDAO.clear();
     }
 
 }
