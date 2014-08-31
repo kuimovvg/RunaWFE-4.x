@@ -37,7 +37,7 @@ import ru.runa.common.web.Messages;
  * 
  * @struts:form name = "propertiesFileForm"
  */
-public class PropertiesFileForm extends ActionForm {
+public class SettingsFileForm extends ActionForm {
 
     private static final long serialVersionUID = 67L;
     private HashMap<String, PropertyForm> properties = new HashMap<String, PropertyForm>();
@@ -59,7 +59,7 @@ public class PropertiesFileForm extends ActionForm {
 		this.resource = resource;
 	}
 	
-	public Map<String, String> getModifiedProperties() {
+	public Map<String, String> getModifiedSettings() {
 		Map<String, String> res = new HashMap<String, String>();
 		for (String p : properties.keySet()) {
 			PropertyForm f = properties.get(p);

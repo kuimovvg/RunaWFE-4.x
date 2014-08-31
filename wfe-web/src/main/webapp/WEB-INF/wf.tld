@@ -5447,8 +5447,8 @@
 
    </tag>
    <tag>
-      <name>editProperties</name>
-      <tag-class>ru.runa.af.web.tag.EditPropertiesTag</tag-class>
+      <name>editSettings</name>
+      <tag-class>ru.runa.af.web.tag.EditSettingsTag</tag-class>
       <body-content>JSP</body-content>
       <attribute>
          <name>resource</name>
