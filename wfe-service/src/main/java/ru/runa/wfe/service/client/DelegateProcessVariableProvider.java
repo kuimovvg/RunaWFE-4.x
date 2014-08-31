@@ -1,6 +1,7 @@
 package ru.runa.wfe.service.client;
 
 import ru.runa.wfe.execution.dto.WfProcess;
+import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.IExecutorLoader;
 import ru.runa.wfe.user.User;
@@ -15,12 +16,18 @@ import ru.runa.wfe.var.dto.WfVariable;
  * @since 4.0
  */
 public class DelegateProcessVariableProvider extends AbstractVariableProvider {
+    private final ExecutionService executionService;
     private final User user;
     private final Long processId;
 
-    public DelegateProcessVariableProvider(User user, Long processId) {
+    public DelegateProcessVariableProvider(ExecutionService executionService, User user, Long processId) {
+        this.executionService = executionService;
         this.user = user;
         this.processId = processId;
+    }
+
+    public DelegateProcessVariableProvider(User user, Long processId) {
+        this(Delegates.getExecutionService(), user, processId);
     }
 
     @Override
@@ -35,7 +42,7 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
 
     @Override
     public String getProcessDefinitionName() {
-        WfProcess process = Delegates.getExecutionService().getProcess(user, processId);
+        WfProcess process = executionService.getProcess(user, processId);
         return process.getName();
     }
 
@@ -50,11 +57,11 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
 
     @Override
     public WfVariable getVariable(String variableName) {
-        return Delegates.getExecutionService().getVariable(user, processId, variableName);
+        return executionService.getVariable(user, processId, variableName);
     }
 
     @Override
     public DelegateProcessVariableProvider getSameProvider(Long processId) {
-        return new DelegateProcessVariableProvider(user, processId);
+        return new DelegateProcessVariableProvider(executionService, user, processId);
     }
 }
