@@ -26,10 +26,14 @@ import javax.transaction.UserTransaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.scheduling.timer.ScheduledTimerTask;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.PropertyResources;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.dao.ConstantDAO;
@@ -43,6 +47,7 @@ import ru.runa.wfe.commons.dbpatch.impl.AddEmbeddedFileForBotTask;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
+import ru.runa.wfe.commons.dbpatch.impl.AddWfPropertiesTable;
 import ru.runa.wfe.commons.dbpatch.impl.ExpandDescriptionsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
 import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
@@ -117,6 +122,7 @@ public class InitializerLogic {
         // 4.2.0
         dbPatches.add(AddEmbeddedFileForBotTask.class);
         dbPatches.add(AddColumnForEmbeddedBotTaskFileName.class);
+        dbPatches.add(AddWfPropertiesTable.class);
 
     };
 
@@ -154,10 +160,27 @@ public class InitializerLogic {
                 localizations.addAll(LocalizationParser.parseLocalizations(stream));
             }
             localizationDAO.saveLocalizations(localizations, false);
+            PropertyResources.setDatabaseAvailable(true);
+            setScheduledTaskTimerSettings();
             JobTask.setSystemStartupCompleted(true);
         } catch (Exception e) {
             log.error("initialization failed", e);
         }
+    }
+    
+    private void setScheduledTaskTimerSettings() {
+    	ApplicationContext context = ApplicationContextFactory.getContext();
+    	PropertyResources resources = SystemProperties.getResources();
+    	ScheduledTimerTask jobExecutorTask = context.getBean("jobExecutorTask", ScheduledTimerTask.class);
+    	ScheduledTimerTask tasksAssignTask = context.getBean("tasksAssignTask", ScheduledTimerTask.class);
+		ScheduledTimerTask ldapSynchronizerTask = context.getBean("ldapSynchronizerTask", ScheduledTimerTask.class);
+    	
+		jobExecutorTask.setDelay(resources.getLongProperty("timertask.start.millis.job.execution", 60000));
+		jobExecutorTask.setPeriod(resources.getLongProperty("timertask.period.millis.job.execution", 60000));
+		tasksAssignTask.setDelay(resources.getLongProperty("timertask.start.unassigned.tasks.execution", 60000));
+		tasksAssignTask.setPeriod(resources.getLongProperty("timertask.period.unassigned.tasks.execution", 60000));
+		ldapSynchronizerTask.setDelay(resources.getLongProperty("timertask.start.millis.ldap.sync", 600000));
+		ldapSynchronizerTask.setPeriod(resources.getLongProperty("timertask.period.millis.ldap.sync", 600000));
     }
 
     /**

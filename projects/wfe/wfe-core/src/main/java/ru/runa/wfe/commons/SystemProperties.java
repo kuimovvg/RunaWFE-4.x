@@ -76,6 +76,14 @@ public class SystemProperties {
     public static boolean isUpdateVariablesEnabled() {
         return RESOURCES.getBooleanProperty("executionServiceAPI.updateVariables.enabled", false);
     }
+    
+    public static String getStrongPasswordsRegexp() {
+    	return RESOURCES.getStringProperty("strong.passwords.regexp");
+    }
+    
+    public static String getDefaultTaskDeadline() {
+    	return RESOURCES.getStringProperty("task.default.deadline");
+    }
 
     /**
      * @return value between 0..100 [%]

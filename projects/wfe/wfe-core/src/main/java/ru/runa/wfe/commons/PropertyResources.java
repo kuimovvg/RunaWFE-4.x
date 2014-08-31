@@ -6,6 +6,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.dao.WfPropertyDAO;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -13,12 +14,25 @@ import com.google.common.collect.Maps;
 public class PropertyResources {
     private final String fileName;
     private final Properties PROPERTIES;
-
-    public PropertyResources(String fileName) {
-        this(fileName, true);
+    private final boolean useDatabase;
+    private static boolean databaseAvailable = false;
+    
+    public static void setDatabaseAvailable(boolean a) {
+    	databaseAvailable = a;
     }
 
+    private WfPropertyDAO wfPropertyDAO = null;
+
+    public PropertyResources(String fileName) {
+        this(fileName, true, true);
+    }
+    
     public PropertyResources(String fileName, boolean required) {
+        this(fileName, required, true);
+    }
+
+    public PropertyResources(String fileName, boolean required, boolean useDatabase) {
+    	this.useDatabase = useDatabase;
         this.fileName = fileName;
         PROPERTIES = ClassLoaderUtil.getProperties(fileName, required);
     }
@@ -36,6 +50,18 @@ public class PropertyResources {
     }
 
     public String getStringProperty(String name) {
+    	if (databaseAvailable && useDatabase) {
+    		if (wfPropertyDAO == null)
+				try {
+					wfPropertyDAO = ApplicationContextFactory.getWfPropertyDAO();
+				} catch (Exception e) {e.printStackTrace();}
+    		if (wfPropertyDAO != null) {
+    			try {
+		    		String v = wfPropertyDAO.getValue(fileName, name);
+		    		if (v != null) return v;
+    			} catch (Exception e) {e.printStackTrace();}
+    		}
+    	}
         return PROPERTIES.getProperty(name);
     }
 
