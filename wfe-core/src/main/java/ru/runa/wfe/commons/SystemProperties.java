@@ -3,7 +3,8 @@ package ru.runa.wfe.commons;
 import java.util.Calendar;
 
 public class SystemProperties {
-    private static final PropertyResources RESOURCES = new PropertyResources("system.properties");
+	public static final String CONFIG_FILE_NAME = "system.properties";
+    private static final PropertyResources RESOURCES = new PropertyResources(CONFIG_FILE_NAME);
     private static final boolean developmentMode = "true".equals(System.getProperty("devmode"));
     private static final boolean v3CompatibilityMode = "true".equals(System.getProperty("v3compatibility"));
     public static final String WEB_SERVICE_NAMESPACE = "http://runa.ru/wfe";
@@ -12,6 +13,13 @@ public class SystemProperties {
     public static final String DEPRECATED_PREFIX = "deprecated.";
     public static final Calendar SYSTEM_STARTUP_CALENDAR = Calendar.getInstance();
 
+    public static final String TIMERTASK_START_MILLIS_JOB_EXECUTION_NAME = "timertask.start.millis.job.execution";
+    public static final String TIMERTASK_PERIOD_MILLIS_JOB_EXECUTION_NAME = "timertask.period.millis.job.execution";
+    public static final String TIMERTASK_START_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME = "timertask.start.unassigned.tasks.execution";
+    public static final String TIMERTASK_PERIOD_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME = "timertask.period.millis.unassigned.tasks.execution";
+    public static final String TIMERTASK_START_MILLIS_LDAP_SYNC_NAME = "timertask.start.millis.ldap.sync";
+    public static final String TIMERTASK_PERIOD_MILLIS_LDAP_SYNC_NAME = "timertask.period.millis.ldap.sync";
+    
     public static PropertyResources getResources() {
         return RESOURCES;
     }

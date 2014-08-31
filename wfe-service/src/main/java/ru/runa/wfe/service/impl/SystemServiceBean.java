@@ -86,21 +86,21 @@ public class SystemServiceBean implements SystemServiceLocal, SystemServiceRemot
     }
 
 	@Override
-	public String getWfProperty(String fileName, String name) {
+	public String getSetting(String fileName, String name) {
 		Preconditions.checkArgument(fileName != null);
 		Preconditions.checkArgument(name != null);
-		return auditLogic.getWfProperty(fileName, name);
+		return auditLogic.getSetting(fileName, name);
 	}
 
 	@Override
-	public void setWfProperty(String fileName, String name, String value) {
+	public void setSetting(String fileName, String name, String value) {
 		Preconditions.checkArgument(fileName != null);
 		Preconditions.checkArgument(name != null);
-		auditLogic.setWfProperty(fileName, name, value);
+		auditLogic.setSetting(fileName, name, value);
 	}
 
 	@Override
-	public void clearWfProperties() {
-		auditLogic.clearWfProperties();
+	public void clearSettings() {
+		auditLogic.clearSettings();
 	}
 }

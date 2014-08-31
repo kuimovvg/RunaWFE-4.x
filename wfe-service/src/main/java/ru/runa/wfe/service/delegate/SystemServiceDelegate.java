@@ -77,27 +77,27 @@ public class SystemServiceDelegate extends EJB3Delegate implements SystemService
     }
 
 	@Override
-	public String getWfProperty(String fileName, String name) {
+	public String getSetting(String fileName, String name) {
 		try {
-            return getSystemService().getWfProperty(fileName, name);
+            return getSystemService().getSetting(fileName, name);
         } catch (Exception e) {
             throw handleException(e);
         }
 	}
 
 	@Override
-	public void setWfProperty(String fileName, String name, String value) {
+	public void setSetting(String fileName, String name, String value) {
 		try {
-            getSystemService().setWfProperty(fileName, name, value);
+            getSystemService().setSetting(fileName, name, value);
         } catch (Exception e) {
             throw handleException(e);
         }
 	}
 	
 	@Override
-	public void clearWfProperties() {
+	public void clearSettings() {
 		try {
-            getSystemService().clearWfProperties();
+            getSystemService().clearSettings();
         } catch (Exception e) {
             throw handleException(e);
         }

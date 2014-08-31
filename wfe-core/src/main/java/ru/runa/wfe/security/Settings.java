@@ -17,12 +17,12 @@
  */
 package ru.runa.wfe.security;
 
-public class ASettings extends IdentifiableBase {
+public class Settings extends IdentifiableBase {
     private static final long serialVersionUID = 1L;
 
-    public static final ASettings INSTANCE = new ASettings();
+    public static final Settings INSTANCE = new Settings();
 
-    private ASettings() {
+    private Settings() {
     }
 
     @Override

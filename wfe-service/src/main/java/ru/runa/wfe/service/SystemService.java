@@ -72,7 +72,7 @@ public interface SystemService {
      * @param name
      * @return
      */
-    public String getWfProperty(String fileName, String name);
+    public String getSetting(String fileName, String name);
     
     /**
      * Get property value with key (fileName, name) in database
@@ -81,10 +81,10 @@ public interface SystemService {
      * @param name
      * @param value
      */
-    public void setWfProperty(String fileName, String name, String value);
+    public void setSetting(String fileName, String name, String value);
     
     /**
      * Remove all properties from database
      */
-    public void clearWfProperties();
+    public void clearSettings();
 }
