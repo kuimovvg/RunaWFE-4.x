@@ -17,6 +17,8 @@
  */
 package ru.runa.wf.web.tag;
 
+import java.util.List;
+
 import org.apache.ecs.html.Input;
 import org.apache.ecs.html.TD;
 
@@ -30,6 +32,7 @@ import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationConsts;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
 
@@ -73,6 +76,13 @@ public class TaskDetailsTag extends BatchReturningTitledFormTag {
         BatchPresentation batchPresentation = getProfile().getActiveBatchPresentation(BatchPresentationConsts.ID_TASKS).clone();
         batchPresentation.setFieldsToGroup(new int[0]);
         WfTask task = Delegates.getExecutionService().getTask(getUser(), getTaskId());
+        List<String> variableNamesToDisplay = batchPresentation.getDynamicFieldsToDisplay(false);
+        for (String variableName : variableNamesToDisplay) {
+            WfVariable variable = Delegates.getExecutionService().getVariable(getUser(), task.getProcessId(), variableName);
+            if (variable != null) {
+                task.addVariable(variable);
+            }
+        }
         this.buttonEnabled = task.isGroupAssigned();
         String url = getReturnAction() + "?" + IdForm.ID_INPUT_NAME + "=" + taskId + "&" + ProcessForm.ACTOR_ID_INPUT_NAME + "=" + actorId;
         tdFormElement.addElement(ListTasksFormTag.buildTasksTable(pageContext, batchPresentation, Lists.newArrayList(task), url, true));

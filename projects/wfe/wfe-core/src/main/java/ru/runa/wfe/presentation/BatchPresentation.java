@@ -495,10 +495,11 @@ public final class BatchPresentation implements Cloneable, Serializable {
     }
 
     @Transient
-    public List<String> getDynamicFieldsToDisplay() {
+    public List<String> getDynamicFieldsToDisplay(boolean treatGrouppedFieldAsDisplayable) {
         List<String> result = Lists.newArrayList();
         for (int i = 0; i < getFields().dynamics.size(); i++) {
-            if (ArraysCommons.contains(getFields().displayIds, i) || ArraysCommons.contains(getFields().groupIds, i)) {
+            if (ArraysCommons.contains(getFields().displayIds, i)
+                    || (treatGrouppedFieldAsDisplayable && ArraysCommons.contains(getFields().groupIds, i))) {
                 result.add(getFields().dynamics.get(i).getDynamicValue());
             }
         }
