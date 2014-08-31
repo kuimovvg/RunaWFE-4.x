@@ -26,7 +26,6 @@ import javax.transaction.UserTransaction;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.timer.ScheduledTimerTask;
@@ -46,8 +45,8 @@ import ru.runa.wfe.commons.dbpatch.impl.AddCreateDateColumns;
 import ru.runa.wfe.commons.dbpatch.impl.AddEmbeddedFileForBotTask;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
-import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
 import ru.runa.wfe.commons.dbpatch.impl.AddSettingsTable;
+import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
 import ru.runa.wfe.commons.dbpatch.impl.ExpandDescriptionsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
 import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
@@ -167,27 +166,21 @@ public class InitializerLogic {
             log.error("initialization failed", e);
         }
     }
-    
+
     @SuppressWarnings("deprecation")
-	private void setScheduledTaskTimerSettings() {
-    	ApplicationContext context = ApplicationContextFactory.getContext();
-    	PropertyResources resources = SystemProperties.getResources();
-    	ScheduledTimerTask jobExecutorTask = context.getBean("jobExecutorTask", ScheduledTimerTask.class);
-    	ScheduledTimerTask tasksAssignTask = context.getBean("tasksAssignTask", ScheduledTimerTask.class);
-		ScheduledTimerTask ldapSynchronizerTask = context.getBean("ldapSynchronizerTask", ScheduledTimerTask.class);
-    	
-		jobExecutorTask.setDelay(resources.getLongProperty(
-				SystemProperties.TIMERTASK_START_MILLIS_JOB_EXECUTION_NAME, 60000));
-		jobExecutorTask.setPeriod(resources.getLongProperty(
-				SystemProperties.TIMERTASK_PERIOD_MILLIS_JOB_EXECUTION_NAME, 60000));
-		tasksAssignTask.setDelay(resources.getLongProperty(
-				SystemProperties.TIMERTASK_START_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME, 60000));
-		tasksAssignTask.setPeriod(resources.getLongProperty(
-				SystemProperties.TIMERTASK_PERIOD_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME, 60000));
-		ldapSynchronizerTask.setDelay(resources.getLongProperty(
-				SystemProperties.TIMERTASK_START_MILLIS_LDAP_SYNC_NAME, 600000));
-		ldapSynchronizerTask.setPeriod(resources.getLongProperty(
-				SystemProperties.TIMERTASK_PERIOD_MILLIS_LDAP_SYNC_NAME, 600000));
+    private void setScheduledTaskTimerSettings() {
+        ApplicationContext context = ApplicationContextFactory.getContext();
+        PropertyResources resources = SystemProperties.getResources();
+        ScheduledTimerTask jobExecutorTask = context.getBean("jobExecutorTask", ScheduledTimerTask.class);
+        ScheduledTimerTask tasksAssignTask = context.getBean("tasksAssignTask", ScheduledTimerTask.class);
+        ScheduledTimerTask ldapSynchronizerTask = context.getBean("ldapSynchronizerTask", ScheduledTimerTask.class);
+
+        jobExecutorTask.setDelay(resources.getLongProperty(SystemProperties.TIMERTASK_START_MILLIS_JOB_EXECUTION_NAME, 60000));
+        jobExecutorTask.setPeriod(resources.getLongProperty(SystemProperties.TIMERTASK_PERIOD_MILLIS_JOB_EXECUTION_NAME, 60000));
+        tasksAssignTask.setDelay(resources.getLongProperty(SystemProperties.TIMERTASK_START_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME, 60000));
+        tasksAssignTask.setPeriod(resources.getLongProperty(SystemProperties.TIMERTASK_PERIOD_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME, 60000));
+        ldapSynchronizerTask.setDelay(resources.getLongProperty(SystemProperties.TIMERTASK_START_MILLIS_LDAP_SYNC_NAME, 600000));
+        ldapSynchronizerTask.setPeriod(resources.getLongProperty(SystemProperties.TIMERTASK_PERIOD_MILLIS_LDAP_SYNC_NAME, 600000));
     }
 
     /**
