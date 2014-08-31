@@ -85,7 +85,7 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
         List<Process> list = getPersistentObjects(user, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES, true);
-        return getProcesses(list, batchPresentation.getDynamicFieldsToDisplay());
+        return getProcesses(list, batchPresentation.getDynamicFieldsToDisplay(true));
     }
 
     public List<WfProcess> getProcesses(User user, ProcessFilter filter) {

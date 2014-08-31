@@ -75,7 +75,7 @@ public class TasklistBuilder {
                 ProcessDefinition processDefinition = processDefinitionLoader.getDefinition(task.getProcess());
                 if (executorsToGetTasksByMembership.contains(taskExecutor)) {
                     log.debug(task + " is acquired by membership rules");
-                    result.add(taskObjectFactory.create(task, actor, false, batchPresentation.getDynamicFieldsToDisplay()));
+                    result.add(taskObjectFactory.create(task, actor, false, batchPresentation.getDynamicFieldsToDisplay(true)));
                     continue;
                 }
                 if (processDefinition.ignoreSubsitutionRulesForTask(task)) {
@@ -88,14 +88,14 @@ public class TasklistBuilder {
                 if (taskExecutor instanceof Actor) {
                     if (isTaskAcceptableBySubstitutionRules(executionContext, task, (Actor) taskExecutor, actor)) {
                         log.debug(task + " is acquired by substitution rules [by actor]");
-                        result.add(taskObjectFactory.create(task, (Actor) taskExecutor, true, batchPresentation.getDynamicFieldsToDisplay(),
+                        result.add(taskObjectFactory.create(task, (Actor) taskExecutor, true, batchPresentation.getDynamicFieldsToDisplay(true),
                                 firstOpen));
                     }
                 } else {
                     for (Actor groupActor : executorDAO.getGroupActors((Group) taskExecutor)) {
                         if (isTaskAcceptableBySubstitutionRules(executionContext, task, groupActor, actor)) {
                             log.debug(task + " is acquired by substitution rules [by group]");
-                            result.add(taskObjectFactory.create(task, groupActor, true, batchPresentation.getDynamicFieldsToDisplay(), firstOpen));
+                            result.add(taskObjectFactory.create(task, groupActor, true, batchPresentation.getDynamicFieldsToDisplay(true), firstOpen));
                             break;
                         }
                     }
