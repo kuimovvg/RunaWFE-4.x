@@ -8,19 +8,19 @@ import org.hibernate.Session;
 
 import ru.runa.wfe.commons.dbpatch.DBPatch;
 
-public class AddWfPropertiesTable extends DBPatch {
+public class AddSettingsTable extends DBPatch {
 
 	@Override
     protected List<String> getDDLQueriesBefore() {
         List<String> sql = super.getDDLQueriesAfter();
         List<ColumnDef> columns = new LinkedList<DBPatch.ColumnDef>();
-        ColumnDef id = new ColumnDef("ID", dialect.getTypeName(Types.INTEGER, 1024, 1024, 1024), false);
+        ColumnDef id = new ColumnDef("ID", Types.BIGINT, false);
         id.setPrimaryKey();
         columns.add(id);
         columns.add(new ColumnDef("FILE_NAME", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024), false));
         columns.add(new ColumnDef("NAME", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024), false));
         columns.add(new ColumnDef("VALUE", dialect.getTypeName(Types.VARCHAR, 1024, 1024, 1024), true));
-        sql.add(getDDLCreateTable("WFE_PROPERTIES", columns, null));
+        sql.add(getDDLCreateTable("BPM_SETTINGS", columns, null));
         return sql;
 	}
 	

@@ -24,16 +24,10 @@ import ru.runa.wfe.task.logic.ITaskNotifier;
 public class TaskFactory {
     private static final Log log = LogFactory.getLog(TaskFactory.class);
 
-    private String defaultTaskDeadline;
     private ITaskNotifier taskNotifier;
 
     public void setTaskNotifier(ITaskNotifier taskNotifier) {
         this.taskNotifier = taskNotifier;
-    }
-
-    @Required
-    public void setDefaultTaskDeadline(String defaultTaskDeadline) {
-        this.defaultTaskDeadline = defaultTaskDeadline;
     }
 
     private String getDeadlineDuration(TaskDefinition taskDefinition) {
@@ -44,8 +38,7 @@ public class TaskFactory {
         if (timerActions.size() > 0) {
             return timerActions.get(0).getDueDate();
         }
-        setDefaultTaskDeadline(SystemProperties.getDefaultTaskDeadline());
-        return defaultTaskDeadline;
+        return SystemProperties.getDefaultTaskDeadline();
     }
 
     /**

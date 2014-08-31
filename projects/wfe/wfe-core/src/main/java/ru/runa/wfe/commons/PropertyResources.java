@@ -5,13 +5,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.dao.WfPropertyDAO;
+import ru.runa.wfe.commons.dao.SettingDAO;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class PropertyResources {
+	private static final Log log = LogFactory.getLog(PropertyResources.class);
     private final String fileName;
     private final Properties PROPERTIES;
     private final boolean useDatabase;
@@ -21,7 +25,7 @@ public class PropertyResources {
     	databaseAvailable = a;
     }
 
-    private WfPropertyDAO wfPropertyDAO = null;
+    private SettingDAO settingDAO = null;
 
     public PropertyResources(String fileName) {
         this(fileName, true, true);
@@ -51,15 +55,19 @@ public class PropertyResources {
 
     public String getStringProperty(String name) {
     	if (databaseAvailable && useDatabase) {
-    		if (wfPropertyDAO == null)
+    		if (settingDAO == null)
 				try {
-					wfPropertyDAO = ApplicationContextFactory.getWfPropertyDAO();
-				} catch (Exception e) {e.printStackTrace();}
-    		if (wfPropertyDAO != null) {
+					settingDAO = ApplicationContextFactory.getSettingDAO();
+				} catch (Exception e) {
+					log.error("No SettingDAO available", e);
+				}
+    		if (settingDAO != null) {
     			try {
-		    		String v = wfPropertyDAO.getValue(fileName, name);
+		    		String v = settingDAO.getValue(fileName, name);
 		    		if (v != null) return v;
-    			} catch (Exception e) {e.printStackTrace();}
+    			} catch (Exception e) {
+    				log.error("Database error", e);
+    			}
     		}
     	}
         return PROPERTIES.getProperty(name);

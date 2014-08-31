@@ -59,7 +59,6 @@ import com.google.common.collect.Sets;
  */
 public class ExecutorLogic extends CommonLogic {
     private static final Log log = LogFactory.getLog(ExecutorLogic.class);
-    private Pattern passwordCheckPattern;
     private List<SetStatusHandler> setStatusHandlers;
 
     @Autowired
@@ -68,17 +67,6 @@ public class ExecutorLogic extends CommonLogic {
     private RelationPairDAO relationPairDAO;
     @Autowired
     private SubstitutionDAO substitutionDAO;
-
-    @Required
-    public void setPasswordCheckPattern(String passwordCheckPattern) {
-        try {
-            if (!Strings.isNullOrEmpty(passwordCheckPattern)) {
-                this.passwordCheckPattern = Pattern.compile(passwordCheckPattern);
-            }
-        } catch (Throwable th) {
-            log.warn("Invalid passwordCheckPattern " + passwordCheckPattern, th);
-        }
-    }
 
     @Required
     public void setSetStatusHandlers(List<SetStatusHandler> setStatusHandlers) {
@@ -276,11 +264,15 @@ public class ExecutorLogic extends CommonLogic {
     }
 
     public void setPassword(User user, Actor actor, String password) {
-    	String strong_passwords_regexp = SystemProperties.getStrongPasswordsRegexp();
-    	if (strong_passwords_regexp == null || strong_passwords_regexp.length() == 0)
-    		passwordCheckPattern = null;
-    	else if (passwordCheckPattern == null || passwordCheckPattern.pattern() != strong_passwords_regexp)
-    		setPasswordCheckPattern(strong_passwords_regexp);
+    	String strongPasswordsRegexp = SystemProperties.getStrongPasswordsRegexp();
+    	Pattern passwordCheckPattern = null;
+    	if (strongPasswordsRegexp != null && strongPasswordsRegexp.length() > 0) {
+    		try {
+				passwordCheckPattern = Pattern.compile(strongPasswordsRegexp);
+			} catch (Exception e) {
+				log.warn("Invalid passwordCheckPattern " + passwordCheckPattern, e);
+			}
+    	}
         if (passwordCheckPattern != null && !passwordCheckPattern.matcher(password).matches()) {
             throw new WeakPasswordException();
         }

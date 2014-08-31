@@ -29,7 +29,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
-import ru.runa.wfe.commons.dao.WfPropertyDAO;
+import ru.runa.wfe.commons.dao.SettingDAO;
 import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.AuthorizationException;
@@ -58,7 +58,7 @@ public class CommonLogic {
     @Autowired
     protected ProcessDAO processDAO;
     @Autowired
-    protected WfPropertyDAO wfPropertyDAO;
+    protected SettingDAO settingDAO;
 
     protected <T extends Executor> T checkPermissionsOnExecutor(User user, T executor, Permission permission) {
         if (executor.getName().equals(SystemExecutors.PROCESS_STARTER_NAME) && permission.equals(Permission.READ)) {
@@ -161,17 +161,17 @@ public class CommonLogic {
         localizationDAO.saveLocalizations(localizations, true);
     }
     
-    public String getWfProperty(String fileName, String name) {
-    	return wfPropertyDAO.getValue(fileName, name);
+    public String getSetting(String fileName, String name) {
+    	return settingDAO.getValue(fileName, name);
     }
     
-    public void setWfProperty(String fileName, String name, String value) {
-    	wfPropertyDAO.setValue(fileName, name, value);
-    	if (fileName.equals("system.properties")) {
+    public void setSetting(String fileName, String name, String value) {
+    	settingDAO.setValue(fileName, name, value);
+    	if (fileName.equals(SystemProperties.CONFIG_FILE_NAME)) {
     		String bean = null;
-    		if (name.equals("timertask.period.millis.job.execution")) bean = "jobExecutorTask";
-    		if (name.equals("timertask.period.millis.unassigned.tasks.execution")) bean = "tasksAssignTask";
-    		if (name.equals("timertask.period.millis.ldap.sync")) bean = "ldapSynchronizerTask";
+    		if (name.equals(SystemProperties.TIMERTASK_PERIOD_MILLIS_JOB_EXECUTION_NAME)) bean = "jobExecutorTask";
+    		if (name.equals(SystemProperties.TIMERTASK_PERIOD_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME)) bean = "tasksAssignTask";
+    		if (name.equals(SystemProperties.TIMERTASK_PERIOD_MILLIS_LDAP_SYNC_NAME)) bean = "ldapSynchronizerTask";
     		if (bean != null) {
     			try {
 					Long period = SystemProperties.getResources().getLongProperty(name, 60000);
@@ -184,8 +184,8 @@ public class CommonLogic {
     	}
     }
     
-    public void clearWfProperties() {
-    	wfPropertyDAO.clear();
+    public void clearSettings() {
+    	settingDAO.clear();
     }
 
 }

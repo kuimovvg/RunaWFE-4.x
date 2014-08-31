@@ -29,18 +29,18 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 @Entity
-@Table(name = "WFE_PROPERTIES")
+@Table(name = "BPM_SETTINGS")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-class WfProperty {
+class Setting {
     private Long id;
     private String fileName;
     private String name;
     private String value;
 
-    public WfProperty() {
+    public Setting() {
     }
 
-    public WfProperty(String fileName, String name, String value) {
+    public Setting(String fileName, String name, String value) {
     	this.fileName = fileName;
         this.name = name;
         this.value = value;
@@ -48,7 +48,7 @@ class WfProperty {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_WFE_PROPERTIES")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_SETTINGS")
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;
