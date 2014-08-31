@@ -36,6 +36,7 @@ import ru.runa.common.web.TabHttpSessionHelper;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.relation.RelationsGroupSecure;
+import ru.runa.wfe.security.ASettings;
 import ru.runa.wfe.security.ASystem;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
@@ -65,6 +66,7 @@ public class TabHeaderTag extends TagSupport {
         FORWARDS.add(new MenuForward("manage_relations", RelationsGroupSecure.INSTANCE));
         FORWARDS.add(new MenuForward("configure_bot_station", BotStation.INSTANCE));
         FORWARDS.add(new MenuForward("manage_system", ASystem.INSTANCE));
+        FORWARDS.add(new MenuForward("manage_settings", ASettings.INSTANCE));
         FORWARDS.add(new MenuForward("view_logs", ASystem.INSTANCE));
     }
 
@@ -136,7 +138,10 @@ public class TabHeaderTag extends TagSupport {
     private boolean isMenuForwardVisible(Identifiable menuSecuredObject) {
         if (menuSecuredObject != null) {
             try {
-                return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.READ, menuSecuredObject);
+            	if (menuSecuredObject == ASettings.INSTANCE)
+            		return Delegates.getExecutorService().isAdministrator(getUser());
+            	else
+            		return Delegates.getAuthorizationService().isAllowed(getUser(), Permission.READ, menuSecuredObject);
             } catch (Exception e) {
                 return false;
             }

@@ -222,6 +222,9 @@
 	<bean id="constantDAO" class="ru.runa.wfe.commons.dao.ConstantDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>
+	<bean id="wfPropertyDAO" class="ru.runa.wfe.commons.dao.WfPropertyDAO">
+		<property name="hibernateTemplate" ref="hibernateTemplate" />
+	</bean>
 	<bean id="deploymentDAO" class="ru.runa.wfe.definition.dao.DeploymentDAO">
 		<property name="hibernateTemplate" ref="hibernateTemplate" />
 	</bean>

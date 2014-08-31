@@ -124,6 +124,14 @@ abstract public class FormTag extends VisibleTag {
     protected String getConfirmationPopupParameter() {
         return "";
     }
+    
+    protected boolean isCancelButtonEnabled() {
+    	return false;
+    }
+    
+    protected String getCancelButtonAction() {
+    	return "";
+    }
 
     @Override
     protected ConcreteElement getEndElement() {
@@ -175,6 +183,13 @@ abstract public class FormTag extends VisibleTag {
                     submitButton.setDisabled(true);
                 }
                 td.addElement(submitButton);
+            }
+            if (isCancelButtonEnabled()) {
+            	Input cancelButton = new Input(Input.BUTTON, SUBMIT_BUTTON_NAME, Messages.getMessage(Messages.BUTTON_CANCEL, pageContext));
+                cancelButton.setClass(Resources.CLASS_BUTTON);
+                cancelButton.addAttribute("onclick", "window.location='" + getCancelButtonAction() + "'");
+                td.addElement(Entities.NBSP);
+                td.addElement(cancelButton);
             }
         }
         return form;

@@ -47,6 +47,10 @@ public class Messages {
     public static final String TITLE_RELATION_DETAILS = "title.relation.details";
     public static final String TITLE_CREATE_RELATION_PAIR = "title.create_relation_pair";
 
+    public static final String LABEL_SETTING_TITLE = "label.setting_title";
+    public static final String LABEL_SETTING_DESCRIPTION = "label.setting_description";
+    public static final String LABEL_SETTING_VALUE = "label.setting_value";
+    
     public static final String MESSAGE_RELATION_GROUP_EXISTS = "label.relation.exists";
     public static final String MESSAGE_RELATION_GROUP_DOESNOT_EXISTS = "label.relation.not_exists";
 
@@ -80,6 +84,8 @@ public class Messages {
 
     public static final String TITLE_HISTORY = "title.history";
     public static final String TITLE_SYSTEM_HISTORY = "title.system.history";
+    
+    public static final String MANAGE_SETTINGS = "manage_settings";
 
     public static final String BUTTON_CREATE_ACTOR = "button.create_actor";
     public static final String BUTTON_CREATE_GROUP = "button.create_group";
@@ -93,6 +99,8 @@ public class Messages {
 
     public static final String BUTTON_ACCEPT_TASK = "button.accept_task";
 
+    public static final String BUTTON_USE_DAFAULT_PROPERTIES = "button.use.default.properties";
+    
     public static final String LABEL_PASSWORD = "label.password";
     public static final String LABEL_PASSWORD_CONFIRM = "label.password_confirm";
 
@@ -275,6 +283,7 @@ public class Messages {
     public static final String CONF_POPUP_START_PROCESS = "confirmpopup.start.process";
     public static final String CONF_POPUP_SUBSTITUTION_CRITERIA_BUTTON_ALL = "confirmpopup.substitutioncriteria.button.all";
     public static final String CONF_POPUP_SUBSTITUTION_CRITERIA_BUTTON_ONLY = "confirmpopup.substitutioncriteria.button.only";
+    public static final String CONF_POPUP_USE_DEFAULT_PROPERTIES = "confirmpopup.use.default.properties";
 
     public static final String LABEL_SUBSTITUTION_CRITERIA_USED_BY = "label.substitutioncriteria.usedby";
 

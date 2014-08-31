@@ -41,6 +41,7 @@ public class ConfirmationPopupHelper {
     public static final String REMOVE_EXECUTORS_FROM_GROUPS_PARAMETER = "remove.executorsfromgroups";
     public static final String REMOVE_BOT_STATION_PARAMETER = "remove.botstation";
     public static final String REMOVE_BOT_PARAMETER = "remove.bot";
+    public static final String USE_DEFAULT_PROPERTIES_PARAMETER = "use.default.properties";
 
     private static final Map<String, String> confirmationResource = new HashMap<String, String>();
     private static final Map<String, String> confirmationCookies = new HashMap<String, String>();
@@ -60,6 +61,7 @@ public class ConfirmationPopupHelper {
         confirmationCookies.put(REMOVE_BOT_STATION_PARAMETER, "remove.botstation.cookie");
         confirmationCookies.put(REMOVE_EXECUTORS_PARAMETER, "remove.executors.cookie");
         confirmationCookies.put(REMOVE_EXECUTORS_FROM_GROUPS_PARAMETER, "remove.executorsfromgroups.cookie");
+        confirmationCookies.put(USE_DEFAULT_PROPERTIES_PARAMETER, "use.default.properties.cookie");
     }
 
     static {
@@ -77,6 +79,7 @@ public class ConfirmationPopupHelper {
         confirmationResource.put(REMOVE_BOT_STATION_PARAMETER, Messages.CONF_POPUP_REMOVE_BOT_STATION);
         confirmationResource.put(REMOVE_EXECUTORS_PARAMETER, Messages.CONF_POPUP_REMOVE_EXECUTORS);
         confirmationResource.put(REMOVE_EXECUTORS_FROM_GROUPS_PARAMETER, Messages.CONF_POPUP_REMOVE_EXECUTORS_FROM_GROUPS);
+        confirmationResource.put(USE_DEFAULT_PROPERTIES_PARAMETER, Messages.CONF_POPUP_USE_DEFAULT_PROPERTIES);
     }
 
     public static ConfirmationPopupHelper getInstance() {
