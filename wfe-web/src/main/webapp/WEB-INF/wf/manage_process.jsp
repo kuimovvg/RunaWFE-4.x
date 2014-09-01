@@ -12,8 +12,9 @@
 
 <tiles:put name="head" type="string">
 
-<% if (WebResources.getDiagramRefreshInterval() > 0) { %>
 	<script type="text/javascript" src="<html:rewrite page="/js/errorviewer.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/processgraphutils.js" />">c=0;</script>
+<% if (WebResources.getDiagramRefreshInterval() > 0) { %>
 <script type="text/javascript">
 $(window).load(function() {
   window.setInterval("Reload()", <%= WebResources.getDiagramRefreshInterval() %>*1000);
@@ -30,7 +31,6 @@ function Reload() {
    $("#graph").attr("src", src);
 }  
 </script>
-	<script type="text/javascript" src="<html:rewrite page="/js/processgraphutils.js" />">c=0;</script>
 
 <% } %>
 
