@@ -1,6 +1,5 @@
 package ru.runa.wfe.commons.email;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -70,11 +69,8 @@ public class EmailUtils {
 
         if (config.getHeaderProperties().containsKey("Subject")) {
             String subject = config.getHeaderProperties().get("Subject");
-            try {
-                subject = MimeUtility.encodeText(subject, Charsets.UTF_8.name(), null);
-                config.getHeaderProperties().put("Subject", subject);
-            } catch (UnsupportedEncodingException e) {
-            }
+            subject = MimeUtility.encodeText(subject, Charsets.UTF_8.name(), null);
+            config.getHeaderProperties().put("Subject", subject);
         }
 
         PasswordAuthenticator authenticator = null;
@@ -142,10 +138,7 @@ public class EmailUtils {
             if (interaction.hasForm()) {
                 formTemplate = new String(interaction.getFormData(), Charsets.UTF_8);
                 if (!"ftl".equals(interaction.getType())) {
-                    // TODO turn off for V3 in 01.07.2014
-                    if (!SystemProperties.isV3CompatibilityMode()) {
-                        throw new Exception("Property 'UseMessageFromTaskForm' is applicable only to free form layout form (ftl)");
-                    }
+                    throw new Exception("Property 'UseMessageFromTaskForm' is applicable only to free form layout form (ftl)");
                 }
             } else {
                 if (SystemProperties.isV3CompatibilityMode()) {
