@@ -38,6 +38,21 @@ public class ComplexVariable extends HashMap<String, Object> {
         }
     }
 
+    @Override
+    public Object get(Object key) {
+        String attributeName = (String) key;
+        int dotIndex = attributeName.indexOf(VariableUserType.DELIM);
+        if (dotIndex != -1) {
+            String embeddedComplexVariable = attributeName.substring(0, dotIndex);
+            String embeddedAttributeName = attributeName.substring(dotIndex + 1);
+            ComplexVariable embeddedVariable = (ComplexVariable) super.get(embeddedComplexVariable);
+            if (embeddedVariable != null) {
+                return embeddedVariable.get(embeddedAttributeName);
+            }
+        }
+        return super.get(key);
+    }
+
     public Map<String, Object> expand(String prefix) {
         Map<String, Object> result = Maps.newHashMap();
         for (Map.Entry<String, Object> entry : entrySet()) {
