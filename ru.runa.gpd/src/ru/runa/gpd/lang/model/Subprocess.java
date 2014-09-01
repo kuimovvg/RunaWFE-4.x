@@ -57,8 +57,8 @@ public class Subprocess extends Node implements Active {
             if (!isCompatibleVariables(processVariable, subprocessVariable)) {
                 VariableFormatArtifact artifact1 = VariableFormatRegistry.getInstance().getArtifactNotNull(processVariable.getFormatClassName());
                 VariableFormatArtifact artifact2 = VariableFormatRegistry.getInstance().getArtifactNotNull(subprocessVariable.getFormatClassName());
-                errors.add(ValidationError.createLocalizedError(this, "subprocess.variableMappingIncompatibleTypes", 
-                        processVariable.getName(), artifact1.getLabel(), subprocessVariable.getName(), artifact2.getLabel()));
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.variableMappingIncompatibleTypes", processVariable.getName(),
+                        artifact1.getLabel(), subprocessVariable.getName(), artifact2.getLabel()));
             }
         }
     }
@@ -92,9 +92,9 @@ public class Subprocess extends Node implements Active {
     public String getSubProcessName() {
         return subProcessName;
     }
-    
+
     public SubprocessDefinition getEmbeddedSubprocess() {
-         return getProcessDefinition().getEmbeddedSubprocessByName(getSubProcessName());
+        return getProcessDefinition().getMainProcessDefinition().getEmbeddedSubprocessByName(getSubProcessName());
     }
 
     @Override
@@ -120,13 +120,13 @@ public class Subprocess extends Node implements Active {
     public boolean isEmbedded() {
         return embedded;
     }
-    
+
     public void setEmbedded(boolean embedded) {
         boolean old = this.embedded;
         this.embedded = embedded;
         firePropertyChange(PROPERTY_SUBPROCESS, old, this.embedded);
     }
-    
+
     @Override
     public Subprocess getCopy(GraphElement parent) {
         Subprocess copy = (Subprocess) super.getCopy(parent);
@@ -137,7 +137,7 @@ public class Subprocess extends Node implements Active {
         copy.setEmbedded(isEmbedded());
         return copy;
     }
-    
+
     @Override
     public List<Variable> getUsedVariables(IFolder processFolder) {
         List<Variable> result = super.getUsedVariables(processFolder);
