@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.SystemProperties;
@@ -16,8 +17,6 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.impl.ValidatorFileParser;
 import ru.runa.wfe.var.IVariableProvider;
-
-import com.google.common.base.Preconditions;
 
 public class ValidatorManager {
     private static final Log log = LogFactory.getLog(ValidatorManager.class);
@@ -57,7 +56,9 @@ public class ValidatorManager {
     private static Validator createValidator(User user, ProcessDefinition processDefinition, ValidatorConfig config,
             ValidatorContext validatorContext, Map<String, Object> variables, IVariableProvider variableProvider) {
         String className = validators.get(config.getType());
-        Preconditions.checkNotNull(className, "There is no validator class mapped to the name '" + config.getType() + "'");
+        if (className == null) {
+            throw new InternalApplicationException("Validator '" + config.getType() + "' is not registered");
+        }
         Validator validator = ApplicationContextFactory.createAutowiredBean(className);
         validator.init(user, processDefinition, config, validatorContext, variables, variableProvider);
         return validator;
