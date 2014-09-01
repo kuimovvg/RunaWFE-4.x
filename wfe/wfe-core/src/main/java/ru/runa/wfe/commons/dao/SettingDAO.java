@@ -27,29 +27,28 @@ import org.apache.commons.logging.LogFactory;
  * tables (drops tables if such tables already exists) and records.
  */
 public class SettingDAO extends GenericDAO<Setting> {
-	private static final Log log = LogFactory.getLog(SettingDAO.class);
-	
+    private static final Log log = LogFactory.getLog(SettingDAO.class);
+
     private Setting get(String fileName, String name) {
         return findFirstOrNull("from Setting where fileName = ? and name = ?", fileName, name);
     }
 
     public String getValue(String fileName, String name) {
-    	log.debug("getValue(" + fileName + ", " + name + ")");
         Setting property = get(fileName, name);
         if (property == null) {
             return null;
         }
-        log.debug("value = " + property.getValue());
         return property.getValue();
     }
 
     public void setValue(String fileName, String name, String value) {
-    	log.debug("setValue(" + fileName + ", " + name + ", " + value + ")");
+        log.debug("setValue(" + fileName + ", " + name + ", " + value + ")");
         Setting property = get(fileName, name);
         if (value == null) {
-        	if (property != null)
-        		delete(property);
-        	return;
+            if (property != null) {
+                delete(property);
+            }
+            return;
         }
         if (property == null) {
             create(new Setting(fileName, name, value));
@@ -59,9 +58,10 @@ public class SettingDAO extends GenericDAO<Setting> {
     }
 
     public void clear() {
-    	List<Setting> list = getAll();
-    	for (Setting l : list)
-    		delete(l);
+        List<Setting> list = getAll();
+        for (Setting l : list) {
+            delete(l);
+        }
     }
-    
+
 }
