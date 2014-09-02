@@ -41,7 +41,10 @@ public class WfVariable implements Serializable {
     }
 
     public Object getValue() {
-        return value;
+        if (value != null) {
+            return value;
+        }
+        return definition.getDefaultValue();
     }
 
     public String getStringValue() {
