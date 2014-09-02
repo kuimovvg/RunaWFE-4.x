@@ -10,9 +10,9 @@ public class DelegableVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
-    public Long getProcessId() {
+    public Long getProcessDefinitionId() {
         if (delegate != null) {
-            return delegate.getProcessId();
+            return delegate.getProcessDefinitionId();
         }
         return null;
     }
@@ -21,6 +21,14 @@ public class DelegableVariableProvider extends AbstractVariableProvider {
     public String getProcessDefinitionName() {
         if (delegate != null) {
             return delegate.getProcessDefinitionName();
+        }
+        return null;
+    }
+
+    @Override
+    public Long getProcessId() {
+        if (delegate != null) {
+            return delegate.getProcessId();
         }
         return null;
     }
