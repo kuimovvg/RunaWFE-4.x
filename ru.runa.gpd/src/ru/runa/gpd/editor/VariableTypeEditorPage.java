@@ -4,6 +4,8 @@ import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -13,6 +15,8 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
+import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,21 +28,33 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.lang.par.ParContentProvider;
+import ru.runa.gpd.ltk.RenameRefactoringWizard;
+import ru.runa.gpd.ltk.RenameUserTypeAttributeRefactoring;
+import ru.runa.gpd.search.MultiVariableSearchQuery;
 import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
+import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 import ru.runa.gpd.ui.dialog.VariableUserTypeDialog;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
+import ru.runa.gpd.util.WorkspaceOperations;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class VariableTypeEditorPage extends EditorPartBase {
@@ -50,6 +66,9 @@ public class VariableTypeEditorPage extends EditorPartBase {
     private TableViewer attributeTableViewer;
     private Button createAttributeButton;
     private Button changeAttributeButton;
+    private Button searchAttributeButton;
+    private Button renameAttributeButton;
+    private Button mergeAttributesButton;
     private Button moveUpAttributeButton;
     private Button moveDownAttributeButton;
     private Button deleteAttributeButton;
@@ -141,6 +160,9 @@ public class VariableTypeEditorPage extends EditorPartBase {
         attributeButtonsBar.setLayoutData(gridData);
         createAttributeButton = addButton(attributeButtonsBar, "button.create", new CreateAttributeSelectionListener(), false);
         changeAttributeButton = addButton(attributeButtonsBar, "button.change", new ChangeAttributeSelectionListener(), true);
+        searchAttributeButton = addButton(attributeButtonsBar, "button.search", new SearchAttributeSelectionListener(), true);
+        renameAttributeButton = addButton(attributeButtonsBar, "button.rename", new RenameAttributeSelectionListener(), true);
+        mergeAttributesButton = addButton(attributeButtonsBar, "button.merge", new MergeAttributesSelectionListener(), true);
         moveUpAttributeButton = addButton(attributeButtonsBar, "button.up", new MoveAttributeSelectionListener(true), true);
         moveDownAttributeButton = addButton(attributeButtonsBar, "button.down", new MoveAttributeSelectionListener(false), true);
         deleteAttributeButton = addButton(attributeButtonsBar, "button.delete", new DeleteAttributeSelectionListener(), true);
@@ -206,6 +228,9 @@ public class VariableTypeEditorPage extends EditorPartBase {
         enableAction(createAttributeButton, selectedType != null);
         List<Variable> attributes = ((IStructuredSelection) attributeTableViewer.getSelection()).toList();
         enableAction(changeAttributeButton, attributes.size() == 1);
+        enableAction(searchAttributeButton, attributes.size() == 1);
+        enableAction(renameAttributeButton, attributes.size() == 1);
+        enableAction(mergeAttributesButton, attributes.size() == 2);
         enableAction(moveUpAttributeButton, selectedType != null && attributes.size() == 1
                 && selectedType.getAttributes().indexOf(attributes.get(0)) > 0);
         enableAction(moveDownAttributeButton,
@@ -335,17 +360,130 @@ public class VariableTypeEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             VariableUserType type = getTypeSelection();
             Variable variable = getAttributeSelection();
-            VariableWizard wizard = new VariableWizard(getDefinition(), type, variable, true, true, false);
+            VariableWizard wizard = new VariableWizard(getDefinition(), type, variable, false, true, false);
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
-                variable.setScriptingName(wizard.getVariable().getScriptingName());
+                // variable.setName(wizard.getVariable().getName());
+                // variable.setScriptingName(wizard.getVariable().getScriptingName());
                 variable.setFormat(wizard.getVariable().getFormat());
                 variable.setUserType(wizard.getVariable().getUserType());
-                variable.setName(wizard.getVariable().getName());
                 variable.setDefaultValue(wizard.getVariable().getDefaultValue());
                 getDefinition().setDirty();
                 updateAttributeViewer();
                 attributeTableViewer.setSelection(new StructuredSelection(variable));
+            }
+        }
+    }
+
+    private class SearchAttributeSelectionListener extends LoggingSelectionAdapter {
+
+        @Override
+        protected void onSelection(SelectionEvent e) throws Exception {
+            VariableUserType searchType = getTypeSelection();
+            Variable searchAttribute = getAttributeSelection();
+            List<Variable> result = Lists.newArrayList();
+            searchInVariables(result, searchType, searchAttribute, null, getDefinition().getVariables(false, false));
+            String searchText = Joiner.on(", ").join(Lists.transform(result, new Function<Variable, String>() {
+
+                @Override
+                public String apply(Variable variable) {
+                    return variable.getName();
+                }
+
+            }));
+            MultiVariableSearchQuery query = new MultiVariableSearchQuery(searchText, editor.getDefinitionFile(), getDefinition(), result);
+            NewSearchUI.runQueryInBackground(query);
+        }
+
+        private void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent,
+                List<Variable> children) {
+            for (Variable variable : children) {
+                if (variable.getUserType() == null) {
+                    continue;
+                }
+                String syntheticName = (parent != null ? (parent.getName() + VariableUserType.DELIM) : "") + variable.getName();
+                String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "")
+                        + variable.getScriptingName();
+                if (Objects.equal(variable.getUserType(), searchType)) {
+                    Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(),
+                            syntheticScriptingName + VariableUserType.DELIM + searchAttribute.getScriptingName(), variable);
+                    result.add(syntheticVariable);
+                } else {
+                    Variable syntheticVariable = new Variable(syntheticName, syntheticScriptingName, variable);
+                    searchInVariables(result, searchType, searchAttribute, syntheticVariable, variable.getUserType().getAttributes());
+                }
+            }
+        }
+    }
+
+    private class RenameAttributeSelectionListener extends LoggingSelectionAdapter {
+        @Override
+        protected void onSelection(SelectionEvent e) throws Exception {
+            VariableUserType type = getTypeSelection();
+            Variable attribute = getAttributeSelection();
+            UpdateVariableNameDialog dialog = new UpdateVariableNameDialog(type, attribute);
+            int result = dialog.open();
+            if (result != IDialogConstants.OK_ID) {
+                return;
+            }
+            IResource projectRoot = editor.getDefinitionFile().getParent();
+            IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+            String newAttributeName = dialog.getName();
+            String newAttributeScriptingName = dialog.getScriptingName();
+            RenameUserTypeAttributeRefactoring refactoring = new RenameUserTypeAttributeRefactoring(editor.getDefinitionFile(),
+                    editor.getDefinition(), type, attribute, newAttributeName, newAttributeScriptingName);
+            boolean useLtk = refactoring.isUserInteractionNeeded();
+            if (useLtk) {
+                RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);
+                wizard.setDefaultPageTitle(Localization.getString("Refactoring.variable.name"));
+                RefactoringWizardOpenOperation operation = new RefactoringWizardOpenOperation(wizard);
+                result = operation.run(Display.getCurrent().getActiveShell(), "");
+                if (result != IDialogConstants.OK_ID) {
+                    return;
+                }
+            }
+            // update attribute
+            attribute.setName(newAttributeName);
+            attribute.setScriptingName(newAttributeScriptingName);
+            updateAttributeViewer();
+            attributeTableViewer.setSelection(new StructuredSelection(attribute));
+            if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
+                IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+                for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
+                    WorkspaceOperations.saveProcessDefinition(ProcessCache.getProcessDefinitionFile(subprocessDefinition), subprocessDefinition);
+                }
+            }
+        }
+    }
+
+    private class MergeAttributesSelectionListener extends LoggingSelectionAdapter {
+        @Override
+        protected void onSelection(SelectionEvent e) throws Exception {
+            VariableUserType type = getTypeSelection();
+            List<Variable> attributes = ((IStructuredSelection) attributeTableViewer.getSelection()).toList();
+            IResource projectRoot = editor.getDefinitionFile().getParent();
+            IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+            RenameUserTypeAttributeRefactoring refactoring = new RenameUserTypeAttributeRefactoring(editor.getDefinitionFile(),
+                    editor.getDefinition(), type, attributes.get(1), attributes.get(0).getName(), attributes.get(0).getScriptingName());
+            boolean useLtk = refactoring.isUserInteractionNeeded();
+            if (useLtk) {
+                RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);
+                wizard.setDefaultPageTitle(Localization.getString("Refactoring.variable.name"));
+                RefactoringWizardOpenOperation operation = new RefactoringWizardOpenOperation(wizard);
+                int result = operation.run(Display.getCurrent().getActiveShell(), "");
+                if (result != IDialogConstants.OK_ID) {
+                    return;
+                }
+            }
+            // delete attribute
+            type.removeAttribute(attributes.get(1));
+            updateAttributeViewer();
+            attributeTableViewer.setSelection(new StructuredSelection(attributes.get(0)));
+            if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
+                IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+                for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
+                    WorkspaceOperations.saveProcessDefinition(ProcessCache.getProcessDefinitionFile(subprocessDefinition), subprocessDefinition);
+                }
             }
         }
     }

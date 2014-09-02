@@ -33,18 +33,18 @@ import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Variable;
 
 @SuppressWarnings("unchecked")
-public class PortabilityRefactoring extends Refactoring {
+public class RenameVariableRefactoring extends Refactoring {
     private final List<VariableRenameProvider<?>> cache = new ArrayList<VariableRenameProvider<?>>();
     private final IFolder definitionFolder;
     private final ProcessDefinition mainProcessDefinition;
     private final Variable oldVariable;
     private final Variable newVariable;
 
-    public PortabilityRefactoring(IFile definitionFile, ProcessDefinition definition, Variable oldVariable, Variable newVariable) {
+    public RenameVariableRefactoring(IFile definitionFile, ProcessDefinition definition, Variable oldVariable, String newName, String newScriptingName) {
         this.definitionFolder = (IFolder) definitionFile.getParent();
         this.mainProcessDefinition = definition.getMainProcessDefinition();
         this.oldVariable = oldVariable;
-        this.newVariable = newVariable;
+        this.newVariable = new Variable(newName, newScriptingName, oldVariable);
     }
 
     @Override

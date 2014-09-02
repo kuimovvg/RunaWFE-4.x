@@ -39,8 +39,8 @@ import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.lang.par.ParContentProvider;
-import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
+import ru.runa.gpd.ltk.RenameVariableRefactoring;
 import ru.runa.gpd.search.ElementMatch;
 import ru.runa.gpd.search.SearchResult;
 import ru.runa.gpd.search.VariableSearchQuery;
@@ -162,7 +162,8 @@ public class VariableEditorPage extends EditorPartBase {
         if (PropertyNames.PROPERTY_CHILDS_CHANGED.equals(type)) {
             fillViewer();
         } else if (evt.getSource() instanceof Variable) {
-            if (PropertyNames.PROPERTY_NAME.equals(type) || PropertyNames.PROPERTY_FORMAT.equals(type) || PropertyNames.PROPERTY_DEFAULT_VALUE.equals(type)) {
+            if (PropertyNames.PROPERTY_NAME.equals(type) || PropertyNames.PROPERTY_FORMAT.equals(type)
+                    || PropertyNames.PROPERTY_DEFAULT_VALUE.equals(type)) {
                 tableViewer.refresh(evt.getSource());
             }
         }
@@ -225,10 +226,10 @@ public class VariableEditorPage extends EditorPartBase {
             }
             IResource projectRoot = editor.getDefinitionFile().getParent();
             IDE.saveAllEditors(new IResource[] { projectRoot }, false);
-            Variable newVariable = new Variable(variable);
-            newVariable.setName(dialog.getName());
-            newVariable.setScriptingName(dialog.getScriptingName());
-            PortabilityRefactoring refactoring = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), variable, newVariable);
+            String newName = dialog.getName();
+            String newScriptingName = dialog.getScriptingName();
+            RenameVariableRefactoring refactoring = new RenameVariableRefactoring(editor.getDefinitionFile(), editor.getDefinition(), variable,
+                    newName, newScriptingName);
             boolean useLtk = refactoring.isUserInteractionNeeded();
             if (useLtk) {
                 RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);
@@ -240,8 +241,8 @@ public class VariableEditorPage extends EditorPartBase {
                 }
             }
             // update variables
-            variable.setName(newVariable.getName());
-            variable.setScriptingName(newVariable.getScriptingName());
+            variable.setName(newName);
+            variable.setScriptingName(newScriptingName);
             if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
                 for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
@@ -280,7 +281,8 @@ public class VariableEditorPage extends EditorPartBase {
         if (searchResult.getMatchCount() > 0) {
             confirmationInfo.append(Localization.getString("Variable.ExistInProcess")).append("\n");
             for (Object element : searchResult.getElements()) {
-                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element).append("\n");
+                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element)
+                        .append("\n");
             }
             confirmationRequired = true;
         }

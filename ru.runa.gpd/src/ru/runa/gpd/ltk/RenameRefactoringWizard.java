@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.internal.ui.refactoring.AbstractChangeNode;
 import org.eclipse.ltk.internal.ui.refactoring.CompositeChangeNode;
 import org.eclipse.ltk.internal.ui.refactoring.PreviewWizardPage;
@@ -16,7 +17,8 @@ import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 
 public class RenameRefactoringWizard extends RefactoringWizard {
-    public RenameRefactoringWizard(PortabilityRefactoring refactoring) {
+
+    public RenameRefactoringWizard(Refactoring refactoring) {
         super(refactoring, WIZARD_BASED_USER_INTERFACE);
     }
 
