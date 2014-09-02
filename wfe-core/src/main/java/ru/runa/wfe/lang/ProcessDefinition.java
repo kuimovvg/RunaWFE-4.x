@@ -35,8 +35,6 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
-import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -224,13 +222,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         Map<String, Object> result = new HashMap<String, Object>();
         for (VariableDefinition variableDefinition : variables) {
             if (variableDefinition.getDefaultValue() != null) {
-                try {
-                    VariableFormat variableFormat = FormatCommons.create(variableDefinition);
-                    Object value = variableFormat.parse(variableDefinition.getDefaultValue());
-                    result.put(variableDefinition.getName(), value);
-                } catch (Exception e) {
-                    log.warn("Unable to get default value '" + variableDefinition.getDefaultValue() + "' in " + variableDefinition, e);
-                }
+                result.put(variableDefinition.getName(), variableDefinition.getDefaultValue());
             }
         }
         return result;

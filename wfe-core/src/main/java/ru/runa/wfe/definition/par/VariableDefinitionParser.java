@@ -3,6 +3,7 @@ package ru.runa.wfe.definition.par;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,10 @@ import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.VariableFormat;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("unchecked")
@@ -52,7 +56,7 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
             VariableUserType type = userTypes.get(typeElement.attributeValue(NAME));
             List<Element> attributeElements = typeElement.elements(VARIABLE);
             for (Element element : attributeElements) {
-                VariableDefinition variable = parse(element, userTypes);
+                VariableDefinition variable = parse(processDefinition, element, userTypes);
                 type.getAttributes().add(variable);
             }
         }
@@ -64,29 +68,29 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
                 String scriptingName = element.attributeValue(SCRIPTING_NAME, name);
                 processDefinition.getSwimlane(name).setScriptingName(scriptingName);
             } else {
-                VariableDefinition variable = parse(element, userTypes);
+                VariableDefinition variable = parse(processDefinition, element, userTypes);
                 processDefinition.addVariable(variable.getName(), variable);
             }
         }
     }
 
-    private VariableDefinition parse(Element element, Map<String, VariableUserType> userTypes) {
+    private VariableDefinition parse(ProcessDefinition processDefinition, Element element, Map<String, VariableUserType> userTypes) {
         String name = element.attributeValue(NAME);
         String scriptingName = element.attributeValue(SCRIPTING_NAME, name);
-        VariableDefinition variable = new VariableDefinition(false, name, scriptingName);
-        variable.setDescription(element.attributeValue(DESCRIPTION));
+        VariableDefinition variableDefinition = new VariableDefinition(false, name, scriptingName);
+        variableDefinition.setDescription(element.attributeValue(DESCRIPTION));
         String userTypeName = element.attributeValue(USER_TYPE);
         if (userTypeName != null) {
-            variable.setFormat(userTypeName);
+            variableDefinition.setFormat(userTypeName);
         } else {
             String format = element.attributeValue(FORMAT);
             format = BackCompatibilityClassNames.getClassName(format);
-            variable.setFormat(format);
+            variableDefinition.setFormat(format);
             String formatLabel;
             if (format.contains(VariableDefinition.FORMAT_COMPONENT_TYPE_START)) {
-                formatLabel = localizationDAO.getLocalized(variable.getFormatClassName());
+                formatLabel = localizationDAO.getLocalized(variableDefinition.getFormatClassName());
                 formatLabel += VariableDefinition.FORMAT_COMPONENT_TYPE_START;
-                String[] componentClassNames = variable.getFormatComponentClassNames();
+                String[] componentClassNames = variableDefinition.getFormatComponentClassNames();
                 for (int i = 0; i < componentClassNames.length; i++) {
                     if (i != 0) {
                         formatLabel += VariableDefinition.FORMAT_COMPONENT_TYPE_CONCAT;
@@ -97,12 +101,21 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
             } else {
                 formatLabel = localizationDAO.getLocalized(format);
             }
-            variable.setFormatLabel(formatLabel);
+            variableDefinition.setFormatLabel(formatLabel);
         }
-        variable.setPublicAccess(Boolean.parseBoolean(element.attributeValue(PUBLIC, "false")));
-        variable.setDefaultValue(element.attributeValue(DEFAULT_VALUE));
-        variable.setUserTypes(userTypes);
-        return variable;
+        variableDefinition.setPublicAccess(Boolean.parseBoolean(element.attributeValue(PUBLIC, "false")));
+        String stringDefaultValue = element.attributeValue(DEFAULT_VALUE);
+        if (!Strings.isNullOrEmpty(stringDefaultValue)) {
+            try {
+                VariableFormat variableFormat = FormatCommons.create(variableDefinition);
+                Object value = variableFormat.parse(stringDefaultValue);
+                variableDefinition.setDefaultValue(value);
+            } catch (Exception e) {
+                LogFactory.getLog(getClass()).error("Unable to format default value '" + name + "' in " + processDefinition, e);
+            }
+        }
+        variableDefinition.setUserTypes(userTypes);
+        return variableDefinition;
     }
 
 }
