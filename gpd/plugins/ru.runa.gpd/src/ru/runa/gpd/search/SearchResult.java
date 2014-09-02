@@ -74,6 +74,13 @@ public class SearchResult extends AbstractTextSearchResult implements IEditorMat
         return (ElementMatch) matches[0].getElement();
     }
 
+    public void merge(SearchResult searchResult) {
+        Object[] elements = searchResult.getElements();
+        for (Object element : elements) {
+            addMatches(searchResult.getMatches(element));
+        }
+    }
+
     @Override
     public int getMatchCount(Object element) {
         ElementMatch elementMatch = getElementMatch(element);
