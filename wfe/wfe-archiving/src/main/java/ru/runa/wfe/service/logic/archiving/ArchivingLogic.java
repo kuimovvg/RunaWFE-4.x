@@ -2,6 +2,7 @@ package ru.runa.wfe.service.logic.archiving;
 
 import java.sql.SQLException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +32,7 @@ import org.springframework.orm.hibernate3.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
@@ -40,14 +42,17 @@ import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.execution.NodeProcess;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessPermission;
+import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dao.ProcessDAO;
 import ru.runa.wfe.execution.dao.TokenDAO;
+import ru.runa.wfe.job.Job;
 import ru.runa.wfe.service.ArchivingService;
 import ru.runa.wfe.service.exceptions.DefinitionHasProcessesException;
 import ru.runa.wfe.service.exceptions.PermissionDeniedException;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
+import ru.runa.wfe.var.Variable;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -94,7 +99,7 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void backupProcess(User user, Long processId) {
-        processLogic(user, processId, true);
+        processLogicNew(user, processId, true);
     }
 
     @Override
@@ -106,7 +111,7 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void restoreProcess(User user, Long processId) {
-        processLogic(user, processId, false);
+        processLogicNew(user, processId, false);
     }
 
     @Override
@@ -115,12 +120,13 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         deploymentLogic(user, definitionName, version, false);
     }
 
-    private void processLogic(User user, Long processId, boolean toArchive) {
+    private void processLogicNew(User user, Long processId, boolean toArchive) {
         try {
-            HibernateTemplate template = null;
+            HibernateTemplate targetTemplate = null;
             ProcessDAO targetProcessDAO = null;
             ProcessDAO sourceProcessDAO = null;
             DeploymentDAO targetDeploymentDAO = null;
+            Set<Swimlane> swimlanes = null;
 
             if (toArchive) {
                 targetProcessDAO = archProcessDAO;
@@ -133,14 +139,19 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
             }
             Process process = sourceProcessDAO.get(processId);
             if (process == null) {
-                throw new IllegalArgumentException(String.format("process with id = %s not found", processId));
+                return;
             }
-            template = targetProcessDAO.getHibernateTemplate();
-            template.setSessionFactory(getSessionFactory(toArchive, true));
-            Session session = template.getSessionFactory().getCurrentSession();
+            boolean isParent = isParent(process, sourceProcessDAO.getHibernateTemplate());
+            log.info("PROCESS WITH ID = " + processId + " IS PARENT - " + isParent);
+            if (!isParent) {
+                return;
+            }
+            targetTemplate = targetProcessDAO.getHibernateTemplate();
+            targetTemplate.setSessionFactory(getSessionFactory(toArchive, true));
+            Session session = targetTemplate.getSessionFactory().getCurrentSession();
 
-            targetProcessDAO.setHibernateTemplate(template);
-            targetDeploymentDAO.setHibernateTemplate(template);
+            targetProcessDAO.setHibernateTemplate(targetTemplate);
+            targetDeploymentDAO.setHibernateTemplate(targetTemplate);
 
             if (toArchive) {
                 boolean isAllowed = isPermissionAllowed(user, process, ProcessPermission.CANCEL_PROCESS);
@@ -148,28 +159,25 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
                     throw new PermissionDeniedException();
                 }
             }
-            Token rootToken = process.getRootToken();
-            clearChild(rootToken);
-            rootToken.setProcess(null);
-            Deployment deployment = process.getDeployment();
-            Deployment existDep = null;
-            try {
-                existDep = targetDeploymentDAO.findDeployment(deployment.getName(), deployment.getVersion());
-            } catch (DefinitionDoesNotExistException e) {
-                // ingnore
+            HibernateTemplate srcTemplate = sourceProcessDAO.getHibernateTemplate();
+            LinkedList<Process> linkedList = getLinkedProcesses(process.getId(), srcTemplate, sourceProcessDAO);
+            for (Process p : linkedList) {
+                processReplicateWithoutSubprocesses(p.getId(), session, targetDeploymentDAO, sourceProcessDAO, targetTemplate, srcTemplate, toArchive);
             }
-            if (existDep != null) {
-                deployment = existDep;
-            } else {
-                replicateDeployment(deployment, toArchive, session, template);
+            List<NodeProcess> nodeProcesses = getNodeProcesses(srcTemplate, process, null, null, null);
+            for (NodeProcess nodeProcess : nodeProcesses) {
+                replicateSubprocess(nodeProcess, toArchive, session, targetTemplate);
             }
-            replicateToken(rootToken, toArchive, session, template);
-            process.setDeployment(deployment);
-            replicateProcess(process, toArchive, session, template);
+            swimlanes = sourceProcessDAO.get(processId).getSwimlanes();
+            for (Swimlane swimlane : swimlanes) {
+                replicateSwimlane(swimlane, toArchive, session, targetTemplate);
+            }
+            replicateLinkedRecords(toArchive, targetTemplate, session, srcTemplate, linkedList);
+
             Process toDelete = sourceProcessDAO.get(processId);
             deleteProcess(toDelete, sourceProcessDAO.getHibernateTemplate(), toArchive);
 
-            template.setSessionFactory(getSessionFactory(toArchive, false));
+            targetTemplate.setSessionFactory(getSessionFactory(toArchive, false));
         } catch (Exception e) {
             log.error(String.format("error backup process with id = %s", processId));
             log.error("", e);
@@ -246,6 +254,69 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         }
     }
 
+    private void replicateLinkedRecords(boolean toArchive, HibernateTemplate targetTemplate, Session session, HibernateTemplate srcTemplate,
+            LinkedList<Process> linkedList) {
+        try {
+            for (Process p : linkedList) {
+                List<ProcessLog> logs = getProcessLogs(p.getId(), srcTemplate);
+                for (ProcessLog processLog : logs) {
+                    replicateProcessLog(processLog, toArchive, session, targetTemplate);
+                }
+                List<Job> jobs = getJobs(p, srcTemplate);
+                for (Job job : jobs) {
+                    replicateJob(job, toArchive, session, targetTemplate);
+                }
+                List<Variable<?>> variables = getVariables(p, srcTemplate);
+                for (Variable<?> variable : variables) {
+                    replicateVariable(variable, toArchive, session, targetTemplate);
+                }
+            }
+        } catch (Exception e) {
+            log.error("error replicate processlog or job or variable");
+            log.error("", e);
+        }
+    }
+
+    private LinkedList<Process> getLinkedProcesses(Long processId, HibernateTemplate srcTemplate, ProcessDAO srcProcessDAO) {
+        LinkedList<Process> linkedList = Lists.newLinkedList();
+        Process process = srcProcessDAO.get(processId);
+        if (process != null) {
+            addSubProcessesToLinkedList(linkedList, process, srcTemplate);
+        }
+        return linkedList;
+    }
+
+    private void addSubProcessesToLinkedList(LinkedList<Process> linkedList, Process process, HibernateTemplate srcTemplate) {
+        linkedList.add(process);
+        List<Process> subprocesses = getSubprocesses(srcTemplate, process);
+        for (Process subProcess : subprocesses) {
+            addSubProcessesToLinkedList(linkedList, subProcess, srcTemplate);
+        }
+    }
+
+    private void processReplicateWithoutSubprocesses(Long processId, Session session, DeploymentDAO targetDeploymentDAO, ProcessDAO sourceProcessDAO,
+            HibernateTemplate targetTemplate, HibernateTemplate srcTemplate, boolean toArchive) {
+        Process process = sourceProcessDAO.get(processId);
+        Token rootToken = process.getRootToken();
+        clearChild(rootToken);
+        rootToken.setProcess(null);
+        Deployment deployment = process.getDeployment();
+        Deployment existDep = null;
+        try {
+            existDep = targetDeploymentDAO.findDeployment(deployment.getName(), deployment.getVersion());
+        } catch (DefinitionDoesNotExistException e) {
+            // ignore
+        }
+        if (existDep != null) {
+            deployment = existDep;
+        } else {
+            replicateDeployment(deployment, toArchive, session, targetTemplate);
+        }
+        replicateToken(rootToken, toArchive, session, targetTemplate);
+        process.setDeployment(deployment);
+        replicateProcess(process, toArchive, session, targetTemplate);
+    }
+
     private void replicateProcess(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
         replicate(entity, Process.class, toArchive, session, tplArchive);
     }
@@ -258,6 +329,27 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         replicate(entity, Token.class, toArchive, session, tplArchive);
     }
 
+    private void replicateSubprocess(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
+        replicate(entity, NodeProcess.class, toArchive, session, tplArchive);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
+    private void replicateSwimlane(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
+        replicate(entity, Swimlane.class, toArchive, session, tplArchive);
+    }
+
+    private void replicateProcessLog(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
+        replicate(entity, ProcessLog.class, toArchive, session, tplArchive);
+    }
+
+    private void replicateJob(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
+        replicate(entity, Job.class, toArchive, session, tplArchive);
+    }
+
+    private void replicateVariable(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
+        replicate(entity, Variable.class, toArchive, session, tplArchive);
+    }
+
     private void replicate(Object entity, Class<?> entityClass, boolean toArchive, Session session, HibernateTemplate tplArchive) {
         String tableName = getTableName(entityClass);
         setIdentityInsert(session, true, tableName);
@@ -265,6 +357,21 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         tplArchive.replicate(entity, ReplicationMode.OVERWRITE);
         finishReplicate(toArchive);
         setIdentityInsert(session, false, tableName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<ProcessLog> getProcessLogs(Long processId, HibernateTemplate template) {
+        return template.find("from ProcessLog where processId=? order by id asc", processId);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Job> getJobs(Process process, HibernateTemplate template) {
+        return template.find("from Job where process=?", process);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Variable<?>> getVariables(Process process, HibernateTemplate template) {
+        return template.find("from Variable where process=?", process);
     }
 
     private String getTableName(Class<?> clazz) {
@@ -478,6 +585,15 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
                 return query.list();
             }
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean isParent(Process process, HibernateTemplate srcTemplate) {
+        List<NodeProcess> list = srcTemplate.find("from NodeProcess where subProcess.id = ?", process.getId());
+        if (list != null && list.size() > 0) {
+            return false;
+        }
+        return true;
     }
 
     public DataSource getArchivingDataSource() throws NamingException {
