@@ -29,10 +29,8 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.form.FormVariableAccess;
-import ru.runa.gpd.lang.model.Action;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskType;
-import ru.runa.gpd.lang.model.Decision;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.GraphElement;
@@ -146,14 +144,11 @@ public class VariableSearchVisitor {
             if (graphElement instanceof FormNode) {
                 processFormNode(definitionFile, (FormNode) graphElement);
             }
-            if (graphElement instanceof Action) {
+            if (graphElement instanceof Delegable) {
                 processDelegableNode(definitionFile, (Delegable) graphElement);
             }
             if (graphElement instanceof ITimed) {
                 processTimedNode(definitionFile, (ITimed) graphElement);
-            }
-            if (graphElement instanceof Decision) {
-                processDelegableNode(definitionFile, (Delegable) graphElement);
             }
             if (graphElement instanceof Subprocess) {
                 processSubprocessNode(definitionFile, (Subprocess) graphElement);
