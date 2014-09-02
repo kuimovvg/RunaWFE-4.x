@@ -1,5 +1,6 @@
 package ru.runa.wfe.commons;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -20,6 +21,8 @@ public class PropertyResources {
     private final Properties PROPERTIES;
     private final boolean useDatabase;
     private static boolean databaseAvailable = false;
+    
+    private static Map<String, String> propertiesCache = new HashMap<String, String>();
 
     public static void setDatabaseAvailable(boolean available) {
         databaseAvailable = available;
@@ -53,6 +56,15 @@ public class PropertyResources {
         return map;
     }
 
+    public static void renewCachedProperty(String fileName, String name, String value) {
+    	String fullName = fileName + '#' + name;
+    	propertiesCache.put(fullName, value);
+    }
+    
+    public static void clearPropertiesCache() {
+    	propertiesCache.clear();
+    }
+    
     public String getStringProperty(String name) {
         if (databaseAvailable && useDatabase) {
             if (settingDAO == null) {
@@ -63,11 +75,14 @@ public class PropertyResources {
                 }
             }
             if (settingDAO != null) {
+            	String fullName = fileName + '#' + name;
+            	if (propertiesCache.containsKey(fullName))
+            		return propertiesCache.get(fullName);
                 try {
                     String v = settingDAO.getValue(fileName, name);
-                    if (v != null) {
-                        return v;
-                    }
+                    if (v == null) v = PROPERTIES.getProperty(name);
+                	propertiesCache.put(fullName, v);
+                    return v;
                 } catch (Exception e) {
                     log.error("Database error", e);
                 }

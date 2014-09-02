@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.timer.ScheduledTimerTask;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
+import ru.runa.wfe.commons.PropertyResources;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.dao.Localization;
 import ru.runa.wfe.commons.dao.LocalizationDAO;
@@ -170,6 +171,7 @@ public class CommonLogic {
     
     public void setSetting(String fileName, String name, String value) {
     	settingDAO.setValue(fileName, name, value);
+    	PropertyResources.renewCachedProperty(fileName, name, value);
     	if (fileName.equals(SystemProperties.CONFIG_FILE_NAME)) {
     		String bean = null;
     		if (name.equals(SystemProperties.TIMERTASK_PERIOD_MILLIS_JOB_EXECUTION_NAME)) bean = "jobExecutorTask";
@@ -189,6 +191,7 @@ public class CommonLogic {
     
     public void clearSettings() {
     	settingDAO.clear();
+    	PropertyResources.clearPropertiesCache();
     }
 
 }
