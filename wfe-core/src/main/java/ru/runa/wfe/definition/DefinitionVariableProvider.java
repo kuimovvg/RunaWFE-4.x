@@ -13,13 +13,18 @@ public class DefinitionVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
-    public Long getProcessId() {
-        return null;
+    public Long getProcessDefinitionId() {
+        return processDefinition.getId();
     }
 
     @Override
     public String getProcessDefinitionName() {
         return processDefinition.getName();
+    }
+
+    @Override
+    public Long getProcessId() {
+        return null;
     }
 
     @Override

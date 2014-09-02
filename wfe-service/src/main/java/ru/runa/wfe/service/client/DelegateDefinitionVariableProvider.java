@@ -28,13 +28,18 @@ public class DelegateDefinitionVariableProvider extends AbstractVariableProvider
     }
 
     @Override
-    public Long getProcessId() {
-        return null;
+    public Long getProcessDefinitionId() {
+        return definitionId;
     }
 
     @Override
     public String getProcessDefinitionName() {
         return definitionService.getProcessDefinition(user, definitionId).getName();
+    }
+
+    @Override
+    public Long getProcessId() {
+        return null;
     }
 
     @Override

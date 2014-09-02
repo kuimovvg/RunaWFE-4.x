@@ -11,12 +11,12 @@ import ru.runa.wfe.var.dto.WfVariable;
 public interface IVariableProvider {
 
     /**
-     * Access to current process id.
+     * Access to current process definition id.
      * 
-     * @return context process id, can be <code>null</code> (if variables does
-     *         not linked with process)
+     * @return context process definition id, can be <code>null</code> (if
+     *         variables does not linked with process definition)
      */
-    Long getProcessId();
+    Long getProcessDefinitionId();
 
     /**
      * Access to current process definition name.
@@ -25,6 +25,14 @@ public interface IVariableProvider {
      *         does not linked with process definition)
      */
     String getProcessDefinitionName();
+
+    /**
+     * Access to current process id.
+     * 
+     * @return context process id, can be <code>null</code> (if variables does
+     *         not linked with process)
+     */
+    Long getProcessId();
 
     /**
      * Access to variable value.

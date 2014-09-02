@@ -5,12 +5,17 @@ import ru.runa.wfe.var.dto.WfVariable;
 public class EmptyVariableProvider extends AbstractVariableProvider {
 
     @Override
-    public Long getProcessId() {
+    public Long getProcessDefinitionId() {
         return null;
     }
 
     @Override
     public String getProcessDefinitionName() {
+        return null;
+    }
+
+    @Override
+    public Long getProcessId() {
         return null;
     }
 

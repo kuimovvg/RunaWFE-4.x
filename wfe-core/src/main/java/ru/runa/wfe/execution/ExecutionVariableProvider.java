@@ -19,13 +19,18 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
     }
 
     @Override
-    public Long getProcessId() {
-        return executionContext.getProcess().getId();
+    public Long getProcessDefinitionId() {
+        return executionContext.getProcessDefinition().getId();
     }
 
     @Override
     public String getProcessDefinitionName() {
         return executionContext.getProcessDefinition().getName();
+    }
+
+    @Override
+    public Long getProcessId() {
+        return executionContext.getProcess().getId();
     }
 
     @Override
