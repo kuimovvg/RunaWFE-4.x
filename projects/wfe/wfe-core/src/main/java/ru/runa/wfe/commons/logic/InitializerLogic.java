@@ -32,6 +32,7 @@ import org.springframework.scheduling.timer.ScheduledTimerTask;
 
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.DatabaseProperties;
 import ru.runa.wfe.commons.PropertyResources;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.Utils;
@@ -159,7 +160,8 @@ public class InitializerLogic {
                 localizations.addAll(LocalizationParser.parseLocalizations(stream));
             }
             localizationDAO.saveLocalizations(localizations, false);
-            PropertyResources.setDatabaseAvailable(true);
+            if (DatabaseProperties.isDynamicSettingsEnabled())
+            	PropertyResources.setDatabaseAvailable(true);
             setScheduledTaskTimerSettings();
             JobTask.setSystemStartupCompleted(true);
         } catch (Exception e) {

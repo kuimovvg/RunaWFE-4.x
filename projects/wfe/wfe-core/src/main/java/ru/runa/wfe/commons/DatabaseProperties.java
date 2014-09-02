@@ -6,5 +6,9 @@ public class DatabaseProperties {
     public static String getUserTransactionJndiName() {
         return RESOURCES.getStringPropertyNotNull("user.transaction.jndi.name");
     }
+    
+    public static boolean isDynamicSettingsEnabled() {
+    	return RESOURCES.getBooleanProperty("dynamic.settings.enabled", true);
+    }
 
 }
