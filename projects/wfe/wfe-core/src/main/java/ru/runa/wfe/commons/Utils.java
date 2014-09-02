@@ -47,7 +47,7 @@ public class Utils {
         try {
             return (UserTransaction) getInitialContext().lookup(jndiName);
         } catch (NamingException e) {
-            throw new InternalApplicationException("Unable to find UserTransaction by name '" + jndiName, e);
+            throw new InternalApplicationException("Unable to find UserTransaction by name '" + jndiName + "'", e);
         }
     }
 

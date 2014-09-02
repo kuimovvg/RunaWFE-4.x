@@ -42,7 +42,7 @@ public class VariableDefinition implements Serializable {
     private String description;
     private String format;
     private boolean publicAccess;
-    private String defaultValue;
+    private Object defaultValue;
     private String scriptingName;
     private String formatLabel;
     private transient VariableFormat variableFormat;
@@ -72,6 +72,7 @@ public class VariableDefinition implements Serializable {
     public VariableDefinition(String name, String scriptingName, VariableDefinition attributeDefinition) {
         this(true, name, scriptingName, attributeDefinition.getFormat());
         setUserTypes(attributeDefinition.getUserTypes());
+        setDefaultValue(attributeDefinition.getDefaultValue());
     }
 
     public boolean isSynthetic() {
@@ -146,11 +147,11 @@ public class VariableDefinition implements Serializable {
         this.publicAccess = publicAccess;
     }
 
-    public String getDefaultValue() {
+    public Object getDefaultValue() {
         return defaultValue;
     }
 
-    public void setDefaultValue(String defaultValue) {
+    public void setDefaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
     }
 
