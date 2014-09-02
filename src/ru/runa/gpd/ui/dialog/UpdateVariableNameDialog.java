@@ -15,24 +15,29 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.VariableContainer;
 import ru.runa.gpd.ui.custom.VariableNameChecker;
 import ru.runa.gpd.util.VariableUtils;
 
 public class UpdateVariableNameDialog extends Dialog {
-    private String name;
-    private final ProcessDefinition definition;
+    private final VariableContainer variableContainer;
     private final Variable variable;
     private Text scriptingNameField;
     private String scriptingName;
+    private String name;
 
-    public UpdateVariableNameDialog(Variable variable) {
+    public UpdateVariableNameDialog(VariableContainer variableContainer, Variable variable) {
         super(Display.getDefault().getActiveShell());
-        this.definition = variable.getProcessDefinition();
+        this.variableContainer = variableContainer;
         this.variable = variable;
         this.name = variable.getName();
-        this.scriptingName = variable.getScriptingName() != null ? variable.getScriptingName() : VariableUtils.generateNameForScripting(definition, name, variable);
+        this.scriptingName = variable.getScriptingName() != null ? variable.getScriptingName() : VariableUtils.generateNameForScripting(
+                variableContainer, name, variable);
+    }
+
+    public UpdateVariableNameDialog(Variable variable) {
+        this(variable.getProcessDefinition(), variable);
     }
 
     @Override
@@ -64,7 +69,7 @@ public class UpdateVariableNameDialog extends Dialog {
             public void modifyText(ModifyEvent e) {
                 name = nameField.getText();
                 updateButtons();
-                scriptingName = VariableUtils.generateNameForScripting(definition, name, variable);
+                scriptingName = VariableUtils.generateNameForScripting(variableContainer, name, variable);
                 scriptingNameField.setText(scriptingName);
             }
         });
@@ -90,7 +95,8 @@ public class UpdateVariableNameDialog extends Dialog {
     }
 
     private void updateButtons() {
-        boolean allowCreation = !definition.getVariableNames(true).contains(name) && VariableNameChecker.isValid(name);
+        boolean allowCreation = !VariableUtils.getVariableNames(variableContainer.getVariables(false, true)).contains(name)
+                && VariableNameChecker.isValid(name);
         getButton(IDialogConstants.OK_ID).setEnabled(allowCreation);
     }
 

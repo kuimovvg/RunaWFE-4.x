@@ -41,10 +41,9 @@ import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
-import ru.runa.gpd.ltk.PortabilityRefactoring;
 import ru.runa.gpd.ltk.RenameRefactoringWizard;
+import ru.runa.gpd.ltk.RenameVariableRefactoring;
 import ru.runa.gpd.search.ElementMatch;
 import ru.runa.gpd.search.SearchResult;
 import ru.runa.gpd.search.VariableSearchQuery;
@@ -282,11 +281,10 @@ public class SwimlaneEditorPage extends EditorPartBase {
             }
             IResource projectRoot = editor.getDefinitionFile().getParent();
             IDE.saveAllEditors(new IResource[] { projectRoot }, false);
-            Variable newVariable = new Variable(swimlane);
-            newVariable.setName(newName);
-            newVariable.setScriptingName(renameDialog.getScriptingName());
+            String newScriptingName = renameDialog.getScriptingName();
             if (useLtk) {
-                PortabilityRefactoring ref = new PortabilityRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane, newVariable);
+                RenameVariableRefactoring ref = new RenameVariableRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane, newName,
+                        newScriptingName);
                 useLtk &= ref.isUserInteractionNeeded();
                 if (useLtk) {
                     RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
@@ -299,8 +297,8 @@ public class SwimlaneEditorPage extends EditorPartBase {
                 }
             }
             // update name
-            swimlane.setName(newVariable.getName());
-            swimlane.setScriptingName(newVariable.getScriptingName());
+            swimlane.setName(newName);
+            swimlane.setScriptingName(newScriptingName);
             if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
                 for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
