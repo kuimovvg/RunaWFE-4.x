@@ -126,6 +126,8 @@ public class ApplicationContextFactory {
                 dbType = DBType.MYSQL;
             } else if (hibernateDialect.contains("SQLServer")) {
                 dbType = DBType.MSSQL;
+            } else if (hibernateDialect.contains("H2")) {
+            	dbType = DBType.H2;
             } else {
                 dbType = DBType.GENERIC;
             }
