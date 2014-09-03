@@ -8,6 +8,13 @@
 		</property>
 		<property title="escalation.default.hierarchy.loader"/>
 		<property title="task.default.deadline" pattern="\s*[+\-]?\d+\s*(business|)\s*(seconds|minutes|hours|days|weeks|months|years)\s*" />
+		<property title="task.almostDeadlinePercents" pattern="\d*"/>
+		<property title="token.maximum.depth" pattern="\d*"/>
+		<property title="file.variable.local.storage.enabled">
+			<value>true</value>
+			<value>false</value>
+		</property>
+		<property title="file.variable.local.storage.enableforfilesgreaterthan" pattern="\d*"/>
 		<property title="authentication.domain.name" />
 		<property title="authentication.ldap.server.url" />
 		<property title="authentication.ldap.userName.format" />
@@ -80,11 +87,8 @@
 			<value>true</value>
 			<value>false</value>
 		</property>
+		<property title="ntlm.domain" />
 		<property title="synchronization.ldap.link.enabled">
-			<value>true</value>
-			<value>false</value>
-		</property>
-		<property title="process.showGraphMode">
 			<value>true</value>
 			<value>false</value>
 		</property>
@@ -98,10 +102,17 @@
 		</property>
 		<property title="view.logs.limit.lines.count" pattern="\d*"/>
 		<property title="view.logs.timeout.autoreload.seconds" pattern="\d*" />
-		<property title="process.graph.autoRefreshInterval.seconds" pattern="\d*" />
-		<property title="ldap.synchronizer.ou" pattern="\d*" />
-		<property title="ntlm.domain" />
+		
 		<property title="menu.additional_links" />
+		<property title="process.showGraphMode">
+			<value>true</value>
+			<value>false</value>
+		</property>
+		<property title="process.graph.autoRefreshInterval.seconds" pattern="\d*" />
+		<property title="process.definition.ajax.deployment">
+			<value>true</value>
+			<value>false</value>
+		</property>
 		<property title="confirmation.remove.executors">
 			<value>true</value>
 			<value>false</value>
