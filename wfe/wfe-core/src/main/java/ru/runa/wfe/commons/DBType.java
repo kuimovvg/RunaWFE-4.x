@@ -8,5 +8,5 @@ import ru.runa.wfe.commons.dbpatch.DBPatch;
  * @author Dofs
  */
 public enum DBType {
-    GENERIC, HSQL, ORACLE, POSTGRESQL, MSSQL, MYSQL
+    GENERIC, HSQL, ORACLE, POSTGRESQL, MSSQL, MYSQL, H2
 }
