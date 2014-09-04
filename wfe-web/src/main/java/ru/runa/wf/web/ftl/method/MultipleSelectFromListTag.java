@@ -3,7 +3,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
+import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionPostProcessor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.ISelectable;
 
@@ -12,7 +12,7 @@ import com.google.common.collect.Lists;
 import freemarker.template.TemplateModelException;
 
 @SuppressWarnings("unchecked")
-public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVariableHandler {
+public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVariableSubmissionPostProcessor {
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -23,7 +23,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
             list = Lists.newArrayList();
         }
         if (list.size() > 0 && list.get(0) instanceof ISelectable) {
-            registerVariableHandler(variableName);
+            registerVariablePostProcessor(variableName);
         }
         List<Object> selectedValues = variableProvider.getValue(List.class, variableName);
         StringBuffer html = new StringBuffer();
@@ -60,7 +60,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
     }
 
     @Override
-    public Object handle(Object source) throws TemplateModelException {
+    public Object postProcessValue(Object source) throws TemplateModelException {
         if (source instanceof List) {
             List<String> valuesList = (List<String>) source;
             List<ISelectable> list = getParameterVariableValueNotNull(List.class, 1);

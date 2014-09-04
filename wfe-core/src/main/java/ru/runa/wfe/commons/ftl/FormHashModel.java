@@ -36,7 +36,10 @@ public class FormHashModel extends SimpleHash {
                 if (attributeName.startsWith(AjaxFreemarkerTag.TAG_SESSION_PREFIX)) {
                     session.removeAttribute(attributeName);
                 }
-                if (attributeName.startsWith(FtlTagVariableHandler.HANDLER_KEY_PREFIX)) {
+                if (attributeName.startsWith(FtlTagVariableSubmissionHandler.KEY_PREFIX)) {
+                    session.removeAttribute(attributeName);
+                }
+                if (attributeName.startsWith(FtlTagVariableSubmissionPostProcessor.KEY_PREFIX)) {
                     session.removeAttribute(attributeName);
                 }
             }
