@@ -45,7 +45,6 @@ import ru.runa.common.web.tag.TitledFormTag;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.PropertyResources;
 import ru.runa.wfe.commons.xml.XmlUtils;
-import ru.runa.wfe.extension.handler.var.FormulaActionHandlerOperations;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.service.delegate.Delegates;
 
@@ -91,7 +90,7 @@ public class EditSettingsTag extends TitledFormTag {
     @SuppressWarnings("unchecked")
 	private static void readSettingsList(String path) {
         try {
-            InputStream is = ClassLoaderUtil.getAsStreamNotNull(path, FormulaActionHandlerOperations.class);
+            InputStream is = ClassLoaderUtil.getAsStreamNotNull(path, EditSettingsTag.class);
             Document document = XmlUtils.parseWithoutValidation(is);
             List<Element> files = document.getRootElement().elements();
             for (Element f : files) {
