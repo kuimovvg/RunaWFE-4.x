@@ -11,6 +11,9 @@ import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
+
+import com.google.common.base.Preconditions;
+
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
@@ -56,8 +59,14 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
         }
     }
 
+    protected void registerVariablePostProcessor(String variableName) {
+        Preconditions.checkArgument(this instanceof FtlTagVariableSubmissionPostProcessor, "not a FtlTagVariableSubmissionPostProcessor instance");
+        webHelper.getRequest().getSession().setAttribute(FtlTagVariableSubmissionPostProcessor.KEY_PREFIX + variableName, this);
+    }
+
     protected void registerVariableHandler(String variableName) {
-        webHelper.getRequest().getSession().setAttribute(FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableName, this);
+        Preconditions.checkArgument(this instanceof FtlTagVariableSubmissionHandler, "not a FtlTagVariableSubmissionHandler instance");
+        webHelper.getRequest().getSession().setAttribute(FtlTagVariableSubmissionHandler.KEY_PREFIX + variableName, this);
     }
 
     protected abstract Object executeTag() throws Exception;

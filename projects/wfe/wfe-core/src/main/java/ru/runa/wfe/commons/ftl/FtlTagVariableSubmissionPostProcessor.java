@@ -18,14 +18,23 @@
 package ru.runa.wfe.commons.ftl;
 
 /**
- * Interface allowed freemerker tags make transforms of user input values in
- * form.
+ * Interface allowed freemarker tags make transforms of user input values in
+ * task form.
  * 
  * @author dofs
  */
-public interface FtlTagVariableHandler {
-    public static final String HANDLER_KEY_PREFIX = "var_handler_";
+public interface FtlTagVariableSubmissionPostProcessor {
+    public static final String KEY_PREFIX = "var_post_processor_";
 
-    public Object handle(Object source) throws Exception;
+    /**
+     * Transforms input value
+     * 
+     * @param input
+     *            parsed input
+     * @return transformed value
+     * @throws Exception
+     *             if any error occurs; message will be displayed to user
+     */
+    public Object postProcessValue(Object input) throws Exception;
 
 }

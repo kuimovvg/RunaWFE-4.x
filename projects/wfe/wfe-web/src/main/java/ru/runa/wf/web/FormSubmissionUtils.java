@@ -21,7 +21,8 @@ import ru.runa.wf.web.servlet.UploadedFile;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
-import ru.runa.wfe.commons.ftl.FtlTagVariableHandler;
+import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionHandler;
+import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionPostProcessor;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.FileVariable;
@@ -65,14 +66,16 @@ public class FormSubmissionUtils {
     }
 
     /**
-     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
      */
     public static Map<String, String[]> getUserFormInput(ServletRequest request) {
         return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
     }
 
     /**
-     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
      */
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
@@ -124,9 +127,25 @@ public class FormSubmissionUtils {
         try {
             HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
-                Object variableValue = extractVariable(request, userInput, variableDefinition, formatErrorsForFields);
-                if (!Objects.equal(IGNORED_VALUE, variableValue)) {
-                    variables.put(variableDefinition.getName(), variableValue);
+                try {
+                    FtlTagVariableSubmissionHandler handler = (FtlTagVariableSubmissionHandler) request.getSession().getAttribute(
+                            FtlTagVariableSubmissionHandler.KEY_PREFIX + variableDefinition.getName());
+                    if (handler != null) {
+                        variables.putAll(handler.extractVariables(variableDefinition, userInput));
+                    } else {
+                        Object variableValue = extractVariable(userInput, variableDefinition, formatErrorsForFields);
+                        if (!Objects.equal(IGNORED_VALUE, variableValue)) {
+                            FtlTagVariableSubmissionPostProcessor postProcessor = (FtlTagVariableSubmissionPostProcessor) request.getSession()
+                                    .getAttribute(FtlTagVariableSubmissionPostProcessor.KEY_PREFIX + variableDefinition.getName());
+                            if (postProcessor != null) {
+                                variableValue = postProcessor.postProcessValue(variableValue);
+                            }
+                            variables.put(variableDefinition.getName(), variableValue);
+                        }
+                    }
+                } catch (Exception e) {
+                    formatErrorsForFields.add(variableDefinition.getName());
+                    log.warn(variableDefinition.getName(), e);
                 }
             }
             return variables;
@@ -136,11 +155,10 @@ public class FormSubmissionUtils {
     }
 
     public static Object extractVariable(HttpServletRequest request, ActionForm actionForm, VariableDefinition variableDefinition) throws Exception {
-
         List<String> formatErrorsForFields = new ArrayList<String>();
         Map<String, Object> inputs = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
         inputs.putAll(getUploadedFilesInputsMap(request));
-        Object variableValue = extractVariable(request, inputs, variableDefinition, formatErrorsForFields);
+        Object variableValue = extractVariable(inputs, variableDefinition, formatErrorsForFields);
         if (formatErrorsForFields.size() > 0) {
             throw new VariablesFormatException(formatErrorsForFields);
         }
@@ -150,7 +168,7 @@ public class FormSubmissionUtils {
         return variableValue;
     }
 
-    private static Object extractVariable(HttpServletRequest request, Map<String, ? extends Object> userInput, VariableDefinition variableDefinition,
+    private static Object extractVariable(Map<String, ? extends Object> userInput, VariableDefinition variableDefinition,
             List<String> formatErrorsForFields) throws Exception {
         VariableFormat format = FormatCommons.create(variableDefinition);
         Object variableValue = null;
@@ -194,7 +212,7 @@ public class FormSubmissionUtils {
                         String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
                         VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
                         componentDefinition.setUserTypes(variableDefinition.getUserTypes());
-                        Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
+                        Object componentValue = extractVariable(userInput, componentDefinition, formatErrorsForFields);
                         if (!Objects.equal(IGNORED_VALUE, componentValue)) {
                             list.add(componentValue);
                         }
@@ -225,7 +243,7 @@ public class FormSubmissionUtils {
                     String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
                     VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
                     componentDefinition.setUserTypes(variableDefinition.getUserTypes());
-                    Object componentValue = extractVariable(request, userInput, componentDefinition, formatErrorsForFields);
+                    Object componentValue = extractVariable(userInput, componentDefinition, formatErrorsForFields);
                     if (!Objects.equal(IGNORED_VALUE, componentValue)) {
                         list.add(componentValue);
                     }
@@ -281,14 +299,14 @@ public class FormSubmissionUtils {
                         + ".key";
                 VariableDefinition componentKeyDefinition = new VariableDefinition(true, nameKey, scriptingNameKey, componentKeyFormat);
                 componentKeyDefinition.setUserTypes(variableDefinition.getUserTypes());
-                Object componentKeyValue = extractVariable(request, userInput, componentKeyDefinition, formatErrorsForFields);
+                Object componentKeyValue = extractVariable(userInput, componentKeyDefinition, formatErrorsForFields);
 
                 String nameValue = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END + ".value";
                 String scriptingNameValue = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END
                         + ".value";
                 VariableDefinition componentValueDefinition = new VariableDefinition(true, nameValue, scriptingNameValue, componentValueFormat);
                 componentValueDefinition.setUserTypes(variableDefinition.getUserTypes());
-                Object componentValueValue = extractVariable(request, userInput, componentValueDefinition, formatErrorsForFields);
+                Object componentValueValue = extractVariable(userInput, componentValueDefinition, formatErrorsForFields);
                 if (!Objects.equal(IGNORED_VALUE, componentKeyValue)) {
                     map.put(componentKeyValue, componentValueValue);
                 }
@@ -298,7 +316,7 @@ public class FormSubmissionUtils {
             List<VariableDefinition> expandedDefinitions = variableDefinition.expandComplexVariable(false);
             ComplexVariable complexVariable = new ComplexVariable(variableDefinition);
             for (VariableDefinition expandedDefinition : expandedDefinitions) {
-                Object componentValue = extractVariable(request, userInput, expandedDefinition, formatErrorsForFields);
+                Object componentValue = extractVariable(userInput, expandedDefinition, formatErrorsForFields);
                 if (!Objects.equal(IGNORED_VALUE, componentValue)) {
                     String attributeName = expandedDefinition.getName().substring(variableDefinition.getName().length() + 1);
                     complexVariable.put(attributeName, componentValue);
@@ -313,11 +331,6 @@ public class FormSubmissionUtils {
             variableValue = convertComponent(variableDefinition.getName(), format, value, formatErrorsForFields);
         }
         if (variableValue != null || forceSetVariableValue) {
-            FtlTagVariableHandler handler = (FtlTagVariableHandler) request.getSession().getAttribute(
-                    FtlTagVariableHandler.HANDLER_KEY_PREFIX + variableDefinition.getName());
-            if (handler != null) {
-                variableValue = handler.handle(variableValue);
-            }
             return variableValue;
         }
         return IGNORED_VALUE;
