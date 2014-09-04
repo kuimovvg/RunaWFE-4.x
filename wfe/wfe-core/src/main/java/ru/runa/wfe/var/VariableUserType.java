@@ -6,6 +6,8 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import ru.runa.wfe.InternalApplicationException;
+
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
@@ -37,6 +39,14 @@ public class VariableUserType implements Serializable {
             }
         }
         return null;
+    }
+
+    public VariableDefinition getAttributeNotNull(String name) {
+        VariableDefinition definition = getAttribute(name);
+        if (definition != null) {
+            return definition;
+        }
+        throw new InternalApplicationException("No attribute '" + name + "' found in " + this);
     }
 
     @Override
