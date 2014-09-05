@@ -78,12 +78,12 @@ public class DocxUtils {
     public static void setCellText(final XWPFTableCell cell, String text) {
         if (cell.getParagraphs().size() > 0 && cell.getParagraphs().get(0).getRuns().size() > 0) {
             new SafeIndefiniteLoop(100) {
-    
+
                 @Override
                 protected void doOp() {
                     cell.removeParagraph(1);
                 }
-    
+
                 @Override
                 protected boolean continueLoop() {
                     return cell.getParagraphs().size() > 1;
@@ -91,12 +91,12 @@ public class DocxUtils {
             }.doLoop();
             final XWPFParagraph paragraph0 = cell.getParagraphs().get(0);
             new SafeIndefiniteLoop(100) {
-    
+
                 @Override
                 protected void doOp() {
                     paragraph0.removeRun(1);
                 }
-    
+
                 @Override
                 protected boolean continueLoop() {
                     return paragraph0.getRuns().size() > 1;
@@ -108,7 +108,7 @@ public class DocxUtils {
             log.warn("no paragraphs or empty one, using raw text insert");
         }
     }
-    
+
     public static void setCellText(XWPFTableCell cell, String text, XWPFTableCell cellTemplate) {
         if (cellTemplate != null && cellTemplate.getParagraphs().size() > 0 && cellTemplate.getParagraphs().get(0).getRuns().size() > 0) {
             XWPFParagraph paragraph0;
@@ -130,13 +130,13 @@ public class DocxUtils {
                 paragraph0.setIndentationLeft(templateParagraph.getIndentationLeft());
                 paragraph0.setIndentationRight(templateParagraph.getIndentationRight());
                 paragraph0.setPageBreak(templateParagraph.isPageBreak());
-//                paragraph0.setSpacingAfter(templateParagraph.getSpacingAfter());
-//                paragraph0.setSpacingAfterLines(templateParagraph.getSpacingAfterLines());
-//                paragraph0.setSpacingBefore(templateParagraph.getSpacingBefore());
-//                paragraph0.setSpacingLineRule(templateParagraph.getSpacingLineRule());
-                //paragraph0.setStyle(templateParagraph.getStyle());
+                // paragraph0.setSpacingAfter(templateParagraph.getSpacingAfter());
+                // paragraph0.setSpacingAfterLines(templateParagraph.getSpacingAfterLines());
+                // paragraph0.setSpacingBefore(templateParagraph.getSpacingBefore());
+                // paragraph0.setSpacingLineRule(templateParagraph.getSpacingLineRule());
+                // paragraph0.setStyle(templateParagraph.getStyle());
                 paragraph0.setVerticalAlignment(templateParagraph.getVerticalAlignment());
-                //paragraph0.setWordWrap(templateParagraph.isWordWrap());
+                // paragraph0.setWordWrap(templateParagraph.isWordWrap());
             } catch (Exception e) {
                 log.warn("Unable to copy paragraph styles", e);
             }
@@ -336,6 +336,9 @@ public class DocxUtils {
         boolean whetherSingleRunContainsPlaceholderStart = false;
         boolean whetherSingleRunContainsPlaceholderEnd = false;
         for (XWPFRun run : paragraph.getRuns()) {
+            if (run.getText(0) == null) {
+                continue;
+            }
             if (!whetherSingleRunContainsPlaceholderStart && run.getText(0).contains(PLACEHOLDER_START)) {
                 whetherSingleRunContainsPlaceholderStart = true;
             }
