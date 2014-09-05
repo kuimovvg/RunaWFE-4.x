@@ -10,6 +10,7 @@ import java.util.Set;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.Table;
 import javax.sql.DataSource;
 
@@ -50,6 +51,7 @@ import ru.runa.wfe.job.Job;
 import ru.runa.wfe.service.ArchivingService;
 import ru.runa.wfe.service.exceptions.DefinitionHasProcessesException;
 import ru.runa.wfe.service.exceptions.PermissionDeniedException;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.Variable;
@@ -99,7 +101,7 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void backupProcess(User user, Long processId) {
-        processLogicNew(user, processId, true);
+        processLogic(user, processId, true);
     }
 
     @Override
@@ -111,7 +113,7 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void restoreProcess(User user, Long processId) {
-        processLogicNew(user, processId, false);
+        processLogic(user, processId, false);
     }
 
     @Override
@@ -120,7 +122,7 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         deploymentLogic(user, definitionName, version, false);
     }
 
-    private void processLogicNew(User user, Long processId, boolean toArchive) {
+    private void processLogic(User user, Long processId, boolean toArchive) {
         try {
             HibernateTemplate targetTemplate = null;
             ProcessDAO targetProcessDAO = null;
@@ -139,6 +141,10 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
             }
             Process process = sourceProcessDAO.get(processId);
             if (process == null) {
+                Process processFromTarget = targetProcessDAO.get(processId);
+                if (processFromTarget == null) {
+                    throw new EntityNotFoundException();
+                }
                 return;
             }
             boolean isParent = isParent(process, sourceProcessDAO.getHibernateTemplate());
@@ -170,6 +176,10 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
             }
             swimlanes = sourceProcessDAO.get(processId).getSwimlanes();
             for (Swimlane swimlane : swimlanes) {
+                Executor executor = swimlane.getExecutor();
+                if (executor != null) {
+                    replicateExecutor(executor, toArchive, session, targetTemplate);
+                }
                 replicateSwimlane(swimlane, toArchive, session, targetTemplate);
             }
             replicateLinkedRecords(toArchive, targetTemplate, session, srcTemplate, linkedList);
@@ -178,6 +188,10 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
             deleteProcess(toDelete, sourceProcessDAO.getHibernateTemplate(), toArchive);
 
             targetTemplate.setSessionFactory(getSessionFactory(toArchive, false));
+        } catch (EntityNotFoundException e) {
+            throw e;
+        } catch (PermissionDeniedException e) {
+            throw e;
         } catch (Exception e) {
             log.error(String.format("error backup process with id = %s", processId));
             log.error("", e);
@@ -333,7 +347,6 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         replicate(entity, NodeProcess.class, toArchive, session, tplArchive);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
     private void replicateSwimlane(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
         replicate(entity, Swimlane.class, toArchive, session, tplArchive);
     }
@@ -350,13 +363,21 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         replicate(entity, Variable.class, toArchive, session, tplArchive);
     }
 
+    private void replicateExecutor(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, Executor.class, toArchive, session, targetTemplate);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED)
     private void replicate(Object entity, Class<?> entityClass, boolean toArchive, Session session, HibernateTemplate tplArchive) {
         String tableName = getTableName(entityClass);
-        setIdentityInsert(session, true, tableName);
-        prepareReplicate(toArchive);
-        tplArchive.replicate(entity, ReplicationMode.OVERWRITE);
-        finishReplicate(toArchive);
-        setIdentityInsert(session, false, tableName);
+        try {
+            setIdentityInsert(session, true, tableName);
+            prepareReplicate(toArchive);
+            tplArchive.replicate(entity, ReplicationMode.OVERWRITE);
+            finishReplicate(toArchive);
+        } finally {
+            setIdentityInsert(session, false, tableName);
+        }
     }
 
     @SuppressWarnings("unchecked")
