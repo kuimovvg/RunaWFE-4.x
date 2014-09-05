@@ -46,14 +46,12 @@ import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.execution.dao.ProcessDAO;
-import ru.runa.wfe.execution.dao.TokenDAO;
 import ru.runa.wfe.job.Job;
 import ru.runa.wfe.service.ArchivingService;
 import ru.runa.wfe.service.exceptions.DefinitionHasProcessesException;
 import ru.runa.wfe.service.exceptions.PermissionDeniedException;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.Variable;
 
 import com.google.common.base.Joiner;
@@ -85,18 +83,6 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
     @Autowired
     @Qualifier("archDeploymentDAO")
     private DeploymentDAO archDeploymentDAO;
-    @Autowired
-    @Qualifier("archTokenDAO")
-    private TokenDAO archTokenDAO;
-    @Autowired
-    @Qualifier("tokenDAO")
-    private TokenDAO tokenDAO;
-    @Autowired
-    @Qualifier("archExecutorDAO")
-    private ExecutorDAO archExecutorDAO;
-    @Autowired
-    @Qualifier("executorDAO")
-    private ExecutorDAO executorDAO;
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -331,36 +317,36 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
         replicateProcess(process, toArchive, session, targetTemplate);
     }
 
-    private void replicateProcess(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, Process.class, toArchive, session, tplArchive);
+    private void replicateProcess(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, Process.class, toArchive, session, targetTemplate);
     }
 
-    private void replicateDeployment(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, Deployment.class, toArchive, session, tplArchive);
+    private void replicateDeployment(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, Deployment.class, toArchive, session, targetTemplate);
     }
 
-    private void replicateToken(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, Token.class, toArchive, session, tplArchive);
+    private void replicateToken(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, Token.class, toArchive, session, targetTemplate);
     }
 
-    private void replicateSubprocess(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, NodeProcess.class, toArchive, session, tplArchive);
+    private void replicateSubprocess(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, NodeProcess.class, toArchive, session, targetTemplate);
     }
 
-    private void replicateSwimlane(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, Swimlane.class, toArchive, session, tplArchive);
+    private void replicateSwimlane(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, Swimlane.class, toArchive, session, targetTemplate);
     }
 
-    private void replicateProcessLog(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, ProcessLog.class, toArchive, session, tplArchive);
+    private void replicateProcessLog(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, ProcessLog.class, toArchive, session, targetTemplate);
     }
 
-    private void replicateJob(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, Job.class, toArchive, session, tplArchive);
+    private void replicateJob(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, Job.class, toArchive, session, targetTemplate);
     }
 
-    private void replicateVariable(Object entity, boolean toArchive, Session session, HibernateTemplate tplArchive) {
-        replicate(entity, Variable.class, toArchive, session, tplArchive);
+    private void replicateVariable(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
+        replicate(entity, Variable.class, toArchive, session, targetTemplate);
     }
 
     private void replicateExecutor(Object entity, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
@@ -368,12 +354,12 @@ public class ArchivingLogic extends WFCommonLogic implements ArchivingService {
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
-    private void replicate(Object entity, Class<?> entityClass, boolean toArchive, Session session, HibernateTemplate tplArchive) {
+    private void replicate(Object entity, Class<?> entityClass, boolean toArchive, Session session, HibernateTemplate targetTemplate) {
         String tableName = getTableName(entityClass);
         try {
             setIdentityInsert(session, true, tableName);
             prepareReplicate(toArchive);
-            tplArchive.replicate(entity, ReplicationMode.OVERWRITE);
+            targetTemplate.replicate(entity, ReplicationMode.OVERWRITE);
             finishReplicate(toArchive);
         } finally {
             setIdentityInsert(session, false, tableName);
