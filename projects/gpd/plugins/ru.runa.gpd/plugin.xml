@@ -1788,6 +1788,7 @@
           <param
                 label="%validator.regex.param.expression"
                 name="expression"
+                required="true"
                 type="java.lang.String">
           </param>
           <param
@@ -1825,6 +1826,7 @@
           <param
                 label="%validator.fileContentType.param.contentType"
                 name="contentType"
+                required="true"
                 type="java.lang.String">
           </param>
        </validator>
@@ -1836,6 +1838,7 @@
           <param
                 label="%validator.fileExtension.param.extension"
                 name="extension"
+                required="true"
                 type="java.lang.String">
           </param>
        </validator>

@@ -82,8 +82,8 @@ import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.validation.ValidationUtil;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -152,8 +152,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     try {
                         if (!formNode.hasFormValidation()) {
                             String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                            IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, fileName, formNode);
-                            formNode.setValidationFileName(validationFile.getName());
+                            formNode.setValidationFileName(fileName);
+                            ValidationUtil.createNewValidationUsingForm(formFile, formNode);
                         } else {
                             op = "update";
                             ValidationUtil.updateValidation(formFile, formNode);
@@ -233,7 +233,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     }
                 }
 
-                if ((prevTemplateFileName == null && filename == null) || (!Strings.isNullOrEmpty(prevTemplateFileName) && prevTemplateFileName.equals(filename))) {
+                if ((prevTemplateFileName == null && filename == null)
+                        || (!Strings.isNullOrEmpty(prevTemplateFileName) && prevTemplateFileName.equals(filename))) {
                     return;
                 }
 
@@ -357,7 +358,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 QuickFormGpdVariable row = (QuickFormGpdVariable) selection.getFirstElement();
                 for (QuickFormGpdVariable variableDef : quickForm.getVariables()) {
                     if (variableDef.getName().equals(row.getName())) {
-                        QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getVariables(), quickForm.getVariables().indexOf(variableDef));
+                        QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getVariables(), quickForm
+                                .getVariables().indexOf(variableDef));
                         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                         if (dialog.open() == Window.OK) {
                             setTableInput();
@@ -399,7 +401,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                         value = TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(variable.getJavaClassName()), defaultValue);
                     }
                     variables.put(quickFormGpdVariable.getName(), value);
-                    VariableDefinition variableDefinition = new VariableDefinition(false, quickFormGpdVariable.getName(), quickFormGpdVariable.getName());
+                    VariableDefinition variableDefinition = new VariableDefinition(false, quickFormGpdVariable.getName(), quickFormGpdVariable
+                            .getName());
                     variableDefinition.setFormat(variable.getFormat());
                     WfVariable wfVariable = new WfVariable(variableDefinition, value);
                     variableProvider.add(wfVariable);
@@ -547,7 +550,8 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         final Table propertiesTable = propertiesTableViewer.getTable();
         propertiesTable.setHeaderVisible(true);
         propertiesTable.setLinesVisible(true);
-        String[] propertiesColumnNames = new String[] { Messages.getString("editor.paramtable.column1"), Messages.getString("editor.paramtable.column2") };
+        String[] propertiesColumnNames = new String[] { Messages.getString("editor.paramtable.column1"),
+                Messages.getString("editor.paramtable.column2") };
         int[] propertiesColumnWidths = new int[] { 150, 750 };
         int[] propertiesColumnAlignments = new int[] { SWT.LEFT, SWT.LEFT };
         for (int i = 0; i < propertiesColumnNames.length; i++) {

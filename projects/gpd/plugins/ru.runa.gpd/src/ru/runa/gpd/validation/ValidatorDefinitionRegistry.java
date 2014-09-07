@@ -34,7 +34,10 @@ public class ValidatorDefinitionRegistry {
                     }
                     IConfigurationElement[] paramElements = configElement.getChildren();
                     for (IConfigurationElement paramElement : paramElements) {
-                        Param param = new Param(paramElement.getAttribute("name"), paramElement.getAttribute("label"), paramElement.getAttribute("type"));
+                        String requiredString = paramElement.getAttribute("required");
+                        boolean required = Strings.isNullOrEmpty(requiredString) ? false : Boolean.parseBoolean(requiredString);
+                        Param param = new Param(paramElement.getAttribute("name"), paramElement.getAttribute("label"),
+                                paramElement.getAttribute("type"), required);
                         definition.addParam(param);
                     }
                     definitions.put(definition.getName(), definition);
@@ -43,8 +46,9 @@ public class ValidatorDefinitionRegistry {
                 }
             }
         }
-        ValidatorDefinition global = new ValidatorDefinition(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, "Groovy", ValidatorDefinition.GLOBAL_TYPE, "Groovy script");
-        global.addParam(new Param(ValidatorDefinition.EXPRESSION_PARAM_NAME, "", Param.STRING_TYPE));
+        ValidatorDefinition global = new ValidatorDefinition(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, "Groovy", ValidatorDefinition.GLOBAL_TYPE,
+                "Groovy script");
+        global.addParam(new Param(ValidatorDefinition.EXPRESSION_PARAM_NAME, ValidatorDefinition.EXPRESSION_PARAM_NAME, Param.STRING_TYPE, true));
         definitions.put(ValidatorDefinition.GLOBAL_VALIDATOR_NAME, global);
     }
 
@@ -54,7 +58,11 @@ public class ValidatorDefinitionRegistry {
     }
 
     public static ValidatorDefinition getGlobalDefinition() {
+        return getDefinition(ValidatorDefinition.GLOBAL_VALIDATOR_NAME);
+    }
+
+    public static ValidatorDefinition getDefinition(String type) {
         init();
-        return definitions.get(ValidatorDefinition.GLOBAL_VALIDATOR_NAME);
+        return definitions.get(type);
     }
 }

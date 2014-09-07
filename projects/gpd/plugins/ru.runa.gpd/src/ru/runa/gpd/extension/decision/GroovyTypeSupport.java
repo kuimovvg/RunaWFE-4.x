@@ -36,7 +36,7 @@ public abstract class GroovyTypeSupport {
                 className = superClass.getName();
                 typeSupport = TYPES_MAP.get(className);
             } catch (Exception e) {
-                PluginLogger.logInfo("Not found type support for type: " + className + ", using default (" + e + ")");
+                PluginLogger.logErrorWithoutDialog("Not found type support for type: " + className + ", using default (" + e + ")");
                 typeSupport = TYPES_MAP.get(Object.class.getName());
             }
         }

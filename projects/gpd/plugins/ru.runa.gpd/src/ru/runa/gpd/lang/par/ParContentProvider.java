@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
@@ -17,7 +16,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.XmlUtil;
-import ru.runa.gpd.validation.ValidatorConfig;
+import ru.runa.gpd.validation.FormNodeValidation;
 import ru.runa.gpd.validation.ValidatorParser;
 
 public class ParContentProvider {
@@ -96,9 +95,8 @@ public class ParContentProvider {
         List<FormNode> allNodes = definition.getChildren(FormNode.class);
         for (FormNode formNode : allNodes) {
             if (formNode.hasFormValidation()) {
-                IFile validationFile = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
-                Map<String, Map<String, ValidatorConfig>> config = ValidatorParser.parseValidatorConfigs(validationFile);
-                if (config.containsKey(variableName)) {
+                FormNodeValidation validation = formNode.getValidation(definitionFile);
+                if (validation.getVariableNames().contains(variableName)) {
                     result.add(formNode);
                 }
             }
@@ -108,10 +106,12 @@ public class ParContentProvider {
 
     public static void rewriteFormValidationsRemoveVariable(IFile definitionFile, List<FormNode> formNodes, String variableName) {
         for (FormNode formNode : formNodes) {
-            IFile validationFile = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
-            Map<String, Map<String, ValidatorConfig>> fieldConfigs = ValidatorParser.parseValidatorConfigs(validationFile);
-            fieldConfigs.remove(variableName);
-            ValidatorParser.writeValidatorXml(validationFile, fieldConfigs);
+            if (formNode.hasFormValidation()) {
+                IFile validationFile = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
+                FormNodeValidation validation = formNode.getValidation(validationFile);
+                validation.getFieldConfigs().remove(variableName);
+                ValidatorParser.writeValidation(validationFile, formNode, validation);
+            }
         }
     }
 }

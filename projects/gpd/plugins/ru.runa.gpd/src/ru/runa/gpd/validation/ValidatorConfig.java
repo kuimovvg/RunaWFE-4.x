@@ -1,20 +1,20 @@
 package ru.runa.gpd.validation;
 
+import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ValidatorConfig {
     public static final String GLOBAL_FIELD_ID = "";
-
     private String type;
+    private String message = "";
+    private final Map<String, String> params = Maps.newHashMap();
+    private final List<String> transitionNames = Lists.newArrayList();
 
-    private String message;
-
-    private Map<String, String> params;
-
-    public ValidatorConfig(String validatorType, String message, Map<String, String> params) {
+    public ValidatorConfig(String validatorType) {
         this.type = validatorType;
-        this.message = message;
-        this.params = params;
     }
 
     public void setMessage(String message) {
@@ -29,14 +29,12 @@ public class ValidatorConfig {
         return params;
     }
 
+    public List<String> getTransitionNames() {
+        return transitionNames;
+    }
+
     public String getType() {
         return type;
     }
 
-    public boolean check() {
-        if ("expression".equals(type) && params.get("expression") == null) {
-            return false;
-        }
-        return true;
-    }
 }

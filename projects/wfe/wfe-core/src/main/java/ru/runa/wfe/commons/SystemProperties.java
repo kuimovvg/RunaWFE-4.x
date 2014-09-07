@@ -3,7 +3,7 @@ package ru.runa.wfe.commons;
 import java.util.Calendar;
 
 public class SystemProperties {
-	public static final String CONFIG_FILE_NAME = "system.properties";
+    public static final String CONFIG_FILE_NAME = "system.properties";
     private static final PropertyResources RESOURCES = new PropertyResources(CONFIG_FILE_NAME);
     private static final boolean developmentMode = "true".equals(System.getProperty("devmode"));
     private static final boolean v3CompatibilityMode = "true".equals(System.getProperty("v3compatibility"));
@@ -19,7 +19,7 @@ public class SystemProperties {
     public static final String TIMERTASK_PERIOD_MILLIS_UNASSIGNED_TASKS_EXECUTION_NAME = "timertask.period.millis.unassigned.tasks.execution";
     public static final String TIMERTASK_START_MILLIS_LDAP_SYNC_NAME = "timertask.start.millis.ldap.sync";
     public static final String TIMERTASK_PERIOD_MILLIS_LDAP_SYNC_NAME = "timertask.period.millis.ldap.sync";
-    
+
     public static PropertyResources getResources() {
         return RESOURCES;
     }
@@ -84,13 +84,13 @@ public class SystemProperties {
     public static boolean isUpdateVariablesEnabled() {
         return RESOURCES.getBooleanProperty("executionServiceAPI.updateVariables.enabled", false);
     }
-    
+
     public static String getStrongPasswordsRegexp() {
-    	return RESOURCES.getStringProperty("strong.passwords.regexp");
+        return RESOURCES.getStringProperty("strong.passwords.regexp");
     }
-    
+
     public static String getDefaultTaskDeadline() {
-    	return RESOURCES.getStringProperty("task.default.deadline");
+        return RESOURCES.getStringProperty("task.default.deadline");
     }
 
     /**
@@ -111,6 +111,14 @@ public class SystemProperties {
      */
     public static int getStringVariableValueLength() {
         return RESOURCES.getIntegerProperty("string.variable.length", 1024);
+    }
+
+    /**
+     * ORA-24816: Expanded non LONG bind data supplied after actual LONG or LOB
+     * column (if string length > 1000)
+     */
+    public static int getLogMaxAttributeValueLength() {
+        return RESOURCES.getIntegerProperty("log.attribute.max.length", 512);
     }
 
     public static int getTokenMaximumDepth() {
