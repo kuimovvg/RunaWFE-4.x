@@ -83,7 +83,7 @@ public class VariableUtils {
                 result.add(variable.getScriptingName());
             } else {
                 // this is here due to strange NPE
-                PluginLogger.logInfo("ERROR: No scriptingName attribute in " + variable.getName());
+                PluginLogger.logErrorWithoutDialog("No scriptingName attribute in " + variable.getName());
             }
         }
         return result;

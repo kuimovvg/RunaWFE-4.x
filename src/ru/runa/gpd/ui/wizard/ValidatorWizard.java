@@ -1,8 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,8 +19,8 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.ui.custom.Dialogs;
-import ru.runa.gpd.util.ValidationUtil;
+import ru.runa.gpd.validation.FormNodeValidation;
+import ru.runa.gpd.validation.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
 import ru.runa.gpd.validation.ValidatorDialog;
@@ -33,12 +31,12 @@ public class ValidatorWizard extends Wizard {
     protected GlobalValidatorsWizardPage globalValidatorsPage;
     private final IFile validationFile;
     private final FormNode formNode;
-    private Map<String, Map<String, ValidatorConfig>> fieldConfigs;
+    private FormNodeValidation validation;
 
     public ValidatorWizard(IFile validationFile, FormNode formNode) {
         this.validationFile = validationFile;
         this.formNode = formNode;
-        this.fieldConfigs = ValidatorParser.parseValidatorConfigs(validationFile);
+        this.validation = ValidatorParser.parseValidation(validationFile);
         setWindowTitle(Localization.getString("ValidatorWizard.wizard.title"));
         setDefaultPageImageDescriptor(SharedImages.getImageDescriptor("/icons/FormValidation.png"));
     }
@@ -53,7 +51,7 @@ public class ValidatorWizard extends Wizard {
             @Override
             public void widgetSelected(SelectionEvent event) {
                 try {
-                    fieldConfigs = ValidationUtil.getInitialFormValidators(validationFile, formNode);
+                    validation = ValidationUtil.getInitialFormValidation(validationFile, formNode);
                     initPages();
                 } catch (Exception e) {
                     PluginLogger.logError("Extracting variables from form error", e);
@@ -63,8 +61,8 @@ public class ValidatorWizard extends Wizard {
     }
 
     private void initPages() {
-        fieldValidatorsPage.init(fieldConfigs);
-        globalValidatorsPage.init(fieldConfigs);
+        fieldValidatorsPage.init(validation);
+        globalValidatorsPage.init(validation);
     }
 
     @Override
@@ -72,29 +70,20 @@ public class ValidatorWizard extends Wizard {
         // regenerate validator.xml
         fieldValidatorsPage.performFinish();
         globalValidatorsPage.performFinish();
-        List<ValidatorConfig> validatorConfigs = new ArrayList<ValidatorConfig>(fieldConfigs.get(ValidatorConfig.GLOBAL_FIELD_ID).values());
-        for (ValidatorConfig config : validatorConfigs) {
-            if (!config.check()) {
-                Dialogs.error("Check validator config", config.getMessage());
-                return false;
-            }
-        }
         // remove configs with deleted variables
-        Set<String> variableNames = new HashSet<String>();
-        variableNames.addAll(fieldConfigs.keySet());
-        variableNames.removeAll(formNode.getProcessDefinition().getVariableNames(true));
-        for (String varName : variableNames) {
-            if (!ValidatorConfig.GLOBAL_FIELD_ID.equals(varName)) {
-                fieldConfigs.remove(varName);
-            }
+        Set<String> missedVariableNames = new HashSet<String>();
+        missedVariableNames.addAll(validation.getVariableNames());
+        missedVariableNames.removeAll(formNode.getProcessDefinition().getVariableNames(true));
+        for (String variableName : missedVariableNames) {
+            validation.removeFieldConfigs(variableName);
         }
-        ValidatorParser.writeValidatorXml(validationFile, fieldConfigs);
+        ValidatorParser.writeValidation(validationFile, formNode, validation);
         return true;
     }
 
     @Override
     public void addPages() {
-        fieldValidatorsPage = new FieldValidatorsWizardPage(formNode.getProcessDefinition());
+        fieldValidatorsPage = new FieldValidatorsWizardPage(formNode);
         globalValidatorsPage = new GlobalValidatorsWizardPage(formNode.getProcessDefinition());
         initPages();
         addPage(fieldValidatorsPage);

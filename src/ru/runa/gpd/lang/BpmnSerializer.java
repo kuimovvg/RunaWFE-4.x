@@ -639,8 +639,8 @@ public class BpmnSerializer extends ProcessSerializer {
             Node source = definition.getGraphElementByIdNotNull(transitionElement.attributeValue(SOURCE_REF));
             Node target = definition.getGraphElementById(transitionElement.attributeValue(TARGET_REF));
             if (target == null) {
-                PluginLogger.logInfo("ERROR: Unable to restore transition " + transitionElement.attributeValue(ID) + " due to missed target node "
-                        + transitionElement.attributeValue(TARGET_REF));
+                PluginLogger.logErrorWithoutDialog("Unable to restore transition " + transitionElement.attributeValue(ID)
+                        + " due to missed target node " + transitionElement.attributeValue(TARGET_REF));
                 continue;
             }
             Transition transition = NodeRegistry.getNodeTypeDefinition(Transition.class).createElement(source, false);

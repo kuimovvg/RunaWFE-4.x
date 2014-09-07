@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.dom4j.Element;
-
 import ru.runa.gpd.extension.VariableFormatRegistry;
 
 public class ValidatorDefinition {
@@ -33,9 +31,8 @@ public class ValidatorDefinition {
         this.applicable.add(applicableType);
     }
 
-    public ValidatorConfig create(String errorMessage) {
-        ValidatorConfig config = new ValidatorConfig(name, errorMessage, new HashMap<String, String>());
-        return config;
+    public ValidatorConfig create() {
+        return new ValidatorConfig(name);
     }
 
     public boolean isGlobal() {
@@ -82,46 +79,18 @@ public class ValidatorDefinition {
         return params;
     }
 
-    public void writeConfig(Element parentElement, ValidatorConfig config) {
-        if (!name.equals(config.getType())) {
-            throw new IllegalArgumentException("Invalid type: " + config.getType() + " for vd: " + name);
-        }
-        String validatorTag;
-        if (FIELD_TYPE.equals(type)) {
-            validatorTag = "field-validator";
-        } else if (GLOBAL_TYPE.equals(type)) {
-            validatorTag = "validator";
-        } else {
-            throw new IllegalArgumentException("Unknown definition type: " + type);
-        }
-        Element validatorElement = parentElement.addElement(validatorTag);
-        validatorElement.addAttribute("type", name);
-        Element messageElement = validatorElement.addElement("message");
-        messageElement.addCDATA(config.getMessage());
-        for (String paramName : config.getParams().keySet()) {
-            String paramValue = config.getParams().get(paramName);
-            if ((paramValue != null) && (paramValue.length() > 0)) {
-                Param param = params.get(paramName);
-                if (param == null) {
-                    throw new NullPointerException("Parameter not registered in validator definition: " + paramName);
-                }
-                Element paramElement = validatorElement.addElement("param");
-                paramElement.addAttribute("name", paramName);
-                paramElement.addCDATA(paramValue);
-            }
-        }
-    }
-
     public static class Param {
         public static final String STRING_TYPE = String.class.getName();
         private final String name;
         private final String label;
         private final String type;
+        private final boolean required;
 
-        public Param(String name, String label, String type) {
+        public Param(String name, String label, String type, boolean required) {
             this.name = name;
             this.label = label;
             this.type = type;
+            this.required = required;
         }
 
         public String getLabel() {
@@ -134,6 +103,10 @@ public class ValidatorDefinition {
 
         public String getType() {
             return type;
+        }
+
+        public boolean isRequired() {
+            return required;
         }
     }
 }

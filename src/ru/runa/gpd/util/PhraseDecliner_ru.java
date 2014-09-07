@@ -9,7 +9,7 @@ public class PhraseDecliner_ru extends PhraseDecliner {
     public String declineDuration(String delay, String unit) {
         Rule rule = Rule.find(unit);
         if (rule == null) {
-            PluginLogger.logInfo("ERROR: No rule found for '" + unit + "'");
+            PluginLogger.logErrorWithoutDialog("No rule found for '" + unit + "'");
             return super.declineDuration(delay, unit);
         }
         int pos;
