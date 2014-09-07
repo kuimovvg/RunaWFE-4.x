@@ -2,7 +2,9 @@ package ru.runa.gpd.lang.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
@@ -11,6 +13,10 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginConstants;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.decision.IDecisionProvider;
+import ru.runa.gpd.util.EditorUtils;
+import ru.runa.gpd.validation.FormNodeValidation;
+import ru.runa.gpd.validation.ValidationUtil;
+import ru.runa.gpd.validation.ValidatorConfig;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
@@ -25,7 +31,7 @@ public class Transition extends NamedGraphElement implements Active {
     public Point getLabelLocation() {
         return labelLocation;
     }
-    
+
     public void setLabelLocation(Point labelLocation) {
         if (!Objects.equal(this.labelLocation, labelLocation)) {
             Point old = this.labelLocation;
@@ -33,7 +39,7 @@ public class Transition extends NamedGraphElement implements Active {
             firePropertyChange(TRANSITION_LABEL_LOCATION_CHANGED, old, labelLocation);
         }
     }
-    
+
     public List<Point> getBendpoints() {
         return bendpoints;
     }
@@ -81,23 +87,40 @@ public class Transition extends NamedGraphElement implements Active {
     }
 
     @Override
-    public void setName(String name) {
-        String old = getName();
+    public void setName(String newName) {
+        String oldName = getName();
         Node source = getSource();
         if (source == null) {
             return;
         }
         List<Transition> list = source.getLeavingTransitions();
         for (Transition transition : list) {
-            if (Objects.equal(name, transition.getName())) {
+            if (Objects.equal(newName, transition.getName())) {
                 return;
             }
         }
-        super.setName(name);
-        if (source instanceof Decision && old != null) {
+        super.setName(newName);
+        if (oldName != null && source instanceof Decision) {
             Decision decision = (Decision) source;
             IDecisionProvider provider = HandlerRegistry.getProvider(decision);
-            provider.transitionRenamed(decision, old, getName());
+            provider.transitionRenamed(decision, oldName, getName());
+        }
+        if (oldName != null && source instanceof FormNode && source.getLeavingTransitions().size() > 1) {
+            FormNode formNode = (FormNode) source;
+            IFile file = EditorUtils.getCurrentEditor().getDefinitionFile();
+            FormNodeValidation validation = formNode.getValidation(file);
+            boolean changed = false;
+            for (Map<String, ValidatorConfig> map : validation.getFieldConfigs().values()) {
+                for (ValidatorConfig config : map.values()) {
+                    if (config.getTransitionNames().remove(oldName)) {
+                        config.getTransitionNames().add(newName);
+                        changed = true;
+                    }
+                }
+            }
+            if (changed) {
+                ValidationUtil.rewriteValidation(file, formNode, validation);
+            }
         }
     }
 
@@ -179,7 +202,7 @@ public class Transition extends NamedGraphElement implements Active {
         }
         return "";
     }
-    
+
     @Override
     public Transition getCopy(GraphElement parent) {
         Transition copy = (Transition) super.getCopy(parent);

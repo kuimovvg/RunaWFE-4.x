@@ -2,10 +2,10 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 
 import ru.runa.gpd.Localization;
@@ -17,10 +17,15 @@ import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.property.FormFilesPropertyDescriptor;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.validation.FormNodeValidation;
 import ru.runa.gpd.validation.ValidatorConfig;
+import ru.runa.gpd.validation.ValidatorDefinition;
+import ru.runa.gpd.validation.ValidatorDefinition.Param;
+import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
 import ru.runa.gpd.validation.ValidatorParser;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public abstract class FormNode extends SwimlanedNode {
@@ -137,33 +142,53 @@ public abstract class FormNode extends SwimlanedNode {
     @Override
     public void validate(List<ValidationError> errors, IFile definitionFile) {
         super.validate(errors, definitionFile);
-        if (hasFormValidation()) {
-            IFile validationFile = IOUtils.getAdjacentFile(definitionFile, this.validationFileName);
-            if (!validationFile.exists()) {
-                errors.add(ValidationError.createLocalizedError(this, "formNode.validationFileNotFound", this.validationFileName));
-                return;
+        try {
+            FormNodeValidation validation = getValidation(definitionFile);
+            if (hasFormValidation()) {
+                IFile validationFile = IOUtils.getAdjacentFile(definitionFile, this.validationFileName);
+                if (!validationFile.exists()) {
+                    errors.add(ValidationError.createLocalizedError(this, "formNode.validationFileNotFound", this.validationFileName));
+                    return;
+                }
+                // check required parameters (#787)
+                for (ValidatorConfig config : validation.getGlobalConfigs()) {
+                    ValidatorDefinition definition = ValidatorDefinitionRegistry.getDefinition(config.getType());
+                    for (Param param : definition.getParams().values()) {
+                        String value = config.getParams().get(param.getName());
+                        if (param.isRequired() && Strings.isNullOrEmpty(value)) {
+                            errors.add(ValidationError.createLocalizedError(this, "formNode.requiredGlobalValidatorParameterIsNotSet",
+                                    config.getMessage()));
+                        }
+                    }
+                }
+                for (Map.Entry<String, Map<String, ValidatorConfig>> entry : validation.getFieldConfigs().entrySet()) {
+                    for (ValidatorConfig config : entry.getValue().values()) {
+                        ValidatorDefinition definition = ValidatorDefinitionRegistry.getDefinition(config.getType());
+                        for (Param param : definition.getParams().values()) {
+                            String value = config.getParams().get(param.getName());
+                            if (param.isRequired() && Strings.isNullOrEmpty(value)) {
+                                errors.add(ValidationError.createLocalizedError(this, "formNode.requiredFieldValidatorParameterIsNotSet",
+                                        entry.getKey(), definition.getLabel(), param.getLabel()));
+                            }
+                        }
+                    }
+                }
             }
-        }
-        if (hasForm()) {
-            try {
+            if (hasForm()) {
                 IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);
                 FormType formType = FormTypeProvider.getFormType(this.formType);
                 Map<String, FormVariableAccess> formVars = formType.getFormVariableNames(formFile, this);
                 List<String> allVariableNames = getProcessDefinition().getVariableNames(true);
-                Set<String> validationVariables = getValidationConfigs((IFolder) formFile.getParent()).keySet();
                 for (String formVarName : formVars.keySet()) {
                     if (formVars.get(formVarName) == FormVariableAccess.DOUBTFUL) {
                         errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableTagUnknown", formVarName));
-                    } else if (!validationVariables.contains(formVarName) && formVars.get(formVarName) == FormVariableAccess.WRITE) {
+                    } else if (!validation.getVariableNames().contains(formVarName) && formVars.get(formVarName) == FormVariableAccess.WRITE) {
                         errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableOutOfValidation", formVarName));
                     } else if (!allVariableNames.contains(formVarName)) {
                         errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableDoesNotExist", formVarName));
                     }
                 }
-                for (String validationVarName : validationVariables) {
-                    if (ValidatorConfig.GLOBAL_FIELD_ID.equals(validationVarName)) {
-                        continue;
-                    }
+                for (String validationVarName : validation.getVariableNames()) {
                     if (!formVars.keySet().contains(validationVarName)) {
                         errors.add(ValidationError.createLocalizedWarning(this, "formNode.validationVariableOutOfForm", validationVarName));
                     }
@@ -172,19 +197,20 @@ public abstract class FormNode extends SwimlanedNode {
                     }
                 }
                 formType.validate(formFile, this, errors);
-            } catch (Exception e) {
-                PluginLogger.logErrorWithoutDialog("Error validating form: '" + getName() + "'", e);
-                errors.add(ValidationError.createLocalizedWarning(this, "formNode.validationUnknownError", e));
             }
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Error validating form node: '" + getName() + "'", e);
+            errors.add(ValidationError.createLocalizedWarning(this, "formNode.validationUnknownError", e));
         }
     }
 
-    public Map<String, Map<String, ValidatorConfig>> getValidationConfigs(IFolder processFolder) throws Exception {
+    public FormNodeValidation getValidation(IResource resource) {
         if (!hasFormValidation()) {
-            return Maps.newHashMap();
+            return new FormNodeValidation();
         }
+        IFolder processFolder = (IFolder) ((resource instanceof IFolder) ? resource : resource.getParent());
         IFile validationFile = IOUtils.getFile(processFolder, this.validationFileName);
-        return ValidatorParser.parseValidatorConfigs(validationFile);
+        return ValidatorParser.parseValidation(validationFile);
     }
 
     public Map<String, FormVariableAccess> getFormVariables(IFolder processFolder) throws Exception {

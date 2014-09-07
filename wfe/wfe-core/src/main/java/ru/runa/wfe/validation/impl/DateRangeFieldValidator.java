@@ -10,12 +10,12 @@ public class DateRangeFieldValidator extends AbstractRangeValidator<Date> {
 
     @Override
     protected Date getMinComparatorValue() {
-        return getParameterNotNull(Date.class, "min");
+        return getParameter(Date.class, "min", null);
     }
 
     @Override
     protected Date getMaxComparatorValue() {
-        return getParameterNotNull(Date.class, "max");
+        return getParameter(Date.class, "max", null);
     }
 
 }

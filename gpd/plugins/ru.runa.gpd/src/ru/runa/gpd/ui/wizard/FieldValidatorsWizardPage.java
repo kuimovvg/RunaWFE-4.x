@@ -17,12 +17,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -31,43 +34,51 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.SharedImages;
+import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
+import ru.runa.gpd.lang.model.Transition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
+import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 import ru.runa.gpd.ui.dialog.TimeInputDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ParametersComposite;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ValidatorInfoControl;
-import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.validation.FormNodeValidation;
+import ru.runa.gpd.validation.ValidationUtil;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
 import ru.runa.gpd.validation.ValidatorDefinition.Param;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
 
+import com.google.common.collect.Maps;
+
 public class FieldValidatorsWizardPage extends WizardPage {
+    private final FormNode formNode;
+    private final ProcessDefinition processDefinition;
     private TabFolder tabFolder;
     private TableViewer variablesTableViewer;
     private TableViewer swimlanesTableViewer;
     private Label warningLabel;
     private TableViewer validatorsTableViewer;
     private ValidatorInfoControl infoGroup;
-    private final ProcessDefinition processDefinition;
     private String warningMessage = "";
     private Map<String, Map<String, ValidatorConfig>> fieldConfigs;
 
-    protected FieldValidatorsWizardPage(ProcessDefinition processDefinition) {
+    protected FieldValidatorsWizardPage(FormNode formNode) {
         super("Field validators");
-        this.processDefinition = processDefinition;
+        this.formNode = formNode;
+        this.processDefinition = formNode.getProcessDefinition();
         setTitle(Localization.getString("ValidatorWizardPage.fieldpage.title"));
         setDescription(Localization.getString("ValidatorWizardPage.fieldpage.description"));
     }
 
-    public void init(Map<String, Map<String, ValidatorConfig>> fieldConfigs) {
-        this.fieldConfigs = fieldConfigs;
+    public void init(FormNodeValidation validation) {
+        this.fieldConfigs = validation.getFieldConfigs();
         if (variablesTableViewer != null) {
             variablesTableViewer.refresh(true);
             swimlanesTableViewer.refresh(true);
@@ -207,20 +218,52 @@ public class FieldValidatorsWizardPage extends WizardPage {
         if (vd != null) {
             ValidatorConfig config = getFieldValidator(getCurrentVariableName(), vd);
             if (config == null) {
-                config = vd.create("");
+                config = vd.create();
             }
             infoGroup.setConfig(getCurrentVariableName(), vd, config);
         }
     }
 
     private class DefaultValidatorInfoControl extends ValidatorInfoControl {
+        private final Map<String, Button> transitionButtons = Maps.newHashMap();
+
         public DefaultValidatorInfoControl(Composite parent) {
             super(parent, true);
+            if (formNode.getLeavingTransitions().size() > 1) {
+                Group transitionsGroup = new Group(this, SWT.BORDER);
+                transitionsGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                transitionsGroup.setLayout(new GridLayout(3, false));
+                transitionsGroup.setText(Localization.getString("FieldValidatorsWizardPage.TransitionContext"));
+                for (Transition transition : formNode.getLeavingTransitions()) {
+                    final Button button = new Button(transitionsGroup, SWT.CHECK);
+                    button.setText(transition.getName());
+                    button.addSelectionListener(new LoggingSelectionAdapter() {
+
+                        @Override
+                        protected void onSelection(SelectionEvent e) throws Exception {
+                            if (button.getSelection()) {
+                                config.getTransitionNames().add(button.getText());
+                            } else {
+                                config.getTransitionNames().remove(button.getText());
+                            }
+                        }
+                    });
+                    transitionButtons.put(transition.getName(), button);
+                }
+            }
             parametersComposite = new DefaultParamsComposite(this, SWT.NONE);
         }
 
         @Override
         protected boolean enableUI(String variableName, ValidatorDefinition definition, ValidatorConfig config) {
+            if (config.getTransitionNames().isEmpty()) {
+                for (Transition transition : formNode.getLeavingTransitions()) {
+                    config.getTransitionNames().add(transition.getName());
+                }
+            }
+            for (Map.Entry<String, Button> entry : transitionButtons.entrySet()) {
+                entry.getValue().setSelection(config.getTransitionNames().contains(entry.getKey()));
+            }
             return getFieldValidator(variableName, definition) != null;
         }
     }
@@ -267,8 +310,8 @@ public class FieldValidatorsWizardPage extends WizardPage {
 
     private void addField(String variableName) {
         Map<String, ValidatorConfig> validators = new HashMap<String, ValidatorConfig>();
-        ValidatorDefinition requiredDef = ValidationUtil.getValidatorDefinition(ValidatorDefinition.REQUIRED_VALIDATOR_NAME);
-        validators.put(requiredDef.getName(), requiredDef.create(Localization.getString("Validation.DefaultRequired")));
+        ValidatorDefinition requiredDef = ValidatorDefinitionRegistry.getDefinition(ValidatorDefinition.REQUIRED_VALIDATOR_NAME);
+        validators.put(requiredDef.getName(), requiredDef.create());
         fieldConfigs.put(variableName, validators);
     }
 
@@ -278,7 +321,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
 
     private void addFieldValidator(ValidatorDefinition definition) {
         Map<String, ValidatorConfig> configs = fieldConfigs.get(getCurrentVariableName());
-        configs.put(definition.getName(), definition.create(""));
+        configs.put(definition.getName(), definition.create());
     }
 
     private void removeFieldValidator(ValidatorDefinition definition) {

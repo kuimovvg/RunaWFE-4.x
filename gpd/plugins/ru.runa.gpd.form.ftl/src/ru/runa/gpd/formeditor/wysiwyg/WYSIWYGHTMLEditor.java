@@ -49,8 +49,8 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.EditorUtils;
 import ru.runa.gpd.util.IOUtils;
-import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.validation.ValidationUtil;
 import ru.runa.wfe.InternalApplicationException;
 
 import com.google.common.base.Preconditions;
@@ -313,8 +313,8 @@ public class WYSIWYGHTMLEditor extends MultiPageEditorPart implements IResourceC
         try {
             if (!formNode.hasFormValidation()) {
                 String fileName = formNode.getId() + "." + FormNode.VALIDATION_SUFFIX;
-                IFile validationFile = ValidationUtil.createNewValidationUsingForm(formFile, fileName, formNode);
-                formNode.setValidationFileName(validationFile.getName());
+                formNode.setValidationFileName(fileName);
+                ValidationUtil.createNewValidationUsingForm(formFile, formNode);
             } else {
                 op = "update";
                 ValidationUtil.updateValidation(formFile, formNode);

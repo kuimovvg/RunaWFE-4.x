@@ -30,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
@@ -271,6 +272,22 @@ public class ClassLoaderUtil {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public static Properties getLocalizedProperties(String resourceBaseName, Class<?> callingClass) {
+        Properties properties = new Properties();
+        try {
+            InputStream is = getAsStream(resourceBaseName + "_" + Locale.getDefault().getLanguage() + ".properties", callingClass);
+            if (is == null) {
+                is = getAsStreamNotNull(resourceBaseName + ".properties", callingClass);
+            }
+            if (is != null) {
+                properties.load(is);
+            }
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+        return properties;
     }
 
 }

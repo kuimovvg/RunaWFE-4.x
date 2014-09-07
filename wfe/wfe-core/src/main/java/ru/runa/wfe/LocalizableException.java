@@ -1,7 +1,5 @@
 package ru.runa.wfe;
 
-import java.io.InputStream;
-import java.util.Locale;
 import java.util.Properties;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
@@ -26,12 +24,7 @@ public abstract class LocalizableException extends InternalApplicationException 
     @Override
     public String getLocalizedMessage() {
         try {
-            InputStream is = ClassLoaderUtil.getAsStream(getResourceBaseName() + "_" + Locale.getDefault().getLanguage() + ".properties", getClass());
-            if (is == null) {
-                is = ClassLoaderUtil.getAsStreamNotNull(getResourceBaseName() + ".properties", getClass());
-            }
-            Properties properties = new Properties();
-            properties.load(is);
+            Properties properties = ClassLoaderUtil.getLocalizedProperties(getResourceBaseName(), getClass());
             String s = properties.getProperty(getMessage());
             if (s != null) {
                 if (details != null) {

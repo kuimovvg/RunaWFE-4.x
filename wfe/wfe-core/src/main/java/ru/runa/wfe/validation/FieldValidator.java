@@ -14,6 +14,7 @@ import ru.runa.wfe.var.IVariableProvider;
  * Base class for field validators.
  */
 public abstract class FieldValidator extends Validator {
+    public static final String FIELD_NAME_PARAMETER_NAME = "fieldName";
     private String fieldName;
     private Object fieldValue;
 
@@ -21,7 +22,7 @@ public abstract class FieldValidator extends Validator {
     public void init(User user, ProcessDefinition processDefinition, ValidatorConfig config, ValidatorContext validatorContext,
             Map<String, Object> variables, IVariableProvider variableProvider) {
         super.init(user, processDefinition, config, validatorContext, variables, variableProvider);
-        fieldName = config.getParams().get("fieldName");
+        fieldName = config.getParams().get(FIELD_NAME_PARAMETER_NAME);
         fieldValue = variables.get(fieldName);
     }
 
