@@ -26,7 +26,6 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import ru.runa.wfe.audit.presentation.FileValue;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.Variable;
 
 /**
@@ -44,21 +43,21 @@ public class VariableUpdateLog extends VariableLog {
 
     public VariableUpdateLog(Variable<?> variable, Object oldValue, Object newValue) {
         super(variable);
-        addAttribute(ATTR_OLD_VALUE, variable.toString(oldValue));
-        addAttribute(ATTR_NEW_VALUE, variable.toString(newValue));
-        addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(newValue instanceof FileVariable));
-        if (variable.getStorableValue() instanceof byte[]) {
-            setBytes((byte[]) variable.getStorableValue());
+        if (!(variable.getStorableValue() instanceof byte[])) {
+            // don't save previous big values, it can be found from previous
+            // records
+            addAttributeWithTruncation(ATTR_OLD_VALUE, variable.toString(oldValue));
         }
+        setVariableNewValue(variable, newValue);
     }
 
     @Override
     @Transient
     public Object[] getPatternArguments() {
         if (isFileValue()) {
-            return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), new FileValue(getId(), getAttribute(ATTR_NEW_VALUE)) };
+            return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), new FileValue(getId(), getVariableNewValue()) };
         }
-        return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), getAttribute(ATTR_NEW_VALUE) };
+        return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), getVariableNewValue() };
     }
 
 }

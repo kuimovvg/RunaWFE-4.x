@@ -26,7 +26,6 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import ru.runa.wfe.audit.presentation.FileValue;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.Variable;
 
 /**
@@ -44,21 +43,16 @@ public class VariableCreateLog extends VariableLog {
 
     public VariableCreateLog(Variable<?> variable, Object newValue) {
         super(variable);
-        addAttribute(ATTR_NEW_VALUE, variable.toString(newValue));
-        addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(newValue instanceof FileVariable));
-        // TODO List value to display
-        if (variable.getStorableValue() instanceof byte[]) {
-            setBytes((byte[]) variable.getStorableValue());
-        }
+        setVariableNewValue(variable, newValue);
     }
 
     @Override
     @Transient
     public Object[] getPatternArguments() {
         if (isFileValue()) {
-            return new Object[] { getVariableName(), new FileValue(getId(), getAttribute(ATTR_NEW_VALUE)) };
+            return new Object[] { getVariableName(), new FileValue(getId(), getVariableNewValue()) };
         }
-        return new Object[] { getVariableName(), getAttribute(ATTR_NEW_VALUE) };
+        return new Object[] { getVariableName(), getVariableNewValue() };
     }
 
 }
