@@ -35,8 +35,16 @@ public class PluginLogger {
         log(createStatus(IStatus.ERROR, IStatus.OK, message, exception));
     }
 
+    public static void logErrorWithoutDialog(String message) {
+        log(createStatus(IStatus.ERROR, message));
+    }
+
     private static IStatus createStatus(int severity, int code, String message, Throwable exception) {
         return new Status(severity, Activator.getDefault().getBundle().getSymbolicName(), code, message, exception);
+    }
+
+    private static IStatus createStatus(int severity, String message) {
+        return new Status(severity, Activator.getDefault().getBundle().getSymbolicName(), message);
     }
 
     private static void log(IStatus status) {

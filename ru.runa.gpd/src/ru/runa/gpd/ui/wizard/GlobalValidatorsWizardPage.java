@@ -44,8 +44,8 @@ import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ParametersComposite;
 import ru.runa.gpd.ui.wizard.ValidatorWizard.ValidatorInfoControl;
-import ru.runa.gpd.util.ValidationUtil;
 import ru.runa.gpd.util.VariableUtils;
+import ru.runa.gpd.validation.FormNodeValidation;
 import ru.runa.gpd.validation.ValidatorConfig;
 import ru.runa.gpd.validation.ValidatorDefinition;
 import ru.runa.gpd.validation.ValidatorDefinitionRegistry;
@@ -56,10 +56,10 @@ public class GlobalValidatorsWizardPage extends WizardPage {
     private TableViewer validatorsTableViewer;
     private Button deleteButton;
     private ValidatorInfoControl infoGroup;
-    private Map<String, Map<String, ValidatorConfig>> fieldConfigs;
     private List<ValidatorConfig> validatorConfigs;
     private final List<Variable> variables;
     private final List<String> variableNames;
+    private final ValidatorDefinition globalDefinition = ValidatorDefinitionRegistry.getGlobalDefinition();
 
     protected GlobalValidatorsWizardPage(ProcessDefinition processDefinition) {
         super("Global validators");
@@ -69,15 +69,8 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         setDescription(Localization.getString("ValidatorWizardPage.globalpage.description"));
     }
 
-    public void init(Map<String, Map<String, ValidatorConfig>> fieldConfigs) {
-        this.fieldConfigs = fieldConfigs;
-        List<ValidatorConfig> validatorConfigs;
-        if (fieldConfigs.containsKey(ValidatorConfig.GLOBAL_FIELD_ID)) {
-            validatorConfigs = new ArrayList<ValidatorConfig>(fieldConfigs.get(ValidatorConfig.GLOBAL_FIELD_ID).values());
-        } else {
-            validatorConfigs = new ArrayList<ValidatorConfig>();
-        }
-        this.validatorConfigs = validatorConfigs;
+    public void init(FormNodeValidation validation) {
+        this.validatorConfigs = validation.getGlobalConfigs();
         if (validatorsTableViewer != null) {
             validatorsTableViewer.setInput(validatorConfigs);
             validatorsTableViewer.refresh(true);
@@ -117,7 +110,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         addButton(buttonsBar, "button.add", new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent event) throws Exception {
-                ValidatorConfig config = ValidatorDefinitionRegistry.getGlobalDefinition().create(ValidatorConfig.GLOBAL_FIELD_ID);
+                ValidatorConfig config = ValidatorDefinitionRegistry.getGlobalDefinition().create();
                 config.setMessage(Localization.getString("GlobalValidatorsWizardPage.defaultValidationMessage"));
                 validatorConfigs.add(config);
                 validatorsTableViewer.refresh(true);
@@ -150,11 +143,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
             protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
                 ValidatorConfig config = (ValidatorConfig) ((IStructuredSelection) validatorsTableViewer.getSelection()).getFirstElement();
                 deleteButton.setEnabled(config != null);
-                ValidatorDefinition def = null;
-                if (config != null) {
-                    def = ValidationUtil.getValidatorDefinition(config.getType());
-                }
-                infoGroup.setConfig(ValidatorConfig.GLOBAL_FIELD_ID, def, config);
+                infoGroup.setConfig(ValidatorConfig.GLOBAL_FIELD_ID, globalDefinition, config);
             }
         });
         infoGroup = new DefaultValidatorInfoControl(mainComposite);
@@ -181,7 +170,6 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         for (ValidatorConfig config : validatorConfigs) {
             globalConfigsMap.put(config.getType() + discrimination++, config);
         }
-        fieldConfigs.put(ValidatorConfig.GLOBAL_FIELD_ID, globalConfigsMap);
     }
 
     public class DefaultValidatorInfoControl extends ValidatorInfoControl {
@@ -307,7 +295,8 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         }
 
         private void toCode() {
-            if (tabFolder.getSelectionIndex() == 0 && comboBoxVar1.getText().length() > 0 && comboBoxOp.getText().length() > 0 && comboBoxVar2.getText().length() > 0) {
+            if (tabFolder.getSelectionIndex() == 0 && comboBoxVar1.getText().length() > 0 && comboBoxOp.getText().length() > 0
+                    && comboBoxVar2.getText().length() > 0) {
                 Variable variable1 = (Variable) comboBoxVar1.getData();
                 String operationName = comboBoxOp.getItem(comboBoxOp.getSelectionIndex());
                 Variable variable2 = VariableUtils.getVariableByScriptingName(variables, comboBoxVar2.getText());
