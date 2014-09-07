@@ -53,6 +53,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Index;
 
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 import com.google.common.base.Objects;
@@ -73,6 +74,7 @@ import com.google.common.collect.Maps;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ProcessLog implements IAttributes, Serializable, Comparable<ProcessLog> {
     private static final long serialVersionUID = 1L;
+    private static final int ATTRIBUTE_MAX_LENGTH = SystemProperties.getLogMaxAttributeValueLength();
 
     private Long id;
     private Long processId;
@@ -178,9 +180,9 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
         attributes.put(name, value);
     }
 
-    protected void addAttributeWithTruncation(String name, String value, int maxLength) {
-        if (value.length() > maxLength) {
-            value = value.substring(0, maxLength) + "...";
+    protected void addAttributeWithTruncation(String name, String value) {
+        if (value.length() > ATTRIBUTE_MAX_LENGTH) {
+            value = value.substring(0, ATTRIBUTE_MAX_LENGTH) + "...";
         }
         addAttribute(name, value);
     }
