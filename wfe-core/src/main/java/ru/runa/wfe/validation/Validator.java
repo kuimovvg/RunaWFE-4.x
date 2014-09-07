@@ -39,6 +39,8 @@ public abstract class Validator {
     private ValidatorConfig config;
     private ValidatorContext validatorContext;
     private IVariableProvider variableProvider;
+    private Map<String, Object> newVariables;
+    private IVariableProvider oldVariableProvider;
 
     public void init(User user, ProcessDefinition processDefinition, ValidatorConfig config, ValidatorContext validatorContext,
             Map<String, Object> variables, IVariableProvider variableProvider) {
@@ -46,6 +48,8 @@ public abstract class Validator {
         this.processDefinition = processDefinition;
         this.config = config;
         this.validatorContext = validatorContext;
+        this.newVariables = variables;
+        this.oldVariableProvider = variableProvider;
         this.variableProvider = new MapDelegableVariableProvider(config.getParams(), new MapDelegableVariableProvider(variables, variableProvider));
     }
 
@@ -67,6 +71,20 @@ public abstract class Validator {
 
     protected IVariableProvider getVariableProvider() {
         return variableProvider;
+    }
+
+    /**
+     * Access only to submitted values (with previous ones).
+     */
+    protected Map<String, Object> getNewVariables() {
+        return newVariables;
+    }
+
+    /**
+     * Access only to old values (without submitted ones).
+     */
+    protected IVariableProvider getOldVariableProvider() {
+        return oldVariableProvider;
     }
 
     private <T extends Object> T getParameter(Class<T> clazz, String name) {

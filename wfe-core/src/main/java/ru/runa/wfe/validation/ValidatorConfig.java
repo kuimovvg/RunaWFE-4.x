@@ -17,19 +17,21 @@
  */
 package ru.runa.wfe.validation;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class ValidatorConfig {
     private final String type;
-    private final Map<String, String> params;
-    private final String message;
+    private final List<String> transitionNames = Lists.newArrayList();
+    private final Map<String, String> params = Maps.newHashMap();
+    private String message;
 
-    public ValidatorConfig(String type, Map<String, String> params, String message) {
+    public ValidatorConfig(String type) {
         this.type = type;
-        this.params = params;
-        this.message = message;
     }
 
     public Map<String, String> getParams() {
@@ -40,8 +42,16 @@ public class ValidatorConfig {
         return type;
     }
 
+    public List<String> getTransitionNames() {
+        return transitionNames;
+    }
+
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
