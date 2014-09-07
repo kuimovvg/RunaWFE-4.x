@@ -42,7 +42,7 @@ public class ActionLog extends ProcessLog {
 
     public ActionLog(GraphElement action) {
         setNodeId(action.getNodeId());
-        addAttributeWithTruncation(ATTR_ACTION, action.toString(), 1000);
+        addAttributeWithTruncation(ATTR_ACTION, action.toString());
     }
 
     @Transient
