@@ -16,7 +16,7 @@ function addTab(tabFolderId, initialize) {
 	var tabFolder = $(FCK.EditorDocument).find('#' + tabFolderId);	
 	tabFolder.find('ul').append(li);
 	tabFolder.append('<div id="' + id + '"><p>' + FCKLang.NewTabContent + '</p></div>');
-	
+		
 	if (initialize) {
 		tabFolder.tabs({
 			create:function(event,ui){ 
@@ -24,10 +24,11 @@ function addTab(tabFolderId, initialize) {
 		    		folderId = $(this).closest('.tabs').attr('id');
 		    	});
 			}
-		});		
+		});			
 	} else {
-		tabFolder.tabs('refresh');
+		tabFolder.tabs('refresh');		
 	}
+	$(FCK.EditorDocument).find('div[role="tabpanel"]').slice(1).removeAttr("class");	
 }
 
 function afterSetHTML( editorInstance )
@@ -38,6 +39,7 @@ function afterSetHTML( editorInstance )
     		folderId = $(this).closest('.tabs').attr('id');
     	});
 	});
+	$(editorInstance.EditorDocument).find('div[role="tabpanel"]').slice(1).removeAttr("class");
 }
 
 var FCKInsertTabCommand = function()
@@ -46,13 +48,13 @@ var FCKInsertTabCommand = function()
 
 FCKInsertTabCommand.prototype.Execute = function()
 {	
-	var rangeHTML = "";
+	var range = "";
 	if(FCKSelection.GetSelectedElement()) {
-		rangeHTML = $(FCKSelection.GetSelectedElement()).html();
+		range = $(FCKSelection.GetSelectedElement());
 	} else if(FCKSelection.GetParentElement()) {
-		rangeHTML = $(FCKSelection.GetParentElement()).html();
+		range = $(FCKSelection.GetParentElement());
 	}	
-	var tabFolder = $(FCK.EditorDocument).find('.tabs:contains(' + rangeHTML + ')');
+	var tabFolder = range.closest('.tabs');
 	if (tabFolder.length == 0) {
 		var tabFolderId = (new Date()).getTime() - 10;
 		var html = '<div id="' + tabFolderId + '" class="tabs"><ul></ul>';	
@@ -111,4 +113,4 @@ var deleteTabItem = new FCKToolbarButton( FTL_METHOD_DELETE_CMD, FCKLang.DeleteT
 deleteTabItem.IconPath = FCKPlugins.Items[FTL_PLUGIN_NAME].Path + 'images/deleteTab.png' ;
 FCKToolbarItems.RegisterItem( FTL_METHOD_DELETE_CMD, deleteTabItem ) ;
 
-FCK.Events.AttachEvent( 'OnAfterSetHTML', afterSetHTML ) ;
+FCK.Events.AttachEvent( 'OnAfterSetHTML', afterSetHTML ) ; 
