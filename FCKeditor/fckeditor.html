@@ -33,6 +33,7 @@
 		function convertTabsHTML(content) {			
 			var doc = $("<p>").append(content);
 			$(doc).find('.tabs').each(function() {
+				$(this).find('div[role="tabpanel"]').remove();
 				$(this).removeAttr("class");	
 				$(this).find("a").each(function() {
 					$(this).attr("href", "#tabs" + $(this).attr("href").split("#tabs")[1]);

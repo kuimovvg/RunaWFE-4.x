@@ -8,7 +8,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.language = 'fr';
 	// config.uiColor = '#AADC6E';
 	
-	config.extraPlugins = "divarea,FreemarkerTags,tabs";
+	config.extraPlugins = "divarea,FreemarkerTags,tabs,anchors";
 	config.contentsCss = "form.css";
 	config.bodyClass = "taskform";
 	config.height = "500px";
