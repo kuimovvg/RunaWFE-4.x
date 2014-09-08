@@ -58,6 +58,7 @@ FCKConfig.Plugins.Add( 'FileUpload', 'ru' ) ;
 //FCKConfig.Plugins.Add( 'RunaVarTags', 'ru' ) ;
 FCKConfig.Plugins.Add( 'FreemarkerTags', 'ru' ) ;
 FCKConfig.Plugins.Add( 'tabs', 'ru' ) ;
+FCKConfig.Plugins.Add( 'anchors', 'ru' ) ;
 
 // FCKConfig.ProtectedSource.Add( /<%[\s\S]*?%>/g ) ;	// ASP style server side code <%...%>
 // FCKConfig.ProtectedSource.Add( /<\?[\s\S]*?\?>/g ) ;	// PHP style server side code
