@@ -88,6 +88,9 @@ public class ExecutionVariableProvider extends AbstractVariableProvider {
                 value = loadComplexVariable(fullName, attributeDefinition);
             } else {
                 value = executionContext.getVariableValue(fullName);
+                if (value == null) {
+                    value = attributeDefinition.getDefaultValue();
+                }
             }
             complexVariable.put(attributeDefinition.getName(), value);
         }
