@@ -1,6 +1,5 @@
 package ru.runa.wf.web;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -80,7 +79,7 @@ public class FormSubmissionUtils {
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
         if (userInput != null && Objects.equal(userInput.get(FORM_NODE_ID_KEY)[0], interaction.getNodeId())) {
-            List<String> formatErrorsForFields = new ArrayList<String>();
+            Map<String, String> formatErrorsForFields = Maps.newHashMap();
             return extractVariables(request, userInput, interaction, formatErrorsForFields);
         }
         return null;
@@ -111,19 +110,19 @@ public class FormSubmissionUtils {
     }
 
     public static Map<String, Object> extractVariables(HttpServletRequest request, ActionForm actionForm, Interaction interaction) {
-        List<String> formatErrorsForFields = new ArrayList<String>();
+        Map<String, String> formatErrorsForFields = Maps.newHashMap();
         Map<String, Object> userInput = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
         userInput.putAll(getUploadedFilesInputsMap(request));
         Map<String, Object> variables = extractVariables(request, userInput, interaction, formatErrorsForFields);
         if (formatErrorsForFields.size() > 0) {
-            throw new VariablesFormatException(formatErrorsForFields);
+            throw new VariablesFormatException(formatErrorsForFields.keySet());
         }
         log.debug("Submitted: " + variables);
         return variables;
     }
 
     private static Map<String, Object> extractVariables(HttpServletRequest request, Map<String, ? extends Object> userInput, Interaction interaction,
-            List<String> formatErrorsForFields) {
+            Map<String, String> formatErrorsForFields) {
         try {
             HashMap<String, Object> variables = Maps.newHashMap();
             for (VariableDefinition variableDefinition : interaction.getVariables().values()) {
@@ -131,7 +130,7 @@ public class FormSubmissionUtils {
                     FtlTagVariableSubmissionHandler handler = (FtlTagVariableSubmissionHandler) request.getSession().getAttribute(
                             FtlTagVariableSubmissionHandler.KEY_PREFIX + variableDefinition.getName());
                     if (handler != null) {
-                        variables.putAll(handler.extractVariables(variableDefinition, userInput));
+                        variables.putAll(handler.extractVariables(variableDefinition, userInput, formatErrorsForFields));
                     } else {
                         Object variableValue = extractVariable(userInput, variableDefinition, formatErrorsForFields);
                         if (!Objects.equal(IGNORED_VALUE, variableValue)) {
@@ -144,7 +143,7 @@ public class FormSubmissionUtils {
                         }
                     }
                 } catch (Exception e) {
-                    formatErrorsForFields.add(variableDefinition.getName());
+                    formatErrorsForFields.put(variableDefinition.getName(), e.getMessage());
                     log.warn(variableDefinition.getName(), e);
                 }
             }
@@ -155,12 +154,12 @@ public class FormSubmissionUtils {
     }
 
     public static Object extractVariable(HttpServletRequest request, ActionForm actionForm, VariableDefinition variableDefinition) throws Exception {
-        List<String> formatErrorsForFields = new ArrayList<String>();
+        Map<String, String> formatErrorsForFields = Maps.newHashMap();
         Map<String, Object> inputs = Maps.newHashMap(actionForm.getMultipartRequestHandler().getAllElements());
         inputs.putAll(getUploadedFilesInputsMap(request));
         Object variableValue = extractVariable(inputs, variableDefinition, formatErrorsForFields);
         if (formatErrorsForFields.size() > 0) {
-            throw new VariablesFormatException(formatErrorsForFields);
+            throw new VariablesFormatException(formatErrorsForFields.keySet());
         }
         if (!Objects.equal(IGNORED_VALUE, variableValue)) {
             return variableValue;
@@ -169,7 +168,7 @@ public class FormSubmissionUtils {
     }
 
     private static Object extractVariable(Map<String, ? extends Object> userInput, VariableDefinition variableDefinition,
-            List<String> formatErrorsForFields) throws Exception {
+            Map<String, String> formatErrorsForFields) throws Exception {
         VariableFormat format = FormatCommons.create(variableDefinition);
         Object variableValue = null;
         boolean forceSetVariableValue = false;
@@ -202,10 +201,8 @@ public class FormSubmissionUtils {
                         }
                     }
                     if (indexes.size() != listSize) {
-                        formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'"
-                                + listSize + "', found:'" + indexes.size());
-                        log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all list items found. Expected:'" + listSize
-                                + "', found:'" + indexes.size());
+                        formatErrorsForFields.put(variableDefinition.getName(), ". Not all list items found. Expected:'" + listSize + "', found:'"
+                                + indexes.size());
                     }
                     for (Integer index : indexes) {
                         String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
@@ -279,9 +276,7 @@ public class FormSubmissionUtils {
                     }
                 }
                 if (indexes.size() != mapSize) {
-                    formatErrorsForFields.add("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize
-                            + "', found:'" + indexes.size());
-                    log.debug("Incorrect'" + variableDefinition.getName() + "' value. Not all map items found. Expected:'" + mapSize + "', found:'"
+                    formatErrorsForFields.put(variableDefinition.getName(), ". Not all list items found. Expected:'" + mapSize + "', found:'"
                             + indexes.size());
                 }
             } else {
@@ -336,7 +331,7 @@ public class FormSubmissionUtils {
         return IGNORED_VALUE;
     }
 
-    private static Object convertComponent(String inputName, VariableFormat format, Object value, List<String> formatErrorsForFields) {
+    private static Object convertComponent(String inputName, VariableFormat format, Object value, Map<String, String> formatErrorsForFields) {
         try {
             if (format instanceof BooleanFormat) {
                 if (value == null) {
@@ -370,7 +365,7 @@ public class FormSubmissionUtils {
                     log.warn(e);
                     if (valueToFormat.length() > 0) {
                         // in other case we put validation in logic
-                        formatErrorsForFields.add(inputName);
+                        formatErrorsForFields.put(inputName, e.getMessage());
                     }
                 }
             } else if (value == null) {
