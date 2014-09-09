@@ -111,7 +111,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         GridData data = new GridData(GridData.FILL_BOTH);
         data.minimumHeight = 300;
         tabFolder.setLayoutData(data);
-        variablesTableViewer = createTableViewer(tabFolder, 200, 300, null);
+        variablesTableViewer = createTableViewer(tabFolder, 200, 300, Localization.getString("property.name"));
         variablesTableViewer.setLabelProvider(new VariableTableLabelProvider());
         variablesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
@@ -135,7 +135,7 @@ public class FieldValidatorsWizardPage extends WizardPage {
         TabItem tabItem1 = new TabItem(tabFolder, SWT.NONE);
         tabItem1.setText(Localization.getString("FieldValidatorsWizardPage.Variables"));
         tabItem1.setControl(variablesTableViewer.getControl());
-        swimlanesTableViewer = createTableViewer(tabFolder, 200, 300, null);
+        swimlanesTableViewer = createTableViewer(tabFolder, 200, 300, Localization.getString("property.name"));
         swimlanesTableViewer.setLabelProvider(new VariableTableLabelProvider());
         swimlanesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
