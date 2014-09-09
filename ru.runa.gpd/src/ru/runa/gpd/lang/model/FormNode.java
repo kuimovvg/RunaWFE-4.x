@@ -164,12 +164,16 @@ public abstract class FormNode extends SwimlanedNode {
                 for (Map.Entry<String, Map<String, ValidatorConfig>> entry : validation.getFieldConfigs().entrySet()) {
                     for (ValidatorConfig config : entry.getValue().values()) {
                         ValidatorDefinition definition = ValidatorDefinitionRegistry.getDefinition(config.getType());
-                        for (Param param : definition.getParams().values()) {
-                            String value = config.getParams().get(param.getName());
-                            if (param.isRequired() && Strings.isNullOrEmpty(value)) {
-                                errors.add(ValidationError.createLocalizedError(this, "formNode.requiredFieldValidatorParameterIsNotSet",
-                                        entry.getKey(), definition.getLabel(), param.getLabel()));
+                        if (definition != null) {
+                            for (Param param : definition.getParams().values()) {
+                                String value = config.getParams().get(param.getName());
+                                if (param.isRequired() && Strings.isNullOrEmpty(value)) {
+                                    errors.add(ValidationError.createLocalizedError(this, "formNode.requiredFieldValidatorParameterIsNotSet",
+                                            entry.getKey(), definition.getLabel(), param.getLabel()));
+                                }
                             }
+                        } else {
+                            errors.add(ValidationError.createLocalizedError(this, "formNode.validatorIsNotDefined", config.getType()));
                         }
                     }
                 }
@@ -177,19 +181,31 @@ public abstract class FormNode extends SwimlanedNode {
             if (hasForm()) {
                 IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);
                 FormType formType = FormTypeProvider.getFormType(this.formType);
-                Map<String, FormVariableAccess> formVars = formType.getFormVariableNames(formFile, this);
+                Map<String, FormVariableAccess> formVariables = formType.getFormVariableNames(formFile, this);
                 List<String> allVariableNames = getProcessDefinition().getVariableNames(true);
-                for (String formVarName : formVars.keySet()) {
-                    if (formVars.get(formVarName) == FormVariableAccess.DOUBTFUL) {
-                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableTagUnknown", formVarName));
-                    } else if (!validation.getVariableNames().contains(formVarName) && formVars.get(formVarName) == FormVariableAccess.WRITE) {
-                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableOutOfValidation", formVarName));
-                    } else if (!allVariableNames.contains(formVarName)) {
-                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableDoesNotExist", formVarName));
+                for (Map.Entry<String, FormVariableAccess> formEntry : formVariables.entrySet()) {
+                    switch (formEntry.getValue()) {
+                    case DOUBTFUL:
+                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableTagUnknown", formEntry.getKey()));
+                        break;
+                    case WRITE:
+                        if (!validation.getVariableNames().contains(formEntry.getKey())) {
+                            errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableOutOfValidation", formEntry.getKey()));
+                        }
+                        break;
+                    case READ:
+                        if (validation.getVariableNames().contains(formEntry.getKey())) {
+                            errors.add(ValidationError.createLocalizedWarning(this, "formNode.formReadAccessVariableExistsInValidation",
+                                    formEntry.getKey()));
+                        }
+                        break;
+                    }
+                    if (!allVariableNames.contains(formEntry.getKey())) {
+                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableDoesNotExist", formEntry.getKey()));
                     }
                 }
                 for (String validationVarName : validation.getVariableNames()) {
-                    if (!formVars.keySet().contains(validationVarName)) {
+                    if (!formVariables.keySet().contains(validationVarName)) {
                         errors.add(ValidationError.createLocalizedWarning(this, "formNode.validationVariableOutOfForm", validationVarName));
                     }
                     if (!allVariableNames.contains(validationVarName)) {
