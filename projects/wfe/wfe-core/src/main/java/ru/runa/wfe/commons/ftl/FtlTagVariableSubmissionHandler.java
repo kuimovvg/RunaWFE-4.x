@@ -42,6 +42,7 @@ public interface FtlTagVariableSubmissionHandler {
      * @throws Exception
      *             if any error occurs; message will be displayed to user
      */
-    public Map<String, ? extends Object> extractVariables(VariableDefinition variableDefinition, Map<String, ? extends Object> userInput);
+    public Map<String, ? extends Object> extractVariables(VariableDefinition variableDefinition, Map<String, ? extends Object> userInput,
+            Map<String, String> formatErrorsForFields) throws Exception;
 
 }
