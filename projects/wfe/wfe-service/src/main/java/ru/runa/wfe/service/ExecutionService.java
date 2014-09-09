@@ -197,7 +197,8 @@ public interface ExecutionService {
      * @param taskId
      *            task id
      * @param variables
-     *            variable value
+     *            variable values, can contain transition name by key
+     *            ru.runa.wfe.execution.dto.WfProcess.SELECTED_TRANSITION_KEY
      * @param swimlaneActorId
      *            actor id who will be assigned to task swimlane, can be
      *            <code>null</code>
