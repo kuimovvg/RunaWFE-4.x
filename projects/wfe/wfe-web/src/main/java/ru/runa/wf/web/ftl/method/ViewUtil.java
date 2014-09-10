@@ -296,7 +296,7 @@ public class ViewUtil {
             if (list == null) {
                 list = new ArrayList<Object>();
             }
-            html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
+            html.append("<div class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
             WfVariable indexesVariable = ViewUtil.createListIndexesVariable(variable, list.size());
             html.append(ViewUtil.getHiddenInput(indexesVariable));
             for (int row = 0; row < list.size(); row++) {
@@ -310,7 +310,7 @@ public class ViewUtil {
             }
             html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName)
                     .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
-            html.append("</span>");
+            html.append("</div>");
             return html.toString();
         }
         if (variableFormat instanceof MapFormat) {
@@ -337,7 +337,7 @@ public class ViewUtil {
             if (map == null) {
                 map = new HashMap<Object, Object>();
             }
-            html.append("<span class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
+            html.append("<div class=\"editList\" id=\"").append(scriptingVariableName).append("\">");
             WfVariable indexesVariable = ViewUtil.createListIndexesVariable(variable, map.size());
             html.append(ViewUtil.getHiddenInput(indexesVariable));
             int row = -1;
@@ -354,7 +354,7 @@ public class ViewUtil {
             }
             html.append("<div><input type=\"button\" id=\"btnAddMap").append(scriptingVariableName)
                     .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
-            html.append("</span>");
+            html.append("</div>");
             return html.toString();
         }
         throw new InternalApplicationException("No input method implemented for " + variableFormat);
@@ -450,7 +450,7 @@ public class ViewUtil {
             VariableFormat componentFormat = FormatCommons.createComponent((VariableFormatContainer) variableFormat, 0);
             StringBuffer html = new StringBuffer();
             List<Object> list = TypeConversionUtil.convertTo(List.class, value);
-            html.append("<span class=\"viewList\" id=\"").append(variable.getDefinition().getScriptingName()).append("\">");
+            html.append("<div class=\"viewList\" id=\"").append(variable.getDefinition().getScriptingName()).append("\">");
             if (list != null) {
                 for (int row = 0; row < list.size(); row++) {
                     Object listValue = list.get(row);
@@ -460,13 +460,13 @@ public class ViewUtil {
                     html.append("</div>");
                 }
             }
-            html.append("</span>");
+            html.append("</div>");
             return html.toString();
         }
         if (variableFormat instanceof MapFormat) {
             StringBuffer html = new StringBuffer();
             Map<Object, Object> map = TypeConversionUtil.convertTo(Map.class, value);
-            html.append("<span class=\"viewList\" id=\"").append(variable.getDefinition().getScriptingName()).append("\">");
+            html.append("<div class=\"viewList\" id=\"").append(variable.getDefinition().getScriptingName()).append("\">");
             html.append("<table class=\"list\">");
             if (map != null) {
                 int row = -1;
@@ -483,7 +483,7 @@ public class ViewUtil {
                 }
             }
             html.append("</table>");
-            html.append("</span>");
+            html.append("</div>");
             return html.toString();
         }
         throw new InternalApplicationException("No output method implemented for " + variableFormat);
@@ -535,10 +535,11 @@ public class ViewUtil {
         if (!WebResources.isAjaxFileInputEnabled()) {
             return "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" />";
         }
+        String id = null;
         UploadedFile file = null;
         if (webHelper != null) {
             // TODO: taskId transmit to the method
-            String id = webHelper.getRequest().getParameter("id");
+            id = webHelper.getRequest().getParameter("id");
             if (id == null) {
                 throw new InternalApplicationException("id not found");
             }
@@ -581,7 +582,7 @@ public class ViewUtil {
 
         html += "<span class=\"statusText\">";
         if (file != null && webHelper != null) {
-            String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName);
+            String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName + "&id=" + id);
             html += "<a href='" + viewUrl + "'>" + file.getName() + " - " + file.getSize() + "</a>";
         } else {
             html += loadingMessage;

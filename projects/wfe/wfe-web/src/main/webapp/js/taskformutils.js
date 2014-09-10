@@ -40,7 +40,7 @@ function initFileInput(dropzone) {
 			var label = data.result.name + "<span style='color: #888'> - " + data.result.size + "</span>";
 			statusImg.attr("src", "/wfe/images/delete.png");
 			statusImg.addClass("inputFileDelete");
-			statusText.html("<a href='/wfe/upload?action=view&inputId=" + inputId + "'>" + label + "</a>");
+			statusText.html("<a href='/wfe/upload?action=view&inputId=" + inputId + "&id=" + id + "'>" + label + "</a>");
 		},
 		progressall: function (e, data) {
 			var progress = parseInt(data.loaded / data.total * 100, 10);
