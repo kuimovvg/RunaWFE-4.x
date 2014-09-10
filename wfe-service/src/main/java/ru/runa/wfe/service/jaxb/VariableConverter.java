@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
@@ -25,7 +26,6 @@ public class VariableConverter {
         variable.value = variableFormat.formatJSON(value);
         return variable;
     }
-    
 
     public static List<Variable> marshal(List<WfVariable> variables) {
         List<Variable> result = Lists.newArrayListWithExpectedSize(variables.size());
@@ -45,6 +45,9 @@ public class VariableConverter {
 
     private static Object unmarshal(ProcessDefinition processDefinition, Variable variable) {
         try {
+            if (WfProcess.SELECTED_TRANSITION_KEY.equals(variable.name)) {
+                return variable.value;
+            }
             VariableDefinition variableDefinition = processDefinition.getVariableNotNull(variable.name, true);
             Object value = FormatCommons.create(variableDefinition).parseJSON(variable.value);
             return value;
