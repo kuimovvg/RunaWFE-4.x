@@ -65,16 +65,14 @@ public class FormSubmissionUtils {
     }
 
     /**
-     * @return saved in request values from previous form submit (used to
-     *         re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
      */
     public static Map<String, String[]> getUserFormInput(ServletRequest request) {
         return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
     }
 
     /**
-     * @return saved in request values from previous form submit (used to
-     *         re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
      */
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
@@ -228,21 +226,23 @@ public class FormSubmissionUtils {
                     variableValue = list;
                 }
             } else {
-                int listSize = stringsIndexes[0].toString().split(",").length;
+                int listSize = !stringsIndexes[0].equals("") ? stringsIndexes[0].toString().split(",").length : 0;
                 list = Lists.newArrayListWithExpectedSize(listSize);
-                indexes = Lists.newArrayListWithExpectedSize(listSize);
-                String[] stringIndexes = stringsIndexes[0].toString().split(",");
-                for (String index : stringIndexes) {
-                    indexes.add(TypeConversionUtil.convertTo(int.class, index));
-                }
-                for (Integer index : indexes) {
-                    String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
-                    String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
-                    VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
-                    componentDefinition.setUserTypes(variableDefinition.getUserTypes());
-                    Object componentValue = extractVariable(userInput, componentDefinition, formatErrorsForFields);
-                    if (!Objects.equal(IGNORED_VALUE, componentValue)) {
-                        list.add(componentValue);
+                if (listSize > 0) {
+                    indexes = Lists.newArrayListWithExpectedSize(listSize);
+                    String[] stringIndexes = stringsIndexes[0].toString().split(",");
+                    for (String index : stringIndexes) {
+                        indexes.add(TypeConversionUtil.convertTo(int.class, index));
+                    }
+                    for (Integer index : indexes) {
+                        String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
+                        String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
+                        VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
+                        componentDefinition.setUserTypes(variableDefinition.getUserTypes());
+                        Object componentValue = extractVariable(userInput, componentDefinition, formatErrorsForFields);
+                        if (!Objects.equal(IGNORED_VALUE, componentValue)) {
+                            list.add(componentValue);
+                        }
                     }
                 }
                 variableValue = list;
@@ -280,12 +280,14 @@ public class FormSubmissionUtils {
                             + indexes.size());
                 }
             } else {
-                int mapSize = stringsIndexes[0].toString().split(",").length;
+                int mapSize = !stringsIndexes[0].equals("") ? stringsIndexes[0].toString().split(",").length : 0;
                 map = Maps.newHashMapWithExpectedSize(mapSize);
                 indexes = Lists.newArrayListWithExpectedSize(mapSize);
-                String[] stringIndexes = stringsIndexes[0].toString().split(",");// Error
-                for (String index : stringIndexes) {
-                    indexes.add(TypeConversionUtil.convertTo(int.class, index));
+                if (mapSize > 0) {
+                    String[] stringIndexes = stringsIndexes[0].toString().split(",");
+                    for (String index : stringIndexes) {
+                        indexes.add(TypeConversionUtil.convertTo(int.class, index));
+                    }
                 }
             }
             for (Integer index : indexes) {
