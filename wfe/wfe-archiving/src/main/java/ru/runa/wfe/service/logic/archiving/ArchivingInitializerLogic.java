@@ -8,6 +8,8 @@ import javax.transaction.UserTransaction;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +100,10 @@ public class ArchivingInitializerLogic {
         return factoryBean.getConfiguration();
     }
 
+    public SessionFactory getArchiveSessionFactory() {
+        return archConstantDAO.getSessionFactory();
+    }
+
     /**
      * Initialize database.
      * 
@@ -160,9 +166,10 @@ public class ArchivingInitializerLogic {
             log.info("Applying patch " + patch + " (" + dbVersion + ")");
             try {
                 transaction.begin();
-                patch.executeDDLBefore();
-                patch.executeDML();
-                patch.executeDDLAfter();
+                Session session = getArchiveSessionFactory().getCurrentSession();
+                patch.executeDDLBefore(session);
+                patch.executeDML(session);
+                patch.executeDDLAfter(session);
                 archConstantDAO.setDatabaseVersion(dbVersion);
                 transaction.commit();
                 log.info("Patch " + patch.getClass().getName() + "(" + dbVersion + ") is applied to database successfully.");
