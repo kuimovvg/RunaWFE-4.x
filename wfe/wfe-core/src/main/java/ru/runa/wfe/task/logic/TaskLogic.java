@@ -177,6 +177,7 @@ public class TaskLogic extends WFCommonLogic {
         if (!Objects.equal(previousOwner, task.getExecutor())) {
             throw new TaskAlreadyAcceptedException(task.getName());
         }
+        checkCanParticipate(user.getActor(), task);
         ProcessDefinition processDefinition = getDefinition(task);
         assignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, newExecutor, false);
     }
