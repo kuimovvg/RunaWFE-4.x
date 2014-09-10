@@ -21,7 +21,7 @@ public class PropertyResources {
     private final Properties PROPERTIES;
     private final boolean useDatabase;
     private static boolean databaseAvailable = false;
-    
+
     private static Map<String, String> propertiesCache = new HashMap<String, String>();
 
     public static void setDatabaseAvailable(boolean available) {
@@ -57,14 +57,14 @@ public class PropertyResources {
     }
 
     public static void renewCachedProperty(String fileName, String name, String value) {
-    	String fullName = fileName + '#' + name;
-    	propertiesCache.put(fullName, value);
+        String fullName = fileName + '#' + name;
+        propertiesCache.put(fullName, value);
     }
-    
+
     public static void clearPropertiesCache() {
-    	propertiesCache.clear();
+        propertiesCache.clear();
     }
-    
+
     public String getStringProperty(String name) {
         if (databaseAvailable && useDatabase) {
             if (settingDAO == null) {
@@ -75,13 +75,16 @@ public class PropertyResources {
                 }
             }
             if (settingDAO != null) {
-            	String fullName = fileName + '#' + name;
-            	if (propertiesCache.containsKey(fullName))
-            		return propertiesCache.get(fullName);
+                String fullName = fileName + '#' + name;
+                if (propertiesCache.containsKey(fullName)) {
+                    return propertiesCache.get(fullName);
+                }
                 try {
                     String v = settingDAO.getValue(fileName, name);
-                    if (v == null) v = PROPERTIES.getProperty(name);
-                	propertiesCache.put(fullName, v);
+                    if (v == null) {
+                        v = PROPERTIES.getProperty(name);
+                    }
+                    propertiesCache.put(fullName, v);
                     return v;
                 } catch (Exception e) {
                     log.error("Database error", e);
@@ -108,11 +111,15 @@ public class PropertyResources {
     }
 
     public List<String> getMultipleStringProperty(String name) {
-        String result = getStringProperty(name);
-        if (result == null) {
-            return null;
+        List<String> result = Lists.newArrayList();
+        String string = getStringProperty(name);
+        if (string != null) {
+            String[] splitted = string.split(";", -1);
+            for (String s : splitted) {
+                result.add(s.trim());
+            }
         }
-        return Lists.newArrayList(result.split(";", -1));
+        return result;
     }
 
     public boolean getBooleanProperty(String name, boolean defaultValue) {
