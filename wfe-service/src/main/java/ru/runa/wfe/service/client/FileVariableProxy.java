@@ -3,6 +3,7 @@ package ru.runa.wfe.service.client;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.FileVariableDescriptor;
 
 /**
  * This class eliminates byte[] data transferring without usage.
@@ -15,6 +16,7 @@ public class FileVariableProxy extends FileVariable {
     private User user;
     private Long processId;
     private String variableName;
+    private String variablePath;
 
     public FileVariableProxy() {
     }
@@ -24,6 +26,13 @@ public class FileVariableProxy extends FileVariable {
         this.user = user;
         this.processId = processId;
         this.variableName = variableName;
+        if (fileVariable instanceof FileVariableDescriptor) {
+            variablePath = ((FileVariableDescriptor) fileVariable).getVariablePath();
+        }
+    }
+
+    public String getVariablePath() {
+        return variablePath;
     }
 
     @Override
