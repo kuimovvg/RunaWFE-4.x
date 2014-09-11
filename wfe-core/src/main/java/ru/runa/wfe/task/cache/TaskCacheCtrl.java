@@ -189,6 +189,7 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         if (executor == null) {
             return;
         }
+        log.debug("Clearing cache for " + executor + " due to " + change);
         Set<Actor> actors;
         if (executor instanceof Group) {
             // TODO make caches retrieval not blocking and remove
