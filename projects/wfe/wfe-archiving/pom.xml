@@ -37,7 +37,7 @@
 	</dependencies>
 
 	<profiles>
-	<!-- Profile for ear build -->
+		<!-- Profile for ear build -->
 		<profile>
 			<id>jboss7</id>
 			<activation>
@@ -72,7 +72,7 @@
 			</build>
 		</profile>
 		<profile>
-		<!-- Profile for client build -->
+			<!-- Profile for client build -->
 			<id>client</id>
 			<activation>
 				<property>
@@ -96,7 +96,7 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-ejb-client-bom</artifactId>
-					<version>7.1.1.Final</version>
+					<version>7.2.0.Final</version>
 					<type>pom</type>
 				</dependency>
 			</dependencies>
