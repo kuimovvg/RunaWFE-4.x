@@ -58,6 +58,22 @@ function getVariableInfo(value) {
 				$(".inputTime").timepicker({ ampm: false, seconds: false });
 				$(".inputDate").datepicker({ dateFormat: "dd.mm.yy", buttonImage: "/wfe/images/calendar.gif" });
 				$(".inputDateTime").datetimepicker({ dateFormat: "dd.mm.yy" });
+				
+				$('.dropzone').each(function () {
+					initFileInput($(this));
+				});
+				$(".dropzone").bind("dragleave dragend drop", function (e) {
+					$(this).removeClass("dropzonehover");
+				});
+				$(".dropzone").bind('dragover', function (e) {
+					$(this).addClass("dropzonehover");
+				});
+				if (ie6compatibility) {
+					$(".inputFileContainer").css("width", "400px");
+					$(".inputFileAjax").css({"width": "77px", "height": "26px", "cursor": "pointer", "filter": "alpha(opacity=50)"});
+					$(".inputFileAttachButtonDiv").css("width", "170px");
+					$(".inputFileAttach").css("cursor", "default");
+				}
 			}
 		});	
 	} else {
