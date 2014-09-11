@@ -3,6 +3,8 @@ package ru.runa.wfe.var;
 import java.util.HashMap;
 import java.util.Map;
 
+import ru.runa.wfe.InternalApplicationException;
+
 import com.google.common.collect.Maps;
 
 public class ComplexVariable extends HashMap<String, Object> {
@@ -25,14 +27,17 @@ public class ComplexVariable extends HashMap<String, Object> {
         int firstDotIndex = name.indexOf(VariableUserType.DELIM);
         if (firstDotIndex != -1) {
             String attributeName = name.substring(0, firstDotIndex);
-            String nameRemainder = name.substring(firstDotIndex + 1);
-            Object existing = get(attributeName);
-            if (existing instanceof ComplexVariable) {
-                ((ComplexVariable) existing).mergeAttribute(nameRemainder, value);
-            } else {
-                // TODO create and put new ComplexVariable
-                put(attributeName, value);
+            VariableDefinition attributeDefinition = userType.getAttributeNotNull(attributeName);
+            if (attributeDefinition.getUserType() == null) {
+                throw new InternalApplicationException("Trying to set complex value to non-complex attribute: " + name);
             }
+            String nameRemainder = name.substring(firstDotIndex + 1);
+            ComplexVariable existing = (ComplexVariable) get(attributeName);
+            if (existing == null) {
+                existing = new ComplexVariable(attributeDefinition);
+                put(attributeName, existing);
+            }
+            existing.mergeAttribute(nameRemainder, value);
         } else {
             put(name, value);
         }
