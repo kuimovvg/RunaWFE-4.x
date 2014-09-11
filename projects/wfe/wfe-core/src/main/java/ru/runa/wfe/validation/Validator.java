@@ -125,7 +125,7 @@ public abstract class Validator {
         addError(getMessage());
     }
 
-    public abstract void validate();
+    public abstract void validate() throws Exception;
 
     @Override
     public String toString() {
