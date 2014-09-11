@@ -167,9 +167,9 @@ public class ArchivingInitializerLogic {
             try {
                 transaction.begin();
                 Session session = getArchiveSessionFactory().getCurrentSession();
-                patch.executeDDLBefore(session);
-                patch.executeDML(session);
-                patch.executeDDLAfter(session);
+                patch.internalExecuteDDLBefore(session);
+                patch.internalExecuteDML(session);
+                patch.internalExecuteDDLAfter(session);
                 archConstantDAO.setDatabaseVersion(dbVersion);
                 transaction.commit();
                 log.info("Patch " + patch.getClass().getName() + "(" + dbVersion + ") is applied to database successfully.");

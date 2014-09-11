@@ -37,8 +37,8 @@ public abstract class DBPatch {
         executeDDL("[DDLBefore]", getDDLQueriesBefore());
     }
 
-    public final void executeDDLBefore(Session session) throws Exception {
-        executeDDL("[DDLBefore]", getDDLQueriesBefore(), session);
+    public final void internalExecuteDDLBefore(Session session) throws Exception {
+        internalExecuteDDL("[DDLBefore]", getDDLQueriesBefore(), session);
     }
 
     protected List<String> getDDLQueriesBefore() {
@@ -49,10 +49,10 @@ public abstract class DBPatch {
      * Execute patch DML statements (in one transaction).
      */
     public final void executeDML() throws Exception {
-        executeDML(ApplicationContextFactory.getCurrentSession());
+        internalExecuteDML(ApplicationContextFactory.getCurrentSession());
     }
 
-    public final void executeDML(Session session) throws Exception {
+    public final void internalExecuteDML(Session session) throws Exception {
         session.setCacheMode(CacheMode.IGNORE);
         applyPatch(session);
         session.flush();
@@ -67,8 +67,8 @@ public abstract class DBPatch {
         executeDDL("[DDLAfter]", getDDLQueriesAfter());
     }
 
-    public final void executeDDLAfter(Session session) throws Exception {
-        executeDDL("[DDLAfter]", getDDLQueriesAfter(), session);
+    public final void internalExecuteDDLAfter(Session session) throws Exception {
+        internalExecuteDDL("[DDLAfter]", getDDLQueriesAfter(), session);
     }
 
     protected List<String> getDDLQueriesAfter() {
@@ -76,10 +76,10 @@ public abstract class DBPatch {
     }
 
     private void executeDDL(String category, List<String> queries) throws Exception {
-        executeDDL(category, queries, ApplicationContextFactory.getCurrentSession());
+        internalExecuteDDL(category, queries, ApplicationContextFactory.getCurrentSession());
     }
 
-    private void executeDDL(String category, List<String> queries, Session session) throws Exception {
+    private void internalExecuteDDL(String category, List<String> queries, Session session) throws Exception {
         for (String query : queries) {
             if (!Strings.isNullOrEmpty(query)) {
                 log.info(category + ": " + query);
