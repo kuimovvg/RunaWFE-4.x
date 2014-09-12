@@ -6,8 +6,11 @@ import java.util.Map;
 import javax.servlet.jsp.PageContext;
 
 import org.apache.ecs.Entities;
+import org.apache.ecs.StringElement;
+import org.apache.ecs.html.BR;
 import org.apache.ecs.html.Form;
 import org.apache.ecs.html.Input;
+import org.apache.ecs.html.Label;
 import org.apache.ecs.html.Option;
 import org.apache.ecs.html.Select;
 import org.apache.ecs.html.TD;
@@ -36,6 +39,9 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
 
     private static final long serialVersionUID = 5106978254165128752L;
     private static final String TYPE_DEFAULT = "_default_type_";
+    private static final String TYPE_APPLYING = "typeApplying";
+    public static final String TYPE_APPLYIES_TO_NEW_PROCESSES = "newProcesses";
+    public static final String TYPE_APPLYIES_TO_ALL_PROCESSES = "allProcesses";
 
     private static Select getTypeSelectElement(String selectedValue, String[] definitionTypes, User user, PageContext pageContext) {
         ProcessTypesIterator iter = new ProcessTypesIterator(user);
@@ -100,6 +106,30 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         td.addElement(typeInput);
         table.addElement(HTMLUtils.createRow(Messages.getMessage("batch_presentation.process_definition.process_type", pageContext), td));
         tdFormElement.addElement(table);
+
+        TR applicationTypeTr = new TR();
+        TD labelTd = new TD(Messages.getMessage("batch_presentation.process_definition.application_type", pageContext));
+        labelTd.setClass(Resources.CLASS_LIST_TABLE_TD);
+        applicationTypeTr.addElement(labelTd);
+
+        td = new TD();
+        Input applyingNewProcessInput = new Input(Input.RADIO, TYPE_APPLYING, TYPE_APPLYIES_TO_NEW_PROCESSES);
+        applyingNewProcessInput.setID(TYPE_APPLYIES_TO_NEW_PROCESSES);
+        applyingNewProcessInput.setChecked(true);
+        td.addElement(applyingNewProcessInput);
+        Label label = new Label(TYPE_APPLYIES_TO_NEW_PROCESSES);
+        label.addElement(new StringElement(Messages.getMessage("batch_presentation.process_definition.application_type.new.label", pageContext)));
+        td.addElement(label);
+        td.addElement(new BR());
+        Input applyingAllProcessInput = new Input(Input.RADIO, TYPE_APPLYING, TYPE_APPLYIES_TO_ALL_PROCESSES);
+        applyingAllProcessInput.setID(TYPE_APPLYIES_TO_ALL_PROCESSES);
+        td.addElement(applyingAllProcessInput);
+        label = new Label(TYPE_APPLYIES_TO_ALL_PROCESSES);
+        label.addElement(new StringElement(Messages.getMessage("batch_presentation.process_definition.application_type.all.label", pageContext)));
+        td.addElement(label);
+
+        applicationTypeTr.addElement(td);
+        table.addElement(applicationTypeTr);
     }
 
     @Override
