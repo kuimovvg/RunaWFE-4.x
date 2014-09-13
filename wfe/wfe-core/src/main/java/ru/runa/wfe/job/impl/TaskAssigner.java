@@ -46,6 +46,7 @@ public class TaskAssigner extends TransactionalExecutor {
     @Override
     protected void doExecuteInTransaction() {
         List<Task> unassignedTasks = taskDAO.findUnassignedTasks();
+        log.debug("Unassigned tasks: " + unassignedTasks.size());
         for (Task unassignedTask : unassignedTasks) {
             execute(unassignedTask);
         }

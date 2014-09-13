@@ -21,9 +21,13 @@ public class VariableDAO extends GenericDAO<Variable> {
      */
     public Map<String, Object> getAll(Process process) {
         Map<String, Object> variables = Maps.newHashMap();
-        List<Variable<?>> list = (List<Variable<?>>) getHibernateTemplate().find("from Variable where process=?", process);
+        List<Variable<?>> list = getHibernateTemplate().find("from Variable where process=?", process);
         for (Variable<?> variable : list) {
-            variables.put(variable.getName(), variable.getValue());
+            try {
+                variables.put(variable.getName(), variable.getValue());
+            } catch (Exception e) {
+                log.error("Unable to revert " + variable + " in " + process, e);
+            }
         }
         return variables;
     }

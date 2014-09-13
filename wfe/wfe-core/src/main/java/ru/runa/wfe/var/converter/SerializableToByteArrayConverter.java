@@ -29,12 +29,20 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
+import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.var.Converter;
+import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.FileVariableDescriptor;
+import ru.runa.wfe.var.FileVariableStorage;
 import ru.runa.wfe.var.Variable;
+
+import com.google.common.io.Files;
 
 public class SerializableToByteArrayConverter implements Converter {
     private static final long serialVersionUID = 1L;
@@ -47,6 +55,18 @@ public class SerializableToByteArrayConverter implements Converter {
     @Override
     public Object convert(Variable<?> variable, Object o) {
         try {
+            if (SystemProperties.isLocalFileStorageEnabled() && TypeConversionUtil.isList(o) && TypeConversionUtil.getListSize(o) > 0
+                    && TypeConversionUtil.getListValue(o, 0) instanceof FileVariable) {
+                List<FileVariable> list = (List<FileVariable>) o;
+                for (int i = 0; i < list.size(); i++) {
+                    FileVariable fileVariable = list.get(i);
+                    if (fileVariable.getData().length > SystemProperties.getLocalFileStorageFileLimit()) {
+                        FileVariableDescriptor descriptor = new FileVariableDescriptor(variable, variable.getName() + i, fileVariable);
+                        Files.write(descriptor.getData(), FileVariableStorage.getContentFile(descriptor, true));
+                        list.set(i, descriptor);
+                    }
+                }
+            }
             ByteArrayOutputStream memoryStream = new ByteArrayOutputStream();
             ObjectOutputStream objectStream = new ObjectOutputStream(memoryStream);
             objectStream.writeObject(o);
