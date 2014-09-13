@@ -20,7 +20,7 @@ public class ViewLogForm extends ActionForm {
 
     private String fileName;
     private int allLinesCount;
-    private int mode = MODE_PAGING;
+    private int mode = MODE_END_LINES;
     private int startLine = 1;
     private int endLine = 0;
     private int endLines = 500;
