@@ -19,7 +19,7 @@ public class TemporaryGroup extends Group {
     /**
      * Prefix for temporary group name.
      */
-    private static final String GROUP_PREFIX = "TmpGroup_";
+    public static final String GROUP_PREFIX = "TmpGroup_";
 
     public static TemporaryGroup create(String nameSuffix, String description) {
         TemporaryGroup temporaryGroup = new TemporaryGroup();
