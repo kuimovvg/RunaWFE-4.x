@@ -181,6 +181,8 @@
                   </enumeration>
                   <enumeration value="ru.runa.wfe.user.Group">
                   </enumeration>
+                  <enumeration value="ru.runa.wfe.var.ComplexVariable">
+                  </enumeration>
                </restriction>
             </simpleType>
          </attribute>
@@ -233,6 +235,15 @@
 
    <annotation>
       <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
@@ -240,14 +251,5 @@
       </documentation>
    </annotation>
 
-
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         [Enter API information here.]
-      </documentation>
-   </annotation>
 
 </schema>
