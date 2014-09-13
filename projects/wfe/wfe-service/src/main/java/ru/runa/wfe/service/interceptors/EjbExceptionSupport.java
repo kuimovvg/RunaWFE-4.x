@@ -14,6 +14,7 @@ import ru.runa.wfe.security.AuthenticationExpiredException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.service.impl.MessagePostponedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
+import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.validation.ValidationException;
 
 import com.google.common.base.Throwables;
@@ -34,6 +35,7 @@ public class EjbExceptionSupport {
         warnExceptionClasses.add(AuthenticationExpiredException.class);
         warnExceptionClasses.add(AuthenticationException.class);
         warnExceptionClasses.add(AuthorizationException.class);
+        warnExceptionClasses.add(ExecutorDoesNotExistException.class);
         warnExceptionClasses.add(ValidationException.class);
         warnExceptionClasses.add(TaskDoesNotExistException.class);
     }

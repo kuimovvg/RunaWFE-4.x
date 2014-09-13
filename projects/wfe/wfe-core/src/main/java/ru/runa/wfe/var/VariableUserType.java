@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VariableUserType implements Serializable {
+    private static final long serialVersionUID = -1054823598655227725L;
     public static final String DELIM = ".";
     private String name;
     private final List<VariableDefinition> attributes = Lists.newArrayList();

@@ -244,8 +244,12 @@ public class HTMLUtils {
                     continue;
                 }
                 try {
-                    Executor executor = Delegates.getExecutorService().getExecutorByName(user, name);
-                    result[i] = pageContext != null ? createExecutorElement(pageContext, executor) : executor.toString();
+                    if (name.startsWith(TemporaryGroup.GROUP_PREFIX) || name.startsWith(EscalationGroup.GROUP_PREFIX)) {
+                        result[i] = name;
+                    } else {
+                        Executor executor = Delegates.getExecutorService().getExecutorByName(user, name);
+                        result[i] = pageContext != null ? createExecutorElement(pageContext, executor) : executor.toString();
+                    }
                 } catch (Exception e) {
                     log.debug("could not get executor '" + name + "': " + e.getMessage());
                     result[i] = name;
@@ -300,5 +304,4 @@ public class HTMLUtils {
         }
         return result;
     }
-
 }
