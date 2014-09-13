@@ -48,7 +48,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
 
     @Override
     protected ComplexVariable convertFromStringValue(String source) {
-        throw new UnsupportedOperationException("complex variable cannot be deserializes from string");
+        throw new UnsupportedOperationException("complex variable cannot be deserialized from string");
     }
 
     @Override

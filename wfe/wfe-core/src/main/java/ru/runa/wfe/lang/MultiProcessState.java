@@ -38,7 +38,7 @@ public class MultiProcessState extends SubProcessState {
     @Override
     public void execute(ExecutionContext executionContext) {
         MultiInstanceParameters parameters = new MultiInstanceParameters(executionContext, this);
-        int subprocessesCount = TypeConversionUtil.getArraySize(parameters.getDiscriminatorValue());
+        int subprocessesCount = TypeConversionUtil.getListSize(parameters.getDiscriminatorValue());
         List<Process> subProcesses = Lists.newArrayList();
         ProcessDefinition subProcessDefinition = getSubProcessDefinition();
         for (int index = 0; index < subprocessesCount; index++) {
@@ -57,12 +57,12 @@ public class MultiProcessState extends SubProcessState {
                         continue;
                     }
                     if (variableMapping.isMultiinstanceLink()) {
-                        variables.put(mappedName, TypeConversionUtil.getArrayVariable(value, index));
+                        variables.put(mappedName, TypeConversionUtil.getListValue(value, index));
                     } else {
                         variables.put(mappedName, value);
                     }
                 }
-                Object value = TypeConversionUtil.getArrayVariable(parameters.getDiscriminatorValue(), index);
+                Object value = TypeConversionUtil.getListValue(parameters.getDiscriminatorValue(), index);
                 if (value instanceof ISelectable) {
                     value = ((ISelectable) value).getValue();
                 }

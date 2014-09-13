@@ -217,7 +217,11 @@ public class TypeConversionUtil {
         return result;
     }
 
-    public static int getArraySize(Object value) {
+    public static boolean isList(Object value) {
+        return value.getClass().isArray() || value instanceof List;
+    }
+
+    public static int getListSize(Object value) {
         if (value.getClass().isArray()) {
             return Array.getLength(value);
         } else if (value instanceof List) {
@@ -227,7 +231,7 @@ public class TypeConversionUtil {
         }
     }
 
-    public static Object getArrayVariable(Object value, int index) {
+    public static Object getListValue(Object value, int index) {
         if (value.getClass().isArray()) {
             Object[] array = (Object[]) value;
             if (array.length > index) {
