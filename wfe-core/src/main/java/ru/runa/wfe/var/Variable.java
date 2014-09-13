@@ -228,7 +228,7 @@ public abstract class Variable<T extends Object> {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).add("value", toString(getValue())).toString();
+        return Objects.toStringHelper(this).add("id", getId()).add("name", getName()).toString();
     }
 
 }

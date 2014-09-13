@@ -21,11 +21,11 @@ public class FileVariableDescriptor extends FileVariable {
     public FileVariableDescriptor() {
     }
 
-    public FileVariableDescriptor(Variable<?> variable, FileVariable fileVariable) {
+    public FileVariableDescriptor(Variable<?> variable, String variableName, FileVariable fileVariable) {
         super(fileVariable.getName(), null, fileVariable.getContentType());
         long version = variable.getVersion() != null ? variable.getVersion() + 1 : 0;
         StringBuffer b = new StringBuffer();
-        for (char ch : variable.getName().toCharArray()) {
+        for (char ch : variableName.toCharArray()) {
             if (Character.isLetterOrDigit(ch)) {
                 b.append(ch);
             } else {
@@ -34,6 +34,10 @@ public class FileVariableDescriptor extends FileVariable {
         }
         variablePath = variable.getProcess().getId() + "/" + b + "/" + version;
         localData = fileVariable.getData();
+    }
+
+    public FileVariableDescriptor(Variable<?> variable, FileVariable fileVariable) {
+        this(variable, variable.getName(), fileVariable);
     }
 
     public String getVariablePath() {
