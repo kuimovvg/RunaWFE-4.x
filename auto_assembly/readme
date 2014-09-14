@@ -1,0 +1,5 @@
+run autoran.bat
+
+Requirements (into $PATH): jdk, maven, subversion
+
+see http://www.runawfe.org/About
