@@ -361,7 +361,7 @@ StrCpy $1 '<datasource jndi-name="java:jboss/datasources/PostgreDS" pool-name="P
       FileWrite $0 "hibernate.dialect = org.hibernate.dialect.SQLServerDialect$\r$\n"
       FileWrite $0 "hibernate.connection.datasource = java:/mssqlds$\r$\n"
 StrCpy $1 '<datasource jndi-name="java:/mssqlds" pool-name="java:/mssqlds_Pool" enabled="true" use-java-context="true">\
- <connection-url>jdbc:jtds:sqlserver://$DB_Host,$DB_Port;DatabaseName=$DB_Name</connection-url>\
+ <connection-url>jdbc:jtds:sqlserver://$DB_Host:$DB_Port;DatabaseName=$DB_Name</connection-url>\
  <driver>mssql</driver>\
  <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>\
  <pool>\
