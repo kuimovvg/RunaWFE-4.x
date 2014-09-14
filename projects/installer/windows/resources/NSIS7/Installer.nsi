@@ -1,9 +1,9 @@
 !define AppName "RunaWFE"
-!define AppVersion "%VERSION%"
+!define AppVersion "4.2.0"
 !define ShortName "RunaWFE"
 !define Vendor "Runa"
 
-!define BuildRoot "%BUILD_ROOT%"
+!define BuildRoot "c:\Users\petya\Automatic_Assemply_4\build\trunk\projects\installer\windows/target/NSIS7/src"
 !define MUI_ICON "${BuildRoot}\icons\wf_48x128.ico"
 !define MUI_UNICON "${BuildRoot}\icons\wf_48x128.ico"
 !define MUI_ABORTWARNING
@@ -33,6 +33,7 @@
 !include "languages.nsh"
 !include "RunaSectionMacros.nsh"
 !include "installSequences.nsh"
+!include "databaseSettings.nsh"
 !include x64.nsh
 
 Name "${AppName}"
@@ -49,7 +50,7 @@ ReserveFile "WelcomePage.ini"
 !insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
 
 CRCCheck off
-BrandingText "RunaWFE %VERSION%"
+BrandingText "RunaWFE 4.2.0"
 AddBrandingImage left -10
 
 
@@ -61,6 +62,7 @@ Page custom selectInstallationType selectInstallationTypeLeave ;Let user choose 
 Page components                                                ;Let user choose components to install
 Page directory                                                 ;Let user choose directory to install
 Page custom installDesktopLinks installDesktopLinksLeave
+Page custom databaseSettings databaseSettingsLeave
 Page custom getHostAndPort getHostAndPortLeave                 ;Main wfe server port and host if selected rtn, web, botstation (and installing client components)
 Page custom checkJDKinit_My checkAndInstallJDK                 ;Check for java and install java
 Page custom setJavaHomeInit_My setJavaHomeleave                ;Check for java_home and install java_home to jdk if necessary
@@ -134,11 +136,11 @@ Section "-Installation of ${AppName}" SecAppFiles
   CreateShortCut "$SMPROGRAMS\${AppName}\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
 
   FileOpen $0 "$INSTDIR\version" w
-  FileWrite $0 "%VERSION%"
+  FileWrite $0 "4.2.0"
   FileClose $0
 
-  WriteRegStr HKLM ${INSTDIR_REG_KEY} "DisplayName" "RunaWFE %VERSION%"
-  WriteRegStr HKLM ${INSTDIR_REG_KEY} "Version" "%VERSION%"
+  WriteRegStr HKLM ${INSTDIR_REG_KEY} "DisplayName" "RunaWFE 4.2.0"
+  WriteRegStr HKLM ${INSTDIR_REG_KEY} "Version" "4.2.0"
   WriteRegStr HKLM ${INSTDIR_REG_KEY} "QuietUninstallString" "$\"$INSTDIR\uninstall.exe$\""
   WriteRegStr HKLM ${INSTDIR_REG_KEY} "UninstallString" "$\"$INSTDIR\uninstall.exe$\""
 SectionEnd
@@ -200,6 +202,16 @@ FunctionEnd
 !macroend
 !insertmacro generateInstallBrandingImage ""
 !insertmacro generateInstallBrandingImage un.
+
+Function databaseSettings
+  ${if} $installationType == ${RUNA_CLIENT}
+    Abort
+  ${endif}
+  !insertmacro isSectionSelected ${${ID_PREFIX}ComponentSRV} toShowDatabaseSettings 0
+  Abort
+  toShowDatabaseSettings:
+  call showDatabaseSettings
+FunctionEnd
 
 Function welcomePageInit
   call installBrandingImage

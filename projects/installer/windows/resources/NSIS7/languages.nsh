@@ -123,4 +123,28 @@ LangString TEXT_ANNOTATION_INSTALLATION ${LANG_RUSSIAN} "RunaWFE - это свободное
 LangString CloseBtn ${LANG_ENGLISH} "Close"
 LangString CloseBtn ${LANG_RUSSIAN} "Готово"
 
+LangString DB_H2_DEFAULT ${LANG_ENGLISH} "H2 Database Engine (by default)"
+LangString DB_H2_DEFAULT ${LANG_RUSSIAN} "H2 Database Engine (по умолчанию)"
+LangString DB_POSTGRESQL ${LANG_ENGLISH} "PostgreSQL"
+LangString DB_POSTGRESQL ${LANG_RUSSIAN} "PostgreSQL"
+LangString DB_MSSQL ${LANG_ENGLISH} "MS SQL"
+LangString DB_MSSQL ${LANG_RUSSIAN} "MS SQL"
+LangString DB_ORACLE ${LANG_ENGLISH} "Oracle"
+LangString DB_ORACLE ${LANG_RUSSIAN} "Oracle"
+
+LangString DB_DIALOG_LABEL ${LANG_ENGLISH} "Database settings"
+LangString DB_DIALOG_LABEL ${LANG_RUSSIAN} "Параметры подключения к базе данных"
+LangString DB_TYPE_LABEL ${LANG_ENGLISH} "SQL server"
+LangString DB_TYPE_LABEL ${LANG_RUSSIAN} "SQL сервер"
+LangString DB_HOST_LABEL ${LANG_ENGLISH} "Host"
+LangString DB_HOST_LABEL ${LANG_RUSSIAN} "Хост"
+LangString DB_PORT_LABEL ${LANG_ENGLISH} "Port"
+LangString DB_PORT_LABEL ${LANG_RUSSIAN} "Порт"
+LangString DB_LOGIN_LABEL ${LANG_ENGLISH} "Login"
+LangString DB_LOGIN_LABEL ${LANG_RUSSIAN} "Логин"
+LangString DB_PASSWORD_LABEL ${LANG_ENGLISH} "Password"
+LangString DB_PASSWORD_LABEL ${LANG_RUSSIAN} "Пароль"
+LangString DB_NAME_LABEL ${LANG_ENGLISH} "Database"
+LangString DB_NAME_LABEL ${LANG_RUSSIAN} "Название базы данных"
+
 !endif
