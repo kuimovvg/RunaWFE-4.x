@@ -15,6 +15,7 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.var.ComplexVariable;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
@@ -89,12 +90,12 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
     }
 
     public static boolean isApplicable(Variable variable, String classNameFilter) {
-    	if (variable.isComplex()) {
-    	    if (Objects.equal(Object.class.getName(), classNameFilter)) {
-    	        return true;
-    	    }
-    		return Objects.equal(variable.getUserType().getName(), classNameFilter);
-    	}
+        if (variable.isComplex()) {
+            if (Objects.equal(ComplexVariable.class.getName(), classNameFilter)) {
+                return true;
+            }
+            return Objects.equal(variable.getUserType().getName(), classNameFilter);
+        }
         return isAssignableFrom(classNameFilter, variable.getJavaClassName());
     }
 
@@ -124,7 +125,7 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
         }
         return result;
     }
-    
+
     public List<VariableFormatArtifact> getFilterArtifacts() {
         return filterArtifacts;
     }
