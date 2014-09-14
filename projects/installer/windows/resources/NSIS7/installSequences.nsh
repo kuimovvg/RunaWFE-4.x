@@ -4,6 +4,7 @@
 !include "languages.nsh"
 !include x64.nsh
 !include "JDKInstallSupport.nsh"
+!include "nsisxml.nsh"
 
 var WFEServerAddress
 var WFEServerPort
@@ -321,6 +322,107 @@ var cleanAllOldData ; Remove all artifacts from old installation if exists
   Push $WFEServerPort                       #replace with
   Push "$INSTDIR\WFEServer\standalone\configuration\standalone.xml"   #file to replace in
   Call AdvReplaceInFile                     #call find and replace function
+
+  CreateDirectory "$INSTDIR\WFEServer\standalone\wfe.custom"
+${if} "$DB_Type" != "$(DB_H2_DEFAULT)"
+  DetailPrint "Write database settings: $DB_Type ; Host $DB_Host:$DB_Port ; Auth $DB_Login/$DB_Password ; Database $DB_Name"
+  Var /GLOBAL database_properties
+  StrCpy $database_properties "$INSTDIR\WFEServer\standalone\wfe.custom\wfe.custom.database.properties"
+  FileOpen $0 "$database_properties" w
+  ${Switch} "$DB_Type"
+    ${Case} "$(DB_POSTGRESQL)"
+      FileWrite $0 "hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect$\r$\n"
+      FileWrite $0 "hibernate.connection.datasource = jboss/datasources/PostgreDS$\r$\n"
+StrCpy $1 '<datasource jndi-name="java:jboss/datasources/PostgreDS" pool-name="PostgreDS">\
+ <connection-url>jdbc:postgresql://$DB_Host:$DB_Port/$DB_Name</connection-url>\
+ <driver>postgresql</driver>\
+ <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>\
+ <pool>\
+  <min-pool-size>10</min-pool-size>\
+  <max-pool-size>100</max-pool-size>\
+  <prefill>true</prefill>\
+ </pool>\
+ <security>\
+  <user-name>$DB_Login</user-name>\
+  <password>$DB_Password</password>\
+ </security>\
+ <statement>\
+  <prepared-statement-cache-size>32</prepared-statement-cache-size>\
+  <share-prepared-statements>true</share-prepared-statements>\
+ </statement>\
+</datasource>\
+<drivers>\
+ <driver name="postgresql" module="org.postgresql">\
+  <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>\
+ </driver>\
+</drivers>'
+      ${Break}
+    ${Case} "$(DB_MSSQL)"
+      FileWrite $0 "hibernate.dialect = org.hibernate.dialect.SQLServerDialect$\r$\n"
+      FileWrite $0 "hibernate.connection.datasource = java:/mssqlds$\r$\n"
+StrCpy $1 '<datasource jndi-name="java:/mssqlds" pool-name="java:/mssqlds_Pool" enabled="true" use-java-context="true">\
+ <connection-url>jdbc:jtds:sqlserver://$DB_Host,$DB_Port;DatabaseName=$DB_Name</connection-url>\
+ <driver>mssql</driver>\
+ <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>\
+ <pool>\
+  <min-pool-size>5</min-pool-size>\
+  <max-pool-size>30</max-pool-size>\
+ </pool>\
+ <security>\
+  <user-name>$DB_Login</user-name>\
+  <password>$DB_Password</password>\
+ </security>\
+</datasource>\
+<driver name="mssql" module="net.sourceforge.jtds">\
+ <driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>\
+ <xa-datasource-class>net.sourceforge.jtds.jdbcx.JtdsDataSource</xa-datasource-class>\
+</driver>'
+      ${Break}
+    ${Case} "$(DB_ORACLE)"
+      FileWrite $0 "hibernate.dialect = org.hibernate.dialect.OracleDialect$\r$\n"
+      FileWrite $0 "hibernate.connection.datasource = jboss/datasources/OracleDS$\r$\n"
+StrCpy $1 '<datasource jndi-name="java:jboss/datasources/OracleDS" pool-name="OracleDS">\
+ <connection-url>jdbc:oracle:thin:@$DB_Host:$DB_Port\/$DB_Name</connection-url>\
+ <driver>oracle</driver>\
+ <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>\
+ <pool>\
+  <min-pool-size>10</min-pool-size>\
+  <max-pool-size>100</max-pool-size>\
+  <prefill>true</prefill>\
+ </pool>\
+ <security>\
+  <user-name>$DB_Login</user-name>\
+  <password>$DB_Password</password>\
+ </security>\
+ <statement>\
+  <prepared-statement-cache-size>32</prepared-statement-cache-size>\
+  <share-prepared-statements>true</share-prepared-statements>\
+ </statement>\
+ <validation>\
+  <exception-sorter class-name="org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter"/>\
+ </validation>\
+ <timeout>\
+  <blocking-timeout-millis>5000</blocking-timeout-millis>\
+  <idle-timeout-minutes>5</idle-timeout-minutes>\
+ </timeout>\
+</datasource>\
+<drivers>\
+ <driver name="oracle" module="com.oraclejdbc">\
+   <xa-datasource-class>oracle.jdbc.driver.OracleDriver</xa-datasource-class>\
+ </driver>\
+</drivers>'
+      ${Break}
+  ${EndSwitch}
+    FileClose $0
+    ${nsisXML->OpenXML} "$INSTDIR\WFEServer\standalone\configuration\standalone.xml"
+    ${nsisXML->SetElementText} "/server/profile/subsystem/datasources" "SERVER_PROFILE_SUBSYSTEM_DATASOURCES"
+    ${nsisXML->CloseXML}
+    Push "SERVER_PROFILE_SUBSYSTEM_DATASOURCES"                                 #text to be replaced
+    Push '$1'                                 #replace with
+    Push "$INSTDIR\WFEServer\standalone\configuration\standalone.xml"   #file to replace in
+    Call AdvReplaceInFile                     #call find and replace function
+    
+  ${endif}
 
   !insertmacro Runa_SetOutPath_INSIDE_CURRENTLOG "$INSTDIR\WFEServer\bin"
   ExecShell open "$INSTDIR\WFEServer\bin\service.bat" install SW_HIDE
