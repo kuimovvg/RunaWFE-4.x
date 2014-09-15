@@ -113,7 +113,7 @@ public class GraphHistoryBuilder {
                         if (node instanceof SubProcessState && ((SubProcessState) node).isEmbedded()) {
                             processLogsExceptComposition.add(processLog);
 
-                            SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
+                            SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByNameNotNull(((SubProcessState) node)
                                     .getSubProcessName());
                             String subProcessName = subprocessDefinition.getNodeId();
 
@@ -196,7 +196,7 @@ public class GraphHistoryBuilder {
                         if (node instanceof SubProcessState && ((SubProcessState) node).isEmbedded()) {
                             subProcessLogs.add(processLog);
 
-                            SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
+                            SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByNameNotNull(((SubProcessState) node)
                                     .getSubProcessName());
                             String subProcessNameEmb = subprocessDefinition.getNodeId();
 
@@ -870,7 +870,7 @@ public class GraphHistoryBuilder {
 
                     if (((SubProcessState) node).isEmbedded()) {
                         ((SubprocessGraphElementPresentation) presentation).setSubprocessId(((NodeEnterLog) nodeLog).getProcessId());
-                        SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByName(((SubProcessState) node)
+                        SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessByNameNotNull(((SubProcessState) node)
                                 .getSubProcessName());
                         ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessId(subprocessDefinition.getNodeId());
                         ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessGraphWidth(subprocessDefinition

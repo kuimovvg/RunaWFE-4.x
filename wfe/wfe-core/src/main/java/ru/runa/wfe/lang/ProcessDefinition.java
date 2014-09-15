@@ -76,6 +76,10 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
 
     @Override
     public void setName(String name) {
+        if (deployment.getName() != null) {
+            // don't override name from database
+            return;
+        }
         deployment.setName(name);
     }
 
@@ -403,13 +407,14 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return getEmbeddedSubprocesses().get(id);
     }
 
-    public SubprocessDefinition getEmbeddedSubprocessByName(String name) {
+    public SubprocessDefinition getEmbeddedSubprocessByNameNotNull(String name) {
         for (SubprocessDefinition subprocessDefinition : getEmbeddedSubprocesses().values()) {
             if (Objects.equal(name, subprocessDefinition.getName())) {
                 return subprocessDefinition;
             }
         }
-        return null;
+        throw new InternalApplicationException("Embedded subprocess definition not found by name '" + name + "' in " + this + ", all = "
+                + getEmbeddedSubprocesses().values());
     }
 
     public void mergeWithEmbeddedSubprocesses() {
@@ -417,8 +422,7 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
             if (node instanceof SubProcessState) {
                 SubProcessState subProcessState = (SubProcessState) node;
                 if (subProcessState.isEmbedded()) {
-                    SubprocessDefinition subprocessDefinition = getEmbeddedSubprocessByName(subProcessState.getSubProcessName());
-                    Preconditions.checkNotNull(subprocessDefinition, "subprocessDefinition");
+                    SubprocessDefinition subprocessDefinition = getEmbeddedSubprocessByNameNotNull(subProcessState.getSubProcessName());
                     EmbeddedSubprocessStartNode startNode = subprocessDefinition.getStartStateNotNull();
                     for (Transition transition : subProcessState.getArrivingTransitions()) {
                         startNode.addArrivingTransition(transition);
