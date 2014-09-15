@@ -301,6 +301,8 @@ public class Messages {
     public static final String TITLE_EXPORT_DATAFILE = "managesystem.datafile.export.title";
     public static final String EXCEPTION_DATAFILE_NOT_PRESENT = "managesystem.datafile.not.present";
 
+    public static final String LINK_DROP_SETTINGS = "link.drop_settings";
+    
     private Messages() {
     }
 

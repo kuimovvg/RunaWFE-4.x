@@ -19,22 +19,18 @@
 package ru.runa.af.web.tag;
 
 import org.apache.ecs.html.TD;
-import org.apache.ecs.html.TR;
-import org.apache.ecs.html.Table;
 
 import ru.runa.af.web.action.RestoreDefaultSettingsAction;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.tag.TitledFormTag;
-import ru.runa.wfe.security.AuthorizationException;
-import ru.runa.wfe.service.delegate.Delegates;
 
 /**
- * @author: petrmikheev Date: 26.08.2014
- * @jsp.tag name = "systemSettings" body-content = "JSP"
+ * @author: petrmikheev Date: 16.09.2014
+ * @jsp.tag name = "dropSettings" body-content = "JSP"
  */
 
-public class SystemSettingsTag extends TitledFormTag {
+public class DropSettingsTag extends TitledFormTag {
     private static final long serialVersionUID = -426375016105456L;
 
     protected String getTitle() {
@@ -43,24 +39,9 @@ public class SystemSettingsTag extends TitledFormTag {
 
     @Override
     protected void fillFormElement(TD tdFormElement) {
-    	if (!Delegates.getExecutorService().isAdministrator(getUser()))
-    		throw new AuthorizationException("No permission on this page");
-        Table table = new Table();
-        for (String resource : EditSettingsTag.settingsList.descendingKeySet()) {
-        	TR tr = new TR();
-        	String title = EditSettingsTag.getDescription(pageContext, resource);
-        	tr.addElement("<td><a href=edit_settings.do?resource="+resource+">" + title + "</a></td>");
-        	table.addElement(tr);
-        }
-        tdFormElement.addElement(table);
     }
     
     @Override
-    protected boolean isFormButtonVisible() {
-        return false;
-    }
-
-    /*@Override
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_USE_DAFAULT_PROPERTIES, pageContext);
     }
@@ -73,5 +54,13 @@ public class SystemSettingsTag extends TitledFormTag {
     @Override
     public String getConfirmationPopupParameter() {
         return ConfirmationPopupHelper.USE_DEFAULT_PROPERTIES_PARAMETER;
-    }*/
+    }
+    @Override
+    protected boolean isCancelButtonEnabled() {
+    	return true;
+    }
+    @Override
+    protected String getCancelButtonAction() {
+    	return "manage_settings.do";
+    }
 }

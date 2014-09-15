@@ -85,6 +85,7 @@
 		<forward name="bot_station_permission" path="/bot_station_permission.do" />
 		<forward name="grant_bot_station_permission" path="/grant_bot_station_permission.do" />
 		<forward name="edit_settings" path="/edit_settings.do" />
+		<forward name="drop_settings" path="/drop_settings.do" />
 	</global-forwards>
 
 	<!-- ========== Action Mapping Definitions =================================== -->
@@ -732,6 +733,8 @@
 		
 		<action path="/edit_settings" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/wf/edit_settings.jsp" />
+		<action path="/drop_settings" type="org.apache.struts.actions.ForwardAction"
+			parameter="/WEB-INF/af/drop_settings.jsp" />
 
 		<action path="/add_bot_station" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/wf/add_bot_station.jsp" />
