@@ -1,5 +1,5 @@
 run autoran.bat
 
-Requirements (into $PATH): jdk, maven, subversion
+Requirements (into $PATH): jdk, maven, subversion, ant
 
 see http://www.runawfe.org/About
