@@ -61,7 +61,7 @@ public class ProcessDefinitionInfoVisitor extends GraphElementPresentationVisito
         if (element.isEmbedded()) {
             element.setSubprocessAccessible(true);
             element.setSubprocessId(definition.getId());
-            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessByName(element.getSubprocessName());
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessByNameNotNull(element.getSubprocessName());
             element.setEmbeddedSubprocessId(subprocessDefinition.getNodeId());
             element.setEmbeddedSubprocessGraphWidth(subprocessDefinition.getGraphConstraints()[2]);
             element.setEmbeddedSubprocessGraphHeight(subprocessDefinition.getGraphConstraints()[3]);

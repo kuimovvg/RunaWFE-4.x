@@ -49,7 +49,7 @@ public class ProcessGraphInfoVisitor extends GraphElementPresentationVisitor {
         this.processLogs = processLogs;
         this.nodeProcesses = nodeProcesses;
     }
-    
+
     @Override
     protected void visit(GraphElementPresentation element) {
         super.visit(element);
@@ -65,8 +65,8 @@ public class ProcessGraphInfoVisitor extends GraphElementPresentationVisitor {
     protected void onMultiSubprocess(MultiinstanceGraphElementPresentation element) {
         for (NodeProcess nodeProcess : nodeProcesses) {
             if (Objects.equal(nodeProcess.getNodeId(), element.getNodeId())) {
-                element.addSubprocessInfo(nodeProcess.getSubProcess().getId(), 
-                        hasReadPermission(nodeProcess.getSubProcess()), nodeProcess.getSubProcess().hasEnded());
+                element.addSubprocessInfo(nodeProcess.getSubProcess().getId(), hasReadPermission(nodeProcess.getSubProcess()), nodeProcess
+                        .getSubProcess().hasEnded());
             }
         }
     }
@@ -77,7 +77,7 @@ public class ProcessGraphInfoVisitor extends GraphElementPresentationVisitor {
             boolean b = ApplicationContextFactory.getProcessLogDAO().isNodeEntered(process, element.getNodeId());
             element.setSubprocessAccessible(b);
             element.setSubprocessId(process.getId());
-            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessByName(element.getSubprocessName());
+            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessByNameNotNull(element.getSubprocessName());
             element.setEmbeddedSubprocessId(subprocessDefinition.getNodeId());
             element.setEmbeddedSubprocessGraphWidth(subprocessDefinition.getGraphConstraints()[2]);
             element.setEmbeddedSubprocessGraphHeight(subprocessDefinition.getGraphConstraints()[3]);
