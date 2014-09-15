@@ -39,28 +39,30 @@ public class AssignmentHelper {
         }
     }
 
-    public void assign(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
+    public boolean assign(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
         try {
             if (executors == null || executors.size() == 0) {
                 log.warn("Assigning null executor in " + executionContext + ": " + assignable + ", check swimlane initializer");
                 assignable.assignExecutor(executionContext, null, true);
                 ProcessExecutionException pee = new ProcessExecutionException(assignable.getErrorMessageKey(), assignable.getName());
                 ProcessExecutionErrors.addProcessError(executionContext.getProcess().getId(), assignable.getName(), assignable.getName(), null, pee);
-                return;
+                return false;
             }
             ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), assignable.getName());
             if (executors.size() == 1) {
                 Executor aloneExecutor = (executors.iterator().next());
                 assignable.assignExecutor(executionContext, aloneExecutor, true);
-                return;
+                return true;
             }
             String swimlaneName = assignable.getSwimlaneName();
             Group tmpGroup = TemporaryGroup.create(executionContext.getProcess().getId(), swimlaneName);
             executorLogic.saveTemporaryGroup(tmpGroup, executors);
             assignable.assignExecutor(executionContext, tmpGroup, true);
             log.info("Cascaded assignment done in " + assignable);
+            return true;
         } catch (Exception e) {
             log.warn("Unable to assign " + assignable + " in " + executionContext.getProcess(), e);
+            return false;
         }
     }
 

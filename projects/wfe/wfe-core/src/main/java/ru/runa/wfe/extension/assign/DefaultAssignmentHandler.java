@@ -53,8 +53,9 @@ public class DefaultAssignmentHandler implements AssignmentHandler {
     public void assign(ExecutionContext executionContext, Assignable assignable) {
         try {
             List<? extends Executor> executors = calculateExecutors(executionContext, assignable);
-            assignmentHelper.assign(executionContext, assignable, executors);
-            ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), assignable.getName());
+            if (assignmentHelper.assign(executionContext, assignable, executors)) {
+                ProcessExecutionErrors.removeProcessError(executionContext.getProcess().getId(), assignable.getName());
+            }
         } catch (Exception e) {
             ProcessExecutionException pee = new ProcessExecutionException(assignable.getErrorMessageKey(), e, assignable.getName());
             ProcessExecutionErrors.addProcessError(executionContext.getProcess().getId(), assignable.getName(), assignable.getName(), null, pee);

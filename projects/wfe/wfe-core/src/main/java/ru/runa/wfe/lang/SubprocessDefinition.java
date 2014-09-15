@@ -28,6 +28,11 @@ public class SubprocessDefinition extends ProcessDefinition {
     }
 
     @Override
+    public void setName(String name) {
+        deployment.setName(name);
+    }
+
+    @Override
     public Map<String, SubprocessDefinition> getEmbeddedSubprocesses() {
         return parentProcessDefinition.getEmbeddedSubprocesses();
     }
