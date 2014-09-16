@@ -14,13 +14,11 @@ import ru.runa.wfe.user.Executor;
 
 import com.google.common.collect.Sets;
 
-import freemarker.template.TemplateModelException;
-
 public abstract class ChooseByRelationTagBase extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() {
         String variableName = getParameterAsString(0);
         String relationName = getParameterAsString(1);
         Executor relationParam = getParameterAs(Executor.class, 2);
@@ -33,7 +31,7 @@ public abstract class ChooseByRelationTagBase extends FreemarkerTag {
         return ViewUtil.createExecutorSelect(variableName, executors, variableProvider.getValue(variableName), true, true);
     }
 
-    private List<Executor> getExecutors(String relationName, Executor relationParam, boolean inversed) throws TemplateModelException {
+    private List<Executor> getExecutors(String relationName, Executor relationParam, boolean inversed) {
         List<Executor> executors = new ArrayList<Executor>();
         executors.add(relationParam);
         BatchPresentation batchPresentation = BatchPresentationFactory.GROUPS.createNonPaged();

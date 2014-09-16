@@ -10,6 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+
+import com.google.common.base.Throwables;
+
 import freemarker.template.ObjectWrapper;
 import freemarker.template.SimpleHash;
 import freemarker.template.TemplateModel;
@@ -77,6 +80,7 @@ public class FormHashModel extends SimpleHash {
                 return tag;
             }
         } catch (Exception e) {
+            Throwables.propagateIfInstanceOf(e, RuntimeException.class);
             throw new TemplateModelException(e);
         }
         Object variableValue = variableProvider.getValue(key);

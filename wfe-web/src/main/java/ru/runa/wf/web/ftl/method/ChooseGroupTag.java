@@ -20,7 +20,7 @@ public class ChooseGroupTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() throws Exception {
         String varName = getParameterAsString(0);
         String view = getParameterAsString(1);
         List<Group> groups = (List<Group>) Delegates.getExecutorService().getExecutors(user, BatchPresentationFactory.GROUPS.createNonPaged());

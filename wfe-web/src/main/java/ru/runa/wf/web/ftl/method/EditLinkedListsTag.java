@@ -16,8 +16,6 @@ import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.collect.Lists;
 
-import freemarker.template.TemplateModelException;
-
 /**
  * shared code with {@link InputVariableTag}.
  * 
@@ -28,7 +26,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected String renderRequest() throws TemplateModelException {
+    protected String renderRequest() {
         boolean allowToAddElements = getParameterAs(boolean.class, 0);
         boolean allowToChangeElements = getParameterAs(boolean.class, 1);
         boolean allowToDeleteElements = getParameterAs(boolean.class, 2);

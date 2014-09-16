@@ -10,14 +10,12 @@ import ru.runa.wfe.var.ISelectable;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
-import freemarker.template.TemplateModelException;
-
 @SuppressWarnings("unchecked")
 public class SelectFromListTag extends FreemarkerTag implements FtlTagVariableSubmissionPostProcessor {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() {
         String variableName = getParameterAsString(0);
         List<Object> list = getParameterVariableValue(List.class, 1, null);
         if (list == null) {
@@ -56,7 +54,7 @@ public class SelectFromListTag extends FreemarkerTag implements FtlTagVariableSu
     }
 
     @Override
-    public Object postProcessValue(Object source) throws TemplateModelException {
+    public Object postProcessValue(Object source) {
         if (source instanceof String) {
             String value = (String) source;
             List<ISelectable> list = getParameterVariableValueNotNull(List.class, 1);

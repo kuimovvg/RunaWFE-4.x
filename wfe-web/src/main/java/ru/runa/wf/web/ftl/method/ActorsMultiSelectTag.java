@@ -24,8 +24,6 @@ import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.collect.Lists;
 
-import freemarker.template.TemplateModelException;
-
 /**
  * @deprecated Use List<User> variable type + InputVariableTag.
  */
@@ -35,7 +33,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected String renderRequest() throws TemplateModelException {
+    protected String renderRequest() {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
@@ -68,7 +66,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
         return html.toString();
     }
 
-    private String getDisplayName(Actor actor) throws TemplateModelException {
+    private String getDisplayName(Actor actor) {
         String displayFormat = getParameterAsString(1);
         return "login".equals(displayFormat) ? actor.getName() : actor.getFullName();
     }
