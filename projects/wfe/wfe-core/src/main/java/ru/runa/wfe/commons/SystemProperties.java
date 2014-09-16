@@ -157,4 +157,8 @@ public class SystemProperties {
         return RESOURCES.getBooleanProperty("trusted.authentication.enabled", false);
     }
 
+    public static boolean isTaskAssignmentStrictRulesEnabled() {
+        return RESOURCES.getBooleanProperty("task.assignment.strict.rules.enabled", true);
+    }
+
 }
