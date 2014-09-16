@@ -37,14 +37,12 @@ import ru.runa.wfe.user.Group;
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
-import freemarker.template.TemplateModelException;
-
 @SuppressWarnings("unchecked")
 public class AjaxGroupMembersTag extends AjaxJsonFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected String renderRequest() throws TemplateModelException {
+    protected String renderRequest() {
         String groupVariableName = getParameterAsString(0);
         String groupScriptingVariableName = variableProvider.getVariableNotNull(groupVariableName).getDefinition().getScriptingNameWithoutDots();
         String userVariableName = getParameterAsString(1);

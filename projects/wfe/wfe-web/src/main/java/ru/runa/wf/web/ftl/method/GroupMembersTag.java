@@ -29,7 +29,7 @@ public class GroupMembersTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() throws Exception {
         String variableName = getParameterAsString(0);
         Group group = getParameterAs(Group.class, 1);
         String view = getParameterAsString(2);

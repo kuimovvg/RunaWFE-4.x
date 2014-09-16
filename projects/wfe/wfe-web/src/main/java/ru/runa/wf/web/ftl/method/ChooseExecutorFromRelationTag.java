@@ -31,13 +31,11 @@ import ru.runa.wfe.user.Executor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import freemarker.template.TemplateModelException;
-
 public class ChooseExecutorFromRelationTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() {
         String variableName = getParameterAsString(0);
         String relationName = getParameterAsString(1);
         boolean inversed = getParameterAs(boolean.class, 2);

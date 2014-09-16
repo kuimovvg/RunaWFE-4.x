@@ -9,14 +9,12 @@ import ru.runa.wfe.var.ISelectable;
 
 import com.google.common.collect.Lists;
 
-import freemarker.template.TemplateModelException;
-
 @SuppressWarnings("unchecked")
 public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVariableSubmissionPostProcessor {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() {
         String variableName = getParameterAsString(0);
         List<Object> list = getParameterVariableValue(List.class, 1, null);
         if (list == null) {
@@ -60,7 +58,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
     }
 
     @Override
-    public Object postProcessValue(Object source) throws TemplateModelException {
+    public Object postProcessValue(Object source) {
         if (source instanceof List) {
             List<String> valuesList = (List<String>) source;
             List<ISelectable> list = getParameterVariableValueNotNull(List.class, 1);

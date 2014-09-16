@@ -33,7 +33,7 @@ public class FileTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() throws Exception {
         String variableName = getParameterAsString(0);
         String view = getParameterAsString(1);
         FileVariable fileVariable = variableProvider.getValueNotNull(FileVariable.class, variableName);

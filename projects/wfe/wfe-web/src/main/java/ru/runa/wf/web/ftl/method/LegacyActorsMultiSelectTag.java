@@ -22,16 +22,15 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import freemarker.template.TemplateModelException;
-
 /**
  * @deprecated Use List<User> variable type + InputVariableTag.
  */
+@Deprecated
 public class LegacyActorsMultiSelectTag extends AjaxFreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected String renderRequest() throws TemplateModelException {
+    protected String renderRequest() {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         String scriptingVariableName = variable.getDefinition().getScriptingNameWithoutDots();
