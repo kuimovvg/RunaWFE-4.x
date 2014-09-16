@@ -60,7 +60,7 @@ public class SerializableToByteArrayConverter implements Converter {
                 List<FileVariable> list = (List<FileVariable>) o;
                 for (int i = 0; i < list.size(); i++) {
                     FileVariable fileVariable = list.get(i);
-                    if (fileVariable.getData().length > SystemProperties.getLocalFileStorageFileLimit()) {
+                    if (fileVariable != null && fileVariable.getData().length > SystemProperties.getLocalFileStorageFileLimit()) {
                         FileVariableDescriptor descriptor = new FileVariableDescriptor(variable, variable.getName() + i, fileVariable);
                         Files.write(descriptor.getData(), FileVariableStorage.getContentFile(descriptor, true));
                         list.set(i, descriptor);
