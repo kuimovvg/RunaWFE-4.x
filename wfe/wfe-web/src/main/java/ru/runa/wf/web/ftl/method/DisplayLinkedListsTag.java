@@ -11,13 +11,11 @@ import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.collect.Lists;
 
-import freemarker.template.TemplateModelException;
-
 public class DisplayLinkedListsTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() {
         List<WfVariable> variables = Lists.newArrayList();
         List<VariableFormat> componentFormats = Lists.newArrayList();
         List<List<?>> lists = Lists.newArrayList();

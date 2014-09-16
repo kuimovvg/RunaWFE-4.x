@@ -10,13 +10,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import freemarker.template.TemplateModelException;
-
 public class DisplayLinkedMapsTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() {
         List<WfVariable> variables = Lists.newArrayList();
         String firstParameter = getParameterAsString(0);
         boolean componentView = "true".equals(firstParameter);

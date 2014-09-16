@@ -36,7 +36,7 @@ public class ChooseActorTag extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() throws Exception {
         String actorVarName = getParameterAsString(0);
         String view = getParameterAsString(1);
         if ("all".equals(view)) {

@@ -18,14 +18,13 @@
 package ru.runa.wf.web.ftl.method;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
-import freemarker.template.TemplateModelException;
 
 public class MultiLanguageExampleTag extends FreemarkerTag {
 
     private static final long serialVersionUID = 1L;
 
     @Override
-    protected Object executeTag() throws TemplateModelException {
+    protected Object executeTag() {
         String key = getParameterAsString(0);
         return webHelper.getMessage(key);
     }

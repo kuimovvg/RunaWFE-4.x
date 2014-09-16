@@ -13,6 +13,7 @@ import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.TemplateMethodModelEx;
@@ -44,7 +45,7 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
 
     @Override
     @SuppressWarnings("rawtypes")
-    public final Object exec(List arguments) throws TemplateModelException {
+    public final Object exec(List arguments) {
         try {
             this.arguments = arguments;
             if (targetProcess) {
@@ -71,24 +72,28 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
 
     protected abstract Object executeTag() throws Exception;
 
-    protected String getParameterAsString(int i) throws TemplateModelException {
+    protected String getParameterAsString(int i) {
         return getParameterAs(String.class, i);
     }
 
-    protected <T> T getParameterAs(Class<T> clazz, int i) throws TemplateModelException {
+    protected <T> T getParameterAs(Class<T> clazz, int i) {
         Object paramValue = null;
         if (i < arguments.size()) {
-            paramValue = BeansWrapper.getDefaultInstance().unwrap(arguments.get(i));
+            try {
+                paramValue = BeansWrapper.getDefaultInstance().unwrap(arguments.get(i));
+            } catch (TemplateModelException e) {
+                Throwables.propagate(e);
+            }
         }
         return TypeConversionUtil.convertTo(clazz, paramValue);
     }
 
-    protected <T> T getParameterVariableValueNotNull(Class<T> clazz, int i) throws TemplateModelException {
+    protected <T> T getParameterVariableValueNotNull(Class<T> clazz, int i) {
         String variableName = getParameterAsString(i);
         return variableProvider.getValueNotNull(clazz, variableName);
     }
 
-    protected <T> T getParameterVariableValue(Class<T> clazz, int i, T defaultValue) throws TemplateModelException {
+    protected <T> T getParameterVariableValue(Class<T> clazz, int i, T defaultValue) {
         String variableName = getParameterAsString(i);
         T value = variableProvider.getValue(clazz, variableName);
         if (value == null) {
