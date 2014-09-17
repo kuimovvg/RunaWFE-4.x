@@ -382,7 +382,7 @@ StrCpy $1 '<datasource jndi-name="java:/mssqlds" pool-name="java:/mssqlds_Pool" 
       FileWrite $0 "hibernate.dialect = org.hibernate.dialect.OracleDialect$\r$\n"
       FileWrite $0 "hibernate.connection.datasource = jboss/datasources/OracleDS$\r$\n"
 StrCpy $1 '<datasource jndi-name="java:jboss/datasources/OracleDS" pool-name="OracleDS">\
- <connection-url>jdbc:oracle:thin:@$DB_Host:$DB_Port\/$DB_Name</connection-url>\
+ <connection-url>jdbc:oracle:thin:@$DB_Host:$DB_Port:$DB_Name</connection-url>\
  <driver>oracle</driver>\
  <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>\
  <pool>\
