@@ -35,7 +35,7 @@ import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
-import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.ui.dialog.ChooseVariableNameDialog;
 import ru.runa.gpd.ui.dialog.UserInputDialog;
 import ru.runa.gpd.util.VariableUtils;
 
@@ -109,7 +109,7 @@ public class GroovyEditorDialog extends Dialog {
         SWTUtils.createLink(sourceHeader, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
+                ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(variableNames);
                 String variableName = dialog.openDialog();
                 if (variableName != null) {
                     styledText.insert(variableName);

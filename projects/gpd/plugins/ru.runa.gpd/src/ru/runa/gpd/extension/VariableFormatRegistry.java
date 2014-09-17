@@ -52,7 +52,7 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
                 String label = configElement.getAttribute("label");
                 String javaClassName = configElement.getAttribute("javaClassName");
                 list.add(new VariableFormatArtifact(enabled, className, label, javaClassName));
-                if ("ru.runa.wfe.var.format.ProcessIdFormat".equals(className) || "ru.runa.wfe.var.format.UserTypeFormat".equals(className)) {
+                if ("ru.runa.wfe.var.format.ProcessIdFormat".equals(className)) {
                     continue;
                 }
                 if (!mappingByTypeClass.containsKey(javaClassName)) {
@@ -91,6 +91,9 @@ public class VariableFormatRegistry extends ArtifactRegistry<VariableFormatArtif
 
     public static boolean isApplicable(Variable variable, String classNameFilter) {
         if (variable.isComplex()) {
+            if (Objects.equal(Object.class.getName(), classNameFilter)) {
+                return true;
+            }
             if (Objects.equal(ComplexVariable.class.getName(), classNameFilter)) {
                 return true;
             }

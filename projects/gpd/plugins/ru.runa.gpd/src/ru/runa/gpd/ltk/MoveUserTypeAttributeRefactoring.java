@@ -18,33 +18,33 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 @SuppressWarnings("unchecked")
-public class RenameUserTypeAttributeRefactoring extends Refactoring {
+public class MoveUserTypeAttributeRefactoring extends Refactoring {
     private final IFile definitionFile;
     private final ProcessDefinition processDefinition;
-    private final VariableUserType type;
-    private final Variable oldAttribute;
-    private final String newAttributeName;
-    private final String newAttributeScriptingName;
+    private final VariableUserType oldType;
+    private final Variable attribute;
+    private final Variable substitutionVariable;
     private final List<Refactoring> refactorings = Lists.newArrayList();
 
-    public RenameUserTypeAttributeRefactoring(IFile definitionFile, ProcessDefinition processDefinition, VariableUserType type,
-            Variable oldAttribute, String newAttributeName, String newAttributeScriptingName) {
+    public MoveUserTypeAttributeRefactoring(IFile definitionFile, ProcessDefinition processDefinition, VariableUserType oldType, Variable attribute,
+            Variable substitutionVariable) {
         this.definitionFile = definitionFile;
         this.processDefinition = processDefinition;
-        this.type = type;
-        this.oldAttribute = oldAttribute;
-        this.newAttributeName = newAttributeName;
-        this.newAttributeScriptingName = newAttributeScriptingName;
+        this.oldType = oldType;
+        this.attribute = attribute;
+        this.substitutionVariable = substitutionVariable;
     }
 
     @Override
     public RefactoringStatus checkInitialConditions(IProgressMonitor progressMonitor) {
         RefactoringStatus status = new RefactoringStatus();
-        List<Variable> result = VariableUtils.findVariablesOfTypeWithAttributeExpanded(processDefinition, type, oldAttribute);
+        List<Variable> result = VariableUtils.findVariablesOfTypeWithAttributeExpanded(processDefinition, oldType, attribute);
         for (Variable variable : result) {
-            String newName = variable.getName().replace(VariableUserType.DELIM + oldAttribute.getName(), VariableUserType.DELIM + newAttributeName);
-            String newScriptingName = variable.getScriptingName().replace(VariableUserType.DELIM + oldAttribute.getScriptingName(),
-                    VariableUserType.DELIM + newAttributeScriptingName);
+            String rootName = variable.getName().substring(0, variable.getName().indexOf(VariableUserType.DELIM));
+            String newName = variable.getName().replace(rootName + VariableUserType.DELIM, substitutionVariable.getName() + VariableUserType.DELIM);
+            String rootScriptingName = variable.getScriptingName().substring(0, variable.getScriptingName().indexOf(VariableUserType.DELIM));
+            String newScriptingName = variable.getScriptingName().replace(rootScriptingName + VariableUserType.DELIM,
+                    substitutionVariable.getScriptingName() + VariableUserType.DELIM);
             RenameVariableRefactoring refactoring = new RenameVariableRefactoring(definitionFile, processDefinition, variable, newName,
                     newScriptingName);
             status.merge(refactoring.checkInitialConditions(progressMonitor));
