@@ -3,10 +3,11 @@ package ru.runa.gpd.ltk;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.jface.text.Document;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
@@ -51,21 +52,15 @@ public class FormNodePresentation extends VariableRenameProvider<FormNode> {
     }
 
     private Change[] processFile(IFile file, final String label, String variableName, String replacement) throws Exception {
-        Document document = new Document();
         String text = IOUtils.readStream(file.getContents());
-        document.set(text);
+        Pattern pattern = Pattern.compile(Pattern.quote(variableName));
+        Matcher matcher = pattern.matcher(text);
         List<Change> changes = new ArrayList<Change>();
-        int offset = 0; // TODO in forms use "\" + varName + "\"
         MultiTextEdit multiEdit = new MultiTextEdit();
         int len = variableName.length();
-        while (offset > -1) {
-            offset = document.search(offset, variableName, true, true, true);
-            if (offset == -1) {
-                break;
-            }
-            ReplaceEdit replaceEdit = new ReplaceEdit(offset, len, replacement);
+        while (matcher.find()) {
+            ReplaceEdit replaceEdit = new ReplaceEdit(matcher.start(), len, replacement);
             multiEdit.addChild(replaceEdit);
-            offset += len; // to avoid overlapping
         }
         if (multiEdit.getChildrenSize() > 0) {
             TextFileChange fileChange = new TextFileChange(file.getName(), file) {

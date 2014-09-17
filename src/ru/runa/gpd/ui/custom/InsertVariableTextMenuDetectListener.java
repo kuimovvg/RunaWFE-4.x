@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.ui.dialog.ChooseVariableNameDialog;
 import ru.runa.gpd.util.VariableUtils;
 
 @SuppressWarnings({ "restriction", "unused" })
@@ -48,7 +48,7 @@ public class InsertVariableTextMenuDetectListener implements MenuDetectListener 
             menuManager.add(new LoggingAction(Localization.getString("button.insert_variable")) {
                 @Override
                 protected void execute() throws Exception {
-                    ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
+                    ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(variableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
                         text.setText(VariableUtils.wrapVariableName(variableName));
