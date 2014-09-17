@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.search.internal.core.text.FileCharSequenceProvider;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.Match;
@@ -60,7 +59,6 @@ public class VariableSearchVisitor {
     private int numberOfElementsToScan;
     private GraphElement currentElement = null;
     private final MultiStatus status;
-    private final FileCharSequenceProvider fileCharSequenceProvider;
     private final Matcher matcher;
     private final Matcher matcherWithBrackets;
     private Matcher matcherScriptingName;
@@ -68,7 +66,6 @@ public class VariableSearchVisitor {
     public VariableSearchVisitor(VariableSearchQuery query) {
         this.query = query;
         this.status = new MultiStatus(NewSearchUI.PLUGIN_ID, IStatus.OK, SearchMessages.TextSearchEngine_statusMessage, null);
-        this.fileCharSequenceProvider = new FileCharSequenceProvider();
         this.matcher = Pattern.compile(Pattern.quote(query.getSearchText())).matcher("");
         if (!Objects.equal(query.getVariable().getScriptingName(), query.getSearchText())) {
             this.matcherScriptingName = Pattern.compile(Pattern.quote(query.getVariable().getScriptingName())).matcher("");
@@ -278,7 +275,7 @@ public class VariableSearchVisitor {
             }
             if (formNode.hasFormValidation()) {
                 IFile file = IOUtils.getAdjacentFile(definitionFile, formNode.getValidationFileName());
-                FormNodeValidation validation = formNode.getValidation((IFolder) definitionFile.getParent());
+                FormNodeValidation validation = formNode.getValidation(definitionFile.getParent());
                 ElementMatch elementMatch = new ElementMatch(formNode, file, ElementMatch.CONTEXT_FORM_VALIDATION);
                 elementMatch.setParent(nodeElementMatch);
                 int matchesCount = 0;
@@ -338,15 +335,8 @@ public class VariableSearchVisitor {
     }
 
     private List<Match> findInFile(ElementMatch elementMatch, IFile file, Matcher matcher) throws CoreException, IOException {
-        CharSequence searchInput = null;
-        try {
-            searchInput = fileCharSequenceProvider.newCharSequence(file);
-            return findInString(elementMatch, searchInput, matcher);
-        } finally {
-            if (searchInput != null) {
-                fileCharSequenceProvider.releaseCharSequence(searchInput);
-            }
-        }
+        String text = IOUtils.readStream(file.getContents());
+        return findInString(elementMatch, text, matcher);
     }
 
     private List<Match> findInString(ElementMatch elementMatch, CharSequence searchInput, Matcher matcher) throws CoreException, IOException {

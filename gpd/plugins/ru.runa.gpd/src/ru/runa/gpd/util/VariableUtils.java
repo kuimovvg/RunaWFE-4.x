@@ -161,4 +161,32 @@ public class VariableUtils {
         }
         return "";
     }
+
+    private static void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent,
+            List<Variable> children) {
+        for (Variable variable : children) {
+            if (variable.getUserType() == null) {
+                continue;
+            }
+            String syntheticName = (parent != null ? (parent.getName() + VariableUserType.DELIM) : "") + variable.getName();
+            String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "")
+                    + variable.getScriptingName();
+            if (Objects.equal(variable.getUserType(), searchType)) {
+                Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName
+                        + VariableUserType.DELIM + searchAttribute.getScriptingName(), variable);
+                result.add(syntheticVariable);
+            } else {
+                Variable syntheticVariable = new Variable(syntheticName, syntheticScriptingName, variable);
+                searchInVariables(result, searchType, searchAttribute, syntheticVariable, variable.getUserType().getAttributes());
+            }
+        }
+    }
+
+    public static List<Variable> findVariablesOfTypeWithAttributeExpanded(VariableContainer variableContainer, VariableUserType searchType,
+            Variable searchAttribute) {
+        List<Variable> result = Lists.newArrayList();
+        searchInVariables(result, searchType, searchAttribute, null, variableContainer.getVariables(false, false));
+        return result;
+    }
+
 }

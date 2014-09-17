@@ -33,7 +33,7 @@ import ru.runa.gpd.ui.custom.HighlightTextStyling;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
-import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.ui.dialog.ChooseVariableNameDialog;
 import ru.runa.gpd.util.IOUtils;
 
 import com.google.common.base.Strings;
@@ -124,7 +124,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
             Hyperlink hl3 = SWTUtils.createLink(composite, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
                 @Override
                 public void onLinkActivated(HyperlinkEvent e) {
-                    ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
+                    ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(variableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
                         if (variableName.indexOf(" ") > 0) {
