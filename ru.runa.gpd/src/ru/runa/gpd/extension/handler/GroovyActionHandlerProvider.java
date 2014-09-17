@@ -21,7 +21,7 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.JavaHighlightTextStyling;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
-import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.ui.dialog.ChooseVariableNameDialog;
 import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Strings;
@@ -74,7 +74,7 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
 
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                    ChooseVariableDialog dialog = new ChooseVariableDialog(variableNames);
+                    ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(variableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
                         styledText.insert(variableName);

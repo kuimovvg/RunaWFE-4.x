@@ -41,7 +41,7 @@ import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
-import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.ui.dialog.ChooseVariableNameDialog;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
@@ -199,7 +199,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                     List<String> ftlVariableNames = VariableUtils.getValidVariableNames(delegable.getVariableNames(true));
-                    ChooseVariableDialog dialog = new ChooseVariableDialog(ftlVariableNames);
+                    ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(ftlVariableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
                         String r = VariableUtils.wrapVariableName(variableName);
@@ -280,7 +280,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
                 List<String> fileVariableNames = VariableUtils.getValidVariableNames(delegable.getVariableNames(true, FileVariable.class.getName()));
-                ChooseVariableDialog dialog = new ChooseVariableDialog(fileVariableNames);
+                ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(fileVariableNames);
                 String variableName = dialog.openDialog();
                 if (variableName != null) {
                     attachments.add(variableName);

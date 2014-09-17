@@ -8,7 +8,7 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-public class VariableUserType extends EventSupport implements VariableContainer, PropertyNames {
+public class VariableUserType extends EventSupport implements VariableContainer, PropertyNames, Comparable<VariableUserType> {
     public static final String PREFIX = "usertype:";
     public static final String DELIM = ".";
     private String name;
@@ -92,6 +92,11 @@ public class VariableUserType extends EventSupport implements VariableContainer,
         }
         VariableUserType type = (VariableUserType) obj;
         return Objects.equal(name, type.name) && Objects.equal(attributes, type.attributes);
+    }
+
+    @Override
+    public int compareTo(VariableUserType o) {
+        return name.compareTo(o.name);
     }
 
     @Override
