@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.dto.WfTask;
@@ -155,8 +156,7 @@ public class HandlerData {
     public void setOutputParam(String name, Object value) {
         ParamDef paramDef = paramsDef.getOutputParamNotNull(name);
         if (paramDef.getVariableName() == null) {
-            log.warn("Variable not set for output parameter " + paramDef + " in configuration.");
-            return;
+            throw new InternalApplicationException("Variable is not set for output parameter " + paramDef + " in configuration.");
         }
         setOutputVariable(paramDef.getVariableName(), value);
     }
