@@ -35,8 +35,8 @@ public class DeployDefinitionLinkTag extends LinkTag {
 
     @Override
     protected boolean isLinkEnabled() {
-        return !WebResources.isBulkDeploymentDefinitions() 
-        		&& Delegates.getAuthorizationService().isAllowed(getUser(), WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
+        return !WebResources.isBulkDeploymentElements()
+                && Delegates.getAuthorizationService().isAllowed(getUser(), WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
     }
 
     @Override

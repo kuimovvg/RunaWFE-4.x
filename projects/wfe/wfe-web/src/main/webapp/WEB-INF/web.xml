@@ -93,7 +93,7 @@
 	
 	<servlet>
 		<servlet-name>bulkUpload</servlet-name>            
-		<servlet-class>ru.runa.wf.web.servlet.BulkUploadProcessDefinitionServlet</servlet-class>
+		<servlet-class>ru.runa.wf.web.servlet.BulkUploadServlet</servlet-class>
 	</servlet>
  
     <servlet>

@@ -183,6 +183,33 @@ public class ViewUtil {
         return "<input type=\"hidden\" name=\"" + variable.getDefinition().getName() + "\" value=\"" + stringValue + "\" />";
     }
 
+    public static String getFileInput(WebHelper webHelper, String variableName) {
+        String attachImageUrl = "";
+        String loadingImageUrl = "";
+        String uploadFileTitle = webHelper.getMessage("message.upload.file");
+        String loadingMessage = webHelper.getMessage("message.loading");
+        if (webHelper != null) {
+            attachImageUrl = webHelper.getUrl(Resources.IMAGE_ATTACH);
+            loadingImageUrl = webHelper.getUrl(Resources.IMAGE_LOADING);
+            loadingMessage = webHelper.getMessage("message.loading");
+        }
+        String hideStyle = "style=\"display: none;\"";
+        String html = "<div class=\"inputFileContainer\">";
+        html += "<div class=\"dropzone\" >";
+        html += "<label class=\"inputFileAttach\">";
+        html += "<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
+        html += "<input class=\"inputFile inputFileAjax \" name=\"" + variableName + "\" type=\"file\" multiple>";
+        html += "</label></div>";
+        html += "<div class=\"progressbar\" " + hideStyle + ">";
+        html += "<div class=\"line\" style=\"width: 0%;\"></div>";
+        html += "<div class=\"status\">";
+        html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
+        html += "<span class=\"statusText\">";
+        html += loadingMessage;
+        html += "</span></div></div></div>";
+        return html;
+    }
+
     public static String getComponentInput(User user, WebHelper webHelper, WfVariable variable) {
         String variableName = variable.getDefinition().getName();
         VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
