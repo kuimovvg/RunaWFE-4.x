@@ -9,10 +9,10 @@
 <tiles:insert page="/WEB-INF/af/main_layout.jsp" flush="true">
 
 <tiles:put name="head" type="string">
-<% if (WebResources.isBulkDeploymentDefinitions()) { %>
+<% if (WebResources.isBulkDeploymentElements()) { %>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.iframe-transport.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.fileupload.js" />">c=0;</script>
-	<script type="text/javascript" src="<html:rewrite page="/js/bulkuploadprocessdefinitionutils.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/bulkuploadutils.js" />">c=0;</script>
 	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/fileupload.css" />">
 <% } %>
 </tiles:put>

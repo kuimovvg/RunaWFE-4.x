@@ -143,9 +143,9 @@ public class WebResources {
     public static boolean isDisplayVariablesJavaType() {
         return RESOURCES.getBooleanProperty("process.variables.displayJavaType", true);
     }
-    
-    public static boolean isBulkDeploymentDefinitions() { 
-        return RESOURCES.getBooleanProperty("process.definition.ajax.deployment", true);
+
+    public static boolean isBulkDeploymentElements() {
+        return RESOURCES.getBooleanProperty("ajax.deployment.elements", true);
     }
 
     public static boolean isLDAPSynchronizationEnabled() {

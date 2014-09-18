@@ -15,6 +15,7 @@ import org.apache.struts.action.ActionMapping;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wf.web.ProcessTypesIterator;
+import ru.runa.wf.web.servlet.BulkUploadServlet;
 import ru.runa.wf.web.servlet.UploadedFile;
 import ru.runa.wf.web.tag.BulkDeployDefinitionFormTag;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
@@ -33,7 +34,6 @@ import com.google.common.collect.Lists;
  */
 public class BulkDeployProcessDefinitionAction extends ActionBase {
     public static final String ACTION_PATH = "/bulkDeployProcessDefinition";
-    public static final String UPLOADED_PAR_FILES = "UploadedParFiles";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
@@ -47,7 +47,7 @@ public class BulkDeployProcessDefinitionAction extends ActionBase {
         request.setAttribute("TypeAttributes", typeParamsHolder);
 
         List<String> fullType;
-        Map<String, UploadedFile> uploadedParFiles = (Map<String, UploadedFile>) request.getSession().getAttribute(UPLOADED_PAR_FILES);
+        Map<String, UploadedFile> uploadedParFiles = (Map<String, UploadedFile>) request.getSession().getAttribute(BulkUploadServlet.UPLOADED_FILES);
         try {
             ProcessTypesIterator iter = new ProcessTypesIterator(getLoggedUser(request));
             if (paramTypeSelected == null || paramTypeSelected.equals("_default_type_")) {

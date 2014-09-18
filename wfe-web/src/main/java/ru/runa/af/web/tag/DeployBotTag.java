@@ -23,10 +23,13 @@ import org.apache.ecs.html.TD;
 
 import ru.runa.af.web.action.DeployBotAction;
 import ru.runa.af.web.form.DeployBotForm;
+import ru.runa.common.WebResources;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
+import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.common.web.tag.TitledFormTag;
+import ru.runa.wf.web.ftl.method.ViewUtil;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotStationPermission;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -78,8 +81,14 @@ public class DeployBotTag extends TitledFormTag {
         Input boolInput = new Input(Input.CHECKBOX, DeployBotForm.REPLACE_OPTION_NAME);
         tdFormElement.addElement(boolInput);
         tdFormElement.addElement(Messages.getMessage(Messages.LABEL_REPLACE_BOT_TASKS, pageContext) + "<br>");
-        Input fileUploadInput = new Input(Input.FILE, FileForm.FILE_INPUT_NAME);
-        fileUploadInput.setClass(Resources.CLASS_REQUIRED);
-        tdFormElement.addElement(fileUploadInput);
+
+        if (WebResources.isBulkDeploymentElements()) {
+            String fileUploadInput = ViewUtil.getFileInput(new StrutsWebHelper(pageContext), FileForm.FILE_INPUT_NAME);
+            tdFormElement.addElement(fileUploadInput);
+        } else {
+            Input fileUploadInput = new Input(Input.FILE, FileForm.FILE_INPUT_NAME);
+            fileUploadInput.setClass(Resources.CLASS_REQUIRED);
+            tdFormElement.addElement(fileUploadInput);
+        }
     }
 }

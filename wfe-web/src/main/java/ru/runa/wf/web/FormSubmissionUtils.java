@@ -43,7 +43,7 @@ public class FormSubmissionUtils {
     private static final Log log = LogFactory.getLog(FormSubmissionUtils.class);
     public static final String USER_DEFINED_VARIABLES = "UserDefinedVariables";
     public static final String USER_ERRORS = "UserErrors";
-    public static final String UPLOADED_FILES = "UploadedFiles";
+    public static final String TASK_UPLOADED_FILES = "TaskUploadedFiles";
     public static final Object IGNORED_VALUE = new Object();
     public static final String SIZE_SUFFIX = ".size";
     public static final String INDEXES_SUFFIX = ".indexes";
@@ -391,10 +391,10 @@ public class FormSubmissionUtils {
     }
 
     public static Map<String, UploadedFile> getUploadedFilesMap(HttpServletRequest request) {
-        Map<String, UploadedFile> map = (Map<String, UploadedFile>) request.getSession().getAttribute(UPLOADED_FILES);
+        Map<String, UploadedFile> map = (Map<String, UploadedFile>) request.getSession().getAttribute(TASK_UPLOADED_FILES);
         if (map == null) {
             map = Maps.newHashMap();
-            request.getSession().setAttribute(UPLOADED_FILES, map);
+            request.getSession().setAttribute(TASK_UPLOADED_FILES, map);
         }
         return map;
     }

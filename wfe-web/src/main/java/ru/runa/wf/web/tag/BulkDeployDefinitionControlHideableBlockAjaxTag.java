@@ -25,8 +25,7 @@ import ru.runa.wfe.commons.web.PortletUrlType;
 /**
  * Created 23.05.2014
  * 
- * @jsp.tag name = "bulkDeployDefinitionControlHideableBlock" body-content =
- *          "JSP"
+ * @jsp.tag name = "bulkDeployDefinitionControlHideableBlock" body-content = "JSP"
  */
 public class BulkDeployDefinitionControlHideableBlockAjaxTag extends AbstractReturningTag {
     private static final long serialVersionUID = -4644961109658379700L;
@@ -56,7 +55,7 @@ public class BulkDeployDefinitionControlHideableBlockAjaxTag extends AbstractRet
 
     @Override
     public int doStartTag() throws JspException {
-        if (WebResources.isBulkDeploymentDefinitions()) {
+        if (WebResources.isBulkDeploymentElements()) {
             JspWriter jspOut = pageContext.getOut();
             try {
                 jspOut.println(new Table().createStartTag());
@@ -101,7 +100,7 @@ public class BulkDeployDefinitionControlHideableBlockAjaxTag extends AbstractRet
 
     @Override
     public int doEndTag() throws JspException {
-        if (WebResources.isBulkDeploymentDefinitions()) {
+        if (WebResources.isBulkDeploymentElements()) {
             JspWriter jspOut = pageContext.getOut();
             try {
                 jspOut.println("</td></tr>");

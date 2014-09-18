@@ -25,6 +25,7 @@ import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.common.web.form.FileForm;
 import ru.runa.wf.web.ProcessTypesIterator;
 import ru.runa.wf.web.action.RedeployProcessDefinitionAction;
+import ru.runa.wf.web.ftl.method.ViewUtil;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.security.Permission;
@@ -174,7 +175,7 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         labelTd.setClass(Resources.CLASS_LIST_TABLE_TD);
         tr.addElement(labelTd);
 
-        String fileInput = getFileInput(strutsWebHelper, name);
+        String fileInput = ViewUtil.getFileInput(strutsWebHelper, name);
 
         Input input = new Input(type, name, String.valueOf(value));
         input.setDisabled(!enabled);
@@ -186,32 +187,4 @@ public class BulkDeployDefinitionFormTag extends ProcessDefinitionBaseFormTag {
         tr.addElement(new TD(fileInput).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
-
-    private static String getFileInput(WebHelper webHelper, String variableName) {
-        String attachImageUrl = "";
-        String loadingImageUrl = "";
-        String uploadFileTitle = webHelper.getMessage("message.upload.file");
-        String loadingMessage = webHelper.getMessage("message.loading");
-        if (webHelper != null) {
-            attachImageUrl = webHelper.getUrl(Resources.IMAGE_ATTACH);
-            loadingImageUrl = webHelper.getUrl(Resources.IMAGE_LOADING);
-            loadingMessage = webHelper.getMessage("message.loading");
-        }
-        String hideStyle = "style=\"display: none;\"";
-        String html = "<div class=\"inputFileContainer\">";
-        html += "<div class=\"dropzone\" >";
-        html += "<label class=\"inputFileAttach\">";
-        html += "<div class=\"inputFileAttachButtonDiv\"><img src=\"" + attachImageUrl + "\" />" + uploadFileTitle + "</div>";
-        html += "<input class=\"inputFile inputFileAjax \" name=\"" + variableName + "\" type=\"file\" multiple>";
-        html += "</label></div>";
-        html += "<div class=\"progressbar\" " + hideStyle + ">";
-        html += "<div class=\"line\" style=\"width: 0%;\"></div>";
-        html += "<div class=\"status\">";
-        html += "<img src=\"" + loadingImageUrl + "\" inputId=\"" + variableName + "\">";
-        html += "<span class=\"statusText\">";
-        html += loadingMessage;
-        html += "</span></div></div></div>";
-        return html;
-    }
-
 }
