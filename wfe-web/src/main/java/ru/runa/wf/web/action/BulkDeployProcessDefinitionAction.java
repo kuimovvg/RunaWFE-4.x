@@ -28,9 +28,12 @@ import com.google.common.collect.Lists;
 /**
  * Created on 26.05.2014
  * 
- * @struts:action path="/bulkDeployProcessDefinition" name="fileForm" validate="false"
- * @struts.action-forward name="success" path="/manage_process_definitions.do" redirect = "true"
- * @struts.action-forward name="failure" path="/manage_process_definitions.do" redirect = "false"
+ * @struts:action path="/bulkDeployProcessDefinition" name="fileForm"
+ *                validate="false"
+ * @struts.action-forward name="success" path="/manage_process_definitions.do"
+ *                        redirect = "true"
+ * @struts.action-forward name="failure" path="/manage_process_definitions.do"
+ *                        redirect = "false"
  */
 public class BulkDeployProcessDefinitionAction extends ActionBase {
     public static final String ACTION_PATH = "/bulkDeployProcessDefinition";
@@ -57,7 +60,7 @@ public class BulkDeployProcessDefinitionAction extends ActionBase {
                     } else {
                         for (Map.Entry<String, UploadedFile> entry : uploadedParFiles.entrySet()) {
                             try {
-                                WfDefinition wfDefinition = Delegates.getDefinitionService().getLatestProcessDefinition(getLoggedUser(request),
+                                Delegates.getDefinitionService().getLatestProcessDefinition(getLoggedUser(request),
                                         entry.getValue().getName().split("[.]")[0]);
                             } catch (Exception e) {
                                 throw new ProcessDefinitionTypeNotPresentException();
