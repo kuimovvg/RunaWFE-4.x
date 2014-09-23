@@ -43,7 +43,6 @@ import ru.runa.wfe.graph.image.GraphImageBuilder;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.ProcessGraphInfoVisitor;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -207,11 +206,7 @@ public class ExecutionLogic extends WFCommonLogic {
                 highlightedToken = nodeProcessDAO.getNodeProcessByChild(childProcessId).getParentToken();
             }
             if (subprocessId != null) {
-                SubprocessDefinition subprocessDefinition = processDefinition.getEmbeddedSubprocessById(subprocessId);
-                if (subprocessDefinition == null) {
-                    throw new NullPointerException("No subprocess found by '" + subprocessId + "' in " + processDefinition);
-                }
-                processDefinition = subprocessDefinition;
+                processDefinition = processDefinition.getEmbeddedSubprocessByIdNotNull(subprocessId);
             }
             ProcessLogs processLogs = new ProcessLogs(processId);
             processLogs.addLogs(processLogDAO.get(processId, processDefinition), false);
@@ -227,11 +222,7 @@ public class ExecutionLogic extends WFCommonLogic {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition definition = getDefinition(process.getDeployment().getId());
         if (subprocessId != null) {
-            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessById(subprocessId);
-            if (subprocessDefinition == null) {
-                throw new NullPointerException("No subprocess found by '" + subprocessId + "' in " + definition);
-            }
-            definition = subprocessDefinition;
+            definition = definition.getEmbeddedSubprocessByIdNotNull(subprocessId);
         }
         List<NodeProcess> nodeProcesses = nodeProcessDAO.getNodeProcesses(process, null, null, null);
         ProcessLogs processLogs = null;

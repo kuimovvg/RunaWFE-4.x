@@ -403,8 +403,13 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return embeddedSubprocesses;
     }
 
-    public SubprocessDefinition getEmbeddedSubprocessById(String id) {
-        return getEmbeddedSubprocesses().get(id);
+    public SubprocessDefinition getEmbeddedSubprocessByIdNotNull(String id) {
+        SubprocessDefinition subprocessDefinition = getEmbeddedSubprocesses().get(id);
+        if (subprocessDefinition == null) {
+            throw new InternalApplicationException("Embedded subprocess definition not found by id '" + id + "' in " + this + ", all = "
+                    + getEmbeddedSubprocesses().keySet());
+        }
+        return subprocessDefinition;
     }
 
     public SubprocessDefinition getEmbeddedSubprocessByNameNotNull(String name) {
