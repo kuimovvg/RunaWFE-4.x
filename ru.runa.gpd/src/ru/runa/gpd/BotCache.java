@@ -61,7 +61,8 @@ public class BotCache {
                                 try {
                                     cacheBotTask(botTaskFile, botTasks);
                                 } catch (Exception e) {
-                                    if (e.getMessage() != null && e.getMessage().startsWith("Resource is out of sync with the file system")) {
+                                    if (e.getCause() != null && e.getCause().getMessage() != null
+                                            && e.getCause().getMessage().startsWith("Resource is out of sync with the file system")) {
                                         // Workaround for 'resource out of sync'
                                         botTaskFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
                                         cacheBotTask(botTaskFile, botTasks);
