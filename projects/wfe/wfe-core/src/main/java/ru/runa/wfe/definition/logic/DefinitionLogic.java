@@ -45,7 +45,6 @@ import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.ProcessDefinitionInfoVisitor;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.lang.Transition;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -145,11 +144,7 @@ public class DefinitionLogic extends WFCommonLogic {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);
         if (subprocessId != null) {
-            SubprocessDefinition subprocessDefinition = definition.getEmbeddedSubprocessById(subprocessId);
-            if (subprocessDefinition == null) {
-                throw new NullPointerException("No subprocess found by '" + subprocessId + "' in " + definition);
-            }
-            definition = subprocessDefinition;
+            definition = definition.getEmbeddedSubprocessByIdNotNull(subprocessId);
         }
         ProcessDefinitionInfoVisitor visitor = new ProcessDefinitionInfoVisitor(user, definition, processDefinitionLoader);
         return getDefinitionGraphElements(user, definition, visitor);
@@ -260,7 +255,7 @@ public class DefinitionLogic extends WFCommonLogic {
     public byte[] getGraph(User user, Long definitionId, String subprocessId) {
         ProcessDefinition definition = getDefinition(definitionId);
         if (subprocessId != null) {
-            definition = definition.getEmbeddedSubprocessById(subprocessId);
+            definition = definition.getEmbeddedSubprocessByIdNotNull(subprocessId);
         }
         return definition.getGraphImageBytesNotNull();
     }
