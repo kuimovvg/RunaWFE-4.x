@@ -173,7 +173,7 @@ public class GraphHistoryBuilder {
 
         this.processLogs.addAll(processLogForProcessing);
         diagramModel = (subProcessId != null && !"null".equals(subProcessId)) ? DiagramModel.load(processDefinition
-                .getEmbeddedSubprocessById(subProcessId)) : DiagramModel.load(processDefinition);
+                .getEmbeddedSubprocessByIdNotNull(subProcessId)) : DiagramModel.load(processDefinition);
         factory = new UMLFigureFactory();
     }
 
