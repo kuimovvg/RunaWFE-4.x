@@ -68,6 +68,10 @@ public abstract class WFEServerConnector implements IConnector, PrefConstants {
         return password;
     }
 
+    protected boolean isLoadProcessDefinitionsHistory() {
+        return Activator.getPrefBoolean(P_WFE_LOAD_PROCESS_DEFINITIONS_HISTORY);
+    }
+
     protected byte[] getKerberosToken() {
         try {
             GSSManager manager = GSSManager.getInstance();
