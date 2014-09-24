@@ -454,6 +454,13 @@ public class FormulaActionHandler extends ActionHandlerBase {
             }
             return actions.timeFunction(new Date());
         }
+        if (s.equals("random")) {
+        	if (!nextToken().equals(")")) {
+                incorrectParameters(s);
+                return null;
+            }
+            return Math.random();
+        }
         if (s.equals("date")) {
             Object param1 = parsePriority0();
             if (param1 == null || !nextToken().equals(")")) {
