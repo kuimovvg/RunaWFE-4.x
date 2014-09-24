@@ -1,6 +1,7 @@
 package ru.runa.gpd.settings;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.ComboFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -42,8 +43,8 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
 
     @Override
     public void createFieldEditors() {
-        addField(new ComboFieldEditor(P_WFE_CONNECTION_TYPE, Localization.getString("pref.connection.wfe.type"), WFEServerConnectorRegistry.getEntriesArray(),
-                getFieldEditorParent()));
+        addField(new ComboFieldEditor(P_WFE_CONNECTION_TYPE, Localization.getString("pref.connection.wfe.type"),
+                WFEServerConnectorRegistry.getEntriesArray(), getFieldEditorParent()));
         addField(new StringFieldEditor(P_WFE_CONNECTION_HOST, Localization.getString("pref.connection.wfe.host"), getFieldEditorParent()));
         portEditor = new StringFieldEditor(P_WFE_CONNECTION_PORT, Localization.getString("pref.connection.wfe.port"), getFieldEditorParent());
         addField(portEditor);
@@ -59,6 +60,8 @@ public class WFEConnectionPreferencePage extends FieldEditorPreferencePage imple
         passwordEditor.setEnabled(enabled, getFieldEditorParent());
         addField(loginEditor);
         addField(passwordEditor);
+        addField(new BooleanFieldEditor(P_WFE_LOAD_PROCESS_DEFINITIONS_HISTORY,
+                Localization.getString("pref.connection.wfe.load.process.definitions.history"), getFieldEditorParent()));
     }
 
     @Override

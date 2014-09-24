@@ -141,12 +141,13 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
         monitor.worked(30);
         double perDefinition = (double) 70 / latestDefinitions.size();
         for (WfDefinition latestDefinition : latestDefinitions) {
-            List<WfDefinition> historyDefinitions;
-            try {
-                historyDefinitions = WfDefinitionAdapter.toDTOs(api.getProcessDefinitionHistory(getUser(), latestDefinition.getName()));
-            } catch (Exception e) {
-                PluginLogger.logErrorWithoutDialog("definition '" + latestDefinition.getName() + "' sync", e);
-                historyDefinitions = Lists.newArrayList();
+            List<WfDefinition> historyDefinitions = Lists.newArrayList();
+            if (isLoadProcessDefinitionsHistory()) {
+                try {
+                    historyDefinitions = WfDefinitionAdapter.toDTOs(api.getProcessDefinitionHistory(getUser(), latestDefinition.getName()));
+                } catch (Exception e) {
+                    PluginLogger.logErrorWithoutDialog("definition '" + latestDefinition.getName() + "' sync", e);
+                }
             }
             result.put(latestDefinition, historyDefinitions);
             monitor.internalWorked(perDefinition);
