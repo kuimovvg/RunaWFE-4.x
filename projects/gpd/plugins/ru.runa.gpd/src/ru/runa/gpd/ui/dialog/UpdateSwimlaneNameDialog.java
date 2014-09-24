@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import com.google.common.base.Strings;
+
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
@@ -106,7 +108,7 @@ public class UpdateSwimlaneNameDialog extends Dialog {
     }
 
     private void updateButtons() {
-        boolean allowCreation = !definition.getVariableNames(true).contains(name) && VariableNameChecker.isValid(name);
+        boolean allowCreation = !Strings.isNullOrEmpty(name) && !definition.getVariableNames(true).contains(name) && VariableNameChecker.isValid(name);
         getButton(IDialogConstants.OK_ID).setEnabled(allowCreation);
     }
 
