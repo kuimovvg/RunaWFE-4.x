@@ -12,7 +12,7 @@ import ru.runa.gpd.wfe.WFEServerConnectorRegistry;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer implements PrefConstants {
     private String DEFAULT_CONNECTOR_ID = "jboss7.ws";
-    
+
     @Override
     public void initializeDefaultPreferences() {
         IPreferenceStore store = Activator.getDefault().getPreferenceStore();
@@ -28,6 +28,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer impleme
         store.setDefault(P_WFE_CONNECTION_LOGIN_MODE, LOGIN_MODE_LOGIN_PASSWORD);
         store.setDefault(P_WFE_CONNECTION_LOGIN, "Administrator");
         store.setDefault(P_WFE_CONNECTION_PASSWORD, "wf");
+        store.setDefault(P_WFE_LOAD_PROCESS_DEFINITIONS_HISTORY, false);
         store.setDefault(P_LDAP_CONNECTION_PROVIDER_URL, "ldap://192.168.0.1/dc=domain,dc=com");
         store.setDefault(P_DATE_FORMAT_PATTERN, "dd.MM.yyyy");
     }

@@ -27,6 +27,7 @@ public interface PrefConstants {
     public static final String P_WFE_CONNECTION_VERSION = "wfeServerVersion";
     public static final String P_WFE_CONNECTION_INITIAL_CTX_FACTORY = "wfeInitialCtxFactory";
     public static final String P_WFE_CONNECTION_URL_PKG_PREFIXES = "wfeUrlPkg";
+    public static final String P_WFE_LOAD_PROCESS_DEFINITIONS_HISTORY = "wfeLoadProcessDefinitionsHistory";
     public static final String P_LDAP_CONNECTION_LOGIN = "ldapLogin";
     public static final String P_LDAP_CONNECTION_PASSWORD = "ldapPassword";
     public static final String P_LDAP_CONNECTION_LOGIN_MODE = "ldapLoginMode";
