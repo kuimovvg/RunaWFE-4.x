@@ -37,7 +37,10 @@ public class VariableUserType implements Serializable {
         int firstDotIndex = name.indexOf(VariableUserType.DELIM);
         if (firstDotIndex != -1) {
             String attributeName = name.substring(0, firstDotIndex);
-            VariableDefinition attributeDefinition = getAttributeNotNull(attributeName);
+            VariableDefinition attributeDefinition = getAttribute(attributeName);
+            if (attributeDefinition == null) {
+                return null;
+            }
             if (attributeDefinition.getUserType() == null) {
                 throw new InternalApplicationException("Trying to retrieve complex attribute in non-complex parent attribute: " + name);
             }
