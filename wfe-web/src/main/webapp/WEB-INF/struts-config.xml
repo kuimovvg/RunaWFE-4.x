@@ -660,7 +660,7 @@
 		<action path="/createSubstitutionCriteria" type="org.apache.struts.actions.ForwardAction"
 			parameter="/WEB-INF/af/edit_substitution_criteria.jsp" />
 
-		<action path="/manage_system" type="ru.runa.common.web.action.TabHeaderForwardAction"
+		<action path="/manage_system" type="ru.runa.af.web.action.ManageSystemAction"
 			parameter="/WEB-INF/af/manage_system.jsp" />
 
 		<action path="/grant_login_permission_on_system" type="org.apache.struts.actions.ForwardAction"
