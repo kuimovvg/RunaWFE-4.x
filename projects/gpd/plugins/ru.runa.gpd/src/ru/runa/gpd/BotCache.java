@@ -56,7 +56,7 @@ public class BotCache {
                         botNames.add(botName);
                         List<BotTask> botTasks = Lists.newArrayList();
                         for (IResource taskResource : botFolder.members()) {
-                            if (taskResource instanceof IFile && taskResource.getFileExtension() == null) {
+                            if (taskResource instanceof IFile && (Strings.isNullOrEmpty(taskResource.getFileExtension()) || !taskResource.getFileExtension().equals("conf"))) {
                                 IFile botTaskFile = (IFile) taskResource;
                                 try {
                                     cacheBotTask(botTaskFile, botTasks);
