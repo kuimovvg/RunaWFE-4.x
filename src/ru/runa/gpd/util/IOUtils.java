@@ -40,6 +40,7 @@ import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.par.ParContentProvider;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
@@ -326,7 +327,7 @@ public class IOUtils {
         try {
             IResource[] resources = botFolder.members();
             for (int i = 0; i < resources.length; i++) {
-                if (resources[i] instanceof IFile && resources[i].getFileExtension() == null) {
+                if (resources[i] instanceof IFile && (Strings.isNullOrEmpty(resources[i].getFileExtension()) || !resources[i].getFileExtension().equals("conf"))) {
                     fileList.add((IFile) resources[i]);
                 }
             }
