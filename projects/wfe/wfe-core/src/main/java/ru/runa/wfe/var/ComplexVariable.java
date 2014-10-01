@@ -71,4 +71,20 @@ public class ComplexVariable extends HashMap<String, Object> {
         return result;
     }
 
+    @Override
+    public boolean isEmpty() {
+        for (VariableDefinition attributeDefinition : userType.getAttributes()) {
+            Object object = get(attributeDefinition.getName());
+            if (object instanceof ComplexVariable) {
+                if (!((ComplexVariable) object).isEmpty()) {
+                    return false;
+                }
+            } else {
+                if (object != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
