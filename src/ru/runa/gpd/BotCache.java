@@ -33,6 +33,7 @@ import com.google.common.io.CharStreams;
  * @since 3.6
  */
 public class BotCache {
+	public final static String CONFIGURATION_FILE_EXTENSION = "conf";
     private static final Map<String, Set<String>> BOT_STATION_BOTS = Maps.newHashMap();
     private static final Map<String, List<BotTask>> BOT_TASKS = Maps.newHashMap();
     private static final Map<BotTask, IFile> BOT_TASK_FILES = Maps.newHashMap();
@@ -56,7 +57,7 @@ public class BotCache {
                         botNames.add(botName);
                         List<BotTask> botTasks = Lists.newArrayList();
                         for (IResource taskResource : botFolder.members()) {
-                            if (taskResource instanceof IFile && (Strings.isNullOrEmpty(taskResource.getFileExtension()) || !taskResource.getFileExtension().equals("conf"))) {
+                            if (taskResource instanceof IFile && (Strings.isNullOrEmpty(taskResource.getFileExtension()) || !taskResource.getFileExtension().equals(CONFIGURATION_FILE_EXTENSION))) {
                                 IFile botTaskFile = (IFile) taskResource;
                                 try {
                                     cacheBotTask(botTaskFile, botTasks);

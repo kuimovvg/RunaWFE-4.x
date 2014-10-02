@@ -6,6 +6,7 @@ import java.util.Map;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
@@ -52,7 +53,7 @@ public class BotScriptUtils {
                         IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
                         taskElement.addAttribute(EMBEDDED_FILE_ATTRIBUTE_NAME, botFileProvider.getEmbeddedFileName(task));
                     }
-                    taskElement.addAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + ".conf");
+                    taskElement.addAttribute(CONFIGURATION_STRING_ATTRIBUTE_NAME, task.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION);
                 }
             }
         }
