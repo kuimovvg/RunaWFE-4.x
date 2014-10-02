@@ -351,7 +351,7 @@ public class WorkspaceOperations {
             info.append("\n");
             String configuration = BotTaskUtils.createBotTaskConfiguration(botTask);
             if (!Strings.isNullOrEmpty(configuration)) {
-                String configurationFileName = botTask.getName() + ".conf";
+                String configurationFileName = botTask.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION;
                 IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
                 ByteArrayInputStream stream = new ByteArrayInputStream(configuration.getBytes(Charsets.UTF_8));
                 IOUtils.createOrUpdateFile(configurationFile, stream);
@@ -369,7 +369,7 @@ public class WorkspaceOperations {
     public static void deleteBotTask(IFile botTaskFile, BotTask botTask) {
         try {
             botTaskFile.delete(true, null);
-            String configurationFileName = botTask.getName() + ".conf";
+            String configurationFileName = botTask.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION;
             IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
             if (configurationFile.exists()) {
                 configurationFile.delete(true, null);
