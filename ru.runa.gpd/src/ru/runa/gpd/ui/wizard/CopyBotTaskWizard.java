@@ -54,7 +54,7 @@ public class CopyBotTaskWizard extends Wizard implements INewWizard {
                         monitor.worked(1);
                         // rename
                         IFile confFile = ResourcesPlugin.getWorkspace().getRoot()
-                                .getFile(sourceBotTask.getParent().getFullPath().append(new Path(sourceBotTask.getName() + ".conf")));
+                                .getFile(sourceBotTask.getParent().getFullPath().append(new Path(sourceBotTask.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION)));
                         if (confFile.exists()) {
                             BotTask botTaskCopy = BotCache.getBotTaskNotNull(sourceBotTask);
                             botTaskCopy.setName(page.getBotTaskName());

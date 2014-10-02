@@ -35,7 +35,7 @@ public class BotTaskExportCommand extends BotExportCommand {
     @Override
     protected void writeConfigurationFiles(IFolder botFolder, ZipOutputStream zipStream) throws CoreException, IOException {
         for (IResource resource : botFolder.members()) {
-            if (resource instanceof IFile && resource.getName().equals(exportResource.getName() + ".conf")) {
+            if (resource instanceof IFile && resource.getName().equals(exportResource.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION)) {
                 write(zipStream, new ZipEntry(resource.getName()), (IFile) resource);
             }
         }
