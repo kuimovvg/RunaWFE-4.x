@@ -72,7 +72,7 @@ public class BotExportCommand extends BotSyncCommand {
 
     protected void writeConfigurationFiles(IFolder botFolder, ZipOutputStream zipStream) throws CoreException, IOException {
         for (IResource resource : botFolder.members()) {
-            if (resource instanceof IFile && "conf".equals(resource.getFileExtension())) {
+            if (resource instanceof IFile && BotCache.CONFIGURATION_FILE_EXTENSION.equals(resource.getFileExtension())) {
                 write(zipStream, new ZipEntry(resource.getName()), (IFile) resource);
             }
         }

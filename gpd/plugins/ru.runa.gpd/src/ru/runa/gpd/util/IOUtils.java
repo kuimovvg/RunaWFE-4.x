@@ -31,6 +31,7 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import ru.runa.gpd.BotCache;
 import ru.runa.gpd.BotStationNature;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessProjectNature;
@@ -327,7 +328,7 @@ public class IOUtils {
         try {
             IResource[] resources = botFolder.members();
             for (int i = 0; i < resources.length; i++) {
-                if (resources[i] instanceof IFile && (Strings.isNullOrEmpty(resources[i].getFileExtension()) || !resources[i].getFileExtension().equals("conf"))) {
+                if (resources[i] instanceof IFile && (Strings.isNullOrEmpty(resources[i].getFileExtension()) || !resources[i].getFileExtension().equals(BotCache.CONFIGURATION_FILE_EXTENSION))) {
                     fileList.add((IFile) resources[i]);
                 }
             }
