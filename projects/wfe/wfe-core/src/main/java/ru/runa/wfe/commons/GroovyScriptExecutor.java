@@ -31,7 +31,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
             GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
-            GroovyShell shell = new GroovyShell(binding);
+            GroovyShell shell = new GroovyShell(ClassLoaderUtil.getExtensionClassLoader(), binding);
             shell.evaluate(script);
             return binding.getAdjustedVariables();
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     public Object evaluateScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
         try {
             GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
-            GroovyShell shell = new GroovyShell(binding);
+            GroovyShell shell = new GroovyShell(ClassLoaderUtil.getExtensionClassLoader(), binding);
             return shell.evaluate(script);
         } catch (Exception e) {
             log.error("Groovy evaluation failed, script=" + script, e);
