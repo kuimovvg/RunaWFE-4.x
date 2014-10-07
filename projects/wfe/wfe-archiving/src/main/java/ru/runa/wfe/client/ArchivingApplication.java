@@ -1,6 +1,9 @@
 package ru.runa.wfe.client;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +47,15 @@ public class ArchivingApplication {
     static {
         properties = new Properties();
         try {
-            properties.load(ArchivingApplication.class.getClassLoader().getResourceAsStream("archiving-client.properties"));
+            URL url = ArchivingApplication.class.getProtectionDomain().getCodeSource().getLocation();
+            File parent = (new File(url.getPath())).getParentFile();
+            String path = parent.getPath() + "/archiving-client.properties";
+            File file = new File(path);
+            if (file.exists()) {
+                properties.load(new FileInputStream(path));
+            } else {
+                properties.load(ArchivingApplication.class.getClassLoader().getResourceAsStream("archiving-client.properties"));
+            }
             USER_NAME = properties.getProperty("client.username");
             PASSWORD = properties.getProperty("client.password");
         } catch (IOException e) {
