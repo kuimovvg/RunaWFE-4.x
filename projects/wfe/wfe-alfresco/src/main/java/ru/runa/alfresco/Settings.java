@@ -1,5 +1,6 @@
 package ru.runa.alfresco;
 
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.commons.logging.Log;
@@ -10,8 +11,7 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.xml.XmlUtils;
 
 /**
- * Base class for configurable items. Configuration of the system is extendible
- * through one XML file.
+ * Base class for configurable items. Configuration of the system is extendible through one XML file. S
  * 
  * @author dofs
  */
@@ -20,7 +20,12 @@ public class Settings {
     private static final String CONFIG_RESOURCE = "alfwf.settings.xml";
 
     protected static Document getConfigDocument() throws Exception {
-        InputStream is = ClassLoaderUtil.getAsStreamNotNull(CONFIG_RESOURCE, Settings.class);
+        InputStream is = null;
+        if (!EXTERNAL_SETTINGS) {
+            is = ClassLoaderUtil.getAsStreamNotNull(CONFIG_RESOURCE, Settings.class);
+        } else {
+            is = new FileInputStream(EXTERNAL_RESOURCE);
+        }
         return XmlUtils.parseWithoutValidation(is);
     }
 
@@ -41,6 +46,18 @@ public class Settings {
             log.warn("Unparsable int: " + value, e);
             return defaultValue;
         }
+    }
+
+    private static String EXTERNAL_RESOURCE = "";
+    private static boolean EXTERNAL_SETTINGS = false;
+
+    public static void setExternalSettingsFile(String file) {
+        EXTERNAL_RESOURCE = file;
+        EXTERNAL_SETTINGS = true;
+    }
+
+    public static void setInternalSettings() {
+        EXTERNAL_SETTINGS = false;
     }
 
 }
