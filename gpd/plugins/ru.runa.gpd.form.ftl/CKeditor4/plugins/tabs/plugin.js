@@ -56,6 +56,11 @@ CKEDITOR.plugins.add('tabs', {
 		});
 		editor.on('dataReady', function(event) {
 			$('.tabs').tabs();
+			$("li a[href^=#tabs]").each(function() {
+				$(this).parent().focus(function() {
+					$(this).find("a").click();
+				});
+			});
 		});
 		editor.on('getData', function(e) {
 			if ($('.tabs').length > 0) {
@@ -77,10 +82,13 @@ function addTab(editor, tabFolderId, initialize) {
 	var tabId = (new Date()).getTime();
 	var label = editor.lang.tabs.NewTabTitle;
 	var id = "tabs-" + tabId;
-	var li = $(tabTemplate.replace( /#\{href\}/g, "#" + id ).replace( /#\{label\}/g, label ));
+	var li = $(tabTemplate.replace( /#\{href\}/g, "#" + id ).replace( /#\{label\}/g, label ));	
 	var tabFolder = $('#' + tabFolderId);
 	tabFolder.find('ul').append(li);
 	tabFolder.append('<div id="' + id + '"><p>' + editor.lang.tabs.NewTabContent + '</p></div>');
+	$(li).on('focus', function() {
+		$(this).find("a").click();
+	});
 	if (initialize) {
 		tabFolder.tabs();
 	} else {
