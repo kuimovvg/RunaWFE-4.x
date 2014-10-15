@@ -1,8 +1,11 @@
 package ru.runa.wfe.var.format;
 
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
@@ -12,6 +15,7 @@ import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 
 public class UserTypeFormat extends VariableFormat implements VariableDisplaySupport {
     private static final Log log = LogFactory.getLog(UserTypeFormat.class);
@@ -29,11 +33,11 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
 
     @Override
     public String getName() {
-        return buildFormatDescriptor(userType).toString();
+        return JSONValue.toJSONString(buildFormatDescriptor(userType));
     }
 
-    private static JSONObject buildFormatDescriptor(VariableUserType userType) {
-        JSONObject result = new JSONObject();
+    private static Map<String, Object> buildFormatDescriptor(VariableUserType userType) {
+        Map<String, Object> map = Maps.newLinkedHashMap();
         for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             Object value;
             if (attributeDefinition.isComplex()) {
@@ -41,9 +45,9 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
             } else {
                 value = FormatCommons.create(attributeDefinition).getName();
             }
-            result.put(attributeDefinition.getName(), value);
+            map.put(attributeDefinition.getName(), value);
         }
-        return result;
+        return map;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
 
     @Override
     protected String convertToStringValue(Object obj) {
-        return convertToJSONValue(obj).toString();
+        return JSONValue.toJSONString(convertToJSONValue(obj));
     }
 
     @Override
@@ -69,7 +73,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
                     result.put(attributeDefinition.getName(), attributeValue);
                 }
             } catch (Exception e) {
-                log.warn(attributeDefinition.toString(), e);
+                log.error(attributeDefinition.toString(), e);
             }
         }
         return result;
@@ -78,17 +82,17 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
     @Override
     protected Object convertToJSONValue(Object value) {
         ComplexVariable complexVariable = (ComplexVariable) value;
-        JSONObject object = new JSONObject();
+        Map<Object, Object> map = Maps.newLinkedHashMap();
         for (VariableDefinition attributeDefinition : userType.getAttributes()) {
             VariableFormat attributeFormat = FormatCommons.create(attributeDefinition);
             Object attributeValue = complexVariable.get(attributeDefinition.getName());
             if (attributeValue != null) {
                 attributeValue = TypeConversionUtil.convertTo(attributeFormat.getJavaClass(), attributeValue);
                 attributeValue = attributeFormat.convertToJSONValue(attributeValue);
-                object.put(attributeDefinition.getName(), attributeValue);
+                map.put(attributeDefinition.getName(), attributeValue);
             }
         }
-        return object;
+        return map;
     }
 
     @Override

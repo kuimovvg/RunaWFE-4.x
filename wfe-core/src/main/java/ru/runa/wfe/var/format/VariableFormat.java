@@ -1,5 +1,6 @@
 package ru.runa.wfe.var.format;
 
+import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -97,7 +98,7 @@ public abstract class VariableFormat {
         if (value == null) {
             return null;
         }
-        return convertToJSONValue(value).toString();
+        return JSONValue.toJSONString(convertToJSONValue(value));
     }
 
     protected Object convertToJSONValue(Object value) {
