@@ -154,7 +154,7 @@ public class FreemarkerUtil {
     private static void writeHtml(Document document, OutputStream os) throws Exception {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "true");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         transformer.transform(new DOMSource(document), new StreamResult(os));
     }
@@ -236,7 +236,7 @@ public class FreemarkerUtil {
             Mode.setDesignerMode();
             this.variables = variables;
         }
-        
+
         private TemplateModel wrapParameter(String prefix, Variable variable) {
             if (prefix != null) {
                 prefix += "." + variable.getName();
@@ -344,7 +344,7 @@ public class FreemarkerUtil {
             }
             return wrap(VAR_VALUE_PLC);
         }
-        
+
         @Override
         public TemplateModel get(String key) throws TemplateModelException {
             // add output variables / read access
