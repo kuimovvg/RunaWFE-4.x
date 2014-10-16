@@ -259,9 +259,9 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
             updateGridLayerVisibility(definition.isShowGrid());
         }
     }
-    
+
     protected abstract void updateGridLayerVisibility(boolean enabled);
-    
+
     private String getGraphImagePath() {
         IFile file = ((FileEditorInput) getEditorInput()).getFile();
         String fileName = ParContentProvider.PROCESS_IMAGE_FILE_NAME;
@@ -274,6 +274,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+        graphPage.doSave(monitor);
         GEFImageHelper.save(getGraphicalViewer(), definition, getGraphImagePath());
         try {
             ProcessDefinitionValidator.validateDefinition(definitionFile, definition);
@@ -303,7 +304,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
             PluginLogger.logError("Cleaning unused form files", e);
         }
     }
-    
+
     private void fetchUsedFormFiles(Set<String> usedFormFiles, ProcessDefinition processDefinition) {
         List<FormNode> formNodes = processDefinition.getChildren(FormNode.class);
         for (FormNode formNode : formNodes) {
@@ -346,8 +347,8 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     protected void pageChange(int newPageIndex) {
         super.pageChange(newPageIndex);
     }
-    
-    public DiagramEditorPage getDiagramEditorPage(){
-    	return (DiagramEditorPage) graphPage;
+
+    public DiagramEditorPage getDiagramEditorPage() {
+        return (DiagramEditorPage) graphPage;
     }
 }
