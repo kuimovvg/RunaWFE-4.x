@@ -3,10 +3,6 @@ package ru.runa.gpd.editor.gef;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.draw2d.Viewport;
-import org.eclipse.draw2d.geometry.Dimension;
-import org.eclipse.draw2d.geometry.Point;
-import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.ContextMenuProvider;
 import org.eclipse.gef.DefaultEditDomain;
 import org.eclipse.gef.DragTracker;
@@ -16,7 +12,6 @@ import org.eclipse.gef.EditPartViewer;
 import org.eclipse.gef.GraphicalEditPart;
 import org.eclipse.gef.KeyHandler;
 import org.eclipse.gef.Request;
-import org.eclipse.gef.editparts.FreeformGraphicalRootEditPart;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.gef.tools.MarqueeDragTracker;
 import org.eclipse.gef.tools.MarqueeSelectionTool;
@@ -29,7 +24,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IWorkbenchPart;
@@ -45,7 +39,6 @@ import ru.runa.gpd.lang.model.GraphElement;
 @SuppressWarnings({ "unchecked", "restriction" })
 public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalette {
     private final ProcessEditorBase editor;
-    private MoveViewportThread moveViewportThread;
     private final DesignerPaletteRoot paletteRoot;
 
     public DesignerGraphicalEditorPart(ProcessEditorBase editor) {
@@ -103,12 +96,13 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             }
         });
         KeyHandler keyHandler = new GraphicalViewerKeyHandler(getGraphicalViewer());
-        keyHandler.setParent(((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).createKeyHandler(getActionRegistry()));
+        keyHandler
+                .setParent(((ProcessEditorContributor) getEditor().getEditorSite().getActionBarContributor()).createKeyHandler(getActionRegistry()));
         getGraphicalViewer().setKeyHandler(keyHandler);
         getGraphicalViewer().setContextMenu(createContextMenu());
         getSite().setSelectionProvider(getGraphicalViewer());
     }
-    
+
     private MenuManager createContextMenu() {
         MenuManager menuManager = new EditorContextMenuProvider(getGraphicalViewer());
         getSite().registerContextMenu("ru.runa.gpd.graph.contextmenu", menuManager, getSite().getSelectionProvider());
@@ -134,84 +128,8 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             editor.getOutlineViewer().select(element);
             return;
         }
-        Rectangle targetElementConstraint = element.getConstraint();
-        GraphElement parentElement = element.getParent();
-        while (targetElementConstraint == null && parentElement != null) {
-            targetElementConstraint = parentElement.getConstraint();
-            parentElement = parentElement.getParent();
-        }
-        if (targetElementConstraint != null) {
-            Viewport viewport = (Viewport) ((FreeformGraphicalRootEditPart) getGraphicalViewer().getRootEditPart()).getFigure();
-            Dimension dim = viewport.getSize();
-            Point startLocation = viewport.getViewLocation().getCopy();
-            Point preferredEndLocation = new Point(targetElementConstraint.x - dim.width / 2 + targetElementConstraint.width / 2, targetElementConstraint.y - dim.height / 2
-                    + targetElementConstraint.height / 2);
-            moveViewport(viewport, startLocation, preferredEndLocation);
-        }
+        getGraphicalViewer().reveal(target);
         getGraphicalViewer().select(target);
-    }
-
-    private class MoveViewportThread extends Thread {
-        private final Display display;
-        private final Viewport viewport;
-        private final Point start, end;
-        private boolean running = true;
-
-        public MoveViewportThread(Display display, Viewport viewport, Point start, Point end) {
-            this.display = display;
-            this.viewport = viewport;
-            this.start = start;
-            this.end = end;
-        }
-
-        @Override
-        public void run() {
-            double sumDelta = 0;
-            for (int i = 0; i < 20; i++) {
-                if (!running) {
-                    break;
-                }
-                double delta = (double) (83 - (i - 10) * (i - 10)) / 1000;
-                sumDelta += delta;
-                final Point np = viewport.getLocation().getCopy();
-                np.x = (int) (start.x + sumDelta * (end.x - start.x));
-                np.y = (int) (start.y + sumDelta * (end.y - start.y));
-                final int debug = i;
-                display.asyncExec(new Runnable() {
-                    @Override
-                    public void run() {
-                        moveViewportTo(viewport, np, debug);
-                    }
-                });
-                try {
-                    Thread.sleep(25);
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-
-        public void cancel() {
-            running = false;
-        }
-    }
-
-    private void moveViewportTo(Viewport viewport, Point p, int debug) {
-        viewport.setViewLocation(p);
-    }
-
-    private void moveViewport(final Viewport viewport, Point start, Point end) {
-        Dimension viewportSize = viewport.getSize();
-        int len = (int) Math.sqrt((start.x - end.x) * (start.x - end.x) + (start.y - end.y) * (start.y - end.y));
-        if ((viewportSize.height + viewportSize.width) / 4 > len) {
-            // simple moving
-            viewport.setViewLocation(end);
-        } else {
-            if (moveViewportThread != null && moveViewportThread.isAlive()) {
-                moveViewportThread.cancel();
-            }
-            moveViewportThread = new MoveViewportThread(Display.getCurrent(), viewport, start, end);
-            moveViewportThread.start();
-        }
     }
 
     @Override
