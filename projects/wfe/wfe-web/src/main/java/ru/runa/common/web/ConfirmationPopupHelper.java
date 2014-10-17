@@ -30,6 +30,7 @@ public class ConfirmationPopupHelper {
     public static final String ACCEPT_TASK_PARAMETER = "accept.task";
     public static final String EXECUTE_TASK_PARAMETER = "execute.task";
     public static final String CANCEL_PROCESS_PARAMETER = "cancel.process";
+    public static final String REMOVE_PROCESS_PARAMETER = "remove.process";
     public static final String START_PROCESS_PARAMETER = "start.process";
     public static final String START_PROCESS_FORM_PARAMETER = "start.process.noform";
     public static final String DEPLOY_PROCESS_DEFINITION_PARAMETER = "deploy.processdefinition";
@@ -50,6 +51,7 @@ public class ConfirmationPopupHelper {
         confirmationCookies.put(ACCEPT_TASK_PARAMETER, "accept.task.cookie");
         confirmationCookies.put(EXECUTE_TASK_PARAMETER, "execute.task.cookie");
         confirmationCookies.put(CANCEL_PROCESS_PARAMETER, "cancel.process.cookie");
+        confirmationCookies.put(REMOVE_PROCESS_PARAMETER, "remove.process.cookie");
         confirmationCookies.put(START_PROCESS_PARAMETER, "start.process.cookie");
         confirmationCookies.put(START_PROCESS_FORM_PARAMETER, "start.process.form.cookie");
         confirmationCookies.put(DEPLOY_PROCESS_DEFINITION_PARAMETER, "deploy.processdefinition.cookie");
@@ -68,6 +70,7 @@ public class ConfirmationPopupHelper {
         confirmationResource.put(ACCEPT_TASK_PARAMETER, Messages.CONF_POPUP_ACCEPT_TASK);
         confirmationResource.put(EXECUTE_TASK_PARAMETER, Messages.CONF_POPUP_EXECUTE_TASK);
         confirmationResource.put(CANCEL_PROCESS_PARAMETER, Messages.CONF_POPUP_CANCEL_PROCESS);
+        confirmationResource.put(REMOVE_PROCESS_PARAMETER, Messages.CONF_POPUP_REMOVE_PROCESS);
         confirmationResource.put(START_PROCESS_PARAMETER, Messages.CONF_POPUP_START_PROCESS);
         confirmationResource.put(START_PROCESS_FORM_PARAMETER, Messages.CONF_POPUP_START_PROCESS);
         confirmationResource.put(DEPLOY_PROCESS_DEFINITION_PARAMETER, Messages.CONF_POPUP_DEPLOY_PROCESSDEFINIION);

@@ -26,12 +26,14 @@ import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
 
+import ru.runa.common.WebResources;
 import ru.runa.common.web.Commons;
 import ru.runa.common.web.ConfirmationPopupHelper;
 import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.action.CancelProcessAction;
+import ru.runa.wf.web.action.RemoveProcessAction;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wf.web.form.TaskIdForm;
 import ru.runa.wfe.commons.CalendarUtil;
@@ -41,8 +43,8 @@ import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.ProcessClassPresentation;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.execution.dto.WfProcess;
+import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.collect.Maps;
@@ -73,15 +75,43 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
         return true;
     }
 
+    // start #179
+
     @Override
-    public String getFormButtonName() {
-        return Messages.getMessage(Messages.BUTTON_CANCEL_PROCESS, pageContext);
+    protected Permission getPermission() {
+        // see isFormButtonEnabled
+        return null;
     }
 
     @Override
-    protected boolean isFormButtonVisible() {
-        return !getProcess().isEnded();
+    protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
+        boolean ended = getProcess().isEnded();
+        if (ended) {
+            return WebResources.isProcessRemovalEnabled() && Delegates.getExecutorService().isAdministrator(getUser());
+        } else {
+            return super.isFormButtonEnabled(identifiable, ProcessPermission.CANCEL_PROCESS);
+        }
     }
+
+    @Override
+    public String getAction() {
+        boolean ended = getProcess().isEnded();
+        return ended ? RemoveProcessAction.ACTION_PATH : CancelProcessAction.ACTION_PATH;
+    }
+
+    @Override
+    public String getConfirmationPopupParameter() {
+        boolean ended = getProcess().isEnded();
+        return ended ? ConfirmationPopupHelper.REMOVE_PROCESS_PARAMETER : ConfirmationPopupHelper.CANCEL_PROCESS_PARAMETER;
+    }
+
+    @Override
+    public String getFormButtonName() {
+        boolean ended = getProcess().isEnded();
+        return Messages.getMessage(ended ? Messages.BUTTON_REMOVE : Messages.BUTTON_CANCEL_PROCESS, pageContext);
+    }
+
+    // end #179
 
     @Override
     protected void fillFormData(TD tdFormElement) {
@@ -132,8 +162,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
             endedTR.addElement(new TD(CalendarUtil.formatDateTime(process.getEndDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
         }
 
-        ExecutionService executionService = Delegates.getExecutionService();
-        WfProcess parentProcess = executionService.getParentProcess(getUser(), getIdentifiableId());
+        WfProcess parentProcess = Delegates.getExecutionService().getParentProcess(getUser(), getIdentifiableId());
         if (parentProcess != null) {
             TR parentTR = new TR();
             table.addElement(parentTR);
@@ -163,22 +192,8 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
     }
 
     @Override
-    protected Permission getPermission() {
-        return ProcessPermission.CANCEL_PROCESS;
-    }
-
-    @Override
     protected String getTitle() {
         return Messages.getMessage(Messages.TITLE_PROCESS, pageContext);
     }
 
-    @Override
-    public String getAction() {
-        return CancelProcessAction.ACTION_PATH;
-    }
-
-    @Override
-    public String getConfirmationPopupParameter() {
-        return ConfirmationPopupHelper.CANCEL_PROCESS_PARAMETER;
-    }
 }

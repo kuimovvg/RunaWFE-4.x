@@ -23,10 +23,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import ru.runa.wfe.audit.ProcessDefinitionDeleteLog;
-import ru.runa.wfe.audit.dao.SystemLogDAO;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionAlreadyExistException;
 import ru.runa.wfe.definition.DefinitionArchiveFormatException;
@@ -62,8 +59,6 @@ import com.google.common.collect.Lists;
  * Created on 15.03.2005
  */
 public class DefinitionLogic extends WFCommonLogic {
-    @Autowired
-    private SystemLogDAO systemLogDAO;
 
     public WfDefinition deployProcessDefinition(User user, byte[] processArchiveBytes, List<String> processType) {
         checkPermissionAllowed(user, ASystem.INSTANCE, WorkflowSystemPermission.DEPLOY_DEFINITION);
@@ -207,7 +202,7 @@ public class DefinitionLogic extends WFCommonLogic {
     private void removeDeployment(User user, Deployment deployment) {
         List<Process> processes = processDAO.findAllProcesses(deployment.getId());
         for (Process process : processes) {
-            deleteProcess(process);
+            deleteProcess(user, process);
         }
         deploymentDAO.delete(deployment);
         systemLogDAO.create(new ProcessDefinitionDeleteLog(user.getActor().getId(), deployment.getName(), deployment.getVersion()));

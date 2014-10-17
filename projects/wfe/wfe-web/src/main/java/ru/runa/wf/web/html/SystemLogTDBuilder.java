@@ -71,16 +71,17 @@ public class SystemLogTDBuilder implements TDBuilder {
     @Override
     public String getValue(Object object, Env env) {
         initPlacehlders(env.getPageContext());
-        SystemLog log = (SystemLog) object;
-        if (log instanceof ProcessDeleteLog) {
-            return Messages.getMessage(Messages.SYSTEM_LOG_PROCESS_DELETED, env.getPageContext()).replaceAll("\\{" + PH_PROCESS + "\\}",
-                    String.valueOf(log.getId()));
-        } else if (log instanceof ProcessDefinitionDeleteLog) {
-            ProcessDefinitionDeleteLog processDefinitionDeleteLog = (ProcessDefinitionDeleteLog) log;
-            String name = processDefinitionDeleteLog.getName();
-            Long version = processDefinitionDeleteLog.getVersion();
+        SystemLog systemLog = (SystemLog) object;
+        if (systemLog instanceof ProcessDeleteLog) {
+            ProcessDeleteLog log = (ProcessDeleteLog) systemLog;
+            return Messages.getMessage(Messages.SYSTEM_LOG_PROCESS_DELETED, env.getPageContext())
+                    .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", log.getName() != null ? log.getName() : "")
+                    .replaceAll("\\{" + PH_PROCESS + "\\}", String.valueOf(log.getProcessId()));
+        } else if (systemLog instanceof ProcessDefinitionDeleteLog) {
+            ProcessDefinitionDeleteLog log = (ProcessDefinitionDeleteLog) systemLog;
             return Messages.getMessage(Messages.SYSTEM_LOG_DEFINITION_DELETED, env.getPageContext())
-                    .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", name).replaceAll("\\{" + PH_VERSION + "\\}", String.valueOf(version));
+                    .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", log.getName())
+                    .replaceAll("\\{" + PH_VERSION + "\\}", String.valueOf(log.getVersion()));
         }
         return "Unsupported log instance";
     }
