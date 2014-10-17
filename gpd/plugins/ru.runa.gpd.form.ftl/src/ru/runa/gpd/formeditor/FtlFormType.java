@@ -24,6 +24,8 @@ public class FtlFormType extends BaseHtmlFormType {
         StringWriter out = new StringWriter();
         ValidationHashModel validationHashModel = new ValidationHashModel(formNode.getProcessDefinition());
         template.process(validationHashModel, out);
-        return validationHashModel.getUsedVariables();
+        Map<String, FormVariableAccess> map = validationHashModel.getUsedVariables();
+        map.remove("context");
+        return map;
     }
 }
