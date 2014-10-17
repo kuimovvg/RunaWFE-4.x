@@ -94,4 +94,8 @@ public class GraphElementPresentation implements Serializable {
         this.data = data;
     }
 
+    @Override
+    public String toString() {
+        return nodeType + ": " + nodeId;
+    }
 }

@@ -18,6 +18,8 @@
 package ru.runa.wf.web.tag;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.jsp.PageContext;
 
@@ -31,6 +33,7 @@ import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wf.web.html.GraphElementPresentationHelper;
+import ru.runa.wfe.audit.ActionLog;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -39,12 +42,15 @@ import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
 import ru.runa.wfe.graph.view.TaskGraphElementPresentation;
 import ru.runa.wfe.lang.NodeType;
+import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 /**
- * Operation to create links to subprocesses and tool tips to minimized elements.
+ * Operation to create links to subprocesses and tool tips to minimized
+ * elements.
  */
 public class ProcessGraphElementPresentationVisitor extends GraphElementPresentationVisitor {
+    private static final Pattern ACTION_LOG_PATTERN = Pattern.compile(".*?class=(.*?), configuration.*?", Pattern.DOTALL);
     /**
      * Helper to create links to subprocesses.
      */
@@ -57,7 +63,8 @@ public class ProcessGraphElementPresentationVisitor extends GraphElementPresenta
     private final TD td;
 
     /**
-     * Creates operation to create links to subprocesses and tool tips to minimized elements.
+     * Creates operation to create links to subprocesses and tool tips to
+     * minimized elements.
      * 
      * @param taskId
      *            Current task identity.
@@ -96,6 +103,14 @@ public class ProcessGraphElementPresentationVisitor extends GraphElementPresenta
                 try {
                     String format = Messages.getMessage("history.log." + log.getClass().getSimpleName(), pageContext);
                     Object[] arguments = log.getPatternArguments();
+                    if (log instanceof ActionLog) {
+                        // #812
+                        Matcher matcher = ACTION_LOG_PATTERN.matcher((String) arguments[0]);
+                        if (matcher.find()) {
+                            String className = matcher.group(1);
+                            arguments[0] = Delegates.getSystemService().getLocalized(user, className);
+                        }
+                    }
                     Object[] substitutedArguments = HTMLUtils.substituteArguments(user, pageContext, arguments);
                     description = log.toString(format, substitutedArguments);
                 } catch (Exception e) {
