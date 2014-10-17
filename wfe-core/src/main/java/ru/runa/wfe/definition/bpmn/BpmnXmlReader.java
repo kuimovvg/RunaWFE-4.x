@@ -339,7 +339,11 @@ public class BpmnXmlReader {
                 String name = propertyElement.attributeValue(NAME);
                 String value = propertyElement.attributeValue(VALUE);
                 if (value == null) {
-                    value = propertyElement.getTextTrim();
+                    // #798
+                    value = propertyElement.getText();
+                    if (value != null) {
+                        value = value.trim();
+                    }
                 }
                 map.put(name, value);
             }
