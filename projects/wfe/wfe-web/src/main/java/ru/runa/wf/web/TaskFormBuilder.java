@@ -38,6 +38,8 @@ public abstract class TaskFormBuilder {
     protected User user;
     protected PageContext pageContext;
     protected Interaction interaction;
+    protected Long definitionId;
+    protected WfTask task;
 
     public void setUser(User user) {
         this.user = user;
@@ -52,6 +54,7 @@ public abstract class TaskFormBuilder {
     }
 
     public final String build(Long definitionId) {
+        this.definitionId = definitionId;
         if (interaction.hasForm()) {
             IVariableProvider variableProvider = new MapDelegableVariableProvider(interaction.getDefaultVariableValues(),
                     new DelegateDefinitionVariableProvider(user, definitionId));
@@ -67,6 +70,8 @@ public abstract class TaskFormBuilder {
     }
 
     public final String build(WfTask task) {
+        this.definitionId = task.getDefinitionId();
+        this.task = task;
         if (interaction.hasForm()) {
             IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
             Map<String, Object> userDefinedVariables = FormSubmissionUtils.getUserFormInputVariables((HttpServletRequest) pageContext.getRequest(),
