@@ -24,8 +24,8 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("PDDel")
 public class ProcessDefinitionDeleteLog extends SystemLog {
-    String name;
-    Long version;
+    private String name;
+    private Long version;
 
     protected ProcessDefinitionDeleteLog() {
     }
@@ -36,7 +36,7 @@ public class ProcessDefinitionDeleteLog extends SystemLog {
         this.version = version;
     }
 
-    @Column(name = "PROCESS_DEFINITION_NAME", updatable = false)
+    @Column(name = "PROCESS_DEFINITION_NAME")
     public String getName() {
         return name;
     }
@@ -45,7 +45,7 @@ public class ProcessDefinitionDeleteLog extends SystemLog {
         this.name = name;
     }
 
-    @Column(name = "PROCESS_DEFINITION_VERSION", updatable = false)
+    @Column(name = "PROCESS_DEFINITION_VERSION")
     public Long getVersion() {
         return version;
     }

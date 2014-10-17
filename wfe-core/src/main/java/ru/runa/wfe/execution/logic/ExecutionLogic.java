@@ -98,7 +98,7 @@ public class ExecutionLogic extends WFCommonLogic {
         // TODO add ProcessPermission.DELETE_PROCESS
         processes = filterIdentifiable(user, processes, ProcessPermission.CANCEL_PROCESS);
         for (Process process : processes) {
-            deleteProcess(process);
+            deleteProcess(user, process);
         }
     }
 

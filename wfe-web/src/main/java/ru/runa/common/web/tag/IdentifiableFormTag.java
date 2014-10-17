@@ -64,7 +64,7 @@ public abstract class IdentifiableFormTag extends TitledFormTag {
     }
 
     protected boolean isFormButtonEnabled(Identifiable identifiable, Permission permission) {
-        return (permission == null || Delegates.getAuthorizationService().isAllowed(getUser(), permission, identifiable));
+        return Delegates.getAuthorizationService().isAllowed(getUser(), permission, identifiable);
     }
 
     @Override

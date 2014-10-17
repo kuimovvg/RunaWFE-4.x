@@ -145,7 +145,7 @@ public class WebResources {
     }
 
     public static boolean isBulkDeploymentElements() {
-        return RESOURCES.getBooleanProperty("ajax.deployment.elements", true);
+        return RESOURCES.getBooleanProperty("process.definition.ajax.bulk.deployment.enabled", true);
     }
 
     public static boolean isLDAPSynchronizationEnabled() {
@@ -158,6 +158,10 @@ public class WebResources {
 
     public static boolean isAjaxFileInputEnabled() {
         return RESOURCES.getBooleanProperty("task.form.ajaxFileInputEnabled", true);
+    }
+
+    public static boolean isProcessRemovalEnabled() {
+        return RESOURCES.getBooleanProperty("process.remove.enabled", true);
     }
 
 }
