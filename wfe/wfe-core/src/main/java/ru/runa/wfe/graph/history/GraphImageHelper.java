@@ -42,12 +42,9 @@ public class GraphImageHelper {
         return result;
     }
 
-    public static int getTransitionActionsCount(Transition tr) {
-        Event event = tr.getEvent(Event.TRANSITION);
-        if (event != null) {
-            return event.getActions().size();
-        }
-        return 0;
+    public static int getTransitionActionsCount(Transition transition) {
+        Event event = transition.getEventNotNull(Event.TRANSITION);
+        return event.getActions().size();
     }
 
     public static void initNodeModel(Node node, NodeModel nodeModel) {

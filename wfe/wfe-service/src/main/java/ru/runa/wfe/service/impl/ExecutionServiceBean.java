@@ -34,17 +34,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.audit.ProcessLogFilter;
-import ru.runa.wfe.audit.ProcessLogs;
-import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.execution.ProcessFilter;
+import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.execution.logic.ExecutionLogic;
+import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -118,7 +117,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     public List<WfProcess> getProcessesByFilter(@WebParam(name = "user") User user, @WebParam(name = "filter") ProcessFilter filter) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(filter != null);
-        return executionLogic.getProcesses(user, filter);
+        return executionLogic.getWfProcesses(user, filter);
     }
 
     @Override
@@ -250,22 +249,6 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     @WebResult(name = "result")
-    public byte[] getProcessHistoryDiagram(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
-            @WebParam(name = "taskId") Long taskId, @WebParam(name = "subprocessId") String subprocessId) {
-        Preconditions.checkArgument(user != null);
-        return executionLogic.getProcessHistoryDiagram(user, processId, taskId, subprocessId);
-    }
-
-    @Override
-    @WebResult(name = "result")
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(@WebParam(name = "user") User user,
-            @WebParam(name = "processId") Long processId, @WebParam(name = "taskId") Long taskId, @WebParam(name = "subprocessId") String subprocessId) {
-        Preconditions.checkArgument(user != null);
-        return executionLogic.getProcessHistoryDiagramElements(user, processId, taskId, subprocessId);
-    }
-
-    @Override
-    @WebResult(name = "result")
     public List<GraphElementPresentation> getProcessDiagramElements(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "subprocessId") String subprocessId) {
         Preconditions.checkArgument(user != null);
@@ -290,19 +273,6 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
 
     @Override
     @WebResult(name = "result")
-    public ProcessLogs getProcessLogs(@WebParam(name = "user") User user, @WebParam(name = "filter") ProcessLogFilter filter) {
-        Preconditions.checkArgument(user != null);
-        return auditLogic.getProcessLogs(user, filter);
-    }
-
-    @Override
-    @WebResult(name = "result")
-    public Object getProcessLogValue(@WebParam(name = "user") User user, @WebParam(name = "logId") Long logId) {
-        return auditLogic.getProcessLogValue(user, logId);
-    }
-
-    @Override
-    @WebResult(name = "result")
     public void markTaskOpened(@WebParam(name = "user") User user, @WebParam(name = "taskId") Long taskId) {
         Preconditions.checkArgument(user != null);
         taskLogic.markTaskOpened(user, taskId);
@@ -317,23 +287,10 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     @Override
-    @WebResult(name = "result")
-    public List<SystemLog> getSystemLogs(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
+    public List<ProcessError> getProcessErrors(User user, Long processId) {
         Preconditions.checkArgument(user != null);
-        if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createNonPaged();
-        }
-        return auditLogic.getSystemLogs(user, batchPresentation);
-    }
-
-    @Override
-    @WebResult(name = "result")
-    public int getSystemLogsCount(@WebParam(name = "user") User user, @WebParam(name = "batchPresentation") BatchPresentation batchPresentation) {
-        Preconditions.checkArgument(user != null);
-        if (batchPresentation == null) {
-            batchPresentation = BatchPresentationFactory.SYSTEM_LOGS.createNonPaged();
-        }
-        return auditLogic.getSystemLogsCount(user, batchPresentation);
+        Preconditions.checkArgument(processId != null);
+        return ProcessExecutionErrors.getProcessErrors(processId);
     }
 
     private boolean convertValueToProxy(User user, Long processId, WfVariable variable) {

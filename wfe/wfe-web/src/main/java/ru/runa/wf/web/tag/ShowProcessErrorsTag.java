@@ -22,8 +22,8 @@ import ru.runa.common.web.tag.VisibleTag;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
-import ru.runa.wfe.execution.logic.ProcessExecutionErrors.TokenErrorDetail;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -40,13 +40,13 @@ public class ShowProcessErrorsTag extends VisibleTag {
     @Override
     protected ConcreteElement getEndElement() {
         List<TR> rows = Lists.newArrayList();
-        for (Map.Entry<Long, List<TokenErrorDetail>> processEntry : ProcessExecutionErrors.getProcessErrors().entrySet()) {
+        for (Map.Entry<Long, List<ProcessError>> processEntry : ProcessExecutionErrors.getProcessErrors().entrySet()) {
             Map<String, Object> params = Maps.newHashMap();
             params.put(IdForm.ID_INPUT_NAME, processEntry.getKey());
             A processIdElement = new A(
                     Commons.getActionUrl(ShowGraphModeHelper.getManageProcessAction(), params, pageContext, PortletUrlType.Render), processEntry
                             .getKey().toString());
-            for (TokenErrorDetail detail : processEntry.getValue()) {
+            for (ProcessError detail : processEntry.getValue()) {
                 TR tr = new TR();
                 tr.addElement(new TD(processIdElement).setClass(Resources.CLASS_LIST_TABLE_TD));
                 tr.addElement(new TD(CalendarUtil.formatDateTime(detail.getOccuredDate())).setClass(Resources.CLASS_LIST_TABLE_TD));

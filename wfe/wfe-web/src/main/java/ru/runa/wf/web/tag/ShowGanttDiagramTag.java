@@ -41,7 +41,7 @@ public class ShowGanttDiagramTag extends ProcessBaseFormTag {
         WfProcess process = executionService.getProcess(getUser(), getIdentifiableId());
         ProcessLogFilter filter = new ProcessLogFilter(process.getId());
         filter.setIncludeSubprocessLogs(true);
-        ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
+        ProcessLogs logs = Delegates.getAuditService().getProcessLogs(getUser(), filter);
         Map<TaskCreateLog, TaskEndLog> taskLogs = logs.getTaskLogs();
         String js = getBar(process.getId(), process.getName(), null, null, "444444", null, true, "0", null);
         for (ProcessLog log : logs.getLogs()) {
@@ -55,8 +55,8 @@ public class ShowGanttDiagramTag extends ProcessBaseFormTag {
                 }
                 if (createLog != null) {
                     TaskEndLog endLog = taskLogs.get(createLog);
-                    js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getCreateDate(), endLog.getCreateDate(), "0ccc00", endLog.getActorName(),
-                            false, createLog.getProcessId(), null);
+                    js += getBar(createLog.getId(), createLog.getTaskName(), createLog.getCreateDate(), endLog.getCreateDate(), "0ccc00",
+                            endLog.getActorName(), false, createLog.getProcessId(), null);
                 }
             }
             if (log instanceof TaskCreateLog) {

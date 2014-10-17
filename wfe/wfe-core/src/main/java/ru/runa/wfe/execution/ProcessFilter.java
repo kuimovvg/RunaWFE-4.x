@@ -18,9 +18,10 @@ public class ProcessFilter implements Serializable {
     private Long idTo;
     private Date startDateFrom;
     private Date startDateTo;
-    private Boolean finishedOnly;
+    private Boolean finished;
     private Date endDateFrom;
     private Date endDateTo;
+    private boolean failedOnly;
 
     public String getDefinitionName() {
         return definitionName;
@@ -94,11 +95,20 @@ public class ProcessFilter implements Serializable {
         this.endDateTo = endDateTill;
     }
 
-    public Boolean getFinishedOnly() {
-        return finishedOnly;
+    public Boolean getFinished() {
+        return finished;
     }
 
-    public void setFinishedOnly(Boolean finishedOnly) {
-        this.finishedOnly = finishedOnly;
+    public void setFinished(Boolean finished) {
+        this.finished = finished;
     }
+
+    public boolean getFailedOnly() {
+        return failedOnly;
+    }
+
+    public void setFailedOnly(boolean failedOnly) {
+        this.failedOnly = failedOnly;
+    }
+
 }

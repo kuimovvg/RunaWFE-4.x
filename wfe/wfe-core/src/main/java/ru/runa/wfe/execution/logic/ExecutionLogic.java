@@ -84,17 +84,30 @@ public class ExecutionLogic extends WFCommonLogic {
 
     public List<WfProcess> getProcesses(User user, BatchPresentation batchPresentation) {
         List<Process> list = getPersistentObjects(user, batchPresentation, ProcessPermission.READ, PROCESS_EXECUTION_CLASSES, true);
-        return getProcesses(list, batchPresentation.getDynamicFieldsToDisplay(true));
+        return toWfProcesses(list, batchPresentation.getDynamicFieldsToDisplay(true));
     }
 
-    public List<WfProcess> getProcesses(User user, ProcessFilter filter) {
-        List<Process> process = processDAO.getProcesses(filter);
-        process = filterIdentifiable(user, process, ProcessPermission.READ);
-        return getProcesses(process, null);
+    public List<Process> getProcesses(User user, ProcessFilter filter) {
+        List<Process> processes;
+        if (filter.getFailedOnly()) {
+            processes = Lists.newArrayList();
+            for (Long processId : ProcessExecutionErrors.getProcessErrors().keySet()) {
+                processes.add(processDAO.get(processId));
+            }
+        } else {
+            processes = processDAO.getProcesses(filter);
+        }
+        processes = filterIdentifiable(user, processes, ProcessPermission.READ);
+        return processes;
+    }
+
+    public List<WfProcess> getWfProcesses(User user, ProcessFilter filter) {
+        List<Process> processes = getProcesses(user, filter);
+        return toWfProcesses(processes, null);
     }
 
     public void deleteProcesses(User user, final ProcessFilter filter) {
-        List<Process> processes = processDAO.getProcesses(filter);
+        List<Process> processes = getProcesses(user, filter);
         // TODO add ProcessPermission.DELETE_PROCESS
         processes = filterIdentifiable(user, processes, ProcessPermission.CANCEL_PROCESS);
         for (Process process : processes) {
@@ -103,7 +116,7 @@ public class ExecutionLogic extends WFCommonLogic {
     }
 
     public void cancelProcesses(User user, final ProcessFilter filter) {
-        List<Process> processes = processDAO.getProcesses(filter);
+        List<Process> processes = getProcesses(user, filter);
         processes = filterIdentifiable(user, processes, ProcessPermission.CANCEL_PROCESS);
         for (Process process : processes) {
             ProcessDefinition processDefinition = getDefinition(process);
@@ -136,10 +149,10 @@ public class ExecutionLogic extends WFCommonLogic {
             subprocesses = nodeProcessDAO.getSubprocesses(process);
         }
         subprocesses = filterIdentifiable(user, subprocesses, ProcessPermission.READ);
-        return getProcesses(subprocesses, null);
+        return toWfProcesses(subprocesses, null);
     }
 
-    private List<WfProcess> getProcesses(List<Process> processes, List<String> variableNamesToInclude) {
+    private List<WfProcess> toWfProcesses(List<Process> processes, List<String> variableNamesToInclude) {
         List<WfProcess> result = Lists.newArrayListWithExpectedSize(processes.size());
         for (Process process : processes) {
             WfProcess wfProcess = new WfProcess(process);

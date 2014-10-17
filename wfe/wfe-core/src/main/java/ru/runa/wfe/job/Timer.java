@@ -64,16 +64,14 @@ public class Timer extends Job {
     public void execute(ExecutionContext executionContext) {
         String timerNodeId = getToken().getNodeId();
         try {
-            Event event = executionContext.getNode().getEvent(Event.TIMER);
-            if (event != null) {
-                for (Action timerAction : event.getActions()) {
-                    // multiple timers are discriminated actions by name
-                    if (Objects.equal(getName(), timerAction.getName())) {
-                        timerAction.execute(executionContext);
-                    } else if (Objects.equal(getName(), timerAction.getNodeId())) {
-                        // back compatibility mode (pre 4.1.0)
-                        timerAction.execute(executionContext);
-                    }
+            Event event = executionContext.getNode().getEventNotNull(Event.TIMER);
+            for (Action timerAction : event.getActions()) {
+                // multiple timers are discriminated actions by name
+                if (Objects.equal(getName(), timerAction.getName())) {
+                    timerAction.execute(executionContext);
+                } else if (Objects.equal(getName(), timerAction.getNodeId())) {
+                    // back compatibility mode (pre 4.1.0)
+                    timerAction.execute(executionContext);
                 }
             }
             if (outTransitionName != null) {

@@ -24,7 +24,6 @@ import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.execution.ProcessPermission;
 import ru.runa.wfe.security.Permission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.base.Objects;
@@ -41,10 +40,9 @@ public class ShowTasksHistoryTag extends ProcessBaseFormTag {
 
     @Override
     protected void fillFormData(TD tdFormElement) {
-        ExecutionService executionService = Delegates.getExecutionService();
         ProcessLogFilter filter = new ProcessLogFilter(getIdentifiableId());
         filter.setIncludeSubprocessLogs(true);
-        ProcessLogs logs = executionService.getProcessLogs(getUser(), filter);
+        ProcessLogs logs = Delegates.getAuditService().getProcessLogs(getUser(), filter);
         List<TR> rows = processLogs(logs);
         HeaderBuilder tasksHistoryHeaderBuilder = new TasksHistoryHeaderBuilder();
         RowBuilder rowBuilder = new TRRowBuilder(rows);

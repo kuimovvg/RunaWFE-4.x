@@ -91,7 +91,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
         filterHtml += "</td></tr></table>\n";
         tdFormElement.addElement(filterHtml);
         // content
-        ProcessLogs logs = Delegates.getExecutionService().getProcessLogs(getUser(), filter);
+        ProcessLogs logs = Delegates.getAuditService().getProcessLogs(getUser(), filter);
         int maxLevel = logs.getMaxSubprocessLevel();
         List<TR> rows = Lists.newArrayList();
         TD mergedEventDateTD = null;

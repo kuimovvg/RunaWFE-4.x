@@ -21,6 +21,8 @@
  */
 package ru.runa.wfe.lang;
 
+import ru.runa.wfe.commons.SystemProperties;
+
 import com.google.common.base.Preconditions;
 
 /**
@@ -60,6 +62,14 @@ public class TaskDefinition extends GraphElement {
      */
     public void setSwimlane(SwimlaneDefinition swimlaneDefinition) {
         this.swimlaneDefinition = swimlaneDefinition;
+        if (SystemProperties.isAutoInvocationLocalBotStationEnabled() && swimlaneDefinition.isBotExecutor()) {
+            Event event = getEventNotNull(Event.TASK_ASSIGN);
+            Action action = new Action();
+            action.setEvent(event);
+            action.setDelegation(new Delegation("ru.runa.wfe.service.handler.BotInvokerActionHandler", null));
+            action.setParent(this);
+            event.addAction(action);
+        }
     }
 
     public boolean isReassignSwimlane() {

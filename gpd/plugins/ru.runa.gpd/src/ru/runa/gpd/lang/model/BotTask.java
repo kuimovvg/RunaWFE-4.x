@@ -11,12 +11,10 @@ import ru.runa.gpd.extension.handler.ParamDefConfig;
 import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.extension.handler.XmlBasedConstructorProvider;
 import ru.runa.gpd.util.XmlUtil;
-import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
 
 import com.google.common.collect.Lists;
 
 public class BotTask implements Delegable, Comparable<BotTask> {
-    public static final String SWIMLANE_DEFINITION_NAME = ExecutorByNameFunction.class.getName();
     private BotTaskType type = BotTaskType.SIMPLE;
     private String name;
     private String delegationClassName = "";

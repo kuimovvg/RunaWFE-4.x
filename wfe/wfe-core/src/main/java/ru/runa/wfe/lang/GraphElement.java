@@ -94,7 +94,7 @@ public abstract class GraphElement implements Serializable {
     public int[] getGraphConstraints() {
         return graphConstraints;
     }
-    
+
     public void setGraphConstraints(int x, int y, int width, int height) {
         this.graphConstraints = new int[] { x, y, width, height };
     }
@@ -111,8 +111,13 @@ public abstract class GraphElement implements Serializable {
         return events;
     }
 
-    public Event getEvent(String eventType) {
-        return events.get(eventType);
+    public Event getEventNotNull(String eventType) {
+        Event event = events.get(eventType);
+        if (event == null) {
+            event = new Event(eventType);
+            addEvent(event);
+        }
+        return event;
     }
 
     public Event addEvent(Event event) {
@@ -151,11 +156,9 @@ public abstract class GraphElement implements Serializable {
     public void fireEvent(ExecutionContext executionContext, String eventType) {
         log.debug("event '" + eventType + "' on '" + this + "' for '" + executionContext.getToken() + "'");
         // execute static actions
-        Event event = getEvent(eventType);
-        if (event != null) {
-            // execute the static actions specified in the process definition
-            executeActions(executionContext, event.getActions());
-        }
+        Event event = getEventNotNull(eventType);
+        // execute the static actions specified in the process definition
+        executeActions(executionContext, event.getActions());
         // propagate the event to the parent element
         GraphElement parent = getParent();
         if (parent != null) {

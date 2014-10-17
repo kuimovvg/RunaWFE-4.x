@@ -37,10 +37,10 @@ import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.commons.IOCommons;
 import ru.runa.wfe.definition.IFileDataProvider;
+import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors.BotTaskIdentifier;
-import ru.runa.wfe.execution.logic.ProcessExecutionErrors.TokenErrorDetail;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
@@ -76,9 +76,9 @@ public class ErrorDetailsAction extends ActionBase {
                     }
                 }
             } else if ("getProcessError".equals(action)) {
-                List<TokenErrorDetail> errorDetails = ProcessExecutionErrors.getProcessErrors(form.getId());
+                List<ProcessError> errorDetails = ProcessExecutionErrors.getProcessErrors(form.getId());
                 if (errorDetails != null) {
-                    for (TokenErrorDetail detail : errorDetails) {
+                    for (ProcessError detail : errorDetails) {
                         if (Objects.equal(detail.getNodeId(), form.getName())) {
                             String html = "<form id='supportForm'>";
                             html += "<input type='hidden' name='processId' value='" + form.getId() + "' />";
@@ -124,8 +124,8 @@ public class ErrorDetailsAction extends ActionBase {
                     JSONArray files = new JSONArray();
                     for (Long processId : processesEntry.getValue()) {
                         String exceptions = "";
-                        List<TokenErrorDetail> errorDetails = ProcessExecutionErrors.getProcessErrors().get(processId);
-                        for (TokenErrorDetail detail : errorDetails) {
+                        List<ProcessError> errorDetails = ProcessExecutionErrors.getProcessErrors().get(processId);
+                        for (ProcessError detail : errorDetails) {
                             exceptions += "\r\n---------------------------------------------------------------";
                             exceptions += "\r\n" + CalendarUtil.formatDateTime(detail.getOccuredDate()) + " " + detail.getNodeId() + "/"
                                     + detail.getTaskName();
@@ -311,7 +311,7 @@ public class ErrorDetailsAction extends ActionBase {
 
     private String getProcessLogs(HttpServletRequest request, User user, Long processId) {
         ProcessLogFilter filter = new ProcessLogFilter(processId);
-        ProcessLogs logs = Delegates.getExecutionService().getProcessLogs(user, filter);
+        ProcessLogs logs = Delegates.getAuditService().getProcessLogs(user, filter);
         int maxLevel = logs.getMaxSubprocessLevel();
         List<TR> rows = Lists.newArrayList();
         TD mergedEventDateTD = null;

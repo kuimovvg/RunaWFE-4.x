@@ -417,11 +417,7 @@ public class JpdlXmlReader {
     }
 
     private void addAction(GraphElement graphElement, String eventType, Action action) {
-        Event event = graphElement.getEvent(eventType);
-        if (event == null) {
-            event = new Event(eventType);
-            graphElement.addEvent(event);
-        }
+        Event event = graphElement.getEventNotNull(eventType);
         action.setParent(graphElement);
         event.addAction(action);
     }

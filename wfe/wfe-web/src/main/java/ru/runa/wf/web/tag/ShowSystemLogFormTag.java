@@ -34,7 +34,6 @@ import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.security.Permission;
 import ru.runa.wfe.security.SystemPermission;
-import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
 
 /**
@@ -47,12 +46,10 @@ public class ShowSystemLogFormTag extends BatchReturningTitledFormTag {
     @Override
     protected void fillFormElement(TD tdFormElement) {
         BatchPresentation batchPresentation = getBatchPresentation();
-        ExecutionService executionService = Delegates.getExecutionService();
-
-        int instanceCount = executionService.getSystemLogsCount(getUser(), batchPresentation);
+        int instanceCount = Delegates.getAuditService().getSystemLogsCount(getUser(), batchPresentation);
         // we must call getSystemLogs before obtaining current page number since
         // it can be changed after getSystemLogs call
-        List<SystemLog> instances = executionService.getSystemLogs(getUser(), batchPresentation);
+        List<SystemLog> instances = Delegates.getAuditService().getSystemLogs(getUser(), batchPresentation);
         // batchPresentation must be recalculated since the current page number
         // might changed
         batchPresentation = getBatchPresentation();
