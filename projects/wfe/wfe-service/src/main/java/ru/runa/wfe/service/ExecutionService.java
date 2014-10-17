@@ -20,13 +20,11 @@ package ru.runa.wfe.service;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.audit.ProcessLogFilter;
-import ru.runa.wfe.audit.ProcessLogs;
-import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
+import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -323,37 +321,6 @@ public interface ExecutionService {
             throws ProcessDoesNotExistException;
 
     /**
-     * Gets process graph element for history diagram.
-     * 
-     * @param user
-     *            authorized user
-     * @param processId
-     *            process id
-     * @param taskId
-     *            active task id
-     * @param subprocessId
-     *            embedded subprocess id, can be <code>null</code>
-     * @return not <code>null</code>
-     * @throws ProcessDoesNotExistException
-     */
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId, String subprocessId)
-            throws ProcessDoesNotExistException;
-
-    /**
-     * Gets process history graphical diagram PNG image.
-     * 
-     * @param user
-     *            authorized user
-     * @param processId
-     *            process id
-     * @param taskId
-     *            task id
-     * @return not <code>null</code>
-     * @throws ProcessDoesNotExistException
-     */
-    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId, String subprocessId) throws ProcessDoesNotExistException;
-
-    /**
      * Marks task as read.
      * 
      * @param user
@@ -365,49 +332,13 @@ public interface ExecutionService {
     public void markTaskOpened(User user, Long taskId) throws TaskDoesNotExistException;
 
     /**
-     * Gets process logs by filter.
-     * 
-     * @param user
-     *            authorized user
-     * @param filter
-     *            process log filter
-     * @return not <code>null</code>
-     */
-    public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter);
-
-    /**
-     * Gets process log byte array value.
-     * 
-     * @param user
-     *            authorized user
-     * @param logId
-     *            process log id
-     * @return value or <code>null</code>
-     */
-    public Object getProcessLogValue(User user, Long logId);
-
-    /**
      * Removes processes by filter criterias.
      */
     public void removeProcesses(User user, ProcessFilter filter) throws ParentProcessExistsException;
 
     /**
-     * Gets system logs for {@link BatchPresentation}.
-     * 
-     * @param user
-     *            authorized user
-     * @param batchPresentation
-     * @return not <code>null</code>
+     * Get process errors.
      */
-    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation);
+    public List<ProcessError> getProcessErrors(User user, Long processId);
 
-    /**
-     * Gets system log count for {@link BatchPresentation}.
-     * 
-     * @param user
-     *            authorized user
-     * @param batchPresentation
-     * @return not <code>null</code>
-     */
-    public int getSystemLogsCount(User user, BatchPresentation batchPresentation);
 }

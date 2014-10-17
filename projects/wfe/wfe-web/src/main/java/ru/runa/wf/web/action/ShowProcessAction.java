@@ -12,8 +12,8 @@ import org.apache.struts.actions.ForwardAction;
 
 import ru.runa.common.web.form.IdForm;
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
-import ru.runa.wfe.execution.logic.ProcessExecutionErrors.TokenErrorDetail;
 
 public class ShowProcessAction extends ForwardAction {
 
@@ -23,10 +23,10 @@ public class ShowProcessAction extends ForwardAction {
         // TODO report sending by email
         ActionForward forward = super.execute(mapping, actionForm, request, response);
         Long processId = Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME));
-        List<TokenErrorDetail> errorDetails = ProcessExecutionErrors.getProcessErrors(processId);
+        List<ProcessError> errorDetails = ProcessExecutionErrors.getProcessErrors(processId);
         if (errorDetails != null) {
             String processErrors = "";
-            for (TokenErrorDetail detail : errorDetails) {
+            for (ProcessError detail : errorDetails) {
                 String url = "javascript:showProcessError(" + processId + ", '" + detail.getNodeId() + "')";
                 processErrors += "<a href=\"" + url + "\">" + detail.getTaskName() + " (" + CalendarUtil.formatDateTime(detail.getOccuredDate())
                         + ")</a><br>";

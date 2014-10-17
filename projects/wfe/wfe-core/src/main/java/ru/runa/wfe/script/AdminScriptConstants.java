@@ -30,7 +30,7 @@ public class AdminScriptConstants {
     public final static String ID_ATTRIBUTE_NAME = "id";
     public final static String ID_FROM_ATTRIBUTE_NAME = "idFrom";
     public final static String ID_TO_ATTRIBUTE_NAME = "idTo";
-    public final static String ONLY_FINISHED_ATTRIBUTE_NAME = "onlyFinished";
+    public final static String FINISHED_ATTRIBUTE_NAME = "onlyFinished";
     public final static String START_DATE_FROM_ATTRIBUTE_NAME = "startDateFrom";
     public final static String START_DATE_TO_ATTRIBUTE_NAME = "startDateTo";
     public final static String END_DATE_FROM_ATTRIBUTE_NAME = "endDateFrom";

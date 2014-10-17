@@ -161,4 +161,8 @@ public class SystemProperties {
         return RESOURCES.getBooleanProperty("task.assignment.strict.rules.enabled", true);
     }
 
+    public static boolean isAutoInvocationLocalBotStationEnabled() {
+        return RESOURCES.getBooleanProperty("auto.invocation.local.botstation.enabled", true);
+    }
+
 }

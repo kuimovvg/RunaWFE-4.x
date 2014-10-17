@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+import ru.runa.wfe.execution.logic.BotSwimlaneInitializer;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
@@ -75,5 +76,9 @@ public class SwimlaneDefinition extends GraphElement {
 
     public VariableDefinition toVariableDefinition() {
         return new VariableDefinition(true, name, scriptingName, ExecutorFormat.class.getName());
+    }
+
+    public boolean isBotExecutor() {
+        return BotSwimlaneInitializer.isValid(delegation.getConfiguration());
     }
 }

@@ -422,7 +422,7 @@ public class AdminScriptRunner {
         String processName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         ProcessFilter filter = new ProcessFilter();
         filter.setDefinitionName(processName);
-        return executionLogic.getProcesses(user, filter);
+        return executionLogic.getWfProcesses(user, filter);
     }
 
     public void addPermissionsOnDefinition(Element element) {
@@ -1053,9 +1053,9 @@ public class AdminScriptRunner {
 
     private ProcessFilter createProcessFilter(Element element) {
         ProcessFilter filter = new ProcessFilter();
-        String finishedOnlyString = element.attributeValue(AdminScriptConstants.ONLY_FINISHED_ATTRIBUTE_NAME);
-        if (!Strings.isNullOrEmpty(finishedOnlyString)) {
-            filter.setFinishedOnly(Boolean.parseBoolean(finishedOnlyString));
+        String finishedString = element.attributeValue(AdminScriptConstants.FINISHED_ATTRIBUTE_NAME);
+        if (!Strings.isNullOrEmpty(finishedString)) {
+            filter.setFinished(Boolean.parseBoolean(finishedString));
         }
         String definitionName = element.attributeValue(AdminScriptConstants.NAME_ATTRIBUTE_NAME);
         if (!Strings.isNullOrEmpty(definitionName)) {

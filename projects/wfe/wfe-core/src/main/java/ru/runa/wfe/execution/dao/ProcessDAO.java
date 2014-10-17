@@ -1,6 +1,5 @@
 package ru.runa.wfe.execution.dao;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -37,18 +36,18 @@ public class ProcessDAO extends GenericDAO<Process> {
      * The returned list of processs is sorted start date, youngest first.
      */
     public List<Process> findAllProcesses(Long definitionId) {
-        return (List<Process>) getHibernateTemplate().find("from Process where deployment.id=? order by startDate desc", definitionId);
+        return getHibernateTemplate().find("from Process where deployment.id=? order by startDate desc", definitionId);
     }
 
     public Set<Number> getDependentProcessIds(Executor executor) {
         Set<Number> processes = Sets.newHashSet();
-        processes.addAll((Collection<? extends Number>) getHibernateTemplate().find("select process.id from Swimlane where executor=?", executor));
-        processes.addAll((Collection<? extends Number>) getHibernateTemplate().find("select process.id from Task where executor=?", executor));
+        processes.addAll(getHibernateTemplate().find("select process.id from Swimlane where executor=?", executor));
+        processes.addAll(getHibernateTemplate().find("select process.id from Task where executor=?", executor));
         return processes;
     }
 
     public List<Process> getProcesses(final ProcessFilter filter) {
-        return (List<Process>) getHibernateTemplate().executeFind(new HibernateCallback<List<Process>>() {
+        return getHibernateTemplate().executeFind(new HibernateCallback<List<Process>>() {
 
             @Override
             public List<Process> doInHibernate(Session session) {
@@ -82,8 +81,8 @@ public class ProcessDAO extends GenericDAO<Process> {
                     conditions.add("startDate <= :startDateTo");
                     parameters.put("startDateTo", filter.getStartDateTo());
                 }
-                if (filter.getFinishedOnly() != null) {
-                    if (filter.getFinishedOnly()) {
+                if (filter.getFinished() != null) {
+                    if (filter.getFinished()) {
                         conditions.add("endDate is not null");
                     } else {
                         conditions.add("endDate is null");
@@ -113,7 +112,7 @@ public class ProcessDAO extends GenericDAO<Process> {
     @Override
     public void delete(Process process) {
         log.debug("deleting tokens for " + process);
-        List<Token> tokens = (List<Token>) getHibernateTemplate().find("from Token where process=? and parent is not null order by id desc", process);
+        List<Token> tokens = getHibernateTemplate().find("from Token where process=? and parent is not null order by id desc", process);
         for (Token token : tokens) {
             log.debug("deleting " + token);
             getHibernateTemplate().delete(token);
