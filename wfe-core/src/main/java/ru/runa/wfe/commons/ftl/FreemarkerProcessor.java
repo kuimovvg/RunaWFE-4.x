@@ -24,7 +24,7 @@ public class FreemarkerProcessor {
         cfg.setTemplateExceptionHandler(new CustomExceptionHandler());
     }
 
-    public static String process(String ftlTemplate, FormHashModel model) {
+    public static String process(String ftlTemplate, Object model) {
         try {
             if (ftlTemplate == null) {
                 return null;
