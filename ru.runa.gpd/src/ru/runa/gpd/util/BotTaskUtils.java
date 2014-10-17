@@ -25,7 +25,7 @@ import ru.runa.gpd.lang.model.BotTaskLink;
 import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.TaskState;
-import ru.runa.gpd.swimlane.OrgFunctionSwimlaneInitializer;
+import ru.runa.gpd.swimlane.BotSwimlaneInitializer;
 import ru.runa.gpd.swimlane.SwimlaneInitializer;
 import ru.runa.gpd.swimlane.SwimlaneInitializerParser;
 
@@ -150,13 +150,8 @@ public class BotTaskUtils {
         if (swimlane != null && swimlane.getDelegationConfiguration() != null) {
             try {
                 SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(swimlane.getDelegationConfiguration());
-                if (swimlaneInitializer instanceof OrgFunctionSwimlaneInitializer) {
-                    OrgFunctionSwimlaneInitializer orgFunctionSwimlaneInitializer = (OrgFunctionSwimlaneInitializer) swimlaneInitializer;
-                    if (BotTask.SWIMLANE_DEFINITION_NAME.equals(orgFunctionSwimlaneInitializer.getDefinition().getName())) {
-                        if (orgFunctionSwimlaneInitializer.getParameters().size() > 0) {
-                            return orgFunctionSwimlaneInitializer.getParameters().get(0).getValue();
-                        }
-                    }
+                if (swimlaneInitializer instanceof BotSwimlaneInitializer) {
+                    return ((BotSwimlaneInitializer) swimlaneInitializer).getBotName();
                 }
             } catch (Exception e) {
                 PluginLogger.logErrorWithoutDialog("Unable to get bot name for " + swimlane, e);

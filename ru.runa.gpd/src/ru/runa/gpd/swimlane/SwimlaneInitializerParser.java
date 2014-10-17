@@ -7,6 +7,9 @@ public class SwimlaneInitializerParser {
         if (Strings.isNullOrEmpty(swimlaneConfiguration)) {
             return new OrgFunctionSwimlaneInitializer();
         }
+        if (swimlaneConfiguration.startsWith(BotSwimlaneInitializer.BEGIN)) {
+            return new BotSwimlaneInitializer(swimlaneConfiguration);
+        }
         if (swimlaneConfiguration.startsWith(RelationSwimlaneInitializer.RELATION_BEGIN)) {
             return new RelationSwimlaneInitializer(swimlaneConfiguration);
         }
