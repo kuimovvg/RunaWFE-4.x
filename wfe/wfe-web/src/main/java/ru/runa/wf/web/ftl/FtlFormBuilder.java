@@ -4,9 +4,18 @@ import ru.runa.common.web.StrutsWebHelper;
 import ru.runa.wf.web.TaskFormBuilder;
 import ru.runa.wfe.commons.ftl.FormHashModel;
 import ru.runa.wfe.commons.ftl.FreemarkerProcessor;
+import ru.runa.wfe.definition.dto.WfDefinition;
+import ru.runa.wfe.execution.dto.WfProcess;
+import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Preconditions;
+
+import freemarker.ext.beans.BeanModel;
+import freemarker.ext.beans.BeansWrapper;
 
 public class FtlFormBuilder extends TaskFormBuilder {
 
@@ -18,13 +27,33 @@ public class FtlFormBuilder extends TaskFormBuilder {
 
     protected String processFreemarkerTemplate(String template, IVariableProvider variableProvider) {
         FormHashModel model = new FormHashModel(user, variableProvider, new StrutsWebHelper(pageContext));
-        model.put("interaction", interaction);
-        // String header =
-        // WebResources.getResources().getStringProperty("task.form.header");
-        // if (header != null) {
-        // header = FreemarkerProcessor.process(header, model);
-        // formTemplate = header + "\n" + formTemplate;
-        // }
+        // #173
+        model.put("context", new BeanModel(new Context(this), BeansWrapper.getDefaultInstance()));
         return FreemarkerProcessor.process(template, model);
+    }
+
+    public static class Context {
+        private final FtlFormBuilder builder;
+
+        public Context(FtlFormBuilder builder) {
+            this.builder = builder;
+        }
+
+        public WfDefinition getDefinition() {
+            return Delegates.getDefinitionService().getProcessDefinition(builder.user, builder.definitionId);
+        }
+
+        public WfProcess getProcess() {
+            return Delegates.getExecutionService().getProcess(builder.user, getTask().getProcessId());
+        }
+
+        public WfTask getTask() {
+            Preconditions.checkNotNull(builder.task, "Be sure you are not using this in start form");
+            return builder.task;
+        }
+
+        public Interaction getInteraction() {
+            return builder.interaction;
+        }
     }
 }
