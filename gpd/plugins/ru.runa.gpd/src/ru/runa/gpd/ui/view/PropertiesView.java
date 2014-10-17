@@ -40,6 +40,8 @@ import org.eclipse.ui.views.properties.IPropertySource;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
 import ru.runa.gpd.lang.model.GraphElement;
 
+import com.google.common.base.Objects;
+
 public class PropertiesView extends ViewPart implements ISelectionListener, PropertyChangeListener, IPartListener {
     public static final String ID = "ru.runa.gpd.propertiesView";
     private static final String CELL_EDITOR_KEY = "CellEditor";
@@ -79,7 +81,8 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
             }
         });
         // Handle selections in the Tree
-        // Part1: Double click only (allow traversal via keyboard without activation
+        // Part1: Double click only (allow traversal via keyboard without
+        // activation
         tree.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -137,7 +140,7 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         if (part instanceof GraphitiProcessEditor) {
             newSource = ((GraphitiProcessEditor) part).translateSelection(selection);
         }
-        if (areObjectsEqual(source, newSource)) {
+        if (Objects.equal(source, newSource)) {
             return;
         }
         if (source instanceof GraphElement) {
@@ -192,14 +195,15 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         boolean propFound = false;
-        //        if (tree.isDisposed()) {
-        //            // TODO remove; seems like bug already is fixed
-        //            PluginLogger.logErrorWithoutDialog("tree is disposed in part.propertyChange", new Exception());
-        //            return;
-        //        }
+        // if (tree.isDisposed()) {
+        // // TODO remove; seems like bug already is fixed
+        // PluginLogger.logErrorWithoutDialog("tree is disposed in part.propertyChange",
+        // new Exception());
+        // return;
+        // }
         for (TreeItem item : tree.getItems()) {
             IPropertyDescriptor descriptor = (IPropertyDescriptor) item.getData(PROPERTY_DESCRIPTOR_KEY);
-            if (descriptor != null && descriptor.getId().equals(evt.getPropertyName())) {
+            if (descriptor != null && Objects.equal(descriptor.getId(), evt.getPropertyName())) {
                 CellEditorListener cellEditorListener = (CellEditorListener) item.getData(CELL_EDITOR_LISTENER_KEY);
                 Object value = source.getPropertyValue(descriptor.getId());
                 if (cellEditorListener != null) {
@@ -299,7 +303,7 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
             }
             Object value = cellEditor.getValue();
             try {
-                boolean valueChanged = !areObjectsEqual(initialValue, value);
+                boolean valueChanged = !Objects.equal(initialValue, value);
                 if (valueChanged) {
                     source.setPropertyValue(descriptor.getId(), value);
                     updateValueInView(value);
@@ -319,20 +323,6 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
                 // ignoring Widget is disposed
             }
         }
-    }
-
-    private boolean areObjectsEqual(Object o1, Object o2) {
-        boolean equals = true;
-        if (o1 != null && o2 == null) {
-            equals = false;
-        }
-        if (o1 == null && o2 != null) {
-            equals = false;
-        }
-        if (o1 != null && o2 != null && !o1.equals(o2)) {
-            equals = false;
-        }
-        return equals;
     }
 
     private String getStringValue(IPropertyDescriptor descriptor, Object value) {
