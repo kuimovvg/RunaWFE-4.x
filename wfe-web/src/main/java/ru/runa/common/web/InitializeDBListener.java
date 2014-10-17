@@ -6,7 +6,10 @@ import javax.servlet.ServletContextListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.commons.ftl.FreemarkerConfiguration;
+import ru.runa.wf.logic.bot.BotStationResources;
+import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.service.BotInvokerService;
+import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
 public class InitializeDBListener implements ServletContextListener {
@@ -17,7 +20,18 @@ public class InitializeDBListener implements ServletContextListener {
         log.info("initializing database");
         Delegates.getInitializerService().onSystemStartup();
         log.info("initialization done in class loader " + Thread.currentThread().getContextClassLoader());
-        log.info("Initialized FTL tags: " + FreemarkerConfiguration.getInstance().getRegistrationInfo());
+        try {
+            if (BotStationResources.isAutoStartBotStations()) {
+                for (BotStation botStation : Delegates.getBotService().getBotStations()) {
+                    BotInvokerService botInvokerService = BotInvokerServiceDelegate.getService(botStation);
+                    if (!botInvokerService.isRunning()) {
+                        botInvokerService.startPeriodicBotsInvocation(botStation);
+                    }
+                }
+            }
+        } catch (Throwable th) {
+            log.error("Unable to autostart bot stations", th);
+        }
     }
 
     @Override
