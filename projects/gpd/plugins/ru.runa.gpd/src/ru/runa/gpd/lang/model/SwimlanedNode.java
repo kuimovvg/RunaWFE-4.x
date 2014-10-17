@@ -13,6 +13,8 @@ import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.VariableUtils;
 
+import com.google.common.base.Objects;
+
 public abstract class SwimlanedNode extends Node implements PropertyChangeListener {
     private Swimlane swimlane;
 
@@ -108,7 +110,7 @@ public abstract class SwimlanedNode extends Node implements PropertyChangeListen
         String propertyName = evt.getPropertyName();
         if (PROPERTY_NAME.equals(propertyName) && evt.getSource() instanceof Swimlane) {
             setSwimlane((Swimlane) evt.getSource());
-        } else if (NODE_REMOVED.equals(propertyName) && evt.getOldValue().equals(getSwimlane())) {
+        } else if (NODE_REMOVED.equals(propertyName) && Objects.equal(evt.getOldValue(), getSwimlane())) {
             setSwimlane(null);
         }
     }
