@@ -26,7 +26,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.audit.ProcessDeleteLog;
 import ru.runa.wfe.audit.dao.ProcessLogDAO;
+import ru.runa.wfe.audit.dao.SystemLogDAO;
 import ru.runa.wfe.definition.dao.DeploymentDAO;
 import ru.runa.wfe.definition.dao.ProcessDefinitionLoader;
 import ru.runa.wfe.execution.Process;
@@ -82,6 +84,8 @@ public class WFCommonLogic extends CommonLogic {
     protected JobDAO jobDAO;
     @Autowired
     protected TokenDAO tokenDAO;
+    @Autowired
+    protected SystemLogDAO systemLogDAO;
 
     public ProcessDefinition getDefinition(Long processDefinitionId) {
         return processDefinitionLoader.getDefinition(processDefinitionId);
@@ -163,19 +167,20 @@ public class WFCommonLogic extends CommonLogic {
         }
     }
 
-    protected void deleteProcess(Process process) {
+    protected void deleteProcess(User user, Process process) {
         log.debug("deleting process " + process);
         permissionDAO.deleteAllPermissions(process);
         List<Process> subProcesses = nodeProcessDAO.getSubprocesses(process);
         nodeProcessDAO.deleteByProcess(process);
         for (Process subProcess : subProcesses) {
             log.debug("deleting sub process " + subProcess.getId());
-            deleteProcess(subProcess);
+            deleteProcess(user, subProcess);
         }
         processLogDAO.deleteAll(process.getId());
         jobDAO.deleteAll(process);
         variableDAO.deleteAll(process);
         processDAO.delete(process);
+        systemLogDAO.create(new ProcessDeleteLog(user.getActor().getId(), process.getDeployment().getName(), process.getId()));
     }
 
     /**

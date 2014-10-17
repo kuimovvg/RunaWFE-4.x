@@ -50,7 +50,7 @@ public class Messages {
     public static final String LABEL_SETTING_TITLE = "label.setting_title";
     public static final String LABEL_SETTING_DESCRIPTION = "label.setting_description";
     public static final String LABEL_SETTING_VALUE = "label.setting_value";
-    
+
     public static final String MESSAGE_RELATION_GROUP_EXISTS = "label.relation.exists";
     public static final String MESSAGE_RELATION_GROUP_DOESNOT_EXISTS = "label.relation.not_exists";
 
@@ -84,7 +84,7 @@ public class Messages {
 
     public static final String TITLE_HISTORY = "title.history";
     public static final String TITLE_SYSTEM_HISTORY = "title.system.history";
-    
+
     public static final String MANAGE_SETTINGS = "manage_settings";
 
     public static final String BUTTON_CREATE_ACTOR = "button.create_actor";
@@ -95,12 +95,12 @@ public class Messages {
     public static final String BUTTON_LOGOUT = "button.logout";
 
     public static final String BUTTON_CANCEL_PROCESS = "button.cancel_process";
-    public static final String BUTTON_UNDEPLOY_DEFINITION = "button.undeploy_definition";    
+    public static final String BUTTON_UNDEPLOY_DEFINITION = "button.undeploy_definition";
 
     public static final String BUTTON_ACCEPT_TASK = "button.accept_task";
 
     public static final String BUTTON_USE_DAFAULT_PROPERTIES = "button.use.default.properties";
-    
+
     public static final String LABEL_PASSWORD = "label.password";
     public static final String LABEL_PASSWORD_CONFIRM = "label.password_confirm";
 
@@ -111,7 +111,7 @@ public class Messages {
     public static final String LABEL_ACTOR_IS_ACTIVE = "label.actor_is_active";
     public static final String LABEL_ACTOR_EMAIL = "label.actor_email";
     public static final String LABEL_ACTOR_PHONE = "label.actor_phone";
-    public static final String LABEL_GROUP_AD = "label.group_ad";    
+    public static final String LABEL_GROUP_AD = "label.group_ad";
 
     public static final String DYNAMIC_GROUP_NAME = "dynamic_group.name";
     public static final String ESCALATION_GROUP_NAME = "escalation_group.name";
@@ -149,7 +149,7 @@ public class Messages {
     public static final String LABEL_PARENT_PROCESS = "label.parent_process";
 
     public static final String TITLE_UPDATE_VARIABLE = "title.update_variable";
-    public static final String LABEL_VARIABLE_NAME = "label.variable_name";    
+    public static final String LABEL_VARIABLE_NAME = "label.variable_name";
     public static final String LABEL_VARIABLE_VALUE = "label.variable_value";
     public static final String LABEL_VARIABLE_TYPE = "label.variable_type";
     public static final String LABEL_VARIABLE_SCRIPTING_VALUE = "label.variable_script_value";
@@ -157,10 +157,10 @@ public class Messages {
     public static final String LABEL_VARIABLE_NULL_VALUE = "label.variable_null_value";
     public static final String LABEL_VARIABLE_OLD_VALUE = "label.variable_old_value";
     public static final String LABEL_VARIABLE_NEW_VALUE = "label.variable_new_value";
-    public static final String LABEL_NO_VARIABLES ="label.no_variables";
+    public static final String LABEL_NO_VARIABLES = "label.no_variables";
     public static final String LABEL_SHOW_CONTROLS = "label.show_controls";
     public static final String LABEL_HIDE_CONTROLS = "label.hide_controls";
-    
+
     public static final String LABEL_SHOW_DEPLOY_DEFINITION_CONTROLS = "label.show_deploy_definition_controls";
     public static final String LABEL_HIDE_DEPLOY_DEFINITION_CONTROLS = "label.hide_deploy_definition_controls";
 
@@ -208,6 +208,7 @@ public class Messages {
     public static final String TASK_COMPLETED = "task.completed";
     public static final String PROCESS_STARTED = "process.started";
     public static final String PROCESS_CANCELED = "process.canceled";
+    public static final String PROCESS_REMOVED = "process.removed";
 
     public static final String MESSAGE_VARIABLE_FORMAT_ERROR = "variable.format.error";
     public static final String MESSAGE_VALIDATION_ERROR = "validation.form.error";
@@ -278,6 +279,7 @@ public class Messages {
     public static final String CONF_POPUP_UNDEPLOY_PROCESSDEFINIION = "confirmpopup.undeploy.processdefinition";
     public static final String CONF_POPUP_REMOVE_SUBSTITUTION_CRITERIA = "confirmpopup.remove.substitutioncriteria";
     public static final String CONF_POPUP_CANCEL_PROCESS = "confirmpopup.cancel.process";
+    public static final String CONF_POPUP_REMOVE_PROCESS = "confirmpopup.remove.process";
     public static final String CONF_POPUP_ACCEPT_TASK = "confirmpopup.accept.task";
     public static final String CONF_POPUP_EXECUTE_TASK = "confirmpopup.execute.task";
     public static final String CONF_POPUP_START_PROCESS = "confirmpopup.start.process";
@@ -302,7 +304,7 @@ public class Messages {
     public static final String EXCEPTION_DATAFILE_NOT_PRESENT = "managesystem.datafile.not.present";
 
     public static final String LINK_DROP_SETTINGS = "link.drop_settings";
-    
+
     private Messages() {
     }
 
