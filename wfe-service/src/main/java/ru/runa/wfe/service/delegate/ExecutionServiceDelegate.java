@@ -20,11 +20,9 @@ package ru.runa.wfe.service.delegate;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.audit.ProcessLogFilter;
-import ru.runa.wfe.audit.ProcessLogs;
-import ru.runa.wfe.audit.SystemLog;
 import ru.runa.wfe.execution.ProcessDoesNotExistException;
 import ru.runa.wfe.execution.ProcessFilter;
+import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.execution.dto.WfSwimlane;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
@@ -211,24 +209,6 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public byte[] getProcessHistoryDiagram(User user, Long processId, Long taskId, String subprocessId) {
-        try {
-            return getExecutionService().getProcessHistoryDiagram(user, processId, taskId, subprocessId);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    @Override
-    public List<GraphElementPresentation> getProcessHistoryDiagramElements(User user, Long processId, Long taskId, String subprocessId) {
-        try {
-            return getExecutionService().getProcessHistoryDiagramElements(user, processId, taskId, subprocessId);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    @Override
     public List<GraphElementPresentation> getProcessDiagramElements(User user, Long processId, String subprocessId) {
         try {
             return getExecutionService().getProcessDiagramElements(user, processId, subprocessId);
@@ -256,15 +236,6 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public ProcessLogs getProcessLogs(User user, ProcessLogFilter filter) {
-        try {
-            return getExecutionService().getProcessLogs(user, filter);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    @Override
     public void markTaskOpened(User user, Long taskId) {
         try {
             getExecutionService().markTaskOpened(user, taskId);
@@ -283,27 +254,9 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public List<SystemLog> getSystemLogs(User user, BatchPresentation batchPresentation) {
+    public List<ProcessError> getProcessErrors(User user, Long processId) {
         try {
-            return getExecutionService().getSystemLogs(user, batchPresentation);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    @Override
-    public int getSystemLogsCount(User user, BatchPresentation batchPresentation) {
-        try {
-            return getExecutionService().getSystemLogsCount(user, batchPresentation);
-        } catch (Exception e) {
-            throw handleException(e);
-        }
-    }
-
-    @Override
-    public Object getProcessLogValue(User user, Long logId) {
-        try {
-            return getExecutionService().getProcessLogValue(user, logId);
+            return getExecutionService().getProcessErrors(user, processId);
         } catch (Exception e) {
             throw handleException(e);
         }

@@ -31,11 +31,12 @@ public class SwimlaneInitializerHelper {
             SwimlaneInitializer swimlaneInitializer;
             if (RelationSwimlaneInitializer.isValid(swimlaneConfiguration)) {
                 swimlaneInitializer = ApplicationContextFactory.autowireBean(new RelationSwimlaneInitializer());
-                swimlaneInitializer.parse(swimlaneConfiguration);
+            } else if (BotSwimlaneInitializer.isValid(swimlaneConfiguration)) {
+                swimlaneInitializer = ApplicationContextFactory.autowireBean(new BotSwimlaneInitializer());
             } else {
                 swimlaneInitializer = ApplicationContextFactory.autowireBean(new OrgFunctionSwimlaneInitializer());
-                swimlaneInitializer.parse(swimlaneConfiguration);
             }
+            swimlaneInitializer.parse(swimlaneConfiguration);
             CACHE.put(swimlaneConfiguration, swimlaneInitializer);
         }
         return CACHE.get(swimlaneConfiguration);

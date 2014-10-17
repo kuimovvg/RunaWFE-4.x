@@ -76,7 +76,7 @@ public class VariableDownloaderAction extends ActionBase {
         VariableFormat qualifierFormat = null;
         Object object;
         if (form.getLogId() != null) {
-            object = Delegates.getExecutionService().getProcessLogValue(getLoggedUser(request), form.getLogId());
+            object = Delegates.getAuditService().getProcessLogValue(getLoggedUser(request), form.getLogId());
         } else {
             String variableName = form.getVariableName();
             if (variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_START)

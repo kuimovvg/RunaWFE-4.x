@@ -58,6 +58,10 @@
 			<value>true</value>
 			<value>false</value>
 		</property>
+		<property title="auto.invocation.local.botstation.enabled">
+			<value>true</value>
+			<value>false</value>
+		</property>
 	</properties_file>
 	
 	<properties_file title="class.presentation.properties">
@@ -109,10 +113,6 @@
 			<value>false</value>
 		</property>
 		<property title="process.graph.autoRefreshInterval.seconds" pattern="\d*" />
-		<property title="process.definition.ajax.deployment">
-			<value>true</value>
-			<value>false</value>
-		</property>
 		<property title="confirmation.remove.executors">
 			<value>true</value>
 			<value>false</value>
@@ -166,6 +166,14 @@
 			<value>false</value>
 		</property>
 		<property title="confirmation.use.default.properties">
+			<value>true</value>
+			<value>false</value>
+		</property>
+		<property title="process.definition.ajax.bulk.deployment.enabled">
+			<value>true</value>
+			<value>false</value>
+		</property>
+		<property title="process.removal.enabled">
 			<value>true</value>
 			<value>false</value>
 		</property>
@@ -224,6 +232,10 @@
 		<property title="thread.pool.size" pattern="\d*"/>
 		<property title="taskhandler.jar.names" />
 		<property title="bot.logger.class" />
+		<property title="botstations.autostart.enabled">
+			<value>true</value>
+			<value>false</value>
+		</property>
 	</property_file>
 	
 </settings>

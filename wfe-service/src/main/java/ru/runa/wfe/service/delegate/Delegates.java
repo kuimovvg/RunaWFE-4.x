@@ -20,6 +20,7 @@ package ru.runa.wfe.service.delegate;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.service.AuditService;
 import ru.runa.wfe.service.AuthenticationService;
 import ru.runa.wfe.service.AuthorizationService;
 import ru.runa.wfe.service.BotService;
@@ -55,6 +56,10 @@ public class Delegates {
 
     public static <T extends EJB3Delegate> T createDelegate(Class<T> delegateClass) {
         return ClassLoaderUtil.instantiate(delegateClass);
+    }
+
+    public static AuditService getAuditService() {
+        return getDelegate(AuditServiceDelegate.class);
     }
 
     public static AuthenticationService getAuthenticationService() {
