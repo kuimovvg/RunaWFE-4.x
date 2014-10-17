@@ -171,6 +171,7 @@ public class FreemarkerUtil {
         Configuration cfg = new Configuration();
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setLocalizedLookup(false);
+        cfg.setTemplateExceptionHandler(new MyTemplateExceptionHandler());
         Template template = new Template("test", new StringReader(ftlText), cfg, "UTF-8");
         StringWriter out = new StringWriter();
         template.process(new EditorHashModel(variables), out);
@@ -317,7 +318,6 @@ public class FreemarkerUtil {
     public static class MyTemplateExceptionHandler implements TemplateExceptionHandler {
         @Override
         public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {
-            PluginLogger.logErrorWithoutDialog("FTL form problem found.", te);
         }
     }
 
