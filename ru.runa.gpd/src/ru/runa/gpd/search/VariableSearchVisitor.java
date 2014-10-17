@@ -267,7 +267,7 @@ public class VariableSearchVisitor {
                     matchesCount++;
                 }
                 elementMatch.setMatchesCount(matchesCount);
-                List<Match> matches = findInFile(elementMatch, file, matcher);
+                List<Match> matches = findInFile(elementMatch, file, matcherWithBrackets);
                 elementMatch.setPotentialMatchesCount(matches.size() - matchesCount);
                 for (Match match : matches) {
                     query.getSearchResult().addMatch(match);

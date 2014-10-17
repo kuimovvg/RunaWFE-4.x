@@ -52,6 +52,9 @@ public class FormNodePresentation extends VariableRenameProvider<FormNode> {
     }
 
     private Change[] processFile(IFile file, final String label, String variableName, String replacement) throws Exception {
+        // #815
+        variableName = "\"" + variableName + "\"";
+        replacement = "\"" + replacement + "\"";
         String text = IOUtils.readStream(file.getContents());
         Pattern pattern = Pattern.compile(Pattern.quote(variableName));
         Matcher matcher = pattern.matcher(text);
