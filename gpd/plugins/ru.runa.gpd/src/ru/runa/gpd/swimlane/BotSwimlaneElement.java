@@ -53,6 +53,6 @@ public class BotSwimlaneElement extends SwimlaneElement<BotSwimlaneInitializer> 
     @Override
     public void open(String path, String swimlaneName, BotSwimlaneInitializer swimlaneInitializer) {
         super.open(path, swimlaneName, swimlaneInitializer);
-        combo.setText(swimlaneInitializer.getBotName());
+        combo.setText(swimlaneInitializer != null ? swimlaneInitializer.getBotName() : "");
     }
 }
