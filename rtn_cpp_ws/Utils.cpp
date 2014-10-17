@@ -219,7 +219,7 @@ bool recvline(int s, string* buf) {
 	int t = 0;
 	while (true) {
 		int available = recv(s, &in, 1, 0);
-		if (available == 0) {
+		if (available <= 0) {
 			return false; 
 		}
 		if (in == 10) {
