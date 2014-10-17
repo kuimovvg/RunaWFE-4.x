@@ -11,14 +11,17 @@ import org.eclipse.swt.widgets.Label;
 
 import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
-import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 
-public class BotSwimlaneElement extends OrgFunctionSwimlaneElement {
+public class BotSwimlaneElement extends SwimlaneElement<BotSwimlaneInitializer> {
     private Combo combo;
 
     public BotSwimlaneElement() {
-        super(BotTask.SWIMLANE_DEFINITION_NAME);
+    }
+
+    @Override
+    protected BotSwimlaneInitializer createNewSwimlaneInitializer() {
+        return new BotSwimlaneInitializer();
     }
 
     @Override
@@ -35,7 +38,7 @@ public class BotSwimlaneElement extends OrgFunctionSwimlaneElement {
         combo.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-                setOrgFunctionParameterValue(0, combo.getText());
+                getSwimlaneInitializerNotNull().setBotName(combo.getText());
                 fireCompletedEvent();
             }
         });
@@ -48,8 +51,8 @@ public class BotSwimlaneElement extends OrgFunctionSwimlaneElement {
     }
 
     @Override
-    public void open(String path, String swimlaneName, OrgFunctionSwimlaneInitializer swimlaneInitializer) {
+    public void open(String path, String swimlaneName, BotSwimlaneInitializer swimlaneInitializer) {
         super.open(path, swimlaneName, swimlaneInitializer);
-        combo.setText(getOrgFunctionParameterValue(0));
+        combo.setText(swimlaneInitializer.getBotName());
     }
 }
