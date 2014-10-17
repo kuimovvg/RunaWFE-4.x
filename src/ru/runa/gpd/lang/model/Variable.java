@@ -185,20 +185,6 @@ public class Variable extends NamedGraphElement implements Describable {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hashCode(getName(), getFormat());
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Variable)) {
-            return false;
-        }
-        Variable v = (Variable) obj;
-        return Objects.equal(getName(), v.getName()) && Objects.equal(getFormat(), v.getFormat());
-    }
-
-    @Override
     public String toString() {
         ToStringHelper helper = Objects.toStringHelper(getClass()).add("name", getName());
         if (isComplex()) {
