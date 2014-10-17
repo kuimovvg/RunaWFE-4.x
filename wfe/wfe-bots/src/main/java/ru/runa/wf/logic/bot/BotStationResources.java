@@ -74,4 +74,8 @@ public class BotStationResources {
         return RESOURCES.getMultipleStringProperty("taskhandler.jar.names");
     }
 
+    public static boolean isAutoStartBotStations() {
+        return RESOURCES.getBooleanProperty("botstations.autostart.enabled", true);
+    }
+
 }
