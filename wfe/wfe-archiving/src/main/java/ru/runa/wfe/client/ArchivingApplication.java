@@ -86,7 +86,7 @@ public class ArchivingApplication {
 
                 ProcessFilter processFilter = new ProcessFilter();
                 processFilter.setEndDateTo(c.getTime());
-                processFilter.setFinishedOnly(true);
+                processFilter.setFinished(true);
 
                 long startTime = System.currentTimeMillis();
 
