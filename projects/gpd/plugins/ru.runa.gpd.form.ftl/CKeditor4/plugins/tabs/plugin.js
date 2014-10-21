@@ -59,8 +59,12 @@ CKEDITOR.plugins.add('tabs', {
 			$("li a[href^=#tabs]").each(function() {
 				$(this).parent().focus(function() {
 					$(this).find("a").click();
+					activeTab = $(this).find("a").attr('href');
 				});
 			});
+			if(activeTab != null) {
+				$("li a[href=" + activeTab + "]").click();
+			}
 		});
 		editor.on('getData', function(e) {
 			if ($('.tabs').length > 0) {
@@ -76,7 +80,8 @@ CKEDITOR.plugins.add('tabs', {
 	}
 });
 
-var tabCounter = 1;
+
+var activeTab = null;
 var tabTemplate = "<li><a href='#{href}'>#{label}</a></li>";
 function addTab(editor, tabFolderId, initialize) {
 	var tabId = (new Date()).getTime();
@@ -86,8 +91,10 @@ function addTab(editor, tabFolderId, initialize) {
 	var tabFolder = $('#' + tabFolderId);
 	tabFolder.find('ul').append(li);
 	tabFolder.append('<div id="' + id + '"><p>' + editor.lang.tabs.NewTabContent + '</p></div>');
+	activeTab = "#" + id;
 	$(li).on('focus', function() {
 		$(this).find("a").click();
+		activeTab = $(this).find("a").attr('href');
 	});
 	if (initialize) {
 		tabFolder.tabs();
