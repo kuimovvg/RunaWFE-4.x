@@ -1,5 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html>
+<html style="height: 100%;">
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -33,7 +33,6 @@
 		function convertTabsHTML(content) {			
 			var doc = $("<p>").append(content);
 			$(doc).find('.tabs').each(function() {
-				$(this).find('div[role="tabpanel"]').remove();
 				$(this).removeAttr("class");	
 				$(this).find("a").each(function() {
 					$(this).attr("href", "#tabs" + $(this).attr("href").split("#tabs")[1]);
@@ -86,8 +85,8 @@
 		}
 		</script>
 	</head>
-	<body style="margin: 0px; padding: 0px;">
-		<form method="POST" name="form">
+	<body style="margin: 0px; padding: 0px; height: 100%;">
+		<form method="POST" name="form" style="height: 100%;">
 			<script type="text/javascript">
 			try {
 				if (FCKeditor_IsCompatibleBrowser()) {
