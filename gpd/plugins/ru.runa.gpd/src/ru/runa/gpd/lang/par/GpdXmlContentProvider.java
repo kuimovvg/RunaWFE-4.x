@@ -152,12 +152,24 @@ public class GpdXmlContentProvider extends AuxContentProvider {
                 Node node = (Node) graphElement;
                 for (Transition transition : node.getLeavingTransitions()) {
                     for (Point bendpoint : transition.getBendpoints()) {
-                        if (bendpoint.x - canvasShift < xOffset) {
-                            xOffset = bendpoint.x - canvasShift;
+                        // canvasShift for BPMN connections = 0;
+                        if (bendpoint.x < xOffset) {
+                            xOffset = bendpoint.x;
                         }
-                        if (bendpoint.y - canvasShift < yOffset) {
-                            yOffset = bendpoint.y - canvasShift;
+                        if (bendpoint.y < yOffset) {
+                            yOffset = bendpoint.y;
                         }
+                    }
+                }
+            }
+            if (graphElement instanceof HasTextDecorator) {
+                TextDecorationNode decorationNode = ((HasTextDecorator) graphElement).getTextDecoratorEmulation().getDefinition();
+                if (decorationNode != null && decorationNode.getConstraint() != null) {
+                    if (decorationNode.getConstraint().x - canvasShift < xOffset) {
+                        xOffset = decorationNode.getConstraint().x - canvasShift;
+                    }
+                    if (decorationNode.getConstraint().y - canvasShift < yOffset) {
+                        yOffset = decorationNode.getConstraint().y - canvasShift;
                     }
                 }
             }

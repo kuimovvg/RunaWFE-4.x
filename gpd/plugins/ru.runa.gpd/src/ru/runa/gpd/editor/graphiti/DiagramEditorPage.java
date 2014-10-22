@@ -37,11 +37,11 @@ import ru.runa.gpd.editor.ProcessEditorContributor;
 import ru.runa.gpd.editor.gef.GEFActionBarContributor;
 import ru.runa.gpd.editor.graphiti.update.BOUpdateContext;
 import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
-import ru.runa.gpd.lang.model.Timer;
 import ru.runa.gpd.lang.model.Transition;
 
 import com.google.common.base.Objects;
@@ -82,14 +82,21 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
                 }
             }
         }
-        if (event.getSource() instanceof Timer && PropertyNames.PROPERTY_TIMER_DELAY.equals(event.getPropertyName())) {
-            Timer timer = (Timer) event.getSource();
-            for (Transition transition : timer.getLeavingTransitions()) {
-                pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(transition);
-                if (pe != null) {
-                    BOUpdateContext context = new BOUpdateContext(pe, transition);
-                    getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
-                }
+        if (event.getSource() instanceof Node) {
+            if (PropertyNames.PROPERTY_TIMER_DELAY.equals(event.getPropertyName())
+                    || PropertyNames.NODE_LEAVING_TRANSITION_ADDED.equals(event.getPropertyName())
+                    || PropertyNames.NODE_LEAVING_TRANSITION_REMOVED.equals(event.getPropertyName())) {
+                updateLeavingTransitions((Node) event.getSource());
+            }
+        }
+    }
+
+    private void updateLeavingTransitions(Node node) {
+        for (Transition transition : node.getLeavingTransitions()) {
+            PictogramElement pe = getDiagramTypeProvider().getFeatureProvider().getPictogramElementForBusinessObject(transition);
+            if (pe != null) {
+                BOUpdateContext context = new BOUpdateContext(pe, transition);
+                getDiagramTypeProvider().getFeatureProvider().updateIfPossibleAndNeeded(context);
             }
         }
     }
@@ -170,6 +177,7 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
 
     @Override
     public void doSave(IProgressMonitor monitor) {
+        refresh();
     }
 
     private void drawElements(ContainerShape parentShape) {
