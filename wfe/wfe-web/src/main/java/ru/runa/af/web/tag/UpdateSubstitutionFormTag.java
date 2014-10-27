@@ -162,8 +162,12 @@ public class UpdateSubstitutionFormTag extends IdentifiableFormTag {
                 String function = "";
                 OrgFunctionSwimlaneInitializer swimlaneInitializer = null;
                 if (substitution != null) {
-                    swimlaneInitializer = (OrgFunctionSwimlaneInitializer) SwimlaneInitializerHelper.parse(substitution.getOrgFunction());
-                    function = swimlaneInitializer.getOrgFunctionClassName();
+                    try {
+                        swimlaneInitializer = (OrgFunctionSwimlaneInitializer) SwimlaneInitializerHelper.parse(substitution.getOrgFunction());
+                        function = swimlaneInitializer.getOrgFunctionClassName();
+                    } catch (Exception e) {
+                        log.warn(e);
+                    }
                 }
                 Option[] functionOptions = getFunctionOptions(function);
                 if (function.length() == 0 && functionOptions.length > 0) {
