@@ -69,13 +69,13 @@
 			}
 		}
 		function markContent(editor) {
-			lastModificationLength = editor.GetXHTML(true).length;
+			lastModificationLength = convertTabsHTML(editor.GetXHTML(true)).length;
 			modificationFlagSent = false;
 		}
 		function findModifications() {
 			if (!modificationFlagSent) {
 				var editor = FCKeditorAPI.GetInstance("editor");
-				var contentLength = editor.GetXHTML(true).length;
+				var contentLength = convertTabsHTML(editor.GetXHTML(true)).length;
 				if (contentLength != lastModificationLength) {
 					markEditorDirtyCallback();
 					lastModificationLength = contentLength;
