@@ -7,6 +7,7 @@ import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.extension.OrgFunction;
+import ru.runa.wfe.extension.OrgFunctionException;
 import ru.runa.wfe.extension.orgfunction.NullOrgFunction;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.IVariableProvider;
@@ -27,6 +28,9 @@ public class OrgFunctionSwimlaneInitializer extends SwimlaneInitializer {
         }
         int leftBracketIndex = swimlaneConfiguration.indexOf(LEFT_BRACKET);
         int rightBracketIndex = swimlaneConfiguration.indexOf(RIGHT_BRACKET);
+        if (leftBracketIndex == -1 || rightBracketIndex == -1) {
+            throw new OrgFunctionException("Invalid org function: missed brackets");
+        }
         orgFunctionClassName = swimlaneConfiguration.substring(0, leftBracketIndex);
         String parametersString = swimlaneConfiguration.substring(leftBracketIndex + 1, rightBracketIndex);
         parameterNames = parametersString.split(",", -1);
