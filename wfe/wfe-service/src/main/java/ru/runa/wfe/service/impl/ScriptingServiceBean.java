@@ -38,7 +38,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.script.AdminScriptException;
@@ -99,9 +99,8 @@ public class ScriptingServiceBean implements ScriptingService {
     @Override
     @WebResult(name = "result")
     public void executeGroovyScript(@WebParam(name = "user") User user, @WebParam(name = "script") String script) {
-        boolean enabled = SystemProperties.getResources().getBooleanProperty("scriptingServiceAPI.executeGroovyScript.enabled", false);
-        if (!enabled) {
-            throw new InternalApplicationException(
+        if (!SystemProperties.isExecuteGroovyScriptInAPIEnabled()) {
+            throw new ConfigurationException(
                     "In order to enable script execution set property 'scripting.groovy.enabled' to 'true' in system.properties or wfe.custom.system.properties");
         }
         GroovyShell shell = new GroovyShell();

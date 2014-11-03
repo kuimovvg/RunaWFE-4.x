@@ -197,6 +197,11 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
         return s;
     }
 
+    @Transient
+    public String getPatternName() {
+        return getClass().getSimpleName();
+    }
+
     /**
      * @return Arguments for localized pattern to format log message
      *         description.

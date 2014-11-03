@@ -209,6 +209,8 @@ public class Messages {
     public static final String PROCESS_STARTED = "process.started";
     public static final String PROCESS_CANCELED = "process.canceled";
     public static final String PROCESS_REMOVED = "process.removed";
+    public static final String PROCESS_UPGRADED_TO_NEXT_DEFINITION_VERSION = "process.upgraded.to.next.definition.version";
+    public static final String PROCESS_UPGRADE_TO_NEXT_DEFINITION_VERSION = "process.upgrade.to.next.definition.version";
 
     public static final String MESSAGE_VARIABLE_FORMAT_ERROR = "variable.format.error";
     public static final String MESSAGE_VALIDATION_ERROR = "validation.form.error";
