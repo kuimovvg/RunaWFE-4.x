@@ -33,7 +33,7 @@ import javax.jws.soap.SOAPBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -200,9 +200,8 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         Preconditions.checkArgument(user != null);
-        boolean enabled = SystemProperties.getResources().getBooleanProperty("executionServiceAPI.updateVariables.enabled", false);
-        if (!enabled) {
-            throw new InternalApplicationException(
+        if (!SystemProperties.isUpdateProcessVariablesInAPIEnabled()) {
+            throw new ConfigurationException(
                     "In order to enable script execution set property 'executionServiceAPI.updateVariables.enabled' to 'true' in system.properties or wfe.custom.system.properties");
         }
         variableLogic.updateVariables(user, processId, variables);
@@ -291,6 +290,14 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(processId != null);
         return ProcessExecutionErrors.getProcessErrors(processId);
+    }
+
+    @Override
+    @WebResult(name = "result")
+    public void upgradeProcessToNextDefinitionVersion(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(processId != null);
+        executionLogic.upgradeProcessToNextDefinitionVersion(user, processId);
     }
 
     private boolean convertValueToProxy(User user, Long processId, WfVariable variable) {

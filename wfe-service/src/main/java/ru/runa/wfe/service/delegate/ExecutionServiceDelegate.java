@@ -261,4 +261,14 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
             throw handleException(e);
         }
     }
+
+    @Override
+    public void upgradeProcessToNextDefinitionVersion(User user, Long processId) {
+        try {
+            getExecutionService().upgradeProcessToNextDefinitionVersion(user, processId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
 }
