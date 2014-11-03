@@ -100,7 +100,7 @@ public class ShowHistoryTag extends ProcessBaseFormTag {
         for (ProcessLog log : logs.getLogs()) {
             String description;
             try {
-                String format = Messages.getMessage("history.log." + log.getClass().getSimpleName(), pageContext);
+                String format = Messages.getMessage("history.log." + log.getPatternName(), pageContext);
                 Object[] arguments = log.getPatternArguments();
                 Object[] substitutedArguments = HTMLUtils.substituteArguments(getUser(), pageContext, arguments);
                 description = log.toString(format, substitutedArguments);

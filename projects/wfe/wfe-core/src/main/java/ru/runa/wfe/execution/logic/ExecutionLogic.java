@@ -22,12 +22,16 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.ConfigurationException;
+import ru.runa.wfe.audit.AdminActionLog;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.ProcessLogs;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.DefinitionVariableProvider;
+import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.NodeProcess;
 import ru.runa.wfe.execution.Process;
@@ -275,6 +279,21 @@ public class ExecutionLogic extends WFCommonLogic {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public void upgradeProcessToNextDefinitionVersion(User user, Long processId) {
+        if (!SystemProperties.isUpgradeProcessToNextDefinitionVersionEnabled()) {
+            throw new ConfigurationException(
+                    "In order to enable script execution set property 'executionServiceAPI.updateVariables.enabled' to 'true' in system.properties or wfe.custom.system.properties");
+        }
+        Process process = processDAO.getNotNull(processId);
+        // TODO
+        // checkPermissionAllowed(user, process, ProcessPermission.UPDATE);
+        Deployment deployment = process.getDeployment();
+        ProcessDefinition nextDefinition = processDefinitionLoader.getDefinition(deployment.getName(), deployment.getVersion());
+        process.setDeployment(nextDefinition.getDeployment());
+        processDAO.update(process);
+        processLogDAO.addLog(new AdminActionLog(user.getActor(), AdminActionLog.ACTION_UPGRADE_PROCESS_TO_NEXT_VERSION), process);
     }
 
 }
