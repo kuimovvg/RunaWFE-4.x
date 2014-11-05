@@ -67,7 +67,7 @@ public class ShowProcessErrorsTag extends VisibleTag {
         public TR build() {
             TR tr = new TR();
             tr.addElement(new TH(Messages.getMessage("errors.process.id", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
-            tr.addElement(new TH(Messages.getMessage("errors.occured", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
+            tr.addElement(new TH(Messages.getMessage("errors.occurred", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage("errors.task.name", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage("errors.error", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             return tr;
