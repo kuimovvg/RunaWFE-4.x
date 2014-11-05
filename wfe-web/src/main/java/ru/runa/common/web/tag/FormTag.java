@@ -77,7 +77,7 @@ abstract public class FormTag extends VisibleTag {
      * In this method descendants fill the form.
      * 
      * @param tdFormElement
-     *            @ if any exception occured
+     *            @ if any exception occurred
      */
     abstract protected void fillFormElement(final TD tdFormElement);
 
@@ -124,13 +124,13 @@ abstract public class FormTag extends VisibleTag {
     protected String getConfirmationPopupParameter() {
         return "";
     }
-    
+
     protected boolean isCancelButtonEnabled() {
-    	return false;
+        return false;
     }
-    
+
     protected String getCancelButtonAction() {
-    	return "";
+        return "";
     }
 
     @Override
@@ -185,7 +185,7 @@ abstract public class FormTag extends VisibleTag {
                 td.addElement(submitButton);
             }
             if (isCancelButtonEnabled()) {
-            	Input cancelButton = new Input(Input.BUTTON, SUBMIT_BUTTON_NAME, Messages.getMessage(Messages.BUTTON_CANCEL, pageContext));
+                Input cancelButton = new Input(Input.BUTTON, SUBMIT_BUTTON_NAME, Messages.getMessage(Messages.BUTTON_CANCEL, pageContext));
                 cancelButton.setClass(Resources.CLASS_BUTTON);
                 cancelButton.addAttribute("onclick", "window.location='" + getCancelButtonAction() + "'");
                 td.addElement(Entities.NBSP);

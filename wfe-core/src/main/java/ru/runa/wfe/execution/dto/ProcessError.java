@@ -17,7 +17,7 @@ public class ProcessError implements Serializable {
     private String nodeId;
     private String taskName;
     private BotTask botTask;
-    private Date occuredDate = new Date();
+    private Date occurredDate = new Date();
     private String throwableMessage;
     private String throwableDetails;
 
@@ -53,8 +53,8 @@ public class ProcessError implements Serializable {
         return botTask;
     }
 
-    public Date getOccuredDate() {
-        return occuredDate;
+    public Date getOccurredDate() {
+        return occurredDate;
     }
 
     public String getThrowableMessage() {
