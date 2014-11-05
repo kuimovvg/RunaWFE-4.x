@@ -127,7 +127,7 @@ public class ErrorDetailsAction extends ActionBase {
                         List<ProcessError> errorDetails = ProcessExecutionErrors.getProcessErrors().get(processId);
                         for (ProcessError detail : errorDetails) {
                             exceptions += "\r\n---------------------------------------------------------------";
-                            exceptions += "\r\n" + CalendarUtil.formatDateTime(detail.getOccuredDate()) + " " + detail.getNodeId() + "/"
+                            exceptions += "\r\n" + CalendarUtil.formatDateTime(detail.getOccurredDate()) + " " + detail.getNodeId() + "/"
                                     + detail.getTaskName();
                             if (detail.getBotTask() != null) {
                                 String botTaskIdentifier = detail.getBotTask().getId() + "." + detail.getBotTask().getName();

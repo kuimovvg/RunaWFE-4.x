@@ -28,7 +28,7 @@ public class ShowProcessAction extends ForwardAction {
             String processErrors = "";
             for (ProcessError detail : errorDetails) {
                 String url = "javascript:showProcessError(" + processId + ", '" + detail.getNodeId() + "')";
-                processErrors += "<a href=\"" + url + "\">" + detail.getTaskName() + " (" + CalendarUtil.formatDateTime(detail.getOccuredDate())
+                processErrors += "<a href=\"" + url + "\">" + detail.getTaskName() + " (" + CalendarUtil.formatDateTime(detail.getOccurredDate())
                         + ")</a><br>";
             }
             request.setAttribute("processErrors", processErrors);
