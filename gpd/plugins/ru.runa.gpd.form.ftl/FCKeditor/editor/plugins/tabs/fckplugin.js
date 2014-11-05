@@ -3,7 +3,7 @@ var FTL_METHOD_INSERT_CMD = 'InsertTab' ;
 var FTL_METHOD_DELETE_CMD = 'DeleteTab' ;
 
 var folderId = -1;
-var tabTemplate = "<li><a href='#{href}'>#{label}</a></li>";
+var tabTemplate = "<li><a href='#{href}'><div>#{label}</div></a></li>";
 
 function addTab(tabFolderId, initialize) {
 	var tabId = (new Date()).getTime();
@@ -16,7 +16,7 @@ function addTab(tabFolderId, initialize) {
 	folderId = tabFolderId;
 	var tabFolder = $(FCK.EditorDocument).find('#' + tabFolderId);	
 	tabFolder.find('ul').append(li);
-	tabFolder.append('<div style="padding: 1em 1.4em;" id="' + id + '"><p>' + FCKLang.NewTabContent + '</p></div>');	
+	tabFolder.append('<div id="' + id + '"><p>' + FCKLang.NewTabContent + '</p></div>');	
 	$(li).on('focus', function() {
 		$(this).find("a").click();	
 	});	
