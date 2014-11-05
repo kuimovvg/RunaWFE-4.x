@@ -69,7 +69,7 @@ public class ProcessExecutionErrors {
     public static synchronized void removeProcessError(Long processId, String nodeId) {
         List<ProcessError> processError = processErrors.get(processId);
         if (processError != null) {
-            processError.remove(new ProcessError(nodeId, null, null, null));
+            processError.remove(new ProcessError(nodeId));
             if (processError.isEmpty()) {
                 processErrors.remove(processId);
             }
