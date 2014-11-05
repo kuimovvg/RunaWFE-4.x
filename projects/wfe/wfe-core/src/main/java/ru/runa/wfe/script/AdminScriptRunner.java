@@ -19,6 +19,7 @@ package ru.runa.wfe.script;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,6 +66,7 @@ import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.Profile;
 import ru.runa.wfe.user.User;
@@ -159,6 +161,12 @@ public class AdminScriptRunner {
             }
             log.info("Processing complete " + name + ".");
         } catch (Throwable th) {
+            if (th instanceof InvocationTargetException) {
+                Throwable target = ((InvocationTargetException) th).getTargetException();
+                if (target instanceof ExecutorAlreadyExistsException) {
+                    throw new AdminScriptException(element, target);
+                }
+            }
             Throwables.propagateIfInstanceOf(th, AdminScriptException.class);
             throw new AdminScriptException(element, th);
         }

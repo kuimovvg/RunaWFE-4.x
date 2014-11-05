@@ -16,9 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessage;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
+import ru.runa.common.web.Messages;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.common.web.form.FileForm;
@@ -157,9 +159,11 @@ public class ImportDataFileAction extends ActionBase {
                 for (String error : errors) {
                     addError(request, new Exception(error));
                 }
+                addMessage(request, new ActionMessage(Messages.EXECUTOR_STATE_DONT_UPDATE));
                 return mapping.findForward(Resources.FORWARD_FAILURE);
             }
-
+            addMessage(request, new ActionMessage(Messages.IMPORT_DATA_SUCCESS));
+            addMessage(request, new ActionMessage(Messages.EXECUTOR_STATE_DONT_UPDATE));
             return mapping.findForward(Resources.FORWARD_SUCCESS);
         } catch (Exception e) {
             addError(request, e);
