@@ -24,16 +24,21 @@ public class ProcessError implements Serializable {
     public ProcessError() {
     }
 
-    public ProcessError(String nodeId, String taskName, BotTask botTask, Throwable throwable) {
+    public ProcessError(String nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public ProcessError(String nodeId, String taskName, BotTask botTask, Throwable throwable) {
+        this(nodeId);
         this.taskName = taskName;
         this.botTask = botTask;
-        this.throwableMessage = throwable.getLocalizedMessage();
-        if (Strings.isNullOrEmpty(throwableMessage)) {
-            throwableMessage = throwable.getClass().getName();
+        if (throwable != null) {
+            this.throwableMessage = throwable.getLocalizedMessage();
+            if (Strings.isNullOrEmpty(throwableMessage)) {
+                throwableMessage = throwable.getClass().getName();
+            }
+            this.throwableDetails = Throwables.getStackTraceAsString(throwable);
         }
-
-        this.throwableDetails = Throwables.getStackTraceAsString(throwable);
     }
 
     public String getNodeId() {
