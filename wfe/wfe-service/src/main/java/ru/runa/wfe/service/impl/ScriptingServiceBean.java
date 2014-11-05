@@ -48,6 +48,7 @@ import ru.runa.wfe.service.interceptors.CacheReloader;
 import ru.runa.wfe.service.interceptors.EjbExceptionSupport;
 import ru.runa.wfe.service.interceptors.EjbTransactionSupport;
 import ru.runa.wfe.service.interceptors.PerformanceObserver;
+import ru.runa.wfe.user.ExecutorAlreadyExistsException;
 import ru.runa.wfe.user.User;
 
 @Stateless
@@ -87,7 +88,9 @@ public class ScriptingServiceBean implements ScriptingService {
             try {
                 runner.handleElement(element);
             } catch (AdminScriptException e) {
-                errors.add(e.getMessage());
+                if (!(e.getCause() instanceof ExecutorAlreadyExistsException)) {
+                    errors.add(e.getMessage());
+                }
             }
         }
 
