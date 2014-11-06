@@ -43,7 +43,7 @@ function afterSetHTML( editorInstance )
     		folderId = $(this).closest('.tabs').attr('id');
     	});
 	});
-	$(editorInstance.EditorDocument).find('div[role="tabpanel"]').slice(1).removeAttr("class");
+	$(editorInstance.EditorDocument).find('div[class^="tabs-"]').addClass('ui-tabs-panel ui-widget-content ui-corner-bottom');
 	$(editorInstance.EditorDocument).find('li a[href^=#tabs]').each(function() {
 		$(this).parent().focus(function() {
 			$(this).find('a').click();
