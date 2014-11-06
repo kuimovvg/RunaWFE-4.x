@@ -31,8 +31,8 @@ function addTab(tabFolderId, initialize) {
 		});	
 	} else {
 		tabFolder.tabs('refresh');	
+		tabFolder.find('div[class^="tabs-"]').addClass('ui-tabs-panel ui-widget-content ui-corner-bottom');	
 	}
-	$(FCK.EditorDocument).find('div[role="tabpanel"]').slice(1).removeAttr("class");	
 }
 
 function afterSetHTML( editorInstance )
