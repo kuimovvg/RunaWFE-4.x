@@ -71,9 +71,9 @@ public class EmailTaskNotifier implements ITaskNotifier {
             for (Actor actor : actors) {
                 if (actor.getEmail() != null && actor.getEmail().trim().length() > 0) {
                     if (emails.length() > 0) {
-                        emails += "; ";
+                        emails += ", ";
                     }
-                    emails = actor.getEmail().trim();
+                    emails += actor.getEmail().trim();
                 }
             }
         }
@@ -88,5 +88,6 @@ public class EmailTaskNotifier implements ITaskNotifier {
         map.put("emails", emails);
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, executionContext.getVariableProvider());
         EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, variableProvider);
+        // TODO add process logs about notification
     }
 }
