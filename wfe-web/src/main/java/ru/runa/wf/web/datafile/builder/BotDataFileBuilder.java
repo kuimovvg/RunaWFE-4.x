@@ -73,9 +73,7 @@ public class BotDataFileBuilder implements DataFileBuilder {
         element.addAttribute(AdminScriptConstants.BOTSTATION_ATTRIBUTE_NAME, botStationName);
         element.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, botName);
         Element subElement = element.addElement("botConfiguration", XmlUtils.RUNA_NAMESPACE);
-        if (StringUtils.isNotEmpty(botTask.getName())) {
-            subElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, botTask.getName());
-        }
+        subElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, botTask.getName());
         if (StringUtils.isNotEmpty(botTask.getTaskHandlerClassName())) {
             subElement.addAttribute(AdminScriptConstants.HANDLER_ATTRIBUTE_NAME, botTask.getTaskHandlerClassName());
         }
