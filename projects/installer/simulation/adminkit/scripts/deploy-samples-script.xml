@@ -20,24 +20,23 @@
   <createActor name="WebServiceBot" fullName="Bot for executing web service requests" password="321" />
   
   <namedIdentitySet name="allProcesses" type="ProcessDefinition">
-    <identity name="TextFileCreation"/>
-    <identity name="BotDemo"/>
-    <!--identity name="Businesstrip"/>
-    <identity name="Vacation"/>
-    <identity name="Overtime Work"/>
-    <identity name="Report"/-->
-    <identity name="FileUpload"/>
-    <!--identity name="Hello World"/-->
-    <identity name="SubProcess"/>
-    <identity name="MainProcess"/>
-    <!--identity name="MultiInstanceSubProcess"/>
-    <identity name="MultiInstanceProcess"/-->
-    <identity name="ExecuteFormulaDemo"/>
-    <identity name="TimerDemo"/>
-    <!--identity name="BPMNdemo"/-->
     <identity name="AjaxFormDemo"/>
-    <identity name="WebService - who is"/>
+    <!--identity name="approve my doc"/-->
+    <identity name="BotDemo"/>
+    <identity name="EndTokenDemo"/>
+    <identity name="ExecuteFormulaDemo"/>
+    <identity name="FileUpload"/>
+    <identity name="Hello World"/>
+    <identity name="InterProcessCommunication.Receiver"/>
+    <identity name="InterProcessCommunication.Sender"/>
+    <identity name="MainMultiProcess"/>
+    <identity name="MainProcess"/>
+    <identity name="MessageRouting (bpmn)"/>
     <identity name="MSWordReport"/>
+    <identity name="SubProcess"/>
+    <identity name="TextFileCreation"/>
+    <identity name="TimerDemo"/>
+    <identity name="WebService - who is"/>
   </namedIdentitySet>
   <namedIdentitySet name="managerProcesses" type="ProcessDefinition">
     <!--identity name="Businesstrip"/>
@@ -45,19 +44,23 @@
     <identity name="Report"/-->
   </namedIdentitySet>
   <namedIdentitySet name="genericProcesses" type="ProcessDefinition">
-    <identity name="TextFileCreation"/>
-    <identity name="BotDemo"/>
-    <!--identity name="Vacation"/-->
-    <identity name="FileUpload"/>
-    <!--identity name="Hello World"/-->
-    <identity name="MainProcess"/>
-    <!--identity name="MultiInstanceProcess"/-->
-    <identity name="ExecuteFormulaDemo"/>
-    <identity name="TimerDemo"/>
     <identity name="AjaxFormDemo"/>
-    <!--identity name="BPMNdemo"/-->
-    <identity name="WebService - who is"/>
+    <!--identity name="approve my doc"/-->
+    <identity name="BotDemo"/>
+    <identity name="EndTokenDemo"/>
+    <identity name="ExecuteFormulaDemo"/>
+    <identity name="FileUpload"/>
+    <identity name="Hello World"/>
+    <identity name="InterProcessCommunication.Receiver"/>
+    <identity name="InterProcessCommunication.Sender"/>
+    <identity name="MainMultiProcess"/>
+    <identity name="MainProcess"/>
+    <identity name="MessageRouting (bpmn)"/>
     <identity name="MSWordReport"/>
+    <identity name="SubProcess"/>
+    <identity name="TextFileCreation"/>
+    <identity name="TimerDemo"/>
+    <identity name="WebService - who is"/>
   </namedIdentitySet>
   
   <namedIdentitySet name="allActors" type="Executor">
@@ -79,24 +82,23 @@
     <identity name="staff"/>
   </namedIdentitySet>
   
-  <!--deployProcessDefinition file="../samples/Hello World.par" />
-  <deployProcessDefinition file="../samples/BPMNdemo.par" /-->
-  <deployProcessDefinition file="../samples/ExecuteFormulaDemo.par"/>
   <deployProcessDefinition file="../samples/AjaxFormDemo.par" />
-  <deployProcessDefinition file="../samples/FileUpload.par" />
-  <deployProcessDefinition file="../samples/TimerDemo.par" />
-  <!--deployProcessDefinition file="../samples/Report.par" />
-  <deployProcessDefinition file="../samples/Overtime Work.par" />
-  <deployProcessDefinition file="../samples/Vacation.par" /> 
-  <deployProcessDefinition file="../samples/Businesstrip.par" /-->
-  <deployProcessDefinition file="../samples/MainProcess.par" />
-  <deployProcessDefinition file="../samples/SubProcess.par" />
-  <!--deployProcessDefinition file="../samples/MultiInstanceProcess.par" />
-  <deployProcessDefinition file="../samples/MultiInstanceSubProcess.par" /-->
+  <!--deployProcessDefinition file="../samples/approve my doc.par" /-->
   <deployProcessDefinition file="../samples/BotDemo.par" />
-  <deployProcessDefinition file="../samples/TextFileCreation.par" />
-  <deployProcessDefinition file="../samples/WebService - who is.par" />
+  <deployProcessDefinition file="../samples/EndTokenDemo.par" /> 
+  <deployProcessDefinition file="../samples/ExecuteFormulaDemo.par" />
+  <deployProcessDefinition file="../samples/FileUpload.par" />
+  <deployProcessDefinition file="../samples/Hello World.par" />
+  <deployProcessDefinition file="../samples/InterProcessCommunication.Receiver.par" />
+  <deployProcessDefinition file="../samples/InterProcessCommunication.Sender.par" />
+  <deployProcessDefinition file="../samples/MainMultiProcess.par" />
+  <deployProcessDefinition file="../samples/MainProcess.par" />
+  <deployProcessDefinition file="../samples/MessageRouting (bpmn).par" />
   <deployProcessDefinition file="../samples/MSWordReport.par" />
+  <deployProcessDefinition file="../samples/SubProcess.par" />
+  <deployProcessDefinition file="../samples/TextFileCreation.par" />
+  <deployProcessDefinition file="../samples/TimerDemo.par" />
+  <deployProcessDefinition file="../samples/WebService - who is.par" />
   
   <addPermissionsOnDefinition executor="all">
     <namedIdentitySet name="allProcesses" type="ProcessDefinition"/>
