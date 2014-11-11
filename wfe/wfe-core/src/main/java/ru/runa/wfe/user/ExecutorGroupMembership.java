@@ -88,7 +88,7 @@ public class ExecutorGroupMembership {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_EXECUTOR_GROUP_MEMBER")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_EXECUTOR_GROUP_MEMBER", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

@@ -79,7 +79,7 @@ public class BotStation extends IdentifiableBase {
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BOT_STATION")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BOT_STATION", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;
