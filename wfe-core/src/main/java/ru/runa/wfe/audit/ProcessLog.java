@@ -91,7 +91,7 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_LOG")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_LOG", allocationSize = 1)
     @Column(name = "ID")
     public Long getId() {
         return id;

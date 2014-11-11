@@ -50,7 +50,7 @@ class Constant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_WFE_CONSTANTS")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_WFE_CONSTANTS", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

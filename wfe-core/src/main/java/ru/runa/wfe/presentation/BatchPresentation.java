@@ -124,7 +124,7 @@ public final class BatchPresentation implements Cloneable, Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BATCH_PRESENTATION")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BATCH_PRESENTATION", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

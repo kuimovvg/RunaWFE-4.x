@@ -94,7 +94,7 @@ public abstract class SystemLog {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_SYSTEM_LOG")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_SYSTEM_LOG", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

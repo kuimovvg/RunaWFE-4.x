@@ -83,7 +83,7 @@ public abstract class Variable<T extends Object> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_VARIABLE")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_VARIABLE", allocationSize = 1)
     @Column(name = "ID")
     public Long getId() {
         return id;

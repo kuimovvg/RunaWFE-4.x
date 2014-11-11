@@ -39,7 +39,7 @@ public class Localization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_LOCALIZATION")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_LOCALIZATION", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

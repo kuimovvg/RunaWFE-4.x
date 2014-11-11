@@ -68,7 +68,7 @@ public class BotTask implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BOT_TASK")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BOT_TASK", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

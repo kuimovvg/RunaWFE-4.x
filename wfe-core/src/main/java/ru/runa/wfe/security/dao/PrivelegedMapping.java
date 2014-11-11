@@ -59,7 +59,7 @@ public class PrivelegedMapping {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_PRIVELEGED_MAPPING")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_PRIVELEGED_MAPPING", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     protected Long getId() {
         return id;
