@@ -86,7 +86,7 @@ public final class Profile implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_PROFILE")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_PROFILE", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

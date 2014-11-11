@@ -89,7 +89,7 @@ public class Substitution implements Comparable<Substitution>, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_SUBSTITUTION")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_SUBSTITUTION", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

@@ -83,7 +83,7 @@ public abstract class Executor extends IdentifiableBase implements Comparable<Ex
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_EXECUTOR")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_EXECUTOR", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

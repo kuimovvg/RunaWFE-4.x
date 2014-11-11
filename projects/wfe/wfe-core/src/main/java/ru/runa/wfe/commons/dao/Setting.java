@@ -41,14 +41,14 @@ class Setting {
     }
 
     public Setting(String fileName, String name, String value) {
-    	this.fileName = fileName;
+        this.fileName = fileName;
         this.name = name;
         this.value = value;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_SETTING")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_SETTING", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;
@@ -66,14 +66,14 @@ class Setting {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Column(name = "FILE_NAME", nullable = false)
     public String getFileName() {
         return fileName;
     }
-    
+
     public void setFileName(String fileName) {
-    	this.fileName = fileName;
+        this.fileName = fileName;
     }
 
     @Column(name = "VALUE")

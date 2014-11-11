@@ -57,7 +57,7 @@ public abstract class Job {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_JOB")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_JOB", allocationSize = 1)
     @Column(name = "ID")
     public Long getId() {
         return id;

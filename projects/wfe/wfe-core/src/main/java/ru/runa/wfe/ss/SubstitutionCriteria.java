@@ -59,7 +59,7 @@ public class SubstitutionCriteria implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_SUBSTITUTION_CRITERIA")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_SUBSTITUTION_CRITERIA", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;
