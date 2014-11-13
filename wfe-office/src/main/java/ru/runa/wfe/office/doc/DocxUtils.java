@@ -25,10 +25,10 @@ import org.apache.xmlbeans.XmlCursor;
 import ru.runa.wfe.commons.SafeIndefiniteLoop;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.office.OfficeProperties;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -377,7 +377,7 @@ public class DocxUtils {
             for (ReplaceOperation replaceOperation : Lists.newArrayList(operations)) {
                 if (replaceOperation instanceof InsertImageOperation) {
                     InsertImageOperation imageOperation = (InsertImageOperation) replaceOperation;
-                    FileVariable fileVariable = imageOperation.getFileVariable();
+                    IFileVariable fileVariable = imageOperation.getFileVariable();
                     try {
                         run.addPicture(new ByteArrayInputStream(fileVariable.getData()), imageOperation.getImageType(), fileVariable.getName(),
                                 imageOperation.getWidth(), imageOperation.getHeight());
@@ -502,10 +502,10 @@ public class DocxUtils {
                         config.reportProblem("No template variable defined in process: '" + operation.getPlaceholder() + "'");
                     }
                 }
-                if (value instanceof FileVariable) {
+                if (value instanceof IFileVariable) {
                     try {
                         operations.remove(operation);
-                        FileVariable fileVariable = (FileVariable) value;
+                        IFileVariable fileVariable = (IFileVariable) value;
                         InsertImageOperation imageOperation = new InsertImageOperation(operation.getPlaceholder(), fileVariable);
                         imageOperation.setValue("");
                         int imageType = getPictureType(config, fileVariable.getName());

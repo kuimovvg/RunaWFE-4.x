@@ -21,7 +21,7 @@ import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
@@ -36,7 +36,7 @@ public class FileTag extends FreemarkerTag {
     protected Object executeTag() throws Exception {
         String variableName = getParameterAsString(0);
         String view = getParameterAsString(1);
-        FileVariable fileVariable = variableProvider.getValueNotNull(FileVariable.class, variableName);
+        IFileVariable fileVariable = variableProvider.getValueNotNull(IFileVariable.class, variableName);
         if ("content".equals(view)) {
             return new String(fileVariable.getData(), Charsets.UTF_8);
         } else if ("contentlength".equals(view)) {

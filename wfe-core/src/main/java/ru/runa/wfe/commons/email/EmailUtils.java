@@ -31,8 +31,8 @@ import ru.runa.wfe.commons.email.EmailConfig.Attachment;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -164,7 +164,7 @@ public class EmailUtils {
         // replacements.put(attachment.fileName, "cid:" + attachment.fileName);
         // } TODO images not supported
         for (String variableName : config.getAttachments()) {
-            FileVariable fileVariable = variableProvider.getValue(FileVariable.class, variableName);
+            IFileVariable fileVariable = variableProvider.getValue(IFileVariable.class, variableName);
             if (fileVariable != null) {
                 Attachment attachment = new Attachment();
                 attachment.fileName = fileVariable.getName();

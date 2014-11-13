@@ -40,6 +40,8 @@ import ru.runa.wfe.extension.orgfunction.SQLDirectorFunction;
 import ru.runa.wfe.extension.orgfunction.SQLFunction;
 import ru.runa.wfe.extension.orgfunction.SQLSubordinateFunction;
 import ru.runa.wfe.extension.orgfunction.SQLSubordinateRecursiveFunction;
+import ru.runa.wfe.var.file.FileVariable;
+import ru.runa.wfe.var.file.FileVariableDescriptor;
 
 import com.google.common.collect.Maps;
 
@@ -134,7 +136,9 @@ public class BackCompatibilityClassNames {
         bcc.put("ru.runa.wf.web.html.vartag.VariableValueDisplayVarTag", "ru.runa.wf.web.customtag.impl.VariableValueDisplayVarTag");
         // serializable variables
         bcc.put("ru.runa.wf.web.Option", "ru.runa.wfe.commons.web.Option");
-        bcc.put("ru.runa.wf.FileVariable", "ru.runa.wfe.var.FileVariable");
+        bcc.put("ru.runa.wf.FileVariable", FileVariable.class.getName());
+        bcc.put("ru.runa.wfe.var.FileVariable", FileVariable.class.getName());
+        bcc.put("ru.runa.wfe.var.FileVariableDescriptor", FileVariableDescriptor.class.getName());
         // wfe-office classes
         bcc.put("ru.runa.wf.office.excel.CellConstraints", "ru.runa.wfe.office.excel.CellConstraints");
         bcc.put("ru.runa.wf.office.excel.RowConstraints", "ru.runa.wfe.office.excel.RowConstraints");

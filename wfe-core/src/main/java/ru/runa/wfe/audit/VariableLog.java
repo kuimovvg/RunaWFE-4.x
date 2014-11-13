@@ -25,10 +25,10 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.converter.FileVariableToByteArrayConverter;
 import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
+import ru.runa.wfe.var.file.IFileVariable;
 
 /**
  * Variables base logging class.
@@ -63,7 +63,7 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     public void setVariableNewValue(Variable<?> variable, Object newValue) {
-        addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(newValue instanceof FileVariable));
+        addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(newValue instanceof IFileVariable));
         if (variable.getStorableValue() instanceof byte[]) {
             setBytes((byte[]) variable.getStorableValue());
         } else {

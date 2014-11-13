@@ -95,11 +95,11 @@ public abstract class Variable<T extends Object> {
 
     @Version
     @Column(name = "VERSION")
-    protected Long getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    protected void setVersion(Long version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 
