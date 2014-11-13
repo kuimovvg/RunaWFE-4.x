@@ -29,8 +29,8 @@ import ru.runa.wf.web.customtag.VarTag;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.collect.Maps;
 
@@ -45,7 +45,7 @@ public class FileVariableValueDownloadVarTag implements VarTag {
         if (pageContext == null || var == null) {
             return "";
         }
-        FileVariable fileVariable = TypeConversionUtil.convertTo(FileVariable.class, var);
+        IFileVariable fileVariable = TypeConversionUtil.convertTo(IFileVariable.class, var);
         A ahref = new A();
         ahref.addElement(new StringElement(fileVariable.getName()));
 

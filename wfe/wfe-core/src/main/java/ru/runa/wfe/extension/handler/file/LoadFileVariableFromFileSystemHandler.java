@@ -5,7 +5,7 @@ import java.util.Map;
 
 import ru.runa.wfe.extension.handler.CommonParamBasedHandler;
 import ru.runa.wfe.extension.handler.HandlerData;
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.FileVariable;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;

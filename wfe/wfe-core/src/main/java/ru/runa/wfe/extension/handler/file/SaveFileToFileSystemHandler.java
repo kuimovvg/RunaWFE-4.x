@@ -4,7 +4,7 @@ import java.io.File;
 
 import ru.runa.wfe.extension.handler.CommonParamBasedHandler;
 import ru.runa.wfe.extension.handler.HandlerData;
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
@@ -13,7 +13,7 @@ public class SaveFileToFileSystemHandler extends CommonParamBasedHandler {
 
     @Override
     protected void executeAction(HandlerData handlerData) throws Exception {
-        FileVariable fileVariable = handlerData.getInputParamValueNotNull(FileVariable.class, "file");
+        IFileVariable fileVariable = handlerData.getInputParamValueNotNull(IFileVariable.class, "file");
         String filePath = handlerData.getInputParamValueNotNull("path");
         if (Strings.isNullOrEmpty(Files.getFileExtension(filePath))) {
             filePath += File.separator + fileVariable.getName();

@@ -152,7 +152,7 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
         versionTR.addElement(new TD(definitionVersion).setClass(Resources.CLASS_LIST_TABLE_TD));
         Element versionElement = new StringElement(String.valueOf(process.getVersion()));
         try {
-            if (SystemProperties.isUpgradeProcessToNextDefinitionVersionEnabled()) {
+            if (SystemProperties.isUpgradeProcessToNextDefinitionVersionEnabled() && !process.isEnded()) {
                 WfDefinition latestDefinition = Delegates.getDefinitionService().getLatestProcessDefinition(getUser(), process.getName());
                 if (latestDefinition.getVersion().intValue() != process.getVersion()) {
                     Div div = new Div();

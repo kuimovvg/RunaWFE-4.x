@@ -1,9 +1,10 @@
-package ru.runa.wfe.var;
+package ru.runa.wfe.var.file;
 
 import java.io.File;
 import java.io.IOException;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.var.Variable;
 
 import com.google.common.io.Files;
 
@@ -13,16 +14,19 @@ import com.google.common.io.Files;
  * @author dofs
  * @since 4.0
  */
-public class FileVariableDescriptor extends FileVariable {
+public class LocalFileSystemVariable implements IFileVariable {
     private static final long serialVersionUID = 1L;
+    private String name;
+    private String contentType;
+    private transient byte[] data;
     private String variablePath;
-    private transient byte[] localData;
 
-    public FileVariableDescriptor() {
+    public LocalFileSystemVariable() {
     }
 
-    public FileVariableDescriptor(Variable<?> variable, String variableName, FileVariable fileVariable) {
-        super(fileVariable.getName(), null, fileVariable.getContentType());
+    public LocalFileSystemVariable(Variable<?> variable, String variableName, IFileVariable fileVariable) {
+        name = fileVariable.getName();
+        contentType = fileVariable.getContentType();
         long version = variable.getVersion() != null ? variable.getVersion() + 1 : 0;
         StringBuffer b = new StringBuffer();
         for (char ch : variableName.toCharArray()) {
@@ -33,11 +37,7 @@ public class FileVariableDescriptor extends FileVariable {
             }
         }
         variablePath = variable.getProcess().getId() + "/" + b + "/" + version;
-        localData = fileVariable.getData();
-    }
-
-    public FileVariableDescriptor(Variable<?> variable, FileVariable fileVariable) {
-        this(variable, variable.getName(), fileVariable);
+        data = fileVariable.getData();
     }
 
     public String getVariablePath() {
@@ -46,15 +46,25 @@ public class FileVariableDescriptor extends FileVariable {
 
     @Override
     public byte[] getData() {
-        if (localData == null) {
-            File file = FileVariableStorage.getContentFile(this, false);
+        if (data == null) {
+            File file = LocalFileSystemStorage.getContentFile(variablePath, false);
             try {
-                localData = Files.toByteArray(file);
+                data = Files.toByteArray(file);
             } catch (IOException e) {
                 throw new InternalApplicationException("Unable to read file variable from '" + file + "'", e);
             }
         }
-        return localData;
+        return data;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getContentType() {
+        return contentType;
     }
 
 }

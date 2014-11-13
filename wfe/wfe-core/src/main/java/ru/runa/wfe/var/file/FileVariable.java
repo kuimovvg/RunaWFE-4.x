@@ -15,9 +15,7 @@
  * along with this program; if not, write to the Free Software 
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
-package ru.runa.wfe.var;
-
-import java.io.Serializable;
+package ru.runa.wfe.var.file;
 
 /**
  * Represents value of file variable in process context.
@@ -25,7 +23,7 @@ import java.io.Serializable;
  * @author Dofs
  * @since 2.0
  */
-public class FileVariable implements Serializable {
+public class FileVariable implements IFileVariable {
     private static final long serialVersionUID = -5664995254436423315L;
     private byte[] data;
     private String name;
@@ -40,8 +38,8 @@ public class FileVariable implements Serializable {
         this.contentType = contentType;
     }
 
-    public FileVariable(FileVariable fileVariable) {
-        this(fileVariable.name, fileVariable.getData().clone(), fileVariable.contentType);
+    public FileVariable(IFileVariable fileVariable) {
+        this(fileVariable.getName(), fileVariable.getData().clone(), fileVariable.getContentType());
     }
 
     public FileVariable(String name, String contentType) {
@@ -52,10 +50,12 @@ public class FileVariable implements Serializable {
         this.data = data;
     }
 
+    @Override
     public byte[] getData() {
         return data;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -64,6 +64,7 @@ public class FileVariable implements Serializable {
         this.name = name;
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }

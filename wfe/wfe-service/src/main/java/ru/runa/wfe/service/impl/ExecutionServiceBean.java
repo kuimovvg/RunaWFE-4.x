@@ -61,8 +61,8 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.logic.TaskLogic;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.logic.VariableLogic;
 
 import com.google.common.base.Preconditions;
@@ -191,7 +191,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         Preconditions.checkArgument(variableName != null);
         WfVariable variable = variableLogic.getVariable(user, processId, variableName);
         if (variable != null) {
-            return ((FileVariable) variable.getValue()).getData();
+            return ((IFileVariable) variable.getValue()).getData();
         }
         return null;
     }
@@ -301,8 +301,8 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     }
 
     private boolean convertValueToProxy(User user, Long processId, WfVariable variable) {
-        if (variable != null && variable.getValue() instanceof FileVariable) {
-            FileVariable fileVariable = (FileVariable) variable.getValue();
+        if (variable != null && variable.getValue() instanceof IFileVariable) {
+            IFileVariable fileVariable = (IFileVariable) variable.getValue();
             FileVariableProxy proxy = new FileVariableProxy(user, processId, variable.getDefinition().getName(), fileVariable);
             variable.setValue(proxy);
             return true;

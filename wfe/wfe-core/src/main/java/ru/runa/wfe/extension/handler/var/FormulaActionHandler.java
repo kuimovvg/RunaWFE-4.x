@@ -29,8 +29,9 @@ import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.extension.function.Function;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.collect.Lists;
 
@@ -215,8 +216,8 @@ public class FormulaActionHandler extends ActionHandlerBase {
             error("Type mismatch");
             return;
         }
-        if (FileVariable.class.isInstance(value)) {
-            FileVariable fileVariable = (FileVariable) value;
+        if (IFileVariable.class.isInstance(value)) {
+            IFileVariable fileVariable = (IFileVariable) value;
             value = new FileVariable(fileVariable);
         }
         context.setVariableValue(variableName, value);
@@ -455,7 +456,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             return actions.timeFunction(new Date());
         }
         if (s.equals("random")) {
-        	if (!nextToken().equals(")")) {
+            if (!nextToken().equals(")")) {
                 incorrectParameters(s);
                 return null;
             }
