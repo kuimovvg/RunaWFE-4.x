@@ -8,8 +8,9 @@ import java.util.List;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.office.shared.FilesSupplierConfig;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.file.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 public class ExcelBindings extends FilesSupplierConfig {
     private final List<ExcelBinding> bindings = new ArrayList<ExcelBinding>();
@@ -33,8 +34,8 @@ public class ExcelBindings extends FilesSupplierConfig {
     public boolean isInputFileXLSX(IVariableProvider variableProvider, boolean defaultValue) {
         if (inputFileVariableName != null) {
             Object value = variableProvider.getValue(inputFileVariableName);
-            if (value instanceof FileVariable) {
-                FileVariable fileVariable = (FileVariable) value;
+            if (value instanceof IFileVariable) {
+                IFileVariable fileVariable = (IFileVariable) value;
                 return isFileNameBelongsToXLSX(fileVariable.getName(), defaultValue);
             }
             throw new InternalApplicationException("Variable '" + inputFileVariableName + "' should contains a file");

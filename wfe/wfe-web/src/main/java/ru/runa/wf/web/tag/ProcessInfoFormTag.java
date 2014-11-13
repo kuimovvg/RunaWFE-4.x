@@ -20,8 +20,10 @@ package ru.runa.wf.web.tag;
 import java.util.Map;
 
 import org.apache.ecs.Element;
+import org.apache.ecs.Entities;
 import org.apache.ecs.StringElement;
 import org.apache.ecs.html.A;
+import org.apache.ecs.html.Div;
 import org.apache.ecs.html.TD;
 import org.apache.ecs.html.TR;
 import org.apache.ecs.html.Table;
@@ -35,8 +37,10 @@ import ru.runa.common.web.form.IdForm;
 import ru.runa.wf.web.action.CancelProcessAction;
 import ru.runa.wf.web.action.RemoveProcessAction;
 import ru.runa.wf.web.action.ShowGraphModeHelper;
+import ru.runa.wf.web.action.UpgradeProcessToNextDefinitionVersionAction;
 import ru.runa.wf.web.form.TaskIdForm;
 import ru.runa.wfe.commons.CalendarUtil;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.definition.DefinitionClassPresentation;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -146,7 +150,23 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
         table.addElement(versionTR);
         String definitionVersion = Messages.getMessage(DefinitionClassPresentation.VERSION, pageContext);
         versionTR.addElement(new TD(definitionVersion).setClass(Resources.CLASS_LIST_TABLE_TD));
-        versionTR.addElement(new TD(String.valueOf(process.getVersion())).setClass(Resources.CLASS_LIST_TABLE_TD));
+        Element versionElement = new StringElement(String.valueOf(process.getVersion()));
+        try {
+            if (SystemProperties.isUpgradeProcessToNextDefinitionVersionEnabled() && !process.isEnded()) {
+                WfDefinition latestDefinition = Delegates.getDefinitionService().getLatestProcessDefinition(getUser(), process.getName());
+                if (latestDefinition.getVersion().intValue() != process.getVersion()) {
+                    Div div = new Div();
+                    div.addElement(versionElement);
+                    div.addElement(Entities.NBSP);
+                    String url = Commons.getActionUrl(UpgradeProcessToNextDefinitionVersionAction.ACTION_PATH, IdForm.ID_INPUT_NAME, process.getId(),
+                            pageContext, PortletUrlType.Render);
+                    div.addElement(new A(url, Commons.getMessage(Messages.PROCESS_UPGRADE_TO_NEXT_DEFINITION_VERSION, pageContext)));
+                    versionElement = div;
+                }
+            }
+        } catch (Exception e) {
+        }
+        versionTR.addElement(new TD(versionElement).setClass(Resources.CLASS_LIST_TABLE_TD));
 
         TR startedTR = new TR();
         table.addElement(startedTR);

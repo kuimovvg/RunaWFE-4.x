@@ -25,7 +25,6 @@ import ru.runa.wfe.commons.web.PortletUrlType;
 import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.execution.logic.ProcessExecutionErrors;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -49,14 +48,10 @@ public class ShowProcessErrorsTag extends VisibleTag {
             for (ProcessError detail : processEntry.getValue()) {
                 TR tr = new TR();
                 tr.addElement(new TD(processIdElement).setClass(Resources.CLASS_LIST_TABLE_TD));
-                tr.addElement(new TD(CalendarUtil.formatDateTime(detail.getOccuredDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
+                tr.addElement(new TD(CalendarUtil.formatDateTime(detail.getOccurredDate())).setClass(Resources.CLASS_LIST_TABLE_TD));
                 tr.addElement(new TD(detail.getTaskName()).setClass(Resources.CLASS_LIST_TABLE_TD));
                 String url = "javascript:showProcessError(" + processEntry.getKey() + ", '" + detail.getNodeId() + "')";
-                String message = detail.getThrowable().getLocalizedMessage();
-                if (Strings.isNullOrEmpty(message)) {
-                    message = detail.getThrowable().getClass().getName();
-                }
-                tr.addElement(new TD(new A(url, message)).setClass(Resources.CLASS_LIST_TABLE_TD));
+                tr.addElement(new TD(new A(url, detail.getThrowableMessage())).setClass(Resources.CLASS_LIST_TABLE_TD));
                 rows.add(tr);
             }
         }
@@ -72,7 +67,7 @@ public class ShowProcessErrorsTag extends VisibleTag {
         public TR build() {
             TR tr = new TR();
             tr.addElement(new TH(Messages.getMessage("errors.process.id", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
-            tr.addElement(new TH(Messages.getMessage("errors.occured", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
+            tr.addElement(new TH(Messages.getMessage("errors.occurred", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage("errors.task.name", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage("errors.error", pageContext)).setClass(Resources.CLASS_LIST_TABLE_TH));
             return tr;

@@ -1,15 +1,12 @@
 package ru.runa.wfe.var.converter;
 
-import java.io.IOException;
+import java.util.List;
 
-import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.SystemProperties;
-import ru.runa.wfe.var.FileVariable;
-import ru.runa.wfe.var.FileVariableDescriptor;
-import ru.runa.wfe.var.FileVariableStorage;
+import org.springframework.beans.factory.annotation.Required;
+
 import ru.runa.wfe.var.Variable;
-
-import com.google.common.io.Files;
+import ru.runa.wfe.var.file.IFileVariable;
+import ru.runa.wfe.var.file.IFileVariableStorage;
 
 /**
  * Besides straightforward functionality this class persist large file variables
@@ -20,25 +17,22 @@ import com.google.common.io.Files;
  */
 public class FileVariableToByteArrayConverter extends SerializableToByteArrayConverter {
     private static final long serialVersionUID = 1L;
+    private IFileVariableStorage storage;
 
-    @Override
-    public boolean supports(Object value) {
-        return value instanceof FileVariable;
+    @Required
+    public void setStorage(IFileVariableStorage storage) {
+        this.storage = storage;
     }
 
     @Override
-    public Object convert(Variable<?> variable, Object o) {
-        FileVariable fileVariable = (FileVariable) o;
-        if (SystemProperties.isLocalFileStorageEnabled() && fileVariable.getData().length > SystemProperties.getLocalFileStorageFileLimit()) {
-            try {
-                FileVariableDescriptor descriptor = new FileVariableDescriptor(variable, fileVariable);
-                Files.write(descriptor.getData(), FileVariableStorage.getContentFile(descriptor, true));
-                return super.convert(variable, descriptor);
-            } catch (IOException e) {
-                throw new InternalApplicationException("Unable to save file variable to local drive", e);
-            }
-        }
-        return super.convert(variable, o);
+    public boolean supports(Object value) {
+        return value instanceof IFileVariable || value instanceof List;
+    }
+
+    @Override
+    public Object convert(Variable<?> variable, Object object) {
+        object = storage.save(variable, object);
+        return super.convert(variable, object);
     }
 
 }

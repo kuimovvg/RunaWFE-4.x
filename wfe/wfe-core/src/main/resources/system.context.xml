@@ -70,7 +70,11 @@
 		class="ru.runa.wfe.var.converter.SerializableToByteArrayConverter" />
 	<bean id="executorToLongConverter" class="ru.runa.wfe.var.converter.ExecutorToLongConverter" />
 	<bean id="fileToByteArrayConverter"
-		class="ru.runa.wfe.var.converter.FileVariableToByteArrayConverter" />
+		class="ru.runa.wfe.var.converter.FileVariableToByteArrayConverter">
+		<property name="storage">
+			<bean class="ru.runa.wfe.var.file.LocalFileSystemStorage" />
+		</property>
+	</bean>
 
 	<bean id="converters" class="ru.runa.wfe.commons.hibernate.Converters">
 		<property name="mappings">
@@ -173,9 +177,7 @@
 	<!-- ru.runa.wfe.var.FileVariable -->
 	<bean id="fileVariableType" class="ru.runa.wfe.var.VariableType">
 		<property name="matcher">
-			<bean class="ru.runa.wfe.var.matcher.ClassNameMatcher">
-				<property name="className" value="ru.runa.wfe.var.FileVariable" />
-			</bean>
+			<bean class="ru.runa.wfe.var.matcher.FileVariableMatcher" />
 		</property>
 		<property name="variableClass" value="ru.runa.wfe.var.impl.ByteArrayVariable" />
 		<property name="converter" ref="fileToByteArrayConverter" />

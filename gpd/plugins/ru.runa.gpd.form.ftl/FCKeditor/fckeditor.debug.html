@@ -38,7 +38,7 @@
 					$(this).attr("href", "#tabs" + $(this).attr("href").split("#tabs")[1]);
 				});
 				$(this).find("a").removeAttr("id");
-				$(this).find("ul,li,div,a").removeAttr("class tabIndex aria-live aria-busy aria-selected aria-labelledby aria-hidden aria-expanded role aria-controls");
+				$(this).find("ul,li,div,a").removeAttr("class tabIndex aria-live aria-busy aria-selected aria-labelledby aria-hidden aria-expanded role");
 				$(this).attr("class", "tabs");
 			});
 			return $(doc).find('.tabs').length > 0 ? doc.html() : content;
@@ -69,14 +69,14 @@
 			}
 		}
 		function markContent(editor) {
-			lastModificationLength = editor.GetXHTML(true).length;
+			lastModificationLength = convertTabsHTML(editor.GetXHTML(true)).length;
 			alert (lastModificationLength);
 			modificationFlagSent = false;
 		}
 		function findModifications() {
 			if (!modificationFlagSent) {
 				var editor = FCKeditorAPI.GetInstance("editor");
-				var contentLength = editor.GetXHTML(true).length;
+				var contentLength = convertTabsHTML(editor.GetXHTML(true)).length;
 				if (contentLength != lastModificationLength) {
 					alert ("sending change: " + lastModificationLength + " != " + contentLength);
 					markEditorDirtyCallback();

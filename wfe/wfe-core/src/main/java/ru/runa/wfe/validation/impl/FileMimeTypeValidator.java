@@ -18,13 +18,13 @@
 package ru.runa.wfe.validation.impl;
 
 import ru.runa.wfe.validation.FieldValidator;
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 public class FileMimeTypeValidator extends FieldValidator {
 
     @Override
     public void validate() {
-        FileVariable fileVariable = (FileVariable) getFieldValue();
+        IFileVariable fileVariable = (IFileVariable) getFieldValue();
         if (fileVariable == null) {
             // use a required validator for these
             return;

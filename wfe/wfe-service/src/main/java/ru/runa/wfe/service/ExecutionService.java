@@ -341,4 +341,9 @@ public interface ExecutionService {
      */
     public List<ProcessError> getProcessErrors(User user, Long processId);
 
+    /**
+     * Upgrades running process to next version of deployed definition. This is
+     * not safe operation, use it with caution.
+     */
+    public void upgradeProcessToNextDefinitionVersion(User user, Long processId);
 }

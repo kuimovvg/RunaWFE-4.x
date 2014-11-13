@@ -77,7 +77,7 @@ public class Relation extends IdentifiableBase {
     @Override
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_RELATION_GROUP")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_RELATION_GROUP", allocationSize = 1)
     @Column(name = "ID", nullable = false)
     public Long getId() {
         return id;

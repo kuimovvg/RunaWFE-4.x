@@ -3,7 +3,7 @@ var FTL_METHOD_INSERT_CMD = 'InsertTab' ;
 var FTL_METHOD_DELETE_CMD = 'DeleteTab' ;
 
 var folderId = -1;
-var tabTemplate = "<li><a href='#{href}'>#{label}</a></li>";
+var tabTemplate = "<li><a href='#{href}'><div>#{label}</div></a></li>";
 
 function addTab(tabFolderId, initialize) {
 	var tabId = (new Date()).getTime();
@@ -12,10 +12,14 @@ function addTab(tabFolderId, initialize) {
 	var li = $(tabTemplate.replace( /#\{label\}/g, label ));
 	li.find('a').attr('href', "#" + id);
 	li.attr('id', tabId);
+	li.attr('aria-controls', id);
 	folderId = tabFolderId;
 	var tabFolder = $(FCK.EditorDocument).find('#' + tabFolderId);	
 	tabFolder.find('ul').append(li);
-	tabFolder.append('<div id="' + id + '"><p>' + FCKLang.NewTabContent + '</p></div>');
+	tabFolder.append('<div id="' + id + '"><p>' + FCKLang.NewTabContent + '</p></div>');	
+	$(li).on('focus', function() {
+		$(this).find("a").click();	
+	});	
 		
 	if (initialize) {
 		tabFolder.tabs({
@@ -24,11 +28,11 @@ function addTab(tabFolderId, initialize) {
 		    		folderId = $(this).closest('.tabs').attr('id');
 		    	});
 			}
-		});			
+		});	
 	} else {
-		tabFolder.tabs('refresh');		
+		tabFolder.tabs('refresh');	
+		tabFolder.find('div[class^="tabs-"]').addClass('ui-tabs-panel ui-widget-content ui-corner-bottom');	
 	}
-	$(FCK.EditorDocument).find('div[role="tabpanel"]').slice(1).removeAttr("class");	
 }
 
 function afterSetHTML( editorInstance )
@@ -39,7 +43,12 @@ function afterSetHTML( editorInstance )
     		folderId = $(this).closest('.tabs').attr('id');
     	});
 	});
-	$(editorInstance.EditorDocument).find('div[role="tabpanel"]').slice(1).removeAttr("class");
+	$(editorInstance.EditorDocument).find('div[class^="tabs-"]').addClass('ui-tabs-panel ui-widget-content ui-corner-bottom');
+	$(editorInstance.EditorDocument).find('li a[href^=#tabs]').each(function() {
+		$(this).parent().focus(function() {
+			$(this).find('a').click();
+		});
+	});
 }
 
 var FCKInsertTabCommand = function()
@@ -54,14 +63,13 @@ FCKInsertTabCommand.prototype.Execute = function()
 	} else if(FCKSelection.GetParentElement()) {
 		range = $(FCKSelection.GetParentElement());
 	}	
-	var tabFolder = range.closest('.tabs');
-	if (tabFolder.length == 0) {
+	if (range == "" || range.closest('.tabs').length == 0) {
 		var tabFolderId = (new Date()).getTime() - 10;
 		var html = '<div id="' + tabFolderId + '" class="tabs"><ul></ul>';	
 		$(FCK.EditorDocument).find('.taskform').append(html);		
 		addTab(tabFolderId, true);	
 	} else {
-		var tabFolderId = tabFolder.attr('id');
+		var tabFolderId = range.closest('.tabs').attr('id');
 		addTab(tabFolderId, false);
 	}
 }

@@ -59,7 +59,7 @@ public class SubProcessState extends VariableContainerNode {
     }
 
     protected ProcessDefinition getSubProcessDefinition() {
-        return processDefinitionLoader.getDefinition(subProcessName);
+        return processDefinitionLoader.getLatestDefinition(subProcessName);
     }
 
     @Override

@@ -209,6 +209,8 @@ public class Messages {
     public static final String PROCESS_STARTED = "process.started";
     public static final String PROCESS_CANCELED = "process.canceled";
     public static final String PROCESS_REMOVED = "process.removed";
+    public static final String PROCESS_UPGRADED_TO_NEXT_DEFINITION_VERSION = "process.upgraded.to.next.definition.version";
+    public static final String PROCESS_UPGRADE_TO_NEXT_DEFINITION_VERSION = "process.upgrade.to.next.definition.version";
 
     public static final String MESSAGE_VARIABLE_FORMAT_ERROR = "variable.format.error";
     public static final String MESSAGE_VALIDATION_ERROR = "validation.form.error";
@@ -304,6 +306,9 @@ public class Messages {
     public static final String EXCEPTION_DATAFILE_NOT_PRESENT = "managesystem.datafile.not.present";
 
     public static final String LINK_DROP_SETTINGS = "link.drop_settings";
+
+    public static final String EXECUTOR_STATE_DONT_UPDATE = "executor.state.dont.update";
+    public static final String IMPORT_DATA_SUCCESS = "import.data.success";
 
     private Messages() {
     }

@@ -83,7 +83,7 @@ public abstract class Variable<T extends Object> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "sequence")
-    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_VARIABLE")
+    @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_VARIABLE", allocationSize = 1)
     @Column(name = "ID")
     public Long getId() {
         return id;
@@ -95,11 +95,11 @@ public abstract class Variable<T extends Object> {
 
     @Version
     @Column(name = "VERSION")
-    protected Long getVersion() {
+    public Long getVersion() {
         return version;
     }
 
-    protected void setVersion(Long version) {
+    public void setVersion(Long version) {
         this.version = version;
     }
 

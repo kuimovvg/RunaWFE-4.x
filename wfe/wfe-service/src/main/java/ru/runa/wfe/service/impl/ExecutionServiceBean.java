@@ -33,7 +33,7 @@ import javax.jws.soap.SOAPBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
-import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.dto.WfDefinition;
@@ -61,8 +61,8 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.logic.TaskLogic;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.logic.VariableLogic;
 
 import com.google.common.base.Preconditions;
@@ -191,7 +191,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         Preconditions.checkArgument(variableName != null);
         WfVariable variable = variableLogic.getVariable(user, processId, variableName);
         if (variable != null) {
-            return ((FileVariable) variable.getValue()).getData();
+            return ((IFileVariable) variable.getValue()).getData();
         }
         return null;
     }
@@ -200,9 +200,8 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
     @Override
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
         Preconditions.checkArgument(user != null);
-        boolean enabled = SystemProperties.getResources().getBooleanProperty("executionServiceAPI.updateVariables.enabled", false);
-        if (!enabled) {
-            throw new InternalApplicationException(
+        if (!SystemProperties.isUpdateProcessVariablesInAPIEnabled()) {
+            throw new ConfigurationException(
                     "In order to enable script execution set property 'executionServiceAPI.updateVariables.enabled' to 'true' in system.properties or wfe.custom.system.properties");
         }
         variableLogic.updateVariables(user, processId, variables);
@@ -293,9 +292,17 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         return ProcessExecutionErrors.getProcessErrors(processId);
     }
 
+    @Override
+    @WebResult(name = "result")
+    public void upgradeProcessToNextDefinitionVersion(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(processId != null);
+        executionLogic.upgradeProcessToNextDefinitionVersion(user, processId);
+    }
+
     private boolean convertValueToProxy(User user, Long processId, WfVariable variable) {
-        if (variable != null && variable.getValue() instanceof FileVariable) {
-            FileVariable fileVariable = (FileVariable) variable.getValue();
+        if (variable != null && variable.getValue() instanceof IFileVariable) {
+            IFileVariable fileVariable = (IFileVariable) variable.getValue();
             FileVariableProxy proxy = new FileVariableProxy(user, processId, variable.getDefinition().getName(), fileVariable);
             variable.setValue(proxy);
             return true;

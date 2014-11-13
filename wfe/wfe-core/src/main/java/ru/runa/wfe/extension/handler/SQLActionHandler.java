@@ -54,9 +54,10 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.dao.ExecutorDAO;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
+import ru.runa.wfe.var.file.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.collect.Maps;
 
@@ -186,8 +187,8 @@ public class SQLActionHandler extends ActionHandlerBase {
             if (value instanceof Date) {
                 value = convertDate((Date) value);
             }
-            if (value instanceof FileVariable) {
-                FileVariable fileVariable = (FileVariable) value;
+            if (value instanceof IFileVariable) {
+                IFileVariable fileVariable = (IFileVariable) value;
                 if ("name".equals(parameter.getFieldName())) {
                     value = fileVariable.getName();
                 } else if ("data".equals(parameter.getFieldName())) {

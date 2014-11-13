@@ -30,8 +30,8 @@ import ru.runa.wf.logic.bot.textreport.TextReportSettingsXmlParser;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.file.FileVariable;
 
 /**
  * Plain text report generator.

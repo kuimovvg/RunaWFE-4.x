@@ -83,7 +83,7 @@ public class ErrorDetailsAction extends ActionBase {
                             String html = "<form id='supportForm'>";
                             html += "<input type='hidden' name='processId' value='" + form.getId() + "' />";
                             html += "</form>";
-                            html += Throwables.getStackTraceAsString(detail.getThrowable());
+                            html += detail.getThrowableDetails();
                             rootObject.put(HTML, html);
                         }
                     }
@@ -127,7 +127,7 @@ public class ErrorDetailsAction extends ActionBase {
                         List<ProcessError> errorDetails = ProcessExecutionErrors.getProcessErrors().get(processId);
                         for (ProcessError detail : errorDetails) {
                             exceptions += "\r\n---------------------------------------------------------------";
-                            exceptions += "\r\n" + CalendarUtil.formatDateTime(detail.getOccuredDate()) + " " + detail.getNodeId() + "/"
+                            exceptions += "\r\n" + CalendarUtil.formatDateTime(detail.getOccurredDate()) + " " + detail.getNodeId() + "/"
                                     + detail.getTaskName();
                             if (detail.getBotTask() != null) {
                                 String botTaskIdentifier = detail.getBotTask().getId() + "." + detail.getBotTask().getName();
@@ -139,7 +139,7 @@ public class ErrorDetailsAction extends ActionBase {
                                             true);
                                 }
                             }
-                            exceptions += "\r\n" + Throwables.getStackTraceAsString(detail.getThrowable());
+                            exceptions += "\r\n" + detail.getThrowableDetails();
                         }
                         processFiles.put("exceptions." + processId + ".txt", exceptions.getBytes(Charsets.UTF_8));
                     }
@@ -321,7 +321,7 @@ public class ErrorDetailsAction extends ActionBase {
             String description;
             try {
                 Object[] arguments = log.getPatternArguments();
-                String format = getResources(request).getMessage("history.log." + log.getClass().getSimpleName());
+                String format = getResources(request).getMessage("history.log." + log.getPatternName());
                 Object[] substitutedArguments = HTMLUtils.substituteArguments(user, null, arguments);
                 description = log.toString(format, substitutedArguments);
             } catch (Exception e) {

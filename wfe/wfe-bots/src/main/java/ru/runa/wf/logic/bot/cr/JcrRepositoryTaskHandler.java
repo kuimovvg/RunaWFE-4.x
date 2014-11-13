@@ -37,8 +37,8 @@ import javax.naming.InitialContext;
 import ru.runa.wfe.extension.handler.TaskHandlerBase;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.file.FileVariable;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;

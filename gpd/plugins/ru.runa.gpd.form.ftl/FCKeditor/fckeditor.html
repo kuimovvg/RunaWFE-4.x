@@ -1,11 +1,11 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html style="height: 100%;">
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE9">
+		<meta http-equiv="X-UA-Compatible" content="IE=9">
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<link href="sample.css" rel="stylesheet" type="text/css" />
 		<script src="jquery-1.11.1.min.js"></script>
-		<script src="jquery-ui-1.11.0.custom.min.js"></script>
+		<script src="jquery-ui-1.11.0.custom.min.js"></script>		
 		<script type="text/javascript" src="fckeditor.js"></script>
 		<script type="text/javascript">
 		var displayedErrors = new Object();
@@ -38,7 +38,7 @@
 					$(this).attr("href", "#tabs" + $(this).attr("href").split("#tabs")[1]);
 				});
 				$(this).find("a").removeAttr("id");
-				$(this).find("ul,li,div,a").removeAttr("class tabIndex aria-live aria-busy aria-selected aria-labelledby aria-hidden aria-expanded role aria-controls");
+				$(this).find("ul,li,div,a").removeAttr("class tabIndex aria-live aria-busy aria-selected aria-labelledby aria-hidden aria-expanded role");
 				$(this).attr("class", "tabs");
 			});
 			return $(doc).find('.tabs').length > 0 ? doc.html() : content;

@@ -101,7 +101,7 @@ public class ProcessGraphElementPresentationVisitor extends GraphElementPresenta
             for (ProcessLog log : logs) {
                 String description;
                 try {
-                    String format = Messages.getMessage("history.log." + log.getClass().getSimpleName(), pageContext);
+                    String format = Messages.getMessage("history.log." + log.getPatternName(), pageContext);
                     Object[] arguments = log.getPatternArguments();
                     if (log instanceof ActionLog) {
                         // #812

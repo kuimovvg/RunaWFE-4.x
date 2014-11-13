@@ -3,25 +3,42 @@ package ru.runa.wfe.execution.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 import ru.runa.wfe.bot.BotTask;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessError implements Serializable {
     private String nodeId;
     private String taskName;
     private BotTask botTask;
-    private Date occuredDate = new Date();
-    private Throwable throwable;
+    private Date occurredDate = new Date();
+    private String throwableMessage;
+    private String throwableDetails;
 
     public ProcessError() {
     }
 
-    public ProcessError(String nodeId, String taskName, BotTask botTask, Throwable throwable) {
+    public ProcessError(String nodeId) {
         this.nodeId = nodeId;
+    }
+
+    public ProcessError(String nodeId, String taskName, BotTask botTask, Throwable throwable) {
+        this(nodeId);
         this.taskName = taskName;
         this.botTask = botTask;
-        this.throwable = throwable;
+        if (throwable != null) {
+            this.throwableMessage = throwable.getLocalizedMessage();
+            if (Strings.isNullOrEmpty(throwableMessage)) {
+                throwableMessage = throwable.getClass().getName();
+            }
+            this.throwableDetails = Throwables.getStackTraceAsString(throwable);
+        }
     }
 
     public String getNodeId() {
@@ -36,12 +53,16 @@ public class ProcessError implements Serializable {
         return botTask;
     }
 
-    public Date getOccuredDate() {
-        return occuredDate;
+    public Date getOccurredDate() {
+        return occurredDate;
     }
 
-    public Throwable getThrowable() {
-        return throwable;
+    public String getThrowableMessage() {
+        return throwableMessage;
+    }
+
+    public String getThrowableDetails() {
+        return throwableDetails;
     }
 
     @Override
