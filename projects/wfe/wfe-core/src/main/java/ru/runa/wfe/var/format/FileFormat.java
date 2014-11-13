@@ -26,7 +26,8 @@ import org.json.simple.JSONObject;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.collect.Maps;
 
@@ -36,8 +37,8 @@ import com.google.common.collect.Maps;
 public class FileFormat extends VariableFormat implements VariableDisplaySupport {
 
     @Override
-    public Class<? extends FileVariable> getJavaClass() {
-        return FileVariable.class;
+    public Class<? extends IFileVariable> getJavaClass() {
+        return IFileVariable.class;
     }
 
     @Override
@@ -47,17 +48,17 @@ public class FileFormat extends VariableFormat implements VariableDisplaySupport
 
     @Override
     public String convertToStringValue(Object object) {
-        return ((FileVariable) object).getName();
+        return ((IFileVariable) object).getName();
     }
 
     @Override
-    public FileVariable convertFromStringValue(String string) throws Exception {
+    public IFileVariable convertFromStringValue(String string) throws Exception {
         throw new UnsupportedOperationException("file variable cannot be deserializes from string");
     }
 
     @Override
     protected Object convertToJSONValue(Object value) {
-        FileVariable fileVariable = (FileVariable) value;
+        IFileVariable fileVariable = (IFileVariable) value;
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("fileName", fileVariable.getName());
         jsonObject.put("contentType", fileVariable.getContentType());
@@ -88,7 +89,7 @@ public class FileFormat extends VariableFormat implements VariableDisplaySupport
         if (object == null) {
             return "&nbsp;";
         }
-        FileVariable value = (FileVariable) object;
+        IFileVariable value = (IFileVariable) object;
         HashMap<String, Object> params = Maps.newHashMap();
         params.put(WebHelper.PARAM_ID, processId);
         params.put(WebHelper.PARAM_VARIABLE_NAME, name);

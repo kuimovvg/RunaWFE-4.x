@@ -12,8 +12,9 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.definition.IFileDataProvider;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.file.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.io.Files;
 
@@ -58,8 +59,8 @@ public abstract class FilesSupplierConfig {
     public InputStream getFileInputStream(IVariableProvider variableProvider, IFileDataProvider fileDataProvider, boolean required) {
         if (inputFileVariableName != null) {
             Object value = variableProvider.getValue(inputFileVariableName);
-            if (value instanceof FileVariable) {
-                FileVariable fileVariable = (FileVariable) value;
+            if (value instanceof IFileVariable) {
+                IFileVariable fileVariable = (IFileVariable) value;
                 return new ByteArrayInputStream(fileVariable.getData());
             }
             if (value instanceof byte[]) {

@@ -28,11 +28,11 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.ComplexVariable;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.format.ActorFormat;
 import ru.runa.wfe.var.format.BigDecimalFormat;
 import ru.runa.wfe.var.format.BooleanFormat;
@@ -243,7 +243,7 @@ public class ViewUtil {
             return html;
         }
         if (FileFormat.class == variableFormat.getClass()) {
-            return getFileComponent(webHelper, variableName, (FileVariable) value, true);
+            return getFileComponent(webHelper, variableName, (IFileVariable) value, true);
         }
         if (BooleanFormat.class == variableFormat.getClass()) {
             String html = "";
@@ -393,7 +393,7 @@ public class ViewUtil {
         Object value = variable.getValue();
         if (FileFormat.class == variableFormat.getClass()) {
             // because component is not usable
-            return getFileComponent(webHelper, variableName, (FileVariable) value, false);
+            return getFileComponent(webHelper, variableName, (IFileVariable) value, false);
         }
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
@@ -558,7 +558,7 @@ public class ViewUtil {
         }
     }
 
-    private static String getFileComponent(WebHelper webHelper, String variableName, FileVariable value, boolean enabled) {
+    private static String getFileComponent(WebHelper webHelper, String variableName, IFileVariable value, boolean enabled) {
         if (!WebResources.isAjaxFileInputEnabled()) {
             return "<input type=\"file\" name=\"" + variableName + "\" class=\"inputFile\" />";
         }

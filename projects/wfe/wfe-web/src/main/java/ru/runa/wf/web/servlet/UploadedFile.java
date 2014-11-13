@@ -1,6 +1,6 @@
 package ru.runa.wf.web.servlet;
 
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Objects;
 
@@ -23,7 +23,7 @@ public class UploadedFile {
     public UploadedFile() {
     }
 
-    public UploadedFile(FileVariable value) {
+    public UploadedFile(IFileVariable value) {
         this.name = value.getName();
         this.mimeType = value.getContentType();
         setContent(value.getData());

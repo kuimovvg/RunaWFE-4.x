@@ -26,8 +26,8 @@ import ru.runa.wf.logic.bot.mswordreport.MSWordReportBuilderFactory;
 import ru.runa.wf.logic.bot.mswordreport.MSWordReportTaskSettings;
 import ru.runa.wf.logic.bot.mswordreport.WordReportSettingsXmlParser;
 import ru.runa.wfe.extension.handler.CommonHandler;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.file.FileVariable;
 
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;

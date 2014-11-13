@@ -34,8 +34,8 @@ import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.form.VariableForm;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.var.FileVariable;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
 
@@ -53,7 +53,7 @@ public class VariableDownloaderAction extends ActionBase {
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm actionForm, HttpServletRequest request, HttpServletResponse response) {
         try {
-            FileVariable fileVariable = getVariable(actionForm, request);
+            IFileVariable fileVariable = getVariable(actionForm, request);
             response.setContentType(fileVariable.getContentType());
             // http://forum.java.sun.com/thread.jspa?forumID=45&threadID=233446
             response.setHeader("Pragma", "public");
@@ -70,7 +70,7 @@ public class VariableDownloaderAction extends ActionBase {
         return null;
     }
 
-    private FileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
+    private IFileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
         String qualifier = null;
         VariableFormat qualifierFormat = null;
@@ -92,22 +92,22 @@ public class VariableDownloaderAction extends ActionBase {
                 qualifierFormat = FormatCommons.createComponent(variable, 0);
             }
         }
-        if (object instanceof FileVariable) {
-            return (FileVariable) object;
+        if (object instanceof IFileVariable) {
+            return (IFileVariable) object;
         }
         if (object instanceof List<?>) {
-            List<FileVariable> list = (List<FileVariable>) object;
+            List<IFileVariable> list = (List<IFileVariable>) object;
             if (qualifier == null) {
                 throw new InternalApplicationException("No index for list was specified");
             }
             return list.get(Integer.parseInt(qualifier));
         }
         if (object instanceof Map<?, ?>) {
-            Map<Object, FileVariable> map = (Map<Object, FileVariable>) object;
+            Map<Object, IFileVariable> map = (Map<Object, IFileVariable>) object;
             if (qualifier == null) {
                 throw new InternalApplicationException("No key for map was specified");
             }
-            for (Map.Entry<Object, FileVariable> entry : map.entrySet()) {
+            for (Map.Entry<Object, IFileVariable> entry : map.entrySet()) {
                 if (qualifierFormat != null) {
                     String keyInQualifierFormat = qualifierFormat.format(entry.getKey());
                     if (Objects.equal(keyInQualifierFormat, qualifier)) {
