@@ -2,6 +2,7 @@ package ru.runa.wfe.service.client;
 
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.file.FileVariableDescriptor;
 import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.file.LocalFileSystemVariable;
 
@@ -33,6 +34,9 @@ public class FileVariableProxy implements IFileVariable {
         this.variableName = variableName;
         if (fileVariable instanceof LocalFileSystemVariable) {
             variablePath = ((LocalFileSystemVariable) fileVariable).getVariablePath();
+        }
+        if (fileVariable instanceof FileVariableDescriptor) {
+            variablePath = ((FileVariableDescriptor) fileVariable).getVariablePath();
         }
     }
 

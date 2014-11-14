@@ -294,7 +294,7 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      * @return Loaded actors.
      */
     public List<Actor> getAvailableActorsByCodes(List<Long> codes) {
-        return (List<Actor>) getHibernateTemplate().find("select actor from Actor as actor where actor.code in ?", codes);
+        return getHibernateTemplate().find("select actor from Actor as actor where actor.code in ?", codes);
     }
 
     /**
@@ -309,7 +309,7 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     public List<TemporaryGroup> getTemporaryGroups(final Long processId) {
-        return (List<TemporaryGroup>) getHibernateTemplate().executeFind(new HibernateCallback<List<TemporaryGroup>>() {
+        return getHibernateTemplate().executeFind(new HibernateCallback<List<TemporaryGroup>>() {
 
             @Override
             public List<TemporaryGroup> doInHibernate(Session session) {
@@ -587,11 +587,11 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     private List<ExecutorGroupMembership> getGroupMemberships(Group group) {
-        return (List<ExecutorGroupMembership>) getHibernateTemplate().find("from ExecutorGroupMembership where group=?", group);
+        return getHibernateTemplate().find("from ExecutorGroupMembership where group=?", group);
     }
 
     private List<ExecutorGroupMembership> getExecutorMemberships(Executor executor) {
-        return (List<ExecutorGroupMembership>) getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
+        return getHibernateTemplate().find("from ExecutorGroupMembership where executor=?", executor);
     }
 
     private ExecutorGroupMembership getMembership(Group group, Executor executor) {
@@ -629,6 +629,17 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
      */
     public Set<Group> getExecutorParentsAll(Executor executor) {
         return getExecutorGroupsAll(executor, new HashSet<Executor>());
+    }
+
+    /**
+     * @return direct executor parent {@linkplain Groups}s skipping cache.
+     */
+    public Set<Group> getExecutorParents(Executor executor) {
+        HashSet<Group> result = new HashSet<Group>();
+        for (ExecutorGroupMembership membership : getExecutorMemberships(executor)) {
+            result.add(membership.getGroup());
+        }
+        return result;
     }
 
     /**
@@ -778,7 +789,7 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
         if (executors != null) {
             return executors;
         }
-        List<T> list = (List<T>) getHibernateTemplate().executeFind(new HibernateCallback<List<T>>() {
+        List<T> list = getHibernateTemplate().executeFind(new HibernateCallback<List<T>>() {
 
             @Override
             public List<T> doInHibernate(Session session) {
