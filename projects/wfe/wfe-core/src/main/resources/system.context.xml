@@ -295,8 +295,7 @@
 	<bean id="processFactory" class="ru.runa.wfe.execution.ProcessFactory">
 	</bean>
 
-	<bean id="tasklistBuilder" class="ru.runa.wfe.task.TasklistBuilder">
-	</bean>
+	<bean id="taskListBuilder" class="ru.runa.wfe.task.logic.TaskListBuilder" />
 
 	<bean id="commonLogic" class="ru.runa.wfe.commons.logic.CommonLogic" />
 

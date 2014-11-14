@@ -1,4 +1,4 @@
-package ru.runa.wfe.task;
+package ru.runa.wfe.task.logic;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +19,7 @@ import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.ss.TerminatorSubstitution;
 import ru.runa.wfe.ss.logic.SubstitutionLogic;
+import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.cache.TaskCache;
 import ru.runa.wfe.task.cache.TaskCacheCtrl;
 import ru.runa.wfe.task.dao.TaskDAO;
@@ -40,8 +41,8 @@ import com.google.common.collect.Sets;
  * @author Dofs
  * @since 4.0
  */
-public class TasklistBuilder {
-    private static final Log log = LogFactory.getLog(TasklistBuilder.class);
+public class TaskListBuilder implements ITaskListBuilder {
+    private static final Log log = LogFactory.getLog(TaskListBuilder.class);
     private TaskCache taskCache = TaskCacheCtrl.getInstance();
     @Autowired
     private WfTaskFactory taskObjectFactory;
@@ -54,6 +55,7 @@ public class TasklistBuilder {
     @Autowired
     private TaskDAO taskDAO;
 
+    @Override
     public List<WfTask> getTasks(Actor actor, BatchPresentation batchPresentation) {
         Preconditions.checkNotNull(batchPresentation, "batchPresentation");
         List<WfTask> result = taskCache.getTasks(actor.getId(), batchPresentation);

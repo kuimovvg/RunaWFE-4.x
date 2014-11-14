@@ -30,7 +30,6 @@ import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.TaskCompletionBy;
 import ru.runa.wfe.task.TaskCompletionInfo;
 import ru.runa.wfe.task.TaskDoesNotExistException;
-import ru.runa.wfe.task.TasklistBuilder;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.dto.WfTaskFactory;
 import ru.runa.wfe.user.Actor;
@@ -55,7 +54,7 @@ public class TaskLogic extends WFCommonLogic {
     @Autowired
     private WfTaskFactory taskObjectFactory;
     @Autowired
-    private TasklistBuilder tasklistBuilder;
+    private ITaskListBuilder taskListBuilder;
     @Autowired
     private AssignmentHelper assignmentHelper;
 
@@ -129,7 +128,7 @@ public class TaskLogic extends WFCommonLogic {
     }
 
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
-        return tasklistBuilder.getTasks(user.getActor(), batchPresentation);
+        return taskListBuilder.getTasks(user.getActor(), batchPresentation);
     }
 
     public List<WfTask> getTasks(User user, Long processId) throws ProcessDoesNotExistException {
