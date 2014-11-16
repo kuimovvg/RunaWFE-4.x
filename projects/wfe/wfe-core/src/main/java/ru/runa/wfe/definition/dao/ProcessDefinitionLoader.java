@@ -21,11 +21,6 @@ public class ProcessDefinitionLoader implements IProcessDefinitionLoader {
     }
 
     @Override
-    public ProcessDefinition getDefinition(String name, Long version) {
-        return processDefCacheCtrl.getLatestDefinition(name);
-    }
-
-    @Override
     public ProcessDefinition getDefinition(Process process) {
         Preconditions.checkNotNull(process, "process");
         return getDefinition(process.getDeployment().getId());
