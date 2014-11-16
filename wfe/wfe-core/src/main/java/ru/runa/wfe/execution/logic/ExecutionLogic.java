@@ -290,8 +290,8 @@ public class ExecutionLogic extends WFCommonLogic {
         // TODO
         // checkPermissionAllowed(user, process, ProcessPermission.UPDATE);
         Deployment deployment = process.getDeployment();
-        ProcessDefinition nextDefinition = processDefinitionLoader.getDefinition(deployment.getName(), deployment.getVersion());
-        process.setDeployment(nextDefinition.getDeployment());
+        Deployment nextDeployment = deploymentDAO.findDeployment(deployment.getName(), deployment.getVersion() + 1);
+        process.setDeployment(nextDeployment);
         processDAO.update(process);
         processLogDAO.addLog(new AdminActionLog(user.getActor(), AdminActionLog.ACTION_UPGRADE_PROCESS_TO_NEXT_VERSION), process);
     }

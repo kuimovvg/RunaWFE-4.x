@@ -10,8 +10,6 @@ public interface IProcessDefinitionLoader {
 
     public ProcessDefinition getDefinition(Long id) throws DefinitionDoesNotExistException;
 
-    public ProcessDefinition getDefinition(String name, Long version) throws DefinitionDoesNotExistException;
-
     public ProcessDefinition getDefinition(Process process) throws DefinitionDoesNotExistException;
 
     public ProcessDefinition getLatestDefinition(String definitionName) throws DefinitionDoesNotExistException;
