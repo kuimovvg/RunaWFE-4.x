@@ -11,8 +11,13 @@ public class FileVariableMatcher implements VariableTypeMatcher {
         if (IFileVariable.class.isAssignableFrom(value.getClass())) {
             return true;
         }
-        return TypeConversionUtil.isList(value) && TypeConversionUtil.getListSize(value) > 0
-                && TypeConversionUtil.getListValue(value, 0) instanceof IFileVariable;
+        if (TypeConversionUtil.isList(value)) {
+            // match empty list too in order to prevent filling in to
+            // serializable converter in next steps
+            int size = TypeConversionUtil.getListSize(value);
+            return size == 0 || (size > 0 && TypeConversionUtil.getListValue(value, 0) instanceof IFileVariable);
+        }
+        return false;
     }
 
 }
