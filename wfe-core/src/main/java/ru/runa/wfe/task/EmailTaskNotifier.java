@@ -78,7 +78,7 @@ public class EmailTaskNotifier implements ITaskNotifier {
             }
         }
         if (onlyIfTaskActorEmailDefined && Strings.isNullOrEmpty(emails)) {
-            log.warn("Notification was not sent about task assigned to executor with empty email: " + task);
+            log.debug("Notification was not sent about task assigned to executor with empty email: " + task);
             return;
         }
         Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
