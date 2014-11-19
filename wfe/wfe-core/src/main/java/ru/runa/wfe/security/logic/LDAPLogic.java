@@ -121,7 +121,7 @@ public class LDAPLogic extends TransactionalExecutor {
     @Override
     protected void doExecuteInTransaction() {
         if (!SystemProperties.isLDAPSynchronizationEnabled()) {
-            log.warn("Synchronization is disabled");
+            log.debug("Synchronization is disabled");
             return;
         }
         Preconditions.checkNotNull(providerUrl, "LDAP property is not configured 'ldap.connection.provider.url'");
