@@ -177,4 +177,12 @@ public class SystemProperties {
         return RESOURCES.getBooleanProperty("upgrade.process.to.next.definition.version.enabled", false);
     }
 
+    public static boolean isErrorEmailNotificationEnabled() {
+        return getErrorEmailNotificationConfiguration() != null;
+    }
+
+    public static String getErrorEmailNotificationConfiguration() {
+        return RESOURCES.getStringProperty("error.email.notification.configuration");
+    }
+
 }
