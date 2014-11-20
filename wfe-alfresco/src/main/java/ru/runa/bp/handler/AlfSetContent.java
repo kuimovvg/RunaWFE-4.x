@@ -4,7 +4,7 @@ import ru.runa.alfresco.AlfConnection;
 import ru.runa.alfresco.AlfObject;
 import ru.runa.bp.AlfHandler;
 import ru.runa.bp.AlfHandlerData;
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Charsets;
 
@@ -24,9 +24,9 @@ public class AlfSetContent extends AlfHandler {
         }
         final byte[] content;
         final String mimetype;
-        if (data instanceof FileVariable) {
-            mimetype = ((FileVariable) data).getContentType();
-            content = ((FileVariable) data).getData();
+        if (data instanceof IFileVariable) {
+            mimetype = ((IFileVariable) data).getContentType();
+            content = ((IFileVariable) data).getData();
         } else {
             mimetype = alfHandlerData.getInputParamValueNotNull("mimetype");
             content = data.toString().getBytes(Charsets.UTF_8);

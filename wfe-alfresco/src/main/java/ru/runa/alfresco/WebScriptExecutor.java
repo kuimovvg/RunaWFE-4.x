@@ -20,7 +20,8 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.var.FileVariable;
+import ru.runa.wfe.var.file.FileVariable;
+import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
@@ -82,7 +83,7 @@ public class WebScriptExecutor {
         url.append(alfBaseUrl).append("service/").append(webScriptUri);
         boolean first = true;
         for (Map.Entry<String, Object> entry : webScriptParameters.entrySet()) {
-            if (entry.getValue() == null || entry.getValue() instanceof FileVariable) {
+            if (entry.getValue() == null || entry.getValue() instanceof IFileVariable) {
                 log.warn("Ignored parameter " + entry.getKey() + "=" + entry.getValue());
                 continue;
             }
