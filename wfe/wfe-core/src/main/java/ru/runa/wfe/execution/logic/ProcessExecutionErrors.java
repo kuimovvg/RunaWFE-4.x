@@ -1,18 +1,29 @@
 package ru.runa.wfe.execution.logic;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
+import ru.runa.wfe.commons.ClassLoaderUtil;
+import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.email.EmailConfig;
+import ru.runa.wfe.commons.email.EmailConfigParser;
+import ru.runa.wfe.commons.email.EmailUtils;
 import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTask;
+import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
 
 public class ProcessExecutionErrors {
     private static Map<BotTaskIdentifier, Throwable> botTaskConfigurationErrors = Maps.newHashMap();
@@ -40,7 +51,12 @@ public class ProcessExecutionErrors {
     }
 
     public static synchronized void addBotTaskConfigurationError(Bot bot, BotTask botTask, Throwable throwable) {
-        botTaskConfigurationErrors.put(new BotTaskIdentifier(bot, botTask), throwable);
+        BotTaskIdentifier botTaskIdentifier = new BotTaskIdentifier(bot, botTask);
+        boolean alreadyExists = botTaskConfigurationErrors.containsKey(botTaskIdentifier);
+        botTaskConfigurationErrors.put(botTaskIdentifier, throwable);
+        if (!alreadyExists) {
+            sendEmailNotification(botTaskIdentifier, null);
+        }
     }
 
     public static synchronized void removeBotTaskConfigurationError(Bot bot, BotTask botTask) {
@@ -48,14 +64,17 @@ public class ProcessExecutionErrors {
     }
 
     public static synchronized void addProcessError(Long processId, String nodeId, String taskName, BotTask botTask, Throwable throwable) {
-        List<ProcessError> processError = processErrors.get(processId);
-        if (processError == null) {
-            processError = Lists.newArrayList();
-            processErrors.put(processId, processError);
+        List<ProcessError> errors = processErrors.get(processId);
+        if (errors == null) {
+            errors = Lists.newArrayList();
+            processErrors.put(processId, errors);
         }
-        ProcessError details = new ProcessError(nodeId, taskName, botTask, throwable);
-        processError.remove(details);
-        processError.add(details);
+        ProcessError processError = new ProcessError(nodeId, taskName, botTask, throwable);
+        boolean alreadyExists = errors.remove(processError);
+        errors.add(processError);
+        if (!alreadyExists) {
+            sendEmailNotification(null, processError);
+        }
     }
 
     public static synchronized void addProcessError(WfTask task, BotTask botTask, Throwable throwable) {
@@ -78,6 +97,25 @@ public class ProcessExecutionErrors {
 
     public static synchronized void removeProcessErrors(Long processId) {
         processErrors.remove(processId);
+    }
+
+    private static synchronized void sendEmailNotification(BotTaskIdentifier botTaskIdentifier, ProcessError processError) {
+        try {
+            if (SystemProperties.isErrorEmailNotificationEnabled()) {
+                InputStream in = ClassLoaderUtil.getAsStreamNotNull(SystemProperties.getErrorEmailNotificationConfiguration(),
+                        ProcessExecutionErrors.class);
+                byte[] configBytes = ByteStreams.toByteArray(in);
+                EmailConfig config = EmailConfigParser.parse(configBytes);
+                Map<String, Object> map = Maps.newHashMap();
+                map.put("botTaskIdentifier", botTaskIdentifier);
+                map.put("processError", processError);
+                IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
+                config.applySubstitutions(variableProvider);
+                EmailUtils.sendMessage(config, null);
+            }
+        } catch (Exception e) {
+            LogFactory.getLog(ProcessExecutionErrors.class).error("Unable to send email notification about error", e);
+        }
     }
 
     public static class BotTaskIdentifier {
