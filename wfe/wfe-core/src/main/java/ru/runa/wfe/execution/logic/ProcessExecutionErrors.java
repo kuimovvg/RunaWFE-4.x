@@ -11,9 +11,11 @@ import ru.runa.wfe.bot.Bot;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
+import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.execution.dto.ProcessError;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.task.dto.WfTask;
@@ -55,7 +57,7 @@ public class ProcessExecutionErrors {
         boolean alreadyExists = botTaskConfigurationErrors.containsKey(botTaskIdentifier);
         botTaskConfigurationErrors.put(botTaskIdentifier, throwable);
         if (!alreadyExists) {
-            sendEmailNotification(botTaskIdentifier, null);
+            sendEmailNotification(throwable, botTaskIdentifier, null);
         }
     }
 
@@ -69,11 +71,11 @@ public class ProcessExecutionErrors {
             errors = Lists.newArrayList();
             processErrors.put(processId, errors);
         }
-        ProcessError processError = new ProcessError(nodeId, taskName, botTask, throwable);
+        ProcessError processError = new ProcessError(processId, nodeId, taskName, botTask, throwable);
         boolean alreadyExists = errors.remove(processError);
         errors.add(processError);
         if (!alreadyExists) {
-            sendEmailNotification(null, processError);
+            sendEmailNotification(throwable, null, processError);
         }
     }
 
@@ -88,7 +90,7 @@ public class ProcessExecutionErrors {
     public static synchronized void removeProcessError(Long processId, String nodeId) {
         List<ProcessError> processError = processErrors.get(processId);
         if (processError != null) {
-            processError.remove(new ProcessError(nodeId));
+            processError.remove(new ProcessError(processId, nodeId));
             if (processError.isEmpty()) {
                 processErrors.remove(processId);
             }
@@ -99,22 +101,46 @@ public class ProcessExecutionErrors {
         processErrors.remove(processId);
     }
 
-    private static synchronized void sendEmailNotification(BotTaskIdentifier botTaskIdentifier, ProcessError processError) {
+    private static synchronized void sendEmailNotification(Throwable exception, BotTaskIdentifier botTaskIdentifier, ProcessError processError) {
         try {
             if (SystemProperties.isErrorEmailNotificationEnabled()) {
+                boolean matches = false;
                 InputStream in = ClassLoaderUtil.getAsStreamNotNull(SystemProperties.getErrorEmailNotificationConfiguration(),
                         ProcessExecutionErrors.class);
                 byte[] configBytes = ByteStreams.toByteArray(in);
                 EmailConfig config = EmailConfigParser.parse(configBytes);
+                List<String> includes = Utils.splitString(config.getCommonProperties().get("exception.includes"), ";");
+                for (String className : includes) {
+                    if (ClassLoaderUtil.loadClass(className).isInstance(exception)) {
+                        matches = true;
+                        break;
+                    }
+                }
+                if (matches) {
+                    List<String> excludes = Utils.splitString(config.getCommonProperties().get("exception.excludes"), ";");
+                    for (String className : excludes) {
+                        if (ClassLoaderUtil.loadClass(className).isInstance(exception)) {
+                            matches = false;
+                            break;
+                        }
+                    }
+                }
+                if (!matches) {
+                    return;
+                }
                 Map<String, Object> map = Maps.newHashMap();
+                map.put("exceptionClassName", exception.getClass().getName());
+                map.put("exceptionMessage", exception.getMessage());
                 map.put("botTaskIdentifier", botTaskIdentifier);
                 map.put("processError", processError);
                 IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
                 config.applySubstitutions(variableProvider);
+                String formMessage = ExpressionEvaluator.process(null, config.getMessage(), variableProvider, null);
+                config.setMessage(formMessage);
                 EmailUtils.sendMessage(config, null);
             }
         } catch (Exception e) {
-            LogFactory.getLog(ProcessExecutionErrors.class).error("Unable to send email notification about error", e);
+            LogFactory.getLog(EmailUtils.class).error("Unable to send email notification about error", e);
         }
     }
 

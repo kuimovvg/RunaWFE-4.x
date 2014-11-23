@@ -27,7 +27,9 @@ import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableMapping;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 public class Utils {
     private static Log log = LogFactory.getLog(Utils.class);
@@ -159,6 +161,13 @@ public class Utils {
         } catch (Exception e) {
             throw new InternalApplicationException("Unable to rollback, status: " + status, e);
         }
+    }
+
+    public static List<String> splitString(String string, String delimiter) {
+        if (string != null) {
+            return Splitter.on(delimiter).omitEmptyStrings().trimResults().splitToList(string);
+        }
+        return Lists.newArrayList();
     }
 
 }

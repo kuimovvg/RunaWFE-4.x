@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.dao.SettingDAO;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -111,15 +112,11 @@ public class PropertyResources {
     }
 
     public List<String> getMultipleStringProperty(String name) {
-        List<String> result = Lists.newArrayList();
         String string = getStringProperty(name);
         if (string != null) {
-            String[] splitted = string.split(";", -1);
-            for (String s : splitted) {
-                result.add(s.trim());
-            }
+            return Splitter.on(";").omitEmptyStrings().trimResults().splitToList(string);
         }
-        return result;
+        return Lists.newArrayList();
     }
 
     public boolean getBooleanProperty(String name, boolean defaultValue) {
