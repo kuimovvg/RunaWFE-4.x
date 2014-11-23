@@ -14,6 +14,7 @@ import com.google.common.base.Throwables;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProcessError implements Serializable {
+    private Long processId;
     private String nodeId;
     private String taskName;
     private BotTask botTask;
@@ -24,12 +25,13 @@ public class ProcessError implements Serializable {
     public ProcessError() {
     }
 
-    public ProcessError(String nodeId) {
+    public ProcessError(Long processId, String nodeId) {
+        this.processId = processId;
         this.nodeId = nodeId;
     }
 
-    public ProcessError(String nodeId, String taskName, BotTask botTask, Throwable throwable) {
-        this(nodeId);
+    public ProcessError(Long processId, String nodeId, String taskName, BotTask botTask, Throwable throwable) {
+        this(processId, nodeId);
         this.taskName = taskName;
         this.botTask = botTask;
         if (throwable != null) {
@@ -39,6 +41,10 @@ public class ProcessError implements Serializable {
             }
             this.throwableDetails = Throwables.getStackTraceAsString(throwable);
         }
+    }
+
+    public Long getProcessId() {
+        return processId;
     }
 
     public String getNodeId() {
@@ -67,14 +73,14 @@ public class ProcessError implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(nodeId);
+        return Objects.hashCode(processId, nodeId);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ProcessError) {
             ProcessError bti = (ProcessError) obj;
-            return Objects.equal(nodeId, bti.nodeId);
+            return Objects.equal(processId, bti.processId) && Objects.equal(nodeId, bti.nodeId);
         }
         return super.equals(obj);
     }

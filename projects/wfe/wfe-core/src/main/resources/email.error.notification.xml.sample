@@ -2,6 +2,8 @@
 <email-config>
 	<common>
 		<param name="throwErrorOnFailure" value="true"/>
+		<param name="exception.includes" value="java.lang.Throwable"/>
+		<param name="exception.excludes" value="ru.runa.wfe.security.AuthenticationException; ru.runa.wfe.security.AuthenticationExpiredException; ru.runa.wfe.validation.ValidationException"/>
 	</common>
 	<headers>
 		<param name="To" value="admin@org.ru"/>
