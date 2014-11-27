@@ -5,6 +5,7 @@ import groovy.lang.GroovyShell;
 import groovy.lang.MissingPropertyException;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +23,7 @@ import ru.runa.wfe.var.VariableUserType;
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 @SuppressWarnings("unchecked")
 public class GroovyScriptExecutor implements IScriptExecutor {
@@ -133,20 +135,40 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         public Map<String, Object> getAdjustedVariables() {
             Map<String, Object> scriptingVariables = getVariables();
             Map<String, Object> result = Maps.newHashMapWithExpectedSize(scriptingVariables.size());
-            for (Map.Entry<String, Object> scriptingEntry : scriptingVariables.entrySet()) {
-                String variableName = getVariableNameByScriptingName(scriptingEntry.getKey());
-                result.put(variableName, scriptingEntry.getValue());
+            for (Map.Entry<String, Object> entry : scriptingVariables.entrySet()) {
+                String variableName = getVariableNameByScriptingName(entry.getKey());
+                result.put(variableName, entry.getValue());
             }
-            result.putAll(complexVariables);
+            for (Map.Entry<String, ScriptingComplexVariable> entry : complexVariables.entrySet()) {
+                Map<String, Object> changedVariables = entry.getValue().getChangedVariables(entry.getKey());
+                result.putAll(changedVariables);
+            }
             return result;
         }
     }
 
     public static class ScriptingComplexVariable extends ComplexVariable {
+        private Set<String> changedAttributeNames = Sets.newHashSet();
 
         public ScriptingComplexVariable(ComplexVariable complexVariable) {
             super(complexVariable.getUserType());
-            putAll(complexVariable);
+            for (Map.Entry<String, Object> e : complexVariable.entrySet()) {
+                super.put(e.getKey(), e.getValue());
+            }
+        }
+
+        public Map<String, Object> getChangedVariables(String parentName) {
+            Map<String, Object> result = Maps.newHashMap();
+            for (String attributeName : changedAttributeNames) {
+                Object object = super.get(attributeName);
+                String variableName = parentName + VariableUserType.DELIM + attributeName;
+                if (object instanceof ScriptingComplexVariable) {
+                    result.putAll(((ScriptingComplexVariable) object).getChangedVariables(variableName));
+                } else {
+                    result.put(variableName, object);
+                }
+            }
+            return result;
         }
 
         @Override
@@ -155,13 +177,14 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             if (object == null) {
                 for (VariableDefinition definition : getUserType().getAttributes()) {
                     if (Objects.equal(key, definition.getScriptingName())) {
-                        return super.get(definition.getName());
+                        object = super.get(definition.getName());
+                        break;
                     }
                 }
             }
             if (object instanceof ComplexVariable) {
                 object = new ScriptingComplexVariable((ComplexVariable) object);
-                put((String) key, object);
+                super.put((String) key, object);
             }
             return object;
         }
@@ -183,6 +206,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 variableName = key;
                 LogFactory.getLog(getClass()).warn("Trying to set undefined '" + variableName + "' in " + this);
             }
+            changedAttributeNames.add(variableName);
             return super.put(variableName, value);
         }
 
