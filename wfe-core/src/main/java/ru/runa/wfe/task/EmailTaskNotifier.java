@@ -61,6 +61,9 @@ public class EmailTaskNotifier implements ITaskNotifier {
         EmailConfig config = EmailConfigParser.parse(configBytes);
         Task task = executionContext.getTask();
         String emails = "";
+        if (task.getExecutor() == null) {
+            return;
+        }
         if (task.getExecutor() instanceof Actor) {
             Actor actor = (Actor) task.getExecutor();
             if (actor.getEmail() != null && actor.getEmail().trim().length() > 0) {
