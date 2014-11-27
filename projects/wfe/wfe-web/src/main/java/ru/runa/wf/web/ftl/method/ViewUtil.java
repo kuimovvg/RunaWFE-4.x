@@ -117,11 +117,11 @@ public class ViewUtil {
     }
 
     public static WfVariable createListComponentVariable(WfVariable containerVariable, int index, VariableFormat componentFormat, Object value) {
-        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        String nameSuffix = VariableFormatContainer.COMPONENT_QUALIFIER_START;
         if (index != -1) {
             nameSuffix += index;
         }
-        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        nameSuffix += VariableFormatContainer.COMPONENT_QUALIFIER_END;
         return createComponentVariable(containerVariable, nameSuffix, componentFormat, value);
     }
 
@@ -130,22 +130,22 @@ public class ViewUtil {
         Object object = map.get(key);
         VariableFormat keyFormat = FormatCommons.createComponent(mapVariable, 0);
         VariableFormat valueFormat = FormatCommons.createComponent(mapVariable, 1);
-        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        String nameSuffix = VariableFormatContainer.COMPONENT_QUALIFIER_START;
         if (key != null) {
             nameSuffix += keyFormat.format(key);
         }
-        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        nameSuffix += VariableFormatContainer.COMPONENT_QUALIFIER_END;
         return createComponentVariable(mapVariable, nameSuffix, valueFormat, object);
     }
 
     public static WfVariable createMapKeyComponentVariable(WfVariable mapVariable, int index, Object key) {
         Map<?, ?> map = (Map<?, ?>) mapVariable.getValue();
         VariableFormat keyFormat = FormatCommons.createComponent(mapVariable, 0);
-        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        String nameSuffix = VariableFormatContainer.COMPONENT_QUALIFIER_START;
         if (index != -1) {
             nameSuffix += index;
         }
-        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        nameSuffix += VariableFormatContainer.COMPONENT_QUALIFIER_END;
         return createComponentVariable(mapVariable, nameSuffix + ".key", keyFormat, key);
     }
 
@@ -153,11 +153,11 @@ public class ViewUtil {
         Map<?, ?> map = (Map<?, ?>) mapVariable.getValue();
         Object value = key != null ? map.get(key) : null;
         VariableFormat valueFormat = FormatCommons.createComponent(mapVariable, 1);
-        String nameSuffix = FormSubmissionUtils.COMPONENT_QUALIFIER_START;
+        String nameSuffix = VariableFormatContainer.COMPONENT_QUALIFIER_START;
         if (index != -1) {
             nameSuffix += index;
         }
-        nameSuffix += FormSubmissionUtils.COMPONENT_QUALIFIER_END;
+        nameSuffix += VariableFormatContainer.COMPONENT_QUALIFIER_END;
         return createComponentVariable(mapVariable, nameSuffix + ".value", valueFormat, value);
     }
 

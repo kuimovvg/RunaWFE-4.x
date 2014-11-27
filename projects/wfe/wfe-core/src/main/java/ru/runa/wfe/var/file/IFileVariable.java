@@ -11,11 +11,6 @@ import java.io.Serializable;
 public interface IFileVariable extends Serializable {
 
     /**
-     * @return file data
-     */
-    public byte[] getData();
-
-    /**
      * @return file name
      */
     public String getName();
@@ -24,4 +19,16 @@ public interface IFileVariable extends Serializable {
      * @return mime type
      */
     public String getContentType();
+
+    /**
+     * @return file data
+     */
+    public byte[] getData();
+
+    /**
+     * @return string representation of external storage, can be
+     *         <code>null</code>
+     */
+    public String getStringValue();
+
 }

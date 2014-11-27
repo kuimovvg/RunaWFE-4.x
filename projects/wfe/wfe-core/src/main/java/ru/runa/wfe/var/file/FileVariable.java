@@ -39,7 +39,7 @@ public class FileVariable implements IFileVariable {
     }
 
     public FileVariable(IFileVariable fileVariable) {
-        this(fileVariable.getName(), fileVariable.getData().clone(), fileVariable.getContentType());
+        this(fileVariable.getName(), fileVariable.getData(), fileVariable.getContentType());
     }
 
     public FileVariable(String name, String contentType) {
@@ -76,5 +76,10 @@ public class FileVariable implements IFileVariable {
     @Override
     public String toString() {
         return name;
+    }
+
+    @Override
+    public String getStringValue() {
+        return null;
     }
 }

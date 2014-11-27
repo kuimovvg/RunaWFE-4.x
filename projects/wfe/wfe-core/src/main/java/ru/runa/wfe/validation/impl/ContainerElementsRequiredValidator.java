@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import ru.runa.wfe.validation.FieldValidator;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 
 public class ContainerElementsRequiredValidator extends FieldValidator {
 
@@ -36,14 +37,18 @@ public class ContainerElementsRequiredValidator extends FieldValidator {
             int index = 0;
             for (Object object : (Collection<?>) container) {
                 if (isNullValue(object)) {
-                    getValidatorContext().addFieldError(getFieldName() + "[" + index + "]", getMessage());
+                    getValidatorContext().addFieldError(
+                            getFieldName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                                    + VariableFormatContainer.COMPONENT_QUALIFIER_END, getMessage());
                 }
                 index++;
             }
         } else if (container.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(container); i++) {
                 if (isNullValue(Array.get(container, i))) {
-                    getValidatorContext().addFieldError(getFieldName() + "[" + i + "]", getMessage());
+                    getValidatorContext().addFieldError(
+                            getFieldName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + i + VariableFormatContainer.COMPONENT_QUALIFIER_END,
+                            getMessage());
                 }
             }
         } else if (container instanceof Map<?, ?>) {

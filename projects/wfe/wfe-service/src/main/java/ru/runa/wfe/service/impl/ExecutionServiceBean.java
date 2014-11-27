@@ -34,8 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
 import ru.runa.wfe.ConfigurationException;
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.logic.AuditLogic;
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.execution.ProcessFilter;
@@ -61,8 +63,12 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.task.logic.TaskLogic;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.var.ComplexVariable;
+import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.FileVariable;
 import ru.runa.wfe.var.file.IFileVariable;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 import ru.runa.wfe.var.logic.VariableLogic;
 
 import com.google.common.base.Preconditions;
@@ -165,7 +171,7 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         Preconditions.checkArgument(user != null);
         List<WfVariable> list = variableLogic.getVariables(user, processId);
         for (WfVariable variable : list) {
-            convertValueToProxy(user, processId, variable);
+            proxyFileVariables(user, processId, variable);
         }
         return list;
     }
@@ -178,20 +184,21 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         Preconditions.checkArgument(processId != null);
         Preconditions.checkArgument(variableName != null);
         WfVariable variable = variableLogic.getVariable(user, processId, variableName);
-        convertValueToProxy(user, processId, variable);
+        proxyFileVariables(user, processId, variable);
         return variable;
     }
 
     @Override
     @WebResult(name = "result")
-    public byte[] getFileVariableValue(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
+    public FileVariable getFileVariableValue(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId,
             @WebParam(name = "variableName") String variableName) {
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(processId != null);
         Preconditions.checkArgument(variableName != null);
         WfVariable variable = variableLogic.getVariable(user, processId, variableName);
         if (variable != null) {
-            return ((IFileVariable) variable.getValue()).getData();
+            IFileVariable fileVariable = (IFileVariable) variable.getValue();
+            return new FileVariable(fileVariable);
         }
         return null;
     }
@@ -204,14 +211,16 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
             throw new ConfigurationException(
                     "In order to enable script execution set property 'executionServiceAPI.updateVariables.enabled' to 'true' in system.properties or wfe.custom.system.properties");
         }
+        unproxyFileVariables(user, processId, variables);
         variableLogic.updateVariables(user, processId, variables);
     }
 
     @WebMethod(exclude = true)
     @Override
-    public void completeTask(User user, Long taskId, @WebParam(name = "variables") Map<String, Object> variables,
-            @WebParam(name = "swimlaneActorId") Long swimlaneActorId) {
+    public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) {
         Preconditions.checkArgument(user != null);
+        Long processId = taskLogic.getProcessId(user, taskId);
+        unproxyFileVariables(user, processId, variables);
         taskLogic.completeTask(user, taskId, variables, swimlaneActorId);
     }
 
@@ -300,16 +309,6 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         executionLogic.upgradeProcessToNextDefinitionVersion(user, processId);
     }
 
-    private boolean convertValueToProxy(User user, Long processId, WfVariable variable) {
-        if (variable != null && variable.getValue() instanceof IFileVariable) {
-            IFileVariable fileVariable = (IFileVariable) variable.getValue();
-            FileVariableProxy proxy = new FileVariableProxy(user, processId, variable.getDefinition().getName(), fileVariable);
-            variable.setValue(proxy);
-            return true;
-        }
-        return false;
-    }
-
     @Override
     @WebResult(name = "result")
     public List<Variable> getVariablesWS(@WebParam(name = "user") User user, @WebParam(name = "processId") Long processId) {
@@ -344,4 +343,103 @@ public class ExecutionServiceBean implements ExecutionServiceLocal, ExecutionSer
         updateVariables(user, processId, VariableConverter.unmarshal(processDefinition, variables));
     }
 
+    private void proxyFileVariables(User user, Long processId, WfVariable variable) {
+        if (variable == null) {
+            return;
+        }
+        variable.setValue(proxyFileVariableValues(user, processId, variable.getDefinition().getName(), variable.getValue()));
+    }
+
+    private Object proxyFileVariableValues(User user, Long processId, String variableName, Object variableValue) {
+        if (variableValue instanceof IFileVariable) {
+            IFileVariable fileVariable = (IFileVariable) variableValue;
+            return new FileVariableProxy(user, processId, variableName, fileVariable);
+        }
+        if (variableValue instanceof List) {
+            for (int i = 0; i < TypeConversionUtil.getListSize(variableValue); i++) {
+                Object object = TypeConversionUtil.getListValue(variableValue, i);
+                if (object instanceof IFileVariable || object instanceof List || object instanceof Map) {
+                    String proxyName = variableName + VariableFormatContainer.COMPONENT_QUALIFIER_START + i
+                            + VariableFormatContainer.COMPONENT_QUALIFIER_END;
+                    Object proxy = proxyFileVariableValues(user, processId, proxyName, object);
+                    if (object instanceof IFileVariable) {
+                        TypeConversionUtil.setListValue(variableValue, i, proxy);
+                    }
+                }
+            }
+        }
+        if (variableValue instanceof Map) {
+            Map<?, Object> map = (Map<?, Object>) variableValue;
+            for (Map.Entry<?, Object> entry : map.entrySet()) {
+                Object object = entry.getValue();
+                if (object instanceof IFileVariable || object instanceof List || object instanceof Map) {
+                    String proxyName;
+                    if (map instanceof ComplexVariable) {
+                        proxyName = variableName + VariableUserType.DELIM + entry.getKey();
+                    } else {
+                        proxyName = variableName + VariableFormatContainer.COMPONENT_QUALIFIER_START + entry.getKey()
+                                + VariableFormatContainer.COMPONENT_QUALIFIER_END;
+                    }
+                    Object proxy = proxyFileVariableValues(user, processId, proxyName, object);
+                    if (object instanceof IFileVariable) {
+                        entry.setValue(proxy);
+                    }
+                }
+            }
+        }
+        return variableValue;
+    }
+
+    private void unproxyFileVariables(User user, Long processId, Map<String, Object> variables) {
+        if (variables == null) {
+            return;
+        }
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            Object object = entry.getValue();
+            if (object instanceof FileVariableProxy || object instanceof List || object instanceof Map) {
+                Object unproxied = unproxyFileVariableValues(user, processId, object);
+                if (object instanceof IFileVariable) {
+                    entry.setValue(unproxied);
+                }
+            }
+        }
+    }
+
+    private Object unproxyFileVariableValues(User user, Long processId, Object variableValue) {
+        if (variableValue instanceof FileVariableProxy) {
+            FileVariableProxy proxy = (FileVariableProxy) variableValue;
+            WfVariable variable = variableLogic.getVariable(user, processId, proxy.getVariableName());
+            if (variable == null || variable.getValue() == null) {
+                throw new InternalApplicationException("FileVariableProxy provided for null variable " + proxy.getVariableName());
+            }
+            if (variable.getValue() instanceof IFileVariable) {
+                return variable.getValue();
+            }
+            throw new InternalApplicationException("FileVariableProxy provided for non-file " + variable);
+        }
+        if (variableValue instanceof List) {
+            for (int i = 0; i < TypeConversionUtil.getListSize(variableValue); i++) {
+                Object object = TypeConversionUtil.getListValue(variableValue, i);
+                if (object instanceof FileVariableProxy || object instanceof List || object instanceof Map) {
+                    Object unproxied = unproxyFileVariableValues(user, processId, object);
+                    if (object instanceof IFileVariable) {
+                        TypeConversionUtil.setListValue(variableValue, i, unproxied);
+                    }
+                }
+            }
+        }
+        if (variableValue instanceof Map) {
+            Map<?, Object> map = (Map<?, Object>) variableValue;
+            for (Map.Entry<?, Object> entry : map.entrySet()) {
+                Object object = entry.getValue();
+                if (object instanceof FileVariableProxy || object instanceof List || object instanceof Map) {
+                    Object unproxied = unproxyFileVariableValues(user, processId, object);
+                    if (object instanceof IFileVariable) {
+                        entry.setValue(unproxied);
+                    }
+                }
+            }
+        }
+        return variableValue;
+    }
 }

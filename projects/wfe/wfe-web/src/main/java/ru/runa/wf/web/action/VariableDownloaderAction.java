@@ -18,8 +18,6 @@
 package ru.runa.wf.web.action;
 
 import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,16 +28,9 @@ import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.action.ActionBase;
-import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.form.VariableForm;
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.service.delegate.Delegates;
-import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.file.IFileVariable;
-import ru.runa.wfe.var.format.FormatCommons;
-import ru.runa.wfe.var.format.VariableFormat;
-
-import com.google.common.base.Objects;
 
 /**
  * Created on 27.09.2005
@@ -72,54 +63,11 @@ public class VariableDownloaderAction extends ActionBase {
 
     private IFileVariable getVariable(ActionForm actionForm, HttpServletRequest request) {
         VariableForm form = (VariableForm) actionForm;
-        String qualifier = null;
-        VariableFormat qualifierFormat = null;
-        Object object;
         if (form.getLogId() != null) {
-            object = Delegates.getAuditService().getProcessLogValue(getLoggedUser(request), form.getLogId());
+            return (IFileVariable) Delegates.getAuditService().getProcessLogValue(getLoggedUser(request), form.getLogId());
         } else {
-            String variableName = form.getVariableName();
-            if (variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_START)
-                    && variableName.contains(FormSubmissionUtils.COMPONENT_QUALIFIER_END)) {
-                int is = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_START);
-                int ie = variableName.indexOf(FormSubmissionUtils.COMPONENT_QUALIFIER_END);
-                qualifier = variableName.substring(is + 1, ie);
-                variableName = variableName.substring(0, is);
-            }
-            WfVariable variable = Delegates.getExecutionService().getVariable(getLoggedUser(request), form.getId(), variableName);
-            object = variable.getValue();
-            if (object instanceof Map) {
-                qualifierFormat = FormatCommons.createComponent(variable, 0);
-            }
+            return Delegates.getExecutionService().getFileVariableValue(getLoggedUser(request), form.getId(), form.getVariableName());
         }
-        if (object instanceof IFileVariable) {
-            return (IFileVariable) object;
-        }
-        if (object instanceof List<?>) {
-            List<IFileVariable> list = (List<IFileVariable>) object;
-            if (qualifier == null) {
-                throw new InternalApplicationException("No index for list was specified");
-            }
-            return list.get(Integer.parseInt(qualifier));
-        }
-        if (object instanceof Map<?, ?>) {
-            Map<Object, IFileVariable> map = (Map<Object, IFileVariable>) object;
-            if (qualifier == null) {
-                throw new InternalApplicationException("No key for map was specified");
-            }
-            for (Map.Entry<Object, IFileVariable> entry : map.entrySet()) {
-                if (qualifierFormat != null) {
-                    String keyInQualifierFormat = qualifierFormat.format(entry.getKey());
-                    if (Objects.equal(keyInQualifierFormat, qualifier)) {
-                        return entry.getValue();
-                    }
-                } else if (Objects.equal(String.valueOf(entry.getKey()), qualifier)) {
-                    return entry.getValue();
-                }
-            }
-            throw new IllegalArgumentException("No file found by key = " + qualifier + "; all values: " + map);
-        }
-        throw new IllegalArgumentException("Unexpected variable type: " + object + " by name " + form.getVariableName());
     }
 
 }

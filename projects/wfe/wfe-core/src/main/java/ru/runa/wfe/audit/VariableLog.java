@@ -63,7 +63,9 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     public void setVariableNewValue(Variable<?> variable, Object newValue) {
-        addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(newValue instanceof IFileVariable));
+        boolean file = newValue instanceof IFileVariable;
+        // TODO FileVariableMatcher
+        addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(file));
         if (variable.getStorableValue() instanceof byte[]) {
             setBytes((byte[]) variable.getStorableValue());
         } else {

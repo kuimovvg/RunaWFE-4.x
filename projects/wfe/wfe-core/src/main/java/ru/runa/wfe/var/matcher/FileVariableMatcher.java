@@ -11,13 +11,16 @@ public class FileVariableMatcher implements VariableTypeMatcher {
         if (IFileVariable.class.isAssignableFrom(value.getClass())) {
             return true;
         }
+        return isFileOrListOfFiles(value);
+    }
+
+    public static boolean isFileOrListOfFiles(Object value) {
         if (TypeConversionUtil.isList(value)) {
             // match empty list too in order to prevent filling in to
             // serializable converter in next steps
-            int size = TypeConversionUtil.getListSize(value);
-            return size == 0 || (size > 0 && TypeConversionUtil.getListValue(value, 0) instanceof IFileVariable);
+            Object object = TypeConversionUtil.getListFirstValueOrNull(value);
+            return object == null || object instanceof IFileVariable;
         }
         return false;
     }
-
 }

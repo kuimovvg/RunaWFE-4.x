@@ -4,10 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
-import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.file.IFileVariableStorage;
+import ru.runa.wfe.var.matcher.FileVariableMatcher;
 
 /**
  * Besides straightforward functionality this class persist large file variables
@@ -31,13 +31,7 @@ public class FileVariableToByteArrayConverter extends SerializableToByteArrayCon
         if (IFileVariable.class.isAssignableFrom(value.getClass())) {
             return true;
         }
-        if (TypeConversionUtil.isList(value)) {
-            // match empty list too in order to prevent filling in to
-            // serializable converter in next steps
-            int size = TypeConversionUtil.getListSize(value);
-            return size == 0 || (size > 0 && TypeConversionUtil.getListValue(value, 0) instanceof IFileVariable);
-        }
-        return false;
+        return FileVariableMatcher.isFileOrListOfFiles(value);
     }
 
     @Override

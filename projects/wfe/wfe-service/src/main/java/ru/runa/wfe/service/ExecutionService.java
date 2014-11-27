@@ -36,6 +36,7 @@ import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.ValidationException;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.FileVariable;
 
 /**
  * Process execution service.
@@ -268,10 +269,10 @@ public interface ExecutionService {
      *            process id
      * @param variableName
      *            variable name
-     * @return byte array or <code>null</code>
+     * @return IFileVariable or <code>null</code>
      * @throws ProcessDoesNotExistException
      */
-    public byte[] getFileVariableValue(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
+    public FileVariable getFileVariableValue(User user, Long processId, String variableName) throws ProcessDoesNotExistException;
 
     /**
      * Updates process variables without any signalling.

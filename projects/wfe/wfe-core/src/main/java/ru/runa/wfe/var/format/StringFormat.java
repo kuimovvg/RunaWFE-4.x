@@ -17,13 +17,16 @@
  */
 package ru.runa.wfe.var.format;
 
+import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.user.User;
+
 /**
  * Format object that converts given object to string.
  * 
  * Created on 24.11.2006
  * 
  */
-public class StringFormat extends VariableFormat {
+public class StringFormat extends VariableFormat implements VariableDisplaySupport {
 
     @Override
     public Class<? extends String> getJavaClass() {
@@ -48,5 +51,11 @@ public class StringFormat extends VariableFormat {
     @Override
     public Object parseJSON(String json) {
         return json;
+    }
+
+    @Override
+    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
+        return ((String) object).replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
     }
 }
