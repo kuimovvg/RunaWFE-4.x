@@ -2,9 +2,7 @@ package ru.runa.wfe.service.client;
 
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.file.FileVariableDescriptor;
 import ru.runa.wfe.var.file.IFileVariable;
-import ru.runa.wfe.var.file.LocalFileSystemVariable;
 
 /**
  * This class eliminates byte[] data transferring without usage.
@@ -20,36 +18,22 @@ public class FileVariableProxy implements IFileVariable {
     private String name;
     private String contentType;
     private byte[] data;
-    // TODO remove this
-    private String variablePath;
+    private String stringValue;
 
     public FileVariableProxy() {
     }
 
     public FileVariableProxy(User user, Long processId, String variableName, IFileVariable fileVariable) {
-        name = fileVariable.getName();
-        contentType = fileVariable.getContentType();
+        this.name = fileVariable.getName();
+        this.contentType = fileVariable.getContentType();
         this.user = user;
         this.processId = processId;
         this.variableName = variableName;
-        if (fileVariable instanceof LocalFileSystemVariable) {
-            variablePath = ((LocalFileSystemVariable) fileVariable).getVariablePath();
-        }
-        if (fileVariable instanceof FileVariableDescriptor) {
-            variablePath = ((FileVariableDescriptor) fileVariable).getVariablePath();
-        }
+        this.stringValue = fileVariable.getStringValue();
     }
 
-    public String getVariablePath() {
-        return variablePath;
-    }
-
-    @Override
-    public byte[] getData() {
-        if (data == null) {
-            data = Delegates.getExecutionService().getFileVariableValue(user, processId, variableName);
-        }
-        return data;
+    public String getVariableName() {
+        return variableName;
     }
 
     @Override
@@ -60,5 +44,19 @@ public class FileVariableProxy implements IFileVariable {
     @Override
     public String getContentType() {
         return contentType;
+    }
+
+    @Override
+    public byte[] getData() {
+        if (data == null) {
+            IFileVariable fileVariable = Delegates.getExecutionService().getFileVariableValue(user, processId, variableName);
+            data = fileVariable != null ? fileVariable.getData() : new byte[0];
+        }
+        return data;
+    }
+
+    @Override
+    public String getStringValue() {
+        return stringValue;
     }
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.var.Variable;
 
+import com.google.common.base.Objects;
 import com.google.common.io.Files;
 
 /**
@@ -65,6 +66,25 @@ public class LocalFileSystemVariable implements IFileVariable {
     @Override
     public String getContentType() {
         return contentType;
+    }
+
+    @Override
+    public String getStringValue() {
+        return variablePath;
+    }
+
+    @Override
+    public int hashCode() {
+        return variablePath.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof LocalFileSystemVariable) {
+            LocalFileSystemVariable f = (LocalFileSystemVariable) obj;
+            return Objects.equal(variablePath, f.variablePath);
+        }
+        return false;
     }
 
 }

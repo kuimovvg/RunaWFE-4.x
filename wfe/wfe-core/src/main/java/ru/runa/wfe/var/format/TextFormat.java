@@ -18,7 +18,7 @@ public class TextFormat extends StringFormat implements VariableDisplaySupport {
 
     @Override
     public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
-        return ((String) object).replaceAll("\n", "<br>");
+        return super.formatHtml(user, webHelper, processId, name, object).replaceAll("\n", "<br>");
     }
-    
+
 }

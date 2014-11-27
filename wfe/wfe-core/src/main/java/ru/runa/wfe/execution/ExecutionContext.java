@@ -200,7 +200,8 @@ public class ExecutionContext {
                 variableDAO.create(variable);
             }
         } else {
-            if (Objects.equal(variable.getValue(), value)) {
+            if (Objects.equal(value, variable.getValue())) {
+                // order is valuable due to Timestamp.equals implementation
                 return;
             }
             log.debug("Updating variable '" + name + "' in '" + getProcess() + "' to '" + value + "'"

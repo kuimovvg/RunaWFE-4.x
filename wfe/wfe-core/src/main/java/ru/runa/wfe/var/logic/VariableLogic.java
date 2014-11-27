@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.audit.AdminActionLog;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.logic.WFCommonLogic;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -32,7 +33,13 @@ import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.ListFormat;
+import ru.runa.wfe.var.format.MapFormat;
+import ru.runa.wfe.var.format.VariableFormat;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 
 /**
@@ -92,7 +99,37 @@ public class VariableLogic extends WFCommonLogic {
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
-        return executionContext.getVariableProvider().getVariable(variableName);
+        String qualifier = null;
+        if (variableName.contains(VariableFormatContainer.COMPONENT_QUALIFIER_START)
+                && variableName.contains(VariableFormatContainer.COMPONENT_QUALIFIER_END)) {
+            int is = variableName.indexOf(VariableFormatContainer.COMPONENT_QUALIFIER_START);
+            int ie = variableName.indexOf(VariableFormatContainer.COMPONENT_QUALIFIER_END);
+            qualifier = variableName.substring(is + 1, ie);
+            variableName = variableName.substring(0, is);
+        }
+        WfVariable variable = executionContext.getVariableProvider().getVariable(variableName);
+        if (qualifier != null) {
+            if (ListFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+                VariableFormat qualifierFormat = FormatCommons.createComponent(variable, 0);
+                Object value = TypeConversionUtil.getListValue(variable.getValue(), Integer.parseInt(qualifier));
+                return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()), value);
+            }
+            if (MapFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+                Map<Object, Object> map = (Map<Object, Object>) variable.getValue();
+                VariableFormat qualifierFormat = FormatCommons.createComponent(variable, 0);
+                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                    String keyInQualifierFormat = qualifierFormat.format(entry.getKey());
+                    if (Objects.equal(keyInQualifierFormat, qualifier)) {
+                        return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()),
+                                entry.getValue());
+                    }
+                }
+                throw new IllegalArgumentException("Invalid key = '" + qualifier + "'; all values: " + map);
+            }
+            throw new IllegalArgumentException("Key '" + qualifier + "' was provided but variable format is "
+                    + variable.getDefinition().getFormatClassName());
+        }
+        return variable;
     }
 
     public void updateVariables(User user, Long processId, Map<String, Object> variables) {
