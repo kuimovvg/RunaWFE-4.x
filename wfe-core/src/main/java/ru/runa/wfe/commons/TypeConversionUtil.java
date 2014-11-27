@@ -231,23 +231,48 @@ public class TypeConversionUtil {
         }
     }
 
-    public static Object getListValue(Object value, int index) {
-        if (value.getClass().isArray()) {
-            Object[] array = (Object[]) value;
-            if (array.length > index) {
-                return array[index];
-            } else {
-                throw new RuntimeException("Array has insufficient length, index = " + index);
-            }
-        } else if (value instanceof List) {
-            List<?> list = (List<?>) value;
+    public static Object getListFirstValueOrNull(Object container) {
+        int size = TypeConversionUtil.getListSize(container);
+        return size > 0 ? TypeConversionUtil.getListValue(container, 0) : null;
+    }
+
+    public static Object getListValue(Object container, int index) {
+        if (container instanceof List) {
+            List<?> list = (List<?>) container;
             if (list.size() > index) {
                 return list.get(index);
             } else {
                 throw new RuntimeException("List has insufficient size, index = " + index);
             }
+        } else if (container.getClass().isArray()) {
+            Object[] array = (Object[]) container;
+            if (array.length > index) {
+                return array[index];
+            } else {
+                throw new RuntimeException("Array has insufficient length, index = " + index);
+            }
         } else {
-            throw new RuntimeException("Unsupported array type " + value.getClass());
+            throw new RuntimeException("Unsupported array type " + container.getClass());
+        }
+    }
+
+    public static void setListValue(Object container, int index, Object value) {
+        if (container instanceof List) {
+            List<Object> list = (List<Object>) container;
+            if (list.size() > index) {
+                list.set(index, value);
+            } else {
+                throw new RuntimeException("List has insufficient size, index = " + index);
+            }
+        } else if (container.getClass().isArray()) {
+            Object[] array = (Object[]) container;
+            if (array.length > index) {
+                array[index] = value;
+            } else {
+                throw new RuntimeException("Array has insufficient length, index = " + index);
+            }
+        } else {
+            throw new RuntimeException("Unsupported array type " + container.getClass());
         }
     }
 

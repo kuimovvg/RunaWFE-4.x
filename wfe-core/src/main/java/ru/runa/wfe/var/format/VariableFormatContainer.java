@@ -11,6 +11,8 @@ import ru.runa.wfe.var.VariableUserType;
  * @since 4.0.5
  */
 public interface VariableFormatContainer {
+    public static final String COMPONENT_QUALIFIER_START = "[";
+    public static final String COMPONENT_QUALIFIER_END = "]";
 
     /**
      * @return component format by index.

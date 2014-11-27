@@ -107,7 +107,7 @@ public class ListFormat extends VariableFormat implements VariableFormatContaine
             o = TypeConversionUtil.convertTo(componentFormat.getJavaClass(), o);
             String value;
             if (componentFormat instanceof VariableDisplaySupport) {
-                String componentName = name + "[" + i + "]";
+                String componentName = name + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
                 value = ((VariableDisplaySupport) componentFormat).formatHtml(user, webHelper, processId, componentName, o);
             } else {
                 value = componentFormat.format(o);

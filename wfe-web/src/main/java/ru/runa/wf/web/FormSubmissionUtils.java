@@ -32,6 +32,7 @@ import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.MapFormat;
 import ru.runa.wfe.var.format.UserTypeFormat;
 import ru.runa.wfe.var.format.VariableFormat;
+import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
@@ -47,9 +48,7 @@ public class FormSubmissionUtils {
     public static final Object IGNORED_VALUE = new Object();
     public static final String SIZE_SUFFIX = ".size";
     public static final String INDEXES_SUFFIX = ".indexes";
-    public static final String COMPONENT_QUALIFIER_START = "[";
     public static final String FILES_MAP_QUALIFIER = ":";
-    public static final String COMPONENT_QUALIFIER_END = "]";
     public static final String FORM_NODE_ID_KEY = "UserDefinedVariablesForFormNodeId";
 
     /**
@@ -65,14 +64,16 @@ public class FormSubmissionUtils {
     }
 
     /**
-     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
      */
     public static Map<String, String[]> getUserFormInput(ServletRequest request) {
         return (Map<String, String[]>) request.getAttribute(USER_DEFINED_VARIABLES);
     }
 
     /**
-     * @return saved in request values from previous form submit (used to re-open form in case of validation errors)
+     * @return saved in request values from previous form submit (used to
+     *         re-open form in case of validation errors)
      */
     public static Map<String, Object> getUserFormInputVariables(HttpServletRequest request, Interaction interaction) {
         Map<String, String[]> userInput = getUserFormInput(request);
@@ -190,7 +191,8 @@ public class FormSubmissionUtils {
                     list = Lists.newArrayListWithExpectedSize(listSize);
                     indexes = Lists.newArrayListWithExpectedSize(listSize);
                     for (int i = 0; indexes.size() < listSize && i < 1000; i++) {
-                        String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                        String checkString = variableDefinition.getName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + i
+                                + VariableFormatContainer.COMPONENT_QUALIFIER_END;
                         for (String key : userInput.keySet()) {
                             if (key.startsWith(checkString)) {
                                 indexes.add(i);
@@ -203,8 +205,10 @@ public class FormSubmissionUtils {
                                 + indexes.size());
                     }
                     for (Integer index : indexes) {
-                        String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
-                        String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
+                        String name = variableDefinition.getName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                                + VariableFormatContainer.COMPONENT_QUALIFIER_END;
+                        String scriptingName = variableDefinition.getScriptingName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                                + VariableFormatContainer.COMPONENT_QUALIFIER_END;
                         VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
                         componentDefinition.setUserTypes(variableDefinition.getUserTypes());
                         Object componentValue = extractVariable(userInput, componentDefinition, formatErrorsForFields);
@@ -235,8 +239,10 @@ public class FormSubmissionUtils {
                         indexes.add(TypeConversionUtil.convertTo(int.class, index));
                     }
                     for (Integer index : indexes) {
-                        String name = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
-                        String scriptingName = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END;
+                        String name = variableDefinition.getName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                                + VariableFormatContainer.COMPONENT_QUALIFIER_END;
+                        String scriptingName = variableDefinition.getScriptingName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                                + VariableFormatContainer.COMPONENT_QUALIFIER_END;
                         VariableDefinition componentDefinition = new VariableDefinition(true, name, scriptingName, componentFormat);
                         componentDefinition.setUserTypes(variableDefinition.getUserTypes());
                         Object componentValue = extractVariable(userInput, componentDefinition, formatErrorsForFields);
@@ -267,7 +273,8 @@ public class FormSubmissionUtils {
                 map = Maps.newHashMapWithExpectedSize(mapSize);
                 indexes = Lists.newArrayListWithExpectedSize(mapSize);
                 for (int i = 0; indexes.size() < mapSize && i < 1000; i++) {
-                    String checkString = variableDefinition.getName() + COMPONENT_QUALIFIER_START + i + COMPONENT_QUALIFIER_END;
+                    String checkString = variableDefinition.getName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + i
+                            + VariableFormatContainer.COMPONENT_QUALIFIER_END;
                     for (String key : userInput.keySet()) {
                         if (key.startsWith(checkString)) {
                             indexes.add(i);
@@ -291,16 +298,18 @@ public class FormSubmissionUtils {
                 }
             }
             for (Integer index : indexes) {
-                String nameKey = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END + ".key";
-                String scriptingNameKey = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END
-                        + ".key";
+                String nameKey = variableDefinition.getName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                        + VariableFormatContainer.COMPONENT_QUALIFIER_END + ".key";
+                String scriptingNameKey = variableDefinition.getScriptingName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                        + VariableFormatContainer.COMPONENT_QUALIFIER_END + ".key";
                 VariableDefinition componentKeyDefinition = new VariableDefinition(true, nameKey, scriptingNameKey, componentKeyFormat);
                 componentKeyDefinition.setUserTypes(variableDefinition.getUserTypes());
                 Object componentKeyValue = extractVariable(userInput, componentKeyDefinition, formatErrorsForFields);
 
-                String nameValue = variableDefinition.getName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END + ".value";
-                String scriptingNameValue = variableDefinition.getScriptingName() + COMPONENT_QUALIFIER_START + index + COMPONENT_QUALIFIER_END
-                        + ".value";
+                String nameValue = variableDefinition.getName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                        + VariableFormatContainer.COMPONENT_QUALIFIER_END + ".value";
+                String scriptingNameValue = variableDefinition.getScriptingName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                        + VariableFormatContainer.COMPONENT_QUALIFIER_END + ".value";
                 VariableDefinition componentValueDefinition = new VariableDefinition(true, nameValue, scriptingNameValue, componentValueFormat);
                 componentValueDefinition.setUserTypes(variableDefinition.getUserTypes());
                 Object componentValueValue = extractVariable(userInput, componentValueDefinition, formatErrorsForFields);

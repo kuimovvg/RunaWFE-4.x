@@ -127,6 +127,10 @@ public class TaskLogic extends WFCommonLogic {
         return taskObjectFactory.create(task, user.getActor(), false, null);
     }
 
+    public Long getProcessId(User user, Long taskId) {
+        return taskDAO.getNotNull(taskId).getProcess().getId();
+    }
+
     public List<WfTask> getTasks(User user, BatchPresentation batchPresentation) {
         return taskListBuilder.getTasks(user.getActor(), batchPresentation);
     }

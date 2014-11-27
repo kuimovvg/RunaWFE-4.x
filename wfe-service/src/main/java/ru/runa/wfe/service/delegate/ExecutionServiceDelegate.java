@@ -32,6 +32,7 @@ import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.file.FileVariable;
 
 /**
  * Created on 28.09.2004
@@ -155,7 +156,7 @@ public class ExecutionServiceDelegate extends EJB3Delegate implements ExecutionS
     }
 
     @Override
-    public byte[] getFileVariableValue(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
+    public FileVariable getFileVariableValue(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
         try {
             return getExecutionService().getFileVariableValue(user, processId, variableName);
         } catch (Exception e) {
