@@ -11,17 +11,17 @@ import java.io.Serializable;
 public interface IFileVariable extends Serializable {
 
     /**
-     * @return file name
+     * @return file name, not <code>null</code>
      */
     public String getName();
 
     /**
-     * @return mime type
+     * @return mime type, not <code>null</code>
      */
     public String getContentType();
 
     /**
-     * @return file data
+     * @return file data, not <code>null</code>
      */
     public byte[] getData();
 
