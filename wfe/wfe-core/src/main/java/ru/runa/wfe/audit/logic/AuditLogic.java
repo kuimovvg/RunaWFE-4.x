@@ -67,21 +67,14 @@ public class AuditLogic extends CommonLogic {
         checkPermissionAllowed(user, processDAO.getNotNull(filter.getProcessId()), Permission.READ);
         ProcessLogs result = new ProcessLogs(filter.getProcessId());
         boolean filterBySeverity = filter.getSeverities().size() != 0 && filter.getSeverities().size() != Severity.values().length;
-        List<ProcessLog> logs;
-        if (filterBySeverity) {
-            logs = processLogDAO.getAll(filter.getProcessId(), filter.getSeverities());
-        } else {
-            logs = processLogDAO.getAll(filter.getProcessId());
-        }
+        List<ProcessLog> logs = processLogDAO.getAll(filter);
         result.addLogs(logs, filter.isIncludeSubprocessLogs());
         if (filter.isIncludeSubprocessLogs()) {
             ru.runa.wfe.execution.Process process = processDAO.getNotNull(filter.getProcessId());
             for (ru.runa.wfe.execution.Process subprocess : nodeProcessDAO.getSubprocessesRecursive(process)) {
-                if (filterBySeverity) {
-                    logs = processLogDAO.getAll(subprocess.getId(), filter.getSeverities());
-                } else {
-                    logs = processLogDAO.getAll(subprocess.getId());
-                }
+                ProcessLogFilter subprocessFilter = new ProcessLogFilter(subprocess.getId());
+                subprocessFilter.setSeverities(filter.getSeverities());
+                logs = processLogDAO.getAll(filter);
                 result.addLogs(logs, filter.isIncludeSubprocessLogs());
             }
         }
