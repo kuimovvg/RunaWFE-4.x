@@ -58,7 +58,8 @@ public class EmbeddedFileUtils {
     }
 
     public static boolean isBotTaskFileName(String fileName, String botTaskName) {
-        if (fileName.startsWith(botTaskName + BotTaskUtils.EMBEDDED_SUFFIX)) {
+    	String botTaskNameWithoutSpaces = botTaskName.replace(' ', '_');
+        if (fileName.startsWith(botTaskNameWithoutSpaces + BotTaskUtils.EMBEDDED_SUFFIX)) {
             return true;
         } else {
             return false;
@@ -99,7 +100,9 @@ public class EmbeddedFileUtils {
             return id + ".template." + fileExtension;
         }
         if (delegable instanceof BotTask) {
-            return ((BotTask) delegable).getName() + BotTaskUtils.EMBEDDED_SUFFIX + "." + fileExtension;
+        	String name = ((BotTask) delegable).getName();
+        	name = name.replace(' ', '_');
+            return  name + BotTaskUtils.EMBEDDED_SUFFIX + "." + fileExtension;
         }
         return null;
     }
