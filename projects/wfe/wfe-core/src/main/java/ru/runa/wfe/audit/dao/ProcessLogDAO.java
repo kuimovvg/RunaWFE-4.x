@@ -10,6 +10,7 @@ import org.springframework.orm.hibernate3.HibernateCallback;
 import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.NodeLeaveLog;
 import ru.runa.wfe.audit.ProcessLog;
+import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.Severity;
 import ru.runa.wfe.audit.TransitionLog;
 import ru.runa.wfe.commons.dao.GenericDAO;
@@ -34,7 +35,7 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
      * @return process logs.
      */
     public List<ProcessLog> getAll(Long processId) {
-        return (List<ProcessLog>) getHibernateTemplate().find("from ProcessLog where processId=? order by id asc", processId);
+        return getHibernateTemplate().find("from ProcessLog where processId=? order by id asc", processId);
     }
 
     /**
@@ -104,25 +105,44 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
             return logs;
         }
         if (definition instanceof SubprocessDefinition) {
-            return (List<ProcessLog>) getHibernateTemplate().find("from ProcessLog where processId=? and nodeId like ? order by id asc", processId,
+            return getHibernateTemplate().find("from ProcessLog where processId=? and nodeId like ? order by id asc", processId,
                     definition.getNodeId() + ".%");
         } else {
-            return (List<ProcessLog>) getHibernateTemplate().find("from ProcessLog where processId=? and nodeId not like 'sub%' order by id asc",
-                    processId);
+            return getHibernateTemplate().find("from ProcessLog where processId=? and nodeId not like 'sub%' order by id asc", processId);
         }
     }
 
     /**
      * @return process logs.
      */
-    public List<ProcessLog> getAll(final Long processId, final List<Severity> severities) {
-        return (List<ProcessLog>) getHibernateTemplate().executeFind(new HibernateCallback<List<ProcessLog>>() {
+    public List<ProcessLog> getAll(final ProcessLogFilter filter) {
+        return getHibernateTemplate().executeFind(new HibernateCallback<List<ProcessLog>>() {
 
             @Override
             public List<ProcessLog> doInHibernate(Session session) {
-                Query query = session.createQuery("from ProcessLog where processId=:processId and severity in (:severities)");
-                query.setParameter("processId", processId);
-                query.setParameterList("severities", severities);
+                boolean filterBySeverity = filter.getSeverities().size() != 0 && filter.getSeverities().size() != Severity.values().length;
+                String hql = "from ProcessLog where processId = :processId";
+                if (filter.getTokenId() != null) {
+                    hql += " and tokenId = :tokenId)";
+                }
+                if (filter.getNodeId() != null) {
+                    hql += " and nodeId = :nodeId)";
+                }
+                if (filterBySeverity) {
+                    hql += " and severity in (:severities)";
+                }
+                hql += " order by id asc";
+                Query query = session.createQuery(hql);
+                query.setParameter("processId", filter.getProcessId());
+                if (filter.getTokenId() != null) {
+                    query.setParameter("tokenId", filter.getTokenId());
+                }
+                if (filter.getNodeId() != null) {
+                    query.setParameter("nodeId", filter.getNodeId());
+                }
+                if (filterBySeverity) {
+                    query.setParameterList("severities", filter.getSeverities());
+                }
                 return query.list();
             }
         });
@@ -140,8 +160,7 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
      * Retrieves passed transitions for all Process's Tokens from process logs
      */
     public List<Transition> getPassedTransitions(ProcessDefinition processDefinition, Process process) {
-        List<TransitionLog> transitionLogs = (List<TransitionLog>) getHibernateTemplate().find("from TransitionLog where processId=?",
-                process.getId());
+        List<TransitionLog> transitionLogs = getHibernateTemplate().find("from TransitionLog where processId=?", process.getId());
         List<Transition> result = Lists.newArrayListWithExpectedSize(transitionLogs.size());
         for (TransitionLog log : transitionLogs) {
             result.add(log.getTransition(processDefinition));
