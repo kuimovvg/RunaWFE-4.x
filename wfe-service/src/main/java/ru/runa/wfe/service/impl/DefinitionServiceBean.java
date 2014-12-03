@@ -32,10 +32,12 @@ import javax.jws.soap.SOAPBinding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ejb.interceptor.SpringBeanAutowiringInterceptor;
 
+import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.logic.DefinitionLogic;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
@@ -94,6 +96,15 @@ public class DefinitionServiceBean implements DefinitionServiceLocal, Definition
         Preconditions.checkArgument(user != null);
         Preconditions.checkArgument(definitionId != null);
         return definitionLogic.getProcessDefinition(user, definitionId);
+    }
+
+    @Override
+    @WebResult(name = "result")
+    public ProcessDefinition getParsedProcessDefinition(@WebParam(name = "user") User user, @WebParam(name = "definitionId") Long definitionId)
+            throws DefinitionDoesNotExistException {
+        Preconditions.checkArgument(user != null);
+        Preconditions.checkArgument(definitionId != null);
+        return definitionLogic.getParsedProcessDefinition(user, definitionId);
     }
 
     @Override

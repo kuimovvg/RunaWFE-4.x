@@ -23,6 +23,7 @@ import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.service.DefinitionService;
@@ -82,6 +83,15 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     public WfDefinition getProcessDefinition(User user, Long definitionId) {
         try {
             return getDefinitionService().getProcessDefinition(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
+    public ProcessDefinition getParsedProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException {
+        try {
+            return getDefinitionService().getParsedProcessDefinition(user, definitionId);
         } catch (Exception e) {
             throw handleException(e);
         }
