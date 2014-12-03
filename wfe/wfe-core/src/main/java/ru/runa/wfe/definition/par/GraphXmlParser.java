@@ -10,12 +10,12 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.InvalidDefinitionException;
 import ru.runa.wfe.lang.Action;
+import ru.runa.wfe.lang.Bendpoint;
 import ru.runa.wfe.lang.GraphElement;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.Transition;
-import ru.runa.wfe.lang.Transition.Bendpoint;
 
 import com.google.common.base.Throwables;
 
@@ -40,18 +40,15 @@ public class GraphXmlParser implements ProcessArchiveParser {
             byte[] gpdBytes = processDefinition.getFileDataNotNull(fileName);
             Document document = XmlUtils.parseWithoutValidation(gpdBytes);
             Element root = document.getRootElement();
-            processDefinition.setGraphConstraints(0, 0,
-                    Integer.parseInt(root.attributeValue("width")), 
+            processDefinition.setGraphConstraints(0, 0, Integer.parseInt(root.attributeValue("width")),
                     Integer.parseInt(root.attributeValue("height")));
             processDefinition.setGraphActionsEnabled(Boolean.parseBoolean(root.attributeValue("showActions", "true")));
             List<Element> nodeElements = root.elements(NODE_ELEMENT);
             for (Element nodeElement : nodeElements) {
                 String nodeId = nodeElement.attributeValue("name");
                 GraphElement graphElement = processDefinition.getGraphElementNotNull(nodeId);
-                graphElement.setGraphConstraints(
-                        Integer.parseInt(nodeElement.attributeValue("x")), 
-                        Integer.parseInt(nodeElement.attributeValue("y")),
-                        Integer.parseInt(nodeElement.attributeValue("width")), 
+                graphElement.setGraphConstraints(Integer.parseInt(nodeElement.attributeValue("x")),
+                        Integer.parseInt(nodeElement.attributeValue("y")), Integer.parseInt(nodeElement.attributeValue("width")),
                         Integer.parseInt(nodeElement.attributeValue("height")));
                 Node transitionSource;
                 if (graphElement instanceof Node) {
@@ -60,7 +57,8 @@ public class GraphXmlParser implements ProcessArchiveParser {
                     transitionSource = (Node) graphElement;
                 } else if (graphElement instanceof Action) {
                     // in case of BPMN timer in task state
-                    transitionSource = (Node) graphElement.getParent();;
+                    transitionSource = (Node) graphElement.getParent();
+                    ;
                 } else {
                     LogFactory.getLog(getClass()).warn("Ignored graph element " + graphElement + " in " + processDefinition);
                     continue;
@@ -71,9 +69,8 @@ public class GraphXmlParser implements ProcessArchiveParser {
                     Transition transition = transitionSource.getLeavingTransitionNotNull(transitionName);
                     List<Element> bendpointElements = transitionElement.elements(BENDPOINT_ELEMENT);
                     for (Element bendpointElement : bendpointElements) {
-                        Bendpoint bendpoint = new Bendpoint(
-                                Integer.parseInt(bendpointElement.attributeValue("x")), 
-                                Integer.parseInt(bendpointElement.attributeValue("y")));
+                        Bendpoint bendpoint = new Bendpoint(Integer.parseInt(bendpointElement.attributeValue("x")), Integer.parseInt(bendpointElement
+                                .attributeValue("y")));
                         transition.getBendpoints().add(bendpoint);
                     }
                 }

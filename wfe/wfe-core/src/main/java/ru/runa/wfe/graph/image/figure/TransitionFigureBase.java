@@ -32,9 +32,9 @@ import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.ExtraGraphics;
 import ru.runa.wfe.graph.image.util.GraphicsMath;
+import ru.runa.wfe.lang.Bendpoint;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
-import ru.runa.wfe.lang.Transition.Bendpoint;
 
 import com.google.common.base.Preconditions;
 

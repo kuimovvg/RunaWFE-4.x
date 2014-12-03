@@ -27,6 +27,7 @@ import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.task.TaskDoesNotExistException;
@@ -109,6 +110,8 @@ public interface DefinitionService {
      * @throws DefinitionDoesNotExistException
      */
     public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException;
+
+    public ProcessDefinition getParsedProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException;
 
     /**
      * Deletes process definition by name. If version is not specified all

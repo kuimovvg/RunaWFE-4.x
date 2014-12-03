@@ -135,6 +135,12 @@ public class DefinitionLogic extends WFCommonLogic {
         }
     }
 
+    public ProcessDefinition getParsedProcessDefinition(User user, Long definitionId) {
+        ProcessDefinition processDefinition = getDefinition(definitionId);
+        checkPermissionAllowed(user, processDefinition.getDeployment(), Permission.READ);
+        return processDefinition;
+    }
+
     public List<GraphElementPresentation> getProcessDefinitionGraphElements(User user, Long definitionId, String subprocessId) {
         ProcessDefinition definition = getDefinition(definitionId);
         checkPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ);

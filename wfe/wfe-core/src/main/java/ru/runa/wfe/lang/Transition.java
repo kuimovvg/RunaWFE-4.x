@@ -73,7 +73,7 @@ public class Transition extends GraphElement {
     public List<Bendpoint> getBendpoints() {
         return bendpoints;
     }
-    
+
     public boolean isTimerTransition() {
         return timerTransition;
     }
@@ -95,22 +95,4 @@ public class Transition extends GraphElement {
         to.enter(executionContext);
     }
 
-    public static class Bendpoint {
-        private final int x;
-        private final int y;
-
-        public Bendpoint(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-    }
 }

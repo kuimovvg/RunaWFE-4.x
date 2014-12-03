@@ -67,7 +67,7 @@ public class BotStationTableBuilder {
         String path = Commons.getActionUrl("bot_station.do", "botStationId", new Long(botStation.getId()), pageContext, PortletUrlType.Render);
         tr.addElement(new TD(input).setClass(Resources.CLASS_LIST_TABLE_TD));
         tr.addElement(new TD(new A(path, botStation.getName())).setClass(Resources.CLASS_LIST_TABLE_TD));
-        tr.addElement(new TD(new A(path, botStation.getAddress())).setClass(Resources.CLASS_LIST_TABLE_TD));
+        tr.addElement(new TD(new A(path, botStation.getAddress() != null ? botStation.getAddress() : "")).setClass(Resources.CLASS_LIST_TABLE_TD));
         return tr;
     }
 
