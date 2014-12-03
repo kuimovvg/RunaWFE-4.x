@@ -158,13 +158,13 @@ public class HandlerData {
         if (paramDef.getVariableName() == null) {
             throw new InternalApplicationException("Variable is not set for output parameter " + paramDef + " in configuration.");
         }
+        if (value == null) {
+            throw new InternalApplicationException("Trying to set output parameter " + paramDef + " to null.");
+        }
         setOutputVariable(paramDef.getVariableName(), value);
     }
 
     public void setOutputVariable(String variableName, Object value) {
-        if (value == null) {
-            log.warn(processId + ": Setting output variable " + variableName + " value to null.");
-        }
         outputVariables.put(variableName, value);
     }
 }
