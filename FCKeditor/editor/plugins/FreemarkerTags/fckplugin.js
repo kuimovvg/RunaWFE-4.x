@@ -29,7 +29,7 @@ FreemarkerTags.AddFormat = function( tagName, format ) {
 }
 
 FreemarkerTags.SetupSpan = function( span, tagName, tagParams ) {
-	span.setAttribute("src", "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + tagName + "&tagParams=" + tagParams);
+	span.setAttribute("src", "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + tagName + "&tagParams=" + encodeURIComponent(tagParams));
 	span.setAttribute("ftltagname", tagName);
 	// To avoid it to be resized.
 	span.onresizestart = function() {
