@@ -24,18 +24,12 @@ FreemarkerTags.AddMethod = function( tagName, params ) {
 FreemarkerTags.AddFormat = function( tagName, format ) {
 	var oSpan = FCK.CreateElement( VISUAL_ELEMENT );
 
-	this.SetupSpan( oSpan, tagName, format, "250", "40" );
+	this.SetupSpan( oSpan, tagName, format );
 	oSpan.setAttribute("ftltagformat", format);
 }
 
-FreemarkerTags.SetupSpan = function( span, tagName, format, width, height ) {
-	if (width == null)
-		width = this.GetTagWidth( tagName );
-	if (height == null)
-		height = this.GetTagHeight( tagName );
-	span.setAttribute("src", "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + tagName);
-	span.style.width = width;
-	span.style.height = height;
+FreemarkerTags.SetupSpan = function( span, tagName, tagParams ) {
+	span.setAttribute("src", "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + tagName + "&tagParams=" + tagParams);
 	span.setAttribute("ftltagname", tagName);
 	// To avoid it to be resized.
 	span.onresizestart = function() {
@@ -62,39 +56,6 @@ FCK.ContextMenu.RegisterListener( { AddItems : function( menu, tag, tagName ) {
 		menu.AddItem( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
 	}
 }});
-
-FreemarkerTags.GetTagWidth = function( tagName ) {
-	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
-	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=GetVarTagWidth&tagName=" + tagName, false ) ;
-	oXmlHttp.send( null ) ;
-	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
-		return oXmlHttp.responseText ;
-	} else {
-		return 300 ;
-	}
-}
-
-FreemarkerTags.GetTagHeight = function( tagName ) {
-	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
-	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=GetVarTagHeight&tagName=" + tagName, false ) ;
-	oXmlHttp.send( null ) ;
-	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
-		return oXmlHttp.responseText ;
-	} else {
-		return 300 ;
-	}
-}
-
-FreemarkerTags.GetTagImage = function( tagName ) {
-	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
-	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + tagName, false ) ;
-	oXmlHttp.send( null ) ;
-	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
-		return oXmlHttp.responseText ;
-	} else {
-		return "error" ;
-	}
-}
 
 FreemarkerTags.GetParameters = function( tagName ) {
 	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;

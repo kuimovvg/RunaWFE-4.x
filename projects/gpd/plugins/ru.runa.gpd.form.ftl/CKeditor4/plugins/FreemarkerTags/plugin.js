@@ -1,6 +1,5 @@
 var FTL_PLUGIN_NAME = 'FreemarkerTags';
 var FTL_METHOD_CMD = 'FreemarkerMethod';
-var FTL_IMG_ELEMENT = 'img';
 var FTL_TAG_NAME = 'ftltagname';
 
 var FreemarkerTags = new Object();
@@ -16,15 +15,6 @@ FreemarkerTags.GetFromServer = function(methodName, tagType, errorResult) {
 	}
 }
 
-FreemarkerTags.GetTagWidth = function(tagType) {
-	return FreemarkerTags.GetFromServer('GetVarTagWidth', tagType, '250');
-}
-FreemarkerTags.GetTagHeight = function(tagType) {
-	return FreemarkerTags.GetFromServer('GetVarTagHeight', tagType, '40');
-}
-FreemarkerTags.GetTagImage = function(tagType) {
-	return FreemarkerTags.GetFromServer('GetTagImage', tagType, 'error');
-}
 FreemarkerTags.GetParameters = function(tagType) {
 	return FreemarkerTags.GetFromServer('GetParameters', tagType, 'Error.');
 }
@@ -42,12 +32,11 @@ FreemarkerTags.createFakeParserElement = function(realElement) {
 		'cke-real-element-type': 'ftl_element', 
 		'data-cke-realelement': encodeURIComponent(html),
 		'cke_resizable': false, 
-		height: FreemarkerTags.GetTagHeight(realElement.attributes[FTL_TAG_NAME]),
-		width: FreemarkerTags.GetTagWidth(realElement.attributes[FTL_TAG_NAME]),
-		src : 'http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=' + realElement.attributes[FTL_TAG_NAME],
-		style: 'background-color: #ffff00; color: #000000;'
+		title: 'test hint',
+		src: 'http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=' + realElement.attributes[FTL_TAG_NAME] + "&tagParams=" + realElement.attributes['ftltagparams'],
+		style: 'margin: 3px;'
 	};
-	return new CKEDITOR.htmlParser.element(FTL_IMG_ELEMENT, attributes);
+	return new CKEDITOR.htmlParser.element('img', attributes);
 };
 
 CKEDITOR.plugins.add(FTL_PLUGIN_NAME, {
