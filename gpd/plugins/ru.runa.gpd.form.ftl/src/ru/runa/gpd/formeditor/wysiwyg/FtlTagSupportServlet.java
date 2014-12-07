@@ -1,6 +1,5 @@
 package ru.runa.gpd.formeditor.wysiwyg;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,29 +78,17 @@ public class FtlTagSupportServlet extends HttpServlet {
             }
             if ("GetTagImage".equals(commandStr)) {
                 response.setContentType("image/png;");
-                InputStream imageStream = null;
-                String tagImageName = null;
+                String tagParams = request.getParameter("tagParams");
+                String[] parameters = FreemarkerUtil.splitTagParameters(tagParams);
+                byte[] imageData;
                 if (MethodTag.hasTag(tagName)) {
                     MethodTag tag = MethodTag.getTagNotNull(tagName);
-                    try {
-                        if (tag.hasImage()) {
-                            imageStream = tag.openImageStream();
-                        }
-                    } catch (IOException e) {
-                        // Unable to load tag image, using default
-                    }
-                    tagImageName = "DefaultTag.png";
+                    imageData = tag.getImageProvider().getImage(tag, parameters);
                 } else {
-                    if (WYSIWYGHTMLEditor.getCurrent().getVariables(true, null).containsKey(tagName)) {
-                        tagImageName = "VariableValueDisplay.png";
-                    } else {
-                        tagImageName = "TagNotFound.png";
-                    }
+                    imageData = EditorsPlugin.loadTagImage(EditorsPlugin.getDefault().getBundle(), "metadata/icons/TagNotFound.png");
                 }
-                if (imageStream == null) {
-                    imageStream = EditorsPlugin.loadTagImage(EditorsPlugin.getDefault().getBundle(), "metadata/icons/" + tagImageName);
-                }
-                IOUtils.copyStream(imageStream, response.getOutputStream());
+                response.getOutputStream().write(imageData);
+                response.getOutputStream().flush();
                 return;
             }
             if (commandStr.startsWith("GetAll")) {
@@ -187,12 +174,6 @@ public class FtlTagSupportServlet extends HttpServlet {
                     paramCounter++;
                 }
                 resultHtml.append("</table>");
-            } else if ("GetTagImage".equals(commandStr)) {
-                // resultHtml.append(MethodTag.getTag(tagName).image);
-            } else if ("GetVarTagWidth".equals(commandStr)) {
-                resultHtml.append(MethodTag.getTagNotNull(tagName).width);
-            } else if ("GetVarTagHeight".equals(commandStr)) {
-                resultHtml.append(MethodTag.getTagNotNull(tagName).height);
             } else if ("IsAvailable".equals(commandStr)) {
                 resultHtml.append(WYSIWYGHTMLEditor.getCurrent().isFtlFormat());
             } else if ("GetVariableNames".equals(commandStr)) {

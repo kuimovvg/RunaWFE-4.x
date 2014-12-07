@@ -1,7 +1,6 @@
 package ru.runa.gpd;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -19,6 +18,7 @@ import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.htmleditor.ColorProvider;
 import ru.runa.gpd.htmleditor.HTMLPlugin;
 import ru.runa.gpd.jseditor.launch.JavaScriptLaunchUtil;
+import ru.runa.gpd.util.IOUtils;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -127,16 +127,22 @@ public class EditorsPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
-    public static InputStream loadTagImage(Bundle bundle, String imagePath) throws IOException {
+    /**
+     * @return byte array or <code>null</code>
+     */
+    public static byte[] loadTagImage(Bundle bundle, String imagePath) throws IOException {
         String lang = Locale.getDefault().getLanguage();
         int ldi = imagePath.lastIndexOf(".");
         if (ldi > 0) {
             String nlImagePath = imagePath.substring(0, ldi) + "." + lang + imagePath.substring(ldi);
             if (FileLocator.find(bundle, new Path(nlImagePath), new HashMap<String, String>()) != null) {
-                return FileLocator.openStream(bundle, new Path(nlImagePath), false);
+                return IOUtils.readStreamAsBytes(FileLocator.openStream(bundle, new Path(nlImagePath), false));
             }
         }
-        return FileLocator.openStream(bundle, new Path(imagePath), false);
+        if (FileLocator.find(bundle, new Path(imagePath), new HashMap<String, String>()) != null) {
+            return IOUtils.readStreamAsBytes(FileLocator.openStream(bundle, new Path(imagePath), false));
+        }
+        return null;
     }
 
 }

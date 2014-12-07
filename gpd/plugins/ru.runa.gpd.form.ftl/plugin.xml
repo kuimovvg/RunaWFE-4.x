@@ -105,11 +105,8 @@
          point="ru.runa.gpd.form.ftl.tags">
       <tag
             enabled="true"
-            height="40"
             id="InputVariable"
-            image="metadata/icons/InputVariable.png"
-            name="%Method.InputVariable"
-            width="250">
+            name="%Method.InputVariable">
          <param
                name="%Param.Variable"
                type="combo"
@@ -119,11 +116,8 @@
       </tag>
       <tag
             enabled="true"
-            height="40"
             id="DisplayVariable"
-            image="metadata/icons/VariableValueDisplay.png"
-            name="%Method.DisplayVariable"
-            width="250">
+            name="%Method.DisplayVariable">
          <param
                name="%Param.Variable"
                type="combo"
@@ -147,11 +141,8 @@
       </tag>
       <tag
             enabled="false"
-            height="40"
             id="ChooseActor"
-            image="metadata/icons/ChooseActor.png"
-            name="%Method.ChooseActor"
-            width="250">
+            name="%Method.ChooseActor">
          <param
                name="%Param.ActorVariable"
                type="combo"
@@ -202,11 +193,8 @@
       </tag>
       <tag
             enabled="false"
-            height="40"
             id="InputDateTime"
-            image="metadata/icons/InputDateTime.png"
-            name="%Method.InputDateTime"
-            width="180">
+            name="%Method.InputDateTime">
          <param
                name="%Param.DateVariable"
                type="combo"
@@ -233,11 +221,8 @@
       </tag>
       <tag
             enabled="true"
-            height="40"
             id="GroupMembers"
-            image="metadata/icons/ChooseActor.png"
-            name="%Method.GroupMembers"
-            width="250">
+            name="%Method.GroupMembers">
          <param
                name="%Param.ActorVariable"
                type="combo"
@@ -266,11 +251,8 @@
       </tag>
       <tag
             enabled="false"
-            height="40"
             id="DisplayActor"
-            image="metadata/icons/DisplayFullActorName.png"
-            name="%Method.DisplayActor"
-            width="250">
+            name="%Method.DisplayActor">
          <param
                name="%Param.ActorVariable"
                type="combo"
@@ -293,11 +275,8 @@
       </tag>
       <tag
             enabled="true"
-            height="40"
             id="ViewFile"
-            image="metadata/icons/VariableValueDisplay.png"
-            name="%Method.ViewFile"
-            width="250">
+            name="%Method.ViewFile">
          <param
                name="%Param.FileVariable"
                type="combo"
@@ -332,11 +311,8 @@
       </tag>
       <tag
             enabled="false"
-            height="40"
             id="DownloadFile"
-            image="metadata/icons/VariableValueDisplay.png"
-            name="%Method.DownloadFile"
-            width="250">
+            name="%Method.DownloadFile">
          <param
                name="%Param.FileVariable"
                type="combo"
@@ -357,11 +333,8 @@
       </tag>
       <tag
             enabled="true"
-            height="45"
             id="AjaxGroupMembers"
-            image="metadata/icons/AjaxGroupMembers.gif"
-            name="%Method.AjaxGroupMembers"
-            width="680">
+            name="%Method.AjaxGroupMembers">
          <param
                name="%Param.GroupVariable"
                type="combo"
@@ -377,11 +350,8 @@
       </tag>
       <tag
             enabled="true"
-            height="40"
             id="ChooseActorByRelation"
-            image="metadata/icons/ChooseActor.png"
-            name="%Method.ChooseActorByRelation"
-            width="250">
+            name="%Method.ChooseActorByRelation">
          <param
                name="%Param.ActorVariable"
                type="combo"
@@ -417,10 +387,8 @@
       </tag>
       <tag
             enabled="true"
-            height="40"
             id="ChooseExecutorByRelation"
-            name="%Method.ChooseExecutorByRelation"
-            width="250">
+            name="%Method.ChooseExecutorByRelation">
          <param
                name="%Param.Variable"
                type="combo"
@@ -456,10 +424,8 @@
       </tag>
       <tag
             enabled="true"
-            height="40"
             id="ChooseExecutorFromRelation"
-            name="%Method.ChooseExecutorFromRelation"
-            width="250">
+            name="%Method.ChooseExecutorFromRelation">
          <param
                name="%Param.Variable"
                type="combo"
@@ -546,9 +512,7 @@
       <tag
             enabled="true"
             id="EditLinkedLists"
-            image="metadata/icons/EditLinkedLists.png"
-            name="%Method.EditLinkedLists"
-            width="450">
+            name="%Method.EditLinkedLists">
          <param
                multiple="false"
                name="%Param.ListAddition"
@@ -602,9 +566,7 @@
       <tag
             enabled="true"
             id="DisplayLinkedLists"
-            image="metadata/icons/DisplayLinkedLists.png"
-            name="%Method.DisplayLinkedLists"
-            width="450">
+            name="%Method.DisplayLinkedLists">
          <param
                multiple="false"
                name="%Param.DisplayFormat"
