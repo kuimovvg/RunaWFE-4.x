@@ -32,8 +32,7 @@ FreemarkerTags.createFakeParserElement = function(realElement) {
 		'cke-real-element-type': 'ftl_element', 
 		'data-cke-realelement': encodeURIComponent(html),
 		'cke_resizable': false, 
-		title: 'test hint',
-		src: 'http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=' + realElement.attributes[FTL_TAG_NAME] + "&tagParams=" + realElement.attributes['ftltagparams'],
+		src: 'http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=' + realElement.attributes[FTL_TAG_NAME] + "&tagParams=" + encodeURIComponent(realElement.attributes['ftltagparams']),
 		style: 'margin: 3px;'
 	};
 	return new CKEDITOR.htmlParser.element('img', attributes);
