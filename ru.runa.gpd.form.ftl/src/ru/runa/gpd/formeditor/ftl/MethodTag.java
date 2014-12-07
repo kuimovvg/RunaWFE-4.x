@@ -1,7 +1,5 @@
 package ru.runa.gpd.formeditor.ftl;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,40 +13,35 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.EditorsPlugin;
+import ru.runa.gpd.PluginLogger;
 
 public class MethodTag {
-    private static final int DEFAULT_WIDTH = 250;
-    private static final int DEFAULT_HEIGHT = 40;
     private final Bundle bundle;
-    private final boolean enabled;
-    private final String imagePath;
+    private boolean enabled;
+    private final ITagImageProvider imageProvider;
     public final String id;
     public final String name;
-    public final int width;
-    public final int height;
     public final List<Param> params = new ArrayList<Param>();
 
-    private MethodTag(Bundle bundle, boolean enabled, String tagName, String label, int width, int height, String imagePath) {
+    private MethodTag(Bundle bundle, boolean enabled, String tagName, String label, ITagImageProvider imageProvider) {
         this.bundle = bundle;
         this.enabled = enabled;
         this.id = tagName;
-        this.name = label;
-        this.width = width;
-        this.height = height;
-        this.imagePath = imagePath;
+        this.name = label != null ? label : id;
+        this.imageProvider = imageProvider;
     }
 
-    public boolean hasImage() {
-        return imagePath != null;
+    public Bundle getBundle() {
+        return bundle;
     }
 
-    public InputStream openImageStream() throws IOException {
-        return EditorsPlugin.loadTagImage(bundle, imagePath);
+    public ITagImageProvider getImageProvider() {
+        return imageProvider;
     }
 
     @Override
     public String toString() {
-        return id + " " + name;
+        return id + " " + name + (enabled ? "" : " (disabled)");
     }
 
     public static class Param {
@@ -146,20 +139,27 @@ public class MethodTag {
         try {
             ftlMethods = new HashMap<String, MethodTag>();
             IExtension[] extensions = Platform.getExtensionRegistry().getExtensionPoint("ru.runa.gpd.form.ftl.tags").getExtensions();
-            //PluginLogger.logInfo("extensions count: " + extensions.length);
+            if (EditorsPlugin.DEBUG) {
+                PluginLogger.logInfo("ru.runa.gpd.form.ftl.tags extensions count: " + extensions.length);
+            }
             for (IExtension extension : extensions) {
                 Bundle bundle = Platform.getBundle(extension.getNamespaceIdentifier());
-                //PluginLogger.logInfo("Loading extensions from " + bundle.getSymbolicName());
+                if (EditorsPlugin.DEBUG) {
+                    PluginLogger.logInfo("Loading extensions from " + bundle.getSymbolicName());
+                }
                 IConfigurationElement[] tagElements = extension.getConfigurationElements();
                 for (IConfigurationElement tagElement : tagElements) {
                     String id = tagElement.getAttribute("id");
                     String name = tagElement.getAttribute("name");
                     try {
-                        String image = tagElement.getAttribute("image");
-                        int width = getIntAttr(tagElement, "width", DEFAULT_WIDTH);
-                        int height = getIntAttr(tagElement, "height", DEFAULT_HEIGHT);
+                        ITagImageProvider imageProvider;
+                        if (tagElement.getAttribute("imageProvider") != null) {
+                            imageProvider = (ITagImageProvider) tagElement.createExecutableExtension("imageProvider");
+                        } else {
+                            imageProvider = new DefaultTagImageProvider();
+                        }
                         boolean enabled = getBooleanAttr(tagElement, "enabled", false);
-                        MethodTag tag = new MethodTag(bundle, enabled, id, name, width, height, image);
+                        MethodTag tag = new MethodTag(bundle, enabled, id, name, imageProvider);
                         IConfigurationElement[] paramElements = tagElement.getChildren();
                         for (IConfigurationElement paramElement : paramElements) {
                             String paramName = paramElement.getAttribute("name");
@@ -179,6 +179,17 @@ public class MethodTag {
                             }
                             tag.params.add(param);
                         }
+                        if (EditorsPlugin.DEBUG) {
+                            PluginLogger.logInfo("Registering " + tag);
+                        }
+                        if (ftlMethods.containsKey(id)) {
+                            MethodTag oldTag = ftlMethods.get(id);
+                            if (!oldTag.enabled || !tag.enabled) {
+                                oldTag.enabled = false;
+                                tag.enabled = false;
+                            }
+                            tag = tag.params.size() > oldTag.params.size() ? tag : oldTag;
+                        }
                         ftlMethods.put(id, tag);
                     } catch (Exception e) {
                         EditorsPlugin.logError("Unable to load FTL method " + name, e);
@@ -188,14 +199,6 @@ public class MethodTag {
         } catch (Exception e) {
             EditorsPlugin.logError("Unable to load FTL methods", e);
         }
-    }
-
-    private static int getIntAttr(IConfigurationElement element, String attrName, int defaultValue) {
-        String attr = element.getAttribute(attrName);
-        if (attr == null) {
-            return defaultValue;
-        }
-        return Integer.parseInt(attr);
     }
 
     private static boolean getBooleanAttr(IConfigurationElement element, String attrName, boolean defaultValue) {
