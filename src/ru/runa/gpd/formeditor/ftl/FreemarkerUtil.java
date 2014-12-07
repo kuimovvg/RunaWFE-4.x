@@ -33,6 +33,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableUtils;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import freemarker.Mode;
@@ -51,6 +52,7 @@ import freemarker.template.TemplateModelException;
 @SuppressWarnings({ "serial", "rawtypes" })
 public class FreemarkerUtil {
     public static final String IMAGE_DIR = "/editor/plugins/FreemarkerTags/im/";
+    public static final String PARAMETERS_DELIM = "|";
 
     private static String METHOD_ELEMENT_NAME() {
         return WebServerUtils.useCKEditor() ? "ftl_element" : "img";
@@ -64,6 +66,13 @@ public class FreemarkerUtil {
     private static final String ATTR_FTL_TAG_PARAMS = "ftltagparams";
     private static final String ATTR_FTL_TAG_NAME = "ftltagname";
     private static final String ATTR_STYLE = "style";
+
+    public static String[] splitTagParameters(String tagParams) {
+        if (Strings.isNullOrEmpty(tagParams)) {
+            return new String[0];
+        }
+        return tagParams.split("\\" + PARAMETERS_DELIM);
+    }
 
     public static String transformFromHtml(String html, Map<String, Variable> variables) throws Exception {
         Document document = BaseHtmlFormType.getDocument(new ByteArrayInputStream(html.getBytes("UTF-8")));
@@ -83,7 +92,7 @@ public class FreemarkerUtil {
                 ftlTag.append("${").append(tagName);
                 ftlTag.append("(");
                 if (tagParams.length() > 0) {
-                    String[] params = tagParams.split("\\|");
+                    String[] params = splitTagParameters(tagParams);
                     for (int j = 0; j < params.length; j++) {
                         if (j != 0) {
                             ftlTag.append(", ");
@@ -283,36 +292,23 @@ public class FreemarkerUtil {
                 stageRenderingParams = false;
                 StringBuffer buffer = new StringBuffer("<").append(METHOD_ELEMENT_NAME()).append(" ");
                 buffer.append(ATTR_FTL_TAG_NAME).append("=\"").append(name).append("\" ");
-                buffer.append(ATTR_FTL_TAG_PARAMS).append("=\"");
+                StringBuffer params = new StringBuffer();
                 for (int i = 0; i < args.size(); i++) {
                     if (i != 0) {
-                        buffer.append("|");
+                        params.append(PARAMETERS_DELIM);
                     }
-                    buffer.append(args.get(i).toString());
+                    params.append(args.get(i).toString());
                 }
-                buffer.append("\" ");
+                buffer.append(ATTR_FTL_TAG_PARAMS).append("=\"").append(params).append("\" ");
                 if (!WebServerUtils.useCKEditor()) {
-                    buffer.append("src=\"http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=").append(name).append("\" ");
-                    buffer.append(ATTR_STYLE).append("=\"").append(getStyle(name)).append("\" ");
+                    String url = "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + name + "&tagParams=" + params;
+                    buffer.append("src=\"").append(url).append("\" ");
+                    buffer.append(ATTR_STYLE).append("=\"margin: 3px;\" ");
                 }
                 buffer.append("/>");
                 return buffer.toString();
             }
         }
-    }
-
-    protected static String getStyle(String tagName) {
-        int w = 250;
-        int h = 40;
-        if (tagName != null && MethodTag.hasTag(tagName)) {
-            MethodTag tag = MethodTag.getTagNotNull(tagName);
-            w = tag.width;
-            h = tag.height;
-        }
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("width: ").append(w).append("px; ");
-        buffer.append("height: ").append(h).append("px; ");
-        return buffer.toString();
     }
 
     public static class MyTemplateExceptionHandler implements TemplateExceptionHandler {
