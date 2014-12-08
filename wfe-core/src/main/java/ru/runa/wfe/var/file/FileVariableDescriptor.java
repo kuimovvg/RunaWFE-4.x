@@ -37,4 +37,9 @@ public class FileVariableDescriptor extends FileVariable {
     public String getVariablePath() {
         return variablePath;
     }
+
+    @Override
+    public String getStringValue() {
+        return variablePath;
+    }
 }
