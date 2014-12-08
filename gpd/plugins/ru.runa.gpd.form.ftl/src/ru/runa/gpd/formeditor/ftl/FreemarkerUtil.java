@@ -22,6 +22,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
+import ru.runa.gpd.EditorsPlugin;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.form.FormVariableAccess;
@@ -33,6 +34,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableUtils;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
@@ -75,67 +77,73 @@ public class FreemarkerUtil {
     }
 
     public static String transformFromHtml(String html, Map<String, Variable> variables) throws Exception {
-        Document document = BaseHtmlFormType.getDocument(new ByteArrayInputStream(html.getBytes("UTF-8")));
-        NodeList spanElements = document.getElementsByTagName(METHOD_ELEMENT_NAME());
-        int len = spanElements.getLength();
+        Document document = BaseHtmlFormType.getDocument(new ByteArrayInputStream(html.getBytes(Charsets.UTF_8)));
+        NodeList tagElements = document.getElementsByTagName(METHOD_ELEMENT_NAME());
+        int len = tagElements.getLength();
         int idx = 0;
         for (int i = 0; i < len; i++) {
-            Node domNode = spanElements.item(idx);
+            Node domNode = tagElements.item(idx);
+            if (domNode == null) {
+                if (EditorsPlugin.DEBUG) {
+                    PluginLogger.logErrorWithoutDialog("Null tag element at " + i + " in " + html);
+                }
+                continue;
+            }
             String tagName = getAttrValue(domNode, ATTR_FTL_TAG_NAME);
             if (tagName == null) {
                 continue;
             }
             String tagParams = getAttrValue(domNode, ATTR_FTL_TAG_PARAMS);
-            if (tagParams != null) {
-                // Method
-                StringBuffer ftlTag = new StringBuffer();
-                ftlTag.append("${").append(tagName);
-                ftlTag.append("(");
-                if (tagParams.length() > 0) {
-                    String[] params = splitTagParameters(tagParams);
-                    for (int j = 0; j < params.length; j++) {
-                        if (j != 0) {
-                            ftlTag.append(", ");
-                        }
-                        boolean surroundWithBrackets = true;
-                        try {
-                            if (MethodTag.hasTag(tagName)) {
-                                MethodTag tag = MethodTag.getTagNotNull(tagName);
-                                if (tag.params.size() > j) {
-                                    Param param = tag.params.get(j);
-                                    if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(params[j]))) {
-                                        surroundWithBrackets = false;
-                                    }
+            if (tagParams == null) {
+                // no params
+                tagParams = "";
+            }
+            // Method
+            StringBuffer ftlTag = new StringBuffer();
+            ftlTag.append("${").append(tagName);
+            ftlTag.append("(");
+            if (tagParams.length() > 0) {
+                String[] params = splitTagParameters(tagParams);
+                for (int j = 0; j < params.length; j++) {
+                    if (j != 0) {
+                        ftlTag.append(", ");
+                    }
+                    boolean surroundWithBrackets = true;
+                    try {
+                        if (MethodTag.hasTag(tagName)) {
+                            MethodTag tag = MethodTag.getTagNotNull(tagName);
+                            if (tag.params.size() > j) {
+                                Param param = tag.params.get(j);
+                                if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(params[j]))) {
+                                    surroundWithBrackets = false;
                                 }
                             }
-                        } catch (Exception e) {
-                            PluginLogger.logErrorWithoutDialog("FTL tag problem found for " + tagName + "(" + j + "): '" + params[j] + "'", e);
                         }
-                        if (!MethodTag.hasTag(tagName)) {
-                            throw new NullPointerException(tagName);
-                        }
-                        if (surroundWithBrackets) {
-                            ftlTag.append("\"");
-                        }
-                        ftlTag.append(params[j]);
-                        if (surroundWithBrackets) {
-                            ftlTag.append("\"");
-                        }
+                    } catch (Exception e) {
+                        PluginLogger.logErrorWithoutDialog("FTL tag problem found for " + tagName + "(" + j + "): '" + params[j] + "'", e);
+                    }
+                    if (!MethodTag.hasTag(tagName)) {
+                        throw new NullPointerException(tagName);
+                    }
+                    if (surroundWithBrackets) {
+                        ftlTag.append("\"");
+                    }
+                    ftlTag.append(params[j]);
+                    if (surroundWithBrackets) {
+                        ftlTag.append("\"");
                     }
                 }
-                ftlTag.append(")");
-                ftlTag.append("}");
-                Text ftlText = document.createTextNode(ftlTag.toString());
-                domNode.getParentNode().replaceChild(ftlText, domNode);
-            } else {
-                ++idx;
             }
+            ftlTag.append(")");
+            ftlTag.append("}");
+            Text ftlText = document.createTextNode(ftlTag.toString());
+            domNode.getParentNode().replaceChild(ftlText, domNode);
         }
-        spanElements = document.getElementsByTagName(OUTPUT_ELEMENT_NAME());
-        len = spanElements.getLength();
+        tagElements = document.getElementsByTagName(OUTPUT_ELEMENT_NAME());
+        len = tagElements.getLength();
         idx = 0;
         for (int i = 0; i < len; i++) {
-            Node domNode = spanElements.item(idx);
+            Node domNode = tagElements.item(idx);
             String tagName = getAttrValue(domNode, ATTR_FTL_TAG_NAME);
             if (tagName == null) {
                 continue;
@@ -152,19 +160,19 @@ public class FreemarkerUtil {
                 Text ftlText = document.createTextNode(ftlTag);
                 domNode.getParentNode().replaceChild(ftlText, domNode);
             } else {
-                ++idx;
+                idx++;
             }
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         writeHtml(document, os);
-        return new String(os.toByteArray(), "UTF-8");
+        return new String(os.toByteArray(), Charsets.UTF_8);
     }
 
     private static void writeHtml(Document document, OutputStream os) throws Exception {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty(OutputKeys.ENCODING, Charsets.UTF_8.name());
         transformer.transform(new DOMSource(document), new StreamResult(os));
     }
 
@@ -181,7 +189,7 @@ public class FreemarkerUtil {
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setLocalizedLookup(false);
         cfg.setTemplateExceptionHandler(new MyTemplateExceptionHandler());
-        Template template = new Template("test", new StringReader(ftlText), cfg, "UTF-8");
+        Template template = new Template("test", new StringReader(ftlText), cfg, Charsets.UTF_8.name());
         StringWriter out = new StringWriter();
         template.process(new EditorHashModel(variables), out);
         out.flush();
