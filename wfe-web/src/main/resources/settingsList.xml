@@ -199,6 +199,10 @@
 			<value>true</value>
 			<value>false</value>
 		</property>
+		<property title="logs.severity.threshold">
+			<value>DEBUG</value>
+			<value>INFO</value>
+		</property>
 		<property title="fontSize" pattern="\d*"/>
 		<property title="fontFamily"/>
 		<property title="backgroundColor" pattern="0x([\da-fA-F]{3}|[\da-fA-F]{6})"/>

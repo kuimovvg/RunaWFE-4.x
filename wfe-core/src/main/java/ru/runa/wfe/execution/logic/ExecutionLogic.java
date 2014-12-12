@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.runa.wfe.ConfigurationException;
 import ru.runa.wfe.audit.AdminActionLog;
 import ru.runa.wfe.audit.ProcessLog;
+import ru.runa.wfe.audit.ProcessLogFilter;
 import ru.runa.wfe.audit.ProcessLogs;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -245,7 +246,9 @@ public class ExecutionLogic extends WFCommonLogic {
         ProcessLogs processLogs = null;
         if (DrawProperties.isLogsInGraphEnabled()) {
             processLogs = new ProcessLogs(process.getId());
-            processLogs.addLogs(processLogDAO.getAll(processId), false);
+            ProcessLogFilter filter = new ProcessLogFilter(processId);
+            filter.setSeverities(DrawProperties.getLogsInGraphSeverities());
+            processLogs.addLogs(processLogDAO.getAll(filter), false);
         }
         ProcessGraphInfoVisitor visitor = new ProcessGraphInfoVisitor(user, definition, process, processLogs, nodeProcesses);
         return getDefinitionGraphElements(user, definition, visitor);

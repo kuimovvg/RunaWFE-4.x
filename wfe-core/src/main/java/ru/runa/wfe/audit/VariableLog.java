@@ -45,7 +45,6 @@ public abstract class VariableLog extends ProcessLog {
 
     public VariableLog(Variable<?> variable) {
         addAttribute(ATTR_VARIABLE_NAME, variable.getName());
-        setSeverity(Severity.INFO);
     }
 
     @Transient

@@ -18,11 +18,15 @@
 package ru.runa.wfe.graph;
 
 import java.awt.Color;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.audit.Severity;
 import ru.runa.wfe.commons.PropertyResources;
+
+import com.google.common.collect.Lists;
 
 public final class DrawProperties {
     private static final Log log = LogFactory.getLog(DrawProperties.class);
@@ -85,7 +89,7 @@ public final class DrawProperties {
     public static int getSmoothDist() {
         return resources.getIntegerProperty("smoothDist", 10);
     }
-    
+
     public static String getFontFamily() {
         return resources.getStringProperty("fontFamily", "Verdana");
     }
@@ -121,8 +125,20 @@ public final class DrawProperties {
     public static boolean isLogsInGraphEnabled() {
         return resources.getBooleanProperty("logs.enabled", false);
     }
-    
+
+    public static List<Severity> getLogsInGraphSeverities() {
+        String name = resources.getStringPropertyNotNull("logs.severity.threshold");
+        Severity threshold = Severity.valueOf(name);
+        List<Severity> severities = Lists.newArrayList(Severity.values());
+        for (Severity severity : Severity.values()) {
+            if (severity.ordinal() < threshold.ordinal()) {
+                severities.remove(severity);
+            }
+        }
+        return severities;
+    }
+
     public static boolean isSmoothLinesEnabled() {
-    	return resources.getBooleanProperty("smoothLines", true);
+        return resources.getBooleanProperty("smoothLines", true);
     }
 }
