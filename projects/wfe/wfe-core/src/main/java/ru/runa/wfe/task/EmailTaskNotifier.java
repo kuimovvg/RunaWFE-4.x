@@ -20,8 +20,11 @@ import ru.runa.wfe.task.logic.ITaskNotifier;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
+import ru.runa.wfe.var.ComplexVariable;
+import ru.runa.wfe.var.DelegableVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
+import ru.runa.wfe.var.ScriptingComplexVariable;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -89,8 +92,26 @@ public class EmailTaskNotifier implements ITaskNotifier {
         map.put("interaction", interaction);
         map.put("task", task);
         map.put("emails", emails);
-        IVariableProvider variableProvider = new MapDelegableVariableProvider(map, executionContext.getVariableProvider());
+        ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext.getVariableProvider());
+        IVariableProvider variableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
         EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, variableProvider);
         // TODO add process logs about notification
+    }
+
+    // TODO unify for all scripting names
+    public static class ScriptingVariableProvider extends DelegableVariableProvider {
+
+        public ScriptingVariableProvider(IVariableProvider delegate) {
+            super(delegate);
+        }
+
+        @Override
+        public Object getValue(String variableName) {
+            Object object = super.getValue(variableName);
+            if (object instanceof ComplexVariable) {
+                object = new ScriptingComplexVariable((ComplexVariable) object);
+            }
+            return object;
+        }
     }
 }
