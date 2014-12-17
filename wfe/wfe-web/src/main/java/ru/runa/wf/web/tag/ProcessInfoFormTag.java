@@ -83,8 +83,12 @@ public class ProcessInfoFormTag extends ProcessBaseFormTag {
 
     @Override
     protected Permission getPermission() {
-        // see isFormButtonEnabled
-        return null;
+        boolean ended = getProcess().isEnded();
+        if (ended) {
+            return null;
+        } else {
+            return ProcessPermission.CANCEL_PROCESS;
+        }
     }
 
     @Override
