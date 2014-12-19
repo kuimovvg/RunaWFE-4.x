@@ -159,6 +159,7 @@ public class Variable extends NamedGraphElement implements Describable {
     @Override
     public List<IPropertyDescriptor> getCustomPropertyDescriptors() {
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
+        list.add(new PropertyDescriptor(PROPERTY_SCRIPTING_NAME, Localization.getString("Variable.property.scriptingName")));
         list.add(new PropertyDescriptor(PROPERTY_FORMAT, Localization.getString("Variable.property.format")));
         list.add(new PropertyDescriptor(PROPERTY_PUBLIC_VISIBILITY, Localization.getString("Variable.property.publicVisibility")));
         list.add(new PropertyDescriptor(PROPERTY_DEFAULT_VALUE, Localization.getString("Variable.property.defaultValue")));
@@ -167,6 +168,9 @@ public class Variable extends NamedGraphElement implements Describable {
 
     @Override
     public Object getPropertyValue(Object id) {
+        if (PROPERTY_SCRIPTING_NAME.equals(id)) {
+            return getScriptingName();
+        }
         if (PROPERTY_FORMAT.equals(id)) {
             return getFormatLabel();
         }
