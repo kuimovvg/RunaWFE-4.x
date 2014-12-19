@@ -168,6 +168,9 @@ public class DesignerGraphicalEditorPart extends GraphicalEditorWithFlyoutPalett
             }
             ISelectionProvider selectionProvider = new StructuredSelectionProvider(graphElement);
             ObjectActionContributorManager.getManager().contributeObjectActions(editor, menu, selectionProvider);
+            // ObjectActionContributorManager.getManager().contributeObjectActions(editor,
+            // menu, selectionProvider, new
+            // HashSet<IObjectActionContributor>());
         }
     }
 
