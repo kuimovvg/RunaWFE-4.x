@@ -12,6 +12,8 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
+import com.google.common.base.Preconditions;
+
 /**
  * Parameters holder for handler.
  * 
@@ -155,9 +157,6 @@ public class HandlerData {
 
     public void setOutputParam(String name, Object value) {
         ParamDef paramDef = paramsDef.getOutputParamNotNull(name);
-        if (paramDef.getVariableName() == null) {
-            throw new InternalApplicationException("Variable is not set for output parameter " + paramDef + " in configuration.");
-        }
         if (value == null) {
             throw new InternalApplicationException("Trying to set output parameter " + paramDef + " to null.");
         }
@@ -165,6 +164,7 @@ public class HandlerData {
     }
 
     public void setOutputVariable(String variableName, Object value) {
+        Preconditions.checkNotNull(variableName);
         outputVariables.put(variableName, value);
     }
 }
