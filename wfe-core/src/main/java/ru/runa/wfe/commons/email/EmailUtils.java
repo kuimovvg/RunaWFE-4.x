@@ -176,6 +176,7 @@ public class EmailUtils {
             formMessage = formMessage.replaceAll(repl, replacements.get(repl));
         }
         config.setMessage(formMessage);
+        log.debug(formMessage);
         sendMessage(config, attachments);
     }
 

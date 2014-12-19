@@ -25,7 +25,9 @@ import ru.runa.wfe.var.DelegableVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.ScriptingComplexVariable;
+import ru.runa.wfe.var.VariableDefinition;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
@@ -92,22 +94,31 @@ public class EmailTaskNotifier implements ITaskNotifier {
         map.put("interaction", interaction);
         map.put("task", task);
         map.put("emails", emails);
-        ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext.getVariableProvider());
+        ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext);
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
         EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, variableProvider);
         // TODO add process logs about notification
     }
 
-    // TODO unify for all scripting names
     public static class ScriptingVariableProvider extends DelegableVariableProvider {
+        private final ExecutionContext executionContext;
 
-        public ScriptingVariableProvider(IVariableProvider delegate) {
-            super(delegate);
+        public ScriptingVariableProvider(ExecutionContext executionContext) {
+            super(executionContext.getVariableProvider());
+            this.executionContext = executionContext;
         }
 
         @Override
         public Object getValue(String variableName) {
             Object object = super.getValue(variableName);
+            if (object == null) {
+                for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
+                    if (Objects.equal(variableName, definition.getScriptingName())) {
+                        object = super.getValue(definition.getName());
+                        break;
+                    }
+                }
+            }
             if (object instanceof ComplexVariable) {
                 object = new ScriptingComplexVariable((ComplexVariable) object);
             }
