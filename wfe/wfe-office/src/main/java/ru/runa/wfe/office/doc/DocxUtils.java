@@ -336,7 +336,7 @@ public class DocxUtils {
         boolean whetherSingleRunContainsPlaceholderStart = false;
         boolean whetherSingleRunContainsPlaceholderEnd = false;
         for (XWPFRun run : paragraph.getRuns()) {
-            if (run.getText(0) == null) {
+            if (run == null || run.getText(0) == null) {
                 continue;
             }
             if (!whetherSingleRunContainsPlaceholderStart && run.getText(0).contains(PLACEHOLDER_START)) {
