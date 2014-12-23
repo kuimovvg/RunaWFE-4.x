@@ -52,7 +52,8 @@ public class LocalFileSystemStorage implements IFileVariableStorage {
     }
 
     private IFileVariable save(Variable<?> variable, IFileVariable fileVariable, Integer index) {
-        if (SystemProperties.isLocalFileStorageEnabled() && fileVariable.getData().length > SystemProperties.getLocalFileStorageFileLimit()) {
+        if (SystemProperties.isLocalFileStorageEnabled() && fileVariable != null
+                && fileVariable.getData().length > SystemProperties.getLocalFileStorageFileLimit()) {
             try {
                 String variableName = index != null ? variable.getName() + index : variable.getName();
                 LocalFileSystemVariable fileSystemVariable = new LocalFileSystemVariable(variable, variableName, fileVariable);
