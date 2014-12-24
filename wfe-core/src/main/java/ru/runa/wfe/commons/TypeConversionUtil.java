@@ -252,7 +252,7 @@ public class TypeConversionUtil {
                 throw new RuntimeException("Array has insufficient length, index = " + index);
             }
         } else {
-            throw new RuntimeException("Unsupported array type " + container.getClass());
+            throw new RuntimeException("Unsupported array type " + (container != null ? container.getClass() : "null"));
         }
     }
 
