@@ -111,12 +111,19 @@ public class VariableLogic extends WFCommonLogic {
         if (qualifier != null) {
             if (ListFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
                 VariableFormat qualifierFormat = FormatCommons.createComponent(variable, 0);
-                Object value = TypeConversionUtil.getListValue(variable.getValue(), Integer.parseInt(qualifier));
+                List<Object> list = (List<Object>) variable.getValue();
+                if (list == null) {
+                    return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()), null);
+                }
+                Object value = TypeConversionUtil.getListValue(list, Integer.parseInt(qualifier));
                 return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()), value);
             }
             if (MapFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
                 Map<Object, Object> map = (Map<Object, Object>) variable.getValue();
                 VariableFormat qualifierFormat = FormatCommons.createComponent(variable, 0);
+                if (map == null) {
+                    return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()), null);
+                }
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     String keyInQualifierFormat = qualifierFormat.format(entry.getKey());
                     if (Objects.equal(keyInQualifierFormat, qualifier)) {
