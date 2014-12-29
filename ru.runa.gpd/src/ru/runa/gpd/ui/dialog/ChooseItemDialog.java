@@ -90,10 +90,11 @@ public class ChooseItemDialog extends Dialog {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
                 selectedItem = ((IStructuredSelection) event.getSelection()).getFirstElement();
-                getButton(IDialogConstants.OK_ID).setEnabled(true);
+                getButton(IDialogConstants.OK_ID).setEnabled(selectedItem != null);
             }
         });
         itemsList.addDoubleClickListener(new LoggingDoubleClickAdapter() {
+            @Override
             protected void onDoubleClick(DoubleClickEvent event) {
                 okPressed();
             }
@@ -117,7 +118,7 @@ public class ChooseItemDialog extends Dialog {
     public Object getSelectedItem() {
         return selectedItem;
     }
-    
+
     public void setSelectedItem(Object selectedItem) {
         this.selectedItem = selectedItem;
         if (itemsList != null) {

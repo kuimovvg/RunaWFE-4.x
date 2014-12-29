@@ -2249,6 +2249,13 @@
                menubarPath="window/additions"
                style="push">
          </action>
+         <action
+               class="ru.runa.gpd.ui.action.OpenToolPaletteExplorer"
+               icon="icons/toolbar-palette.png"
+               id="ru.runa.gpd.ui.action.openToolPaletteExplorer"
+               label="%label.menu.view.toolPaletteExplorer"
+               menubarPath="window/additions"
+               style="push"/>
          <menu
                id="help"
                label="%label.menu.help"

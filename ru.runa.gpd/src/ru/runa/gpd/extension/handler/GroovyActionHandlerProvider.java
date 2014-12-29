@@ -54,7 +54,8 @@ public class GroovyActionHandlerProvider extends DelegableProvider {
 
     @Override
     public String getConfigurationOnVariableRename(Delegable delegable, Variable currentVariable, Variable previewVariable) {
-        return delegable.getDelegationConfiguration().replaceAll(Pattern.quote(currentVariable.getScriptingName()), Matcher.quoteReplacement(previewVariable.getScriptingName()));
+        return delegable.getDelegationConfiguration().replaceAll(Pattern.quote(currentVariable.getScriptingName()),
+                Matcher.quoteReplacement(previewVariable.getScriptingName()));
     }
 
     private class ConfigurationDialog extends DelegableConfigurationDialog {

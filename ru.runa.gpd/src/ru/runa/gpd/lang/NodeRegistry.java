@@ -91,6 +91,7 @@ public class NodeRegistry {
 
     public static ProcessDefinition parseProcessDefinition(IFile definitionFile) throws Exception {
         try {
+            syncFile(definitionFile);
             return parseProcessDefinitionInternal(definitionFile);
         } catch (CoreException e) {
             if (e.getMessage() != null && e.getMessage().startsWith("Resource is out of sync with the file system")) {
@@ -101,7 +102,16 @@ public class NodeRegistry {
             throw e;
         }
     }
-    
+
+    private static void syncFile(IFile formFile) throws CoreException {
+        try {
+            formFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
+        } catch (CoreException e) {
+            PluginLogger.logError("refresh local error", e);
+            throw e;
+        }
+    }
+
     private static ProcessDefinition parseProcessDefinitionInternal(IFile definitionFile) throws Exception {
         boolean embeddedSubprocess = definitionFile.getName().startsWith(ParContentProvider.SUBPROCESS_DEFINITION_PREFIX);
         Document document = XmlUtil.parseWithoutValidation(definitionFile.getContents());
