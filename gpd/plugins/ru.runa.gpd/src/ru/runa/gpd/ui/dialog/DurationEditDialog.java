@@ -64,7 +64,7 @@ public class DurationEditDialog extends Dialog {
             gridData.minimumWidth = 200;
             baseDateField.setLayoutData(gridData);
             SWTUtils.createButton(area, "...", new LoggingSelectionAdapter() {
-                
+
                 @Override
                 protected void onSelection(SelectionEvent e) throws Exception {
                     ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(processDefinition, Duration.CURRENT_DATE_MESSAGE);

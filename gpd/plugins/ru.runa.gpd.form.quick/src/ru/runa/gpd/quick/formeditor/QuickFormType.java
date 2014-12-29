@@ -14,7 +14,6 @@ import org.eclipse.ui.ide.IDE;
 
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormVariableAccess;
-import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.quick.formeditor.util.QuickFormXMLUtil;
 import ru.runa.gpd.util.XmlUtil;
@@ -52,13 +51,12 @@ public class QuickFormType extends FormType {
         }
         return variableNames;
     }
-
-    @Override
-    public void validate(IFile formFile, FormNode formNode, List<ValidationError> errors) throws Exception {
-        super.validate(formFile, formNode, errors);
-        if (!formNode.hasFormTemplate()) {
-            errors.add(ValidationError.createLocalizedError(formNode, "formNode.templateIsRequired"));
-        }
-    }
+    // // @Override
+    // public void validate(IFile formFile, FormNode formNode, List<ValidationError> errors) throws Exception {
+    // super.validate(formFile, formNode, errors);
+    // if (!formNode.hasFormTemplate()) {
+    // errors.add(ValidationError.createLocalizedError(formNode, "formNode.templateIsRequired"));
+    // }
+    // }
 
 }

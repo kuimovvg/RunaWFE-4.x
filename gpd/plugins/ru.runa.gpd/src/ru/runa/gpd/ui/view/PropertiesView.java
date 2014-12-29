@@ -21,9 +21,12 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -38,25 +41,35 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
+import ru.runa.gpd.help.IHelpTopicProvider;
 import ru.runa.gpd.lang.model.GraphElement;
 
 import com.google.common.base.Objects;
 
 public class PropertiesView extends ViewPart implements ISelectionListener, PropertyChangeListener, IPartListener {
     public static final String ID = "ru.runa.gpd.propertiesView";
-    private static final String CELL_EDITOR_KEY = "CellEditor";
-    private static final String CELL_EDITOR_LISTENER_KEY = "CellEditorListener";
+    public static final String CELL_EDITOR_KEY = "CellEditor";
+    public static final String CELL_EDITOR_LISTENER_KEY = "CellEditorListener";
     private static final String TREE_EDITOR_KEY = "TreeEditor";
-    private static final String PROPERTY_DESCRIPTOR_KEY = "PropertyDescriptor";
+    public static final String PROPERTY_DESCRIPTOR_KEY = "PropertyDescriptor";
     private Tree tree;
     private static String[] columnLabels = { PropertiesMessages.PropertyViewer_property, PropertiesMessages.PropertyViewer_value };
     private final int columnToEdit = 1;
     private IPropertySource source = null;
     private IWorkbenchPart sourcePart = null;
+    private ISelection originalSelection;
+    private static final String BROWSER_TYPE = System.getProperty("org.eclipse.swt.browser.DefaultType");
 
     @Override
     public void setFocus() {
         // tree.setFocus();
+    }
+
+    private boolean isMozilla() {
+        if ("mozilla".equalsIgnoreCase(BROWSER_TYPE)) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -116,6 +129,15 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Object getAdapter(Class adapter) {
+        if (adapter == IHelpTopicProvider.class && sourcePart != null) {
+            return new HelpTopicProviderProxy(originalSelection, (IHelpTopicProvider) sourcePart.getAdapter(adapter));
+        }
+        return super.getAdapter(adapter);
+    }
+
     @Override
     public void init(IViewSite site) throws PartInitException {
         super.init(site);
@@ -135,7 +157,9 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
 
     @Override
     public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+        this.originalSelection = selection;
         this.sourcePart = part;
+
         IPropertySource newSource = getSource(selection);
         if (part instanceof GraphitiProcessEditor) {
             newSource = ((GraphitiProcessEditor) part).translateSelection(selection);
@@ -145,6 +169,9 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         }
         if (source instanceof GraphElement) {
             ((GraphElement) source).removePropertyChangeListener(this);
+        }
+        if (isMozilla()) {
+            apply();// TODO: it`s a hook for mozilla
         }
         source = newSource;
         if (source instanceof GraphElement) {
@@ -236,8 +263,20 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         for (int i = 0; i < descriptors.length; i++) {
             IPropertyDescriptor descriptor = descriptors[i];
             Object value = source.getPropertyValue(descriptor.getId());
+            boolean isPropertyRequired = false;
+            if (source instanceof IRequiredPropertiesSource) {
+                isPropertyRequired = ((IRequiredPropertiesSource) source).isPropertyRequired(descriptor.getId());
+            }
             final TreeItem item = new TreeItem(tree, SWT.NONE, i);
-            item.setText(0, descriptor.getDisplayName());
+            String labelName = descriptor.getDisplayName();
+            if (isPropertyRequired) {
+                Display display = Display.getCurrent();
+                FontData[] fontData = item.getFont().getFontData();
+                fontData[0].setStyle(SWT.BOLD);
+                item.setFont(new Font(display, fontData));
+                labelName = labelName + "*";
+            }
+            item.setText(0, labelName);
             item.setText(1, getStringValue(descriptor, value));
             CellEditor cellEditor = descriptor.createPropertyEditor(tree);
             CellEditorListener cellEditorListener = null;
@@ -272,7 +311,19 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         tree.setRedraw(true);
     }
 
-    private class CellEditorListener implements ICellEditorListener {
+    private void apply() {
+        if (tree == null || tree.isDisposed()) {
+            return;
+        }
+        for (TreeItem item : tree.getItems()) {
+            CellEditorListener listener = (CellEditorListener) item.getData(CELL_EDITOR_LISTENER_KEY);
+            if (listener != null) {
+                listener.applyEditorValue();
+            }
+        }
+    }
+
+    public class CellEditorListener implements ICellEditorListener {
         private final TreeItem item;
         private final CellEditor cellEditor;
         private final IPropertyDescriptor descriptor;
@@ -301,6 +352,7 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
             if (!cellEditor.isValueValid()) {
                 return;
             }
+
             Object value = cellEditor.getValue();
             try {
                 boolean valueChanged = !Objects.equal(initialValue, value);
@@ -335,10 +387,30 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         } else {
             stringValue = value.toString();
         }
-        if (stringValue.indexOf("\n") > 0) {
-            return stringValue.substring(0, stringValue.indexOf("\n"));
-        } else {
-            return stringValue;
+        return stringValue;
+    }
+
+    private static class HelpTopicProviderProxy implements IHelpTopicProvider {
+        private final ISelection selection;
+        private final IHelpTopicProvider provider;
+
+        public HelpTopicProviderProxy(ISelection selection, IHelpTopicProvider provider) {
+            this.selection = selection;
+            this.provider = provider;
         }
+
+        @Override
+        public String getHelpTopicUrl(ISelection sel) {
+            return null;
+        }
+
+        @Override
+        public String getHelpTopicUrl() {
+            if (provider != null) {
+                return provider.getHelpTopicUrl(selection);
+            }
+            return null;
+        }
+
     }
 }

@@ -19,7 +19,8 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 
 public class SyncUIHelper {
 
-    public static Composite createHeader(Composite parent, DataImporter importer, Class<? extends IPreferencePage> pageClass, ConnectorCallback callback) {
+    public static Composite createHeader(Composite parent, DataImporter importer, Class<? extends IPreferencePage> pageClass,
+            ConnectorCallback callback) {
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new GridLayout(2, true));
         createConnectionSettingsLink(composite, pageClass);
