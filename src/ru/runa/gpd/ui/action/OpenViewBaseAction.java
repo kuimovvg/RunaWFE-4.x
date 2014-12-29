@@ -11,6 +11,7 @@ public abstract class OpenViewBaseAction extends BaseActionDelegate {
 
     protected abstract String getViewId();
 
+    @Override
     public void run(IAction action) {
         try {
             PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(getViewId(), null, IWorkbenchPage.VIEW_VISIBLE);
