@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,9 @@ import ru.runa.gpd.formeditor.BaseHtmlFormType;
 import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
 import ru.runa.gpd.formeditor.ftl.MethodTag.VariableAccess;
+import ru.runa.gpd.formeditor.ftl.bean.ComponentParameter;
+import ru.runa.gpd.formeditor.ftl.bean.FtlComponent;
+import ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.util.VariableUtils;
@@ -76,8 +81,8 @@ public class FreemarkerUtil {
         return tagParams.split("\\" + PARAMETERS_DELIM);
     }
 
-    public static String transformFromHtml(String html, Map<String, Variable> variables) throws Exception {
-        Document document = BaseHtmlFormType.getDocument(new ByteArrayInputStream(html.getBytes(Charsets.UTF_8)));
+    public static String transformFromHtml(String html, Map<String, Variable> variables, Map<Integer, FtlComponent> ftlComponents) throws Exception {
+        Document document = BaseHtmlFormType.getDocument(new ByteArrayInputStream(html.getBytes("UTF-8")));
         NodeList tagElements = document.getElementsByTagName(METHOD_ELEMENT_NAME());
         int len = tagElements.getLength();
         int idx = 0;
@@ -89,49 +94,44 @@ public class FreemarkerUtil {
                 }
                 continue;
             }
+            String idStr = getAttrValue(domNode, "id");
             String tagName = getAttrValue(domNode, ATTR_FTL_TAG_NAME);
-            if (tagName == null) {
-                continue;
-            }
             String tagParams = getAttrValue(domNode, ATTR_FTL_TAG_PARAMS);
             if (tagParams == null) {
                 // no params
                 tagParams = "";
             }
+            if (/* idStr == null || */tagName == null) {
+                continue;
+            }
+
+            FtlComponent component = ftlComponents.get(Integer.valueOf(idStr));
+
             // Method
             StringBuffer ftlTag = new StringBuffer();
-            ftlTag.append("${").append(tagName);
+            ftlTag.append("${").append(component.getType().id /* tagName */);
             ftlTag.append("(");
-            if (tagParams.length() > 0) {
-                String[] params = splitTagParameters(tagParams);
-                for (int j = 0; j < params.length; j++) {
-                    if (j != 0) {
-                        ftlTag.append(", ");
-                    }
-                    boolean surroundWithBrackets = true;
-                    try {
-                        if (MethodTag.hasTag(tagName)) {
-                            MethodTag tag = MethodTag.getTagNotNull(tagName);
-                            if (tag.params.size() > j) {
-                                Param param = tag.params.get(j);
-                                if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(params[j]))) {
-                                    surroundWithBrackets = false;
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        PluginLogger.logErrorWithoutDialog("FTL tag problem found for " + tagName + "(" + j + "): '" + params[j] + "'", e);
-                    }
-                    if (!MethodTag.hasTag(tagName)) {
-                        throw new NullPointerException(tagName);
-                    }
-                    if (surroundWithBrackets) {
-                        ftlTag.append("\"");
-                    }
-                    ftlTag.append(params[j]);
-                    if (surroundWithBrackets) {
-                        ftlTag.append("\"");
-                    }
+
+            boolean first = true;
+            for (ComponentParameter parameter : component.getParameters()) {
+                String rawValue = parameter.getRawValue().toString();
+                if (!first) {
+                    ftlTag.append(", ");
+                } else {
+                    first = false;
+                }
+
+                boolean surroundWithBrackets = true;
+                Param param = parameter.getParam();
+                if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(rawValue))) {
+                    surroundWithBrackets = false;
+                }
+                if (surroundWithBrackets) {
+                    ftlTag.append("\"");
+                }
+                setParameterValue(ftlTag, parameter);
+                if (surroundWithBrackets) {
+                    ftlTag.append("\"");
                 }
             }
             ftlTag.append(")");
@@ -160,12 +160,41 @@ public class FreemarkerUtil {
                 Text ftlText = document.createTextNode(ftlTag);
                 domNode.getParentNode().replaceChild(ftlText, domNode);
             } else {
-                idx++;
+                ++idx;
             }
         }
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         writeHtml(document, os);
-        return new String(os.toByteArray(), Charsets.UTF_8);
+        return new String(os.toByteArray(), "UTF-8");
+    }
+
+    private static void setParameterValue(StringBuffer ftlTag, ComponentParameter parameter) {
+        if (parameter.getParam().isTextForIDGeneration() && parameter.getStringValue().isEmpty()) {
+            String elemID = "elemId_" + System.nanoTime();
+            ftlTag.append(elemID);
+            parameter.setRawValue(elemID);
+        } else {
+            if (parameter.getParam().getVariableTypeFilter() != null) {
+                if (VariableFormatRegistry.isAssignableFrom(Map.class.getName(), parameter.getParam().getVariableTypeFilter())
+                        || VariableFormatRegistry.isAssignableFrom(List.class.getName(), parameter.getParam().getVariableTypeFilter())) {
+                    String[] values = parameter.getStringValue().trim().split(",");
+                    String result = "";
+                    if (values.length > 1) {
+                        for (int i = 0; i < values.length; i++) {
+                            result += values[i];
+                            if (i < values.length - 1) {
+                                result += "\", \"";
+                            }
+                        }
+                    } else {
+                        result = parameter.getStringValue();
+                    }
+                    ftlTag.append(result);
+                    return;
+                }
+            }
+            ftlTag.append(parameter.getStringValue());
+        }
     }
 
     private static void writeHtml(Document document, OutputStream os) throws Exception {
@@ -184,14 +213,14 @@ public class FreemarkerUtil {
         return attrNode.getNodeValue();
     }
 
-    public static String transformToHtml(Map<String, Variable> variables, String ftlText) throws Exception {
+    public static String transformToHtml(WYSIWYGHTMLEditor formEditor, String ftlText) throws Exception {
         Configuration cfg = new Configuration();
         cfg.setObjectWrapper(new DefaultObjectWrapper());
         cfg.setLocalizedLookup(false);
         cfg.setTemplateExceptionHandler(new MyTemplateExceptionHandler());
         Template template = new Template("test", new StringReader(ftlText), cfg, Charsets.UTF_8.name());
         StringWriter out = new StringWriter();
-        template.process(new EditorHashModel(variables), out);
+        template.process(new EditorHashModel(formEditor), out);
         out.flush();
         return out.toString();
     }
@@ -244,15 +273,16 @@ public class FreemarkerUtil {
         private void addPropertyDescriptor(Map<String, String> properties, String name, String variableName) {
             properties.put(name, "${" + variableName + "." + name + "}");
         }
-
     }
 
     public static class EditorHashModel extends VariableTypeSupportHashModel {
         private final Map<String, Variable> variables;
+        private final WYSIWYGHTMLEditor formEditor;
 
-        public EditorHashModel(Map<String, Variable> variables) {
+        public EditorHashModel(WYSIWYGHTMLEditor formEditor) {
             Mode.setDesignerMode();
-            this.variables = variables;
+            this.variables = formEditor.getVariables(false);
+            this.formEditor = formEditor;
         }
 
         private TemplateModel wrapParameter(String prefix, Variable variable) {
@@ -289,7 +319,7 @@ public class FreemarkerUtil {
         }
 
         public class EditorMethodModel implements TemplateMethodModel {
-            private String name;
+            private final String name;
 
             public EditorMethodModel(String name) {
                 this.name = name;
@@ -298,8 +328,14 @@ public class FreemarkerUtil {
             @Override
             public Object exec(List args) throws TemplateModelException {
                 stageRenderingParams = false;
+
+                int componentId = formEditor.createComponent(name);
+                FtlComponent ftlComponent = formEditor.getComponent(componentId);
+                ftlComponent.setRawParameters(args);
+
                 StringBuffer buffer = new StringBuffer("<").append(METHOD_ELEMENT_NAME()).append(" ");
                 buffer.append(ATTR_FTL_TAG_NAME).append("=\"").append(name).append("\" ");
+                buffer.append("id=\"").append(componentId).append("\" ");
                 StringBuffer params = new StringBuffer();
                 for (int i = 0; i < args.size(); i++) {
                     if (i != 0) {
@@ -309,7 +345,12 @@ public class FreemarkerUtil {
                 }
                 buffer.append(ATTR_FTL_TAG_PARAMS).append("=\"").append(params).append("\" ");
                 if (!WebServerUtils.useCKEditor()) {
-                    String url = "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + name + "&tagParams=" + params;
+                    String url = "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + name + "&tagParams=";
+                    try {
+                        url += URLEncoder.encode(params.toString(), Charsets.UTF_8.name());
+                    } catch (UnsupportedEncodingException e) {
+                        PluginLogger.logError(e);
+                    }
                     buffer.append("src=\"").append(url).append("\" ");
                     buffer.append(ATTR_STYLE).append("=\"margin: 3px;\" ");
                 }
@@ -319,9 +360,24 @@ public class FreemarkerUtil {
         }
     }
 
+    protected static String getStyle(String tagName) {
+        int w = 250;
+        int h = 40;
+        if (tagName != null && MethodTag.hasTag(tagName)) {
+            MethodTag tag = MethodTag.getTagNotNull(tagName);
+            w = tag.width;
+            h = tag.height;
+        }
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("width: ").append(w).append("px; ");
+        buffer.append("height: ").append(h).append("px; ");
+        return buffer.toString();
+    }
+
     public static class MyTemplateExceptionHandler implements TemplateExceptionHandler {
         @Override
         public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {
+            PluginLogger.logError("template exception: ", te);
         }
     }
 

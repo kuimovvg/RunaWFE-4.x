@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,7 +22,11 @@ public class DynaTagImageProvider implements ITagImageProvider {
     @Override
     public byte[] getImage(MethodTag tag, String[] parameters) throws IOException {
         String label = getLabel(tag, parameters);
-        int width = label.length() * 12;
+        Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 17);
+
+        Rectangle2D stringBounds = font.getStringBounds(label, new FontRenderContext(font.getTransform(), true, true));
+        int width = (int) Math.round(stringBounds.getWidth()) + (2 * 10);
+
         BufferedImage image = new BufferedImage(width, 40, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics2d = image.createGraphics();
         graphics2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
@@ -31,10 +37,11 @@ public class DynaTagImageProvider implements ITagImageProvider {
         graphics2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         graphics2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         graphics2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        graphics2d.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 17));
+        graphics2d.setFont(font);
         graphics2d.setColor(Color.BLACK);
         graphics2d.drawString(label, 10, image.getHeight() / 2 + 5);
         graphics2d.draw(new Rectangle(1, 1, image.getWidth() - 2, image.getHeight() - 2));
+        System.out.println(graphics2d.getFontMetrics().stringWidth(label));
         graphics2d.dispose();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);

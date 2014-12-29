@@ -56,7 +56,8 @@ public class FtlTagSupportServlet extends HttpServlet {
                     List<Variable> variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(false, filterClassName).values());
                     Collections.sort(variables);
                     for (Variable variable : variables) {
-                        newContent.append(needComma ? "," : "").append("['").append(variable.getName()).append("','").append(variable.getName()).append("']");
+                        newContent.append(needComma ? "," : "").append("['").append(variable.getName()).append("','").append(variable.getName())
+                                .append("']");
                         if (!needComma) {
                             defaultChoise = variable.getName();
                         }
@@ -124,9 +125,11 @@ public class FtlTagSupportServlet extends HttpServlet {
                             if (option.container) {
                                 List<Variable> variables;
                                 if (option.useFilter) {
-                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(param.isVarCombo(), option.filterType).values());
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent()
+                                            .getVariables(param.isVarCombo(), option.filterType).values());
                                 } else {
-                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(param.isVarCombo(), null).values());
+                                    variables = new ArrayList<Variable>(WYSIWYGHTMLEditor.getCurrent().getVariables(param.isVarCombo(), null)
+                                            .values());
                                 }
                                 Collections.sort(variables);
                                 for (Variable variable : variables) {
@@ -192,6 +195,21 @@ public class FtlTagSupportServlet extends HttpServlet {
                     }
                     resultHtml.append(variable.getName());
                 }
+            } else if ("CreateComponent".equals(commandStr)) {
+                int componentId = WYSIWYGHTMLEditor.getCurrent().createComponent(tagName);
+                response.setContentType("application/json; charset=UTF-8");
+                resultHtml.append("{\"componentId\":").append(componentId).append("}");
+            } else if ("ComponentSelected".equals(commandStr)) {
+                String component = request.getParameter("componentId");
+                int componentId = Integer.valueOf(component);
+                WYSIWYGHTMLEditor.getCurrent().componentSelected(componentId);
+            } else if ("ComponentDeselected".equals(commandStr)) {
+                WYSIWYGHTMLEditor.getCurrent().componentDeselected();
+            } else if ("TagDialog".equals(commandStr)) {
+                String parameter = request.getParameter("componentId");
+                System.out.println("componentId = " + parameter);
+                int componentId = Integer.valueOf(request.getParameter("componentId"));
+                WYSIWYGHTMLEditor.getCurrent().openTagDialog(componentId);
             } else {
                 EditorsPlugin.logInfo("Unknown cmd: " + commandStr);
             }

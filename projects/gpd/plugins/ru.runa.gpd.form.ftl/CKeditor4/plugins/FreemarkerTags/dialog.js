@@ -1,4 +1,4 @@
-CKEDITOR.dialog.add("FreemarkerMethod", function(editor) {
+/*CKEDITOR.dialog.add("FreemarkerMethod", function(editor) {
 	// CKEDITOR.dialog.definition
 	return {
 		title: 'Sample dialog',
@@ -28,4 +28,4 @@ CKEDITOR.dialog.add("FreemarkerMethod", function(editor) {
 				alert("You have entered: " + textareaObj.getValue());
 			}
 		}
-});
+});*/

@@ -119,7 +119,22 @@ if ( FCKBrowserInfo.IsIE )
 // The first function to be called on selection change must the the styles
 // change checker, because the result of its processing may be used by another
 // functions listening to the same event.
-FCK.Events.AttachEvent( 'OnSelectionChange', function() { FCKStyles.CheckSelectionChanges() ; } ) ;
+FCK.Events.AttachEvent( 'OnSelectionChange', function() { FCKStyles.CheckSelectionChanges() ; CheckIsComponentSelected();} ) ;
+
+function CheckIsComponentSelected() {
+	try{
+		var selectedElement = FCKSelection.GetSelectedElement();
+		//if (!selectedElement || selectedElement.className != 'ftl_component')
+		if (!selectedElement){
+			FreemarkerTags.ComponentDeselected();
+		}		
+		else{
+			FreemarkerTags.ComponentSelected(selectedElement.id);
+		}
+	}catch(e){
+		alert(e);
+	}	
+}
 
 // The config hidden field is processed immediately, because
 // CustomConfigurationsPath may be set in the page.
@@ -231,8 +246,10 @@ function WaitForActive( editorInstance, newStatus )
 
 		// Call the special "FCKeditor_OnComplete" function that should be present in
 		// the HTML page where the editor is located.
-		if ( typeof( window.parent.FCKeditor_OnComplete ) == 'function' )
+		if ( typeof( window.parent.FCKeditor_OnComplete ) == 'function' ){
 			window.parent.FCKeditor_OnComplete( FCK ) ;
+		}
+		
 	}
 }
 

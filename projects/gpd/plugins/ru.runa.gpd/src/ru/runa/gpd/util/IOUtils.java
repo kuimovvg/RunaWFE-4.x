@@ -178,7 +178,9 @@ public class IOUtils {
             throw new CoreException(new Status(IStatus.WARNING, "ru.runa.gpd", 0, "File already exist", null));
         }
         file.create(stream, true, null);
-        file.setCharset(Charsets.UTF_8.name(), null);
+        if (!Charsets.UTF_8.name().equals(file.getCharset())) {
+            file.setCharset(Charsets.UTF_8.name(), null);
+        }
     }
 
     public static void createOrUpdateFile(IFile file, InputStream stream) throws CoreException {
@@ -186,7 +188,9 @@ public class IOUtils {
             file.setContents(stream, true, false, null);
         } else {
             file.create(stream, true, null);
-            file.setCharset(Charsets.UTF_8.name(), null);
+            if (!Charsets.UTF_8.name().equals(file.getCharset())) {
+                file.setCharset(Charsets.UTF_8.name(), null);
+            }
         }
     }
 
@@ -328,7 +332,10 @@ public class IOUtils {
         try {
             IResource[] resources = botFolder.members();
             for (int i = 0; i < resources.length; i++) {
-                if (resources[i] instanceof IFile && (Strings.isNullOrEmpty(resources[i].getFileExtension()) || !(resources[i].getFileExtension().equals(BotCache.CONFIGURATION_FILE_EXTENSION)||resources[i].getFileExtension().equals(BotCache.WORD_TEMPLATE_FILE_EXTENSION)))) {
+                if (resources[i] instanceof IFile
+                        && (Strings.isNullOrEmpty(resources[i].getFileExtension()) || !(resources[i].getFileExtension().equals(
+                                BotCache.CONFIGURATION_FILE_EXTENSION) || resources[i].getFileExtension().equals(
+                                BotCache.WORD_TEMPLATE_FILE_EXTENSION)))) {
                     fileList.add((IFile) resources[i]);
                 }
             }
