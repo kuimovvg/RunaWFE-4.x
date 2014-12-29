@@ -26,6 +26,7 @@ import ru.runa.gpd.util.IOUtils;
 public class EditorsPlugin extends AbstractUIPlugin {
     private static EditorsPlugin plugin;
     public static final boolean DEBUG = "true".equals(System.getProperty("ru.runa.gpd.form.ftl.debug"));
+    private static final String BROWSER_TYPE = System.getProperty("org.eclipse.swt.browser.DefaultType");
     // Color Provider
     private ColorProvider colorProvider;
 
@@ -145,4 +146,11 @@ public class EditorsPlugin extends AbstractUIPlugin {
         return null;
     }
 
+    public static boolean useCKEditor3() {
+        return false;
+    }
+
+    public static boolean isMozilla() {
+        return "mozilla".equalsIgnoreCase(BROWSER_TYPE);
+    }
 }

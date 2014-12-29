@@ -29,16 +29,21 @@
 			var editor = CKEDITOR.instances.editor;
 			getHTMLCallback(editor.getData());
 		}
-		function setHTML(html) {
-			try {
-				var editor = CKEDITOR.instances.editor;
-				editor.setData(html, function() {
+		function setHTML(html){
+        try {
+     		  var editor = CKEDITOR.instances.editor;        	  
+              editor.setData(html, function() {
 					markContent(editor);
-				});				
-			} catch (e) {
-				alertError(e, "setHTML");
-			}
-		}
+				});	
+        } catch (e) {
+         	  if(e instanceof TypeError)
+         	  {
+          		  //supress TypeError
+         	  }else{
+				    alertError(e, "setHTML");
+		 	  }
+		   }
+        }
 		function setHTMLSaved() {
 			try {
 				var editor = CKEDITOR.instances.editor;

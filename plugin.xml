@@ -2,6 +2,8 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="tags" name="Freemarker methods" schema="metadata/tags.exsd"/>
+   <extension-point id="freemarker_tag_validator" name="Freemarker tag validator" schema="metadata/freemarker_tag_validator.exsd"/>
+   <extension-point id="parameter_type" name="parameter_type" schema="schema/parameter_type.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">
@@ -55,7 +57,26 @@
       </editor>
    </extension>
 
-
+   <extension
+         point="ru.runa.gpd.form.ftl.parameter_type">
+      <type
+            class="ru.runa.gpd.formeditor.ftl.bean.StringParameter"
+            id="text">
+      </type>
+      <type
+            class="ru.runa.gpd.formeditor.ftl.bean.ComboBoxParameter"
+            id="combo">
+      </type>
+      <type
+            class="ru.runa.gpd.formeditor.ftl.bean.VariableParameter"
+            id="varcombo">               
+      </type>
+      <type
+           class="ru.runa.gpd.formeditor.ftl.bean.RichComboParameter"
+            id="richcombo">
+      </type>
+   </extension>
+   
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer class="ru.runa.gpd.htmleditor.HTMLPreferenceInitializer"/>
@@ -71,10 +92,8 @@
             category="ru.runa.gpd.htmleditor"
             class="ru.runa.gpd.htmleditor.views.ImageView"
             name="%plugin.views.image"
-            id="ru.runa.gpd.htmleditor.views.ImageView"/>
-            
+            id="ru.runa.gpd.htmleditor.views.ImageView"/>            
    </extension>
-
 
    <extension
          point="org.eclipse.ui.editors.templates">
@@ -87,8 +106,6 @@
             name="JavaScript"
             id="ru.runa.gpd.htmleditor.templateContextType.javascript"/>
    </extension>
-   
-   
       
    <extension
          point="ru.runa.gpd.formtype">
@@ -145,7 +162,7 @@
             name="%Method.ChooseActor">
          <param
                name="%Param.ActorVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="ru.runa.wfe.user.Executor"
                variableAccess="WRITE">
          </param>
@@ -169,7 +186,7 @@
             name="%Method.ChooseGroup">
          <param
                name="%Param.GroupVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="ru.runa.wfe.user.Group"
                variableAccess="WRITE">
          </param>
@@ -197,7 +214,7 @@
             name="%Method.InputDateTime">
          <param
                name="%Param.DateVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="java.util.Date"
                variableAccess="WRITE">
          </param>
@@ -255,7 +272,7 @@
             name="%Method.DisplayActor">
          <param
                name="%Param.ActorVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="ru.runa.wfe.user.Actor"
                variableAccess="READ">
          </param>
@@ -315,7 +332,7 @@
             name="%Method.DownloadFile">
          <param
                name="%Param.FileVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="ru.runa.wfe.var.FileVariable"
                variableAccess="READ">
          </param>
@@ -326,7 +343,7 @@
             name="%Method.DisplayExecutor">
          <param
                name="%Param.GroupVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="ru.runa.wfe.user.Group"
                variableAccess="READ">
          </param>
@@ -459,13 +476,13 @@
             name="%Method.MultipleSelect">
          <param
                name="%Param.ListVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="java.util.List"
                variableAccess="WRITE">
          </param>
          <param
                name="%Param.InputData"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="java.util.List"
                variableAccess="READ">
          </param>
@@ -476,7 +493,7 @@
             name="%Method.EditStringList">
          <param
                name="%Param.ListVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="java.util.List"
                variableAccess="WRITE">
          </param>
@@ -487,7 +504,7 @@
             name="%Method.ViewList">
          <param
                name="%Param.ListVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="java.util.List"
                variableAccess="READ">
          </param>
@@ -558,7 +575,7 @@
          <param
                multiple="true"
                name="%Param.ListVariable"
-               type="combo"
+               type="richcombo"
                variableAccess="WRITE"
                variableTypeFilter="java.util.List">
          </param>
@@ -584,7 +601,7 @@
          <param
                multiple="true"
                name="%Param.ListVariable"
-               type="combo"
+               type="richcombo"
                variableAccess="READ"
                variableTypeFilter="java.util.List">
          </param>
@@ -595,7 +612,7 @@
             name="%Method.DisplayLinkedLists">
          <param
                name="%Param.ListVariable"
-               type="combo"
+               type="richcombo"
                variableTypeFilter="java.util.List"
                variableAccess="READ">
          </param>
@@ -621,7 +638,7 @@
          <param
                multiple="true"
                name="%Param.MapVariable"
-               type="combo"
+               type="richcombo"
                variableAccess="READ"
                variableTypeFilter="java.util.Map">
          </param>
@@ -632,7 +649,7 @@
             name="%Method.DisplayLinkedMaps">
          <param
                name="%Param.MapVariable"
-               type="combo"
+               type="richcombo"
                variableTypeFilter="java.util.Map"
                variableAccess="READ">
          </param>
@@ -643,7 +660,7 @@
             name="%Method.DisplayFormattedText">
          <param
                name="%Param.String"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="java.lang.String"
                variableAccess="READ">
          </param>
@@ -654,7 +671,7 @@
             name="%Method.ActorsMultiSelect">
          <param
                name="%Param.ListVariable"
-               type="combo"
+               type="varcombo"
                variableTypeFilter="java.util.List"
                variableAccess="WRITE">
          </param>
@@ -752,4 +769,13 @@
             name="%Method.TreeviewSupport">
       </tag>
    </extension>
+   <extension
+         point="org.eclipse.ui.views">
+         <view
+	         category="ru.runa.gpd.view.category"
+	         class="ru.runa.gpd.formeditor.ftl.view.ToolPaletteView"
+	         id="ru.runa.gpd.formeditor.ftl.view.toolPaletteView"
+	         name="%label.view.toolPaletteExplorer"/>         
+    </extension>
+    
 </plugin>

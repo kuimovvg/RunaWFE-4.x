@@ -3,15 +3,46 @@ var FTL_PLUGIN_NAME = 'FreemarkerTags' ;
 var FTL_METHOD_CMD = 'FreemarkerMethod' ;
 var VISUAL_ELEMENT = 'img' ;
 
+
+var FreemarkerTags = new Object() ;
+
+FreemarkerTags.TagDialog = function() {
+  var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=TagDialog&componentId=" + FreemarkerTags.SelectedId.id, false ) ;
+  oXmlHttp.send( null ) ;
+  if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+    return oXmlHttp.responseText ;
+  } else {
+    return "Error." ;
+  }
+};
+
+var FCKTagDialogCommand = function(name)
+{	
+	this.Name = name;
+}
+
+FCKTagDialogCommand.prototype.Execute = function()
+{	
+	FreemarkerTags.TagDialog();
+}
+
+FCKTagDialogCommand.prototype.GetState = function()
+{
+	FCK.Focus();
+    return 0;
+}
+
 // Register the related command.
-FCKCommands.RegisterCommand( FTL_METHOD_CMD, new FCKDialogCommand( FTL_METHOD_CMD, FCKLang.MethodTitle, "/editor/FreemarkerTags.java?method=GetAllMethods", 500, 300 ) ) ;
+FCKCommands.RegisterCommand( FTL_METHOD_CMD, new FCKTagDialogCommand(FTL_METHOD_CMD)) ;
 
 // Create the "FTLTag" toolbar button.
 var methodItem = new FCKToolbarButton( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
 methodItem.IconPath = FCKPlugins.Items[FTL_PLUGIN_NAME].Path + 'toolbar.gif' ;
 FCKToolbarItems.RegisterItem( FTL_METHOD_CMD, methodItem ) ;
 
-var FreemarkerTags = new Object() ;
+
+FreemarkerTags.SelectedId = {id : -1};
 
 // Add method
 FreemarkerTags.AddMethod = function( tagName, params ) {
@@ -94,4 +125,30 @@ if (FreemarkerTags.IsAvailable() != "true") {
 	FCKCommands.GetCommand( FTL_METHOD_CMD ).Execute = function() { return false; };
 	FCKCommands.GetCommand( FTL_METHOD_CMD ).GetState = function() { return FCK_TRISTATE_DISABLED; } ;
 }
+
+FreemarkerTags.ComponentSelected = function( componentId ) {
+  FreemarkerTags.SelectedId.id = componentId;
+  var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentSelected&componentId=" + componentId, false ) ;
+  oXmlHttp.send( null ) ;
+  if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+    return oXmlHttp.responseText ;
+  } else {
+    return "Error." ;
+  }
+};
+
+FreemarkerTags.ComponentDeselected = function() {
+  FreemarkerTags.SelectedId.id = -1;
+  var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
+  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentDeselected", false ) ;
+  oXmlHttp.send( null ) ;
+  if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
+    return oXmlHttp.responseText ;
+  } else {
+    return "Error." ;
+  }
+};
+
+
 
