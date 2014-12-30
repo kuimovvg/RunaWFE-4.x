@@ -212,6 +212,7 @@ public abstract class FormNode extends SwimlanedNode {
                         errors.add(ValidationError.createLocalizedError(this, "formNode.validationVariableDoesNotExist", validationVarName));
                     }
                 }
+                formType.validate(formFile, this, errors);
             }
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("Error validating form node: '" + getName() + "'", e);

@@ -1,11 +1,13 @@
 package ru.runa.gpd.form;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorPart;
 
+import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.FormNode;
 
 public abstract class FormType {
@@ -31,6 +33,13 @@ public abstract class FormType {
      * Retrieve variables defined in form.
      */
     public abstract Map<String, FormVariableAccess> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception;
+
+    /**
+     * Additional form validation.
+     */
+    public void validate(IFile formFile, FormNode formNode, List<ValidationError> errors) throws Exception {
+
+    }
 
     public String getType() {
         return type;
