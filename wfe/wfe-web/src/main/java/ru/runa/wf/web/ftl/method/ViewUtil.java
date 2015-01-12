@@ -573,6 +573,10 @@ public class ViewUtil {
             file = FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest()).get(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName);
             if (value != null && file == null) {
                 file = new UploadedFile(value);
+                if (enabled) {
+                    // #766, load file content only for input file tag
+                    file.setContent(value.getData());
+                }
                 FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest())
                         .put(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName, file);
             }
@@ -610,7 +614,7 @@ public class ViewUtil {
         html += "<span class=\"statusText\">";
         if (file != null && webHelper != null) {
             String viewUrl = webHelper.getUrl("/upload?action=view&inputId=" + variableName + "&id=" + id);
-            html += "<a href='" + viewUrl + "'>" + file.getName() + " - " + file.getSize() + "</a>";
+            html += "<a href='" + viewUrl + "'>" + file.getName() + (file.getSize() != null ? " - " + file.getSize() : "") + "</a>";
         } else {
             html += loadingMessage;
         }

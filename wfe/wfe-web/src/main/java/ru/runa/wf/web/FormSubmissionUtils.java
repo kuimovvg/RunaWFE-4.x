@@ -367,6 +367,10 @@ public class FormSubmissionUtils {
                 }
             } else if (value instanceof UploadedFile) {
                 UploadedFile uploadedFile = (UploadedFile) value;
+                if (uploadedFile.getContent() == null) {
+                    // null for display tag
+                    return IGNORED_VALUE;
+                }
                 return new FileVariable(uploadedFile.getName(), uploadedFile.getContent(), uploadedFile.getMimeType());
             } else if (value instanceof String) {
                 String valueToFormat = (String) value;
