@@ -248,7 +248,8 @@ public class DocxUtils {
             if (variable != null) {
                 operation.setContainerVariable(variable);
             } else {
-                config.warn("Variable not found by '" + placeholder + "' (checked '" + operation.getContainerVariableName() + "')");
+                config.warn("not an iteration operation: Variable not found by '" + placeholder + "' (checked '"
+                        + operation.getContainerVariableName() + "')");
             }
             if (!operation.isValid()) {
                 // config.reportProblem("Invalid " + operation + " for '" +
@@ -336,7 +337,7 @@ public class DocxUtils {
         boolean whetherSingleRunContainsPlaceholderStart = false;
         boolean whetherSingleRunContainsPlaceholderEnd = false;
         for (XWPFRun run : paragraph.getRuns()) {
-            if (run == null || run.getText(0) == null) {
+            if (run == null || run.getText(0) == null) { // TODO run.toString() shows \t
                 continue;
             }
             if (!whetherSingleRunContainsPlaceholderStart && run.getText(0).contains(PLACEHOLDER_START)) {
@@ -354,6 +355,10 @@ public class DocxUtils {
         }
         List<ReplaceOperation> operations = Lists.newArrayList();
         for (XWPFRun run : Lists.newArrayList(paragraph.getRuns())) {
+            if (run == null) {
+                log.warn("Null run in paragraph " + paragraphText);
+                continue;
+            }
             String text = run.getText(0);
             if (text == null) {
                 log.warn("Null run value in paragraph " + paragraphText);
