@@ -48,9 +48,10 @@ public class ParallelGateway extends Node {
                 break;
             }
         }
-
-        token.end(executionContext, null);
-
+        if (getArrivingTransitions().size() > 1) {
+            // #850 don't end root token
+            token.end(executionContext, null);
+        }
         if (allArrivedTransitionArePassed) {
             log.debug("marking tokens as inactive " + tokensToPop);
             for (Token arrivedToken : tokensToPop) {
