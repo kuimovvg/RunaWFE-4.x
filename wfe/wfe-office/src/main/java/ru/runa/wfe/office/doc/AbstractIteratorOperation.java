@@ -29,7 +29,8 @@ public class AbstractIteratorOperation extends Operation {
     }
 
     public void setContainerVariableName(String containerName) {
-        this.containerVariableName = containerName;
+        // #876
+        this.containerVariableName = containerName.trim();
     }
 
     @Override
