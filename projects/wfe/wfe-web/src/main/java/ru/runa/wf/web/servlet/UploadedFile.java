@@ -26,7 +26,6 @@ public class UploadedFile {
     public UploadedFile(IFileVariable value) {
         this.name = value.getName();
         this.mimeType = value.getContentType();
-        setContent(value.getData());
     }
 
     public String getName() {
