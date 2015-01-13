@@ -1,6 +1,5 @@
 package ru.runa.wf.web.datafile.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -14,7 +13,6 @@ import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.bot.BotTask;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.script.AdminScriptConstants;
-import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
@@ -46,7 +44,7 @@ public class BotDataFileBuilder implements DataFileBuilder {
             }
         }
 
-        new PermissionsDataFileBuilder(new ArrayList<Identifiable>(botStations), "addPermissionsOnBotStations", user).build(zos, script);
+        new PermissionsDataFileBuilder(user, botStations, "addPermissionsOnBotStations").build(zos, script);
     }
 
     private void populateBotStation(Document script, BotStation botStation) {

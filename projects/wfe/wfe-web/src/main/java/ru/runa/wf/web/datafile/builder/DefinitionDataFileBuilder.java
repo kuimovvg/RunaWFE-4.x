@@ -1,6 +1,5 @@
 package ru.runa.wf.web.datafile.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -14,13 +13,13 @@ import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
 
 /**
- * Populate zip archive definition files. Add action 'deployProcessDefinition' to xml.
+ * Populate zip archive definition files. Add action 'deployProcessDefinition'
+ * to xml.
  * 
  * @author riven
  * 
@@ -51,7 +50,7 @@ public class DefinitionDataFileBuilder implements DataFileBuilder {
                 element.addAttribute("file", PATH_TO_PROCESS_DEF + fileName);
             }
 
-            new PermissionsDataFileBuilder(new ArrayList<Identifiable>(definitions), "addPermissionsOnDefinition", user).build(zos, script);
+            new PermissionsDataFileBuilder(user, definitions, "addPermissionsOnDefinition").build(zos, script);
         } catch (Exception e) {
             log.error("", e);
         }

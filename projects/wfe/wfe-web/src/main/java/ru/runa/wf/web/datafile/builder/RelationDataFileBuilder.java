@@ -1,6 +1,5 @@
 package ru.runa.wf.web.datafile.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipOutputStream;
@@ -13,7 +12,6 @@ import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.relation.Relation;
 import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.script.AdminScriptConstants;
-import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
@@ -58,7 +56,7 @@ public class RelationDataFileBuilder implements DataFileBuilder {
                 }
             }
         }
-        new PermissionsDataFileBuilder(new ArrayList<Identifiable>(relations), "addPermissionsOnRelation", user).build(zos, script);
+        new PermissionsDataFileBuilder(user, relations, "addPermissionsOnRelation").build(zos, script);
     }
 
     private void populateExecutor(Element element, Executor executor) {
