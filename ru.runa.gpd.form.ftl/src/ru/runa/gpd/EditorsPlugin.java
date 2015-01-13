@@ -145,12 +145,4 @@ public class EditorsPlugin extends AbstractUIPlugin {
         }
         return null;
     }
-
-    public static boolean useCKEditor3() {
-        return false;
-    }
-
-    public static boolean isMozilla() {
-        return "mozilla".equalsIgnoreCase(BROWSER_TYPE);
-    }
 }

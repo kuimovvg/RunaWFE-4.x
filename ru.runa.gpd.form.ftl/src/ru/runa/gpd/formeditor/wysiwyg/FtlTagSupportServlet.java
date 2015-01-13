@@ -206,8 +206,6 @@ public class FtlTagSupportServlet extends HttpServlet {
             } else if ("ComponentDeselected".equals(commandStr)) {
                 WYSIWYGHTMLEditor.getCurrent().componentDeselected();
             } else if ("TagDialog".equals(commandStr)) {
-                String parameter = request.getParameter("componentId");
-                System.out.println("componentId = " + parameter);
                 int componentId = Integer.valueOf(request.getParameter("componentId"));
                 WYSIWYGHTMLEditor.getCurrent().openTagDialog(componentId);
             } else {
