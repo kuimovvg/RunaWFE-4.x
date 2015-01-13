@@ -19,13 +19,15 @@ public class UploadedFile {
     private String size;
     private String mimeType;
     private byte[] content;
+    private IFileVariable fileVariable;
 
     public UploadedFile() {
     }
 
-    public UploadedFile(IFileVariable value) {
-        this.name = value.getName();
-        this.mimeType = value.getContentType();
+    public UploadedFile(IFileVariable fileVariable) {
+        this.name = fileVariable.getName();
+        this.mimeType = fileVariable.getContentType();
+        this.fileVariable = fileVariable;
     }
 
     public String getName() {
@@ -59,6 +61,10 @@ public class UploadedFile {
         } else {
             this.size = content.length / 1024 + " Kb";
         }
+    }
+
+    public IFileVariable getFileVariable() {
+        return fileVariable;
     }
 
     @Override
