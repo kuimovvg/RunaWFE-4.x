@@ -2,9 +2,9 @@ package ru.runa.wf.web.datafile.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.Element;
 
@@ -15,7 +15,12 @@ import ru.runa.wfe.relation.RelationPair;
 import ru.runa.wfe.script.AdminScriptConstants;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class RelationDataFileBuilder implements DataFileBuilder {
     private final User user;
@@ -28,41 +33,36 @@ public class RelationDataFileBuilder implements DataFileBuilder {
     public void build(ZipOutputStream zos, Document script) {
         List<Relation> relations = Delegates.getRelationService().getRelations(user, BatchPresentationFactory.RELATIONS.createDefault());
         for (Relation relation : relations) {
-            Element element = populateRelation(script, relation);
+            if (Strings.isNullOrEmpty(relation.getName())) {
+                continue;
+            }
+            Map<Executor, List<Executor>> map = Maps.newHashMap();
             List<RelationPair> relationPairs = Delegates.getRelationService().getRelationPairs(user, relation.getName(),
                     BatchPresentationFactory.RELATION_PAIRS.createDefault());
-            Element leftElement = element.addElement("left", XmlUtils.RUNA_NAMESPACE);
-            Element rightElement = element.addElement("right", XmlUtils.RUNA_NAMESPACE);
-            List<String> leftExecutors = new ArrayList<String>();
-            List<String> rightExecutors = new ArrayList<String>();
-
             for (RelationPair relationPair : relationPairs) {
-                if (!leftExecutors.contains(relationPair.getLeft().getName())) {
-                    populateExecutor(leftElement, script, relationPair.getLeft().getName());
-                    leftExecutors.add(relationPair.getLeft().getName());
+                List<Executor> list = map.get(relationPair.getLeft());
+                if (list == null) {
+                    list = Lists.newArrayList();
+                    map.put(relationPair.getLeft(), list);
                 }
-
-                if (!rightExecutors.contains(relationPair.getRight().getName())) {
-                    populateExecutor(rightElement, script, relationPair.getRight().getName());
-                    rightExecutors.add(relationPair.getRight().getName());
+                list.add(relationPair.getRight());
+            }
+            for (Map.Entry<Executor, List<Executor>> entry : map.entrySet()) {
+                Element relationElement = script.getRootElement().addElement("relation", XmlUtils.RUNA_NAMESPACE);
+                relationElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, relation.getName());
+                Element leftElement = relationElement.addElement("left", XmlUtils.RUNA_NAMESPACE);
+                Element rightElement = relationElement.addElement("right", XmlUtils.RUNA_NAMESPACE);
+                populateExecutor(leftElement, entry.getKey());
+                for (Executor rightExecutor : entry.getValue()) {
+                    populateExecutor(rightElement, rightExecutor);
                 }
             }
         }
-
         new PermissionsDataFileBuilder(new ArrayList<Identifiable>(relations), "addPermissionsOnRelation", user).build(zos, script);
-
     }
 
-    private Element populateRelation(Document script, Relation relation) {
-        Element element = script.getRootElement().addElement("relation", XmlUtils.RUNA_NAMESPACE);
-        if (StringUtils.isNotEmpty(relation.getName())) {
-            element.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, relation.getName());
-        }
-        return element;
-    }
-
-    private void populateExecutor(Element element, Document script, String executorName) {
-        Element exElement = element.addElement(AdminScriptConstants.EXECUTOR_ELEMENT_NAME, XmlUtils.RUNA_NAMESPACE);
-        exElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, executorName);
+    private void populateExecutor(Element element, Executor executor) {
+        Element executorElement = element.addElement(AdminScriptConstants.EXECUTOR_ELEMENT_NAME, XmlUtils.RUNA_NAMESPACE);
+        executorElement.addAttribute(AdminScriptConstants.NAME_ATTRIBUTE_NAME, executor.getName());
     }
 }
