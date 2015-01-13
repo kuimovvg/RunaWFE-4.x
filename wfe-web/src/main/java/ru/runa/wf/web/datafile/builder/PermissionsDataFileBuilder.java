@@ -20,14 +20,14 @@ import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
 public class PermissionsDataFileBuilder implements DataFileBuilder {
-    private final List<Identifiable> identifiablies;
+    private final List<? extends Identifiable> identifiablies;
     private final String xmlElement;
     private final User user;
 
-    public PermissionsDataFileBuilder(List<Identifiable> identifiablies, String xmlElement, User user) {
+    public PermissionsDataFileBuilder(User user, List<? extends Identifiable> identifiablies, String xmlElement) {
+        this.user = user;
         this.identifiablies = identifiablies;
         this.xmlElement = xmlElement;
-        this.user = user;
     }
 
     @Override
@@ -36,17 +36,19 @@ public class PermissionsDataFileBuilder implements DataFileBuilder {
             List<Executor> executors = Delegates.getAuthorizationService().getExecutorsWithPermission(user, identifiable,
                     BatchPresentationFactory.EXECUTORS.createDefault(), true);
             for (Executor executor : executors) {
-
+                List<Permission> permissions = Delegates.getAuthorizationService().getIssuedPermissions(user, executor, identifiable);
+                if (permissions.isEmpty()) {
+                    // this is the case for privileged executors
+                    continue;
+                }
                 Element element = script.getRootElement().addElement(xmlElement, XmlUtils.RUNA_NAMESPACE);
                 if (!"addPermissionsOnBotStations".equals(xmlElement) && !"addPermissionsOnSystem".equals(xmlElement)) {
                     element.addAttribute("name", getIdentifiableName(identifiable));
                 }
                 element.addAttribute("executor", executor.getName());
-
-                List<Permission> permissions = identifiable.getSecuredObjectType().getAllPermissions();
                 for (Permission permission : permissions) {
-                    Element permissionEl = element.addElement("permission", XmlUtils.RUNA_NAMESPACE);
-                    permissionEl.addAttribute("name", permission.getName());
+                    Element permissionElement = element.addElement("permission", XmlUtils.RUNA_NAMESPACE);
+                    permissionElement.addAttribute("name", permission.getName());
                 }
             }
         }
