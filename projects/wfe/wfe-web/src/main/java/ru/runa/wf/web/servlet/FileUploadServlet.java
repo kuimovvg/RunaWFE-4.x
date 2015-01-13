@@ -63,10 +63,14 @@ public class FileUploadServlet extends HttpServlet {
                 LogFactory.getLog(getClass()).error("No session file found by '" + inputId + "', all files = " + map);
                 return;
             }
+            if (file.getContent() == null && file.getFileVariable() == null) {
+                LogFactory.getLog(getClass()).error("No file content exists for '" + inputId + "'");
+                return;
+            }
             response.setContentType(file.getMimeType());
             String encodedFileName = HTMLUtils.encodeFileName(request, file.getName());
             response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
-            response.getOutputStream().write(file.getContent());
+            response.getOutputStream().write(file.getContent() != null ? file.getContent() : file.getFileVariable().getData());
             response.getOutputStream().flush();
             response.getOutputStream().close();
         }
