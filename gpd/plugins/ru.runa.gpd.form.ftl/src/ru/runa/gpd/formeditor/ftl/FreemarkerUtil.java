@@ -360,24 +360,9 @@ public class FreemarkerUtil {
         }
     }
 
-    protected static String getStyle(String tagName) {
-        int w = 250;
-        int h = 40;
-        if (tagName != null && MethodTag.hasTag(tagName)) {
-            MethodTag tag = MethodTag.getTagNotNull(tagName);
-            w = tag.width;
-            h = tag.height;
-        }
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("width: ").append(w).append("px; ");
-        buffer.append("height: ").append(h).append("px; ");
-        return buffer.toString();
-    }
-
     public static class MyTemplateExceptionHandler implements TemplateExceptionHandler {
         @Override
         public void handleTemplateException(TemplateException te, Environment env, Writer out) throws TemplateException {
-            PluginLogger.logError("template exception: ", te);
         }
     }
 

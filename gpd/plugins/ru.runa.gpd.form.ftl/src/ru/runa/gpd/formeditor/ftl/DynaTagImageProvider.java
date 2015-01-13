@@ -41,7 +41,6 @@ public class DynaTagImageProvider implements ITagImageProvider {
         graphics2d.setColor(Color.BLACK);
         graphics2d.drawString(label, 10, image.getHeight() / 2 + 5);
         graphics2d.draw(new Rectangle(1, 1, image.getWidth() - 2, image.getHeight() - 2));
-        System.out.println(graphics2d.getFontMetrics().stringWidth(label));
         graphics2d.dispose();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(image, "png", baos);
