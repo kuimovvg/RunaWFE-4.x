@@ -56,7 +56,7 @@ public class AssignmentHelper {
             }
             String swimlaneName = assignable.getSwimlaneName();
             Group tmpGroup = TemporaryGroup.create(executionContext.getProcess().getId(), swimlaneName);
-            executorLogic.saveTemporaryGroup(tmpGroup, executors);
+            tmpGroup = executorLogic.saveTemporaryGroup(tmpGroup, executors);
             assignable.assignExecutor(executionContext, tmpGroup, true);
             log.info("Cascaded assignment done in " + assignable);
             return true;
