@@ -11,7 +11,6 @@ import org.dom4j.Element;
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
 import ru.runa.wfe.script.AdminScriptConstants;
-import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
@@ -56,8 +55,8 @@ public class ExecutorDataFileBuilder implements DataFileBuilder {
             populateExecutorsToGroup(script, group, actors);
         }
 
-        new PermissionsDataFileBuilder(new ArrayList<Identifiable>(actorOnPermissions), "addPermissionsOnActor", user).build(zos, script);
-        new PermissionsDataFileBuilder(new ArrayList<Identifiable>(groupOnPermissions), "addPermissionsOnGroup", user).build(zos, script);
+        new PermissionsDataFileBuilder(user, actorOnPermissions, "addPermissionsOnActor").build(zos, script);
+        new PermissionsDataFileBuilder(user, groupOnPermissions, "addPermissionsOnGroup").build(zos, script);
     }
 
     private void populateActorElement(Document script, Actor actor) {
