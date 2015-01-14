@@ -12,6 +12,7 @@ import org.dom4j.Branch;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.extension.handler.ParamDef.Presentation;
@@ -214,7 +215,9 @@ public class ParamDefConfig {
     }
 
     public String toConfiguration(List<String> variableNames, Map<String, String> properties) {
-        return XmlUtil.toString(toConfigurationXml(variableNames, properties));
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        format.setSuppressDeclaration(true);
+        return XmlUtil.toString(toConfigurationXml(variableNames, properties), format);
     }
 
     public Document toConfigurationXml(List<String> variableNames, Map<String, String> properties) {
