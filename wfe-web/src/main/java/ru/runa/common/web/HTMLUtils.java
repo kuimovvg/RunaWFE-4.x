@@ -109,7 +109,7 @@ public class HTMLUtils {
         try {
             String userAgent = request.getHeader("User-Agent");
             if (userAgent != null) {
-                if (userAgent.indexOf("MSIE") != -1) {
+                if (userAgent.indexOf("MSIE") != -1 || userAgent.indexOf("Trident") != -1) {
                     // IE
                     fileName = URLEncoder.encode(fileName, Charsets.UTF_8.name());
                     fileName = fileName.replaceAll("\\+", " ");
