@@ -184,8 +184,13 @@ public class BotTaskUtils {
             newConfiguration = ParamBasedProvider.showConfigurationDialog(botTaskLink, config, logo);
         }
         if (newConfiguration != null) {
-            botTaskLink.setDelegationConfiguration(newConfiguration);
-            taskState.setDirty();
+            // #871
+            String newConfigurationHash = newConfiguration.replaceAll(" ", "").replaceAll("\n", "");
+            String oldConfigurationHash = botTaskLink.getDelegationConfiguration().replaceAll(" ", "").replaceAll("\n", "");
+            if (!newConfigurationHash.equals(oldConfigurationHash)) {
+                botTaskLink.setDelegationConfiguration(newConfiguration);
+                taskState.setDirty();
+            }
         }
     }
 }
