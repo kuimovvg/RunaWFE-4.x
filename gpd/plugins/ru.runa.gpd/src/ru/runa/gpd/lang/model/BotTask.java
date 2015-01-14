@@ -127,6 +127,17 @@ public class BotTask implements Delegable, Comparable<BotTask> {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        BotTask botTask = (BotTask) obj;
+        return name.equals(botTask.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
     public String toString() {
         return Localization.getString("property.botTaskName") + ": " + name;
     }
