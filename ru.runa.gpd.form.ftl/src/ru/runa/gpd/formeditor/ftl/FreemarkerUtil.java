@@ -244,6 +244,10 @@ public class FreemarkerUtil {
                 addPropertyDescriptor(properties, "code", variable.getName());
                 addPropertyDescriptor(properties, "email", variable.getName());
                 addPropertyDescriptor(properties, "phone", variable.getName());
+                // transient fields
+                addPropertyDescriptor(properties, "firstName", variable.getName());
+                addPropertyDescriptor(properties, "middleName", variable.getName());
+                addPropertyDescriptor(properties, "lastName", variable.getName());
             }
             if (VariableFormatRegistry.isAssignableFrom("ru.runa.wfe.user.Group", javaClassName)) {
                 addPropertyDescriptor(properties, "ldapGroupName", variable.getName());
