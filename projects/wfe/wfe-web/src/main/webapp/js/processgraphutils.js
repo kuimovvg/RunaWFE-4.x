@@ -66,17 +66,19 @@ function showImageDialog(src, w, h) {
     	modal: true,
     	position: [100, 100],  
     	width: w + 40,
-    	height: h + 70
+    	height: h + 70,
+    	close: function(event, ui) {
+	    	$("#" + graphDialogDivId).html("");
+		}
     });
    	$("#" + graphDialogDivId).html("<br/><br/>&nbsp;&nbsp;&nbsp;<img src='/wfe/images/loading.gif' align='absmiddle' />");
 	$.graphDialog.dialog("open");
 	$("#" + graphDialogDivId).load(unify(src));
 }
 
-function getJsessionidValue()
-{
+function getJsessionidValue() {
 	var jsession = document.location.href.match(/jsessionid=(.*?)\?id/i);
-	if(jsession) {
+	if (jsession) {
 		return jsession[1];
 	}
 	return null;
