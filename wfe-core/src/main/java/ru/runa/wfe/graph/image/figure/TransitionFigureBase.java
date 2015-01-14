@@ -23,7 +23,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.graph.DrawProperties;
@@ -36,7 +35,9 @@ import ru.runa.wfe.lang.Bendpoint;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 public class TransitionFigureBase {
     protected String timerInfo;
@@ -46,10 +47,11 @@ public class TransitionFigureBase {
 
     protected Transition transition;
     protected int actionsCount;
-    protected List<Integer> failedActions = new ArrayList<Integer>();
+    protected final List<Integer> failedActions = Lists.newArrayList();
     private boolean exclusive;
     protected RenderHits renderHits;
     protected boolean smoothLines;
+    private final List<Point> bendpoints = Lists.newArrayList();
 
     public void init(Transition transition, AbstractFigure figureFrom, AbstractFigure figureTo, boolean smoothLines) {
         Preconditions.checkNotNull(transition, "transition");
@@ -65,6 +67,14 @@ public class TransitionFigureBase {
             timerInfo = transition.getFrom().getTimerActions(false).get(0).getDueDate();
         }
         this.smoothLines = smoothLines;
+        for (Bendpoint bendpoint : transition.getBendpoints()) {
+            Point point = new Point(bendpoint.getX(), bendpoint.getY());
+            if (bendpoints.size() > 0 && Objects.equal(point, bendpoints.get(bendpoints.size() - 1))) {
+                // remove duplicated bendpoints
+                continue;
+            }
+            bendpoints.add(point);
+        }
     }
 
     public Transition getTransition() {
@@ -87,11 +97,6 @@ public class TransitionFigureBase {
         this.timerInfo = timerInfo;
     }
 
-    private Point getBendpoint(int pos) {
-        Bendpoint bendpoint = transition.getBendpoints().get(pos);
-        return new Point(bendpoint.getX(), bendpoint.getY());
-    }
-
     protected double[] getReferencePoint(Rectangle rectFrom, Rectangle rectTo) {
         return new double[] { rectTo.getCenterX(), rectTo.getCenterY() };
     }
@@ -102,8 +107,8 @@ public class TransitionFigureBase {
         ExtraGraphics extragraphics = new ExtraGraphics(graphics);
         double secondX;
         double secondY;
-        if (transition.getBendpoints().size() > 0) {
-            Point bendPoint = getBendpoint(0);
+        if (bendpoints.size() > 0) {
+            Point bendPoint = bendpoints.get(0);
             secondX = bendPoint.x;
             secondY = bendPoint.y;
         } else {
@@ -111,16 +116,15 @@ public class TransitionFigureBase {
             secondX = secondCoors[0];
             secondY = secondCoors[1];
         }
-        int[] xPoints = new int[transition.getBendpoints().size() + 2];
-        int[] yPoints = new int[xPoints.length];
+        List<Point> points = Lists.newArrayListWithExpectedSize(bendpoints.size() + 2);
         Point start = figureFrom.getTransitionPoint(transition, secondX, secondY);
-        xPoints[0] = start.x;
-        yPoints[0] = start.y;
+        points.add(start);
         Point bendPoint = null;
-        for (int i = 0; i < transition.getBendpoints().size(); i++) {
-            bendPoint = getBendpoint(i);
-            xPoints[i + 1] = bendPoint.x;
-            yPoints[i + 1] = bendPoint.y;
+        for (int i = 0; i < bendpoints.size(); i++) {
+            bendPoint = bendpoints.get(i);
+            if (!Objects.equal(bendPoint, points.get(points.size() - 1))) {
+                points.add(bendPoint);
+            }
         }
         if (bendPoint == null) {
             if (figureFrom.getType() == NodeType.FORK || figureFrom.getType() == NodeType.JOIN || transition.isTimerTransition()) {
@@ -130,9 +134,16 @@ public class TransitionFigureBase {
             }
         }
         Point end = figureTo.getTransitionPoint(null, bendPoint.x, bendPoint.y);
-        xPoints[xPoints.length - 1] = end.x;
-        yPoints[yPoints.length - 1] = end.y;
+        if (!Objects.equal(end, points.get(points.size() - 1))) {
+            points.add(end);
+        }
 
+        int[] xPoints = new int[points.size()];
+        int[] yPoints = new int[points.size()];
+        for (int i = 0; i < points.size(); i++) {
+            xPoints[i] = points.get(i).x;
+            yPoints[i] = points.get(i).y;
+        }
         if (figureFrom.useEgdingOnly) {
             // Cleaning old transitions
             graphics.setStroke(new BasicStroke(DrawProperties.TRANSITION_CLEAN_WIDTH));
