@@ -166,6 +166,9 @@ public class QuickFormVariableWizardPage extends WizardPage {
         if (methodTags != null) {
             for (MethodTag methodTag : methodTags.values()) {
                 if (methodTag.name.equals(tagType.getCombo().getText())) {
+                    if (methodTag.params.size() < 2) {
+                        paramValue = null;
+                    }
                     for (int i = 1; i < methodTag.params.size(); i++) {
                         Param param = methodTag.params.get(i);
 
@@ -230,6 +233,7 @@ public class QuickFormVariableWizardPage extends WizardPage {
                             });
                         }
                     }
+                    break;
                 }
             }
         }
