@@ -139,7 +139,6 @@ FreemarkerTags.ComponentSelected = function( componentId ) {
 };
 
 FreemarkerTags.ComponentDeselected = function() {
-  FreemarkerTags.SelectedId.id = -1;
   var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
   oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentDeselected", false ) ;
   oXmlHttp.send( null ) ;
