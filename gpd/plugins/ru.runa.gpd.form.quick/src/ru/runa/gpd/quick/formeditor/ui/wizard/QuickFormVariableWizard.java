@@ -1,6 +1,5 @@
 package ru.runa.gpd.quick.formeditor.ui.wizard;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -13,6 +12,7 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
 public class QuickFormVariableWizard extends Wizard implements INewWizard {
     private QuickFormVariableWizardPage page;
@@ -54,11 +54,12 @@ public class QuickFormVariableWizard extends Wizard implements INewWizard {
         Variable variable = page.getVariable();
         Preconditions.checkNotNull(variable, "Variable is null");
         variableDef.setName(variable.getName());
-        variableDef.setScriptingName(variableDef.getScriptingName());
-        variableDef.setDescription(variableDef.getDescription());
+        variableDef.setScriptingName(variable.getScriptingName());
+        variableDef.setDescription(variable.getDescription());
         variableDef.setFormatLabel(variable.getFormatLabel());
+        variableDef.setParams(null);
         if (page.getParamValue() != null && !page.getParamValue().isEmpty()) {
-            List<String> param = new ArrayList<String>();
+            List<String> param = Lists.newArrayListWithExpectedSize(1);
             param.add(page.getParamValue());
             variableDef.setParams(param.toArray(new String[0]));
         }
@@ -67,5 +68,4 @@ public class QuickFormVariableWizard extends Wizard implements INewWizard {
         }
         return true;
     }
-
 }

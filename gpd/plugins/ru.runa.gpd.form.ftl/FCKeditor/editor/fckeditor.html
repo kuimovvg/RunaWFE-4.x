@@ -124,7 +124,6 @@ FCK.Events.AttachEvent( 'OnSelectionChange', function() { FCKStyles.CheckSelecti
 function CheckIsComponentSelected() {
 	try{
 		var selectedElement = FCKSelection.GetSelectedElement();
-		//if (!selectedElement || selectedElement.className != 'ftl_component')
 		if (!selectedElement){
 			FreemarkerTags.ComponentDeselected();
 		}		
