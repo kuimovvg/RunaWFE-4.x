@@ -123,7 +123,7 @@ public class FreemarkerUtil {
 
                 boolean surroundWithBrackets = true;
                 Param param = parameter.getParam();
-                if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(rawValue))) {
+                if (param.isVarCombo() || (param.isRichCombo() && variables.containsKey(rawValue)) && !param.surroundBrackets) {
                     surroundWithBrackets = false;
                 }
                 if (surroundWithBrackets) {

@@ -182,6 +182,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="surroundBrackets" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  This attribute is only relevant for richcombo tag
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
