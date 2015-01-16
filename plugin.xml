@@ -577,6 +577,7 @@
                name="%Param.ListVariable"
                type="richcombo"
                variableAccess="WRITE"
+               surroundBrackets="true"
                variableTypeFilter="java.util.List">
          </param>
       </tag>
@@ -603,6 +604,7 @@
                name="%Param.ListVariable"
                type="richcombo"
                variableAccess="READ"
+               surroundBrackets="true"
                variableTypeFilter="java.util.List">
          </param>
       </tag>
