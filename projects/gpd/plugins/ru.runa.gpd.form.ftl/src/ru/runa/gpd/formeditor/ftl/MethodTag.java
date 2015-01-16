@@ -79,14 +79,17 @@ public class MethodTag {
         public final boolean required;
         public final List<OptionalValue> optionalValues = new ArrayList<OptionalValue>();
         public final boolean multiple;
+        public final boolean surroundBrackets;
 
-        public Param(String typeName, VariableAccess variableAccess, String label, String help, boolean required, boolean multiple) {
+        public Param(String typeName, VariableAccess variableAccess, String label, String help, boolean required, boolean multiple,
+                boolean surroundBrackets) {
             this.typeName = typeName;
             this.variableAccess = variableAccess;
             this.label = label;
             this.help = help;
             this.required = required;
             this.multiple = multiple;
+            this.surroundBrackets = surroundBrackets;
         }
 
         public boolean isCombo() {
@@ -220,8 +223,9 @@ public class MethodTag {
                                 help = helpAttr.trim();
                             }
                             boolean multiple = getBooleanAttr(paramElement, "multiple", false);
+                            boolean surroundBrackets = getBooleanAttr(paramElement, "surroundBrackets", false);
 
-                            Param param = new Param(paramType, variableAccess, paramName, help, required, multiple);
+                            Param param = new Param(paramType, variableAccess, paramName, help, required, multiple, surroundBrackets);
 
                             String paramValues = paramElement.getAttribute("variableTypeFilter");
                             if (paramValues != null && paramValues.length() > 0) {
