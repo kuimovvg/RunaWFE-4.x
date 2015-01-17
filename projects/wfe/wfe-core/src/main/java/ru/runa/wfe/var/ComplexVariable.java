@@ -58,6 +58,11 @@ public class ComplexVariable extends HashMap<String, Object> {
         return super.get(key);
     }
 
+    public Object get(Object key, Object defaultValue) {
+        Object value = get(key);
+        return value != null ? value : defaultValue;
+    }
+
     public Map<String, Object> expand(String prefix) {
         Map<String, Object> result = Maps.newHashMap();
         for (Map.Entry<String, Object> entry : entrySet()) {
