@@ -63,4 +63,7 @@ public class FormatCommons {
         return createComponent(containerVariable, index).format(value);
     }
 
+    public static VariableUserType getComponentUserType(VariableDefinition variableDefinition, int index) {
+        return variableDefinition.getUserTypes().get(variableDefinition.getFormatComponentClassNames()[index]);
+    }
 }
