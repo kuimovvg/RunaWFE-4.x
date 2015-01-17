@@ -240,6 +240,7 @@
 			<value>true</value>
 			<value>false</value>
 		</property>
+		<property title="botstation.invocation.handler.timeout.milliseconds" pattern="\d*"/>
 	</property_file>
 	
 </settings>
