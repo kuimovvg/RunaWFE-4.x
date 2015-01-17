@@ -18,7 +18,13 @@
 package ru.runa.wfe.service.handler;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import ru.runa.wf.logic.bot.BotStationResources;
 import ru.runa.wfe.bot.BotStation;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandlerBase;
@@ -26,6 +32,7 @@ import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 /**
  * Starts bot invocation at specified server.
@@ -33,6 +40,8 @@ import com.google.common.base.Strings;
  * @since 2.0
  */
 public class BotInvokerActionHandler extends ActionHandlerBase {
+    private static final ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+    private static final Map<BotStation, Future<?>> invocations = Maps.newHashMap();
 
     @Override
     public void execute(ExecutionContext executionContext) {
@@ -59,11 +68,39 @@ public class BotInvokerActionHandler extends ActionHandlerBase {
                 log.warn("No botstation can be found for invocation " + configuration);
                 return;
             }
-            log.info("Invoking " + botStation);
-            BotInvokerServiceDelegate.getService(botStation).invokeBots(botStation);
+            synchronized (botStation) {
+                Future<?> invocation = invocations.get(botStation);
+                if (invocation != null && !invocation.isDone()) {
+                    log.debug("invocation != null && !invocation.isDone() for " + botStation);
+                    return;
+                }
+                long timeout = BotStationResources.getBotInvokerHandlerTimeout();
+                log.info("Scheduling invocation of " + botStation + " for " + timeout + "ms");
+                invocation = scheduledExecutorService.schedule(new InvokerRunnable(botStation), timeout, TimeUnit.MILLISECONDS);
+                invocations.put(botStation, invocation);
+            }
         } catch (Exception e) {
             log.error("Unable to invoke bot station due to " + e);
         }
+    }
+
+    private class InvokerRunnable implements Runnable {
+        private final BotStation botStation;
+
+        public InvokerRunnable(BotStation botStation) {
+            this.botStation = botStation;
+        }
+
+        @Override
+        public void run() {
+            try {
+                log.info("Invoking " + botStation);
+                BotInvokerServiceDelegate.getService(botStation).invokeBots(botStation);
+            } catch (Exception e) {
+                log.warn("Unable to invoke " + botStation, e);
+            }
+        }
+
     }
 
 }
