@@ -22,6 +22,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import ru.runa.wfe.validation.FieldValidator;
+import ru.runa.wfe.var.ComplexVariable;
+import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.format.VariableFormatContainer;
 
 public class ContainerElementsRequiredValidator extends FieldValidator {
@@ -33,38 +35,40 @@ public class ContainerElementsRequiredValidator extends FieldValidator {
             // use a required validator for these
             return;
         }
-        if (container instanceof Collection) {
+        checkValue(getFieldName(), container, true);
+    }
+
+    private void checkValue(String variableName, Object value, boolean requireContainerType) {
+        if (value instanceof Collection) {
             int index = 0;
-            for (Object object : (Collection<?>) container) {
-                if (isNullValue(object)) {
-                    getValidatorContext().addFieldError(
-                            getFieldName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
-                                    + VariableFormatContainer.COMPONENT_QUALIFIER_END, getMessage());
-                }
+            for (Object object : (Collection<?>) value) {
+                String itemVariableName = variableName + VariableFormatContainer.COMPONENT_QUALIFIER_START + index
+                        + VariableFormatContainer.COMPONENT_QUALIFIER_END;
+                checkValue(itemVariableName, object, false);
                 index++;
             }
-        } else if (container.getClass().isArray()) {
-            for (int i = 0; i < Array.getLength(container); i++) {
-                if (isNullValue(Array.get(container, i))) {
-                    getValidatorContext().addFieldError(
-                            getFieldName() + VariableFormatContainer.COMPONENT_QUALIFIER_START + i + VariableFormatContainer.COMPONENT_QUALIFIER_END,
-                            getMessage());
-                }
+        } else if (value.getClass().isArray()) {
+            for (int i = 0; i < Array.getLength(value); i++) {
+                String itemVariableName = variableName + VariableFormatContainer.COMPONENT_QUALIFIER_START + i
+                        + VariableFormatContainer.COMPONENT_QUALIFIER_END;
+                checkValue(itemVariableName, Array.get(value, i), false);
             }
-        } else if (container instanceof Map<?, ?>) {
-            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) container).entrySet()) {
-                if (isNullValue(entry.getKey()) || isNullValue(entry.getValue())) {
-                    addError();
-                    return;
-                }
+        } else if (value instanceof ComplexVariable) {
+            for (Map.Entry<String, Object> entry : ((ComplexVariable) value).entrySet()) {
+                checkValue(variableName + VariableUserType.DELIM + entry.getKey(), entry.getValue(), false);
             }
+        } else if (value instanceof Map<?, ?>) {
+            for (Map.Entry<Object, Object> entry : ((Map<Object, Object>) value).entrySet()) {
+                checkValue(variableName, entry.getKey(), false);
+                checkValue(variableName, entry.getValue(), false);
+            }
+        } else if (requireContainerType) {
+            addError("Unexpected variable type: " + value.getClass());
         } else {
-            addError("Unexpected variable type: " + container.getClass());
-            return;
+            if (value == null || (value instanceof String && ((String) value).isEmpty())) {
+                getValidatorContext().addFieldError(variableName, getMessage());
+            }
         }
     }
 
-    private boolean isNullValue(Object object) {
-        return object == null || (object instanceof String && ((String) object).isEmpty());
-    }
 }
