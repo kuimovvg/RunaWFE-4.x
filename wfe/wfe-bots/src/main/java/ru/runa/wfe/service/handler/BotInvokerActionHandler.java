@@ -75,7 +75,7 @@ public class BotInvokerActionHandler extends ActionHandlerBase {
                     return;
                 }
                 long timeout = BotStationResources.getBotInvokerHandlerTimeout();
-                log.info("Scheduling invocation of " + botStation + " for " + timeout + "ms");
+                log.debug("Scheduling invocation of " + botStation + " for " + timeout + "ms");
                 invocation = scheduledExecutorService.schedule(new InvokerRunnable(botStation), timeout, TimeUnit.MILLISECONDS);
                 invocations.put(botStation, invocation);
             }
