@@ -226,17 +226,17 @@ public class DocxUtils {
             int iteratorNameIndex = placeholder.lastIndexOf(ITERATOR_NAME_DELIMITER);
             String iteratorWithContainerVariable = placeholder;
             if (iteratorNameIndex != -1) {
-                iteratorWithContainerVariable = iteratorWithContainerVariable.substring(0, iteratorNameIndex);
+                iteratorWithContainerVariable = iteratorWithContainerVariable.substring(0, iteratorNameIndex).trim();
             }
             int colonIndex = iteratorWithContainerVariable.indexOf(":");
             if (colonIndex > 0) {
                 operation.setIterateBy(IterateBy.identifyByString(config, iteratorWithContainerVariable));
-                operation.setContainerVariableName(iteratorWithContainerVariable.substring(colonIndex + 1));
+                operation.setContainerVariableName(iteratorWithContainerVariable.substring(colonIndex + 1).trim());
             } else {
                 operation.setContainerVariableName(iteratorWithContainerVariable);
             }
             if (iteratorNameIndex != -1) {
-                String lexem = placeholder.substring(iteratorNameIndex + ITERATOR_NAME_DELIMITER.length());
+                String lexem = placeholder.substring(iteratorNameIndex + ITERATOR_NAME_DELIMITER.length()).trim();
                 if (operation instanceof ColumnExpansionOperation) {
                     ((ColumnExpansionOperation) operation).setContainerSelector(lexem);
                 }
@@ -337,7 +337,8 @@ public class DocxUtils {
         boolean whetherSingleRunContainsPlaceholderStart = false;
         boolean whetherSingleRunContainsPlaceholderEnd = false;
         for (XWPFRun run : paragraph.getRuns()) {
-            if (run == null || run.getText(0) == null) { // TODO run.toString() shows \t
+            if (run == null || run.getText(0) == null) { // TODO run.toString()
+                                                         // shows \t
                 continue;
             }
             if (!whetherSingleRunContainsPlaceholderStart && run.getText(0).contains(PLACEHOLDER_START)) {
