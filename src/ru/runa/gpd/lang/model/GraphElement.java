@@ -95,9 +95,9 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
     }
 
     public void setDirty() {
-        ProcessDefinition pd = getProcessDefinition();
-        if (pd != null) {
-            pd.setDirty(true);
+        ProcessDefinition processDefinition = getProcessDefinition();
+        if (processDefinition != null) {
+            processDefinition.setDirty(true);
         }
     }
 

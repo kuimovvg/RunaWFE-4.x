@@ -451,6 +451,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
             // update attribute
             attribute.setName(newAttributeName);
             attribute.setScriptingName(newAttributeScriptingName);
+            getDefinition().setDirty();
             updateAttributeViewer();
             attributeTableViewer.setSelection(new StructuredSelection(attribute));
             if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
