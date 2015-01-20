@@ -213,10 +213,8 @@ public class FormPresentationUtils {
                 // handle input (type='text, password')
                 if (Strings.isNullOrEmpty(typeName) || "text".equalsIgnoreCase(typeName) || "password".equalsIgnoreCase(typeName)
                         || "hidden".equalsIgnoreCase(typeName)) {
-                    if (Strings.isNullOrEmpty(node.getAttribute(VALUE_ATTR))) {
-                        log.debug("Setting " + inputName + "[value]=" + stringValue);
-                        node.setAttribute(VALUE_ATTR, stringValue);
-                    }
+                    log.debug("Setting " + inputName + "[value]=" + stringValue);
+                    node.setAttribute(VALUE_ATTR, stringValue);
                 } else if ("checkbox".equalsIgnoreCase(typeName)) {
                     String checkBoxValue = node.getAttribute(VALUE_ATTR);
                     if (Objects.equal(checkBoxValue, stringValue) || "true".equals(stringValue)) {
@@ -316,13 +314,9 @@ public class FormPresentationUtils {
     /**
      * Rules:
      * 
-     * 1) don't handling multiple input (we cannot do this properly; they are
-     * handled in according tags.
+     * 1) don't handling multiple input (we cannot do this properly; they are handled in according tags.
      * 
-     * 2) Don't fill long strings due to
-     * java.lang.ArrayIndexOutOfBoundsException at
-     * java.lang.String.getChars(String.java:854) at
-     * org.apache.xml.serializer.WriterToUTF8Buffered
+     * 2) Don't fill long strings due to java.lang.ArrayIndexOutOfBoundsException at java.lang.String.getChars(String.java:854) at org.apache.xml.serializer.WriterToUTF8Buffered
      * .write(WriterToUTF8Buffered.java:347)
      * 
      * 3) User input has precedence on variables
