@@ -62,10 +62,13 @@ public class FtlComponent extends EventSupport implements IRequiredPropertiesSou
                     continue;
                 }
             }
-            ComponentParameter parameter = parameters.get(i);
-            String valueStr = parameterValues.get(i).toString();
-            valueStr = StringUtils.trimToNull(valueStr);
-            parameter.initValue(valueStr);
+            if (i < parameters.size()) {
+                // omit excess parameters
+                ComponentParameter parameter = parameters.get(i);
+                String valueStr = parameterValues.get(i).toString();
+                valueStr = StringUtils.trimToNull(valueStr);
+                parameter.initValue(valueStr);
+            }
         }
     }
 
