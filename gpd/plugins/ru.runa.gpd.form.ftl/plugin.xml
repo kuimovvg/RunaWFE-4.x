@@ -3,7 +3,7 @@
 <plugin>
    <extension-point id="tags" name="Freemarker methods" schema="metadata/tags.exsd"/>
    <extension-point id="freemarker_tag_validator" name="Freemarker tag validator" schema="metadata/freemarker_tag_validator.exsd"/>
-   <extension-point id="parameter_type" name="parameter_type" schema="schema/parameter_type.exsd"/>
+   <extension-point id="parameter_type" name="parameter_type" schema="metadata/parameter_type.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">
