@@ -101,14 +101,26 @@ public class ProcessExecutionErrors {
         processErrors.remove(processId);
     }
 
-    private static synchronized void sendEmailNotification(Throwable exception, BotTaskIdentifier botTaskIdentifier, ProcessError processError) {
-        try {
-            if (SystemProperties.isErrorEmailNotificationEnabled()) {
-                boolean matches = false;
+    private static byte[] emailNotificationConfigBytes;
+    static {
+        if (SystemProperties.isErrorEmailNotificationEnabled()) {
+            try {
                 InputStream in = ClassLoaderUtil.getAsStreamNotNull(SystemProperties.getErrorEmailNotificationConfiguration(),
                         ProcessExecutionErrors.class);
-                byte[] configBytes = ByteStreams.toByteArray(in);
-                EmailConfig config = EmailConfigParser.parse(configBytes);
+                emailNotificationConfigBytes = ByteStreams.toByteArray(in);
+                EmailConfigParser.parse(emailNotificationConfigBytes);
+            } catch (Exception e) {
+                LogFactory.getLog(ProcessExecutionErrors.class).error("Email notification configuration error", e);
+                emailNotificationConfigBytes = null;
+            }
+        }
+    }
+
+    private static synchronized void sendEmailNotification(Throwable exception, BotTaskIdentifier botTaskIdentifier, ProcessError processError) {
+        try {
+            if (emailNotificationConfigBytes != null) {
+                boolean matches = false;
+                EmailConfig config = EmailConfigParser.parse(emailNotificationConfigBytes);
                 List<String> includes = Utils.splitString(config.getCommonProperties().get("exception.includes"), ";");
                 for (String className : includes) {
                     if (ClassLoaderUtil.loadClass(className).isInstance(exception)) {

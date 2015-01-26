@@ -2,9 +2,7 @@ package ru.runa.wfe.task;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Required;
 
 import ru.runa.wfe.audit.TaskCreateLog;
 import ru.runa.wfe.commons.ApplicationContextFactory;
@@ -22,8 +20,6 @@ import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.task.logic.ITaskNotifier;
 
 public class TaskFactory {
-    private static final Log log = LogFactory.getLog(TaskFactory.class);
-
     private ITaskNotifier taskNotifier;
 
     public void setTaskNotifier(ITaskNotifier taskNotifier) {
@@ -88,7 +84,7 @@ public class TaskFactory {
                 taskNotifier.onNewTask(new ExecutionContext(executionContext.getProcessDefinition(), task));
             }
         } catch (Exception e) {
-            log.warn("Task notifier error", e);
+            LogFactory.getLog(ITaskNotifier.class).warn("Task notifier error", e);
         }
     }
 
