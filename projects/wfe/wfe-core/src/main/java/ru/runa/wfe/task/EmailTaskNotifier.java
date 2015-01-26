@@ -96,7 +96,11 @@ public class EmailTaskNotifier implements ITaskNotifier {
         map.put("emails", emails);
         ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext);
         IVariableProvider variableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
-        EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, variableProvider);
+        try {
+            EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, variableProvider);
+        } catch (Exception e) {
+            log.warn("Task notifier error: " + e);
+        }
         // TODO add process logs about notification
     }
 
