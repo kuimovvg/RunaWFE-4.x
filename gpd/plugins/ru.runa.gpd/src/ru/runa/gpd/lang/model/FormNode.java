@@ -162,9 +162,19 @@ public abstract class FormNode extends SwimlanedNode {
                     }
                 }
                 for (Map.Entry<String, Map<String, ValidatorConfig>> entry : validation.getFieldConfigs().entrySet()) {
+                    Variable variable = VariableUtils.getVariableByName(getProcessDefinition(), entry.getKey());
+                    if (variable == null) {
+                        // checked later
+                        continue;
+                    }
                     for (ValidatorConfig config : entry.getValue().values()) {
                         ValidatorDefinition definition = ValidatorDefinitionRegistry.getDefinition(config.getType());
                         if (definition != null) {
+                            if (!definition.isApplicable(variable.getJavaClassName())) {
+                                errors.add(ValidationError.createLocalizedError(this, "formNode.validatorVariableIsNotApplicable", config.getType(),
+                                        variable.getName(), variable.getFormatLabel()));
+                                continue;
+                            }
                             for (Param param : definition.getParams().values()) {
                                 String value = config.getParams().get(param.getName());
                                 if (param.isRequired() && Strings.isNullOrEmpty(value)) {
