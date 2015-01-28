@@ -49,8 +49,7 @@ public class DefinitionDataFileBuilder implements DataFileBuilder {
                 Element element = script.getRootElement().addElement("deployProcessDefinition", XmlUtils.RUNA_NAMESPACE);
                 element.addAttribute("file", PATH_TO_PROCESS_DEF + fileName);
             }
-
-            new PermissionsDataFileBuilder(user, definitions, "addPermissionsOnDefinition").build(zos, script);
+            new PermissionsDataFileBuilder(user, definitions, "addPermissionsOnDefinition", true).build(zos, script);
         } catch (Exception e) {
             log.error("", e);
         }
