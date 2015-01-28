@@ -56,6 +56,9 @@ public class EmbeddedSubprocessActionsDelegate extends BaseModelDropDownActionDe
      */
     @Override
     protected void fillMenu(Menu menu) {
+        if (subprocess.getClass() != Subprocess.class) {
+            return;
+        }
         List<String> allNames = Lists.newArrayList();
         ProcessDefinition mainProcessDefinition = definition.getMainProcessDefinition();
         for (SubprocessDefinition subprocessDefinition : mainProcessDefinition.getEmbeddedSubprocesses().values()) {
