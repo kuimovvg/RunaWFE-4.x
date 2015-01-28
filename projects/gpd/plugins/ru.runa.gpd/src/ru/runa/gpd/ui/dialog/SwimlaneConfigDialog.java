@@ -28,7 +28,7 @@ import ru.runa.gpd.swimlane.SwimlaneInitializerParser;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SwimlaneConfigDialog extends Dialog implements ISwimlaneElementListener {
-    private List<SwimlaneElement> swimlaneElements = SwimlaneElementRegistry.getSwimlaneElements();
+    private final List<SwimlaneElement> swimlaneElements = SwimlaneElementRegistry.getSwimlaneElements();
     private CTabFolder typeTabFolder;
     private CTabFolder orgFunctionsTabFolder;
     private final Swimlane swimlane;
@@ -36,13 +36,13 @@ public class SwimlaneConfigDialog extends Dialog implements ISwimlaneElementList
     private String path;
     private boolean publicVisibility;
 
-    public SwimlaneConfigDialog(ProcessDefinition definition, Swimlane swimlane, String path) {
+    public SwimlaneConfigDialog(ProcessDefinition definition, Swimlane swimlane) {
         super(Display.getCurrent().getActiveShell());
         setShellStyle(getShellStyle() | SWT.RESIZE);
         this.swimlane = swimlane;
         this.configuration = swimlane.getDelegationConfiguration();
         this.publicVisibility = swimlane.isPublicVisibility();
-        this.path = path;
+        this.path = swimlane.getEditorPath();
         for (SwimlaneElement swimlaneElement : swimlaneElements) {
             swimlaneElement.setProcessDefinition(definition);
         }
