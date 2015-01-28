@@ -17,12 +17,14 @@
  */
 package ru.runa.wfe.service.impl;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
+import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.ejb.Timeout;
+import javax.ejb.Timer;
+import javax.ejb.TimerService;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
 
@@ -31,6 +33,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wf.logic.bot.BotStationResources;
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.bot.BotStationDoesNotExistException;
 import ru.runa.wfe.bot.invoker.BotInvokerFactory;
 import ru.runa.wfe.service.BotInvokerService;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -41,14 +44,14 @@ import ru.runa.wfe.service.delegate.Delegates;
 @SOAPBinding
 public class BotInvokerServiceBean implements BotInvokerService {
     private static final Log log = LogFactory.getLog(BotInvokerServiceBean.class);
-    private transient static Timer timer;
+    @Resource
+    private TimerService timerService;
 
     @Override
     public synchronized void startPeriodicBotsInvocation(BotStation botStation) {
-        if (timer == null) {
+        if (!isRunning()) {
             log.info("Starting periodic bot execution...");
-            timer = new Timer();
-            timer.schedule(new InvokerTimerTask(botStation), 0, BotStationResources.getBotInvocationPeriod());
+            timerService.createTimer(0, BotStationResources.getBotInvocationPeriod(), botStation.getId());
         } else {
             log.info("BotRunner is running. skipping start...");
         }
@@ -56,15 +59,16 @@ public class BotInvokerServiceBean implements BotInvokerService {
 
     @Override
     public boolean isRunning() {
-        return timer != null;
+        return timerService.getTimers().size() > 0;
     }
 
     @Override
     public synchronized void cancelPeriodicBotsInvocation() {
-        if (timer != null) {
+        if (isRunning()) {
             log.info("Canceling periodic bot execution...");
-            timer.cancel();
-            timer = null;
+            for (Timer timer : timerService.getTimers()) {
+                timer.cancel();
+            }
             BotInvokerFactory.unsetBotInvoker();
         } else {
             log.info("BotRunner is not running. skipping cancel...");
@@ -76,27 +80,26 @@ public class BotInvokerServiceBean implements BotInvokerService {
         invokeBotsImpl(botStation);
     }
 
+    @WebMethod(exclude = true)
+    @Timeout
+    public void timeOutHandler(Timer timer) {
+        try {
+            // refresh version and check that bot station exists
+            BotStation botStation = Delegates.getBotService().getBotStation((Long) timer.getInfo());
+            invokeBotsImpl(botStation);
+        } catch (BotStationDoesNotExistException e) {
+            log.warn("Cancelling periodic invocation due to: " + e);
+            timer.cancel();
+        }
+    }
+
     private static void invokeBotsImpl(BotStation botStation) {
-        // refresh version
-        botStation = Delegates.getBotService().getBotStation(botStation.getId());
-        BotInvokerFactory.getBotInvoker().invokeBots(botStation);
-    }
-
-    private static class InvokerTimerTask extends TimerTask {
-        private final BotStation botStation;
-
-        public InvokerTimerTask(BotStation botStation) {
-            this.botStation = botStation;
-        }
-
-        @Override
-        public void run() {
-            try {
-                log.debug("Invoking bots...");
-                invokeBotsImpl(botStation);
-            } catch (Throwable th) {
-                log.error("Unable to invoke bots", th);
-            }
+        try {
+            log.debug("Invoking bots...");
+            BotInvokerFactory.getBotInvoker().invokeBots(botStation);
+        } catch (Throwable th) {
+            log.error("Unable to invoke bots", th);
         }
     }
+
 }
