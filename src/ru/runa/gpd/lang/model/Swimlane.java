@@ -16,10 +16,21 @@ import ru.runa.wfe.var.format.ExecutorFormat;
 
 public class Swimlane extends Variable implements Delegable {
     private static final String DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
+    private String editorPath;
 
     public Swimlane() {
         setFormat(ExecutorFormat.class.getName());
         setDelegationClassName(DELEGATION_CLASS_NAME);
+    }
+
+    public String getEditorPath() {
+        return editorPath;
+    }
+
+    public void setEditorPath(String editorPath) {
+        String old = this.getEditorPath();
+        this.editorPath = editorPath;
+        firePropertyChange(PROPERTY_EDITOR_PATH, old, this.getEditorPath());
     }
 
     @Override
