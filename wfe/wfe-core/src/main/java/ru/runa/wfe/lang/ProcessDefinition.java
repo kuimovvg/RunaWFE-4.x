@@ -193,6 +193,10 @@ public class ProcessDefinition extends GraphElement implements IFileDataProvider
         return interaction;
     }
 
+    public Map<String, byte[]> getProcessFiles() {
+        return processFiles;
+    }
+
     @Override
     public byte[] getFileData(String fileName) {
         Preconditions.checkNotNull(fileName, "fileName");
