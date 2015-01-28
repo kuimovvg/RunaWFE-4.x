@@ -295,8 +295,7 @@ public class GlobalValidatorsWizardPage extends WizardPage {
         }
 
         private void toCode() {
-            if (tabFolder.getSelectionIndex() == 0 && comboBoxVar1.getText().length() > 0 && comboBoxOp.getText().length() > 0
-                    && comboBoxVar2.getText().length() > 0) {
+            if (comboBoxVar1.getText().length() > 0 && comboBoxOp.getText().length() > 0 && comboBoxVar2.getText().length() > 0) {
                 Variable variable1 = (Variable) comboBoxVar1.getData();
                 String operationName = comboBoxOp.getItem(comboBoxOp.getSelectionIndex());
                 Variable variable2 = VariableUtils.getVariableByScriptingName(variables, comboBoxVar2.getText());
@@ -339,7 +338,9 @@ public class GlobalValidatorsWizardPage extends WizardPage {
 
         @Override
         protected void updateConfigParams(ValidatorDefinition definition, ValidatorConfig config) {
-            toCode();
+            if (tabFolder.getSelectionIndex() == 0) {
+                toCode();
+            }
             String textData = codeText.getText().trim();
             if (textData.length() != 0) {
                 config.getParams().put(ValidatorDefinition.EXPRESSION_PARAM_NAME, textData);
