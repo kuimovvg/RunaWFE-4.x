@@ -1,6 +1,7 @@
 package ru.runa.wfe.var.matcher;
 
-import ru.runa.wfe.commons.TypeConversionUtil;
+import java.util.List;
+
 import ru.runa.wfe.var.VariableTypeMatcher;
 import ru.runa.wfe.var.file.IFileVariable;
 
@@ -15,11 +16,16 @@ public class FileVariableMatcher implements VariableTypeMatcher {
     }
 
     public static boolean isFileOrListOfFiles(Object value) {
-        if (TypeConversionUtil.isList(value)) {
+        if (value instanceof List) {
+            for (Object object : (List<Object>) value) {
+                if (object != null) {
+                    // decide by first not-null value
+                    return object instanceof IFileVariable;
+                }
+            }
             // match empty list too in order to prevent filling in to
             // serializable converter in next steps
-            Object object = TypeConversionUtil.getListFirstValueOrNull(value);
-            return object == null || object instanceof IFileVariable;
+            return true;
         }
         return false;
     }
