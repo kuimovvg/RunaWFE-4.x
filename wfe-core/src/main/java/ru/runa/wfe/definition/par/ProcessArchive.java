@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -58,6 +60,8 @@ public class ProcessArchive {
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new TaskSubsitutionParser()));
         processArchiveParsers.add(ApplicationContextFactory.autowireBean(new GraphXmlParser()));
     }
+    private static final Pattern SUBPROCESS_DEFINITION_PATTERN = Pattern.compile(IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + "(\\d*)."
+            + IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME);
 
     private final Map<String, byte[]> fileData = Maps.newHashMap();
 
@@ -85,19 +89,19 @@ public class ProcessArchive {
         for (ProcessArchiveParser processArchiveParser : processArchiveParsers) {
             processArchiveParser.readFromArchive(this, processDefinition);
         }
-        int subprocessCounter = 1;
-        String testXml = IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + "1." + IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME;
-        while (processDefinition.getFileData(testXml) != null) {
-            SubprocessDefinition subprocessDefinition = new SubprocessDefinition(processDefinition);
-            subprocessDefinition.setNodeId(IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessCounter);
-            for (ProcessArchiveParser processArchiveParser : processArchiveParsers) {
-                if (processArchiveParser.isApplicableToEmbeddedSubprocess()) {
-                    processArchiveParser.readFromArchive(this, subprocessDefinition);
+        for (Map.Entry<String, byte[]> entry : processDefinition.getProcessFiles().entrySet()) {
+            Matcher matcher = SUBPROCESS_DEFINITION_PATTERN.matcher(entry.getKey());
+            if (matcher.matches()) {
+                int subprocessIndex = Integer.parseInt(matcher.group(1));
+                SubprocessDefinition subprocessDefinition = new SubprocessDefinition(processDefinition);
+                subprocessDefinition.setNodeId(IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessIndex);
+                for (ProcessArchiveParser processArchiveParser : processArchiveParsers) {
+                    if (processArchiveParser.isApplicableToEmbeddedSubprocess()) {
+                        processArchiveParser.readFromArchive(this, subprocessDefinition);
+                    }
                 }
+                processDefinition.addEmbeddedSubprocess(subprocessDefinition);
             }
-            processDefinition.addEmbeddedSubprocess(subprocessDefinition);
-            subprocessCounter++;
-            testXml = IFileDataProvider.SUBPROCESS_DEFINITION_PREFIX + subprocessCounter + "." + IFileDataProvider.PROCESSDEFINITION_XML_FILE_NAME;
         }
         processDefinition.mergeWithEmbeddedSubprocesses();
         return processDefinition;
