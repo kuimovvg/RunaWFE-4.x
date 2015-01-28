@@ -43,8 +43,6 @@ public class BotDataFileBuilder implements DataFileBuilder {
                 }
             }
         }
-
-        new PermissionsDataFileBuilder(user, botStations, "addPermissionsOnBotStations").build(zos, script);
     }
 
     private void populateBotStation(Document script, BotStation botStation) {

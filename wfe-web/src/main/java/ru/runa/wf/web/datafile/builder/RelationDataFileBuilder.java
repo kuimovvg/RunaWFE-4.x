@@ -56,7 +56,7 @@ public class RelationDataFileBuilder implements DataFileBuilder {
                 }
             }
         }
-        new PermissionsDataFileBuilder(user, relations, "addPermissionsOnRelation").build(zos, script);
+        new PermissionsDataFileBuilder(user, relations, "addPermissionsOnRelation", true).build(zos, script);
     }
 
     private void populateExecutor(Element element, Executor executor) {
