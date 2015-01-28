@@ -21,6 +21,7 @@ import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.xmlbeans.XmlCursor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 
 import ru.runa.wfe.commons.SafeIndefiniteLoop;
 import ru.runa.wfe.commons.TypeConversionUtil;
@@ -244,6 +245,10 @@ public class DocxUtils {
                     ((LoopOperation) operation).setIteratorVariableName(lexem);
                 }
             }
+            if (operation.getContainerVariableName().contains(PLACEHOLDER_START)) {
+                // this is the case of multiple replacements in one line
+                return null;
+            }
             WfVariable variable = variableProvider.getVariable(operation.getContainerVariableName());
             if (variable != null) {
                 operation.setContainerVariable(variable);
@@ -334,11 +339,12 @@ public class DocxUtils {
             config.warn("No placeholder end '" + PLACEHOLDER_END + "' found for '" + PLACEHOLDER_START + "' in " + paragraphText);
             return;
         }
+        // TODO #904: multiple replacements in same run does not fit in this
+        // algorithm
         boolean whetherSingleRunContainsPlaceholderStart = false;
         boolean whetherSingleRunContainsPlaceholderEnd = false;
         for (XWPFRun run : paragraph.getRuns()) {
-            if (run == null || run.getText(0) == null) { // TODO run.toString()
-                                                         // shows \t
+            if (run == null || run.getText(0) == null) {
                 continue;
             }
             if (!whetherSingleRunContainsPlaceholderStart && run.getText(0).contains(PLACEHOLDER_START)) {
@@ -360,24 +366,32 @@ public class DocxUtils {
                 log.warn("Null run in paragraph " + paragraphText);
                 continue;
             }
-            String text = run.getText(0);
-            if (text == null) {
-                log.warn("Null run value in paragraph " + paragraphText);
+            CTR ctr = run.getCTR();
+            int tArraySize = ctr.sizeOfTArray();
+            if (tArraySize == 0) {
+                log.warn("Null run CTR value in paragraph " + paragraphText);
                 continue;
             }
-            String replacedText = replaceText(config, variableProvider, operations, text);
-            if (!Objects.equal(replacedText, text)) {
-                if (replacedText.contains(LINE_DELIMITER)) {
-                    StringTokenizer tokenizer = new StringTokenizer(replacedText, LINE_DELIMITER);
-                    while (tokenizer.hasMoreTokens()) {
-                        run.setText(tokenizer.nextToken(), 0);
-                        if (tokenizer.hasMoreTokens()) {
-                            run.addBreak();
-                            run = paragraph.insertNewRun(paragraph.getRuns().indexOf(run) + 1);
+            for (int index = 0; index < tArraySize; index++) {
+                String text = ctr.getTArray(index).getStringValue();
+                if (text == null) {
+                    log.warn("Null run[" + index + "] value in paragraph " + paragraphText);
+                    continue;
+                }
+                String replacedText = replaceText(config, variableProvider, operations, text);
+                if (!Objects.equal(replacedText, text)) {
+                    if (replacedText.contains(LINE_DELIMITER)) {
+                        StringTokenizer tokenizer = new StringTokenizer(replacedText, LINE_DELIMITER);
+                        while (tokenizer.hasMoreTokens()) {
+                            run.setText(tokenizer.nextToken(), 0);
+                            if (tokenizer.hasMoreTokens()) {
+                                run.addBreak();
+                                run = paragraph.insertNewRun(paragraph.getRuns().indexOf(run) + 1);
+                            }
                         }
+                    } else {
+                        run.setText(replacedText, index);
                     }
-                } else {
-                    run.setText(replacedText, 0);
                 }
             }
             for (ReplaceOperation replaceOperation : Lists.newArrayList(operations)) {
@@ -397,7 +411,7 @@ public class DocxUtils {
     }
 
     private static void fixRunsToStateInWhichSingleRunContainsPlaceholder(DocxConfig config, XWPFParagraph paragraph, String placeholder) {
-        config.warn("Restructuring runs for '" + PLACEHOLDER_START + "' in '" + paragraph.getParagraphText() + "'");
+        config.warn("Restructuring runs for '" + placeholder + "' in '" + paragraph.getParagraphText() + "'");
         try {
             List<XWPFRun> runs = paragraph.getRuns();
             for (int i = 0; i < runs.size() - 1; i++) {
