@@ -22,7 +22,6 @@ import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.property.DurationPropertyDescriptor;
 import ru.runa.gpd.property.StartImagePropertyDescriptor;
-import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
@@ -38,7 +37,6 @@ import com.google.common.collect.Maps;
 public class ProcessDefinition extends NamedGraphElement implements Active, Describable, VariableContainer {
     private Language language;
     private Dimension dimension;
-    private final SwimlaneGUIConfiguration swimlaneGUIConfiguration = new SwimlaneGUIConfiguration();
     private boolean dirty;
     private boolean showActions;
     private boolean showGrid;
@@ -207,10 +205,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         return nextNodeId;
     }
 
-    public SwimlaneGUIConfiguration getSwimlaneGUIConfiguration() {
-        return swimlaneGUIConfiguration;
-    }
-
     @Override
     public void setName(String name) {
         if (name.length() == 0) {
@@ -376,10 +370,8 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, this, getDefaultTaskTimeoutDelay(), Localization
-                .getString("default.task.deadline")));
-        String[] array = { Localization.getString("ProcessDefinition.property.accessType.Process"),
-                Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.deadline")));
+        String[] array = { Localization.getString("ProcessDefinition.property.accessType.Process"), Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
         list.add(new ComboBoxPropertyDescriptor(PROPERTY_ACCESS_TYPE, Localization.getString("ProcessDefinition.property.accessType"), array));
         return list;
     }

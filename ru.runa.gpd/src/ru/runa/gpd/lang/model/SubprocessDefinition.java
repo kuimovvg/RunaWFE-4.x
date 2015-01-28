@@ -12,7 +12,6 @@ import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.NodeTypeDefinition;
 import ru.runa.gpd.lang.ValidationError;
-import ru.runa.gpd.swimlane.SwimlaneGUIConfiguration;
 import ru.runa.gpd.util.Duration;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
@@ -22,10 +21,11 @@ public class SubprocessDefinition extends ProcessDefinition {
         setAccessType(ProcessDefinitionAccessType.EmbeddedSubprocess);
     }
 
+    @Override
     public ProcessDefinition getMainProcessDefinition() {
         return getParent().getMainProcessDefinition();
     };
-    
+
     @Override
     public Duration getDefaultTaskTimeoutDelay() {
         return getParent().getDefaultTaskTimeoutDelay();
@@ -76,11 +76,6 @@ public class SubprocessDefinition extends ProcessDefinition {
     @Override
     public void setLanguage(Language language) {
         throw new UnsupportedOperationException("This property is inherited from main process definition");
-    }
-
-    @Override
-    public SwimlaneGUIConfiguration getSwimlaneGUIConfiguration() {
-        return getParent().getSwimlaneGUIConfiguration();
     }
 
     @Override
@@ -141,7 +136,7 @@ public class SubprocessDefinition extends ProcessDefinition {
         }
         super.addChild(child, index);
     }
-    
+
     @Override
     public void removeChild(GraphElement child) {
         if (child instanceof Variable || child instanceof Swimlane) {

@@ -224,8 +224,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
         if (searchResult.getMatchCount() > 0) {
             confirmationInfo.append(Localization.getString("Swimlane.ExistInProcess")).append("\n");
             for (Object element : searchResult.getElements()) {
-                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element)
-                        .append("\n");
+                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element).append("\n");
             }
             confirmationRequired = true;
         }
@@ -253,7 +252,6 @@ public class SwimlaneEditorPage extends EditorPartBase {
             // TODO Ctrl+Z support (form validation)
             // editor.getCommandStack().execute(command);
             command.execute();
-            getDefinition().getSwimlaneGUIConfiguration().removeSwimlanePath(swimlane.getName());
         }
     }
 
@@ -283,8 +281,7 @@ public class SwimlaneEditorPage extends EditorPartBase {
             IDE.saveAllEditors(new IResource[] { projectRoot }, false);
             String newScriptingName = renameDialog.getScriptingName();
             if (useLtk) {
-                RenameVariableRefactoring ref = new RenameVariableRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane, newName,
-                        newScriptingName);
+                RenameVariableRefactoring ref = new RenameVariableRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane, newName, newScriptingName);
                 useLtk &= ref.isUserInteractionNeeded();
                 if (useLtk) {
                     RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
@@ -338,12 +335,11 @@ public class SwimlaneEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Swimlane swimlane = (Swimlane) selection.getFirstElement();
-            String path = getDefinition().getSwimlaneGUIConfiguration().getEditorPath(swimlane.getName());
-            SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(getDefinition(), swimlane, path);
+            SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(getDefinition(), swimlane);
             if (dialog.open() == IDialogConstants.OK_ID) {
                 swimlane.setDelegationConfiguration(dialog.getConfiguration());
                 swimlane.setPublicVisibility(dialog.isPublicVisibility());
-                getDefinition().getSwimlaneGUIConfiguration().putSwimlanePath(swimlane.getName(), dialog.getPath());
+                swimlane.setEditorPath(dialog.getPath());
                 tableViewer.setSelection(selection);
             }
         }

@@ -18,10 +18,9 @@ public class SwimlaneInitializerProvider extends DelegableProvider {
         }
         Swimlane swimlane = (Swimlane) delegable;
         ProcessDefinition definition = swimlane.getProcessDefinition();
-        String path = definition.getSwimlaneGUIConfiguration().getEditorPath(swimlane.getName());
-        SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(definition, swimlane, path);
+        SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(definition, swimlane);
         if (dialog.open() == IDialogConstants.OK_ID) {
-            definition.getSwimlaneGUIConfiguration().putSwimlanePath(swimlane.getName(), dialog.getPath());
+            swimlane.setEditorPath(dialog.getPath());
             return dialog.getConfiguration();
         }
         return null;

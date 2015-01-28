@@ -27,17 +27,18 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
     private static final String DEFAULT_VALUE = "defaultValue";
     private static final String SCRIPTING_NAME = "scriptingName";
     private static final String USER_TYPE = "usertype";
+    private static final String EDITOR = "editor";
 
     @Override
     public boolean isSupportedForEmbeddedSubprocess() {
         return false;
     }
-    
+
     @Override
     public String getFileName() {
         return XML_FILE_NAME;
     }
-    
+
     @Override
     public void read(Document document, ProcessDefinition definition) throws Exception {
         List<Element> typeElements = document.getRootElement().elements(USER_TYPE);
@@ -72,6 +73,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
                     swimlane.setDescription(description);
                     swimlane.setPublicVisibility(publicVisibility);
                     swimlane.setScriptingName(element.attributeValue(SCRIPTING_NAME, variableName));
+                    swimlane.setEditorPath(element.attributeValue(EDITOR, "SwimlaneElement.ManualLabel"));
                 } catch (Exception e) {
                     PluginLogger.logErrorWithoutDialog("No swimlane found for " + variableName, e);
                 }
@@ -109,7 +111,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         }
         return variable;
     }
-    
+
     @Override
     public Document save(ProcessDefinition definition) throws Exception {
         Document document = XmlUtil.createDocument(VARIABLES);
@@ -126,7 +128,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         }
         return document;
     }
-    
+
     private Element writeVariable(Element root, Variable variable) {
         Element element = root.addElement(VARIABLE);
         element.addAttribute(NAME, variable.getName());
@@ -146,7 +148,9 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
             element.addAttribute(DEFAULT_VALUE, variable.getDefaultValue());
         }
         if (variable instanceof Swimlane) {
+            Swimlane swimlane = (Swimlane) variable;
             element.addAttribute(SWIMLANE, Boolean.TRUE.toString());
+            element.addAttribute(EDITOR, swimlane.getEditorPath());
         }
         return element;
     }
