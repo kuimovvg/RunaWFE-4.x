@@ -23,11 +23,13 @@ public class PermissionsDataFileBuilder implements DataFileBuilder {
     private final List<? extends Identifiable> identifiablies;
     private final String xmlElement;
     private final User user;
+    private final boolean handleName;
 
-    public PermissionsDataFileBuilder(User user, List<? extends Identifiable> identifiablies, String xmlElement) {
+    public PermissionsDataFileBuilder(User user, List<? extends Identifiable> identifiablies, String xmlElement, boolean handleName) {
         this.user = user;
         this.identifiablies = identifiablies;
         this.xmlElement = xmlElement;
+        this.handleName = handleName;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class PermissionsDataFileBuilder implements DataFileBuilder {
                     continue;
                 }
                 Element element = script.getRootElement().addElement(xmlElement, XmlUtils.RUNA_NAMESPACE);
-                if (!"addPermissionsOnBotStations".equals(xmlElement) && !"addPermissionsOnSystem".equals(xmlElement)) {
+                if (handleName) {
                     element.addAttribute("name", getIdentifiableName(identifiable));
                 }
                 element.addAttribute("executor", executor.getName());
