@@ -67,7 +67,7 @@ public class GroovyDecisionModel {
             }
             if (lexem1Text.indexOf(".") > 0) {
                 // Java names doesn't allowed use of point in variable name
-                lexem1Text = lexem1Text.substring(0, lexem1Text.indexOf("."));
+                lexem1Text = lexem1Text.substring(0, lexem1Text.lastIndexOf("."));
             }
             Variable variable1 = VariableUtils.getVariableByScriptingName(variables, lexem1Text);
             if (variable1 == null) {
@@ -82,7 +82,7 @@ public class GroovyDecisionModel {
             Object lexem2;
             if (lexem2Text.indexOf(".") > 0) {
                 // Java names doesn't allowed use of point in variable name
-                lexem2Text = lexem2Text.substring(0, lexem2Text.indexOf("."));
+                lexem2Text = lexem2Text.substring(0, lexem2Text.lastIndexOf("."));
             }
             Variable variable2 = VariableUtils.getVariableByScriptingName(variables, lexem2Text);
             if (variable2 != null) {
