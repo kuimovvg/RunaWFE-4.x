@@ -742,12 +742,6 @@
                variableTypeFilter="java.lang.Long"
                variableAccess="READ">
          </param>
-         <param
-               name="ru.runa.gpd.form.ftl.param1"
-               optional="false"
-               type="text"
-               variableAccess="NONE">
-         </param>
       </component>
       <component
             enabled="true"
