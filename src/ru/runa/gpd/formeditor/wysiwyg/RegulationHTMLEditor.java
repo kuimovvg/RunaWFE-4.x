@@ -153,7 +153,7 @@ public class RegulationHTMLEditor extends MultiPageEditorPart implements IResour
     // Used from servlets
     public static RegulationHTMLEditor getCurrent() {
         IEditorPart editor = EditorsPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getActivePage().getActiveEditor();
-        if (editor instanceof WYSIWYGHTMLEditor) {
+        if (editor instanceof FormEditor) {
             return (RegulationHTMLEditor) editor;
         }
         if (lastInitializedInstance != null) {

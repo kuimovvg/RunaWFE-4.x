@@ -6,9 +6,9 @@ var VISUAL_ELEMENT = 'img' ;
 
 var FreemarkerTags = new Object() ;
 
-FreemarkerTags.TagDialog = function() {
+FreemarkerTags.OpenParametersDialog = function() {
   var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
-  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=TagDialog&componentId=" + FreemarkerTags.SelectedId.id, false ) ;
+  oXmlHttp.open( "GET", "/editor/FtlComponentServlet?command=OpenParametersDialog&id=" + FreemarkerTags.SelectedId.id, false ) ;
   oXmlHttp.send( null ) ;
   if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
     return oXmlHttp.responseText ;
@@ -17,24 +17,21 @@ FreemarkerTags.TagDialog = function() {
   }
 };
 
-var FCKTagDialogCommand = function(name)
-{	
+var OpenParametersDialog = function(name) {	
 	this.Name = name;
 }
 
-FCKTagDialogCommand.prototype.Execute = function()
-{	
-	FreemarkerTags.TagDialog();
+OpenParametersDialog.prototype.Execute = function() {	
+	FreemarkerTags.OpenParametersDialog();
 }
 
-FCKTagDialogCommand.prototype.GetState = function()
-{
+OpenParametersDialog.prototype.GetState = function() {
 	FCK.Focus();
     return 0;
 }
 
 // Register the related command.
-FCKCommands.RegisterCommand( FTL_METHOD_CMD, new FCKTagDialogCommand(FTL_METHOD_CMD)) ;
+FCKCommands.RegisterCommand( FTL_METHOD_CMD, new OpenParametersDialog(FTL_METHOD_CMD)) ;
 
 // Create the "FTLTag" toolbar button.
 var methodItem = new FCKToolbarButton( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
@@ -48,20 +45,13 @@ FreemarkerTags.SelectedId = {id : -1};
 FreemarkerTags.AddMethod = function( tagName, params ) {
 	var oSpan = FCK.CreateElement( VISUAL_ELEMENT );
 	this.SetupSpan( oSpan, tagName, params );
-	oSpan.setAttribute("ftltagparams", params);
-}
-
-// Add format
-FreemarkerTags.AddFormat = function( tagName, format ) {
-	var oSpan = FCK.CreateElement( VISUAL_ELEMENT );
-
-	this.SetupSpan( oSpan, tagName, format );
-	oSpan.setAttribute("ftltagformat", format);
+	oSpan.setAttribute("parameters", params);
 }
 
 FreemarkerTags.SetupSpan = function( span, tagName, tagParams ) {
-	span.setAttribute("src", "http://localhost:48780/editor/FreemarkerTags.java?method=GetTagImage&tagName=" + tagName + "&tagParams=" + encodeURIComponent(tagParams));
-	span.setAttribute("ftltagname", tagName);
+	span.setAttribute("src", "http://localhost:48780/editor/FtlSupportServlet?command=GetImage&type=" + tagName + "&parameters=" + encodeURIComponent(tagParams));
+	span.setAttribute("type", tagName);
+	span.setAttribute("style", "margin: 3px; border: 2px solid black;")
 	// To avoid it to be resized.
 	span.onresizestart = function() {
 		FCK.EditorWindow.event.returnValue = false ;
@@ -72,7 +62,7 @@ FreemarkerTags.SetupSpan = function( span, tagName, tagParams ) {
 // On Gecko we must do this trick so the user select all the SPAN when clicking on it.
 FreemarkerTags._SetupClickListener = function() {
 	FreemarkerTags._ClickListener = function( e ) {
-		if ( e.target.ftlTagName ) {
+		if (e.target.type) {
 			FCKSelection.SelectNode( e.target ) ;
 		}
 	}
@@ -83,53 +73,15 @@ FCK.ContextMenu.RegisterListener( { AddItems : function( menu, tag, tagName ) {
 	if ( tagName && tagName.toLowerCase() == VISUAL_ELEMENT ) {
 		menu.AddSeparator();
 	}
-	if ( tag && tag.getAttribute("ftltagparams") != null) {
+	if (tag && tag.getAttribute("parameters") != null) {
 		menu.AddItem( FTL_METHOD_CMD, FCKLang.MethodTitle ) ;
 	}
 }});
 
-FreemarkerTags.GetParameters = function( tagName ) {
-	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
-	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=GetParameters&tagName=" + tagName, false ) ;
-	oXmlHttp.send( null ) ;
-	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
-		return oXmlHttp.responseText ;
-	} else {
-		return "Error." ;
-	}
-}
-
-FreemarkerTags.GetFormats = function( tagName ) {
-	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
-	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=GetFormats&tagName=" + encodeURIComponent(tagName), false ) ;
-	oXmlHttp.send( null ) ;
-	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
-		return oXmlHttp.responseText ;
-	} else {
-		return "Error." ;
-	}
-}
-
-FreemarkerTags.IsAvailable = function( ) {
-	var oXmlHttp = FCKTools.CreateXmlObject( 'XmlHttp' ) ;
-	oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=IsAvailable", false ) ;
-	oXmlHttp.send( null ) ;
-	if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
-		return oXmlHttp.responseText ;
-	} else {
-		return "false";
-	}
-}
-
-if (FreemarkerTags.IsAvailable() != "true") {
-	FCKCommands.GetCommand( FTL_METHOD_CMD ).Execute = function() { return false; };
-	FCKCommands.GetCommand( FTL_METHOD_CMD ).GetState = function() { return FCK_TRISTATE_DISABLED; } ;
-}
-
 FreemarkerTags.ComponentSelected = function( componentId ) {
   FreemarkerTags.SelectedId.id = componentId;
   var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
-  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentSelected&componentId=" + componentId, false ) ;
+  oXmlHttp.open( "GET", "/editor/FtlComponentServlet?command=ComponentSelected&id=" + componentId, false ) ;
   oXmlHttp.send( null ) ;
   if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
     return oXmlHttp.responseText ;
@@ -140,7 +92,7 @@ FreemarkerTags.ComponentSelected = function( componentId ) {
 
 FreemarkerTags.ComponentDeselected = function() {
   var oXmlHttp = (!window.XMLHttpRequest)? new ActiveXObject("Microsoft.XMLHTTP") : new XMLHttpRequest();
-  oXmlHttp.open( "GET", "/editor/FreemarkerTags.java?method=ComponentDeselected", false ) ;
+  oXmlHttp.open( "GET", "/editor/FtlComponentServlet?command=ComponentDeselected", false ) ;
   oXmlHttp.send( null ) ;
   if ( oXmlHttp.status == 200 || oXmlHttp.status == 304 ) {
     return oXmlHttp.responseText ;

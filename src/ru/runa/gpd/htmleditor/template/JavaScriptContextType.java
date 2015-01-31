@@ -3,8 +3,6 @@ package ru.runa.gpd.htmleditor.template;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
-import ru.runa.gpd.htmleditor.HTMLPlugin;
-
 public class JavaScriptContextType extends TemplateContextType {
 	
 	public static final String CONTEXT_TYPE 
