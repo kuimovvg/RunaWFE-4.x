@@ -1,5 +1,7 @@
 package ru.runa.gpd.ui.dialog;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -28,25 +30,41 @@ import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 
-public class ChooseItemDialog extends Dialog {
-    private List<? extends Object> items;
-    private Object selectedItem;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
+public class ChooseItemDialog<T extends Comparable<? super T>> extends Dialog {
     private final String dialogText;
+    private final List<T> items;
+    private T selectedItem;
+    private final boolean sort;
+    private Comparator<T> comparator;
     private final String labelText;
-    private final boolean useFilter;
     private LabelProvider labelProvider;
+    private final boolean useFilter;
     private Text filterText;
     private ListViewer itemsList;
 
-    public ChooseItemDialog(String dialogText, String labelText, boolean useFilter) {
+    public ChooseItemDialog(String dialogText, List<T> items, boolean sort, String labelText, boolean useFilter) {
         super(Display.getCurrent().getActiveShell());
         this.dialogText = dialogText;
+        this.items = Lists.newArrayList(items);
+        this.sort = sort;
         this.labelText = labelText;
         this.useFilter = useFilter;
+        Preconditions.checkNotNull(items, "items are not set");
+    }
+
+    public ChooseItemDialog(String dialogText, List<T> items) {
+        this(dialogText, items, true, null, true);
     }
 
     public void setLabelProvider(LabelProvider labelProvider) {
         this.labelProvider = labelProvider;
+    }
+
+    public void setComparator(Comparator<T> comparator) {
+        this.comparator = comparator;
     }
 
     @Override
@@ -76,6 +94,13 @@ public class ChooseItemDialog extends Dialog {
         listData.minimumWidth = 100;
         itemsList.getControl().setLayoutData(listData);
         itemsList.setContentProvider(new ArrayContentProvider());
+        if (sort) {
+            if (comparator != null) {
+                Collections.sort(this.items, comparator);
+            } else {
+                Collections.sort(this.items);
+            }
+        }
         itemsList.setInput(items);
         if (useFilter) {
             itemsList.addFilter(new ItemsFilter());
@@ -89,7 +114,7 @@ public class ChooseItemDialog extends Dialog {
         itemsList.addSelectionChangedListener(new ISelectionChangedListener() {
             @Override
             public void selectionChanged(SelectionChangedEvent event) {
-                selectedItem = ((IStructuredSelection) event.getSelection()).getFirstElement();
+                selectedItem = (T) ((IStructuredSelection) event.getSelection()).getFirstElement();
                 getButton(IDialogConstants.OK_ID).setEnabled(selectedItem != null);
             }
         });
@@ -115,11 +140,7 @@ public class ChooseItemDialog extends Dialog {
         newShell.setText(dialogText);
     }
 
-    public Object getSelectedItem() {
-        return selectedItem;
-    }
-
-    public void setSelectedItem(Object selectedItem) {
+    public void setSelectedItem(T selectedItem) {
         this.selectedItem = selectedItem;
         if (itemsList != null) {
             if (selectedItem != null) {
@@ -130,12 +151,11 @@ public class ChooseItemDialog extends Dialog {
         }
     }
 
-    public List<? extends Object> getItems() {
-        return items;
-    }
-
-    public void setItems(List<? extends Object> types) {
-        this.items = types;
+    public T openDialog() {
+        if (open() != IDialogConstants.CANCEL_ID) {
+            return selectedItem;
+        }
+        return null;
     }
 
     public class ItemsFilter extends ViewerFilter {

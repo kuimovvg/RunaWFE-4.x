@@ -1,6 +1,5 @@
 package ru.runa.gpd.quick.formeditor;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +17,7 @@ import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.quick.formeditor.util.QuickFormXMLUtil;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.gpd.validation.FormNodeValidation;
 
 import com.google.common.collect.Maps;
 
@@ -32,21 +32,18 @@ public class QuickFormType extends FormType {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, FormVariableAccess> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception {
+    public Map<String, FormVariableAccess> getFormVariableNames(FormNode formNode, byte[] formData) throws Exception {
         Map<String, FormVariableAccess> variableNames = Maps.newHashMap();
-        InputStream contentStream = formFile.getContents(true);
-        if (contentStream != null && contentStream.available() != 0) {
-            Document document = XmlUtil.parseWithoutValidation(contentStream);
-            Element tagsElement = document.getRootElement().element(QuickFormXMLUtil.ELEMENT_TAGS);
-            List<Element> varElementsList = tagsElement.elements(QuickFormXMLUtil.ELEMENT_TAG);
-            for (Element varElement : varElementsList) {
-                String tag = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_NAME);
-                List<Element> paramElements = varElement.elements(QuickFormXMLUtil.ELEMENT_PARAM);
-                if (paramElements != null && paramElements.size() > 0) {
-                    for (Element paramElement : paramElements) {
-                        variableNames.put(paramElement.getText(), READ_TAG.equals(tag) ? FormVariableAccess.READ : FormVariableAccess.WRITE);
-                        break;
-                    }
+        Document document = XmlUtil.parseWithoutValidation(formData);
+        Element tagsElement = document.getRootElement().element(QuickFormXMLUtil.ELEMENT_TAGS);
+        List<Element> varElementsList = tagsElement.elements(QuickFormXMLUtil.ELEMENT_TAG);
+        for (Element varElement : varElementsList) {
+            String tag = varElement.elementText(QuickFormXMLUtil.ATTRIBUTE_NAME);
+            List<Element> paramElements = varElement.elements(QuickFormXMLUtil.ELEMENT_PARAM);
+            if (paramElements != null && paramElements.size() > 0) {
+                for (Element paramElement : paramElements) {
+                    variableNames.put(paramElement.getText(), READ_TAG.equals(tag) ? FormVariableAccess.READ : FormVariableAccess.WRITE);
+                    break;
                 }
             }
         }
@@ -54,8 +51,8 @@ public class QuickFormType extends FormType {
     }
 
     @Override
-    public void validate(IFile formFile, FormNode formNode, List<ValidationError> errors) throws Exception {
-        super.validate(formFile, formNode, errors);
+    public void validate(FormNode formNode, byte[] formData, FormNodeValidation validation, List<ValidationError> errors) throws Exception {
+        super.validate(formNode, formData, validation, errors);
         if (!formNode.hasFormTemplate()) {
             errors.add(ValidationError.createLocalizedError(formNode, "formNode.templateIsRequired"));
         }

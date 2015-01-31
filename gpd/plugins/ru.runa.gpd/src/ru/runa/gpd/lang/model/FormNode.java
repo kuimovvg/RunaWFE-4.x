@@ -156,8 +156,7 @@ public abstract class FormNode extends SwimlanedNode {
                     for (Param param : definition.getParams().values()) {
                         String value = config.getParams().get(param.getName());
                         if (param.isRequired() && Strings.isNullOrEmpty(value)) {
-                            errors.add(ValidationError.createLocalizedError(this, "formNode.requiredGlobalValidatorParameterIsNotSet",
-                                    config.getMessage()));
+                            errors.add(ValidationError.createLocalizedError(this, "formNode.requiredGlobalValidatorParameterIsNotSet", config.getMessage()));
                         }
                     }
                 }
@@ -171,15 +170,15 @@ public abstract class FormNode extends SwimlanedNode {
                         ValidatorDefinition definition = ValidatorDefinitionRegistry.getDefinition(config.getType());
                         if (definition != null) {
                             if (!definition.isApplicable(variable.getJavaClassName())) {
-                                errors.add(ValidationError.createLocalizedError(this, "formNode.validatorVariableIsNotApplicable", config.getType(),
-                                        variable.getName(), variable.getFormatLabel()));
+                                errors.add(ValidationError.createLocalizedError(this, "formNode.validatorVariableIsNotApplicable", config.getType(), variable.getName(),
+                                        variable.getFormatLabel()));
                                 continue;
                             }
                             for (Param param : definition.getParams().values()) {
                                 String value = config.getParams().get(param.getName());
                                 if (param.isRequired() && Strings.isNullOrEmpty(value)) {
-                                    errors.add(ValidationError.createLocalizedError(this, "formNode.requiredFieldValidatorParameterIsNotSet",
-                                            entry.getKey(), definition.getLabel(), param.getLabel()));
+                                    errors.add(ValidationError.createLocalizedError(this, "formNode.requiredFieldValidatorParameterIsNotSet", entry.getKey(),
+                                            definition.getLabel(), param.getLabel()));
                                 }
                             }
                         } else {
@@ -191,38 +190,8 @@ public abstract class FormNode extends SwimlanedNode {
             if (hasForm()) {
                 IFile formFile = IOUtils.getAdjacentFile(definitionFile, this.formFileName);
                 FormType formType = FormTypeProvider.getFormType(this.formType);
-                Map<String, FormVariableAccess> formVariables = formType.getFormVariableNames(formFile, this);
-                List<String> allVariableNames = getProcessDefinition().getVariableNames(true);
-                for (Map.Entry<String, FormVariableAccess> formEntry : formVariables.entrySet()) {
-                    switch (formEntry.getValue()) {
-                    case DOUBTFUL:
-                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableTagUnknown", formEntry.getKey()));
-                        break;
-                    case WRITE:
-                        if (!validation.getVariableNames().contains(formEntry.getKey())) {
-                            errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableOutOfValidation", formEntry.getKey()));
-                        }
-                        break;
-                    case READ:
-                        if (validation.getVariableNames().contains(formEntry.getKey())) {
-                            errors.add(ValidationError.createLocalizedWarning(this, "formNode.formReadAccessVariableExistsInValidation",
-                                    formEntry.getKey()));
-                        }
-                        break;
-                    }
-                    if (!allVariableNames.contains(formEntry.getKey())) {
-                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.formVariableDoesNotExist", formEntry.getKey()));
-                    }
-                }
-                for (String validationVarName : validation.getVariableNames()) {
-                    if (!formVariables.keySet().contains(validationVarName)) {
-                        errors.add(ValidationError.createLocalizedWarning(this, "formNode.validationVariableOutOfForm", validationVarName));
-                    }
-                    if (!allVariableNames.contains(validationVarName)) {
-                        errors.add(ValidationError.createLocalizedError(this, "formNode.validationVariableDoesNotExist", validationVarName));
-                    }
-                }
-                formType.validate(formFile, this, errors);
+                byte[] formData = IOUtils.readStreamAsBytes(formFile.getContents(true));
+                formType.validate(this, formData, validation, errors);
             }
         } catch (Exception e) {
             PluginLogger.logErrorWithoutDialog("Error validating form node: '" + getName() + "'", e);
@@ -245,7 +214,8 @@ public abstract class FormNode extends SwimlanedNode {
         }
         FormType formType = FormTypeProvider.getFormType(this.formType);
         IFile formFile = IOUtils.getFile(processFolder, this.formFileName);
-        return formType.getFormVariableNames(formFile, this);
+        byte[] formData = IOUtils.readStreamAsBytes(formFile.getContents(true));
+        return formType.getFormVariableNames(this, formData);
     }
 
     @Override

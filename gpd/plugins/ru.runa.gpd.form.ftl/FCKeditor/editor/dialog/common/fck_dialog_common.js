@@ -1,4 +1,4 @@
-﻿/*
+/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2008 Frederico Caldeira Knabben
  *
@@ -311,10 +311,10 @@ function CopyAttributes( oSource, oDest, oSkipAttributes )
 }
 
 function populateNameSelect(elementType, oActiveEl) {
-	new Ajax.Request('/editor/FreemarkerTags.java', {
+	new Ajax.Request('/editor/FormSupportServlet', {
 		method : 'get',
 		parameters : {
-			method : 'GetVariableNames',
+			command : 'GetVariableNames',
 			elementType : elementType
 		},
 		onSuccess : function(transport) {

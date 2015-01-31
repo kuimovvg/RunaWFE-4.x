@@ -18,8 +18,8 @@
 	</servlet>
 
 	<servlet>
-		<servlet-name>FtlTagSupportServlet</servlet-name>
-		<servlet-class>ru.runa.gpd.formeditor.wysiwyg.FtlTagSupportServlet</servlet-class>
+		<servlet-name>FtlComponentServlet</servlet-name>
+		<servlet-class>ru.runa.gpd.formeditor.wysiwyg.FtlComponentServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
@@ -35,8 +35,8 @@
 	</servlet-mapping>  
 
 	<servlet-mapping>
-		<servlet-name>FtlTagSupportServlet</servlet-name>
-		<url-pattern>/editor/FreemarkerTags.java</url-pattern>
+		<servlet-name>FtlComponentServlet</servlet-name>
+		<url-pattern>/editor/FtlComponentServlet</url-pattern>
 	</servlet-mapping>
 
     <welcome-file-list>

@@ -73,7 +73,7 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
                     swimlane.setDescription(description);
                     swimlane.setPublicVisibility(publicVisibility);
                     swimlane.setScriptingName(element.attributeValue(SCRIPTING_NAME, variableName));
-                    swimlane.setEditorPath(element.attributeValue(EDITOR, "SwimlaneElement.ManualLabel"));
+                    swimlane.setEditorPath(element.attributeValue(EDITOR));
                 } catch (Exception e) {
                     PluginLogger.logErrorWithoutDialog("No swimlane found for " + variableName, e);
                 }
@@ -150,7 +150,9 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
         if (variable instanceof Swimlane) {
             Swimlane swimlane = (Swimlane) variable;
             element.addAttribute(SWIMLANE, Boolean.TRUE.toString());
-            element.addAttribute(EDITOR, swimlane.getEditorPath());
+            if (!Strings.isNullOrEmpty(swimlane.getEditorPath())) {
+                element.addAttribute(EDITOR, swimlane.getEditorPath());
+            }
         }
         return element;
     }

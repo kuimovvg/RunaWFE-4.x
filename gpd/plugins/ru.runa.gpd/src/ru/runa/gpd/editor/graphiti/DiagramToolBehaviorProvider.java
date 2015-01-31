@@ -49,13 +49,6 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         if (element instanceof Subprocess) {
             return new OpenSubProcessFeature(getFeatureProvider());
         }
-        // TODO
-        // if (element instanceof Node) {
-        // return new DirectEditNodeNameFeature(getFeatureProvider());
-        // }
-        // if (element instanceof TextAnnotation) {
-        // return new DirectEditDescriptionFeature(getFeatureProvider());
-        // }
         return super.getDoubleClickFeature(context);
     }
 
@@ -72,8 +65,7 @@ public class DiagramToolBehaviorProvider extends DefaultToolBehaviorProvider {
         CreateConnectionContext createConnectionContext = new CreateConnectionContext();
         createConnectionContext.setSourcePictogramElement(pe);
         boolean allowTargetNodeCreation = !(element instanceof EndState) && !(element instanceof EndTokenState)
-                && !(element instanceof Timer && element.getParent() instanceof ITimed) && !(element instanceof Swimlane)
-                && !(element instanceof TextAnnotation);
+                && !(element instanceof Timer && element.getParent() instanceof ITimed) && !(element instanceof Swimlane) && !(element instanceof TextAnnotation);
         //
         CreateContext createContext = new CreateContext();
         createContext.setTargetContainer((ContainerShape) pe.eContainer());

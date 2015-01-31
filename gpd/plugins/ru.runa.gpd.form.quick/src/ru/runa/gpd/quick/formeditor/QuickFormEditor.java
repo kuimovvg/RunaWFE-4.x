@@ -53,8 +53,9 @@ import org.osgi.framework.Bundle;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.extension.Artifact;
-import ru.runa.gpd.form.PreviewFormWizard;
-import ru.runa.gpd.formeditor.ftl.MethodTag;
+import ru.runa.gpd.formeditor.ftl.ComponentType;
+import ru.runa.gpd.formeditor.ftl.ComponentTypeRegistry;
+import ru.runa.gpd.formeditor.ftl.TemplateProcessor;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
@@ -63,6 +64,7 @@ import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.quick.Messages;
 import ru.runa.gpd.quick.extension.QuickTemplateArtifact;
 import ru.runa.gpd.quick.extension.QuickTemplateRegister;
+import ru.runa.gpd.quick.formeditor.ui.PreviewFormWizard;
 import ru.runa.gpd.quick.formeditor.ui.wizard.QuickFormVariableWizard;
 import ru.runa.gpd.quick.formeditor.ui.wizard.QuickFormVariabliesToDisplayWizard;
 import ru.runa.gpd.quick.formeditor.util.PresentationVariableUtils;
@@ -70,7 +72,6 @@ import ru.runa.gpd.quick.formeditor.util.QuickFormConvertor;
 import ru.runa.gpd.quick.formeditor.util.QuickFormConvertor.ConverterSource;
 import ru.runa.gpd.quick.formeditor.util.QuickFormXMLUtil;
 import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
-import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
 import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.DropDownButton;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
@@ -233,8 +234,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                     }
                 }
 
-                if ((prevTemplateFileName == null && filename == null)
-                        || (!Strings.isNullOrEmpty(prevTemplateFileName) && prevTemplateFileName.equals(filename))) {
+                if ((prevTemplateFileName == null && filename == null) || (!Strings.isNullOrEmpty(prevTemplateFileName) && prevTemplateFileName.equals(filename))) {
                     return;
                 }
 
@@ -358,8 +358,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 QuickFormGpdVariable row = (QuickFormGpdVariable) selection.getFirstElement();
                 for (QuickFormGpdVariable variableDef : quickForm.getVariables()) {
                     if (variableDef.getName().equals(row.getName())) {
-                        QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getVariables(), quickForm
-                                .getVariables().indexOf(variableDef));
+                        QuickFormVariableWizard wizard = new QuickFormVariableWizard(processDefinition, quickForm.getVariables(), quickForm.getVariables().indexOf(variableDef));
                         CompactWizardDialog dialog = new CompactWizardDialog(wizard);
                         if (dialog.open() == Window.OK) {
                             setTableInput();
@@ -387,7 +386,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, null);
                 FormHashModelGpdWrap model = new FormHashModelGpdWrap(null, variableProvider, null);
 
-                String out = FreemarkerProcessorGpdWrap.process(templateHtml, model);
+                String out = TemplateProcessor.process(templateHtml, model);
 
                 variables = new HashMap<String, Object>();
                 variableProvider = new MapDelegableVariableProvider(variables, null);
@@ -401,8 +400,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                         value = TypeConversionUtil.convertTo(ClassLoaderUtil.loadClass(variable.getJavaClassName()), defaultValue);
                     }
                     variables.put(quickFormGpdVariable.getName(), value);
-                    VariableDefinition variableDefinition = new VariableDefinition(false, quickFormGpdVariable.getName(), quickFormGpdVariable
-                            .getName());
+                    VariableDefinition variableDefinition = new VariableDefinition(false, quickFormGpdVariable.getName(), quickFormGpdVariable.getName());
                     variableDefinition.setFormat(variable.getFormat());
                     WfVariable wfVariable = new WfVariable(variableDefinition, value);
                     variableProvider.add(wfVariable);
@@ -416,7 +414,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
                 }
 
                 model = new FormHashModelGpdWrap(null, variableProvider, null);
-                out = FreemarkerProcessorGpdWrap.process(out, model);
+                out = TemplateProcessor.process(out, model);
 
                 IFile formCssFile = definitionFolder.getFile(ParContentProvider.FORM_CSS_FILE_NAME);
                 String styles = formCssFile.exists() ? IOUtils.readStream(formCssFile.getContents()) : null;
@@ -550,8 +548,7 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
         final Table propertiesTable = propertiesTableViewer.getTable();
         propertiesTable.setHeaderVisible(true);
         propertiesTable.setLinesVisible(true);
-        String[] propertiesColumnNames = new String[] { Messages.getString("editor.paramtable.column1"),
-                Messages.getString("editor.paramtable.column2") };
+        String[] propertiesColumnNames = new String[] { Messages.getString("editor.paramtable.column1"), Messages.getString("editor.paramtable.column2") };
         int[] propertiesColumnWidths = new int[] { 150, 750 };
         int[] propertiesColumnAlignments = new int[] { SWT.LEFT, SWT.LEFT };
         for (int i = 0; i < propertiesColumnNames.length; i++) {
@@ -632,9 +629,9 @@ public class QuickFormEditor extends EditorPart implements ISelectionListener, I
             QuickFormGpdVariable variableDef = (QuickFormGpdVariable) element;
             switch (index) {
             case 0:
-                if (MethodTag.hasTag(variableDef.getTagName())) {
-                    MethodTag tag = MethodTag.getTagNotNull(variableDef.getTagName());
-                    return tag.name;
+                if (ComponentTypeRegistry.has(variableDef.getTagName())) {
+                    ComponentType tag = ComponentTypeRegistry.getNotNull(variableDef.getTagName());
+                    return tag.getLabel();
                 }
                 return variableDef.getTagName();
             case 1:

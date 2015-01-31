@@ -21,12 +21,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
@@ -41,7 +38,6 @@ import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
-import ru.runa.gpd.help.IHelpTopicProvider;
 import ru.runa.gpd.lang.model.GraphElement;
 
 import com.google.common.base.Objects;
@@ -129,15 +125,6 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public Object getAdapter(Class adapter) {
-        if (adapter == IHelpTopicProvider.class && sourcePart != null) {
-            return new HelpTopicProviderProxy(originalSelection, (IHelpTopicProvider) sourcePart.getAdapter(adapter));
-        }
-        return super.getAdapter(adapter);
-    }
-
     @Override
     public void init(IViewSite site) throws PartInitException {
         super.init(site);
@@ -171,7 +158,7 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
             ((GraphElement) source).removePropertyChangeListener(this);
         }
         if (isMozilla()) {
-            apply();// TODO: it`s a hook for mozilla
+            apply();// it`s a hook for mozilla
         }
         source = newSource;
         if (source instanceof GraphElement) {
@@ -263,20 +250,8 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         for (int i = 0; i < descriptors.length; i++) {
             IPropertyDescriptor descriptor = descriptors[i];
             Object value = source.getPropertyValue(descriptor.getId());
-            boolean isPropertyRequired = false;
-            if (source instanceof IRequiredPropertiesSource) {
-                isPropertyRequired = ((IRequiredPropertiesSource) source).isPropertyRequired(descriptor.getId());
-            }
             final TreeItem item = new TreeItem(tree, SWT.NONE, i);
-            String labelName = descriptor.getDisplayName();
-            if (isPropertyRequired) {
-                Display display = Display.getCurrent();
-                FontData[] fontData = item.getFont().getFontData();
-                fontData[0].setStyle(SWT.BOLD);
-                item.setFont(new Font(display, fontData));
-                labelName = labelName + "*";
-            }
-            item.setText(0, labelName);
+            item.setText(0, descriptor.getDisplayName());
             item.setText(1, getStringValue(descriptor, value));
             CellEditor cellEditor = descriptor.createPropertyEditor(tree);
             CellEditorListener cellEditorListener = null;
@@ -390,27 +365,4 @@ public class PropertiesView extends ViewPart implements ISelectionListener, Prop
         return stringValue;
     }
 
-    private static class HelpTopicProviderProxy implements IHelpTopicProvider {
-        private final ISelection selection;
-        private final IHelpTopicProvider provider;
-
-        public HelpTopicProviderProxy(ISelection selection, IHelpTopicProvider provider) {
-            this.selection = selection;
-            this.provider = provider;
-        }
-
-        @Override
-        public String getHelpTopicUrl(ISelection sel) {
-            return null;
-        }
-
-        @Override
-        public String getHelpTopicUrl() {
-            if (provider != null) {
-                return provider.getHelpTopicUrl(selection);
-            }
-            return null;
-        }
-
-    }
 }

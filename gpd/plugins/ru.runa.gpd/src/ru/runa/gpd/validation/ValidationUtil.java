@@ -39,11 +39,12 @@ public class ValidationUtil {
         IFile formFile = IOUtils.getAdjacentFile(adjacentFile, formNode.getFormFileName());
         if (formFile.exists()) {
             FormType formType = FormTypeProvider.getFormType(formNode.getFormType());
-            Map<String, FormVariableAccess> variableNames = formType.getFormVariableNames(formFile, formNode);
-            for (String variableName : variableNames.keySet()) {
-                if (variableNames.get(variableName) == FormVariableAccess.WRITE
-                        && formNode.getProcessDefinition().getVariableNames(true).contains(variableName)) {
-                    validation.addFieldEmptyConfigs(variableName);
+            byte[] formData = IOUtils.readStreamAsBytes(formFile.getContents(true));
+            Map<String, FormVariableAccess> formVariables = formType.getFormVariableNames(formNode, formData);
+            List<String> variableNames = formNode.getProcessDefinition().getVariableNames(true);
+            for (Map.Entry<String, FormVariableAccess> entry : formVariables.entrySet()) {
+                if (entry.getValue() == FormVariableAccess.WRITE && variableNames.contains(entry.getKey())) {
+                    validation.addFieldEmptyConfigs(entry.getKey());
                 }
             }
         }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -49,11 +48,10 @@ public class ExecutorSwimlaneElement extends OrgFunctionSwimlaneElement {
                         items.add(name);
                     }
                 }
-                ChooseItemDialog dialog = new ChooseItemDialog(Localization.getString("WFDialog.Text"), null, true);
-                dialog.setItems(items);
-                //dialog.setLabelProvider(new LabelProvider());
-                if (dialog.open() == IDialogConstants.OK_ID) {
-                    selectionText.setText((String) dialog.getSelectedItem());
+                ChooseItemDialog<String> dialog = new ChooseItemDialog<String>(Localization.getString("WFDialog.Text"), items);
+                String result = dialog.openDialog();
+                if (result != null) {
+                    selectionText.setText(result);
                     setOrgFunctionParameterValue(0, selectionText.getText());
                     fireCompletedEvent();
                 }

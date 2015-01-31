@@ -19,37 +19,38 @@ import org.xml.sax.SAXException;
 
 import ru.runa.gpd.form.FormType;
 import ru.runa.gpd.form.FormVariableAccess;
-import ru.runa.gpd.formeditor.wysiwyg.WYSIWYGHTMLEditor;
+import ru.runa.gpd.formeditor.wysiwyg.FormEditor;
 import ru.runa.gpd.lang.model.FormNode;
-import ru.runa.gpd.util.IOUtils;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 
 public abstract class BaseHtmlFormType extends FormType {
     private static final String READONLY_ATTR = "readonly";
     private static final String DISABLED_ATTR = "disabled";
     private static final String NAME_ATTR = "name";
-    protected WYSIWYGHTMLEditor editor;
+    protected FormEditor editor;
 
     @Override
     public IEditorPart openForm(final IFile formFile, final FormNode formNode) throws CoreException {
-        return IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), formFile, WYSIWYGHTMLEditor.ID, true);
+        return IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), formFile, FormEditor.ID, true);
     }
 
-    protected abstract Map<String, FormVariableAccess> getTypeSpecificVariableNames(FormNode formNode, byte[] formBytes) throws Exception;
+    protected Map<String, FormVariableAccess> getTypeSpecificVariableNames(FormNode formNode, byte[] formBytes) throws Exception {
+        return Maps.newHashMap();
+    }
 
     @Override
-    public Map<String, FormVariableAccess> getFormVariableNames(IFile formFile, FormNode formNode) throws Exception {
+    public Map<String, FormVariableAccess> getFormVariableNames(FormNode formNode, byte[] formData) throws Exception {
         Map<String, FormVariableAccess> variableNames = Maps.newHashMap();
-        byte[] formBytes = IOUtils.readStreamAsBytes(formFile.getContents(true));
-        Document document = getDocument(new ByteArrayInputStream(formBytes));
+        Document document = getDocument(new ByteArrayInputStream(formData));
         NodeList inputElements = document.getElementsByTagName("input");
         addHtmlFields(inputElements, variableNames);
         NodeList textareaElements = document.getElementsByTagName("textarea");
         addHtmlFields(textareaElements, variableNames);
         NodeList selectElements = document.getElementsByTagName("select");
         addHtmlFields(selectElements, variableNames);
-        Map<String, FormVariableAccess> typeSpecificVariableNames = getTypeSpecificVariableNames(formNode, formBytes);
+        Map<String, FormVariableAccess> typeSpecificVariableNames = getTypeSpecificVariableNames(formNode, formData);
         for (Map.Entry<String, FormVariableAccess> entry : typeSpecificVariableNames.entrySet()) {
             FormVariableAccess access = entry.getValue();
             if (variableNames.containsKey(entry.getKey())) {
@@ -83,7 +84,7 @@ public abstract class BaseHtmlFormType extends FormType {
     public static Document getDocument(InputStream is) throws IOException, SAXException {
         DOMParser parser = new DOMParser();
         InputSource inputSource = new InputSource(is);
-        inputSource.setEncoding("UTF-8");
+        inputSource.setEncoding(Charsets.UTF_8.name());
         parser.parse(inputSource);
         return parser.getDocument();
     }

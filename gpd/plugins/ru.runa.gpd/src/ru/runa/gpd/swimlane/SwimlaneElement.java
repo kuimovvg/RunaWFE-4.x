@@ -41,8 +41,14 @@ public abstract class SwimlaneElement<T extends SwimlaneInitializer> {
 
     protected abstract T createNewSwimlaneInitializer();
 
+    protected boolean isSwimlaneInitializerSuitable(T swimlaneInitializer) {
+        return true;
+    }
+
     public void setSwimlaneInitializer(T swimlaneInitializer) {
-        this.swimlaneInitializer = swimlaneInitializer;
+        if (isSwimlaneInitializerSuitable(swimlaneInitializer)) {
+            this.swimlaneInitializer = swimlaneInitializer;
+        }
     }
 
     public T getSwimlaneInitializerNotNull() {

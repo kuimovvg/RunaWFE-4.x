@@ -1,5 +1,7 @@
 package ru.runa.gpd.quick.formeditor.ui.wizard;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +14,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -20,17 +21,15 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
-import ru.runa.gpd.formeditor.ftl.MethodTag;
-import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
-import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
+import ru.runa.gpd.formeditor.ftl.ComponentParameter;
+import ru.runa.gpd.formeditor.ftl.ComponentType;
+import ru.runa.gpd.formeditor.ftl.ComponentTypeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.quick.Messages;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
 import ru.runa.gpd.quick.tag.FreemarkerConfigurationGpdWrap;
-import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.util.VariableUtils;
@@ -110,9 +109,9 @@ public class QuickFormVariableWizardPage extends WizardPage {
         FreemarkerConfigurationGpdWrap freemarkerConfiguration = FreemarkerConfigurationGpdWrap.getInstance();
 
         for (String value : freemarkerConfiguration.getTagsName()) {
-            if (MethodTag.hasTag(value)) {
-                MethodTag tag = MethodTag.getTagNotNull(value);
-                types.add(new SelectItem(tag.name, value));
+            if (ComponentTypeRegistry.has(value)) {
+                ComponentType tag = ComponentTypeRegistry.getNotNull(value);
+                types.add(new SelectItem(tag.getLabel(), value));
                 continue;
             }
         }
@@ -148,7 +147,7 @@ public class QuickFormVariableWizardPage extends WizardPage {
 
     private void createVariablesField(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
-        label.setText(Messages.getString("TemplatedFormVariableWizardPage.page.var"));
+        label.setText(Messages.getString("TemplatedFormVariableWizardPage.page.var") + " *");
         variableCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
         variableCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         List<String> names = processDefinition.getVariableNames(true);
@@ -162,76 +161,27 @@ public class QuickFormVariableWizardPage extends WizardPage {
     }
 
     private void createParamField(Composite parent) {
-        Map<String, MethodTag> methodTags = MethodTag.getAll();
-        if (methodTags != null) {
-            for (MethodTag methodTag : methodTags.values()) {
-                if (methodTag.name.equals(tagType.getCombo().getText())) {
-                    if (methodTag.params.size() < 2) {
+        Map<String, ComponentType> componentTypes = ComponentTypeRegistry.getAll();
+        if (componentTypes != null) {
+            for (ComponentType componentType : componentTypes.values()) {
+                if (componentType.getLabel().equals(tagType.getCombo().getText())) {
+                    if (componentType.getParameters().size() < 2) {
                         paramValue = null;
                     }
-                    for (int i = 1; i < methodTag.params.size(); i++) {
-                        Param param = methodTag.params.get(i);
-
+                    for (int i = 1; i < componentType.getParameters().size(); i++) {
+                        ComponentParameter componentParameter = componentType.getParameters().get(i);
                         Label label = new Label(parent, SWT.NONE);
-                        label.setText(param.label);
-                        if (param.isCombo() || param.isVarCombo()) {
-                            final ComboViewer comboParam = new ComboViewer(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-                            comboParam.getCombo().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                            comboParam.setContentProvider(ArrayContentProvider.getInstance());
-                            comboParam.setLabelProvider(new LabelProvider() {
-                                @Override
-                                public String getText(Object element) {
-                                    if (element instanceof SelectItem) {
-                                        SelectItem current = (SelectItem) element;
+                        label.setText(componentParameter.getLabel());
+                        // TODO in createEditor variables populated from
+                        // FormEditor instance
+                        componentParameter.getType().createEditor(parent, componentParameter, paramValue, new PropertyChangeListener() {
 
-                                        return current.getLabel();
-                                    }
-                                    return "";
-                                }
-                            });
-
-                            if (param.optionalValues != null) {
-                                List<SelectItem> selectItems = new ArrayList<SelectItem>(param.optionalValues.size());
-                                for (OptionalValue optionalValue : param.optionalValues) {
-                                    SelectItem selectItem = new SelectItem(optionalValue.value, optionalValue.name);
-                                    selectItems.add(selectItem);
-                                }
-                                comboParam.setInput(selectItems);
+                            @Override
+                            public void propertyChange(PropertyChangeEvent evt) {
+                                paramValue = evt.getNewValue().toString();
+                                verifyContentsValid();
                             }
-
-                            if (paramValue != null) {
-                                List<SelectItem> selectItems = (List<SelectItem>) comboParam.getInput();
-                                for (SelectItem selectItem : selectItems) {
-                                    if (paramValue.equals(selectItem.getValue())) {
-                                        comboParam.getCombo().setText(selectItem.getLabel());
-                                        break;
-                                    }
-                                }
-                            }
-                            comboParam.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
-                                @Override
-                                protected void onSelectionChanged(SelectionChangedEvent e) throws Exception {
-                                    IStructuredSelection selection = (IStructuredSelection) e.getSelection();
-                                    SelectItem selectItem = (SelectItem) selection.getFirstElement();
-                                    paramValue = selectItem.getValue().toString();
-                                    verifyContentsValid();
-                                }
-                            });
-                        } else {
-                            final Text text = new Text(parent, SWT.NONE);
-                            text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                            if (paramValue != null) {
-                                text.setText(paramValue);
-                            }
-
-                            text.addModifyListener(new LoggingModifyTextAdapter() {
-                                @Override
-                                protected void onTextChanged(ModifyEvent e) throws Exception {
-                                    paramValue = text.getText();
-                                    verifyContentsValid();
-                                }
-                            });
-                        }
+                        });
                     }
                     break;
                 }
