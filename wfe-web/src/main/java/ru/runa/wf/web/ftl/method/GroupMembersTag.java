@@ -31,7 +31,7 @@ public class GroupMembersTag extends FreemarkerTag {
     @Override
     protected Object executeTag() throws Exception {
         String variableName = getParameterAsString(0);
-        Group group = getParameterAs(Group.class, 1);
+        Group group = getRichComboParameterAs(Group.class, 1);
         String view = getParameterAsString(2);
         List<Actor> actors = Delegates.getExecutorService().getGroupActors(user, group);
         if ("all".equals(view)) {

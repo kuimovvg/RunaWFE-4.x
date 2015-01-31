@@ -20,8 +20,8 @@ public abstract class ChooseByRelationTagBase extends FreemarkerTag {
     @Override
     protected Object executeTag() {
         String variableName = getParameterAsString(0);
-        String relationName = getParameterAsString(1);
-        Executor relationParam = getParameterAs(Executor.class, 2);
+        String relationName = getRichComboParameterAs(String.class, 1);
+        Executor relationParam = getRichComboParameterAs(Executor.class, 2);
         if (relationParam == null) {
             // TODO right way?
             relationParam = user.getActor();

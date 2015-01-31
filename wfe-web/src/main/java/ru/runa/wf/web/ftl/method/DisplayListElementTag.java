@@ -16,7 +16,7 @@ public class DisplayListElementTag extends FreemarkerTag {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         List<Object> list = (List<Object>) variable.getValue();
-        int index = getParameterAs(int.class, 1);
+        int index = getRichComboParameterAs(int.class, 1);
         Object object = null;
         if (index < list.size()) {
             object = list.get(index);
