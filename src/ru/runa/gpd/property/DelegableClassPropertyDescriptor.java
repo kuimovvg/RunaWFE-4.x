@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 
+import ru.runa.gpd.extension.LocalizationLabelProvider;
 import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.ui.dialog.ChooseHandlerClassDialog;
 
@@ -16,7 +17,7 @@ public class DelegableClassPropertyDescriptor extends PropertyDescriptor {
     public DelegableClassPropertyDescriptor(Object id, String label, Delegable delegable) {
         super(id, label);
         this.delegable = delegable;
-        setLabelProvider(new LocalizationLabelProvider());
+        setLabelProvider(new LocalizationLabelProvider(true));
     }
 
     @Override

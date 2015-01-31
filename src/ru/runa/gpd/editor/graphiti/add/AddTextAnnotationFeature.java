@@ -29,18 +29,17 @@ public class AddTextAnnotationFeature extends AddElementFeature {
         ContainerShape containerShape = Graphiti.getPeCreateService().createContainerShape(context.getTargetContainer(), true);
         Rectangle main = Graphiti.getGaService().createInvisibleRectangle(containerShape);
         Graphiti.getGaService().setLocationAndSize(main, context.getX(), context.getY(), bounds.width, bounds.height);
-        // TODO shapes
         final Shape lineShape = Graphiti.getPeCreateService().createShape(containerShape, false);
         Polyline polyline = Graphiti.getGaService().createPolyline(lineShape, new int[] { LayoutTextAnnotationFeature.EDGE, 0, 0, 0, 0, 0, LayoutTextAnnotationFeature.EDGE, 0 });
         polyline.getProperties().add(new GaProperty(GaProperty.ID, LayoutTextAnnotationFeature.POLYLINE));
         polyline.setStyle(StyleUtil.getStyleForTask(getDiagram()));
         polyline.setLineWidth(2);
-        final Shape textShape = Graphiti.getPeCreateService().createShape(containerShape, false); // TODO
+        final Shape textShape = Graphiti.getPeCreateService().createShape(containerShape, false);
         MultiText text = Graphiti.getGaService().createDefaultMultiText(getDiagram(), textShape, annotation.getDescription());
         text.getProperties().add(new GaProperty(GaProperty.ID, GaProperty.DESCRIPTION));
-        //text.setStyle(StyleUtil.getStyleForTask(getDiagram()));
         text.setVerticalAlignment(Orientation.ALIGNMENT_TOP);
-        // link both, the container as well as the text shape so direct editing works together
+        // link both, the container as well as the text shape so direct editing
+        // works together
         // with updating and property handling
         link(containerShape, annotation);
         link(textShape, annotation);

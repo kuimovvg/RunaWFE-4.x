@@ -3,6 +3,8 @@ package ru.runa.gpd.swimlane;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionDefinition;
 import ru.runa.gpd.extension.orgfunction.OrgFunctionsRegistry;
 
+import com.google.common.base.Objects;
+
 public abstract class OrgFunctionSwimlaneElement extends SwimlaneElement<OrgFunctionSwimlaneInitializer> {
     private String orgFunctionDefinitionName;
 
@@ -18,6 +20,15 @@ public abstract class OrgFunctionSwimlaneElement extends SwimlaneElement<OrgFunc
     protected OrgFunctionSwimlaneInitializer createNewSwimlaneInitializer() {
         OrgFunctionDefinition orgFunctionDefinition = OrgFunctionsRegistry.getInstance().getArtifactNotNull(orgFunctionDefinitionName);
         return new OrgFunctionSwimlaneInitializer(orgFunctionDefinition);
+    }
+
+    @Override
+    protected boolean isSwimlaneInitializerSuitable(OrgFunctionSwimlaneInitializer swimlaneInitializer) {
+        if (swimlaneInitializer == null) {
+            return true;
+        }
+        OrgFunctionDefinition orgFunctionDefinition = OrgFunctionsRegistry.getInstance().getArtifactNotNull(orgFunctionDefinitionName);
+        return Objects.equal(swimlaneInitializer.getDefinition(), orgFunctionDefinition);
     }
 
     protected String getOrgFunctionParameterValue(int index) {

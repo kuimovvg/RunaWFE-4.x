@@ -14,19 +14,6 @@ import com.google.common.collect.Maps;
 
 public class VariableUtils {
 
-    /**
-     * Filtering by whitespace, etc...
-     */
-    public static List<Variable> getValidVariables(List<Variable> variables) {
-        List<Variable> result = Lists.newArrayList(variables);
-        for (Variable variable : variables) {
-            if (variable.getName().indexOf(" ") != -1) {
-                result.remove(variable);
-            }
-        }
-        return result;
-    }
-
     public static Map<String, Variable> toMap(List<Variable> variables) {
         Map<String, Variable> result = Maps.newHashMapWithExpectedSize(variables.size());
         for (Variable variable : variables) {
@@ -162,18 +149,16 @@ public class VariableUtils {
         return "";
     }
 
-    private static void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent,
-            List<Variable> children) {
+    private static void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent, List<Variable> children) {
         for (Variable variable : children) {
             if (variable.getUserType() == null) {
                 continue;
             }
             String syntheticName = (parent != null ? (parent.getName() + VariableUserType.DELIM) : "") + variable.getName();
-            String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "")
-                    + variable.getScriptingName();
+            String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "") + variable.getScriptingName();
             if (Objects.equal(variable.getUserType(), searchType)) {
-                Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName
-                        + VariableUserType.DELIM + searchAttribute.getScriptingName(), variable);
+                Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName + VariableUserType.DELIM
+                        + searchAttribute.getScriptingName(), variable);
                 result.add(syntheticVariable);
             } else {
                 Variable syntheticVariable = new Variable(syntheticName, syntheticScriptingName, variable);
@@ -182,8 +167,7 @@ public class VariableUtils {
         }
     }
 
-    public static List<Variable> findVariablesOfTypeWithAttributeExpanded(VariableContainer variableContainer, VariableUserType searchType,
-            Variable searchAttribute) {
+    public static List<Variable> findVariablesOfTypeWithAttributeExpanded(VariableContainer variableContainer, VariableUserType searchType, Variable searchAttribute) {
         List<Variable> result = Lists.newArrayList();
         searchInVariables(result, searchType, searchAttribute, null, variableContainer.getVariables(false, false));
         return result;

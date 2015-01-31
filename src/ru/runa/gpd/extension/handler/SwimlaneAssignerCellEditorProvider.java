@@ -118,7 +118,6 @@ public class SwimlaneAssignerCellEditorProvider extends DelegableProvider {
                     swimlane.setParent(definition);
                     swimlane.setName("TEST");
                     swimlane.setDelegationConfiguration(swimlaneInitializerText.getText());
-                    swimlane.setEditorPath("");
                     SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(definition, swimlane);
                     if (dialog.open() == IDialogConstants.OK_ID) {
                         swimlaneInitializerText.setText(dialog.getConfiguration());
