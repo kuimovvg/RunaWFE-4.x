@@ -122,13 +122,13 @@ public class Duration {
     public int hashCode() {
         return Objects.hashCode(variableName, delay, unit);
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         Duration d = (Duration) obj;
         return Objects.equal(variableName, d.variableName) && Objects.equal(delay, d.delay) && Objects.equal(unit, d.unit);
     }
-    
+
     @Override
     public String toString() {
         if (!hasDuration()) {
@@ -155,7 +155,7 @@ public class Duration {
         return duration;
     }
 
-    public static class Unit {
+    public static class Unit implements Comparable<Unit> {
         private final String value;
         private final String label;
 
@@ -163,10 +163,16 @@ public class Duration {
             this.value = value;
             this.label = Localization.getString("unit." + value.replaceAll(" ", ""));
         }
-        
+
         @Override
         public String toString() {
             return label;
         }
+
+        @Override
+        public int compareTo(Unit unit) {
+            return label.compareTo(unit.label);
+        }
+
     }
 }

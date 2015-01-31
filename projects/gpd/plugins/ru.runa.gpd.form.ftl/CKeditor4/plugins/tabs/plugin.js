@@ -27,8 +27,6 @@ CKEDITOR.plugins.add('tabs', {
 					var tabFolderId = tabFolder.attr('id');
 					addTab(editor, tabFolderId, false);
 				}
-				//editor.setData(editor.getData());
-				//editor.updateElement();
 			}
 		});
 		editor.addCommand('DeleteTab', {
@@ -49,8 +47,6 @@ CKEDITOR.plugins.add('tabs', {
 					} else {
 						tabFolder.remove();
 					}
-					//editor.setData(editor.getData());
-					//editor.updateElement();
 				}
 			}
 		});

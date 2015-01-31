@@ -30,6 +30,9 @@ import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.TextEditorInput;
+
+import com.google.common.base.Charsets;
+
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
@@ -57,7 +60,7 @@ public class CreateProcessRegulation extends BaseModelActionDelegate {
         Configuration config = new Configuration();
 
         config.setObjectWrapper(ObjectWrapper.DEFAULT_WRAPPER);
-        config.setDefaultEncoding("UTF-8");
+        config.setDefaultEncoding(Charsets.UTF_8.name());
         config.setTemplateExceptionHandler(TemplateExceptionHandler.HTML_DEBUG_HANDLER);
 
         // TODO need localization

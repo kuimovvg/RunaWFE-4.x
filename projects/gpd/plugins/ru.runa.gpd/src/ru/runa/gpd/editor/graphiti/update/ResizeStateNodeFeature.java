@@ -15,7 +15,7 @@ import ru.runa.gpd.editor.graphiti.PropertyUtil;
 import ru.runa.gpd.editor.graphiti.add.AddElementFeature;
 import ru.runa.gpd.lang.model.GraphElement;
 
-// TODO unused
+// unused
 public class ResizeStateNodeFeature extends DefaultResizeShapeFeature implements GEFConstants {
     public ResizeStateNodeFeature(IFeatureProvider provider) {
         super(provider);
@@ -28,7 +28,7 @@ public class ResizeStateNodeFeature extends DefaultResizeShapeFeature implements
         if (element != null) {
             IAddFeature addFeature = ((DiagramFeatureProvider) getFeatureProvider()).getAddFeature(element.getClass());
             if (addFeature instanceof AddElementFeature) {
-                //return !((AddElementFeature) addFeature).isFixedSize();
+                // return !((AddElementFeature) addFeature).isFixedSize();
                 return true;
             }
         }
@@ -47,7 +47,8 @@ public class ResizeStateNodeFeature extends DefaultResizeShapeFeature implements
         element.setConstraint(bounds);
         // see ga structure in AddStateNodeFeature and hierarchy
         GraphicsAlgorithm ga = context.getShape().getGraphicsAlgorithm();
-        //RoundedRectangle borderRect = (RoundedRectangle) ga.getGraphicsAlgorithmChildren().get(0);
+        // RoundedRectangle borderRect = (RoundedRectangle)
+        // ga.getGraphicsAlgorithmChildren().get(0);
         ga.setWidth(bounds.width - GRID_SIZE);
         ga.setHeight(bounds.height - GRID_SIZE);
         GraphicsAlgorithm swimlaneText = PropertyUtil.findGaRecursiveByName(ga, GaProperty.SWIMLANE_NAME);

@@ -42,7 +42,7 @@ public class SwimlaneConfigDialog extends Dialog implements ISwimlaneElementList
         this.swimlane = swimlane;
         this.configuration = swimlane.getDelegationConfiguration();
         this.publicVisibility = swimlane.isPublicVisibility();
-        this.path = swimlane.getEditorPath();
+        this.path = swimlane.getEditorPath() != null ? swimlane.getEditorPath() : "SwimlaneElement.ManualLabel";
         for (SwimlaneElement swimlaneElement : swimlaneElements) {
             swimlaneElement.setProcessDefinition(definition);
         }

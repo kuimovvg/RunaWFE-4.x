@@ -10,9 +10,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.graphics.Image;
 
-import com.google.common.collect.Maps;
-
 import ru.runa.gpd.EditorsPlugin;
+
+import com.google.common.collect.Maps;
 
 /**
  * The main plugin class to be used in the desktop.

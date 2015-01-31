@@ -54,10 +54,10 @@ function Ok() {
 }
 
 function populateNameSelect(elementType, oActiveEl) {
-	new Ajax.Request('/editor/FreemarkerTags.java', {
+	new Ajax.Request('/editor/FormSupportServlet', {
 		method : 'get',
 		parameters : {
-			method : 'GetVariableNames',
+			command : 'GetVariableNames',
 			elementType : elementType
 		},
 		onSuccess : function(transport) {

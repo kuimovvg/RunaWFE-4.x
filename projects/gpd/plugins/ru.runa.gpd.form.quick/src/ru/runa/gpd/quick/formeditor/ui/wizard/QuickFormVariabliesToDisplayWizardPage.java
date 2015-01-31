@@ -1,5 +1,7 @@
 package ru.runa.gpd.quick.formeditor.ui.wizard;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +16,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -22,15 +23,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.Section;
 
-import ru.runa.gpd.formeditor.ftl.MethodTag;
-import ru.runa.gpd.formeditor.ftl.MethodTag.OptionalValue;
-import ru.runa.gpd.formeditor.ftl.MethodTag.Param;
+import ru.runa.gpd.formeditor.ftl.ComponentParameter;
+import ru.runa.gpd.formeditor.ftl.ComponentType;
+import ru.runa.gpd.formeditor.ftl.ComponentTypeRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.quick.Messages;
@@ -38,7 +38,6 @@ import ru.runa.gpd.quick.formeditor.QuickFormGpdVariable;
 import ru.runa.gpd.quick.formeditor.QuickFormType;
 import ru.runa.gpd.quick.formeditor.ui.wizard.QuickFormVariableWizardPage.SelectItem;
 import ru.runa.gpd.quick.tag.FreemarkerConfigurationGpdWrap;
-import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.util.VariableUtils;
@@ -221,9 +220,9 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
         FreemarkerConfigurationGpdWrap freemarkerConfiguration = FreemarkerConfigurationGpdWrap.getInstance();
 
         for (String value : freemarkerConfiguration.getTagsName()) {
-            if (MethodTag.hasTag(value)) {
-                MethodTag tag = MethodTag.getTagNotNull(value);
-                types.add(new SelectItem(tag.name, value));
+            if (ComponentTypeRegistry.has(value)) {
+                ComponentType tag = ComponentTypeRegistry.getNotNull(value);
+                types.add(new SelectItem(tag.getLabel(), value));
                 continue;
             }
         }
@@ -236,9 +235,7 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
             @Override
             public String getText(Object element) {
                 if (element instanceof SelectItem) {
-                    SelectItem current = (SelectItem) element;
-
-                    return current.getLabel();
+                    return ((SelectItem) element).getLabel();
                 }
                 return "";
             }
@@ -249,8 +246,8 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
             public void onSelectionChanged(SelectionChangedEvent e) {
                 IStructuredSelection selection = (IStructuredSelection) e.getSelection();
                 SelectItem selectItem = (SelectItem) selection.getFirstElement();
-
                 variableDef.setTagName(selectItem.getValue().toString());
+                variableDef.setParams("InputVariable".equals(selectItem.getValue()) ? new String[0] : new String[] { "false" });
                 createClientArea(parent, variableDef);
             }
         });
@@ -269,75 +266,22 @@ public class QuickFormVariabliesToDisplayWizardPage extends WizardPage {
     }
 
     private void createParamField(Composite parent, ComboViewer tagType, String paramValue, final QuickFormGpdVariable variableDef) {
-        Map<String, MethodTag> methodTags = MethodTag.getAll();
-        if (methodTags != null) {
-            for (MethodTag methodTag : methodTags.values()) {
-                if (methodTag.name.equals(tagType.getCombo().getText())) {
-                    for (int i = 1; i < methodTag.params.size(); i++) {
-                        Param param = methodTag.params.get(i);
+        Map<String, ComponentType> componentTypes = ComponentTypeRegistry.getAll();
+        if (componentTypes != null) {
+            for (ComponentType componentType : componentTypes.values()) {
+                if (componentType.getLabel().equals(tagType.getCombo().getText())) {
+                    for (int i = 1; i < componentType.getParameters().size(); i++) {
+                        ComponentParameter componentParameter = componentType.getParameters().get(i);
+                        Composite parameterComposite = componentParameter.getType().createEditor(parent, componentParameter, paramValue, new PropertyChangeListener() {
 
-                        if (param.isCombo() || param.isVarCombo()) {
-                            final ComboViewer comboParam = new ComboViewer(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-                            comboParam.getCombo().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                            comboParam.setContentProvider(ArrayContentProvider.getInstance());
-                            comboParam.setLabelProvider(new LabelProvider() {
-                                @Override
-                                public String getText(Object element) {
-                                    if (element instanceof SelectItem) {
-                                        SelectItem current = (SelectItem) element;
-
-                                        return current.getLabel();
-                                    }
-                                    return "";
-                                }
-                            });
-
-                            if (param.optionalValues != null) {
-                                List<SelectItem> selectItems = new ArrayList<SelectItem>(param.optionalValues.size());
-                                for (OptionalValue optionalValue : param.optionalValues) {
-                                    SelectItem selectItem = new SelectItem(optionalValue.value, optionalValue.name);
-                                    selectItems.add(selectItem);
-                                }
-                                comboParam.setInput(selectItems);
+                            @Override
+                            public void propertyChange(PropertyChangeEvent evt) {
+                                List<String> param = new ArrayList<String>();
+                                param.add(evt.getNewValue().toString());
+                                variableDef.setParams(param.toArray(new String[0]));
                             }
-
-                            if (paramValue != null) {
-                                List<SelectItem> selectItems = (List<SelectItem>) comboParam.getInput();
-                                for (SelectItem selectItem : selectItems) {
-                                    if (paramValue.equals(selectItem.getValue())) {
-                                        comboParam.getCombo().setText(selectItem.getLabel());
-                                        break;
-                                    }
-                                }
-                            }
-                            comboParam.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
-                                @Override
-                                protected void onSelectionChanged(SelectionChangedEvent e) throws Exception {
-                                    IStructuredSelection selection = (IStructuredSelection) e.getSelection();
-                                    SelectItem selectItem = (SelectItem) selection.getFirstElement();
-                                    List<String> param = new ArrayList<String>();
-                                    param.add(selectItem.getValue().toString());
-                                    variableDef.setParams(param.toArray(new String[0]));
-                                }
-                            });
-                            comboParam.getCombo().setEnabled(!initialVariables.contains(variableDef));
-                        } else {
-                            final Text text = new Text(parent, SWT.NONE);
-                            text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                            if (paramValue != null) {
-                                text.setText(paramValue);
-                            }
-
-                            text.addModifyListener(new LoggingModifyTextAdapter() {
-                                @Override
-                                protected void onTextChanged(ModifyEvent e) throws Exception {
-                                    List<String> param = new ArrayList<String>();
-                                    param.add(text.getText());
-                                    variableDef.setParams(param.toArray(new String[0]));
-                                }
-                            });
-                            text.setEnabled(!initialVariables.contains(variableDef));
-                        }
+                        });
+                        parameterComposite.setEnabled(!initialVariables.contains(variableDef));
                     }
                 }
             }

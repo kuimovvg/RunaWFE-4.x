@@ -301,7 +301,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
                 }
             }
         } catch (CoreException e) {
-            PluginLogger.logError("Cleaning unused form files", e);
+            PluginLogger.logErrorWithoutDialog("Cleaning unused form files", e);
         }
     }
 

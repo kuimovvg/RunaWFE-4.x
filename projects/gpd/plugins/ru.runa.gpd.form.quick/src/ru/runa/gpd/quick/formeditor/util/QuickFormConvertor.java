@@ -18,6 +18,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.formeditor.ftl.TemplateProcessor;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.quick.Messages;
@@ -26,7 +27,6 @@ import ru.runa.gpd.quick.formeditor.QuickForm;
 import ru.runa.gpd.quick.formeditor.QuickFormEditorUtil;
 import ru.runa.gpd.quick.formeditor.QuickFormGpdProperty;
 import ru.runa.gpd.quick.tag.FormHashModelGpdWrap;
-import ru.runa.gpd.quick.tag.FreemarkerProcessorGpdWrap;
 import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
@@ -87,7 +87,7 @@ public final class QuickFormConvertor {
         MapDelegableVariableProvider variableProvider = new MapDelegableVariableProvider(variables, null);
         FormHashModelGpdWrap model = new FormHashModelGpdWrap(null, variableProvider, null);
 
-        String out = FreemarkerProcessorGpdWrap.process(templateHtml, model);
+        String out = TemplateProcessor.process(templateHtml, model);
         ByteArrayInputStream stream = new ByteArrayInputStream(out.getBytes(Charsets.UTF_8));
         converterSource.getQuickFormFile().setContents(stream, true, true, null);
     }
@@ -128,8 +128,7 @@ public final class QuickFormConvertor {
     }
 
     private static void deleteTemplate(ConverterSource converterSource) throws CoreException {
-        if (!QuickFormEditorUtil.isTemplateUsingInForms(converterSource.getProcessDefinition(), converterSource.getFormNode(), converterSource
-                .getFormNode().getTemplateFileName())) {
+        if (!QuickFormEditorUtil.isTemplateUsingInForms(converterSource.getProcessDefinition(), converterSource.getFormNode(), converterSource.getFormNode().getTemplateFileName())) {
             IFolder folder = (IFolder) converterSource.getQuickFormFile().getParent();
             IFile templateFile = folder.getFile(converterSource.getFormNode().getTemplateFileName());
             templateFile.delete(true, null);
