@@ -30,19 +30,14 @@
 			getHTMLCallback(editor.getData());
 		}
 		function setHTML(html){
-        try {
-     		  var editor = CKEDITOR.instances.editor;        	  
-              editor.setData(html, function() {
+			try {
+				var editor = CKEDITOR.instances.editor;        	  
+				editor.setData(html, function() {
 					markContent(editor);
 				});	
-        } catch (e) {
-         	  if(e instanceof TypeError)
-         	  {
-          		  //supress TypeError
-         	  }else{
-				    alertError(e, "setHTML");
-		 	  }
-		   }
+			} catch (e) {
+				alertError(e, "setHTML");
+			}
         }
 		function setHTMLSaved() {
 			try {

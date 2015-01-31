@@ -42,7 +42,7 @@ public abstract class ProcessFileComposite extends Composite {
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         IOUtils.copyFile(getTemplateInputStream(), file);
-                        eventSupport.firePropertyChange(PropertyNames.VALUE, null, file.getName());
+                        eventSupport.firePropertyChange(PropertyNames.PROPERTY_VALUE, null, file.getName());
                         rebuild();
                     }
                 });
@@ -60,7 +60,7 @@ public abstract class ProcessFileComposite extends Composite {
                         return;
                     }
                     IOUtils.copyFile(path, file);
-                    eventSupport.firePropertyChange(PropertyNames.VALUE, null, file.getName());
+                    eventSupport.firePropertyChange(PropertyNames.PROPERTY_VALUE, null, file.getName());
                     rebuild();
                 }
             });
@@ -96,7 +96,7 @@ public abstract class ProcessFileComposite extends Composite {
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         EmbeddedFileUtils.deleteProcessFile(file);
                         rebuild();
-                        eventSupport.firePropertyChange(PropertyNames.VALUE, file.getName(), null);
+                        eventSupport.firePropertyChange(PropertyNames.PROPERTY_VALUE, file.getName(), null);
                     }
                 });
             }
@@ -107,7 +107,7 @@ public abstract class ProcessFileComposite extends Composite {
     public EventSupport getEventSupport() {
         return eventSupport;
     }
-    
+
     protected abstract boolean hasTemplate();
 
     protected abstract InputStream getTemplateInputStream();

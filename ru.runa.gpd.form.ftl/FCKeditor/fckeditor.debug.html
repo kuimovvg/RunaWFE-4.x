@@ -61,6 +61,7 @@
 		}
 		function FCKeditor_OnComplete(editor) {
 			try {
+				alert("Starting 'FCKeditor_OnComplete' callback");
 				onLoadCallback();
 				editor.Events.AttachEvent("OnAfterSetHTML", markContent) ;
 				window.setInterval("findModifications()", 1000);

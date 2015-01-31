@@ -45,11 +45,11 @@
       </handler>
    </extension>
    <extension
-         point="ru.runa.gpd.form.ftl.tags">
-      <tag
+         point="ru.runa.gpd.form.ftl.components">
+      <component
             id="GetMyDocStatus"
             name="Show status of document">
-      </tag>
+      </component>
    </extension>
 
 </plugin>

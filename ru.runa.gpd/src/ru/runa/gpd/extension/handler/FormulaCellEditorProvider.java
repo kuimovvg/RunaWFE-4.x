@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -158,7 +157,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
 
     }
 
-    private static class ChooseFunctionDialog extends ChooseItemDialog {
+    private static class ChooseFunctionDialog extends ChooseItemDialog<String> {
         private final static List<String> functions = new ArrayList<String>();
         static {
             functions.add("get_process_id()");
@@ -189,16 +188,7 @@ public class FormulaCellEditorProvider extends DelegableProvider {
         }
 
         public ChooseFunctionDialog() {
-            super(Localization.getString("ChooseFunction.title"), Localization.getString("ChooseFunction.message"), false);
-        }
-
-        public String openDialog() {
-            setItems(functions);
-            if (open() == IDialogConstants.OK_ID) {
-                return (String) getSelectedItem();
-            }
-            return null;
-
+            super(Localization.getString("ChooseFunction.title"), functions, false, Localization.getString("ChooseFunction.message"), false);
         }
     }
 

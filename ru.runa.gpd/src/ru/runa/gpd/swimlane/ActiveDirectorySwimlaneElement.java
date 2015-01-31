@@ -1,9 +1,8 @@
 package ru.runa.gpd.swimlane;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -19,6 +18,8 @@ import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.SyncUIHelper;
 import ru.runa.gpd.ui.dialog.ChooseItemDialog;
 import ru.runa.wfe.extension.orgfunction.ExecutorByNameFunction;
+
+import com.google.common.collect.Lists;
 
 public class ActiveDirectorySwimlaneElement extends OrgFunctionSwimlaneElement {
     private Text selectionText;
@@ -45,11 +46,12 @@ public class ActiveDirectorySwimlaneElement extends OrgFunctionSwimlaneElement {
         SWTUtils.createLink(content, Localization.getString("button.choose"), new LoggingHyperlinkAdapter() {
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                ChooseItemDialog dialog = new ChooseItemDialog(Localization.getString("WFDialog.Text"), null, true);
                 Map<String, Boolean> executors = LDAPExecutorsImporter.getInstance().loadCachedData();
-                dialog.setItems(new ArrayList<String>(executors.keySet()));
-                if (dialog.open() == IDialogConstants.OK_ID) {
-                    selectionText.setText((String) dialog.getSelectedItem());
+                List<String> list = Lists.newArrayList(executors.keySet());
+                ChooseItemDialog<String> dialog = new ChooseItemDialog<String>(Localization.getString("WFDialog.Text"), list);
+                String result = dialog.openDialog();
+                if (result != null) {
+                    selectionText.setText(result);
                     setOrgFunctionParameterValue(0, selectionText.getText());
                     fireCompletedEvent();
                 }

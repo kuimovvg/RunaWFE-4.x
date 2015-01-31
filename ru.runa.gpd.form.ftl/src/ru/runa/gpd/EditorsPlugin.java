@@ -1,24 +1,16 @@
 package ru.runa.gpd;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Locale;
-
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.htmleditor.ColorProvider;
 import ru.runa.gpd.htmleditor.HTMLPlugin;
 import ru.runa.gpd.jseditor.launch.JavaScriptLaunchUtil;
-import ru.runa.gpd.util.IOUtils;
 
 /**
  * The main plugin class to be used in the desktop.
@@ -26,7 +18,6 @@ import ru.runa.gpd.util.IOUtils;
 public class EditorsPlugin extends AbstractUIPlugin {
     private static EditorsPlugin plugin;
     public static final boolean DEBUG = "true".equals(System.getProperty("ru.runa.gpd.form.ftl.debug"));
-    private static final String BROWSER_TYPE = System.getProperty("org.eclipse.swt.browser.DefaultType");
     // Color Provider
     private ColorProvider colorProvider;
 
@@ -128,21 +119,4 @@ public class EditorsPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
-    /**
-     * @return byte array or <code>null</code>
-     */
-    public static byte[] loadTagImage(Bundle bundle, String imagePath) throws IOException {
-        String lang = Locale.getDefault().getLanguage();
-        int ldi = imagePath.lastIndexOf(".");
-        if (ldi > 0) {
-            String nlImagePath = imagePath.substring(0, ldi) + "." + lang + imagePath.substring(ldi);
-            if (FileLocator.find(bundle, new Path(nlImagePath), new HashMap<String, String>()) != null) {
-                return IOUtils.readStreamAsBytes(FileLocator.openStream(bundle, new Path(nlImagePath), false));
-            }
-        }
-        if (FileLocator.find(bundle, new Path(imagePath), new HashMap<String, String>()) != null) {
-            return IOUtils.readStreamAsBytes(FileLocator.openStream(bundle, new Path(imagePath), false));
-        }
-        return null;
-    }
 }

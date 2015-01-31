@@ -67,7 +67,7 @@ public class DurationEditDialog extends Dialog {
 
                 @Override
                 protected void onSelection(SelectionEvent e) throws Exception {
-                    ChooseDateVariableDialog dialog = new ChooseDateVariableDialog(processDefinition, Duration.CURRENT_DATE_MESSAGE);
+                    ChooseDurationDialog dialog = new ChooseDurationDialog(processDefinition);
                     editable.setVariableName(dialog.openDialog());
                     updateGUI();
                 }
@@ -119,10 +119,10 @@ public class DurationEditDialog extends Dialog {
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-                    ChooseItemDialog dialog = new ChooseItemDialog(label.getText(), "", false);
-                    dialog.setItems(Duration.getUnits());
-                    if (dialog.open() == IDialogConstants.OK_ID) {
-                        editable.setUnit((Unit) dialog.getSelectedItem());
+                    ChooseItemDialog<Unit> dialog = new ChooseItemDialog<Unit>(label.getText(), Duration.getUnits(), false, null, false);
+                    Unit unit = dialog.openDialog();
+                    if (unit != null) {
+                        editable.setUnit(unit);
                         updateGUI();
                     }
                 }

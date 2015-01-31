@@ -2,7 +2,6 @@ package ru.runa.gpd.swimlane;
 
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -53,11 +52,11 @@ public class RelationComposite extends Composite {
         SWTUtils.createLink(composite, Localization.getString("button.choose"), new LoggingHyperlinkAdapter() {
             @Override
             protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                ChooseItemDialog dialog = new ChooseItemDialog(Localization.getString("Relations"), null, true);
                 List<String> relations = WFEServerRelationsImporter.getInstance().loadCachedData();
-                dialog.setItems(relations);
-                if (dialog.open() == IDialogConstants.OK_ID) {
-                    relationNameText.setText((String) dialog.getSelectedItem());
+                ChooseItemDialog<String> dialog = new ChooseItemDialog<String>(Localization.getString("Relations"), relations);
+                String result = dialog.openDialog();
+                if (result != null) {
+                    relationNameText.setText(result);
                     swimlaneInitializer.setRelationName(relationNameText.getText());
                 }
             }
@@ -97,5 +96,5 @@ public class RelationComposite extends Composite {
             variableCombo.setText(swimlaneInitializer.getRelationParameterVariableName());
         }
     }
-    
+
 }

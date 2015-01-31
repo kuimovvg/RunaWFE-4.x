@@ -174,7 +174,7 @@ public class TimerActionEditDialog extends Dialog {
     protected void createButtonsForButtonBar(Composite parent) {
         if (isDeleteButtonEnabled()) {
             Button button = createButton(parent, DELETE_ID, Localization.getString("button.delete"), false);
-            //            button.setEnabled(deleteButtonEnabled);
+            // button.setEnabled(deleteButtonEnabled);
             button.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {

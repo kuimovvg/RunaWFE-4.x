@@ -30,11 +30,11 @@ public class TableViewerLocalDragAndDropSupport {
     }
 
     public static class DropElementsListener extends ViewerDropAdapter {
-        private final DragAndDropAdapter executor;
+        private final DragAndDropAdapter dragAndDropAdapter;
 
         public DropElementsListener(TableViewer tableViewer, DragAndDropAdapter executor) {
             super(tableViewer);
-            this.executor = executor;
+            this.dragAndDropAdapter = executor;
         }
 
         @Override
@@ -42,7 +42,7 @@ public class TableViewerLocalDragAndDropSupport {
             IStructuredSelection selection = (IStructuredSelection) getViewer().getSelection();
             Object target = determineTarget(event);
             if (target != null) {
-                executor.onDrop(target, selection.toList());
+                dragAndDropAdapter.onDrop(target, selection.toList());
             }
             super.drop(event);
         }
