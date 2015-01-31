@@ -11,6 +11,7 @@ import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -22,6 +23,7 @@ import freemarker.template.TemplateModelException;
 
 @SuppressWarnings("unchecked")
 public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializable {
+    private static final String RICH_COMBO_VALUE_PREFIX = "value@";
     private static final long serialVersionUID = 1L;
     protected Log log = LogFactory.getLog(getClass());
     public static final String TARGET_PROCESS_PREFIX = "TargetProcess";
@@ -85,6 +87,30 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
                 Throwables.propagate(e);
             }
         }
+        return TypeConversionUtil.convertTo(clazz, paramValue);
+    }
+
+    protected <T> T getRichComboParameterAs(Class<T> clazz, int i) {
+        Object paramValue = null;
+        if (i < arguments.size()) {
+            try {
+                paramValue = BeansWrapper.getDefaultInstance().unwrap(arguments.get(i));
+            } catch (TemplateModelException e) {
+                Throwables.propagate(e);
+            }
+        }
+        if (paramValue instanceof String) {
+            String value = (String) paramValue;
+            if (value.startsWith(RICH_COMBO_VALUE_PREFIX)) {
+                value = value.substring(RICH_COMBO_VALUE_PREFIX.length()).trim();
+                return TypeConversionUtil.convertTo(clazz, value);
+            }
+            WfVariable variable = variableProvider.getVariable(value);
+            if (variable != null) {
+                return TypeConversionUtil.convertTo(clazz, variable.getValue());
+            }
+        }
+        // back compatibility (pre 4.2.0)
         return TypeConversionUtil.convertTo(clazz, paramValue);
     }
 
