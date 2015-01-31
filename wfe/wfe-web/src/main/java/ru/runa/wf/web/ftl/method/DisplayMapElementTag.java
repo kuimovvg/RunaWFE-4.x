@@ -10,7 +10,7 @@ public class DisplayMapElementTag extends FreemarkerTag {
     protected Object executeTag() {
         String variableName = getParameterAsString(0);
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        Object key = getParameterAs(Object.class, 1);
+        Object key = getRichComboParameterAs(Object.class, 1);
         WfVariable componentVariable = ViewUtil.createMapComponentVariable(variable, key);
         return ViewUtil.getOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
     }

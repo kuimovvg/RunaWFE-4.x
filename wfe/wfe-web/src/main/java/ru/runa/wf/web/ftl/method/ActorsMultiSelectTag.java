@@ -75,7 +75,7 @@ public class ActorsMultiSelectTag extends AjaxJsonFreemarkerTag {
     protected JSONAware processAjaxRequest(HttpServletRequest request) throws Exception {
         JSONArray jsonArray = new JSONArray();
         String displayFormat = getParameterAsString(1);
-        Group group = getParameterAs(Group.class, 2);
+        Group group = getRichComboParameterAs(Group.class, 2);
         boolean byLogin = "login".equals(displayFormat);
         String hint = request.getParameter("hint");
         List<Actor> actors = getActors(group, byLogin, hint);
