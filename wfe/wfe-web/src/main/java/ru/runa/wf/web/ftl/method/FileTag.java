@@ -17,6 +17,7 @@
  */
 package ru.runa.wf.web.ftl.method;
 
+import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
@@ -24,13 +25,15 @@ import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Files;
 
 import freemarker.template.TemplateModelException;
 
 public class FileTag extends FreemarkerTag {
-
     private static final long serialVersionUID = 1L;
+    private static final List<String> textFileExtensions = Lists.newArrayList("txt", "log");
 
     @Override
     protected Object executeTag() throws Exception {
@@ -38,7 +41,12 @@ public class FileTag extends FreemarkerTag {
         String view = getParameterAsString(1);
         IFileVariable fileVariable = variableProvider.getValueNotNull(IFileVariable.class, variableName);
         if ("content".equals(view)) {
-            return new String(fileVariable.getData(), Charsets.UTF_8);
+            String content = new String(fileVariable.getData(), Charsets.UTF_8);
+            if (textFileExtensions.contains(Files.getFileExtension(fileVariable.getName()))) {
+                content = content.replaceAll("\n", "<br>");
+                content = content.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
+            }
+            return content;
         } else if ("contentlength".equals(view)) {
             return fileVariable.getData().length;
         } else if ("contenttype".equals(view)) {
