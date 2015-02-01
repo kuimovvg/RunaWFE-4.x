@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 
+import ru.runa.gpd.extension.VariableFormatArtifact;
+import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.util.MultiinstanceParameters;
+import ru.runa.gpd.util.VariableMapping;
 
 public class MultiSubprocess extends Subprocess implements IMultiInstancesContainer {
     @Override
@@ -18,10 +21,11 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
     }
 
     @Override
-    protected boolean isCompatibleVariables(Variable variable1, Variable variable2) {
-        if (List.class.getName().equals(variable1.getJavaClassName())) {
-            return true;
+    protected boolean isCompatibleVariables(VariableMapping mapping, Variable variable1, Variable variable2) {
+        if (mapping.isMultiinstanceLink() && VariableFormatRegistry.isApplicable(variable1, List.class.getName())) {
+            VariableFormatArtifact elementArtifact = VariableFormatRegistry.getInstance().getArtifact(variable1.getFormatComponentClassNames()[0]);
+            return VariableFormatRegistry.isApplicable(variable2, elementArtifact.getJavaClassName());
         }
-        return super.isCompatibleVariables(variable1, variable2);
+        return super.isCompatibleVariables(mapping, variable1, variable2);
     }
 }
