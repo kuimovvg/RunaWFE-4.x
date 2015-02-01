@@ -54,17 +54,17 @@ public class Subprocess extends Node implements Active {
                 errors.add(ValidationError.createLocalizedError(this, "subprocess.subProcessVariableDoesNotExist", mapping.getMappedName()));
                 continue;
             }
-            if (!isCompatibleVariables(processVariable, subprocessVariable)) {
+            if (!isCompatibleVariables(mapping, processVariable, subprocessVariable)) {
                 VariableFormatArtifact artifact1 = VariableFormatRegistry.getInstance().getArtifactNotNull(processVariable.getFormatClassName());
                 VariableFormatArtifact artifact2 = VariableFormatRegistry.getInstance().getArtifactNotNull(subprocessVariable.getFormatClassName());
-                errors.add(ValidationError.createLocalizedError(this, "subprocess.variableMappingIncompatibleTypes", processVariable.getName(),
-                        artifact1.getLabel(), subprocessVariable.getName(), artifact2.getLabel()));
+                errors.add(ValidationError.createLocalizedError(this, "subprocess.variableMappingIncompatibleTypes", processVariable.getName(), artifact1.getLabel(),
+                        subprocessVariable.getName(), artifact2.getLabel()));
             }
         }
     }
 
-    protected boolean isCompatibleVariables(Variable variable1, Variable variable2) {
-        if (Objects.equal(variable1.getUserType(), variable2.getUserType())) {
+    protected boolean isCompatibleVariables(VariableMapping mapping, Variable variable1, Variable variable2) {
+        if (variable1.getUserType() != null && Objects.equal(variable1.getUserType(), variable2.getUserType())) {
             return true;
         }
         if (VariableFormatRegistry.isAssignableFrom(variable1.getJavaClassName(), variable2.getJavaClassName())) {
