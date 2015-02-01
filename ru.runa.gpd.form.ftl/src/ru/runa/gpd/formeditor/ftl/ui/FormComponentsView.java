@@ -19,6 +19,7 @@ import org.eclipse.ui.part.ViewPart;
 import ru.runa.gpd.formeditor.ftl.ComponentType;
 
 public class FormComponentsView extends ViewPart implements IPartListener2 {
+    public static final String ID = "ru.runa.gpd.formeditor.ftl.formComponentsView";
     private TableViewer viewer;
 
     @Override

@@ -46,25 +46,28 @@ public class ValidationHashModel extends SimpleHash {
 
     @Override
     public TemplateModel get(String key) throws TemplateModelException {
+        if (ComponentTypeRegistry.has(key)) {
+            stageRenderingParams = true;
+            return new ComponentModel(ComponentTypeRegistry.getNotNull(key));
+        }
         // add output variables / read access
         Variable variable = VariableUtils.getVariableByName(definition, key);
+        if (variable == null) {
+            variable = VariableUtils.getVariableByScriptingName(definition.getVariables(true, true), key);
+        }
         if (variable != null) {
             if (stageRenderingParams) {
                 return wrapParameter(variable);
             }
             return new SimpleScalar("${" + variable.getName() + "}");
         }
-        if (ComponentTypeRegistry.has(key)) {
-            stageRenderingParams = true;
-            return new ValidationMethodModel(ComponentTypeRegistry.getNotNull(key));
-        }
-        return new UndefinedMethodModel();
+        return new UndefinedModel();
     }
 
-    private class ValidationMethodModel implements TemplateMethodModel {
+    private class ComponentModel implements TemplateMethodModel {
         private final ComponentType componentType;
 
-        public ValidationMethodModel(ComponentType componentType) {
+        public ComponentModel(ComponentType componentType) {
             this.componentType = componentType;
         }
 
@@ -78,7 +81,7 @@ public class ValidationHashModel extends SimpleHash {
         }
     }
 
-    private class UndefinedMethodModel implements TemplateMethodModel {
+    private class UndefinedModel implements TemplateMethodModel {
 
         @Override
         public Object exec(List args) throws TemplateModelException {
