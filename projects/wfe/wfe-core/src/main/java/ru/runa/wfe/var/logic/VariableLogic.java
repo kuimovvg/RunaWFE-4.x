@@ -40,6 +40,7 @@ import ru.runa.wfe.var.format.VariableFormat;
 import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -119,6 +120,9 @@ public class VariableLogic extends WFCommonLogic {
                 return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()), value);
             }
             if (MapFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
+                if (MapFormat.KEY_NULL_VALUE.equals(qualifier)) {
+                    qualifier = "";
+                }
                 Map<Object, Object> map = (Map<Object, Object>) variable.getValue();
                 VariableFormat qualifierFormat = FormatCommons.createComponent(variable, 0);
                 if (map == null) {
@@ -126,7 +130,7 @@ public class VariableLogic extends WFCommonLogic {
                 }
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     String keyInQualifierFormat = qualifierFormat.format(entry.getKey());
-                    if (Objects.equal(keyInQualifierFormat, qualifier)) {
+                    if (Objects.equal(keyInQualifierFormat, qualifier) || (keyInQualifierFormat == null && Strings.isNullOrEmpty(qualifier))) {
                         return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()),
                                 entry.getValue());
                     }

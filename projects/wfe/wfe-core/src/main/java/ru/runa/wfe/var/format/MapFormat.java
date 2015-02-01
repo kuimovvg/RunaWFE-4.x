@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class MapFormat extends VariableFormat implements VariableFormatContainer, VariableDisplaySupport {
+    public static final String KEY_NULL_VALUE = "null";
     private String keyFormatClassName;
     private String valueFormatClassName;
     // TODO find more convenient way to reference user types
