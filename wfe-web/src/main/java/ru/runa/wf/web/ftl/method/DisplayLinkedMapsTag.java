@@ -6,6 +6,7 @@ import java.util.Map;
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -19,6 +20,7 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
         String firstParameter = getParameterAsString(0);
         boolean componentView = "true".equals(firstParameter);
         int i = ("false".equals(firstParameter) || "true".equals(firstParameter)) ? 1 : 0;
+        String keyFormatClassName = null;
         while (true) {
             String variableName = getParameterAsString(i);
             if (variableName == null) {
@@ -29,6 +31,12 @@ public class DisplayLinkedMapsTag extends FreemarkerTag {
                 variable.setValue(Maps.newHashMap());
             }
             Preconditions.checkArgument(variable.getValue() instanceof Map, variable);
+            if (keyFormatClassName != null) {
+                Preconditions.checkArgument(Objects.equal(variable.getDefinition().getFormatComponentClassNames()[0], keyFormatClassName),
+                        "Maps should be linked by keys with equal format");
+            } else {
+                keyFormatClassName = variable.getDefinition().getFormatComponentClassNames()[0];
+            }
             variables.add(variable);
             i++;
         }

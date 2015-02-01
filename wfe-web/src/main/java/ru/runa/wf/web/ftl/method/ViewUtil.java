@@ -55,6 +55,7 @@ import ru.runa.wfe.var.format.VariableFormat;
 import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class ViewUtil {
@@ -131,9 +132,8 @@ public class ViewUtil {
         VariableFormat keyFormat = FormatCommons.createComponent(mapVariable, 0);
         VariableFormat valueFormat = FormatCommons.createComponent(mapVariable, 1);
         String nameSuffix = VariableFormatContainer.COMPONENT_QUALIFIER_START;
-        if (key != null) {
-            nameSuffix += keyFormat.format(key);
-        }
+        String keyString = key != null ? keyFormat.format(key) : null;
+        nameSuffix += Strings.isNullOrEmpty(keyString) ? MapFormat.KEY_NULL_VALUE : keyString;
         nameSuffix += VariableFormatContainer.COMPONENT_QUALIFIER_END;
         return createComponentVariable(mapVariable, nameSuffix, valueFormat, object);
     }
