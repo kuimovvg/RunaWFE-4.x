@@ -9,6 +9,8 @@ import java.util.Map;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.formeditor.ftl.Component;
+import ru.runa.gpd.formeditor.ftl.ComponentType;
+import ru.runa.gpd.formeditor.ftl.ComponentTypeRegistry;
 import ru.runa.gpd.formeditor.wysiwyg.FormEditor;
 import ru.runa.gpd.lang.model.Variable;
 
@@ -57,19 +59,19 @@ public class EditorHashModel extends SimpleHash {
             }
             return new SimpleScalar(key);
         }
-        // output variables
-        if (variables.containsKey(key)) {
-            return new SimpleScalar("${" + key + "}");
+        if (ComponentTypeRegistry.has(key)) {
+            stageRenderingParams = true;
+            return new ComponentModel(ComponentTypeRegistry.getNotNull(key));
         }
-        stageRenderingParams = true;
-        return new EditorMethodModel(key);
+        // output variables
+        return new SimpleScalar("${" + key + "}");
     }
 
-    public class EditorMethodModel implements TemplateMethodModel {
-        private final String name;
+    public class ComponentModel implements TemplateMethodModel {
+        private final ComponentType componentType;
 
-        public EditorMethodModel(String name) {
-            this.name = name;
+        public ComponentModel(ComponentType componentType) {
+            this.componentType = componentType;
         }
 
         @Override
@@ -77,17 +79,17 @@ public class EditorHashModel extends SimpleHash {
             stageRenderingParams = false;
             StringBuffer buffer = new StringBuffer();
             try {
-                Component component = formEditor.createComponent(name);
+                Component component = formEditor.createComponent(componentType.getId());
                 component.setRawParameters(args);
                 buffer.append("<").append(DesignUtils.getComponentHtmlElementName()).append(" ");
-                buffer.append(DesignUtils.ATTR_COMPONENT_TYPE).append("=\"").append(name).append("\" ");
+                buffer.append(DesignUtils.ATTR_COMPONENT_TYPE).append("=\"").append(componentType.getId()).append("\" ");
                 buffer.append("id=\"").append(component.getId()).append("\" ");
                 String params = Joiner.on(DesignUtils.PARAMETERS_DELIM).join(component.getRawParameters());
                 buffer.append(DesignUtils.ATTR_COMPONENT_PARAMETERS).append("=\"").append(params).append("\"");
                 if (WebServerUtils.useCKEditor()) {
                     buffer.append("></").append(DesignUtils.getComponentHtmlElementName()).append(">");
                 } else {
-                    String url = "http://localhost:48780/editor/FtlComponentServlet?command=GetImage&type=" + name + "&parameters=";
+                    String url = "http://localhost:48780/editor/FtlComponentServlet?command=GetImage&type=" + componentType.getId() + "&parameters=";
                     try {
                         url += URLEncoder.encode(params.toString(), Charsets.UTF_8.name());
                     } catch (UnsupportedEncodingException e) {
@@ -98,7 +100,7 @@ public class EditorHashModel extends SimpleHash {
                     buffer.append("/>");
                 }
             } catch (Exception e) {
-                buffer.append("${").append(name).append("(");
+                buffer.append("${").append(componentType.getId()).append("(");
                 for (int i = 0; i < args.size(); i++) {
                     if (i != 0) {
                         buffer.append(", ");

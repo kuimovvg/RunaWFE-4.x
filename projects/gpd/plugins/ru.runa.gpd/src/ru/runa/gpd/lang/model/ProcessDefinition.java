@@ -286,7 +286,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
             String name = superVariable.getName() + VariableUserType.DELIM + attribute.getName();
             String scriptingName = superVariable.getScriptingName() + VariableUserType.DELIM + attribute.getScriptingName();
             Variable variable = new Variable(name, scriptingName, attribute);
-            variable.setUserType(attribute.getUserType());
             result.add(variable);
             if (variable.isComplex()) {
                 result.addAll(expandComplexVariable(variable, attribute));

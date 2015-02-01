@@ -74,7 +74,10 @@ public class Component extends EventSupport implements IPropertySource {
     public void setRawParameters(List args) {
         for (int i = 0; i < args.size(); i++) {
             String value = args.get(i).toString();
-            ComponentParameter parameter = type.getParameterOrLastNotNull(i);
+            ComponentParameter parameter = type.getParameterOrLastMultiple(i);
+            if (parameter == null) {
+                continue;
+            }
             if (parameter.getType().isMultiple()) {
                 ((List<String>) getParameterValue(parameter)).add(value);
             } else {

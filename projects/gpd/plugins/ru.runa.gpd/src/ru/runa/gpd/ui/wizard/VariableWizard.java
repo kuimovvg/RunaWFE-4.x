@@ -10,27 +10,28 @@ import ru.runa.gpd.lang.model.VariableUserType;
 
 public class VariableWizard extends Wizard {
     private VariableNamePage namePage;
-    private VariableFormatPage formatPage;
-    private VariableDefaultValuePage defaultValuePage;
+    private final VariableFormatPage formatPage;
+    private final VariableDefaultValuePage defaultValuePage;
     private VariableAccessPage accessPage;
     private Variable variable;
 
     public VariableWizard(ProcessDefinition processDefinition, Variable variable, boolean showNamePage, boolean editFormat) {
-    	this(processDefinition, processDefinition, variable, showNamePage, editFormat, true);
+        this(processDefinition, processDefinition, variable, showNamePage, editFormat, true);
     }
-    
-    public VariableWizard(ProcessDefinition processDefinition, VariableContainer variableContainer, Variable variable, boolean showNamePage, boolean editFormat, boolean showAccessPage) {
+
+    public VariableWizard(ProcessDefinition processDefinition, VariableContainer variableContainer, Variable variable, boolean showNamePage, boolean editFormat,
+            boolean showAccessPage) {
         if (showNamePage) {
             namePage = new VariableNamePage(variableContainer, variable);
         }
         String excludedUserTypeName = null;
         if (variableContainer instanceof VariableUserType) {
-        	excludedUserTypeName = ((VariableUserType) variableContainer).getName();
+            excludedUserTypeName = ((VariableUserType) variableContainer).getName();
         }
         formatPage = new VariableFormatPage(processDefinition, variable, editFormat, excludedUserTypeName);
         defaultValuePage = new VariableDefaultValuePage(variable);
         if (showAccessPage) {
-        	accessPage = new VariableAccessPage(variable);
+            accessPage = new VariableAccessPage(variable);
         }
         setWindowTitle(showNamePage ? Localization.getString("VariableWizard.create") : Localization.getString("VariableWizard.edit"));
     }
@@ -43,7 +44,7 @@ public class VariableWizard extends Wizard {
         addPage(formatPage);
         addPage(defaultValuePage);
         if (accessPage != null) {
-        	addPage(accessPage);
+            addPage(accessPage);
         }
     }
 
@@ -75,11 +76,8 @@ public class VariableWizard extends Wizard {
         }
         String defaultValue = defaultValuePage.getDefaultValue();
         boolean publicVisibility = accessPage != null ? accessPage.isPublicVisibility() : false;
-        variable = new Variable(name, scriptingName, format, publicVisibility, defaultValue);
+        variable = new Variable(name, scriptingName, format, formatPage.getUserType(), publicVisibility, defaultValue);
         variable.setDescription(description);
-        if (formatPage.getUserType() != null) {
-            variable.setUserType(formatPage.getUserType());
-        }
         return true;
     }
 }

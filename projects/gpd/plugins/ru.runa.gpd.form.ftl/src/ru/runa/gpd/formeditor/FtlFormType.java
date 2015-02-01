@@ -7,15 +7,13 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.form.FormVariableAccess;
-import ru.runa.gpd.formeditor.action.OpenFormComponentsViewAction;
 import ru.runa.gpd.formeditor.ftl.Component;
 import ru.runa.gpd.formeditor.ftl.TemplateProcessor;
 import ru.runa.gpd.formeditor.ftl.conv.VariableSearchHashModel;
+import ru.runa.gpd.formeditor.ftl.ui.FormComponentsView;
 import ru.runa.gpd.formeditor.ftl.validation.IComponentValidator;
 import ru.runa.gpd.formeditor.ftl.validation.ValidationHashModel;
 import ru.runa.gpd.lang.ValidationError;
@@ -26,7 +24,7 @@ public class FtlFormType extends BaseHtmlFormType {
 
     @Override
     public IEditorPart openForm(IFile formFile, FormNode formNode) throws CoreException {
-        openComponentsView();
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(FormComponentsView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
         return super.openForm(formFile, formNode);
     }
 
@@ -49,11 +47,4 @@ public class FtlFormType extends BaseHtmlFormType {
         }
     }
 
-    private void openComponentsView() throws PartInitException {
-        try {
-            PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(OpenFormComponentsViewAction.VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-        } catch (Exception e) {
-            PluginLogger.logError("error occurred when opening the palette window", e);
-        }
-    }
 }
