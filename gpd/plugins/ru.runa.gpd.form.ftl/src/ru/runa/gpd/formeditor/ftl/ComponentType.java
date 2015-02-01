@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 public class ComponentType {
     private static int orderCounter = 0;
     private final Bundle bundle;
-    private boolean enabled;
+    private final boolean enabled;
     private final int order;
     private final String id;
     private final String label;
@@ -58,10 +58,6 @@ public class ComponentType {
         return enabled;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public int getOrder() {
         return order;
     }
@@ -90,8 +86,15 @@ public class ComponentType {
         return parameters;
     }
 
-    public ComponentParameter getParameterOrLastNotNull(int index) {
-        return parameters.size() > index ? parameters.get(index) : parameters.get(parameters.size() - 1);
+    public ComponentParameter getParameterOrLastMultiple(int index) {
+        if (parameters.size() > index) {
+            return parameters.get(index);
+        }
+        ComponentParameter parameter = parameters.get(parameters.size() - 1);
+        if (parameter.getType().isMultiple()) {
+            return parameter;
+        }
+        return null;
     }
 
     @Override

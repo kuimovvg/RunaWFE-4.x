@@ -228,19 +228,16 @@ public class VariableTypeEditorPage extends EditorPartBase {
         enableAction(deleteTypeButton, selectedType != null);
         enableAction(renameTypeButton, selectedType != null);
         enableAction(moveUpTypeButton, selectedType != null && getDefinition().getVariableUserTypes().indexOf(selectedType) > 0);
-        enableAction(moveDownTypeButton, selectedType != null
-                && getDefinition().getVariableUserTypes().indexOf(selectedType) < getDefinition().getVariableUserTypes().size() - 1);
+        enableAction(moveDownTypeButton, selectedType != null && getDefinition().getVariableUserTypes().indexOf(selectedType) < getDefinition().getVariableUserTypes().size() - 1);
         enableAction(createAttributeButton, selectedType != null);
         List<Variable> attributes = ((IStructuredSelection) attributeTableViewer.getSelection()).toList();
         enableAction(changeAttributeButton, attributes.size() == 1);
         enableAction(searchAttributeButton, attributes.size() == 1);
         enableAction(renameAttributeButton, attributes.size() == 1);
         enableAction(mergeAttributesButton, attributes.size() == 2);
-        enableAction(moveUpAttributeButton, selectedType != null && attributes.size() == 1
-                && selectedType.getAttributes().indexOf(attributes.get(0)) > 0);
-        enableAction(moveDownAttributeButton,
-                selectedType != null && attributes.size() == 1
-                        && selectedType.getAttributes().indexOf(attributes.get(0)) < selectedType.getAttributes().size() - 1);
+        enableAction(moveUpAttributeButton, selectedType != null && attributes.size() == 1 && selectedType.getAttributes().indexOf(attributes.get(0)) > 0);
+        enableAction(moveDownAttributeButton, selectedType != null && attributes.size() == 1
+                && selectedType.getAttributes().indexOf(attributes.get(0)) < selectedType.getAttributes().size() - 1);
         enableAction(deleteAttributeButton, attributes.size() > 0);
         enableAction(moveToTypeAttributeButton, attributes.size() == 1);
     }
@@ -369,8 +366,6 @@ public class VariableTypeEditorPage extends EditorPartBase {
             VariableWizard wizard = new VariableWizard(getDefinition(), type, variable, false, true, false);
             CompactWizardDialog dialog = new CompactWizardDialog(wizard);
             if (dialog.open() == Window.OK) {
-                // variable.setName(wizard.getVariable().getName());
-                // variable.setScriptingName(wizard.getVariable().getScriptingName());
                 variable.setFormat(wizard.getVariable().getFormat());
                 variable.setUserType(wizard.getVariable().getUserType());
                 variable.setDefaultValue(wizard.getVariable().getDefaultValue());
@@ -401,18 +396,16 @@ public class VariableTypeEditorPage extends EditorPartBase {
             NewSearchUI.runQueryInBackground(query);
         }
 
-        private void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent,
-                List<Variable> children) {
+        private void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent, List<Variable> children) {
             for (Variable variable : children) {
                 if (variable.getUserType() == null) {
                     continue;
                 }
                 String syntheticName = (parent != null ? (parent.getName() + VariableUserType.DELIM) : "") + variable.getName();
-                String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "")
-                        + variable.getScriptingName();
+                String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "") + variable.getScriptingName();
                 if (Objects.equal(variable.getUserType(), searchType)) {
-                    Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(),
-                            syntheticScriptingName + VariableUserType.DELIM + searchAttribute.getScriptingName(), variable);
+                    Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName + VariableUserType.DELIM
+                            + searchAttribute.getScriptingName(), variable);
                     result.add(syntheticVariable);
                 } else {
                     Variable syntheticVariable = new Variable(syntheticName, syntheticScriptingName, variable);
@@ -436,8 +429,8 @@ public class VariableTypeEditorPage extends EditorPartBase {
             IDE.saveAllEditors(new IResource[] { projectRoot }, false);
             String newAttributeName = dialog.getName();
             String newAttributeScriptingName = dialog.getScriptingName();
-            RenameUserTypeAttributeRefactoring refactoring = new RenameUserTypeAttributeRefactoring(editor.getDefinitionFile(),
-                    editor.getDefinition(), type, attribute, newAttributeName, newAttributeScriptingName);
+            RenameUserTypeAttributeRefactoring refactoring = new RenameUserTypeAttributeRefactoring(editor.getDefinitionFile(), editor.getDefinition(), type, attribute,
+                    newAttributeName, newAttributeScriptingName);
             boolean useLtk = refactoring.isUserInteractionNeeded();
             if (useLtk) {
                 RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);
@@ -470,8 +463,8 @@ public class VariableTypeEditorPage extends EditorPartBase {
             List<Variable> attributes = ((IStructuredSelection) attributeTableViewer.getSelection()).toList();
             IResource projectRoot = editor.getDefinitionFile().getParent();
             IDE.saveAllEditors(new IResource[] { projectRoot }, false);
-            RenameUserTypeAttributeRefactoring refactoring = new RenameUserTypeAttributeRefactoring(editor.getDefinitionFile(),
-                    editor.getDefinition(), type, attributes.get(1), attributes.get(0).getName(), attributes.get(0).getScriptingName());
+            RenameUserTypeAttributeRefactoring refactoring = new RenameUserTypeAttributeRefactoring(editor.getDefinitionFile(), editor.getDefinition(), type, attributes.get(1),
+                    attributes.get(0).getName(), attributes.get(0).getScriptingName());
             boolean useLtk = refactoring.isUserInteractionNeeded();
             if (useLtk) {
                 RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);
@@ -522,8 +515,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
                 // TODO recursion will not work
                 for (Variable variable : getDefinition().getVariables(false, false, getTypeSelection().getName())) {
                     String name = variable.getName() + VariableUserType.DELIM + suffix;
-                    variableFormNodesMapping.put(name,
-                            ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), name));
+                    variableFormNodesMapping.put(name, ParContentProvider.getFormsWhereVariableUsed(editor.getDefinitionFile(), getDefinition(), name));
                 }
                 StringBuffer formNames = new StringBuffer(Localization.getString("Variable.ExistInForms")).append("\n");
                 if (variableFormNodesMapping.size() > 0) {
@@ -536,8 +528,7 @@ public class VariableTypeEditorPage extends EditorPartBase {
                         }
                     }
                     formNames.append(Localization.getString("Variable.WillBeRemovedFromFormAuto"));
-                    if (!MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"),
-                            formNames.toString())) {
+                    if (!MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), Localization.getString("confirm.delete"), formNames.toString())) {
                         continue;
                     }
                 }
@@ -576,8 +567,8 @@ public class VariableTypeEditorPage extends EditorPartBase {
                     return;
                 }
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
-                MoveUserTypeAttributeRefactoring refactoring = new MoveUserTypeAttributeRefactoring(editor.getDefinitionFile(),
-                        editor.getDefinition(), type, attribute, substitutionVariable);
+                MoveUserTypeAttributeRefactoring refactoring = new MoveUserTypeAttributeRefactoring(editor.getDefinitionFile(), editor.getDefinition(), type, attribute,
+                        substitutionVariable);
                 useLtk = refactoring.isUserInteractionNeeded();
                 if (useLtk) {
                     RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);

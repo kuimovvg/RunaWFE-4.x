@@ -51,29 +51,32 @@ public class VariableSearchHashModel extends SimpleHash {
 
     @Override
     public TemplateModel get(String key) throws TemplateModelException {
+        if (ComponentTypeRegistry.has(key)) {
+            stageRenderingParams = true;
+            return new ComponentModel(ComponentTypeRegistry.getNotNull(key));
+        }
         // add output variables / read access
         Variable variable = VariableUtils.getVariableByName(definition, key);
+        if (variable == null) {
+            variable = VariableUtils.getVariableByScriptingName(definition.getVariables(true, true), key);
+        }
         if (variable != null) {
-            if (!usedVariables.containsKey(key)) {
-                usedVariables.put(key, FormVariableAccess.READ);
+            if (!usedVariables.containsKey(variable.getName())) {
+                usedVariables.put(variable.getName(), FormVariableAccess.READ);
             }
             if (stageRenderingParams) {
                 return wrapParameter(variable);
             }
             return new SimpleScalar("${" + variable.getName() + "}");
         }
-        if (ComponentTypeRegistry.has(key)) {
-            stageRenderingParams = true;
-            return new ValidationMethodModel(ComponentTypeRegistry.getNotNull(key));
-        }
         usedVariables.put(key, FormVariableAccess.DOUBTFUL);
         return new UndefinedMethodModel();
     }
 
-    private class ValidationMethodModel implements TemplateMethodModel {
+    private class ComponentModel implements TemplateMethodModel {
         private final ComponentType componentType;
 
-        public ValidationMethodModel(ComponentType componentType) {
+        public ComponentModel(ComponentType componentType) {
             this.componentType = componentType;
         }
 
@@ -85,7 +88,10 @@ public class VariableSearchHashModel extends SimpleHash {
                 if (Strings.isNullOrEmpty(arg)) {
                     continue;
                 }
-                ComponentParameter parameter = componentType.getParameterOrLastNotNull(i);
+                ComponentParameter parameter = componentType.getParameterOrLastMultiple(i);
+                if (parameter == null) {
+                    continue;
+                }
                 if (parameter.getVariableAccess() == VariableAccess.WRITE) {
                     usedVariables.put(arg, FormVariableAccess.WRITE);
                 } else if (parameter.getVariableAccess() == VariableAccess.READ) {
