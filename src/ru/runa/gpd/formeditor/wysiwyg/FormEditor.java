@@ -35,10 +35,14 @@ import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -55,6 +59,7 @@ import ru.runa.gpd.formeditor.ftl.TemplateProcessor;
 import ru.runa.gpd.formeditor.ftl.conv.DesignUtils;
 import ru.runa.gpd.formeditor.ftl.conv.EditorHashModel;
 import ru.runa.gpd.formeditor.ftl.ui.ComponentParametersDialog;
+import ru.runa.gpd.formeditor.ftl.ui.FormComponentsView;
 import ru.runa.gpd.formeditor.ftl.ui.IComponentDropTarget;
 import ru.runa.gpd.formeditor.resources.Messages;
 import ru.runa.gpd.formeditor.vartag.VarTagUtil;
@@ -71,6 +76,7 @@ import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.validation.ValidationUtil;
 import ru.runa.wfe.InternalApplicationException;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -143,8 +149,25 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         addPropertyListener(new IPropertyListener() {
             @Override
             public void propertyChanged(Object source, int propId) {
-                if (propId == FormEditor.CLOSED && formFile.exists()) {
-                    createOrUpdateFormValidation();
+                if (propId == FormEditor.CLOSED) {
+                    if (formFile.exists()) {
+                        createOrUpdateFormValidation();
+                    }
+                    boolean formEditorsAvailable = false;
+                    IWorkbenchPage workbenchPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                    for (IEditorReference editorReference : workbenchPage.getEditorReferences()) {
+                        IEditorPart editor = editorReference.getEditor(true);
+                        if (editor instanceof FormEditor && !Objects.equal(FormEditor.this, editor)) {
+                            formEditorsAvailable = true;
+                            break;
+                        }
+                    }
+                    if (!formEditorsAvailable) {
+                        IViewReference reference = workbenchPage.findViewReference(FormComponentsView.ID);
+                        if (reference != null) {
+                            workbenchPage.hideView(reference);
+                        }
+                    }
                 }
             }
         });

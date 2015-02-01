@@ -2,7 +2,8 @@
 <?eclipse version="3.0"?>
 <plugin>
    <extension-point id="components" name="Freemarker components" schema="metadata/components.exsd"/>
-   <extension-point id="parameter_type" name="parameter_type" schema="metadata/parameter_type.exsd"/>
+   <extension-point id="parameters" name="Freemarker component parameters" schema="metadata/parameters.exsd"/>
+   <extension-point id="filters" name="Freemarker component filters" schema="metadata/filters.exsd"/>
 
    <extension
          point="org.eclipse.ui.editors">
@@ -57,7 +58,7 @@
    </extension>
 
    <extension
-         point="ru.runa.gpd.form.ftl.parameter_type">
+         point="ru.runa.gpd.form.ftl.parameters">
       <type
             class="ru.runa.gpd.formeditor.ftl.parameter.StringParameter"
             id="text">
@@ -151,7 +152,6 @@
             name="%Method.InputVariable"
             order="-99">
          <param
-               description="%Param.Variable.Description"
                name="%Param.Variable"
                type="varcombo"
                variableAccess="WRITE"

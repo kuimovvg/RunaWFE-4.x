@@ -13,8 +13,10 @@ import org.osgi.framework.Bundle;
 
 import ru.runa.gpd.EditorsPlugin;
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.formeditor.ftl.filter.IComponentFilter;
 import ru.runa.gpd.formeditor.ftl.parameter.ParameterType;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ComponentTypeRegistry {
@@ -22,8 +24,25 @@ public class ComponentTypeRegistry {
     private static final Map<String, ComponentType> components = Maps.newHashMap();
 
     static {
-        IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("ru.runa.gpd.form.ftl.parameter_type");
+        List<IComponentFilter> filters = Lists.newArrayList();
         try {
+            IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("ru.runa.gpd.form.ftl.filters");
+            for (IConfigurationElement element : elements) {
+                try {
+                    IComponentFilter filter = (IComponentFilter) element.createExecutableExtension("class");
+                    if (EditorsPlugin.DEBUG) {
+                        PluginLogger.logInfo("Registering component filter " + filter);
+                    }
+                    filters.add(filter);
+                } catch (Throwable th) {
+                    EditorsPlugin.logError("Unable to load FTL component filter " + element, th);
+                }
+            }
+        } catch (Throwable th) {
+            EditorsPlugin.logError("Unable to load FTL component filters", th);
+        }
+        try {
+            IConfigurationElement[] elements = Platform.getExtensionRegistry().getConfigurationElementsFor("ru.runa.gpd.form.ftl.parameters");
             for (IConfigurationElement element : elements) {
                 try {
                     String id = element.getAttribute("id");
@@ -61,15 +80,18 @@ public class ComponentTypeRegistry {
                         if (EditorsPlugin.DEBUG) {
                             PluginLogger.logInfo("Registering " + type);
                         }
-                        if (components.containsKey(type.getId())) {
-                            ComponentType oldTag = components.get(type.getId());
-                            if (!oldTag.isEnabled() || !type.isEnabled()) {
-                                oldTag.setEnabled(false);
-                                type.setEnabled(false);
+                        boolean register = true;
+                        for (IComponentFilter filter : filters) {
+                            if (filter.disable(type)) {
+                                if (EditorsPlugin.DEBUG) {
+                                    PluginLogger.logInfo("Filtered " + type + " by " + filter);
+                                }
+                                register = false;
                             }
-                            type = type.getParameters().size() > oldTag.getParameters().size() ? type : oldTag;
                         }
-                        components.put(type.getId(), type);
+                        if (register) {
+                            components.put(type.getId(), type);
+                        }
                     } catch (Throwable th) {
                         EditorsPlugin.logError("Unable to load FTL component " + componentElement, th);
                     }

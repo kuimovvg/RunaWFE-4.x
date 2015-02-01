@@ -4,6 +4,7 @@ import java.util.List;
 
 import ru.runa.gpd.formeditor.ftl.Component;
 import ru.runa.gpd.formeditor.ftl.ComponentParameter;
+import ru.runa.gpd.formeditor.ftl.VariableAccess;
 import ru.runa.gpd.formeditor.resources.Messages;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.FormNode;
@@ -17,14 +18,42 @@ public class DefaultComponentValidator implements IComponentValidator {
     public List<ValidationError> validate(FormNode formNode, Component component) {
         List<ValidationError> list = Lists.newArrayList();
         for (ComponentParameter parameter : component.getType().getParameters()) {
+            Object value = component.getParameterValue(parameter);
             if (parameter.isRequired()) {
-                Object value = component.getParameterValue(parameter);
-                if ((value instanceof String && Strings.isNullOrEmpty((String) value)) || (value instanceof List && ((List) value).size() == 0)) {
-                    list.add(ValidationError.createError(formNode, Messages.getString("validation.requiredComponentParameterIsNotSet", component.getType().getLabel())));
-                    return list;
+                if (value instanceof String) {
+                    if (Strings.isNullOrEmpty((String) value)) {
+                        list.add(createRequiredParameterIsNotSetError(formNode, component));
+                    }
+                } else {
+                    List<String> strings = (List<String>) value;
+                    if (strings.size() == 0) {
+                        list.add(createRequiredParameterIsNotSetError(formNode, component));
+                    }
+                    for (String string : strings) {
+                        if (Strings.isNullOrEmpty(string)) {
+                            list.add(createRequiredParameterIsNotSetError(formNode, component));
+                        }
+                    }
+                }
+            }
+            if (parameter.getVariableAccess() == VariableAccess.READ || parameter.getVariableAccess() == VariableAccess.WRITE) {
+                if (value instanceof String) {
+                    String variableName = (String) value;
+                } else {
+                    for (String variableName : (List<String>) value) {
+
+                    }
                 }
             }
         }
         return list;
+    }
+
+    private ValidationError createRequiredParameterIsNotSetError(FormNode formNode, Component component) {
+        return ValidationError.createError(formNode, Messages.getString("validation.requiredComponentParameterIsNotSet", component.getType().getLabel()));
+    }
+
+    private ValidationError createRequiredParameterIsNotSetError(FormNode formNode, String variableName) {
+        return ValidationError.createError(formNode, Messages.getString("validation.variableComponentParameterIsNotSet", variableName));
     }
 }
