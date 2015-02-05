@@ -240,6 +240,9 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         int pageNumber = 0;
         try {
             browser = new Browser(getContainer(), SWT.NULL);
+            if (EditorsPlugin.DEBUG) {
+                PluginLogger.logInfo("Browser type = " + browser.getBrowserType());
+            }
             browser.addOpenWindowListener(new BrowserWindowHelper(getContainer().getDisplay()));
             new GetHTMLCallbackFunction(browser);
             new OnLoadCallbackFunction(browser);
@@ -505,7 +508,7 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
             @Override
             public void run() {
                 ComponentParametersDialog dialog = new ComponentParametersDialog(getComponentNotNull(componentId));
-                Component component = dialog.openDialog();
+                final Component component = dialog.openDialog();
                 if (component != null) {
                     components.put(componentId, component);
                     try {
@@ -521,13 +524,12 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
 
     @Override
     public void doDrop() {
-        Display.getDefault().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                syncBrowser2Editor();
-                syncEditor2Browser();
-            }
-        });
+        try {
+            syncBrowser2Editor();
+            syncEditor2Browser();
+        } catch (Exception e) {
+            PluginLogger.logError(e);
+        }
     }
 
     private class GetHTMLCallbackFunction extends BrowserFunction {

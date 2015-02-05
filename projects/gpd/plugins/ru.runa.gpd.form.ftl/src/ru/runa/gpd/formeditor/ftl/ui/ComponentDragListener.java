@@ -32,9 +32,9 @@ public class ComponentDragListener implements DragSourceListener {
 
     @Override
     public void dragFinished(DragSourceEvent event) {
-        IEditorPart actEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
-        if (actEditor instanceof IComponentDropTarget) {
-            IComponentDropTarget componentDropTarget = ((IComponentDropTarget) actEditor);
+        IEditorPart editorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActiveEditor();
+        if (editorPart instanceof IComponentDropTarget) {
+            IComponentDropTarget componentDropTarget = ((IComponentDropTarget) editorPart);
             componentDropTarget.doDrop();
         }
     }
