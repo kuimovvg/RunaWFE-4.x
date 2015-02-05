@@ -4,7 +4,6 @@ import java.util.List;
 
 import ru.runa.gpd.formeditor.ftl.Component;
 import ru.runa.gpd.formeditor.ftl.ComponentParameter;
-import ru.runa.gpd.formeditor.ftl.VariableAccess;
 import ru.runa.gpd.formeditor.resources.Messages;
 import ru.runa.gpd.lang.ValidationError;
 import ru.runa.gpd.lang.model.FormNode;
@@ -36,15 +35,6 @@ public class DefaultComponentValidator implements IComponentValidator {
                     }
                 }
             }
-            if (parameter.getVariableAccess() == VariableAccess.READ || parameter.getVariableAccess() == VariableAccess.WRITE) {
-                if (value instanceof String) {
-                    String variableName = (String) value;
-                } else {
-                    for (String variableName : (List<String>) value) {
-
-                    }
-                }
-            }
         }
         return list;
     }
@@ -53,7 +43,4 @@ public class DefaultComponentValidator implements IComponentValidator {
         return ValidationError.createError(formNode, Messages.getString("validation.requiredComponentParameterIsNotSet", component.getType().getLabel()));
     }
 
-    private ValidationError createRequiredParameterIsNotSetError(FormNode formNode, String variableName) {
-        return ValidationError.createError(formNode, Messages.getString("validation.variableComponentParameterIsNotSet", variableName));
-    }
 }
