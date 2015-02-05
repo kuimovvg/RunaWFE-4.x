@@ -57,8 +57,8 @@ public abstract class FormType {
                 }
                 break;
             }
-            if (!allVariableNames.contains(formEntry.getKey())) {
-                errors.add(ValidationError.createLocalizedWarning(formNode, "formNode.formVariableDoesNotExist", formEntry.getKey()));
+            if (!allVariableNames.contains(formEntry.getKey()) && formEntry.getValue() != FormVariableAccess.DOUBTFUL) {
+                errors.add(ValidationError.createLocalizedError(formNode, "formNode.formVariableDoesNotExist", formEntry.getKey()));
             }
         }
         for (String validationVarName : validation.getVariableNames()) {
