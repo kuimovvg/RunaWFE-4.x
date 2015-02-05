@@ -60,7 +60,7 @@ FtlComponents.createFakeParserElement = function(realElement) {
 };
 
 CKEDITOR.plugins.add(FTL_PLUGIN_NAME, {
-		lang: "en, ru",
+		lang: "en,ru",
 		requires: "fakeobjects",
 		init: function(editor) {
 			editor.addCommand(OPEN_PARAMETERS_COMMAND, {
