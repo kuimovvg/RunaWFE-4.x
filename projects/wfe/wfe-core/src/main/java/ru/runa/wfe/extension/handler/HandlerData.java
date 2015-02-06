@@ -12,8 +12,6 @@ import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.var.IVariableProvider;
 
-import com.google.common.base.Preconditions;
-
 /**
  * Parameters holder for handler.
  * 
@@ -68,16 +66,14 @@ public class HandlerData {
     }
 
     /**
-     * @return input parameter value or throws exception (in case of parameter
-     *         is not defined or has <code>null</code> value)
+     * @return input parameter value or throws exception (in case of parameter is not defined or has <code>null</code> value)
      */
     public <T> T getInputParamValueNotNull(String name) {
         return (T) paramsDef.getInputParamValueNotNull(name, variableProvider);
     }
 
     /**
-     * @return input parameter value or default value (in case of parameter is
-     *         not defined or has <code>null</code> value)
+     * @return input parameter value or default value (in case of parameter is not defined or has <code>null</code> value)
      */
     public <T> T getInputParamValue(String name, T defaultValue) {
         Object result = paramsDef.getInputParamValue(name, variableProvider);
@@ -95,9 +91,7 @@ public class HandlerData {
     }
 
     /**
-     * @return input parameter value casted to specified class or throws
-     *         exception (in case of parameter is not defined or has
-     *         <code>null</code> value)
+     * @return input parameter value casted to specified class or throws exception (in case of parameter is not defined or has <code>null</code> value)
      */
     public <T> T getInputParamValueNotNull(Class<T> clazz, String name) {
         Object object = getInputParamValueNotNull(name);
@@ -105,9 +99,7 @@ public class HandlerData {
     }
 
     /**
-     * @return input parameter value casted to specified class or default value
-     *         (in case of parameter is not defined or has <code>null</code>
-     *         value)
+     * @return input parameter value casted to specified class or default value (in case of parameter is not defined or has <code>null</code> value)
      */
     public <T> T getInputParamValue(Class<T> clazz, String name, T defaultValue) {
         Object object = getInputParamValue(name, defaultValue);
@@ -115,8 +107,7 @@ public class HandlerData {
     }
 
     /**
-     * @return input parameter value casted to specified class or
-     *         <code>null</code>
+     * @return input parameter value casted to specified class or <code>null</code>
      */
     public <T> T getInputParamValue(Class<T> clazz, String name) {
         return getInputParamValue(clazz, name, null);
@@ -164,7 +155,9 @@ public class HandlerData {
     }
 
     public void setOutputVariable(String variableName, Object value) {
-        Preconditions.checkNotNull(variableName);
+        if (variableName == null) {
+            throw new InternalApplicationException("Trying to set output variable with null name.");
+        }
         outputVariables.put(variableName, value);
     }
 }
