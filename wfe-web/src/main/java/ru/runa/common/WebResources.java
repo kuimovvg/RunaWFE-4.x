@@ -161,7 +161,7 @@ public class WebResources {
     }
 
     public static boolean isProcessRemovalEnabled() {
-        return RESOURCES.getBooleanProperty("process.removal.enabled", true);
+        return RESOURCES.getBooleanProperty("process.removal.enabled", false);
     }
 
 }
