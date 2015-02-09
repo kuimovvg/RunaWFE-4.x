@@ -23,7 +23,7 @@ import ru.runa.gpd.util.IOUtils;
 
 public class WebServerUtils {
     private static Server server;
-    public static final int SERVER_PORT = 48780;
+    private static int SERVER_PORT;
     private static String lastUsedEditor = null;
 
     /**
@@ -100,8 +100,13 @@ public class WebServerUtils {
             applicationContext.setContextPath("/");
             applicationContext.addHandler(new ResourceHandler());
             server.addContext(applicationContext);
-            InetAddrPort address = new InetAddrPort(SERVER_PORT);
-            server.addListener(address);
+            try {
+                SERVER_PORT = Integer.parseInt(Activator.getPrefString(PrefConstants.P_FORM_WEB_SERVER_PORT));
+            } catch (Exception e) {
+                PluginLogger.logErrorWithoutDialog("SERVER_PORT: " + e);
+                SERVER_PORT = 48780;
+            }
+            server.addListener(new InetAddrPort(SERVER_PORT));
             server.start();
         }
         monitor.worked(remain);
@@ -123,7 +128,8 @@ public class WebServerUtils {
         copyFolder(root, path, monitor, filesForUnitWork, 0);
     }
 
-    private static int copyFolder(IPath root, String path, IProgressMonitor monitor, int filesForUnitWork, int currentUnitFilesCount) throws IOException {
+    private static int copyFolder(IPath root, String path, IProgressMonitor monitor, int filesForUnitWork, int currentUnitFilesCount)
+            throws IOException {
         File folder = new File(root.toFile(), path);
         folder.mkdir();
         Enumeration<String> e = EditorsPlugin.getDefault().getBundle().getEntryPaths(path);
