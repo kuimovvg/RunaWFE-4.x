@@ -10,6 +10,7 @@ public interface PrefConstants {
     public static final String P_FORM_DEFAULT_FCK_EDITOR = "defaultFCKEditor";
     public static final String FORM_FCK_EDITOR = "fck2";
     public static final String FORM_CK_EDITOR4 = "ck4";
+    public static final String P_FORM_WEB_SERVER_PORT = "editorWebPort";
     public static final String P_FORM_USE_EXTERNAL_EDITOR = "useExternalEditor";
     public static final String P_FORM_EXTERNAL_EDITOR_PATH = "externalEditorPath";
     // public static final String P_TASKS_TIMEOUT_ENABLED = "useTasksTimeout";
