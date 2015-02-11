@@ -89,7 +89,7 @@ public class EditorHashModel extends SimpleHash {
                 if (WebServerUtils.useCKEditor()) {
                     buffer.append("></").append(DesignUtils.getComponentHtmlElementName()).append(">");
                 } else {
-                    String url = "http://localhost:48780/editor/FtlComponentServlet?command=GetImage&type=" + componentType.getId() + "&parameters=";
+                    String url = "/editor/FtlComponentServlet?command=GetImage&type=" + componentType.getId() + "&parameters=";
                     try {
                         url += URLEncoder.encode(params.toString(), Charsets.UTF_8.name());
                     } catch (UnsupportedEncodingException e) {
