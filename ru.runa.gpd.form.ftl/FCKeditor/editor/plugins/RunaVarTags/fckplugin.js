@@ -27,7 +27,7 @@ VarTags.Add = function( name, type ) {
 
 VarTags.SetupSpan = function( span, name, type ) {
 	if (this.IsTagHaveImage( type )) {
-		span.style.backgroundImage = 'url("http://localhost:48780/editor/RunaVarTags.java?method=GetTagImage&type=' + type + '")' ;
+		span.style.backgroundImage = 'url("/editor/RunaVarTags.java?method=GetTagImage&type=' + type + '")' ;
 	} else {
 		span.style.backgroundColor = '#ffff00' ;
 		span.style.color = '#000000' ;
