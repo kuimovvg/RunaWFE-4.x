@@ -118,8 +118,9 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
             }
             if (value instanceof ComplexVariable) {
-                value = complexVariables.get(name);
-                if (value == null) {
+                if (complexVariables.containsKey(name)) {
+                    value = complexVariables.get(name);
+                } else {
                     value = new ScriptingComplexVariable((ComplexVariable) value);
                     complexVariables.put(name, (ScriptingComplexVariable) value);
                 }
