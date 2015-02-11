@@ -53,7 +53,7 @@ FtlComponents.createFakeParserElement = function(realElement) {
 		"cke-real-element-type": "ftl_component", 
 		"data-cke-realelement": encodeURIComponent(html),
 		"cke_resizable": false, 
-		src: "http://localhost:48780/editor/FtlComponentServlet?command=GetImage&type=" + realElement.attributes[TYPE_ATTRIBUTE] + "&parameters=" + encodeURIComponent(realElement.attributes["parameters"]),
+		src: "/editor/FtlComponentServlet?command=GetImage&type=" + realElement.attributes[TYPE_ATTRIBUTE] + "&parameters=" + encodeURIComponent(realElement.attributes["parameters"]),
 		style: "margin: 3px; border: 2px solid black;"
 	};
 	return new CKEDITOR.htmlParser.element("img", attributes);

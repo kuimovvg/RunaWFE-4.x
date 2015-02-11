@@ -49,7 +49,7 @@ FreemarkerTags.AddMethod = function( tagName, params ) {
 }
 
 FreemarkerTags.SetupSpan = function( span, tagName, tagParams ) {
-	span.setAttribute("src", "http://localhost:48780/editor/FtlSupportServlet?command=GetImage&type=" + tagName + "&parameters=" + encodeURIComponent(tagParams));
+	span.setAttribute("src", "/editor/FtlSupportServlet?command=GetImage&type=" + tagName + "&parameters=" + encodeURIComponent(tagParams));
 	span.setAttribute("type", tagName);
 	span.setAttribute("style", "margin: 3px; border: 2px solid black;")
 	// To avoid it to be resized.
