@@ -144,6 +144,7 @@
 		<profile>
 			<id>jboss7</id>
 			<activation>
+				<activeByDefault>true</activeByDefault>
 				<property>
 					<name>appserver</name>
 					<value>jboss7</value>
