@@ -71,58 +71,6 @@
 
 	<profiles>
 		<profile>
-			<id>jboss4</id>
-			<activation>
-				<property>
-					<name>appserver</name>
-					<value>!jboss7</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-ear-plugin</artifactId>
-						<configuration>
-							<finalName>runawfe</finalName>
-							<displayName>RunaWFE application</displayName>
-							<version>5</version>
-							<defaultLibBundleDir>lib</defaultLibBundleDir>
-							<modules>
-								<jarModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>wfe-core</artifactId>
-								</jarModule>
-								<jarModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>wfe-office</artifactId>
-								</jarModule>
-								<ejbModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>wfe-service</artifactId>
-								</ejbModule>
-								<ejbModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>wfe-bots</artifactId>
-								</ejbModule>
-								<webModule>
-									<groupId>${project.groupId}</groupId>
-									<artifactId>wfe-web</artifactId>
-									<contextRoot>/wfe</contextRoot>
-								</webModule>
-							</modules>
-							<jboss>
-								<version>4.2</version>
-								<data-sources>
-									<data-source>runawfe-ds.xml</data-source>
-									<data-source>runawfe-jms-service.xml</data-source>
-								</data-sources>
-							</jboss>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
 			<id>jboss7</id>
 			<activation>
 				<property>
@@ -140,7 +88,6 @@
 							<version>6</version>
 							<defaultLibBundleDir>lib</defaultLibBundleDir>
 							<initializeInOrder>true</initializeInOrder>
-							<packagingExcludes>runawfe-ds.xml,runawfe-jms-service.xml</packagingExcludes>
 							<modules>
 								<jarModule>
 									<groupId>dom4j</groupId>
