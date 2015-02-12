@@ -115,6 +115,11 @@
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.2.2</version>
@@ -137,33 +142,6 @@
 
 	<profiles>
 		<profile>
-			<id>jboss4</id>
-			<activation>
-				<property>
-					<name>appserver</name>
-					<value>!jboss7</value>
-				</property>
-			</activation>
-			<properties>
-				<enable.resteasy.start>&lt;!--</enable.resteasy.start>
-				<enable.resteasy.end>--&gt;</enable.resteasy.end>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-					<version>2.11.0</version>
-					<scope>provided</scope>
-					<exclusions>
-						<exclusion>
-							<artifactId>xml-apis</artifactId>
-							<groupId>xml-apis</groupId>
-						</exclusion>
-					</exclusions>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
 			<id>jboss7</id>
 			<activation>
 				<property>
@@ -175,13 +153,6 @@
 				<enable.resteasy.start></enable.resteasy.start>
 				<enable.resteasy.end></enable.resteasy.end>
 			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-					<version>2.11.0</version>
-				</dependency>
-			</dependencies>
 		</profile>
 		<profile>
 			<id>simulation</id>

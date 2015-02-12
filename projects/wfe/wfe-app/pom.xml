@@ -29,21 +29,6 @@
 
 	<profiles>
 		<profile>
-			<id>jboss4</id>
-			<activation>
-				<property>
-					<name>appserver</name>
-					<value>!jboss7</value>
-				</property>
-			</activation>
-			<properties>
-				<maven.profile.jndi.name>runawfe/${bean.name}/${ejb.type}</maven.profile.jndi.name>
-				<maven.profile.hibernate.datasource>java:/runawfe-ds</maven.profile.hibernate.datasource>
-				<maven.profile.hibernate.dialect>org.hibernate.dialect.HSQLDialect</maven.profile.hibernate.dialect>
-				<maven.profile.user.transaction.jndi.name>UserTransaction</maven.profile.user.transaction.jndi.name>
-			</properties>
-		</profile>
-		<profile>
 			<id>jboss7</id>
 			<activation>
 				<property>
