@@ -355,7 +355,7 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
 
     @Override
     public void doSave(IProgressMonitor monitor) {
-        if (getActivePage() == 0) {
+        if (getActivePage() == 0 && isBrowserLoaded()) {
             if (!syncBrowser2Editor()) {
                 throw new InternalApplicationException(Messages.getString("wysiwyg.design.save_error"));
             }
