@@ -218,7 +218,6 @@
       <plugin id="ru.runa.gpd"/>
       <plugin id="ru.runa.gpd.alfresco"/>
       <plugin id="ru.runa.gpd.app"/>
-      <plugin id="ru.runa.gpd.connector.wfe.rmi.jboss4"/>
       <plugin id="ru.runa.gpd.connector.wfe.ws"/>
       <plugin id="ru.runa.gpd.form.ftl"/>
       <plugin id="ru.runa.gpd.form.quick"/>
