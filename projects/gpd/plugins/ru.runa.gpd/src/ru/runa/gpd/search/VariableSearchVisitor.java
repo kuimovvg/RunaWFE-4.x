@@ -284,15 +284,13 @@ public class VariableSearchVisitor {
                 }
                 for (ValidatorConfig config : validation.getGlobalConfigs()) {
                     String groovyCode = config.getParams().get(ValidatorDefinition.EXPRESSION_PARAM_NAME);
-                    if (groovyCode != null && groovyCode.contains(query.getSearchText())) {
+                    if (groovyCode != null && groovyCode.contains(query.getVariable().getScriptingName())) {
                         matchesCount++;
                     }
                 }
                 elementMatch.setMatchesCount(matchesCount);
-                List<Match> matches = findInFile(elementMatch, file, matcherWithBrackets);
-                elementMatch.setPotentialMatchesCount(matches.size() - matchesCount);
-                for (Match match : matches) {
-                    query.getSearchResult().addMatch(match);
+                if (matchesCount > 0) {
+                    query.getSearchResult().addMatch(new Match(elementMatch, 0, 0));
                 }
             }
             String swimlaneName = ((SwimlanedNode) formNode).getSwimlaneName();

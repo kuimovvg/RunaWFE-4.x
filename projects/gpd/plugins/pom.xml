@@ -11,7 +11,6 @@
     <module>ru.runa.gpd.alfresco</module>
     <module>ru.runa.gpd.app</module>
     <module>ru.runa.gpd.maven</module>
-    <module>ru.runa.gpd.connector.wfe.rmi.jboss4</module>
     <module>ru.runa.gpd.connector.wfe.ws</module>
     <module>ru.runa.gpd.form.ftl</module>
     <module>ru.runa.gpd.form.quick</module>
@@ -43,7 +42,7 @@
     </repository>
     <repository>
       <id>babel</id>
-      <url>http://download.eclipse.org/technology/babel/update-site/R0.11.1/indigo/</url>
+      <url>http://archive.eclipse.org/technology/babel/update-site/R0.11.1/indigo/</url>
       <layout>p2</layout>
     </repository>
   </repositories>
