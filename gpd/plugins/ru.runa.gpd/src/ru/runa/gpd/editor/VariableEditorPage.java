@@ -243,7 +243,7 @@ public class VariableEditorPage extends EditorPartBase {
             // update variables
             variable.setName(newName);
             variable.setScriptingName(newScriptingName);
-            if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
+            if (useLtk) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
                 for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
                     WorkspaceOperations.saveProcessDefinition(ProcessCache.getProcessDefinitionFile(subprocessDefinition), subprocessDefinition);
