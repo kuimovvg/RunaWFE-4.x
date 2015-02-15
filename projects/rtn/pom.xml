@@ -18,7 +18,9 @@
 	</repositories>
 
 	<properties>
-	    <swt.version>3.7.2</swt.version>
+		<swt.version>3.7.2</swt.version>
+		<maven.compiler.target>1.6</maven.compiler.target>
+		<maven.compiler.source>1.6</maven.compiler.source>
 	</properties>
 
 	<dependencies>
