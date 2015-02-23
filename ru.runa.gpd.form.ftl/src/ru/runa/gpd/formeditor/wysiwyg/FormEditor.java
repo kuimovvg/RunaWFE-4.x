@@ -105,6 +105,7 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
     private boolean dirty = false;
     private boolean browserLoaded = false;
     private static FormEditor lastInitializedInstance;
+    private static boolean browserCreationErrorWasShownToUser;
 
     private int cachedForVariablesCount = -1;
     private final Map<String, Map<String, Variable>> cachedVariables = new HashMap<String, Map<String, Variable>>();
@@ -258,7 +259,10 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
             addPage(browser);
             setPageText(pageNumber++, Messages.getString("wysiwyg.design.tab_name"));
         } catch (Throwable th) {
-            PluginLogger.logError(Messages.getString("wysiwyg.design.create_error"), th);
+            if (!browserCreationErrorWasShownToUser) {
+                PluginLogger.logError(Messages.getString("wysiwyg.design.create_error"), th);
+                browserCreationErrorWasShownToUser = true;
+            }
         }
         try {
             addPage(sourceEditor, getEditorInput());
@@ -483,7 +487,8 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         return component;
     }
 
-    public void componentSelected(int componentId) throws PartInitException, ExecutionException, NotDefinedException, NotEnabledException, NotHandledException {
+    public void componentSelected(int componentId) throws PartInitException, ExecutionException, NotDefinedException, NotEnabledException,
+            NotHandledException {
         Component component = components.get(componentId);
         final ISelection selection = new StructuredSelection(component);
         Display.getDefault().asyncExec(new Runnable() {
