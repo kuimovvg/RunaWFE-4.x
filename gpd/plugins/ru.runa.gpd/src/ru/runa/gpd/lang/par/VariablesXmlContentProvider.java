@@ -72,7 +72,6 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
                     swimlane.setScriptingName(scriptingName);
                     swimlane.setDescription(description);
                     swimlane.setPublicVisibility(publicVisibility);
-                    swimlane.setScriptingName(element.attributeValue(SCRIPTING_NAME, variableName));
                     swimlane.setEditorPath(element.attributeValue(EDITOR));
                 } catch (Exception e) {
                     PluginLogger.logErrorWithoutDialog("No swimlane found for " + variableName, e);
