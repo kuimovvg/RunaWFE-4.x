@@ -240,6 +240,8 @@
 			<value>true</value>
 			<value>false</value>
 		</property>
+		<property title="botstation.failedExecutionInitialDelaySeconds" pattern="\d*"/>
+		<property title="botstation.failedExecutionMaxDelaySeconds" pattern="\d*"/>
 		<property title="botstation.invocation.handler.timeout.milliseconds" pattern="\d*"/>
 	</property_file>
 	
