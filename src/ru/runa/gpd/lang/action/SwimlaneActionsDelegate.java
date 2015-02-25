@@ -104,6 +104,7 @@ public class SwimlaneActionsDelegate extends BaseModelDropDownActionDelegate {
             String swimlaneName = newSwimlaneDialog.getName();
             Swimlane newSwimlane = NodeRegistry.getNodeTypeDefinition(Swimlane.class).createElement(definition, false);
             newSwimlane.setName(swimlaneName);
+            newSwimlane.setScriptingName(newSwimlaneDialog.getScriptingName());
             definition.addChild(newSwimlane);
             setSwimlane(swimlaneName);
         }
