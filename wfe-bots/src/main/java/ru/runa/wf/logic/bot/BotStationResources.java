@@ -50,7 +50,24 @@ public class BotStationResources {
             return 1;
         }
     }
-
+    
+    
+    public static int getFailedExecutionInitialDelay() {
+        try {
+            return RESOURCES.getIntegerProperty("botstation.failedExecutionInitialDelaySeconds", 30);
+        } catch (Exception e) {
+            return 30;
+        }
+    }
+    
+    public static int getFailedExecutionMaxDelay() {
+        try {
+            return RESOURCES.getIntegerProperty("botstation.failedExecutionMaxDelaySeconds", 7200);
+        } catch (Exception e) {
+            return 7200;
+        }
+    }
+    
     public static String getSystemUsername() {
         return RESOURCES.getStringPropertyNotNull("botstation.system.username");
     }

@@ -55,15 +55,6 @@ import com.google.common.base.Throwables;
  */
 public class WorkflowBotTaskExecutor implements Runnable {
     private static final Log log = LogFactory.getLog(WorkflowBotTaskExecutor.class);
-    /**
-     * first wait is 30 sec. Next wait is 2*wait, but no more
-     * failedTasksMaxDelayPeriod
-     */
-    private final static int FAILED_EXECUTION_INITIAL_DELAY_SECONDS = 30;
-    /**
-     * 2 hours
-     */
-    private final static int FAILED_EXECUTION_MAX_DELAY_SECONDS = 7200;
 
     private final WorkflowBotExecutor botExecutor;
     private final WfTask task;
@@ -72,7 +63,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
     /**
      * Next wait is 2*wait, but no more FAILED_EXECUTION_MAX_DELAY_SECONDS
      */
-    private int failedDelaySeconds = FAILED_EXECUTION_INITIAL_DELAY_SECONDS;
+    private int failedDelaySeconds = BotStationResources.getFailedExecutionInitialDelay();
     private Thread executionThread = null;
     private boolean threadInterrupting = false;
 
@@ -221,8 +212,9 @@ public class WorkflowBotTaskExecutor implements Runnable {
             executionStatus = WorkflowBotTaskExecutionStatus.FAILED;
             // Double delay if exists
             failedDelaySeconds *= 2;
-            if (failedDelaySeconds > FAILED_EXECUTION_MAX_DELAY_SECONDS) {
-                failedDelaySeconds = FAILED_EXECUTION_MAX_DELAY_SECONDS;
+            int maxDelay = BotStationResources.getFailedExecutionMaxDelay();
+            if (failedDelaySeconds > maxDelay) {
+                failedDelaySeconds = maxDelay;
             }
             log.info("FailedDelaySeconds = " + failedDelaySeconds + " for " + task);
             started.add(Calendar.SECOND, failedDelaySeconds);
