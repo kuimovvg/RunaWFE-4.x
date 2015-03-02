@@ -369,7 +369,9 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
             formNode.setDirty();
             createOrUpdateFormValidation();
         }
-        browser.execute("setHTMLSaved()");
+        if (isBrowserLoaded()) {
+            browser.execute("setHTMLSaved()");
+        }
         setDirty(false);
     }
 
