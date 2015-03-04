@@ -173,7 +173,11 @@ public class BotCache {
     public static synchronized List<BotTask> getBotTasks(String botName) {
         List<BotTask> botTasks = Lists.newArrayList();
         if (BOT_TASKS.containsKey(botName)) {
-            botTasks.addAll(BOT_TASKS.get(botName));
+        	for(BotTask task: BOT_TASKS.get(botName)){
+        		if (task.getName().indexOf("embedded.docx") == -1){
+        			botTasks.add(task);
+        		}
+        	}
             Collections.sort(botTasks);
         }
         return botTasks;
