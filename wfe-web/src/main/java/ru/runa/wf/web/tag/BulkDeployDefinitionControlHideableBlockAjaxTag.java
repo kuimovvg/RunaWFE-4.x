@@ -21,6 +21,10 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.HideableBlockAction;
 import ru.runa.common.web.tag.AbstractReturningTag;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.definition.WorkflowSystemPermission;
+import ru.runa.wfe.security.ASystem;
+import ru.runa.wfe.service.delegate.Delegates;
+import ru.runa.wfe.user.User;
 
 /**
  * Created 23.05.2014
@@ -55,7 +59,7 @@ public class BulkDeployDefinitionControlHideableBlockAjaxTag extends AbstractRet
 
     @Override
     public int doStartTag() throws JspException {
-        if (WebResources.isBulkDeploymentElements()) {
+        if (isBulkDeployEnabled()) {
             JspWriter jspOut = pageContext.getOut();
             try {
                 jspOut.println(new Table().createStartTag());
@@ -100,7 +104,7 @@ public class BulkDeployDefinitionControlHideableBlockAjaxTag extends AbstractRet
 
     @Override
     public int doEndTag() throws JspException {
-        if (WebResources.isBulkDeploymentElements()) {
+        if (isBulkDeployEnabled()) {
             JspWriter jspOut = pageContext.getOut();
             try {
                 jspOut.println("</td></tr>");
@@ -112,4 +116,14 @@ public class BulkDeployDefinitionControlHideableBlockAjaxTag extends AbstractRet
         }
         return 0;
     }
+
+    /**
+     * Check when bulk deployment is enabled and user has right's to deploy process definitions 
+     * @return true, if element must be displayed and false otherwise.
+     */
+	private boolean isBulkDeployEnabled() {
+		User user = Commons.getUser(pageContext.getSession());
+		boolean isDeployAllowed = Delegates.getAuthorizationService().isAllowed(user, WorkflowSystemPermission.DEPLOY_DEFINITION, ASystem.INSTANCE);
+		return WebResources.isBulkDeploymentElements() && isDeployAllowed;
+	}
 }

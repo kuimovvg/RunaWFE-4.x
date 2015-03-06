@@ -39,5 +39,4 @@ public class BulkDeployDefinitionControlTag extends TitledFormTag {
     protected String getFormButtonName() {
         return Messages.getMessage(Messages.BUTTON_DEPLOY_DEFINITION, pageContext);
     }
-
 }
