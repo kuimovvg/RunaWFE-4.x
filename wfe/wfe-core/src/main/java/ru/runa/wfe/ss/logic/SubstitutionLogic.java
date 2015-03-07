@@ -206,7 +206,7 @@ public class SubstitutionLogic extends CommonLogic {
     }
 
     public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor) {
-        return substitutionCache.getSubstitutors(actor);
+        return substitutionCache.getSubstitutors(actor, true);
     }
 
     public Set<Actor> getSubstituted(Actor actor) {
