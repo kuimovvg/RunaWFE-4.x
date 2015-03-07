@@ -141,22 +141,9 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         throw new InternalApplicationException("Unexpected object " + object);
     }
 
-    /**
-     * Do not wait until cache is released
-     * 
-     * @return cache or <code>null</code> in case of locked
-     */
-    private TaskCacheImpl getCacheNoWait() {
-        TaskCacheImpl cache = getCache();
-        if (cache == null && !isLocked()) {
-            cache = CachingLogic.getCacheImpl(this);
-        }
-        return cache;
-    }
-
     @Override
     public List<WfTask> getTasks(Long actorId, BatchPresentation batchPresentation) {
-        TaskCacheImpl cache = getCacheNoWait();
+        TaskCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
         if (cache == null) {
             return null;
         }
@@ -165,7 +152,7 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
 
     @Override
     public void setTasks(int cacheVersion, Long actorId, BatchPresentation batchPresentation, List<WfTask> tasks) {
-        TaskCacheImpl cache = getCacheNoWait();
+        TaskCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
         if (cache == null) {
             return;
         }
@@ -174,7 +161,7 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
 
     @Override
     public int getCacheVersion() {
-        TaskCacheImpl cache = getCacheNoWait();
+        TaskCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
         if (cache == null) {
             return 0;
         }

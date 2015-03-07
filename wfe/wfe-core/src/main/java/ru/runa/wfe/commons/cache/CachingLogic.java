@@ -199,6 +199,30 @@ public class CachingLogic {
     }
 
     /**
+     * Return cache instance from cache control instance or null. If control
+     * instance is locked (already exists transactions, which changing cache)
+     * and cache is not initialized returns null; otherwise initialize cache.
+     * @param <CacheImpl>
+     *            Type of cache, controlled by cache control component.
+     * @param cache
+     *            Cache control component.
+     * @return Cache instance. May be null.
+     */
+    public static <CacheImpl extends CacheImplementation> CacheImpl getCacheImplIfNotLocked(CacheControl<CacheImpl> cache) {
+        CacheImpl cacheImplTmp = cache.getCache();
+        if (cacheImplTmp != null) {
+            return cacheImplTmp;
+        }
+        if (cache.isLocked())
+            return null;
+        synchronized (CachingLogic.class) {
+            if (cache.isLocked())
+                return null;
+            return getCacheImpl(cache);
+        }
+    }
+    
+    /**
      * Return cache instance from cache control instance. If control instance
      * already initialized with cache instance, then returning it. If control
      * instance not initialized with cache instance, then cache instance is

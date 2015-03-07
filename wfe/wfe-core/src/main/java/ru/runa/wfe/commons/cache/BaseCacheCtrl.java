@@ -50,7 +50,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
 
     /**
      * Current cache implementation. May be null, if no cache implementation
-     * initialised.
+     * initialized.
      */
     private final AtomicReference<CacheImpl> impl = new AtomicReference<CacheImpl>(null);
 
@@ -61,10 +61,9 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     private final AtomicBoolean isInitiateInProcess = new AtomicBoolean(false);
 
     /**
-     * Set of threads, which makes changes, affecting cache. After thread
-     * transaction completes, it removes from this set.
+     * Stores dirty threads for cache control.
      */
-    private final Set<Thread> dirtyThreads = new HashSet<Thread>();
+    private final DirtyThreadsStorage dirtyThreads = new DirtyThreadsStorage();
 
     @Override
     public final CacheImpl getCache() {
@@ -95,7 +94,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
 
     @Override
     public final boolean isLocked() {
-        return !dirtyThreads.isEmpty();
+        return dirtyThreads.isDirtyExist();
     }
 
     @Override
@@ -107,8 +106,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
 
     @Override
     public final void markTransactionComplete() {
-        dirtyThreads.remove(Thread.currentThread());
-        if (dirtyThreads.isEmpty()) {
+        if (dirtyThreads.ResetDirty()) {
             CachingLogic.class.notifyAll();
         }
         doMarkTransactionComplete();
@@ -176,7 +174,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * it will be removed from changing threads.
      */
     private void registerChange() {
-        dirtyThreads.add(Thread.currentThread());
+        dirtyThreads.MarkAsDirty();
     }
 
     /**
@@ -191,5 +189,50 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
             return RESOURCES.getBooleanProperty(this.getClass().getName() + "." + SMART_CACHE, true);
         }
         return false;
+    }
+
+    /**
+     * Stores set of dirty threads for cache control.
+     */
+    class DirtyThreadsStorage
+    {
+        /**
+         * Flag, equals true if some dirty threads exists and false otherwise.
+         */
+        private final AtomicBoolean hasDirty = new AtomicBoolean(false);
+        
+        /**
+         * Set of threads, which makes changes, affecting cache. After thread
+         * transaction completes, it removes from this set.
+         */
+        private final Set<Thread> dirtyThreads = new HashSet<Thread>();
+        
+        /**
+         * Check if dirty threads exists for cache control.
+         * @return true if dirty thread exists and false otherwise.
+         */
+        public boolean isDirtyExist() {
+            return hasDirty.get();
+        }
+        
+        /**
+         * Mark current thread as dirty thread.
+         */
+        public synchronized void MarkAsDirty() {
+            dirtyThreads.add(Thread.currentThread());
+            hasDirty.set(true);
+        }
+        
+        /**
+         * Reset dirty flag from current thread.
+         * @return true, if no dirty threads in cache control and false otherwise.
+         */
+        public synchronized boolean ResetDirty() {
+            dirtyThreads.remove(Thread.currentThread());
+            if (!dirtyThreads.isEmpty())
+                return false;
+            hasDirty.set(false);
+            return true;
+        }
     }
 }
