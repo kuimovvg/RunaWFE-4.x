@@ -71,7 +71,7 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     }
 
     @Override
-    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor) {
+    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor, boolean loadIfRequired) {
         if (actor.isActive()) {
             return new TreeMap<Substitution, Set<Actor>>();
         }
@@ -79,6 +79,8 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         if (result != null) {
             return new TreeMap<Substitution, Set<Actor>>(result);
         }
+        if (!loadIfRequired)
+        	return null;
         Map<Long, TreeMap<Substitution, HashSet<Actor>>> actorToSubstitutors = getMapActorToSubstitutors();
         result = actorToSubstitutors.get(actor.getId());
         return result != null ? new TreeMap<Substitution, Set<Actor>>(result) : new TreeMap<Substitution, Set<Actor>>();
