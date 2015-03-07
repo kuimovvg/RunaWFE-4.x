@@ -27,6 +27,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.commons.cache.Change;
+import ru.runa.wfe.commons.cache.ChangedObjectParameter;
 import ru.runa.wfe.commons.cache.TaskChangeListener;
 import ru.runa.wfe.execution.Swimlane;
 import ru.runa.wfe.presentation.BatchPresentation;
@@ -65,83 +66,6 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
     }
 
     @Override
-    public void doOnChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        if (!isSmartCache()) {
-            uninitialize(object, change);
-            return;
-        }
-        if (object instanceof Task) {
-            int idx = 0;
-            while (!propertyNames[idx].equals(EXECUTOR_PROPERTY_NAME)) {
-                ++idx;
-            }
-            if (idx == propertyNames.length) {
-                throw new InternalApplicationException("No '" + EXECUTOR_PROPERTY_NAME + "' found in " + object);
-            }
-            clearCacheForActors((Executor) currentState[idx], change);
-            if (previousState != null) {
-                clearCacheForActors((Executor) previousState[idx], change);
-            }
-            return;
-        }
-        if (object instanceof Swimlane) {
-            int idx = 0;
-            while (!propertyNames[idx].equals(EXECUTOR_PROPERTY_NAME)) {
-                ++idx;
-            }
-            if (idx == propertyNames.length) {
-                throw new InternalApplicationException("No '" + EXECUTOR_PROPERTY_NAME + "' found in " + object);
-            }
-            clearCacheForActors((Executor) currentState[idx], change);
-            if (previousState != null) {
-                clearCacheForActors((Executor) previousState[idx], change);
-            }
-            return;
-        }
-        if (object instanceof ExecutorGroupMembership) {
-            ExecutorGroupMembership membership = (ExecutorGroupMembership) object;
-            clearCacheForActors(membership.getExecutor(), change);
-            return;
-        }
-        if (object instanceof Actor) {
-            if (change == Change.UPDATE) {
-                int activePropertyIndex = 0;
-                for (int i = 0; i < propertyNames.length; i++) {
-                    if (propertyNames[i].equals("active")) {
-                        activePropertyIndex = i;
-                        break;
-                    }
-                }
-                if (previousState != null && !Objects.equal(previousState[activePropertyIndex], currentState[activePropertyIndex])) {
-                    // TODO clear cache for affected actors only
-                    uninitialize(object, change);
-                }
-            }
-            return;
-        }
-        if (object instanceof Substitution) {
-            Substitution substitution = (Substitution) object;
-            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
-            if (executorCache == null) {
-                uninitialize(object, change);
-                return;
-            }
-            Actor actor = (Actor) executorCache.getExecutor(substitution.getActorId());
-            // actor can be null if created in same transaction
-            if (actor != null && !actor.isActive()) {
-                clearCacheForActors(actor, change);
-            }
-            return;
-        }
-        if (object instanceof SubstitutionCriteria) {
-            // TODO clear cache for affected actors only
-            uninitialize(object, change);
-            return;
-        }
-        throw new InternalApplicationException("Unexpected object " + object);
-    }
-
-    @Override
     public List<WfTask> getTasks(Long actorId, BatchPresentation batchPresentation) {
         TaskCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
         if (cache == null) {
@@ -168,41 +92,72 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         return cache.getCacheVersion();
     }
 
-    private void clearCacheForActors(Executor executor, Change change) {
-        TaskCacheImpl cache = getCache();
-        if (cache == null) {
-            return;
+    @Override
+    public void doOnChange(ChangedObjectParameter changedObject) {
+        if (changedObject.object instanceof Task || changedObject.object instanceof Swimlane) {
+            clearObjectWithExecutorProperty(changedObject);
+        } else if (changedObject.object instanceof ExecutorGroupMembership) {
+            ExecutorGroupMembership membership = (ExecutorGroupMembership) changedObject.object;
+            clearCacheForActors(membership.getExecutor(), changedObject.changeType);
+        } else if (changedObject.object instanceof Actor) {
+            if (changedObject.changeType == Change.UPDATE) {
+                int activePropertyIndex = changedObject.getPropertyIndex("active");
+                if (changedObject.previousState != null && !Objects.equal(changedObject.previousState[activePropertyIndex], changedObject.currentState[activePropertyIndex])) {
+                    // TODO clear cache for affected actors only
+                    uninitialize(changedObject);
+                }
+            }
+        } else if (changedObject.object instanceof Substitution) {
+            Substitution substitution = (Substitution) changedObject.object;
+            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
+            if (executorCache == null) {
+                uninitialize(changedObject);
+                return;
+            }
+            Actor actor = (Actor) executorCache.getExecutor(substitution.getActorId());
+            // actor can be null if created in same transaction
+            if (actor != null && !actor.isActive()) {
+                clearCacheForActors(actor, changedObject.changeType);
+            }
+        } else if (changedObject.object instanceof SubstitutionCriteria) {
+            // TODO clear cache for affected actors only
+            uninitialize(changedObject);
+        } else {
+            throw new InternalApplicationException("Unexpected object " + changedObject.object);
         }
-        if (executor == null) {
+    }
+  
+    /**
+     * Clear caches for object, which contains executor property.
+     * @param object Changed object.
+     * @param change Change type.
+     * @param currentState Current state of changed object.
+     * @param previousState Previous state of changed object.
+     * @param propertyNames Properties names of changed object.
+     */
+    private void clearObjectWithExecutorProperty(ChangedObjectParameter changedObject) {
+        int idx = changedObject.getPropertyIndex(EXECUTOR_PROPERTY_NAME);
+        clearCacheForActors((Executor) changedObject.currentState[idx], changedObject.changeType);
+        if (changedObject.previousState != null) {
+            clearCacheForActors((Executor) changedObject.previousState[idx], changedObject.changeType);
+        }
+        return;
+    }
+
+    /**
+     * Clears task lists, affected by changes in executor. 
+     * @param executor Changed executor.
+     * @param change Change type.
+     */
+     private void clearCacheForActors(Executor executor, Change change) {
+        TaskCacheImpl cache = getCache();
+        if (cache == null || executor == null) {
             return;
         }
         log.debug("Clearing cache for " + executor + " due to " + change);
-        Set<Actor> actors;
-        if (executor instanceof Group) {
-            // TODO make caches retrieval not blocking and remove
-            // uninitialize(...)
-            // call for this cache
-            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
-            if (executorCache == null) {
-                if (executor instanceof TemporaryGroup) {
-                    log.debug("Ignored cache recalc [executorCache == null] on " + change + " with " + executor);
-                    return;
-                }
-                uninitialize(executor, change);
-                return;
-            }
-            actors = executorCache.getGroupActorsAll((Group) executor);
-            if (actors == null) {
-                if (executor instanceof TemporaryGroup) {
-                    log.debug("Ignored cache recalc [actors == null] on " + change + " with " + executor);
-                    return;
-                }
-                log.error("No group actors found in cache for " + executor);
-                uninitialize(executor, change);
-                return;
-            }
-        } else {
-            actors = Sets.newHashSet((Actor) executor);
+        Set<Actor> actors = Sets.newHashSet();
+        if (!FillAffectedActors(executor, change, actors)) {
+            return;
         }
         for (Actor actor : actors) {
             cache.clearActorTasks(actor.getId());
@@ -222,4 +177,38 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         }
     }
 
+    /**
+     * Fill set of actors, which task lists may be affected by changing executor.
+     * @param changedExecutor Executor, which may affect other executors.
+     * @param change Change type.
+     * @param affectedActors Set of affected actors to fill.
+     * @return true, if affected actors is filled and false if no other actions required.
+     */
+    private boolean FillAffectedActors(Executor changedExecutor, Change change, Set<Actor> affectedActors) {
+        if (changedExecutor instanceof Group) {
+            ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
+            if (executorCache == null) {
+                if (changedExecutor instanceof TemporaryGroup) {
+                    log.debug("Ignored cache recalc [executorCache == null] on " + change + " with " + changedExecutor);
+                } else {
+                    uninitialize(changedExecutor, change);
+                }
+                return false;
+            }
+            Set<Actor> cached = executorCache.getGroupActorsAll((Group) changedExecutor);
+            if (cached == null) {
+                if (changedExecutor instanceof TemporaryGroup) {
+                    log.debug("Ignored cache recalc [actors == null] on " + change + " with " + changedExecutor);
+                } else {
+                    log.warn("No group actors found in cache for " + changedExecutor);
+                    uninitialize(changedExecutor, change);
+                }
+                return false;
+            }
+            affectedActors.addAll(cached);
+        } else {
+            affectedActors.add((Actor) changedExecutor);
+        }
+        return true;
+    }
 }
