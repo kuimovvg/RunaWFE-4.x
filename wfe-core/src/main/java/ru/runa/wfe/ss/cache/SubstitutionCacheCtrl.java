@@ -51,9 +51,9 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
     }
 
     @Override
-    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor) {
+    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor, boolean loadIfRequired) {
         SubstitutionCacheImpl cache = CachingLogic.getCacheImpl(this);
-        return cache.getSubstitutors(actor);
+        return cache.getSubstitutors(actor, loadIfRequired);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
         if (cache == null) {
             return null;
         }
-        return cache.getSubstitutors(actor);
+        return cache.getSubstitutors(actor, false);
     }
 
     @Override

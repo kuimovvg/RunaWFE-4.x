@@ -35,10 +35,12 @@ public interface SubstitutionCache {
      * 
      * @param actor
      *            Actor, which substitution rules will be returned.
+     * @param loadIfRequired
+     *            Flag, equals true if substitution rules may be loaded from database if cache is empty and false to return null in this case.
      * @return {@link Map} from substitution rule to {@link Set} of substitutor
      *         id's.
      */
-    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor);
+    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor, boolean loadIfRequired);
 
     /**
      * Returns all inactive {@link Actor}'s, which has at least one substitution

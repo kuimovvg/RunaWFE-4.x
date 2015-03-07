@@ -134,7 +134,7 @@ class AltSubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCach
     }
 
     @Override
-    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor) {
+    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor, boolean loadIfRequired) {
         TreeMap<Substitution, HashSet<Actor>> result = actorToSubstitutorsCache.get(actor);
         return result != null ? new TreeMap<Substitution, Set<Actor>>(result) : new TreeMap<Substitution, Set<Actor>>();
     }
