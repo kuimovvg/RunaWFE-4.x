@@ -19,13 +19,12 @@ package ru.runa.wfe.definition.cache;
 
 import java.util.List;
 
-import org.hibernate.type.Type;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
-import ru.runa.wfe.commons.cache.Change;
+import ru.runa.wfe.commons.cache.ChangedObjectParameter;
 import ru.runa.wfe.commons.cache.ProcessDefChangeListener;
 import ru.runa.wfe.definition.DefinitionDoesNotExistException;
 import ru.runa.wfe.definition.Deployment;
@@ -46,20 +45,16 @@ public class ProcessDefCacheCtrl extends BaseCacheCtrl<ProcessDefCacheImpl> impl
     }
 
     @Override
-    public void doOnChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        if (!isSmartCache()) {
-            uninitialize(object, change);
-            return;
-        }
+    public void doOnChange(ChangedObjectParameter changedObject) {
         ProcessDefCacheImpl cache = getCache();
         if (cache == null) {
             return;
         }
-        if (object instanceof Deployment) {
-            cache.onDeploymentChange((Deployment) object, change);
+        if (changedObject.object instanceof Deployment) {
+            cache.onDeploymentChange((Deployment) changedObject.object, changedObject.changeType);
             return;
         }
-        throw new InternalApplicationException("Unexpected object " + object);
+        throw new InternalApplicationException("Unexpected object " + changedObject.object);
     }
 
     public ProcessDefinition getDefinition(Long definitionId) throws DefinitionDoesNotExistException {

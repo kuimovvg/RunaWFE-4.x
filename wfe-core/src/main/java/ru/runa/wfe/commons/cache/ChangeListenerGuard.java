@@ -19,7 +19,6 @@ package ru.runa.wfe.commons.cache;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.type.Type;
 
 /**
  * Safety guard for {@linkplain ChangeListener}. Catches all exceptions during
@@ -60,9 +59,9 @@ public class ChangeListenerGuard implements ChangeListener {
     }
 
     @Override
-    public void onChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    public void onChange(ChangedObjectParameter changedObject) {
         try {
-            delegated.onChange(object, change, currentState, previousState, propertyNames, types);
+            delegated.onChange(changedObject);
         } catch (Exception e) {
             log.error("onChange(object, currentState, previousState, propertyNames, types) call failed on " + delegated.getClass().getName(), e);
         }
@@ -76,5 +75,4 @@ public class ChangeListenerGuard implements ChangeListener {
             log.error("uninitialize() call failed on " + delegated.getClass().getName(), e);
         }
     }
-
 }

@@ -17,7 +17,6 @@
  */
 package ru.runa.wfe.commons.cache;
 
-import org.hibernate.type.Type;
 
 /**
  * Interface for components, receiving events on objects change and transaction
@@ -31,21 +30,9 @@ public interface ChangeListener {
     /**
      * Called, then changed one of predefined object (e. q. specific sub
      * interface exists).
-     * 
-     * @param object
-     *            Changed object.
-     * @param change
-     *            operation type
-     * @param currentState
-     *            Current state of object properties.
-     * @param previousState
-     *            Previous state of object properties.
-     * @param propertyNames
-     *            Property names (same order as in currentState).
-     * @param types
-     *            Property types.
+     * @param changedObject Changed object data.
      */
-    public void onChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types);
+    public void onChange(ChangedObjectParameter changedObject);
 
     /**
      * Called, then transaction in current thread is completed. Cache controller

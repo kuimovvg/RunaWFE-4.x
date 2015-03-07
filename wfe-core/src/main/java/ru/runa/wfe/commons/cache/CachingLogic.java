@@ -175,7 +175,7 @@ public class CachingLogic {
         }
         toNotify.addAll(notifyThis);
         for (ChangeListener listener : notifyThis) {
-            listener.onChange(changed, change, currentState, previousState, propertyNames, types);
+            listener.onChange(new ChangedObjectParameter(changed, change, currentState, previousState, propertyNames, types));
         }
     }
 
