@@ -98,10 +98,14 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     }
 
     @Override
-    public final void onChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
+    public final void onChange(ChangedObjectParameter changedObject) {
         registerChange();
-        log.debug("On " + change + ": " + object);
-        doOnChange(object, change, currentState, previousState, propertyNames, types);
+        log.debug("On " + changedObject.changeType + ": " + changedObject.object);
+        if (!isSmartCache()) {
+            uninitialize(changedObject);
+        } else {
+            doOnChange(changedObject);
+        }
     }
 
     @Override
@@ -113,28 +117,15 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     }
 
     /**
-     * <b>Override this method if you need some additional actions on
-     * {@link #onChange(Object, Change, Object[], Object[], String[], Type[])}
-     * .</b>
+     * <b>Override this method if you need some additional actions on {@link #onChange(ChangedObjectParameter)}.</b>
      * <p/>
      * 
-     * Called, then changed one of predefined object (e. q. specific sub
-     * interface exists).
+     * Called, then changed one of predefined object (e. q. specific sub interface exists).
+     * If smart cache capability is off, then this method is not called (called {@link #uninitialize(ChangedObjectParameter)}).
      * 
-     * @param object
-     *            Changed object.
-     * @param change
-     *            operation type
-     * @param state
-     *            Current state of object properties.
-     * @param previousState
-     *            Previous state of object properties.
-     * @param propertyNames
-     *            Property names (same order as in currentState).
-     * @param types
-     *            Property types.
+     * @param changedObject Changed object data.
      */
-    protected abstract void doOnChange(Object object, Change change, Object[] state, Object[] previousState, String[] propertyNames, Type[] types);
+    protected abstract void doOnChange(ChangedObjectParameter changedObject);
 
     /**
      * <b>Override this method if you need some additional actions on
@@ -167,6 +158,14 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
             log.info("Cache is uninitialized. Due to " + change + " of " + object);
         }
         impl.set(null);
+    }
+
+    /**
+     * Drops current cache implementation.
+     * @param object Changed object, which leads to cache drop.
+     */
+    protected void uninitialize(ChangedObjectParameter changedObject) {
+        uninitialize(changedObject.object, changedObject.changeType);
     }
 
     /**

@@ -26,6 +26,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.commons.cache.Change;
+import ru.runa.wfe.commons.cache.ChangedObjectParameter;
 import ru.runa.wfe.commons.cache.SubstitutionChangeListener;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
@@ -62,6 +63,12 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
         return cache.getSubstituted(actor);
     }
 
+    /**
+     * Try to get substitutors for actor. If cache is not initialized or substitutors not found this
+     * method will not query database - it returns null instead.
+     * @param actor Actor, to get substitutors.
+     * @return Substitutors for actor or null, if substitutors not initialized for actor.
+     */
     public TreeMap<Substitution, Set<Actor>> tryToGetSubstitutors(Actor actor) {
         SubstitutionCacheImpl cache = getCache();
         if (cache == null) {
@@ -71,17 +78,13 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
     }
 
     @Override
-    public void doOnChange(Object object, Change change, Object[] currentState, Object[] previousState, String[] propertyNames, Type[] types) {
-        if (!isSmartCache()) {
-            uninitialize(object, change);
-            return;
-        }
+    public void doOnChange(ChangedObjectParameter changedObject) {
         SubstitutionCacheImpl cache = getCache();
         if (cache == null) {
             return;
         }
-        if (object instanceof Substitution || object instanceof SubstitutionCriteria) {
-            uninitialize(object, change);
+        if (changedObject.object instanceof Substitution || changedObject.object instanceof SubstitutionCriteria) {
+            uninitialize(changedObject);
             // TODO: refresh cache for target actors
             // ExecutorCacheImpl executorCache =
             // ExecutorCacheCtrl.getInstance().getCache();
@@ -95,31 +98,23 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
             // cache.onActorStatusChange(actor, change);
             return;
         }
-        if (object instanceof SubstitutionCriteria) {
-            uninitialize(object, change);
+        if (changedObject.object instanceof SubstitutionCriteria) {
+            uninitialize(changedObject);
             return;
         }
-        if (object instanceof Actor) {
-            int activePropertyIndex = 0;
-            int namePropertyIndex = 0;
-            for (int i = 0; i < propertyNames.length; i++) {
-                if (propertyNames[i].equals("active")) {
-                    activePropertyIndex = i;
-                }
-                if (propertyNames[i].equals("name")) {
-                    namePropertyIndex = i;
-                }
+        if (changedObject.object instanceof Actor) {
+            int activePropertyIndex = changedObject.getPropertyIndex("active");
+            int namePropertyIndex = changedObject.getPropertyIndex("name");
+            if (changedObject.previousState != null && !Objects.equal(changedObject.previousState[activePropertyIndex], changedObject.currentState[activePropertyIndex])) {
+                cache.onActorStatusChange((Actor) changedObject.object, changedObject.changeType);
             }
-            if (previousState != null && !Objects.equal(previousState[activePropertyIndex], currentState[activePropertyIndex])) {
-                cache.onActorStatusChange((Actor) object, change);
-            }
-            if (previousState != null && !Objects.equal(previousState[namePropertyIndex], currentState[namePropertyIndex])) {
+            if (changedObject.previousState != null && !Objects.equal(changedObject.previousState[namePropertyIndex], changedObject.currentState[namePropertyIndex])) {
                 // this event interested due to Actor.hashCode() implementation
                 // cache.onActorNameChange((Actor) object, change);
             }
             return;
         }
-        throw new InternalApplicationException("Unexpected object " + object);
+        throw new InternalApplicationException("Unexpected object " + changedObject.object);
     }
 
 }
