@@ -46,7 +46,7 @@ import com.google.common.collect.Maps;
 
 /**
  * Task logic.
- * 
+ *
  * @author Dofs
  * @since 4.0
  */
@@ -80,6 +80,13 @@ public class TaskLogic extends WFCommonLogic {
             transitionMap.put(WfProcess.SELECTED_TRANSITION_KEY, transitionName);
             if (SystemProperties.isV3CompatibilityMode()) {
                 transitionMap.put("transition", transitionName);
+            }
+            // transient variables
+            Map<String, Object> transientVariables = (Map<String, Object>) variables.remove(WfProcess.TRANSIENT_VARIABLES);
+            if (transientVariables != null) {
+                for (Map.Entry<String, Object> entry : transientVariables.entrySet()) {
+                    executionContext.setTransientVariable(entry.getKey(), entry.getValue());
+                }
             }
             IVariableProvider validationVariableProvider = new MapDelegableVariableProvider(transitionMap, executionContext.getVariableProvider());
             validateVariables(user, processDefinition, task.getNodeId(), variables, validationVariableProvider);

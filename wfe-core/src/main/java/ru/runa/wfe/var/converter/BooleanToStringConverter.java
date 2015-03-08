@@ -22,6 +22,7 @@
 package ru.runa.wfe.var.converter;
 
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.Converter;
 import ru.runa.wfe.var.Variable;
 
@@ -34,7 +35,7 @@ public class BooleanToStringConverter implements Converter {
     }
 
     @Override
-    public Object convert(Variable<?> variable, Object o) {
+    public Object convert(ExecutionContext executionContext, Variable<?> variable, Object o) {
         return ((Boolean) o).toString();
     }
 

@@ -149,7 +149,7 @@ public class ClassLoaderUtil {
         Preconditions.checkNotNull(resourceName, "resourceName");
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         URL url = null;
-        while ((loader != null) && (url == null)) {
+        while (loader != null && url == null) {
             url = loader.getResource(resourceName);
             loader = loader.getParent();
         }
@@ -182,7 +182,7 @@ public class ClassLoaderUtil {
 
     /**
      * Get resource as stream.
-     * 
+     *
      * @param resourceName
      *            classpath resource name
      * @param callingClass
@@ -200,7 +200,7 @@ public class ClassLoaderUtil {
 
     /**
      * Get resource as stream.
-     * 
+     *
      * @param resourceName
      *            classpath resource name
      * @param callingClass
@@ -217,7 +217,7 @@ public class ClassLoaderUtil {
 
     /**
      * Get resource as string.
-     * 
+     *
      * @param resourceName
      *            classpath resource name
      * @param callingClass

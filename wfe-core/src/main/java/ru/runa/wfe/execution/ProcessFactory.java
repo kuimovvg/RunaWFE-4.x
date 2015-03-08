@@ -60,19 +60,20 @@ public class ProcessFactory {
      * Creates and starts a new process for the given process definition, puts
      * the root-token (=main path of execution) in the start state and executes
      * the initial node.
-     * 
+     *
      * @param variables
      *            will be inserted into the context variables after the context
      *            submodule has been created and before the process-start event
      *            is fired, which is also before the execution of the initial
      *            node.
      */
-    public Process startProcess(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String transitionName) {
+    public Process startProcess(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String transitionName,
+            Map<String, Object> transientVariables) {
         Preconditions.checkNotNull(actor, "can't start a process when actor is null");
-        Process process = createProcessInternal(processDefinition, variables, actor, null);
-        grantProcessPermissions(processDefinition, process, actor);
-        startProcessInternal(processDefinition, process, transitionName);
-        return process;
+        ExecutionContext executionContext = createProcessInternal(processDefinition, variables, actor, null, transientVariables);
+        grantProcessPermissions(processDefinition, executionContext.getProcess(), actor);
+        startProcessInternal(executionContext, transitionName);
+        return executionContext.getProcess();
     }
 
     private void grantProcessPermissions(ProcessDefinition processDefinition, Process process, Actor actor) {
@@ -106,16 +107,16 @@ public class ProcessFactory {
                 variables.put(entry.getKey(), entry.getValue());
             }
         }
-        Process subProcess = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchyIds());
-        nodeProcessDAO.create(new NodeProcess(subProcessNode, parentExecutionContext.getToken(), subProcess, index));
-        return subProcess;
+        ExecutionContext subExecutionContext = createProcessInternal(processDefinition, variables, null, parentProcess.getHierarchyIds(), null);
+        nodeProcessDAO.create(new NodeProcess(subProcessNode, parentExecutionContext.getToken(), subExecutionContext.getProcess(), index));
+        return subExecutionContext.getProcess();
     }
 
     public void startSubprocess(ExecutionContext parentExecutionContext, ExecutionContext executionContext) {
         parentExecutionContext.addLog(new SubprocessStartLog(parentExecutionContext.getNode(), parentExecutionContext.getToken(), executionContext
                 .getProcess()));
         grantSubprocessPermissions(executionContext.getProcessDefinition(), executionContext.getProcess(), parentExecutionContext.getProcess());
-        startProcessInternal(executionContext.getProcessDefinition(), executionContext.getProcess(), null);
+        startProcessInternal(executionContext, null);
     }
 
     private void grantSubprocessPermissions(ProcessDefinition processDefinition, Process subProcess, Process parentProcess) {
@@ -132,7 +133,8 @@ public class ProcessFactory {
         }
     }
 
-    private Process createProcessInternal(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor, String parentHierarchy) {
+    private ExecutionContext createProcessInternal(ProcessDefinition processDefinition, Map<String, Object> variables, Actor actor,
+            String parentHierarchy, Map<String, Object> transientVariables) {
         Preconditions.checkNotNull(processDefinition, "can't create a process when processDefinition is null");
         Process process = new Process(processDefinition.getDeployment());
         Token rootToken = new Token(processDefinition, process);
@@ -143,25 +145,28 @@ public class ProcessFactory {
         if (actor != null) {
             executionContext.addLog(new ProcessStartLog(actor));
         }
+        if (transientVariables != null) {
+            for (Map.Entry<String, Object> entry : transientVariables.entrySet()) {
+                executionContext.setTransientVariable(entry.getKey(), entry.getValue());
+            }
+        }
         executionContext.setVariableValues(variables);
         if (actor != null) {
             SwimlaneDefinition swimlaneDefinition = processDefinition.getStartStateNotNull().getFirstTaskNotNull().getSwimlane();
             Swimlane swimlane = process.getSwimlaneNotNull(swimlaneDefinition);
             swimlane.assignExecutor(executionContext, actor, false);
         }
-        return process;
+        return executionContext;
     }
 
-    private Process startProcessInternal(ProcessDefinition processDefinition, Process process, String transitionName) {
-        ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
+    private void startProcessInternal(ExecutionContext executionContext, String transitionName) {
         // execute the start node
-        StartState startState = processDefinition.getStartStateNotNull();
+        StartState startState = executionContext.getProcessDefinition().getStartStateNotNull();
         // startState.enter(executionContext);
         Transition transition = null;
         if (transitionName != null) {
-            transition = processDefinition.getStartStateNotNull().getLeavingTransitionNotNull(transitionName);
+            transition = executionContext.getProcessDefinition().getStartStateNotNull().getLeavingTransitionNotNull(transitionName);
         }
         startState.leave(executionContext, transition);
-        return process;
     }
 }
