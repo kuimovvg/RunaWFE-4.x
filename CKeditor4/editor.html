@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -36,7 +36,9 @@
 					markContent(editor);
 				});	
 			} catch (e) {
-				alertError(e, "setHTML");
+				if (e.message != "ignore") {
+					alertError(e, "setHTML");
+				}				
 			}
         }
 		function setHTMLSaved() {
@@ -44,7 +46,9 @@
 				var editor = CKEDITOR.instances.editor;
 				markContent(editor);
 			} catch (e) {
-				alertError(e, "setHTMLSaved");
+				if (e.message != "ignore") {
+					alertError(e, "setHTMLSaved");
+				}				
 			}
 		}
 		function markContent(editor) {
