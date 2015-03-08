@@ -36,6 +36,7 @@ import ru.runa.wfe.user.Actor;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.ExecutorPermission;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.validation.ValidationException;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
 
@@ -104,6 +105,8 @@ public class TaskLogic extends WFCommonLogic {
             }
             log.info("Task '" + task.getName() + "' was done by " + user + " in process " + task.getProcess());
             ProcessExecutionErrors.removeProcessError(task.getProcess().getId(), task.getNodeId());
+        } catch (ValidationException ex) {
+            throw Throwables.propagate(ex);
         } catch (Throwable th) {
             ProcessExecutionErrors.addProcessError(task, th);
             throw Throwables.propagate(th);
