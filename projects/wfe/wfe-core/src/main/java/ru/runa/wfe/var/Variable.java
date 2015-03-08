@@ -185,7 +185,7 @@ public abstract class Variable<T extends Object> {
         Object newStorableValue;
         if (supports(newValue)) {
             if (converter != null && converter.supports(newValue)) {
-                newStorableValue = converter.convert(this, newValue);
+                newStorableValue = converter.convert(executionContext, this, newValue);
             } else {
                 converter = null;
                 newStorableValue = newValue;

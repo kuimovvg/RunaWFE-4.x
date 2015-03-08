@@ -6,6 +6,7 @@ import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.Variable;
 
 import com.google.common.io.Files;
@@ -36,7 +37,7 @@ public class LocalFileSystemStorage implements IFileVariableStorage {
     }
 
     @Override
-    public Object save(Variable<?> variable, Object object) {
+    public Object save(ExecutionContext executionContext, Variable<?> variable, Object object) {
         if (object instanceof IFileVariable) {
             IFileVariable fileVariable = (IFileVariable) object;
             object = save(variable, fileVariable, null);

@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.commons.cache;
@@ -24,13 +24,12 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.type.Type;
 
 import ru.runa.wfe.commons.PropertyResources;
 
 /**
  * Base implementation of cache control objects.
- * 
+ *
  * @author Konstantinov Aleksey
  * @param <CacheImpl>
  *            Controlled cache implementation.
@@ -117,13 +116,16 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     }
 
     /**
-     * <b>Override this method if you need some additional actions on {@link #onChange(ChangedObjectParameter)}.</b>
+     * <b>Override this method if you need some additional actions on
+     * {@link #onChange(ChangedObjectParameter)}.</b>
      * <p/>
      * 
-     * Called, then changed one of predefined object (e. q. specific sub interface exists).
-     * If smart cache capability is off, then this method is not called (called {@link #uninitialize(ChangedObjectParameter)}).
-     * 
-     * @param changedObject Changed object data.
+     * Called, then changed one of predefined object (e. q. specific sub
+     * interface exists). If smart cache capability is off, then this method is
+     * not called (called {@link #uninitialize(ChangedObjectParameter)}).
+     *
+     * @param changedObject
+     *            Changed object data.
      */
     protected abstract void doOnChange(ChangedObjectParameter changedObject);
 
@@ -132,7 +134,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * {@link #markTransactionComplete()}. Default implementation is suitable
      * for most case.</b>
      * <p/>
-     * 
+     *
      * Called, then transaction in current thread is completed. Cache controller
      * must mark transaction as completed, but must not recreate cache.
      * <p/>
@@ -148,7 +150,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
 
     /**
      * Drops current cache implementation.
-     * 
+     *
      * @param object
      *            Changed object, which leads to cache drop.
      */
@@ -162,7 +164,9 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
 
     /**
      * Drops current cache implementation.
-     * @param object Changed object, which leads to cache drop.
+     * 
+     * @param object
+     *            Changed object, which leads to cache drop.
      */
     protected void uninitialize(ChangedObjectParameter changedObject) {
         uninitialize(changedObject.object, changedObject.changeType);
@@ -180,7 +184,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * Check if current cache is 'smart'. If cache is not 'smart' it will
      * completely drop cache implementation on all affecting changes; 'smart'
      * cache tries to remove only affected elements from cache.
-     * 
+     *
      * @return true, if cache is 'smart'; false otherwise.
      */
     protected boolean isSmartCache() {
@@ -193,27 +197,27 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
     /**
      * Stores set of dirty threads for cache control.
      */
-    class DirtyThreadsStorage
-    {
+    class DirtyThreadsStorage {
         /**
          * Flag, equals true if some dirty threads exists and false otherwise.
          */
         private final AtomicBoolean hasDirty = new AtomicBoolean(false);
-        
+
         /**
          * Set of threads, which makes changes, affecting cache. After thread
          * transaction completes, it removes from this set.
          */
         private final Set<Thread> dirtyThreads = new HashSet<Thread>();
-        
+
         /**
          * Check if dirty threads exists for cache control.
+         * 
          * @return true if dirty thread exists and false otherwise.
          */
         public boolean isDirtyExist() {
             return hasDirty.get();
         }
-        
+
         /**
          * Mark current thread as dirty thread.
          */
@@ -221,15 +225,18 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
             dirtyThreads.add(Thread.currentThread());
             hasDirty.set(true);
         }
-        
+
         /**
          * Reset dirty flag from current thread.
-         * @return true, if no dirty threads in cache control and false otherwise.
+         * 
+         * @return true, if no dirty threads in cache control and false
+         *         otherwise.
          */
         public synchronized boolean ResetDirty() {
             dirtyThreads.remove(Thread.currentThread());
-            if (!dirtyThreads.isEmpty())
+            if (!dirtyThreads.isEmpty()) {
                 return false;
+            }
             hasDirty.set(false);
             return true;
         }
