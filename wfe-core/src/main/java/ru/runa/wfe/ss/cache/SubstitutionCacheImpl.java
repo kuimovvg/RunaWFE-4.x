@@ -48,22 +48,22 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     private static final Log log = LogFactory.getLog(SubstitutionCacheImpl.class);
     public static final String substitutorsName = "ru.runa.wfe.ss.cache.substitutors";
     public static final String substitutedName = "ru.runa.wfe.ss.cache.substituted";
-    private final Cache<Long, TreeMap<Substitution, HashSet<Actor>>> actorToSubstitutorsCache;
-    private final Cache<Long, HashSet<Actor>> actorToSubstitutedCache;
+    private final Cache<Long, TreeMap<Substitution, HashSet<Long>>> actorToSubstitutorsCache;
+    private final Cache<Long, HashSet<Long>> actorToSubstitutedCache;
     private ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
     private SubstitutionDAO substitutionDAO = ApplicationContextFactory.getSubstitutionDAO();
 
     public SubstitutionCacheImpl() {
         actorToSubstitutorsCache = createCache(substitutorsName, true);
         actorToSubstitutedCache = createCache(substitutedName, true);
-        Map<Long, TreeMap<Substitution, HashSet<Actor>>> actorToSubstitutors = getMapActorToSubstitutors();
-        Map<Long, HashSet<Actor>> actorToSubstituted = getMapActorToSubstituted(actorToSubstitutors);
+        Map<Long, TreeMap<Substitution, HashSet<Long>>> actorToSubstitutors = getMapActorToSubstitutors();
+        Map<Long, HashSet<Long>> actorToSubstituted = getMapActorToSubstituted(actorToSubstitutors);
         for (Actor actor : executorDAO.getAllActors(BatchPresentationFactory.ACTORS.createNonPaged())) {
             if (actorToSubstituted.get(actor.getId()) == null) {
-                actorToSubstituted.put(actor.getId(), new HashSet<Actor>());
+                actorToSubstituted.put(actor.getId(), new HashSet<Long>());
             }
             if (actorToSubstitutors.get(actor.getId()) == null) {
-                actorToSubstitutors.put(actor.getId(), new TreeMap<Substitution, HashSet<Actor>>());
+                actorToSubstitutors.put(actor.getId(), new TreeMap<Substitution, HashSet<Long>>());
             }
         }
         actorToSubstitutorsCache.putAll(actorToSubstitutors);
@@ -71,77 +71,55 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
     }
 
     @Override
-    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor, boolean loadIfRequired) {
+    public TreeMap<Substitution, Set<Long>> getSubstitutors(Actor actor, boolean loadIfRequired) {
         if (actor.isActive()) {
-            return new TreeMap<Substitution, Set<Actor>>();
+            return new TreeMap<Substitution, Set<Long>>();
         }
-        TreeMap<Substitution, HashSet<Actor>> result = actorToSubstitutorsCache.get(actor.getId());
+        TreeMap<Substitution, HashSet<Long>> result = actorToSubstitutorsCache.get(actor.getId());
         if (result != null) {
-            return new TreeMap<Substitution, Set<Actor>>(result);
+            return new TreeMap<Substitution, Set<Long>>(result);
         }
         if (!loadIfRequired)
         	return null;
-        Map<Long, TreeMap<Substitution, HashSet<Actor>>> actorToSubstitutors = getMapActorToSubstitutors();
+        Map<Long, TreeMap<Substitution, HashSet<Long>>> actorToSubstitutors = getMapActorToSubstitutors();
         result = actorToSubstitutors.get(actor.getId());
-        return result != null ? new TreeMap<Substitution, Set<Actor>>(result) : new TreeMap<Substitution, Set<Actor>>();
+        return result != null ? new TreeMap<Substitution, Set<Long>>(result) : new TreeMap<Substitution, Set<Long>>();
     }
 
     @Override
-    public HashSet<Actor> getSubstituted(Actor actor) {
-        HashSet<Actor> result = actorToSubstitutedCache.get(actor.getId());
+    public HashSet<Long> getSubstituted(Actor actor) {
+        HashSet<Long> result = actorToSubstitutedCache.get(actor.getId());
         if (result != null) {
             return result;
         }
-        Map<Long, HashSet<Actor>> actToSubstituted = getMapActorToSubstituted(actorToSubstitutorsCache);
+        Map<Long, HashSet<Long>> actToSubstituted = getMapActorToSubstituted(actorToSubstitutorsCache);
         result = actToSubstituted.get(actor.getId());
-        return result != null ? result : new HashSet<Actor>();
+        return result != null ? result : new HashSet<Long>();
     }
 
     public void onActorStatusChange(Actor actor, Change change) {
         log.debug("onActorStatusChange: " + actor);
-        TreeMap<Substitution, HashSet<Actor>> substitutions = actorToSubstitutorsCache.get(actor.getId());
+        TreeMap<Substitution, HashSet<Long>> substitutions = actorToSubstitutorsCache.get(actor.getId());
         if (substitutions == null) {
             return;
         }
-        for (HashSet<Actor> substitutors : substitutions.values()) {
+        for (HashSet<Long> substitutors : substitutions.values()) {
             if (substitutors != null) {
-                for (Actor substitutor : substitutors) {
-                    actorToSubstitutedCache.remove(substitutor.getId());
+                for (Long substitutor : substitutors) {
+                    actorToSubstitutedCache.remove(substitutor);
                 }
-            }
-        }
-        // Quick fix instead of changing Actor -> Long; update actor references
-        for (Long actorId : actorToSubstitutorsCache.keySet()) {
-            for (Map.Entry<Substitution, HashSet<Actor>> entry : actorToSubstitutorsCache.get(actorId).entrySet()) {
-                if (entry.getValue() == null) {
-                    log.debug("null actorToSubstitutorsCache value");
-                    continue;
-                }
-                if (entry.getValue().remove(actor)) {
-                    entry.getValue().add(actor);
-                }
-            }
-        }
-        for (Long actorId : actorToSubstitutedCache.keySet()) {
-            HashSet<Actor> actors = actorToSubstitutedCache.get(actorId);
-            if (actors == null) {
-                log.debug("null actorToSubstitutedCache value");
-                continue;
-            }
-            if (actors.remove(actor)) {
-                actors.add(actor);
             }
         }
     }
 
-    private Map<Long, TreeMap<Substitution, HashSet<Actor>>> getMapActorToSubstitutors() {
-        Map<Long, TreeMap<Substitution, HashSet<Actor>>> result = Maps.newHashMap();
+    private Map<Long, TreeMap<Substitution, HashSet<Long>>> getMapActorToSubstitutors() {
+        Map<Long, TreeMap<Substitution, HashSet<Long>>> result = Maps.newHashMap();
         try {
             for (Substitution substitution : substitutionDAO.getAll()) {
                 try {
-                    Actor actor = null;
+                    Long actorId;
                     try {
-                        actor = executorDAO.getActor(substitution.getActorId());
+                        actorId = executorDAO.getActor(substitution.getActorId()).getId();
                     } catch (ExecutorDoesNotExistException e) {
                         log.error("in " + substitution + ": " + e);
                         continue;
@@ -149,23 +127,23 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
                     if (!substitution.isEnabled()) {
                         continue;
                     }
-                    TreeMap<Substitution, HashSet<Actor>> subDescr = result.get(actor.getId());
+                    TreeMap<Substitution, HashSet<Long>> subDescr = result.get(actorId);
                     if (subDescr == null) {
-                        subDescr = new TreeMap<Substitution, HashSet<Actor>>();
-                        result.put(actor.getId(), subDescr);
+                        subDescr = new TreeMap<Substitution, HashSet<Long>>();
+                        result.put(actorId, subDescr);
                     }
                     if (substitution instanceof TerminatorSubstitution) {
                         subDescr.put(substitution, null);
                         continue;
                     }
                     List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(substitution.getOrgFunction(), null);
-                    HashSet<Actor> substitutors = new HashSet<Actor>();
+                    HashSet<Long> substitutors = new HashSet<Long>();
                     for (Executor sub : executors) {
                         if (sub instanceof Actor) {
-                            substitutors.add((Actor) sub);
+                            substitutors.add(sub.getId());
                         } else {
                             for (Actor groupActor : executorDAO.getGroupActors((Group) sub)) {
-                                substitutors.add(groupActor);
+                                substitutors.add(groupActor.getId());
                             }
                         }
                     }
@@ -180,25 +158,25 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         return result;
     }
 
-    private Map<Long, HashSet<Actor>> getMapActorToSubstituted(Cache<Long, TreeMap<Substitution, HashSet<Actor>>> mapActorToSubstitutors) {
-        Map<Long, HashSet<Actor>> result = new HashMap<Long, HashSet<Actor>>();
+    private Map<Long, HashSet<Long>> getMapActorToSubstituted(Cache<Long, TreeMap<Substitution, HashSet<Long>>> mapActorToSubstitutors) {
+        Map<Long, HashSet<Long>> result = new HashMap<Long, HashSet<Long>>();
         for (Long substituted : mapActorToSubstitutors.keySet()) {
             try {
                 Actor substitutedActor = executorDAO.getActor(substituted);
                 if (substitutedActor.isActive()) {
                     continue;
                 }
-                for (HashSet<Actor> substitutors : mapActorToSubstitutors.get(substituted).values()) {
+                for (HashSet<Long> substitutors : mapActorToSubstitutors.get(substituted).values()) {
                     if (substitutors == null) {
                         continue;
                     }
-                    for (Actor substitutor : substitutors) {
-                        HashSet<Actor> set = result.get(substitutor.getId());
+                    for (Long substitutor : substitutors) {
+                        HashSet<Long> set = result.get(substitutor);
                         if (set == null) {
-                            set = new HashSet<Actor>();
-                            result.put(substitutor.getId(), set);
+                            set = new HashSet<Long>();
+                            result.put(substitutor, set);
                         }
-                        set.add(substitutedActor);
+                        set.add(substitutedActor.getId());
                     }
                 }
             } catch (ExecutorDoesNotExistException e) {
@@ -207,26 +185,26 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         return result;
     }
 
-    private Map<Long, HashSet<Actor>> getMapActorToSubstituted(Map<Long, TreeMap<Substitution, HashSet<Actor>>> mapActorToSubstitutors) {
-        Map<Long, HashSet<Actor>> result = new HashMap<Long, HashSet<Actor>>();
+    private Map<Long, HashSet<Long>> getMapActorToSubstituted(Map<Long, TreeMap<Substitution, HashSet<Long>>> mapActorToSubstitutors) {
+        Map<Long, HashSet<Long>> result = new HashMap<Long, HashSet<Long>>();
         for (Long substitutedId : mapActorToSubstitutors.keySet()) {
             try {
                 Actor substitutedActor = executorDAO.getActor(substitutedId);
                 if (substitutedActor.isActive()) {
                     continue;
                 }
-                for (HashSet<Actor> substitutors : mapActorToSubstitutors.get(substitutedId).values()) {
+                for (HashSet<Long> substitutors : mapActorToSubstitutors.get(substitutedId).values()) {
                     if (substitutors == null) {
                         // TODO terminators handling?
                         continue;
                     }
-                    for (Actor substitutor : substitutors) {
-                        HashSet<Actor> set = result.get(substitutor.getId());
+                    for (Long substitutor : substitutors) {
+                        HashSet<Long> set = result.get(substitutor);
                         if (set == null) {
-                            set = new HashSet<Actor>();
-                            result.put(substitutor.getId(), set);
+                            set = new HashSet<Long>();
+                            result.put(substitutor, set);
                         }
-                        set.add(substitutedActor);
+                        set.add(substitutedActor.getId());
                     }
                 }
             } catch (ExecutorDoesNotExistException e) {
@@ -234,5 +212,4 @@ class SubstitutionCacheImpl extends BaseCacheImpl implements SubstitutionCache {
         }
         return result;
     }
-
 }

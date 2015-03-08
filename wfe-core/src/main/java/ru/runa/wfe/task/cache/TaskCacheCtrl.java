@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.type.Type;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
@@ -161,17 +159,17 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         }
         for (Actor actor : actors) {
             cache.clearActorTasks(actor.getId());
-            Map<Substitution, Set<Actor>> substitutors = SubstitutionCacheCtrl.getInstance().tryToGetSubstitutors(actor);
+            Map<Substitution, Set<Long>> substitutors = SubstitutionCacheCtrl.getInstance().tryToGetSubstitutors(actor);
             if (substitutors == null) {
                 uninitialize(this, change);
                 return;
             }
-            for (Map.Entry<Substitution, Set<Actor>> entry : substitutors.entrySet()) {
+            for (Map.Entry<Substitution, Set<Long>> entry : substitutors.entrySet()) {
                 if (entry.getKey() instanceof TerminatorSubstitution) {
                     continue;
                 }
-                for (Actor substitutorActor : entry.getValue()) {
-                    cache.clearActorTasks(substitutorActor.getId());
+                for (Long substitutorActor : entry.getValue()) {
+                    cache.clearActorTasks(substitutorActor);
                 }
             }
         }
