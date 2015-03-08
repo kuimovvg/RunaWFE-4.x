@@ -117,13 +117,13 @@ public class WFCommonLogic extends CommonLogic {
 
     private boolean canParticipateAsSubstitutor(Actor actor, Task task) {
         try {
-            Set<Actor> substitutedActors = substitutionLogic.getSubstituted(actor);
+            Set<Long> substitutedActors = substitutionLogic.getSubstituted(actor);
             Executor taskExecutor = task.getExecutor();
             if (taskExecutor instanceof Actor) {
-                return substitutedActors.contains(taskExecutor);
+                return substitutedActors.contains(taskExecutor.getId());
             } else {
                 for (Actor assignedActor : getAssignedActors(task)) {
-                    if (substitutedActors.contains(assignedActor)) {
+                    if (substitutedActors.contains(assignedActor.getId())) {
                         return true;
                     }
                 }

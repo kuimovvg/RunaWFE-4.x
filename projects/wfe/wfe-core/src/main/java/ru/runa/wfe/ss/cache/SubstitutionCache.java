@@ -40,7 +40,7 @@ public interface SubstitutionCache {
      * @return {@link Map} from substitution rule to {@link Set} of substitutor
      *         id's.
      */
-    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor, boolean loadIfRequired);
+    public TreeMap<Substitution, Set<Long>> getSubstitutors(Actor actor, boolean loadIfRequired);
 
     /**
      * Returns all inactive {@link Actor}'s, which has at least one substitution
@@ -51,5 +51,5 @@ public interface SubstitutionCache {
      * @return All inactive {@link Actor} id's, which has at least one
      *         substitution rule with specified actor as substitutor.
      */
-    public Set<Actor> getSubstituted(Actor actor);
+    public Set<Long> getSubstituted(Actor actor);
 }

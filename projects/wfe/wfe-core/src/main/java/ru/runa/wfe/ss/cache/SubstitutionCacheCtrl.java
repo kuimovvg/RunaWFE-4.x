@@ -20,12 +20,9 @@ package ru.runa.wfe.ss.cache;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.hibernate.type.Type;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
-import ru.runa.wfe.commons.cache.Change;
 import ru.runa.wfe.commons.cache.ChangedObjectParameter;
 import ru.runa.wfe.commons.cache.SubstitutionChangeListener;
 import ru.runa.wfe.ss.Substitution;
@@ -52,13 +49,13 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
     }
 
     @Override
-    public TreeMap<Substitution, Set<Actor>> getSubstitutors(Actor actor, boolean loadIfRequired) {
+    public TreeMap<Substitution, Set<Long>> getSubstitutors(Actor actor, boolean loadIfRequired) {
         SubstitutionCacheImpl cache = CachingLogic.getCacheImpl(this);
         return cache.getSubstitutors(actor, loadIfRequired);
     }
 
     @Override
-    public Set<Actor> getSubstituted(Actor actor) {
+    public Set<Long> getSubstituted(Actor actor) {
         SubstitutionCacheImpl cache = CachingLogic.getCacheImpl(this);
         return cache.getSubstituted(actor);
     }
@@ -69,7 +66,7 @@ public class SubstitutionCacheCtrl extends BaseCacheCtrl<SubstitutionCacheImpl> 
      * @param actor Actor, to get substitutors.
      * @return Substitutors for actor or null, if substitutors not initialized for actor.
      */
-    public TreeMap<Substitution, Set<Actor>> tryToGetSubstitutors(Actor actor) {
+    public TreeMap<Substitution, Set<Long>> tryToGetSubstitutors(Actor actor) {
         SubstitutionCacheImpl cache = getCache();
         if (cache == null) {
             return null;
