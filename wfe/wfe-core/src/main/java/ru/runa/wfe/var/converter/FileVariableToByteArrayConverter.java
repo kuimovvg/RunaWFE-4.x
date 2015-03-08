@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Required;
 
+import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.file.IFileVariable;
 import ru.runa.wfe.var.file.IFileVariableStorage;
@@ -12,7 +13,7 @@ import ru.runa.wfe.var.matcher.FileVariableMatcher;
 /**
  * Besides straightforward functionality this class persist large file variables
  * in local disc storage.
- * 
+ *
  * @author dofs
  * @since 4.0
  */
@@ -35,10 +36,10 @@ public class FileVariableToByteArrayConverter extends SerializableToByteArrayCon
     }
 
     @Override
-    public Object convert(Variable<?> variable, Object object) {
-        object = storage.save(variable, object);
+    public Object convert(ExecutionContext executionContext, Variable<?> variable, Object object) {
+        object = storage.save(executionContext, variable, object);
         log.debug("Saving " + (object != null ? object.getClass() : "null") + " using " + storage);
-        return super.convert(variable, object);
+        return super.convert(executionContext, variable, object);
     }
 
 }
