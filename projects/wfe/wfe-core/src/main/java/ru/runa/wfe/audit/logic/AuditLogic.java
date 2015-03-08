@@ -74,7 +74,7 @@ public class AuditLogic extends CommonLogic {
             for (ru.runa.wfe.execution.Process subprocess : nodeProcessDAO.getSubprocessesRecursive(process)) {
                 ProcessLogFilter subprocessFilter = new ProcessLogFilter(subprocess.getId());
                 subprocessFilter.setSeverities(filter.getSeverities());
-                logs = processLogDAO.getAll(filter);
+                logs = processLogDAO.getAll(subprocessFilter);
                 result.addLogs(logs, filter.isIncludeSubprocessLogs());
             }
         }
