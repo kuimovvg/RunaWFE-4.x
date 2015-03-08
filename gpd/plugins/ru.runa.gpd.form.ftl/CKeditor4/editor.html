@@ -46,9 +46,7 @@
 				var editor = CKEDITOR.instances.editor;
 				markContent(editor);
 			} catch (e) {
-				if (e.message != "ignore") {
-					alertError(e, "setHTMLSaved");
-				}				
+				alertError(e, "setHTMLSaved");
 			}
 		}
 		function markContent(editor) {
