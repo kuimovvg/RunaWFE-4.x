@@ -65,10 +65,10 @@ public class TaskListBuilder implements ITaskListBuilder {
         result = Lists.newArrayList();
         Set<Executor> executorsToGetTasksByMembership = getExecutorsToGetTasks(actor, false);
         Set<Executor> executorsToGetTasks = Sets.newHashSet(executorsToGetTasksByMembership);
-        Set<Actor> substitutedActors = substitutionLogic.getSubstituted(actor);
+        Set<Long> substitutedActors = substitutionLogic.getSubstituted(actor);
         log.debug("Building tasklist for " + actor + " with BP '" + batchPresentation.getName() + "' with substituted: " + substitutedActors);
-        for (Actor substitutedActor : substitutedActors) {
-            executorsToGetTasks.addAll(getExecutorsToGetTasks(substitutedActor, true));
+        for (Long substitutedActor : substitutedActors) {
+            executorsToGetTasks.addAll(getExecutorsToGetTasks(executorDAO.getActor(substitutedActor), true));
         }
         List<Task> tasks = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(executorsToGetTasks, "executor", false);
         for (Task task : tasks) {
@@ -131,8 +131,8 @@ public class TaskListBuilder implements ITaskListBuilder {
     }
 
     private boolean isTaskAcceptableBySubstitutionRules(ExecutionContext executionContext, Task task, Actor assignedActor, Actor substitutorActor) {
-        TreeMap<Substitution, Set<Actor>> mapOfSubstitionRule = substitutionLogic.getSubstitutors(assignedActor);
-        for (Map.Entry<Substitution, Set<Actor>> substitutionRule : mapOfSubstitionRule.entrySet()) {
+        TreeMap<Substitution, Set<Long>> mapOfSubstitionRule = substitutionLogic.getSubstitutors(assignedActor);
+        for (Map.Entry<Substitution, Set<Long>> substitutionRule : mapOfSubstitionRule.entrySet()) {
             Substitution substitution = substitutionRule.getKey();
             SubstitutionCriteria criteria = substitution.getCriteria();
             if (substitution instanceof TerminatorSubstitution) {
@@ -144,7 +144,8 @@ public class TaskListBuilder implements ITaskListBuilder {
             }
             boolean canISubstitute = false;
             boolean substitutionApplies = false;
-            for (Actor actor : substitutionRule.getValue()) {
+            for (Long actorId : substitutionRule.getValue()) {
+            	Actor actor = executorDAO.getActor(actorId);
                 if (actor.isActive() && (criteria == null || criteria.isSatisfied(executionContext, task, assignedActor, actor))) {
                     log.debug("To " + task + " is applied " + substitutionRule.getKey());
                     substitutionApplies = true;
