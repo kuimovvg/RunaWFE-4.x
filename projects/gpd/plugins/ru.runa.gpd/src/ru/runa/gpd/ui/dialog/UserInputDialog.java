@@ -18,14 +18,10 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
 
 public class UserInputDialog extends Dialog implements Listener, FocusListener {
-
-    private String value = null;
-
-    protected Label label;
-
-    private Text text;
-
     private final String title;
+    protected Label label;
+    private Text text;
+    private String value;
 
     public UserInputDialog(String title) {
         super(Display.getCurrent().getActiveShell());
@@ -38,7 +34,7 @@ public class UserInputDialog extends Dialog implements Listener, FocusListener {
 
     public void setInitialValue(String initialValue) {
         this.value = initialValue;
-        if ((text != null) && !text.isDisposed()) {
+        if (text != null && !text.isDisposed()) {
             text.setText(value);
         }
     }
@@ -67,6 +63,7 @@ public class UserInputDialog extends Dialog implements Listener, FocusListener {
     protected void postCreation() {
     }
 
+    @Override
     public void handleEvent(Event event) {
         String newValue = text.getText();
         if (validate(newValue)) {
@@ -77,15 +74,17 @@ public class UserInputDialog extends Dialog implements Listener, FocusListener {
         }
     }
 
+    @Override
     public void focusGained(FocusEvent e) {
         getButton(IDialogConstants.OK_ID).setEnabled(false);
     }
 
+    @Override
     public void focusLost(FocusEvent e) {
     }
 
     protected boolean validate(String newValue) {
-        return (newValue.length() > 0);
+        return newValue.length() > 0;
     }
 
     public String getUserInput() {
