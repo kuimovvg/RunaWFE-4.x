@@ -32,7 +32,7 @@ import ru.runa.wfe.user.Group;
 public interface ExecutorCache extends VersionedCache {
 
     /**
-     * Return {@link Actor} with specified code, or null, if such actor not exists.
+     * Return {@link Actor} with specified code, or null, if such actor not exists or cache is not valid.
      * 
      * @param code
      *            Actor code.
@@ -41,7 +41,7 @@ public interface ExecutorCache extends VersionedCache {
     public Actor getActor(Long code);
 
     /**
-     * Return {@link Executor} with specified name, or null, if such executor not exists.
+     * Return {@link Executor} with specified name, or null, if such executor not exists or cache is not valid.
      * 
      * @param name
      *            Executor name.
@@ -50,7 +50,7 @@ public interface ExecutorCache extends VersionedCache {
     public Executor getExecutor(String name);
 
     /**
-     * Return {@link Executor} with specified id, or null, if such executor not exists.
+     * Return {@link Executor} with specified id, or null, if such executor not exists or cache is not valid.
      * 
      * @param id
      *            Executor identity.
@@ -61,7 +61,7 @@ public interface ExecutorCache extends VersionedCache {
     /**
      * Return first level {@link Group} members. Only {@link Executor}, which directly contains in {@link Group} is returning. No recursive group
      * search performs.
-     * 
+     * May return null, if cache is not valid.
      * @param group
      *            {@link Group}, which members will be returned.
      * @return First level {@link Group} members.
@@ -71,7 +71,7 @@ public interface ExecutorCache extends VersionedCache {
     /**
      * Return all {@link Actor} members of specified {@link Group} and all her subgroups. {@link Actor} members searching recursive and all actors
      * from subgroups is also contains in result set.
-     * 
+     * May return null, if cache is not valid.
      * @param group
      *            {@link Group}, which actor members will be returned.
      * @return All {@link Actor} members of specified {@link Group} and all her subgroups.
@@ -80,7 +80,7 @@ public interface ExecutorCache extends VersionedCache {
 
     /**
      * Return all {@link Group}, which contains specified {@link Executor} as first level member.
-     * 
+     * May return null, if cache is not valid.
      * @param executor
      *            {@link Executor}, which parents will be returned.
      * @return All {@link Group}, which contains specified {@link Executor} as first level member.
@@ -89,7 +89,7 @@ public interface ExecutorCache extends VersionedCache {
 
     /**
      * Return all {@link Group}, which contains specified {@link Executor} as member (direct or recursive by subgroups).
-     * 
+     * May return null, if cache is not valid.
      * @param executor
      *            {@link Executor}, which parents will be returned.
      * @return All {@link Group}, which contains specified {@link Executor} as member.
@@ -99,7 +99,7 @@ public interface ExecutorCache extends VersionedCache {
     /**
      * Return all {@link Executor} of specified class according to {@link BatchPresentation}. May return null, if executor list for specified class
      * and presentation wasn't set yet (With {@link #addAllExecutor(Class, BatchPresentation, List)}).
-     * 
+     * May return null, if cache is not valid.
      * @param <T>
      *            Type of returned objects. Must be {@link Executor} or it subclass.
      * @param clazz
