@@ -53,6 +53,7 @@ import ru.runa.wfe.var.format.UserTypeFormat;
 import ru.runa.wfe.var.format.VariableDisplaySupport;
 import ru.runa.wfe.var.format.VariableFormat;
 import ru.runa.wfe.var.format.VariableFormatContainer;
+import ru.runa.wfe.var.format.VariableInputSupport;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
@@ -214,6 +215,9 @@ public class ViewUtil {
         String variableName = variable.getDefinition().getName();
         VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
         Object value = variable.getValue();
+        if (variableFormat instanceof VariableInputSupport) {
+            return ((VariableInputSupport) variableFormat).getInputHtml(user, webHelper, variable);
+        }
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
@@ -248,7 +252,7 @@ public class ViewUtil {
         if (BooleanFormat.class == variableFormat.getClass()) {
             String html = "";
             html += "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" ";
-            if (value instanceof Boolean && ((Boolean) value)) {
+            if (value instanceof Boolean && (Boolean) value) {
                 html += "checked=\"checked\" ";
             }
             html += "/>";
@@ -422,7 +426,7 @@ public class ViewUtil {
         }
         if (BooleanFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"checkbox\" name=\"" + variableName + "\" class=\"inputBoolean\" disabled=\"true\" ";
-            if (value instanceof Boolean && ((Boolean) value)) {
+            if (value instanceof Boolean && (Boolean) value) {
                 html += "checked=\"checked\" ";
             }
             html += "/>";
@@ -512,6 +516,10 @@ public class ViewUtil {
             html.append("</table>");
             html.append("</div>");
             return html.toString();
+        }
+        if (variableFormat instanceof VariableDisplaySupport) {
+            VariableDisplaySupport displaySupport = (VariableDisplaySupport) variableFormat;
+            return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
         }
         throw new InternalApplicationException("No output method implemented for " + variableFormat);
     }

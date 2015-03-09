@@ -125,6 +125,20 @@
 
 <wf:importDataFile />
 
+<table class='box'><tr><th class='box'><bean:message key="title.monitoring" /></th></tr>
+	<tr>
+		<td class='box'>
+			<table>
+				<tr>
+					<td>
+						<a href="/wfe/monitoring" class="link" target="javamelody">JavaMelody</a>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
 <table class='box'><tr><th class='box'><bean:message key="title.errors" /></th></tr>
 <tr><td class='box'>
 	<div>
