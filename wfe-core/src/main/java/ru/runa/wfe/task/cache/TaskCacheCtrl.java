@@ -113,9 +113,10 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
                 return;
             }
             Actor actor = (Actor) executorCache.getExecutor(substitution.getActorId());
-            // actor can be null if created in same transaction
-            if (actor != null && !actor.isActive()) {
+            if (actor != null) {
                 clearCacheForActors(actor, changedObject.changeType);
+            } else {
+                uninitialize(changedObject);
             }
         } else if (changedObject.object instanceof SubstitutionCriteria) {
             // TODO clear cache for affected actors only
@@ -195,12 +196,8 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
             }
             Set<Actor> cached = executorCache.getGroupActorsAll((Group) changedExecutor);
             if (cached == null) {
-                if (changedExecutor instanceof TemporaryGroup) {
-                    log.debug("Ignored cache recalc [actors == null] on " + change + " with " + changedExecutor);
-                } else {
-                    log.warn("No group actors found in cache for " + changedExecutor);
-                    uninitialize(changedExecutor, change);
-                }
+                log.warn("No group actors found in cache for " + changedExecutor);
+                uninitialize(changedExecutor, change);
                 return false;
             }
             affectedActors.addAll(cached);

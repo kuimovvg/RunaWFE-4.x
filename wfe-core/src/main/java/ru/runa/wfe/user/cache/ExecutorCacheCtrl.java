@@ -20,8 +20,6 @@ package ru.runa.wfe.user.cache;
 import java.util.List;
 import java.util.Set;
 
-import org.hibernate.type.Type;
-
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.cache.BaseCacheCtrl;
 import ru.runa.wfe.commons.cache.CachingLogic;
@@ -99,51 +97,81 @@ public class ExecutorCacheCtrl extends BaseCacheCtrl<ExecutorCacheImpl> implemen
 
     @Override
     public Actor getActor(Long code) {
-        return CachingLogic.getCacheImpl(this).getActor(code);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getActor(code);
     }
 
     @Override
     public Executor getExecutor(String name) {
-        return CachingLogic.getCacheImpl(this).getExecutor(name);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getExecutor(name);
     }
 
     @Override
     public Executor getExecutor(Long id) {
-        return CachingLogic.getCacheImpl(this).getExecutor(id);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getExecutor(id);
     }
 
     @Override
     public Set<Executor> getGroupMembers(Group group) {
-        return CachingLogic.getCacheImpl(this).getGroupMembers(group);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getGroupMembers(group);
     }
 
     @Override
     public Set<Actor> getGroupActorsAll(Group group) {
-        return CachingLogic.getCacheImpl(this).getGroupActorsAll(group);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getGroupActorsAll(group);
     }
 
     @Override
     public Set<Group> getExecutorParents(Executor executor) {
-        return CachingLogic.getCacheImpl(this).getExecutorParents(executor);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getExecutorParents(executor);
     }
 
     @Override
     public Set<Group> getExecutorParentsAll(Executor executor) {
-        return CachingLogic.getCacheImpl(this).getExecutorParentsAll(executor);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getExecutorParentsAll(executor);
     }
 
     @Override
     public <T extends Executor> List<T> getAllExecutor(Class<T> clazz, BatchPresentation batch) {
-        return CachingLogic.getCacheImpl(this).getAllExecutor(clazz, batch);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return null;
+        return cache.getAllExecutor(clazz, batch);
     }
 
     @Override
     public void addAllExecutor(int cacheVersion, Class<?> clazz, BatchPresentation batch, List<? extends Executor> executors) {
-        CachingLogic.getCacheImpl(this).addAllExecutor(cacheVersion, clazz, batch, executors);
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return;
+        cache.addAllExecutor(cacheVersion, clazz, batch, executors);
     }
 
     @Override
     public int getCacheVersion() {
-        return CachingLogic.getCacheImpl(this).getCacheVersion();
+        ExecutorCacheImpl cache = CachingLogic.getCacheImplIfNotLocked(this);
+        if (cache == null)
+            return 0;
+        return cache.getCacheVersion();
     }
 }
