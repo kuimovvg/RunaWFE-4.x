@@ -714,14 +714,14 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
     }
 
     private <T extends Executor> List<T> getAll(Class<T> clazz, BatchPresentation batchPresentation) {
-        List<T> retVal = executorCache.getAllExecutor(clazz, batchPresentation);
-        if (retVal != null) {
-            return retVal;
+        List<T> cached = executorCache.getAllExecutor(clazz, batchPresentation);
+        if (cached != null) {
+            return cached;
         }
         int cacheVersion = executorCache.getCacheVersion();
-        retVal = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(clazz, false);
-        executorCache.addAllExecutor(cacheVersion, clazz, batchPresentation, retVal);
-        return retVal;
+        List<T> result = new BatchPresentationHibernateCompiler(batchPresentation).getBatch(clazz, false);
+        executorCache.addAllExecutor(cacheVersion, clazz, batchPresentation, result);
+        return result;
     }
 
     private Set<Actor> getGroupActors(Group group, Set<Group> visited) {
@@ -746,27 +746,29 @@ public class ExecutorDAO extends CommonDAO implements IExecutorLoader {
 
     private Set<Group> getExecutorGroups(Executor executor) {
         Set<Group> result = executorCache.getExecutorParents(executor);
-        if (result == null) {
-            result = new HashSet<Group>();
-            for (ExecutorGroupMembership membership : getExecutorMemberships(executor)) {
-                result.add(membership.getGroup());
-            }
+        if (result != null) {
+            return result;
+        }
+        result = new HashSet<Group>();
+        for (ExecutorGroupMembership membership : getExecutorMemberships(executor)) {
+            result.add(membership.getGroup());
         }
         return result;
     }
 
     private Set<Group> getExecutorGroupsAll(Executor executor, Set<Executor> visited) {
-        Set<Group> result = executorCache.getExecutorParentsAll(executor);
-        if (result == null) {
-            result = new HashSet<Group>();
-            if (visited.contains(executor)) {
-                return result;
-            }
-            visited.add(executor);
-            for (Group group : getExecutorGroups(executor)) {
-                result.add(group);
-                result.addAll(getExecutorGroupsAll(group, visited));
-            }
+        Set<Group> cached = executorCache.getExecutorParentsAll(executor);
+        if (cached != null) {
+            return cached;
+        }
+        if (visited.contains(executor)) {
+            return new HashSet<Group>();
+        }
+        visited.add(executor);
+        Set<Group> result = new HashSet<Group>();
+        for (Group group : getExecutorGroups(executor)) {
+            result.add(group);
+            result.addAll(getExecutorGroupsAll(group, visited));
         }
         return result;
     }
