@@ -6,13 +6,16 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.InvocationContext;
 import javax.transaction.UserTransaction;
 
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.dao.ConcurrencyFailureException;
+import org.hibernate.StaleObjectStateException;
+import org.springframework.dao.OptimisticLockingFailureException;
 
 import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
 import ru.runa.wfe.security.auth.UserHolder;
+import ru.runa.wfe.service.utils.ApiProperties;
 import ru.runa.wfe.user.User;
 
 import com.google.common.base.Throwables;
@@ -30,46 +33,56 @@ import com.google.common.base.Throwables;
  * delivered successfully.
  */
 public class EjbTransactionSupport {
+    private static final Log log = LogFactory.getLog(EjbTransactionSupport.class);
     @Resource
     private EJBContext ejbContext;
 
     @AroundInvoke
     public Object process(InvocationContext ic) throws Exception {
-        UserTransaction transaction = ejbContext.getUserTransaction();
         try {
-            transaction.begin();
             if (ic.getParameters() != null && ic.getParameters().length > 0 && ic.getParameters()[0] instanceof User) {
                 User user = (User) ic.getParameters()[0];
                 SubjectPrincipalsHelper.validateUser(user);
                 UserHolder.set(user);
             }
-            Object result = invokeWithRetry(ic);
-            transaction.commit();
-            UserHolder.reset();
-            return result;
-        } catch (Throwable th) {
-            Utils.rollbackTransaction(transaction);
-            throw Throwables.propagate(th);
+            UserTransaction transaction = ejbContext.getUserTransaction();
+            return invokeWithRetry(ic, transaction, ApiProperties.getRetriesCount());
         } finally {
+            UserHolder.reset();
             CachingLogic.onTransactionComplete();
         }
     }
 
     /**
-     * Make invocation with retry on deadlock.
-     * 
+     * Make invocation with retry on optimistic lock failure exception.
+     *
      * @param invocation
-     *            Current invocation.
-     * @return Invocation result.
+     *            current invocation
+     * @param transaction
+     *            current transaction
+     * @return invocation result.
      */
-    private Object invokeWithRetry(InvocationContext ic) throws Throwable {
+    private Object invokeWithRetry(InvocationContext ic, UserTransaction transaction, int retriesCount) {
         try {
-            return ic.proceed();
-        } catch (ConcurrencyFailureException e) {
-            LogFactory.getLog(getClass()).error("Got ConcurrencyFailureException: " + e);
-            Thread.sleep(1000);
-            return ic.proceed();
+            transaction.begin();
+            Object result = ic.proceed();
+            transaction.commit();
+            return result;
+        } catch (Throwable th) {
+            Utils.rollbackTransaction(transaction);
+            if (th instanceof StaleObjectStateException || th instanceof OptimisticLockingFailureException) {
+                log.error(th);
+                if (retriesCount > 0) {
+                    try {
+                        Thread.sleep(ApiProperties.getRetryTimeoutMilliseconds());
+                        retriesCount--;
+                        return invokeWithRetry(ic, transaction, retriesCount);
+                    } catch (InterruptedException e) {
+                        log.error(e);
+                    }
+                }
+            }
+            throw Throwables.propagate(th);
         }
     }
-
 }

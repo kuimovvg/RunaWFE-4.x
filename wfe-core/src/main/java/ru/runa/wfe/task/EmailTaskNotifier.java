@@ -54,7 +54,7 @@ public class EmailTaskNotifier implements ITaskNotifier {
             InputStream in = ClassLoaderUtil.getAsStreamNotNull(path, getClass());
             configBytes = ByteStreams.toByteArray(in);
         } catch (Exception e) {
-            log.error("Configuration error", e);
+            log.error("Configuration error: " + e);
         }
     }
 
