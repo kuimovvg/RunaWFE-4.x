@@ -9,10 +9,12 @@ import javax.interceptor.InvocationContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.security.AuthenticationException;
 import ru.runa.wfe.security.AuthenticationExpiredException;
 import ru.runa.wfe.security.AuthorizationException;
 import ru.runa.wfe.service.impl.MessagePostponedException;
+import ru.runa.wfe.service.utils.ApiProperties;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.validation.ValidationException;
@@ -23,7 +25,7 @@ import com.google.common.collect.Lists;
 /**
  * Interceptor for logging and original exception extractor (from
  * {@link EJBException}).
- * 
+ *
  * @author Dofs
  * @since RunaWFE 4.0
  */
@@ -53,6 +55,12 @@ public class EjbExceptionSupport {
                 log.warn("ejb call " + th);
             } else {
                 log.error("ejb call error: " + DebugUtils.getDebugString(ic, true), th);
+            }
+            if (ApiProperties.suppressExternalExceptions()) {
+                if (th instanceof InternalApplicationException) {
+                    throw (InternalApplicationException) th;
+                }
+                throw new InternalApplicationException(th.getMessage());
             }
             Throwables.propagateIfInstanceOf(th, Exception.class);
             throw Throwables.propagate(th);

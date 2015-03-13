@@ -45,6 +45,8 @@ public abstract class LoginModuleBase implements LoginModule {
         try {
             actor = login(callbackHandler);
             return actor != null;
+        } catch (LoginException e) {
+            throw e;
         } catch (UnsupportedCallbackException e) {
             return false;
         } catch (ExecutorDoesNotExistException e) {
