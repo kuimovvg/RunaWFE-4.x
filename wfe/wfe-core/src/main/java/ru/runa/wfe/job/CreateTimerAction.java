@@ -39,7 +39,7 @@ public class CreateTimerAction extends Action {
     private String repeatDurationString;
 
     @Autowired
-    private JobDAO jobDAO;
+    private transient JobDAO jobDAO;
 
     @Override
     public void execute(ExecutionContext executionContext) {
