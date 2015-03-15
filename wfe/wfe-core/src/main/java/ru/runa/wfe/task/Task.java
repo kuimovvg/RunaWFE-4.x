@@ -222,6 +222,7 @@ public class Task implements Assignable {
         this.process = process;
     }
 
+    @Override
     @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID")
     @ForeignKey(name = "FK_TASK_EXECUTOR")
