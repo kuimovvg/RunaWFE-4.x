@@ -42,10 +42,14 @@ public interface Assignable extends Serializable {
     /**
      * sets the responsible for this assignable object. Use this method to
      * assign the task into a user's personal task list.
-     * 
+     *
      * @param cascadeUpdate
      *            for task: update swimlane; for swimlane: update tasks
      */
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate);
 
+    /**
+     * @return currently assigned executor
+     */
+    public Executor getExecutor();
 }
