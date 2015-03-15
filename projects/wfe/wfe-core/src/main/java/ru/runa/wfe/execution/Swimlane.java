@@ -109,6 +109,7 @@ public class Swimlane implements Serializable, Assignable {
         this.name = name;
     }
 
+    @Override
     @ManyToOne(targetEntity = Executor.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "EXECUTOR_ID")
     @ForeignKey(name = "FK_SWIMLANE_EXECUTOR")
