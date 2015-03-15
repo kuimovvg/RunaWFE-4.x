@@ -26,9 +26,9 @@ public class MultiProcessState extends SubProcessState {
     private static final long serialVersionUID = 1L;
 
     @Autowired
-    private ProcessFactory processFactory;
+    private transient ProcessFactory processFactory;
     @Autowired
-    private NodeProcessDAO nodeProcessDAO;
+    private transient NodeProcessDAO nodeProcessDAO;
 
     @Override
     public NodeType getNodeType() {

@@ -32,7 +32,7 @@ public class CancelTimerAction extends Action {
     private static final long serialVersionUID = 1L;
 
     @Autowired
-    private JobDAO jobDAO;
+    private transient JobDAO jobDAO;
 
     @Override
     public void execute(ExecutionContext executionContext) {

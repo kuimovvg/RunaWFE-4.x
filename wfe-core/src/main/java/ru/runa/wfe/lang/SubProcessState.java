@@ -22,9 +22,9 @@ public class SubProcessState extends VariableContainerNode {
     private String subProcessName;
     private boolean embedded;
     @Autowired
-    private IProcessDefinitionLoader processDefinitionLoader;
+    private transient IProcessDefinitionLoader processDefinitionLoader;
     @Autowired
-    private ProcessFactory processFactory;
+    private transient ProcessFactory processFactory;
 
     @Override
     public NodeType getNodeType() {
