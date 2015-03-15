@@ -13,7 +13,7 @@ public abstract class BaseTaskNode extends InteractionNode implements Synchroniz
     private static final long serialVersionUID = 1L;
 
     @Autowired
-    protected TaskFactory taskFactory;
+    protected transient TaskFactory taskFactory;
 
     protected boolean async;
     protected AsyncCompletionMode asyncCompletionMode = AsyncCompletionMode.NEVER;
