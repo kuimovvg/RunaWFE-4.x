@@ -165,7 +165,7 @@ public abstract class AbstractWebServicesConnector extends WFEServerConnector {
         try {
             return WfDefinitionAdapter.toDTO(getDefinitionService().deployProcessDefinition(getUser(), par, Lists.newArrayList("GPD")));
         } catch (Exception e) {
-            if (e.getMessage() != null && e.getMessage().contains("DefinitionAlreadyExistException")) {
+            if (e.getMessage() != null && (e.getMessage().contains("DefinitionAlreadyExistException") || e.getMessage().contains("already exists"))) {
                 throw new DefinitionAlreadyExistException("");
             }
             throw Throwables.propagate(e);
