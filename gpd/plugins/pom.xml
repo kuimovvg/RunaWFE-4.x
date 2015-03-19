@@ -8,11 +8,14 @@
   <packaging>pom</packaging>
   <modules>
     <module>ru.runa.gpd</module>
+    <module>ru.runa.gpd.alfresco</module>
     <module>ru.runa.gpd.app</module>
-    <module>ru.altlinux.tnms</module>
-    <module>ru.altlinux.tnms.maven</module>
+    <module>ru.runa.gpd.maven</module>
     <module>ru.runa.gpd.connector.wfe.ws</module>
     <module>ru.runa.gpd.form.ftl</module>
+    <module>ru.runa.gpd.form.quick</module>
+    <module>ru.runa.gpd.office</module>
+    <module>ru.runa.gpd.xpdl</module>
   </modules>
 
   <properties>
