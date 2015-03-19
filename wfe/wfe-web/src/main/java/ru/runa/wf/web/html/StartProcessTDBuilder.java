@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wf.web.html;
@@ -53,7 +53,7 @@ public class StartProcessTDBuilder extends BaseTDBuilder {
         ConcreteElement startLink;
 
         String href;
-        if (isEnabled(object, env)) {
+        if (definition.isCanBeStarted()) {
             if (definition.hasStartImage()) {
                 href = Commons.getActionUrl(StartImageProcessAction.ACTION_PATH, IdForm.ID_INPUT_NAME, definition.getId(), env.getPageContext(),
                         PortletUrlType.Resource);
@@ -72,7 +72,7 @@ public class StartProcessTDBuilder extends BaseTDBuilder {
         String startMessage = Messages.getMessage(Messages.LABEL_START_PROCESS, env.getPageContext());
         startImg.setAlt(startMessage);
         startImg.setBorder(0);
-        if (isEnabled(object, env)) {
+        if (definition.isCanBeStarted()) {
             String url = new DefinitionUrlStrategy(env.getPageContext()).getUrl(WebResources.ACTION_MAPPING_START_PROCESS, definition);
             startLink = new A(url).addElement(startImg);
             if (ConfirmationPopupHelper.getInstance().isEnabled(ConfirmationPopupHelper.START_PROCESS_PARAMETER)

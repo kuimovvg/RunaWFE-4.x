@@ -176,7 +176,8 @@ public abstract class Variable<T extends Object> {
 
     public boolean supports(Object value) {
         if (value == null) {
-            return true;
+            // TODO check this
+            return false;
         }
         return converter != null && converter.supports(value);
     }

@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.definition.logic;
@@ -79,7 +79,7 @@ public class DefinitionLogic extends WFCommonLogic {
         Collection<Permission> allPermissions = new DefinitionPermission().getAllPermissions();
         permissionDAO.setPermissions(user.getActor(), allPermissions, definition.getDeployment());
         log.debug("Deployed process definition " + definition);
-        return new WfDefinition(definition);
+        return new WfDefinition(definition, true);
     }
 
     public WfDefinition redeployProcessDefinition(User user, Long definitionId, byte[] processArchiveBytes, List<String> processType) {
@@ -106,28 +106,21 @@ public class DefinitionLogic extends WFCommonLogic {
             definition.getDeployment().setCategory(oldDeployment.getCategory());
         }
         deploymentDAO.deploy(definition.getDeployment(), oldDeployment);
-        // for (Executor executor :
-        // permissionDAO.getExecutorsWithPermission(deployment)) {
-        // Map<Permission, Boolean> permissions =
-        // permissionDAO.getOwnPermissions(executor, deployment);
-        // permissionDAO.setPermissions(executor, permissions.keySet(),
-        // definition);
-        // }
         log.debug("Process definition " + oldDeployment + " was successfully redeployed");
-        return new WfDefinition(definition);
+        return new WfDefinition(definition, true);
     }
 
     public WfDefinition getLatestProcessDefinition(User user, String definitionName) {
         ProcessDefinition definition = getLatestDefinition(definitionName);
         checkPermissionAllowed(user, definition.getDeployment(), Permission.READ);
-        return new WfDefinition(definition);
+        return new WfDefinition(definition, isPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.START_PROCESS));
     }
 
     public WfDefinition getProcessDefinition(User user, Long definitionId) {
         try {
-            ProcessDefinition processDefinition = getDefinition(definitionId);
-            checkPermissionAllowed(user, processDefinition.getDeployment(), Permission.READ);
-            return new WfDefinition(processDefinition);
+            ProcessDefinition definition = getDefinition(definitionId);
+            checkPermissionAllowed(user, definition.getDeployment(), Permission.READ);
+            return new WfDefinition(definition, isPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.START_PROCESS));
         } catch (Exception e) {
             Deployment deployment = deploymentDAO.getNotNull(definitionId);
             checkPermissionAllowed(user, deployment, Permission.READ);
@@ -156,8 +149,8 @@ public class DefinitionLogic extends WFCommonLogic {
         List<WfDefinition> result = Lists.newArrayListWithExpectedSize(deploymentIds.size());
         for (Number definitionId : deploymentIds) {
             try {
-                ProcessDefinition processDefinition = getDefinition(definitionId.longValue());
-                result.add(new WfDefinition(processDefinition));
+                ProcessDefinition definition = getDefinition(definitionId.longValue());
+                result.add(new WfDefinition(definition, isPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.START_PROCESS)));
             } catch (Exception e) {
                 Deployment deployment = deploymentDAO.get(definitionId.longValue());
                 result.add(new WfDefinition(deployment));
