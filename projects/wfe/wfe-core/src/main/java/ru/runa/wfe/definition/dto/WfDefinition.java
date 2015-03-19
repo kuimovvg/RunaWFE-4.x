@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.definition.dto;
@@ -45,16 +45,18 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
     private boolean hasDisabledImage;
     private Date deployedDate;
     private boolean subprocessOnly;
+    private boolean canBeStarted;
 
     public WfDefinition() {
     }
 
-    public WfDefinition(ProcessDefinition definition) {
+    public WfDefinition(ProcessDefinition definition, boolean canBeStarted) {
         this(definition.getDeployment());
         hasHtmlDescription = definition.getFileData(IFileDataProvider.INDEX_FILE_NAME) != null;
         hasStartImage = definition.getFileData(IFileDataProvider.START_IMAGE_FILE_NAME) != null;
         hasDisabledImage = definition.getFileData(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME) != null;
         subprocessOnly = definition.getAccessType() == ProcessDefinitionAccessType.OnlySubprocess;
+        this.canBeStarted = canBeStarted && !subprocessOnly;
     }
 
     public WfDefinition(Deployment deployment) {
@@ -112,6 +114,14 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
         return subprocessOnly;
     }
 
+    public boolean isCanBeStarted() {
+        return canBeStarted;
+    }
+
+    public void setCanBeStarted(boolean canBeStarted) {
+        this.canBeStarted = canBeStarted;
+    }
+
     public Date getDeployedDate() {
         return deployedDate;
     }
@@ -141,5 +151,5 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
     public String toString() {
         return Objects.toStringHelper(this).add("id", id).add("name", name).add("version", version).toString();
     }
-    
+
 }
