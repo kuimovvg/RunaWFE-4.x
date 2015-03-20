@@ -34,6 +34,9 @@ public class QuickFormType extends FormType {
     @Override
     public Map<String, FormVariableAccess> getFormVariableNames(FormNode formNode, byte[] formData) throws Exception {
         Map<String, FormVariableAccess> variableNames = Maps.newHashMap();
+        if (formData.length == 0) {
+            return variableNames;
+        }
         Document document = XmlUtil.parseWithoutValidation(formData);
         Element tagsElement = document.getRootElement().element(QuickFormXMLUtil.ELEMENT_TAGS);
         List<Element> varElementsList = tagsElement.elements(QuickFormXMLUtil.ELEMENT_TAG);
