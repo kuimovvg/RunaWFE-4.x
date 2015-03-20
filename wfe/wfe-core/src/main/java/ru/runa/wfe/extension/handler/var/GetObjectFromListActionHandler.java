@@ -15,7 +15,7 @@ public class GetObjectFromListActionHandler extends CommonParamBasedHandler {
         if (list == null) {
             list = Lists.newArrayList();
         }
-        int index = handlerData.getInputParamValueNotNull(int.class, "index");
+        int index = ListIndexUtils.adjustIndex(handlerData.getInputParamValueNotNull(int.class, "index"));
         Object object;
         if (list.size() > index) {
             object = list.get(index);
