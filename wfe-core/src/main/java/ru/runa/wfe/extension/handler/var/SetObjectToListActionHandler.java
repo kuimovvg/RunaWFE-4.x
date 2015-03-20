@@ -12,7 +12,7 @@ public class SetObjectToListActionHandler extends CommonParamBasedHandler {
     protected void executeAction(HandlerData handlerData) throws Exception {
         ArrayList list = handlerData.getInputParamValue(ArrayList.class, "list");
         Object object = handlerData.getInputParamValueNotNull(Object.class, "object");
-        int index = handlerData.getInputParamValueNotNull(int.class, "index");
+        int index = ListIndexUtils.adjustIndex(handlerData.getInputParamValueNotNull(int.class, "index"));
         if (list == null) {
             list = new ArrayList();
         }
