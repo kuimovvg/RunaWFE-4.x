@@ -16,7 +16,7 @@ public class AddObjectToListActionHandler extends CommonParamBasedHandler {
         if (list == null) {
             list = new ArrayList();
         }
-        Integer index = handlerData.getInputParamValue(Integer.class, "index");
+        Integer index = ListIndexUtils.adjustIndex(handlerData.getInputParamValue(Integer.class, "index"));
         Object object = handlerData.getInputParamValueNotNull(Object.class, "object");
         if (object instanceof Collection) {
             if (index != null) {
