@@ -6,9 +6,9 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * 
+ *
  * @author dofs
- * 
+ *
  * @struts:form name = "viewLogForm"
  */
 public class ViewLogForm extends ActionForm {
@@ -17,6 +17,7 @@ public class ViewLogForm extends ActionForm {
     public static final int MODE_SEARCH = 2;
     public static final int MODE_END_LINES = 3;
     public static final int MODE_ERRORS_AND_WARNS = 4;
+    public static final int MODE_DOWNLOAD = 5;
 
     private String fileName;
     private int allLinesCount;
