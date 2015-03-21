@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +21,18 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import ru.runa.common.WebResources;
+import ru.runa.common.web.HTMLUtils;
 import ru.runa.common.web.Resources;
 import ru.runa.common.web.form.ViewLogForm;
 import ru.runa.wfe.commons.IOCommons;
 
 import com.google.common.io.Closeables;
+import com.google.common.io.Files;
 
 /**
- * 
+ *
  * @author dofs
- * 
+ *
  * @struts:action path="/viewLogs" name="viewLogForm" validate="false"
  * @struts.action-forward name="success" path="/displayLogs.do" redirect =
  *                        "false"
@@ -47,6 +50,16 @@ public class ViewLogsAction extends ActionBase {
             ViewLogForm form = (ViewLogForm) actionForm;
             if (form.getFileName() != null) {
                 File file = new File(logDirPath, form.getFileName());
+
+                if (form.getMode() == ViewLogForm.MODE_DOWNLOAD) {
+                    String encodedFileName = HTMLUtils.encodeFileName(request, form.getFileName());
+                    response.setHeader("Content-disposition", "attachment; filename=\"" + encodedFileName + "\"");
+                    OutputStream os = response.getOutputStream();
+                    Files.copy(file, os);
+                    os.flush();
+                    return null;
+                }
+
                 int allLinesCount = countLines(file);
                 form.setAllLinesCount(allLinesCount);
 

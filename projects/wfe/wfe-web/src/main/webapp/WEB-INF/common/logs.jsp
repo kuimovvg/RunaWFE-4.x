@@ -84,11 +84,15 @@ function reloadLogFile() {
 	<b><%= logDirPath %></b><br />
 	<wf:viewLogs logDirPath="<%= logDirPath %>" />
 	<% if (logFileContent != null) { %>
-		<html:form action="/viewLogs" method="get">
+		<html:form styleId="downloadForm" action="/viewLogs" method="get">
+			<html:hidden property="fileName" />
+			<input type="hidden" name="mode" value="5" />
 			<table class="box"><tr><th class="box">
-				<bean:write name="viewLogForm" property="fileName" /> 
+				<a href="javascript:$('#downloadForm').submit();" style="color: white;"><bean:write name="viewLogForm" property="fileName" /></a> 
 				(<bean:message key="label.logs.allLinesCount"/>: <bean:write name="viewLogForm" property="allLinesCount" />)
 			</th></tr></table>
+		</html:form>
+		<html:form action="/viewLogs" method="get">
 			<html:hidden property="fileName" />
 			<table><tr><td style="width: 400px;">
 				<html:radio property="mode" value="1" styleId="pagingMode" />
