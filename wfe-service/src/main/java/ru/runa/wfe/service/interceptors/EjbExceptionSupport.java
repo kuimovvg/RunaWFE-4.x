@@ -1,5 +1,6 @@
 package ru.runa.wfe.service.interceptors;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ejb.EJBException;
@@ -20,7 +21,6 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.validation.ValidationException;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 
 /**
  * Interceptor for logging and original exception extractor (from
@@ -32,15 +32,9 @@ import com.google.common.collect.Lists;
 public class EjbExceptionSupport {
     private static final Log log = LogFactory.getLog(EjbExceptionSupport.class);
 
-    private static final List<Class<? extends Exception>> warnExceptionClasses = Lists.newArrayList();
-    static {
-        warnExceptionClasses.add(AuthenticationExpiredException.class);
-        warnExceptionClasses.add(AuthenticationException.class);
-        warnExceptionClasses.add(AuthorizationException.class);
-        warnExceptionClasses.add(ExecutorDoesNotExistException.class);
-        warnExceptionClasses.add(ValidationException.class);
-        warnExceptionClasses.add(TaskDoesNotExistException.class);
-    }
+    public static final List<Class<? extends InternalApplicationException>> warnExceptionClasses = Arrays.asList(
+            AuthenticationExpiredException.class, AuthenticationException.class, AuthorizationException.class, ExecutorDoesNotExistException.class,
+            ValidationException.class, TaskDoesNotExistException.class);
 
     @AroundInvoke
     public Object process(InvocationContext ic) throws Exception {
