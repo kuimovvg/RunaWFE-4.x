@@ -54,6 +54,7 @@ import ru.runa.wfe.audit.TaskEndBySubstitutorLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskExpiredLog;
 import ru.runa.wfe.audit.TaskRemovedOnProcessEndLog;
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
@@ -66,6 +67,7 @@ import ru.runa.wfe.lang.InteractionNode;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.TaskDefinition;
 import ru.runa.wfe.lang.WaitState;
+import ru.runa.wfe.task.logic.ITaskNotifier;
 import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Objects;
@@ -251,6 +253,7 @@ public class Task implements Assignable {
     public void assignExecutor(ExecutionContext executionContext, Executor executor, boolean cascadeUpdate) {
         if (!Objects.equal(getExecutor(), executor)) {
             log.debug("assigning " + this + " to " + executor);
+            Executor previousExecutor = getExecutor();
             // log this assignment
             executionContext.addLog(new TaskAssignLog(this, executor));
             // do the actual assignment
@@ -258,6 +261,9 @@ public class Task implements Assignable {
             InteractionNode node = (InteractionNode) executionContext.getProcessDefinition().getNodeNotNull(nodeId);
             ExecutionContext taskExecutionContext = new ExecutionContext(executionContext.getProcessDefinition(), this);
             node.getFirstTaskNotNull().fireEvent(taskExecutionContext, Event.TASK_ASSIGN);
+            for (ITaskNotifier notifier : ApplicationContextFactory.getTaskNotifiers()) {
+                notifier.onTaskAssigned(executionContext.getProcessDefinition(), executionContext.getVariableProvider(), this, previousExecutor);
+            }
         }
         if (cascadeUpdate && swimlane != null) {
             swimlane.assignExecutor(executionContext, executor, false);

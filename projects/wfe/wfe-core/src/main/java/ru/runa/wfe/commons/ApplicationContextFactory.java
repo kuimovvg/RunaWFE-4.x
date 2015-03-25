@@ -1,5 +1,7 @@
 package ru.runa.wfe.commons;
 
+import java.util.List;
+
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
@@ -28,10 +30,12 @@ import ru.runa.wfe.relation.dao.RelationPairDAO;
 import ru.runa.wfe.security.dao.PermissionDAO;
 import ru.runa.wfe.ss.dao.SubstitutionDAO;
 import ru.runa.wfe.task.dao.TaskDAO;
+import ru.runa.wfe.task.logic.ITaskNotifier;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.user.logic.ExecutorLogic;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 
 public class ApplicationContextFactory {
     private static ApplicationContext applicationContext = null;
@@ -67,7 +71,7 @@ public class ApplicationContextFactory {
     public static SettingDAO getSettingDAO() {
         return getContext().getBean("settingDAO", SettingDAO.class);
     }
-    
+
     public static ProcessDAO getProcessDAO() {
         return getContext().getBean("processDAO", ProcessDAO.class);
     }
@@ -101,7 +105,7 @@ public class ApplicationContextFactory {
         LocalSessionFactoryBean factoryBean = (LocalSessionFactoryBean) getContext().getBean("&sessionFactory");
         return factoryBean.getConfiguration();
     }
-    
+
     public static DataSource getDataSource() throws NamingException {
         String dsName = getConfiguration().getProperty("hibernate.connection.datasource");
         return (DataSource) new InitialContext().lookup(dsName);
@@ -127,7 +131,7 @@ public class ApplicationContextFactory {
             } else if (hibernateDialect.contains("SQLServer")) {
                 dbType = DBType.MSSQL;
             } else if (hibernateDialect.contains("H2")) {
-            	dbType = DBType.H2;
+                dbType = DBType.H2;
             } else {
                 dbType = DBType.GENERIC;
             }
@@ -161,6 +165,10 @@ public class ApplicationContextFactory {
 
     public static AssignmentHelper getAssignmentHelper() {
         return getContext().getBean(AssignmentHelper.class);
+    }
+
+    public static List<ITaskNotifier> getTaskNotifiers() {
+        return Lists.newArrayList(getContext().getBeansOfType(ITaskNotifier.class).values());
     }
 
     public static ExecutorLogic getExecutorLogic() {

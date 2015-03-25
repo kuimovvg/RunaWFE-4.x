@@ -91,9 +91,7 @@ public class MultiTaskNode extends BaseTaskNode {
                 log.debug("Executor is null for identity " + executorIdentity);
                 continue;
             }
-            Task task = taskFactory.create(executionContext, taskDefinition);
-            task.assignExecutor(executionContext, executor, false);
-            taskFactory.notify(executionContext, task);
+            taskFactory.create(executionContext, taskDefinition, null, executor);
             tasksCreated = true;
         }
         if (!tasksCreated) {
