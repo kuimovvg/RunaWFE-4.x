@@ -22,7 +22,7 @@
 package ru.runa.wfe.lang;
 
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.task.Task;
+import ru.runa.wfe.execution.Swimlane;
 
 /**
  * is a node that relates to one or more tasks. Property <code>signal</code>
@@ -39,9 +39,10 @@ public class TaskNode extends BaseTaskNode {
     @Override
     public void execute(ExecutionContext executionContext) {
         for (TaskDefinition taskDefinition : taskDefinitions) {
-            Task task = taskFactory.create(executionContext, taskDefinition);
-            taskFactory.assign(executionContext, taskDefinition, task);
-            taskFactory.notify(executionContext, task);
+            Swimlane swimlane = executionContext.getProcess().getInitializedSwimlaneNotNull(executionContext, taskDefinition.getSwimlane(),
+                    taskDefinition.isReassignSwimlane());
+            // copy the swimlane assignment into the task
+            taskFactory.create(executionContext, taskDefinition, swimlane, swimlane.getExecutor());
         }
         if (async) {
             log.debug("continue execution in async " + this);

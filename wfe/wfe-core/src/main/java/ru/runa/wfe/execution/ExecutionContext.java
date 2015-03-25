@@ -164,7 +164,12 @@ public class ExecutionContext {
                 Class<?> definedClass = FormatCommons.create(variableDefinition).getJavaClass();
                 if (!definedClass.isAssignableFrom(value.getClass())) {
                     if (SystemProperties.isVariableAutoCastingEnabled()) {
-                        value = TypeConversionUtil.convertTo(definedClass, value);
+                        try {
+                            value = TypeConversionUtil.convertTo(definedClass, value);
+                        } catch (Exception e) {
+                            throw new InternalApplicationException("Variable '" + name + "' defined as '" + definedClass
+                                    + "' but value is instance of '" + value.getClass() + "'", e);
+                        }
                     } else {
                         throw new InternalApplicationException("Variable '" + name + "' defined as '" + definedClass + "' but value is instance of '"
                                 + value.getClass() + "'");
