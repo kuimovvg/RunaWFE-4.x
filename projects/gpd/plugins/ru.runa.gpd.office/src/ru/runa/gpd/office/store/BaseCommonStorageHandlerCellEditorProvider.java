@@ -294,8 +294,7 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                             if (cmodel.getConditionModel() == null) {
                                 cmodel.setConditionModel(new ConditionModel());
                             }
-                            ConditionItem conditionItem = queryType.equals(QueryType.UPDATE) ? new UpdateConditionItem(Op.EQUAL, "", "")
-                                    : new ConditionItem(Op.EQUAL, "");
+                            ConditionItem conditionItem = new ConditionItem(Op.EQUAL, "");
                             cmodel.getConditionModel().getConditions().add(conditionItem);
                             buildFromModel();
                         }
@@ -340,21 +339,6 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                                 item.setValue(valText.getText());
                             }
                         });
-                        if (item instanceof UpdateConditionItem) {
-                            final UpdateConditionItem updateConditionItem = (UpdateConditionItem) item;
-                            final Text newVal = new Text(condGroup, SWT.BORDER);
-                            newVal.addModifyListener(new ModifyListener() {
-
-                                @Override
-                                public void modifyText(ModifyEvent e) {
-                                    updateConditionItem.setNewValue(newVal.getText());
-                                }
-                            });
-                            Object val = updateConditionItem.getNewValue();
-                            newVal.setText(val == null ? "" : val.toString());
-                        } else {
-                            new Label(condGroup, SWT.NONE);
-                        }
                         SWTUtils.createLink(condGroup, "[X]", new LoggingHyperlinkAdapter() {
 
                             @Override

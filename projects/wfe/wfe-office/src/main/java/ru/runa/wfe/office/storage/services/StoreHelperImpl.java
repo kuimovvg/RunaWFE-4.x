@@ -1,12 +1,14 @@
 package ru.runa.wfe.office.storage.services;
 
-import java.util.List;
+import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.office.storage.StoreHelper;
+import ru.runa.wfe.office.storage.StoreOperation;
 import ru.runa.wfe.office.storage.StoreService;
 import ru.runa.wfe.office.storage.StoreServiceImpl;
 import ru.runa.wfe.office.storage.binding.DataBinding;
@@ -14,26 +16,29 @@ import ru.runa.wfe.office.storage.binding.DataBindings;
 import ru.runa.wfe.office.storage.binding.ExecutionResult;
 import ru.runa.wfe.office.storage.binding.QueryType;
 import ru.runa.wfe.var.dto.WfVariable;
-import ru.runa.wfe.var.format.ListFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class StoreHelperImpl implements StoreHelper {
 
     private static final Log log = LogFactory.getLog(StoreHelperImpl.class);
 
+    private Map<QueryType, Method> invocationMap = Maps.newHashMap();
+
     StoreService storeService;
 
     DataBindings config;
+
     VariableFormat format;
 
-    public StoreHelperImpl() {
-        storeService = new StoreServiceImpl();
+    public StoreHelperImpl(DataBindings config) {
+        setConfig(config);
+        registerHandlers();
+        storeService = new StoreServiceImpl();        
     }
 
-    @Override
-    public void setConfig(DataBindings config) {
+    private void setConfig(DataBindings config) {
         this.config = config;
     }
 
@@ -43,78 +48,53 @@ public class StoreHelperImpl implements StoreHelper {
     }
 
     @Override
-    public Object execute(DataBinding binding, WfVariable variable, QueryType queryType) {
-        ExecutionResult toReturn = null;
-        if (queryType.equals(QueryType.CREATE)) {
-            toReturn = save(binding, variable);
-        } else if (queryType.equals(QueryType.READ)) {
-            toReturn = findByFilter(binding);
-        } else if (queryType.equals(QueryType.UPDATE)) {
-            toReturn = update(binding);
-        } else {
-            toReturn = delete(binding);
-        }
-        if (toReturn == null) {
-            return null;
-        }
-        return toReturn.getValue();
-    }
-
-    @Override
-    public ExecutionResult findAll(DataBinding binding) {
+    public ExecutionResult execute(DataBinding binding, WfVariable variable) {
         try {
-            return storeService.findAll(extractProperties(binding));
+            Method method = invocationMap.get(config.getQueryType());
+            return (ExecutionResult) method.invoke(this, binding, variable);
         } catch (Exception e) {
             log.error("", e);
-            return null;
+            return ExecutionResult.EMPTY;
         }
     }
 
-    @Override
-    public ExecutionResult findByFilter(DataBinding binding) {
-        try {
-            return storeService.findByFilter(extractProperties(binding), binding.getConditions());
-        } catch (Exception e) {
-            log.error("", e);
-            return null;
-        }
+    @StoreOperation(QueryType.CREATE)
+    public ExecutionResult save(DataBinding binding, WfVariable variable) throws Exception {
+        storeService.save(extractProperties(binding), variable, false);
+        return ExecutionResult.EMPTY;
     }
 
-    @Override
-    public ExecutionResult update(DataBinding binding) {
-        try {
-            return storeService.update(extractProperties(binding), binding.getConditions());
-        } catch (Exception e) {
-            log.error("", e);
-            return null;
-        }
+    @StoreOperation(QueryType.READ)
+    public ExecutionResult findByFilter(DataBinding binding, WfVariable variable) throws Exception {
+        return storeService.findByFilter(extractProperties(binding), binding.getConditions());
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public ExecutionResult save(DataBinding binding, WfVariable variable) {
-        try {
-            List<Object> records = null;
-            if (format instanceof ListFormat) {
-                records = (List<Object>) variable.getValue();
-            } else {
-                records = Lists.newArrayList(variable.getValue());
+    @StoreOperation(QueryType.UPDATE)
+    public ExecutionResult update(DataBinding binding, WfVariable variable) throws Exception {
+        storeService.update(extractProperties(binding), variable, binding.getConditions());
+        return ExecutionResult.EMPTY;
+    }
+
+    @StoreOperation(QueryType.DELETE)
+    public ExecutionResult delete(DataBinding binding, WfVariable variable) throws Exception {
+        storeService.delete(extractProperties(binding), variable, binding.getConditions());
+        return ExecutionResult.EMPTY;
+    }
+
+    private void registerHandlers() {
+        Method[] methods = this.getClass().getDeclaredMethods();
+        for (Method method : methods) {
+            StoreOperation annotation = method.getAnnotation(StoreOperation.class);
+            if (annotation != null) {
+                Class<?>[] parameters = method.getParameterTypes();
+                if (parameters == null || parameters.length < 1) {
+                    log.warn("wrong parameters");
+                    continue;
+                }
+                if (!invocationMap.containsKey(annotation.value())) {
+                    invocationMap.put(annotation.value(), method);
+                }
             }
-            return storeService.save(extractProperties(binding), records, false);
-        } catch (Exception e) {
-            log.error("", e);
-            return null;
-        }
-    }
-
-    @Override
-    public ExecutionResult delete(DataBinding binding) {
-        Properties properties = extractProperties(binding);
-        try {
-            return storeService.delete(properties, binding.getConditions());
-        } catch (Exception e) {
-            log.error("", e);
-            return null;
         }
     }
 
