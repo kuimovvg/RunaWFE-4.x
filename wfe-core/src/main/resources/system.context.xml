@@ -281,19 +281,13 @@
 
 	<bean id="processDefCacheCtrl" class="ru.runa.wfe.definition.cache.ProcessDefCacheCtrl" />
 
-	<bean id="processDefinitionLoader" class="ru.runa.wfe.definition.dao.ProcessDefinitionLoader">
-	</bean>
+	<bean id="processDefinitionLoader" class="ru.runa.wfe.definition.dao.ProcessDefinitionLoader" />
 
-	<bean id="taskFactory" class="ru.runa.wfe.task.TaskFactory">
-		<!-- property name="taskNotifier"> <bean class="ru.runa.wfe.task.EmailTaskNotifier"> 
-			</bean> </property -->
-	</bean>
+	<bean id="taskFactory" class="ru.runa.wfe.task.TaskFactory" />
 
-	<bean id="wfTaskFactory" class="ru.runa.wfe.task.dto.WfTaskFactory">
-	</bean>
+	<bean id="wfTaskFactory" class="ru.runa.wfe.task.dto.WfTaskFactory" />
 
-	<bean id="processFactory" class="ru.runa.wfe.execution.ProcessFactory">
-	</bean>
+	<bean id="processFactory" class="ru.runa.wfe.execution.ProcessFactory" />
 
 	<bean id="taskListBuilder" class="ru.runa.wfe.task.logic.TaskListBuilder" />
 

@@ -2,7 +2,10 @@ package ru.runa.wfe.task;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+
+import javax.mail.MessagingException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,11 +16,12 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
-import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.logic.ITaskNotifier;
 import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.ComplexVariable;
@@ -27,8 +31,9 @@ import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.ScriptingComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
@@ -59,64 +64,68 @@ public class EmailTaskNotifier implements ITaskNotifier {
     }
 
     @Override
-    public void onNewTask(ExecutionContext executionContext) throws Exception {
+    public void onTaskAssigned(ProcessDefinition processDefinition, IVariableProvider variableProvider, Task task, Executor previousExecutor) {
         if (!enabled || configBytes == null) {
             return;
         }
-        EmailConfig config = EmailConfigParser.parse(configBytes);
-        Task task = executionContext.getTask();
-        String emails = "";
-        if (task.getExecutor() == null) {
-            return;
-        }
-        if (task.getExecutor() instanceof Actor) {
-            Actor actor = (Actor) task.getExecutor();
-            if (actor.getEmail() != null && actor.getEmail().trim().length() > 0) {
-                emails = actor.getEmail().trim();
+        try {
+            log.debug("About " + task + " assigned to " + task.getExecutor() + ", previous: " + previousExecutor);
+            EmailConfig config = EmailConfigParser.parse(configBytes);
+            List<String> emailsToSend = getEmails(task.getExecutor());
+            List<String> emailsWereSent = getEmails(previousExecutor);
+            emailsToSend.removeAll(emailsWereSent);
+            if (onlyIfTaskActorEmailDefined && emailsToSend.size() == 0) {
+                log.debug("Ignored due to empty emails, previously emails were sent: " + emailsWereSent);
+                return;
             }
-        } else {
-            Collection<Actor> actors = executorDAO.getGroupActors((Group) task.getExecutor());
+            String emails = Joiner.on(", ").join(emailsToSend);
+            Interaction interaction = processDefinition.getInteractionNotNull(task.getNodeId());
+            Map<String, Object> map = Maps.newHashMap();
+            map.put("interaction", interaction);
+            map.put("task", task);
+            map.put("emails", emails);
+            ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(processDefinition, variableProvider);
+            IVariableProvider emailVariableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
+            EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, emailVariableProvider);
+            // TODO add process logs about notification
+        } catch (MessagingException e) {
+            log.warn(e);
+        } catch (Exception e) {
+            log.warn("", e);
+        }
+    }
+
+    private List<String> getEmails(Executor executor) {
+        List<String> emails = Lists.newArrayList();
+        if (executor instanceof Actor) {
+            Actor actor = (Actor) executor;
+            if (actor.getEmail() != null && actor.getEmail().trim().length() > 0) {
+                emails.add(actor.getEmail().trim());
+            }
+        } else if (executor instanceof Group) {
+            Collection<Actor> actors = executorDAO.getGroupActors((Group) executor);
             for (Actor actor : actors) {
                 if (actor.getEmail() != null && actor.getEmail().trim().length() > 0) {
-                    if (emails.length() > 0) {
-                        emails += ", ";
-                    }
-                    emails += actor.getEmail().trim();
+                    emails.add(actor.getEmail().trim());
                 }
             }
         }
-        if (onlyIfTaskActorEmailDefined && Strings.isNullOrEmpty(emails)) {
-            log.debug("Notification was not sent about task assigned to executor with empty email: " + task);
-            return;
-        }
-        Interaction interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
-        Map<String, Object> map = Maps.newHashMap();
-        map.put("interaction", interaction);
-        map.put("task", task);
-        map.put("emails", emails);
-        ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext);
-        IVariableProvider variableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
-        try {
-            EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, variableProvider);
-        } catch (Exception e) {
-            log.warn("Task notifier error: " + e);
-        }
-        // TODO add process logs about notification
+        return emails;
     }
 
     public static class ScriptingVariableProvider extends DelegableVariableProvider {
-        private final ExecutionContext executionContext;
+        private final ProcessDefinition processDefinition;
 
-        public ScriptingVariableProvider(ExecutionContext executionContext) {
-            super(executionContext.getVariableProvider());
-            this.executionContext = executionContext;
+        public ScriptingVariableProvider(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
+            super(variableProvider);
+            this.processDefinition = processDefinition;
         }
 
         @Override
         public Object getValue(String variableName) {
             Object object = super.getValue(variableName);
             if (object == null) {
-                for (VariableDefinition definition : executionContext.getProcessDefinition().getVariables()) {
+                for (VariableDefinition definition : processDefinition.getVariables()) {
                     if (Objects.equal(variableName, definition.getScriptingName())) {
                         object = super.getValue(definition.getName());
                         break;
