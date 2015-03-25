@@ -9,7 +9,6 @@ import ru.runa.wfe.office.excel.IExcelConstraints;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
 import ru.runa.wfe.office.storage.ConditionItem;
 import ru.runa.wfe.office.storage.Op;
-import ru.runa.wfe.office.storage.UpdateConditionItem;
 import ru.runa.wfe.office.storage.binding.DataBinding;
 import ru.runa.wfe.office.storage.binding.DataBindings;
 import ru.runa.wfe.office.storage.binding.QueryType;
@@ -62,19 +61,11 @@ public class StorageBindingsParser extends FilesSupplierConfigParser<DataBinding
     @SuppressWarnings("unchecked")
     private List<ConditionItem> configureConditions(Element conditionsElement) {
         List<ConditionItem> conditionItems = Lists.newArrayList();
-        QueryType queryType = QueryType.valueOf(conditionsElement.attributeValue("type"));
         List<Element> conditions = conditionsElement.elements("condition");
         for (Element element : conditions) {
-            ConditionItem conditionItem = null;
+            ConditionItem conditionItem = new ConditionItem();
             Op op = Op.valueOf(element.attributeValue("is"));
             Object val = element.attributeValue("val");
-            if (QueryType.UPDATE.equals(queryType)) {
-                Object newVal = element.attributeValue("newVal");
-                conditionItem = new UpdateConditionItem();
-                ((UpdateConditionItem) conditionItem).setNewValue(newVal);
-            } else {
-                conditionItem = new ConditionItem();
-            }
             conditionItem.setOperator(op);
             conditionItem.setValue(val);
             conditionItems.add(conditionItem);
