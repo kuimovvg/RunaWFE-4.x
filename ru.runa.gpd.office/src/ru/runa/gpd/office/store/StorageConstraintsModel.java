@@ -121,22 +121,14 @@ public class StorageConstraintsModel {
         } else {
             model.column = Integer.parseInt(conf.attributeValue("columnStart"));
         }
-        if (model.type == ROW || model.type == COLUMN) {
-            if (conditions != null) {
-                model.setConditionModel(new ConditionModel());
-                for (Object condition : conditions.elements()) {
-                    Element el = (Element) condition;
-                    String is = el.attributeValue("is");
-                    String val = el.attributeValue("val");
-                    ConditionItem conditionItem = null;
-                    if (queryType.equals(QueryType.UPDATE)) {
-                        String newVal = el.attributeValue("newVal");
-                        conditionItem = new UpdateConditionItem(Op.valueOf(is), val, newVal);
-                    } else {
-                        conditionItem = new ConditionItem(Op.valueOf(is), val);
-                    }
-                    model.getConditionModel().getConditions().add(conditionItem);
-                }
+        if (conditions != null) {
+            model.setConditionModel(new ConditionModel());
+            for (Object condition : conditions.elements()) {
+                Element el = (Element) condition;
+                String is = el.attributeValue("is");
+                String val = el.attributeValue("val");
+                ConditionItem conditionItem = new ConditionItem(Op.valueOf(is), val);
+                model.getConditionModel().getConditions().add(conditionItem);
             }
         }
         return model;
@@ -183,9 +175,6 @@ public class StorageConstraintsModel {
                 if (item.getCondition() != null && item.getValue() != null) {
                     condition.addAttribute("is", item.getCondition().toString());
                     condition.addAttribute("val", item.getValue().toString());
-                    if (item instanceof UpdateConditionItem) {
-                        condition.addAttribute("newVal", ((UpdateConditionItem) item).getNewValue().toString());
-                    }
                 }
             }
         }
