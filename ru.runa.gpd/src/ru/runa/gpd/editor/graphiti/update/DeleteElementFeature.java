@@ -28,7 +28,12 @@ public class DeleteElementFeature extends DefaultDeleteFeature implements ICusto
     protected boolean getUserDecision(IDeleteContext context) {
         return true;
     }
-
+    
+    @Override
+    protected boolean getUserDecision() {
+    	return true;
+    }
+    
     @Override
     protected void deleteBusinessObject(Object bo) {
     	if (bo == null) return;
@@ -57,28 +62,28 @@ public class DeleteElementFeature extends DefaultDeleteFeature implements ICusto
         element.getParent().removeChild(element);
     }
     
-    @Override
-    public boolean canUndo(IContext context) {
-    	return element != null;
-	}
-
 	@Override
+	public boolean canUndo(IContext context) {
+		return element != null;
+	}
+    
+    @Override
 	public void undo(IContext context) {
 		if (element instanceof Transition) {
 			Transition transition = (Transition) element;
-            transition.getSource().addLeavingTransition(transition);
+            transition.getSource().addChild(transition);
             return;
 		}
 		element.getParent().addChild(element);
 		if (element instanceof Node) {
 			if (leavingTransitions != null) {
 				for (Transition transition : leavingTransitions) {
-	                transition.getSource().addLeavingTransition(transition);
+					transition.getSource().addChild(transition);
 	            }
 			}
 			if (arrivingTransitions != null) {
 				for (Transition transition : arrivingTransitions) {
-	                transition.getSource().addLeavingTransition(transition);
+					transition.getSource().addChild(transition);
 	            }
 			}
 		}
@@ -86,13 +91,11 @@ public class DeleteElementFeature extends DefaultDeleteFeature implements ICusto
 
 	@Override
 	public boolean canRedo(IContext context) {
-		return false;//TODO: return element != null;
+		return element != null;
 	}
 
 	@Override
 	public void redo(IContext context) {
-		/*
-		 * TODO: implement
-		 */
+		deleteBusinessObject(element);
 	}
 }
