@@ -222,7 +222,11 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
 
     @Override
     public int compareTo(ProcessLog o) {
-        return createDate.compareTo(o.createDate);
+        int dateCompare = createDate.compareTo(o.createDate);
+        if (dateCompare != 0) {
+            return dateCompare;
+        }
+        return id.compareTo(o.id);
     }
 
     @Override
