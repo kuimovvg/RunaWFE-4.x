@@ -244,13 +244,7 @@ public class BpmnXmlReader {
         if (node instanceof TaskNode) {
             TaskNode taskNode = (TaskNode) node;
             readTask(processDefinition, element, taskNode);
-            List<Element> boundaryEventElements = element.getParent().elements(BOUNDARY_EVENT);
-            for (Element boundaryEventElement : boundaryEventElements) {
-                String parentNodeId = boundaryEventElement.attributeValue(ATTACHED_TO_REF);
-                if (Objects.equal(parentNodeId, taskNode.getNodeId())) {
-                    readTimer(processDefinition, boundaryEventElement, taskNode);
-                }
-            }
+            readBoundaryEvent(processDefinition, element, taskNode);
         }
         if (node instanceof BaseTaskNode) {
             Map<String, String> properties = parseExtensionProperties(element);
@@ -290,9 +284,23 @@ public class BpmnXmlReader {
             SendMessage sendMessage = (SendMessage) node;
             sendMessage.setTtlDuration(element.attributeValue(QName.get(TIME_DURATION, RUNA_NAMESPACE), "1 days"));
         }
+        if (node instanceof ReceiveMessage) {
+            ReceiveMessage receiveMessage = (ReceiveMessage) node;
+            readBoundaryEvent(processDefinition, element, receiveMessage);
+        }
         if (node instanceof TextAnnotation) {
             node.setName("TextAnnotation_" + node.getNodeId());
             node.setDescription(element.elementTextTrim(TEXT));
+        }
+    }
+
+    private void readBoundaryEvent(ProcessDefinition processDefinition, Element element, GraphElement parent) {
+        List<Element> boundaryEventElements = element.getParent().elements(BOUNDARY_EVENT);
+        for (Element boundaryEventElement : boundaryEventElements) {
+            String parentNodeId = boundaryEventElement.attributeValue(ATTACHED_TO_REF);
+            if (Objects.equal(parentNodeId, parent.getNodeId())) {
+                readTimer(processDefinition, boundaryEventElement, parent);
+            }
         }
     }
 
