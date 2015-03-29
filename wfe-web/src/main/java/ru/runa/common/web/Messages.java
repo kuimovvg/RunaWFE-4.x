@@ -98,6 +98,7 @@ public class Messages {
     public static final String BUTTON_UNDEPLOY_DEFINITION = "button.undeploy_definition";
 
     public static final String BUTTON_ACCEPT_TASK = "button.accept_task";
+    public static final String BUTTON_DELEGATE_TASK = "button.delegate_task";
 
     public static final String BUTTON_USE_DAFAULT_PROPERTIES = "button.use.default.properties";
 

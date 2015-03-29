@@ -81,6 +81,13 @@ public class WebResources {
     /**
      * Used from JSP page
      */
+    public static boolean isTaskDelegationEnabled() {
+    	return RESOURCES.getBooleanProperty("task.delegationEnabled", false);
+    }
+    
+    /**
+     * Used from JSP page
+     */
     public static int getDiagramRefreshInterval() {
         return RESOURCES.getIntegerProperty("process.graph.autoRefreshInterval.seconds", 0);
     }
