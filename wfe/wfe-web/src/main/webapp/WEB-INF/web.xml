@@ -87,6 +87,11 @@
 	</servlet>
 
 	<servlet>
+		<servlet-name>delegateTaskServlet</servlet-name>
+		<servlet-class>ru.runa.wf.web.servlet.DelegateTaskServlet</servlet-class>
+	</servlet>
+
+	<servlet>
 		<servlet-name>upload</servlet-name>            
 		<servlet-class>ru.runa.wf.web.servlet.FileUploadServlet</servlet-class>
 	</servlet>
@@ -136,6 +141,11 @@
 	<servlet-mapping>
 		<servlet-name>ajaxcmdServlet</servlet-name>
 		<url-pattern>/ajaxcmd</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>delegateTaskServlet</servlet-name>
+		<url-pattern>/delegateTask</url-pattern>
 	</servlet-mapping>
 
 	<servlet-mapping>

@@ -84,8 +84,7 @@ public class AjaxCommandServlet extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("Got ajax request: " + request.getQueryString());
         try {
             String command = request.getParameter("command");
@@ -109,5 +108,14 @@ public class AjaxCommandServlet extends HttpServlet {
             throw new ServletException(e);
         }
     }
-
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	doRequest(request, response);
+    }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    	doRequest(request, response);
+    }
 }

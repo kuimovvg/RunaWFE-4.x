@@ -181,6 +181,10 @@
 			<value>true</value>
 			<value>false</value>
 		</property>
+		<property title="task.delegationEnabled">
+			<value>true</value>
+			<value>false</value>
+		</property>
 	</properties_file>
 	
 	<properties_file title="office.properties">

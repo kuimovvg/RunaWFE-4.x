@@ -15,8 +15,10 @@
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.iframe-transport.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/jquery.fileupload.js" />">c=0;</script>
 	<script type="text/javascript" src="<html:rewrite page="/js/taskformutils.js" />">c=0;</script>
+	<script type="text/javascript" src="<html:rewrite page="/js/delegate.dialog.js" />">c=0;</script>
 	<script type="text/javascript">var id = <%= Long.parseLong(request.getParameter(IdForm.ID_INPUT_NAME)) %>;</script>
 	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/fileupload.css" />">
+	<link rel="stylesheet" type="text/css" href="<html:rewrite page="/css/delegate.dialog.css" />">
 <% 
    }
    for (String url : WebResources.getTaskFormExternalJsLibs()) {
@@ -34,6 +36,9 @@
 	String title = ru.runa.common.web.Commons.getMessage("title.task_form", pageContext);
 %>
 <wf:taskDetails batchPresentationId="listTasksForm" title="<%= title %>" taskId="<%= taskId %>" actorId="<%= actorId %>" buttonAlignment="right" action="/processTaskAssignment" returnAction="/submitTaskDispatcher.do"/>
+<% if (WebResources.isTaskDelegationEnabled()) { %>
+	<wf:taskFormDelegationButton taskId="<%= taskId %>" />
+<% } %>
 <wf:taskForm title="<%= title %>" taskId="<%= taskId %>" actorId="<%= actorId %>" action="/submitTaskForm" />
 
 </tiles:put>
