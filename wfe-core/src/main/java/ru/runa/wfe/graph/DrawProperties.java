@@ -40,8 +40,6 @@ public final class DrawProperties {
     public static final int TRANSITION_CLEAN_WIDTH = 10;
     public static final int FIGURE_CLEAN_WIDTH = 5;
 
-    private static boolean useEdgingMode = resources.getBooleanProperty("edgingOnly", true);
-
     public static Color getBackgroundColor() {
         return getColorProperty("backgroundColor", Color.WHITE);
     }
@@ -99,11 +97,7 @@ public final class DrawProperties {
     }
 
     public static boolean useEdgingOnly() {
-        return useEdgingMode;
-    }
-
-    public static void setUseEdgingMode(boolean edgingMode) {
-        useEdgingMode = edgingMode;
+        return resources.getBooleanProperty("edgingOnly", true);
     }
 
     public static boolean showSwimlaneInBPMN() {
