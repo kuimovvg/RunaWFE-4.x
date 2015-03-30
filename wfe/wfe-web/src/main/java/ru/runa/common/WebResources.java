@@ -82,9 +82,9 @@ public class WebResources {
      * Used from JSP page
      */
     public static boolean isTaskDelegationEnabled() {
-    	return RESOURCES.getBooleanProperty("task.delegationEnabled", false);
+        return RESOURCES.getBooleanProperty("task.delegation.enabled", false);
     }
-    
+
     /**
      * Used from JSP page
      */
