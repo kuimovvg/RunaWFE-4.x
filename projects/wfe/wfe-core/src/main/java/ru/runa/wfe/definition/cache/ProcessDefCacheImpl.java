@@ -19,6 +19,9 @@ package ru.runa.wfe.definition.cache;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
+
 import ru.runa.wfe.commons.cache.BaseCacheImpl;
 import ru.runa.wfe.commons.cache.Cache;
 import ru.runa.wfe.commons.cache.Change;
@@ -63,6 +66,10 @@ class ProcessDefCacheImpl extends BaseCacheImpl implements ProcessDefinitionCach
             }
         }
         Deployment deployment = deploymentDAO.getNotNull(definitionId);
+        Hibernate.initialize(deployment);
+        if (deployment instanceof HibernateProxy) {
+            deployment = (Deployment) (((HibernateProxy) deployment).getHibernateLazyInitializer().getImplementation());
+        }
         ProcessArchive archive = new ProcessArchive(deployment);
         processDefinition = archive.parseProcessDefinition();
         synchronized (this) {
