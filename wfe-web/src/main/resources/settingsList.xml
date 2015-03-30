@@ -181,7 +181,7 @@
 			<value>true</value>
 			<value>false</value>
 		</property>
-		<property title="task.delegationEnabled">
+		<property title="task.delegation.enabled">
 			<value>true</value>
 			<value>false</value>
 		</property>
