@@ -73,7 +73,7 @@ public abstract class AbstractFigure {
         swimlane = model.getSwimlane();
         actionsCount = model.getActionsCount();
         async = model.isAsync();
-        minimized = model.isMinimizedView();
+        minimized = false;// model.isMinimizedView();
         timerTransitionName = model.getTimerTransitionName();
         this.useEgdingOnly = useEgdingOnly;
     }

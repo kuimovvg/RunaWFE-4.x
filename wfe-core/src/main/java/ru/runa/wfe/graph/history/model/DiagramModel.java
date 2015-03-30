@@ -33,7 +33,8 @@ import ru.runa.wfe.lang.SubprocessDefinition;
 
 import com.google.common.collect.Maps;
 
-public class DiagramModel { // FIXME move to par definition loader and integrate with ProcessDefinition & GraphElement
+public class DiagramModel { // FIXME move to par definition loader and integrate
+                            // with ProcessDefinition & GraphElement
     private static final String NODE_ELEMENT = "node";
     private static final String TRANSITION_ELEMENT = "transition";
     private static final String BENDPOINT_ELEMENT = "bendpoint";
@@ -67,16 +68,16 @@ public class DiagramModel { // FIXME move to par definition loader and integrate
     public int getWidth() {
         return width;
     }
-    
+
     public void setHeight(int height) {
-		this.height = height;
-	}
+        this.height = height;
+    }
 
-	public void setWidth(int width) {
-		this.width = width;
-	}
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
-	public boolean isShowActions() {
+    public boolean isShowActions() {
         return showActions;
     }
 
