@@ -30,7 +30,7 @@ public class GraphHistoryBuilderData {
     /**
      * Model with process definition data.
      */
-    private final ProcessInstanceData processDefinitionData;
+    private final ProcessInstanceData processInstanceData;
     /**
      * Model with passed transitions.
      */
@@ -69,7 +69,7 @@ public class GraphHistoryBuilderData {
      */
     public GraphHistoryBuilderData(List<Executor> executors, Process processInstance, ProcessDefinition processDefinition,
             List<ProcessLog> fullProcessLogs, String subProcessId) {
-        processDefinitionData = new ProcessInstanceData(processInstance, processDefinition);
+        processInstanceData = new ProcessInstanceData(processInstance, processDefinition);
         transitions = new TransitionLogData(fullProcessLogs);
         for (Executor executor : executors) {
             this.executors.put(executor.getName(), executor);
@@ -172,7 +172,7 @@ public class GraphHistoryBuilderData {
         case EXCLUSIVE_GATEWAY:
             return NodeType.DECISION;
         case PARALLEL_GATEWAY:
-            return transitions.getTransitionLogsFromNode(nodeId).size() > 1 ? NodeType.FORK : NodeType.JOIN;
+            return node.getLeavingTransitions().size() > 1 ? NodeType.FORK : NodeType.JOIN;
         default:
             return node.getNodeType();
         }
@@ -204,6 +204,6 @@ public class GraphHistoryBuilderData {
     }
 
     public ProcessInstanceData getProcessDefinitionData() {
-        return processDefinitionData;
+        return processInstanceData;
     }
 }
