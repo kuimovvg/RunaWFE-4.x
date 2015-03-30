@@ -66,7 +66,7 @@ import com.google.common.collect.Maps;
 
 /**
  * Process execution logic.
- *
+ * 
  * @author Dofs
  * @since 2.0
  */
@@ -263,7 +263,7 @@ public class ExecutionLogic extends WFCommonLogic {
             ProcessDefinition processDefinition = getDefinition(process);
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
-            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, processDefinition, logs, subprocessId);
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, process, processDefinition, logs, subprocessId);
             return converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
         } catch (Exception e) {
             throw Throwables.propagate(e);
@@ -278,7 +278,7 @@ public class ExecutionLogic extends WFCommonLogic {
             ProcessDefinition processDefinition = getDefinition(process);
             List<ProcessLog> logs = processLogDAO.getAll(processId);
             List<Executor> executors = executorDAO.getAllExecutors(BatchPresentationFactory.EXECUTORS.createNonPaged());
-            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, processDefinition, logs, "" + subprocessId);
+            GraphHistoryBuilder converter = new GraphHistoryBuilder(executors, process, processDefinition, logs, "" + subprocessId);
             converter.createDiagram(process, processLogDAO.getPassedTransitions(processDefinition, process));
             return converter.getLogElements();
         } catch (Exception e) {
