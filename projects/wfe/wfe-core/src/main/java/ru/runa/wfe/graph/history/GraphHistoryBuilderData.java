@@ -9,6 +9,7 @@ import ru.runa.wfe.audit.NodeLog;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.TaskLog;
 import ru.runa.wfe.audit.TransitionLog;
+import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -29,7 +30,7 @@ public class GraphHistoryBuilderData {
     /**
      * Model with process definition data.
      */
-    private final ProcessDefinitionData processDefinitionData;
+    private final ProcessInstanceData processDefinitionData;
     /**
      * Model with passed transitions.
      */
@@ -66,14 +67,14 @@ public class GraphHistoryBuilderData {
      *            Subprocess name, if history for embedded subprocess is
      *            required.
      */
-    public GraphHistoryBuilderData(List<Executor> executors, ProcessDefinition processDefinition, List<ProcessLog> fullProcessLogs,
-            String subProcessId) {
-        processDefinitionData = new ProcessDefinitionData(processDefinition);
+    public GraphHistoryBuilderData(List<Executor> executors, Process processInstance, ProcessDefinition processDefinition,
+            List<ProcessLog> fullProcessLogs, String subProcessId) {
+        processDefinitionData = new ProcessInstanceData(processInstance, processDefinition);
         transitions = new TransitionLogData(fullProcessLogs);
         for (Executor executor : executors) {
             this.executors.put(executor.getName(), executor);
         }
-        embeddedLogsParser = new EmbeddedSubprocessLogsData(fullProcessLogs, transitions, processDefinitionData);
+        embeddedLogsParser = new EmbeddedSubprocessLogsData(fullProcessLogs, transitions, getProcessDefinitionData());
         processLogs = prepareLogs(fullProcessLogs, subProcessId);
     }
 
@@ -111,7 +112,7 @@ public class GraphHistoryBuilderData {
      * @return Returns {@link Node} or null, if node is not found.
      */
     public Node getNode(String nodeId) {
-        return processDefinitionData.getNode(nodeId);
+        return getProcessDefinitionData().getNode(nodeId);
     }
 
     /**
@@ -163,7 +164,7 @@ public class GraphHistoryBuilderData {
      * @return
      */
     public NodeType getNodeType(String nodeId) {
-        Node node = processDefinitionData.getNode(nodeId);
+        Node node = getProcessDefinitionData().getNode(nodeId);
         if (node == null) {
             throw new InternalApplicationException("Node model with id " + nodeId + " is not found.");
         }
@@ -185,7 +186,7 @@ public class GraphHistoryBuilderData {
      * @return Returns subprocess definition.
      */
     public SubprocessDefinition getEmbeddedSubprocess(String subProcessName) {
-        return processDefinitionData.getEmbeddedSubprocess(subProcessName);
+        return getProcessDefinitionData().getEmbeddedSubprocess(subProcessName);
     }
 
     /**
@@ -200,5 +201,9 @@ public class GraphHistoryBuilderData {
      */
     public TransitionLog findNextTransitionLog(NodeLog log, String nodeId) {
         return transitions.findNextTransitionLog(log, nodeId);
+    }
+
+    public ProcessInstanceData getProcessDefinitionData() {
+        return processDefinitionData;
     }
 }
