@@ -101,7 +101,6 @@ public class GraphHistoryBuilder {
         root.processBy(new PushWidthDown(), -1);
         root.processBy(new TransitionOrderer(), new TransitionOrdererContext());
         root.processBy(new CalculateGraphLayout(), new CalculateGraphLayoutContext(NodeLayoutData.get(root).getSubtreeHeight()));
-        // root.processBy(new JoinParallelWidthTuner(), null);
         HashSet<HistoryGraphNode> visited = new HashSet<HistoryGraphNode>();
         calculateCoordinatesForNodes(root, null, null, visited);
 
