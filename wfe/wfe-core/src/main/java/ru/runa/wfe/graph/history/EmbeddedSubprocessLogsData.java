@@ -37,16 +37,17 @@ public class EmbeddedSubprocessLogsData {
     /**
      * Process definition data.
      */
-    private final ProcessDefinitionData processDefinitionData;
+    private final ProcessInstanceData processDefinitionData;
 
-    public EmbeddedSubprocessLogsData(List<ProcessLog> processLogs, TransitionLogData transitionData, ProcessDefinitionData processDefinition) {
+    public EmbeddedSubprocessLogsData(List<ProcessLog> processLogs, TransitionLogData transitionData, ProcessInstanceData processDefinition) {
         this.transitionData = transitionData;
         this.processDefinitionData = processDefinition;
-        if (correctLogsTokenId(processLogs)) {
-            processLogsByTokenId(processLogs);
-        } else {
-            processLogsWithoutTokenId(processLogs);
-        }
+        /*
+         * if (correctLogsTokenId(processLogs)) {
+         * processLogsByTokenId(processLogs); } else {
+         */
+        processLogsWithoutTokenId(processLogs);
+        // }
     }
 
     private void processLogsWithoutTokenId(List<ProcessLog> processLogs) {
