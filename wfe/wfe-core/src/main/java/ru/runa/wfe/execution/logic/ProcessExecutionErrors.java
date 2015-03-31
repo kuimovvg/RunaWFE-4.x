@@ -116,44 +116,53 @@ public class ProcessExecutionErrors {
         }
     }
 
-    private static synchronized void sendEmailNotification(Throwable exception, BotTaskIdentifier botTaskIdentifier, ProcessError processError) {
-        try {
-            if (emailNotificationConfigBytes != null) {
-                boolean matches = false;
-                EmailConfig config = EmailConfigParser.parse(emailNotificationConfigBytes);
-                List<String> includes = Utils.splitString(config.getCommonProperties().get("exception.includes"), ";");
-                for (String className : includes) {
-                    if (ClassLoaderUtil.loadClass(className).isInstance(exception)) {
-                        matches = true;
-                        break;
-                    }
-                }
-                if (matches) {
-                    List<String> excludes = Utils.splitString(config.getCommonProperties().get("exception.excludes"), ";");
-                    for (String className : excludes) {
-                        if (ClassLoaderUtil.loadClass(className).isInstance(exception)) {
-                            matches = false;
-                            break;
+    private static synchronized void sendEmailNotification(final Throwable exception, final BotTaskIdentifier botTaskIdentifier,
+            final ProcessError processError) {
+        // non-blocking usage for surronding transaction
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    if (emailNotificationConfigBytes != null) {
+                        boolean matches = false;
+                        EmailConfig config = EmailConfigParser.parse(emailNotificationConfigBytes);
+                        List<String> includes = Utils.splitString(config.getCommonProperties().get("exception.includes"), ";");
+                        for (String className : includes) {
+                            if (ClassLoaderUtil.loadClass(className).isInstance(exception)) {
+                                matches = true;
+                                break;
+                            }
                         }
+                        if (matches) {
+                            List<String> excludes = Utils.splitString(config.getCommonProperties().get("exception.excludes"), ";");
+                            for (String className : excludes) {
+                                if (ClassLoaderUtil.loadClass(className).isInstance(exception)) {
+                                    matches = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!matches) {
+                            return;
+                        }
+                        Map<String, Object> map = Maps.newHashMap();
+                        map.put("exceptionClassName", exception.getClass().getName());
+                        map.put("exceptionMessage", exception.getMessage());
+                        map.put("botTaskIdentifier", botTaskIdentifier);
+                        map.put("processError", processError);
+                        IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
+                        config.applySubstitutions(variableProvider);
+                        String formMessage = ExpressionEvaluator.process(null, config.getMessage(), variableProvider, null);
+                        config.setMessage(formMessage);
+                        config.setMessageId("Error: " + exception.toString());
+                        // does not work EmailUtils.sendMessageRequest(config);
+                        EmailUtils.sendMessage(config);
                     }
+                } catch (Exception e) {
+                    LogFactory.getLog(EmailUtils.class).error("Unable to send email notification about error", e);
                 }
-                if (!matches) {
-                    return;
-                }
-                Map<String, Object> map = Maps.newHashMap();
-                map.put("exceptionClassName", exception.getClass().getName());
-                map.put("exceptionMessage", exception.getMessage());
-                map.put("botTaskIdentifier", botTaskIdentifier);
-                map.put("processError", processError);
-                IVariableProvider variableProvider = new MapDelegableVariableProvider(map, null);
-                config.applySubstitutions(variableProvider);
-                String formMessage = ExpressionEvaluator.process(null, config.getMessage(), variableProvider, null);
-                config.setMessage(formMessage);
-                EmailUtils.sendMessage(config, null);
-            }
-        } catch (Exception e) {
-            LogFactory.getLog(EmailUtils.class).error("Unable to send email notification about error", e);
-        }
+            };
+        }.start();
     }
 
     public static class BotTaskIdentifier {

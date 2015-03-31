@@ -1,9 +1,7 @@
 package ru.runa.wfe.commons.email;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -27,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.SystemProperties;
+import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.email.EmailConfig.Attachment;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.form.Interaction;
@@ -39,7 +38,7 @@ import com.google.common.base.Preconditions;
 
 public class EmailUtils {
     private static final Log log = LogFactory.getLog(EmailConfig.class);
-
+    public static final String MAIL_ID = "mail.id";
     private static final String MAIL_TRANSPORT = "mail.transport.protocol";
     private static final String MAIL_HOST = "mail.host";
     private static final String MAIL_USER = "mail.user";
@@ -51,7 +50,20 @@ public class EmailUtils {
         System.setProperty("mail.mime.encodefilename", "true");
     }
 
-    public static void sendMessage(EmailConfig config, List<Attachment> attachments) throws Exception {
+    /**
+     * Sends email in non-blocking and transactional mode
+     */
+    public static void sendMessageRequest(EmailConfig config) throws Exception {
+        Utils.sendEmailRequest(config);
+    }
+
+    /**
+     * Sends email immediately
+     */
+    public static void sendMessage(EmailConfig config) throws Exception {
+        if (config.getMessageId() != null) {
+            log.info("Sending " + config.getMessageId());
+        }
         config.checkValid();
         Properties props = new Properties();
         props.putAll(config.getConnectionProperties());
@@ -60,11 +72,11 @@ public class EmailUtils {
 
         String connectionTimepoutPropName = "mail." + protocol + ".connectiontimeout";
         if (!props.contains(connectionTimepoutPropName)) {
-            props.put(connectionTimepoutPropName, "5000");
+            props.put(connectionTimepoutPropName, SystemProperties.getEmailDefaultTimeoutInMilliseconds());
         }
         String timepoutPropName = "mail." + protocol + ".timeout";
         if (!props.contains(timepoutPropName)) {
-            props.put(timepoutPropName, "5000");
+            props.put(timepoutPropName, SystemProperties.getEmailDefaultTimeoutInMilliseconds());
         }
 
         if (config.getHeaderProperties().containsKey("Subject")) {
@@ -96,18 +108,16 @@ public class EmailUtils {
         MimeBodyPart part = new MimeBodyPart();
         part.setText(config.getMessage(), Charsets.UTF_8.name(), config.getMessageType());
         multipart.addBodyPart(part);
-        if (attachments != null) {
-            for (Attachment attachment : attachments) {
-                MimeBodyPart attach = new MimeBodyPart();
-                attach.setDataHandler(new DataHandler(new ByteArrayDataSource(attachment.content, fileTypeMap.getContentType(attachment.fileName))));
-                if (attachment.inlined) {
-                    attach.setHeader("Content-ID", attachment.fileName);
-                    attach.setDisposition(Part.INLINE);
-                } else {
-                    attach.setFileName(attachment.fileName);
-                }
-                multipart.addBodyPart(attach);
+        for (Attachment attachment : config.getAttachments()) {
+            MimeBodyPart attach = new MimeBodyPart();
+            attach.setDataHandler(new DataHandler(new ByteArrayDataSource(attachment.content, fileTypeMap.getContentType(attachment.fileName))));
+            if (attachment.inlined) {
+                attach.setHeader("Content-ID", attachment.fileName);
+                attach.setDisposition(Part.INLINE);
+            } else {
+                attach.setFileName(attachment.fileName);
             }
+            multipart.addBodyPart(attach);
         }
         msg.setContent(multipart);
         log.info("Connecting to [" + protocol + "]: " + props.getProperty(MAIL_HOST) + ":" + props.getProperty("mail." + protocol + ".port"));
@@ -131,7 +141,9 @@ public class EmailUtils {
         }
     }
 
-    public static void sendTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider) throws Exception {
+    public static void prepareTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider)
+            throws Exception {
+        config.setMessageId(variableProvider.getProcessId() + ": " + (interaction != null ? interaction.getName() : "no interaction"));
         config.applySubstitutions(variableProvider);
         String formTemplate;
         if (config.isUseMessageFromTaskForm()) {
@@ -152,24 +164,13 @@ public class EmailUtils {
         }
         String formMessage = ExpressionEvaluator.process(user, formTemplate, variableProvider, null);
         Map<String, String> replacements = new HashMap<String, String>();
-        List<Attachment> attachments = new ArrayList<Attachment>();
-        // List<String> images = HTMLUtils.findImages(formBytes);
-        // for (String image : images) {
-        // Attachment attachment = new Attachment();
-        // attachment.fileName = image;
-        // attachment.content =
-        // fileDataProvider.getFileDataNotNull(attachment.fileName);
-        // attachment.inlined = true;
-        // attachments.add(attachment);
-        // replacements.put(attachment.fileName, "cid:" + attachment.fileName);
-        // } TODO images not supported
-        for (String variableName : config.getAttachments()) {
+        for (String variableName : config.getAttachmentVariableNames()) {
             IFileVariable fileVariable = variableProvider.getValue(IFileVariable.class, variableName);
             if (fileVariable != null) {
                 Attachment attachment = new Attachment();
                 attachment.fileName = fileVariable.getName();
                 attachment.content = fileVariable.getData();
-                attachments.add(attachment);
+                config.getAttachments().add(attachment);
             }
         }
         for (String repl : replacements.keySet()) {
@@ -177,11 +178,9 @@ public class EmailUtils {
         }
         config.setMessage(formMessage);
         log.debug(formMessage);
-        sendMessage(config, attachments);
     }
 
     private static class PasswordAuthenticator extends Authenticator {
-
         private final String username;
         private final String password;
 
@@ -195,4 +194,5 @@ public class EmailUtils {
             return new PasswordAuthentication(username, password);
         }
     }
+
 }
