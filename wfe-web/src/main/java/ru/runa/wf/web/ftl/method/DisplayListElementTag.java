@@ -3,6 +3,7 @@ package ru.runa.wf.web.ftl.method;
 import java.util.List;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
+import ru.runa.wfe.extension.handler.var.ListIndexUtils;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
@@ -17,6 +18,7 @@ public class DisplayListElementTag extends FreemarkerTag {
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
         List<Object> list = (List<Object>) variable.getValue();
         int index = getRichComboParameterAs(int.class, 1);
+        index = ListIndexUtils.adjustIndex(index);
         Object object = null;
         if (index < list.size()) {
             object = list.get(index);
