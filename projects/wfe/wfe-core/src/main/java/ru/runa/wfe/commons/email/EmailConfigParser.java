@@ -91,7 +91,7 @@ public class EmailConfigParser {
                 List<Element> fileElements = attachmentsElement.elements("file");
                 for (Element element : fileElements) {
                     String name = element.attributeValue(NAME_ATTR);
-                    config.getAttachments().add(name);
+                    config.getAttachmentVariableNames().add(name);
                 }
             }
             return config;

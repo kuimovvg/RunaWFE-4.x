@@ -189,4 +189,12 @@ public class SystemProperties {
         return RESOURCES.getBooleanProperty("formula.handler.strict.mode", false);
     }
 
+    public static boolean isEmailGuaranteedDeliveryEnabled() {
+        return RESOURCES.getBooleanProperty("email.guaranteed.delivery.enabled", false);
+    }
+
+    public static long getEmailDefaultTimeoutInMilliseconds() {
+        return RESOURCES.getLongProperty("email.default.timeout.milliseconds", 10000);
+    }
+
 }

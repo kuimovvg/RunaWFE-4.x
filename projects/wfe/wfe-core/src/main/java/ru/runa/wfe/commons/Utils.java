@@ -23,6 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableMapping;
@@ -35,7 +36,8 @@ public class Utils {
     private static Log log = LogFactory.getLog(Utils.class);
     private static InitialContext initialContext;
     private static ConnectionFactory connectionFactory;
-    private static Queue queue;
+    private static Queue bpmMessageQueue;
+    private static Queue emailQueue;
 
     private static InitialContext getInitialContext() throws NamingException {
         if (initialContext == null) {
@@ -61,7 +63,8 @@ public class Utils {
             } catch (Exception e) {
                 throw new InternalApplicationException("Unable to find JMS ConnectionFactory by name '" + connectionFactoryJndiName, e);
             }
-            queue = (Queue) getInitialContext().lookup("queue/bpmMessages");
+            bpmMessageQueue = (Queue) getInitialContext().lookup("queue/bpmMessages");
+            emailQueue = (Queue) getInitialContext().lookup("queue/email");
         }
     }
 
@@ -73,7 +76,7 @@ public class Utils {
             init();
             connection = connectionFactory.createConnection();
             session = connection.createSession(true, Session.SESSION_TRANSACTED);
-            sender = session.createProducer(queue);
+            sender = session.createProducer(bpmMessageQueue);
 
             HashMap<String, Object> map = new HashMap<String, Object>();
             for (VariableMapping variableMapping : data) {
@@ -92,6 +95,45 @@ public class Utils {
             sender.send(message, Message.DEFAULT_DELIVERY_MODE, Message.DEFAULT_PRIORITY, ttl);
             sender.close();
             log.info("message sent: " + toString(message, false));
+            return message;
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        } finally {
+            if (sender != null) {
+                try {
+                    sender.close();
+                } catch (Exception ignore) {
+                }
+            }
+            if (session != null) {
+                try {
+                    session.close();
+                } catch (Exception ignore) {
+                }
+            }
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception ignore) {
+                }
+            }
+        }
+    }
+
+    public static ObjectMessage sendEmailRequest(EmailConfig config) {
+        Connection connection = null;
+        Session session = null;
+        MessageProducer sender = null;
+        try {
+            init();
+            connection = connectionFactory.createConnection();
+            session = connection.createSession(true, Session.SESSION_TRANSACTED);
+            sender = session.createProducer(emailQueue);
+
+            ObjectMessage message = session.createObjectMessage(config);
+            sender.send(message);
+            sender.close();
+            log.info("email request sent: " + (config.getMessageId() != null ? config.getMessageId() : message));
             return message;
         } catch (Exception e) {
             throw Throwables.propagate(e);

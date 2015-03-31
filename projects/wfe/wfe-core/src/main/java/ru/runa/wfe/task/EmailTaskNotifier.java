@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,10 +84,8 @@ public class EmailTaskNotifier implements ITaskNotifier {
             map.put("emails", emails);
             ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(processDefinition, variableProvider);
             IVariableProvider emailVariableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
-            EmailUtils.sendTaskMessage(UserHolder.get(), config, interaction, emailVariableProvider);
-            // TODO add process logs about notification
-        } catch (MessagingException e) {
-            log.warn(e);
+            EmailUtils.prepareTaskMessage(UserHolder.get(), config, interaction, emailVariableProvider);
+            EmailUtils.sendMessageRequest(config);
         } catch (Exception e) {
             log.warn("", e);
         }
