@@ -3,8 +3,8 @@ package ru.runa.wfe.history.graph;
 import java.util.List;
 import java.util.Map;
 
-import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.ProcessLog;
+import ru.runa.wfe.lang.Node;
 
 /**
  * Interface for all nodes in history graph.
@@ -25,6 +25,13 @@ public interface HistoryGraphNode {
     public List<HistoryGraphTransitionModel> getIncomingTransitions();
 
     /**
+     * Get node model from process definition.
+     * 
+     * @return Returns node model.
+     */
+    public Node getNode();
+
+    /**
      * Node id from process definition, which correspond to this node.
      * 
      * @return Return node id.
@@ -39,11 +46,13 @@ public interface HistoryGraphNode {
     public Map<String, Object> getCustomData();
 
     /**
-     * Returns first instance of {@link NodeEnterLog}.
+     * Returns first instance of of log with given type.
      * 
-     * @return Returns first instance of {@link NodeEnterLog} or null.
+     * @return Returns first instance of of log with given type.
      */
-    public NodeEnterLog getNodeEnterLog();
+    public <T extends ProcessLog> T getNodeLog(Class<T> clazz);
+
+    public <T extends ProcessLog> List<T> getNodeLogs(Class<T> clazz);
 
     /**
      * Check if node may accept log instance.
