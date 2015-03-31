@@ -1,6 +1,6 @@
 package ru.runa.wfe.commons.email;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,9 +12,10 @@ import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 
-public class EmailConfig {
-
+public class EmailConfig implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static final Log log = LogFactory.getLog(EmailConfig.class);
 
     public static final String THROW_ERROR_ON_FAILURE = "throwErrorOnFailure";
@@ -26,7 +27,9 @@ public class EmailConfig {
     private final Map<String, String> connectionProperties = new HashMap<String, String>();
     private final Map<String, String> headerProperties = new HashMap<String, String>();
     private final Map<String, String> contentProperties = new HashMap<String, String>();
-    private final List<String> attachments = new ArrayList<String>();
+    private final List<String> attachmentVariableNames = Lists.newArrayList();
+    private final List<Attachment> attachments = Lists.newArrayList();
+    private String messageId;
     private String message;
 
     public Map<String, String> getCommonProperties() {
@@ -45,8 +48,20 @@ public class EmailConfig {
         return contentProperties;
     }
 
-    public List<String> getAttachments() {
+    public List<String> getAttachmentVariableNames() {
+        return attachmentVariableNames;
+    }
+
+    public List<Attachment> getAttachments() {
         return attachments;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 
     public String getMessage() {
@@ -121,7 +136,6 @@ public class EmailConfig {
     }
 
     public static class Attachment {
-
         public boolean inlined;
         public String fileName;
         public byte[] content;

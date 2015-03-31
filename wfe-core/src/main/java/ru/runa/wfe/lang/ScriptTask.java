@@ -29,16 +29,16 @@ public class ScriptTask extends Node {
 
     @Override
     protected void execute(ExecutionContext executionContext) {
+        log.debug("Executing " + this);
         try {
             executionContext.addLog(new ActionLog(this));
             ActionHandler actionHandler = delegation.getInstance();
-            log.debug("Executing " + this);
             actionHandler.execute(executionContext);
-            leave(executionContext);
         } catch (Exception e) {
             log.error("Failed " + this);
             throw Throwables.propagate(e);
         }
+        leave(executionContext);
     }
 
     @Override
