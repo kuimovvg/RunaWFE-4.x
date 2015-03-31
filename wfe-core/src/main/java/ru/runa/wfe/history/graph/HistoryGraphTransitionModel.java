@@ -1,6 +1,7 @@
 package ru.runa.wfe.history.graph;
 
 import ru.runa.wfe.audit.TransitionLog;
+import ru.runa.wfe.lang.Transition;
 
 /**
  * History graph model for transition between nodes.
@@ -19,11 +20,34 @@ public class HistoryGraphTransitionModel {
      * Log instance for current transition.
      */
     private final TransitionLog log;
+    /**
+     * WFE transition model.
+     */
+    private final Transition transition;
 
     public HistoryGraphTransitionModel(HistoryGraphNode fromNode, HistoryGraphNode toNode, TransitionLog log) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.log = log;
+        this.transition = getTransitionModel(fromNode, log);
+    }
+
+    /**
+     * Search transition model for transition log entry.
+     * 
+     * @param node
+     *            History graph node, from which transition moved up.
+     * @param log
+     *            Transition log entry.
+     * @return Returns WFE transition model.
+     */
+    private Transition getTransitionModel(HistoryGraphNode node, TransitionLog log) {
+        for (Transition transition : node.getNode().getLeavingTransitions()) {
+            if (transition.getNodeId().equals(log.getNodeId())) {
+                return transition;
+            }
+        }
+        return null;
     }
 
     /**
@@ -60,5 +84,14 @@ public class HistoryGraphTransitionModel {
      */
     public TransitionLog getLog() {
         return log;
+    }
+
+    /**
+     * Get WFE transition model.
+     * 
+     * @return Returns WFE transition model.
+     */
+    public Transition getTransition() {
+        return transition;
     }
 }

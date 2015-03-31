@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.TransitionLog;
 import ru.runa.wfe.graph.history.ProcessInstanceData;
@@ -99,6 +98,27 @@ public abstract class HistoryGraphBaseNodeModel implements HistoryGraphNode {
         return addTransition((TransitionLog) log);
     }
 
+    @Override
+    public <T extends ProcessLog> T getNodeLog(Class<T> clazz) {
+        for (ProcessLog log : nodeLogs) {
+            if (log.getClass().equals(clazz)) {
+                return (T) log;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public <T extends ProcessLog> List<T> getNodeLogs(Class<T> clazz) {
+        List<T> result = new ArrayList<T>();
+        for (ProcessLog log : nodeLogs) {
+            if (log.getClass().equals(clazz)) {
+                result.add((T) log);
+            }
+        }
+        return result;
+    }
+
     /**
      * Add leaving transition from current node.
      * 
@@ -138,16 +158,6 @@ public abstract class HistoryGraphBaseNodeModel implements HistoryGraphNode {
     }
 
     @Override
-    public NodeEnterLog getNodeEnterLog() {
-        for (ProcessLog log : nodeLogs) {
-            if (log instanceof NodeEnterLog) {
-                return (NodeEnterLog) log;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public List<HistoryGraphTransitionModel> getTransitions() {
         return transitions;
     }
@@ -157,6 +167,7 @@ public abstract class HistoryGraphBaseNodeModel implements HistoryGraphNode {
         return incomingTransitions;
     }
 
+    @Override
     public Node getNode() {
         return node;
     }

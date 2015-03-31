@@ -3,7 +3,6 @@ package ru.runa.wfe.graph.history;
 import java.util.HashMap;
 import java.util.List;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.NodeLog;
 import ru.runa.wfe.audit.ProcessLog;
@@ -153,29 +152,6 @@ public class GraphHistoryBuilderData {
      */
     public List<TaskLog> getTaskLogs() {
         return taskLogs;
-    }
-
-    /**
-     * Returns {@link NodeType} for node. EXCLUSIVE_GATEWAY is replaced with
-     * DECISION and PARALLEL_GATEWAY replaced with FORK or JOIN
-     * 
-     * @param nodeId
-     *            Node id.
-     * @return
-     */
-    public NodeType getNodeType(String nodeId) {
-        Node node = getProcessDefinitionData().getNode(nodeId);
-        if (node == null) {
-            throw new InternalApplicationException("Node model with id " + nodeId + " is not found.");
-        }
-        switch (node.getNodeType()) {
-        case EXCLUSIVE_GATEWAY:
-            return NodeType.DECISION;
-        case PARALLEL_GATEWAY:
-            return node.getLeavingTransitions().size() > 1 ? NodeType.FORK : NodeType.JOIN;
-        default:
-            return node.getNodeType();
-        }
     }
 
     /**

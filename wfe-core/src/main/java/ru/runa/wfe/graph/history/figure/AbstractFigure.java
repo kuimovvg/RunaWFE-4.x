@@ -31,8 +31,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -63,7 +61,6 @@ public abstract class AbstractFigure {
     protected String timerTransitionName;
     protected boolean useEgdingOnly;
 
-    protected Map<String, TransitionFigureBase> transitions = new HashMap<String, TransitionFigureBase>();
     protected RenderHits renderHits;
 
     public void initFigure(NodeModel model, boolean useEgdingOnly) {
@@ -96,18 +93,6 @@ public abstract class AbstractFigure {
 
     public void setRenderHits(RenderHits renderHits) {
         this.renderHits = renderHits;
-    }
-
-    public Map<String, TransitionFigureBase> getTransitions() {
-        return transitions;
-    }
-
-    public void addTransition(String name, TransitionFigureBase transition) {
-        transitions.put(name, transition);
-    }
-
-    public TransitionFigureBase getTransition(String name) {
-        return transitions.get(name);
     }
 
     protected void drawActions(Graphics2D graphics) {
