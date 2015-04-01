@@ -19,6 +19,7 @@ package ru.runa.wfe.definition.logic;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -156,7 +157,9 @@ public class DefinitionLogic extends WFCommonLogic {
                 result.add(new WfDefinition(deployment));
             }
         }
-        return filterIdentifiable(user, result, Permission.READ);
+        result = filterIdentifiable(user, result, Permission.READ);
+        Collections.sort(result);
+        return result;
     }
 
     public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
