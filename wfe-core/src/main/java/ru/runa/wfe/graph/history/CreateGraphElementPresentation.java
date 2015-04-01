@@ -15,8 +15,6 @@ import ru.runa.wfe.audit.TaskCreateLog;
 import ru.runa.wfe.audit.TaskEndLog;
 import ru.runa.wfe.audit.TaskLog;
 import ru.runa.wfe.commons.CalendarUtil;
-import ru.runa.wfe.graph.history.figure.FiguresNodeData;
-import ru.runa.wfe.graph.history.model.NodeModel;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
 import ru.runa.wfe.graph.view.SubprocessGraphElementPresentation;
@@ -28,6 +26,7 @@ import ru.runa.wfe.history.graph.HistoryGraphNode;
 import ru.runa.wfe.history.graph.HistoryGraphNodeVisitor;
 import ru.runa.wfe.history.graph.HistoryGraphParallelNodeModel;
 import ru.runa.wfe.history.graph.HistoryGraphTransitionModel;
+import ru.runa.wfe.history.layout.NodeLayoutData;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.SubProcessState;
 import ru.runa.wfe.lang.SubprocessDefinition;
@@ -69,21 +68,22 @@ public class CreateGraphElementPresentation implements HistoryGraphNodeVisitor<C
             return;
         }
         visited.add(node);
-        addedTooltipOnGraph(node, FiguresNodeData.getOrThrow(node).getNodeModel());
+        addedTooltipOnGraph(node);
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, context);
         }
     }
 
-    private void addedTooltipOnGraph(HistoryGraphNode historyNode, NodeModel nodeModel) {
+    private void addedTooltipOnGraph(HistoryGraphNode historyNode) {
         NodeEnterLog nodeEnterLog = historyNode.getNodeLog(NodeEnterLog.class);
         NodeLeaveLog nodeLeaveLog = historyNode.getNodeLog(NodeLeaveLog.class);
-
         if (nodeEnterLog == null) {
             return;
         }
         GraphElementPresentation presentation;
-        switch (nodeModel.getType()) {
+        NodeType nodeType = historyNode.getNode().getNodeType();
+        NodeLayoutData layoutData = NodeLayoutData.get(historyNode);
+        switch (nodeType) {
         case SUBPROCESS:
             presentation = new SubprocessGraphElementPresentation();
             ((SubprocessGraphElementPresentation) presentation).setSubprocessAccessible(true);
@@ -110,7 +110,7 @@ public class CreateGraphElementPresentation implements HistoryGraphNodeVisitor<C
                 ((SubprocessGraphElementPresentation) presentation).setEmbeddedSubprocessGraphHeight(subprocessDefinition.getGraphConstraints()[3]);
 
                 if (nodeLeaveLog == null) {
-                    presentation.initialize(historyNode.getNode(), nodeModel.getConstraints());
+                    presentation.initialize(historyNode.getNode(), layoutData.getConstraints());
                     presentation.setData("");
                     presentationElements.add(presentation);
                     return;
@@ -144,7 +144,7 @@ public class CreateGraphElementPresentation implements HistoryGraphNodeVisitor<C
             return;
         }
 
-        presentation.initialize(historyNode.getNode(), nodeModel.getConstraints());
+        presentation.initialize(historyNode.getNode(), layoutData.getConstraints());
 
         Calendar startCal = Calendar.getInstance();
         startCal.setTime(nodeEnterLog.getCreateDate());
@@ -155,9 +155,9 @@ public class CreateGraphElementPresentation implements HistoryGraphNodeVisitor<C
         periodCal.setTimeInMillis(period);
         String date = getPeriodDateString(startCal, endCal);
 
-        if (nodeModel.getType().equals(NodeType.SUBPROCESS) || nodeModel.getType().equals(NodeType.MULTI_SUBPROCESS)) {
+        if (nodeType.equals(NodeType.SUBPROCESS) || nodeType.equals(NodeType.MULTI_SUBPROCESS)) {
             presentation.setData("Time period is " + date);
-        } else if (nodeModel.getType().equals(NodeType.TASK_STATE)) {
+        } else if (nodeType.equals(NodeType.TASK_STATE)) {
             StringBuffer str = new StringBuffer();
 
             TaskCreateLog taskCreateLog = null;

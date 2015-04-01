@@ -12,7 +12,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.history.GraphImage.RenderHits;
 import ru.runa.wfe.graph.history.figure.AbstractFigure;
 import ru.runa.wfe.graph.history.figure.FiguresNodeData;
 import ru.runa.wfe.graph.history.figure.FiguresNodeData.TransitionFigureData;

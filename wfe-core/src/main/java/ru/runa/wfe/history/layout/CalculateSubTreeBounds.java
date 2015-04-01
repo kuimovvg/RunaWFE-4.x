@@ -43,26 +43,22 @@ public class CalculateSubTreeBounds implements HistoryGraphNodeVisitor<Object> {
     @Override
     public void onForkNode(HistoryGraphForkNodeModel node, Object o) {
         NodeLayoutData data = NodeLayoutData.get(node);
-        if (!data.widthHeightCalulationRequired()) {
+        if (!data.subtreeCalulationRequired()) {
             return;
         }
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             forkStack.push(node);
             transition.getToNode().processBy(this, o);
-        }
-        int height = 0;
-        for (HistoryGraphTransitionModel transition : node.getTransitions()) {
-            if (height < NodeLayoutData.get(transition.getToNode()).getSubtreeHeight()) {
-                height = NodeLayoutData.get(transition.getToNode()).getSubtreeHeight();
+            if (forkStack.peek() == node) {
+                forkStack.pop();
             }
         }
-        data.setSubtreeHeight(height + HistoryGraphLayoutProperties.maxNodeHeight);
-        int prefferedWidth = 0;
+        data.setSubtreeHeight(getSubtreeHeight(node) + HistoryGraphLayoutProperties.maxCellHeight);
+        int width = 0;
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
-            prefferedWidth += getSubtreeWidthForParent(transition.getToNode());
+            width += getSubtreeWidthForParent(transition.getToNode());
         }
-        data.setPreferredWidth(prefferedWidth - HistoryGraphLayoutProperties.widthBetweenNodes);
-        int width = data.getPreferredWidth() + HistoryGraphLayoutProperties.widthBetweenNodes;
+        data.setPreferredWidth(width - HistoryGraphLayoutProperties.widthBetweenNodes);
         HistoryGraphJoinNodeModel join = forkToJoin.get(node);
         if (join != null && NodeLayoutData.get(join).getSubtreeWidth() > width) {
             width = NodeLayoutData.get(join).getSubtreeWidth();
@@ -72,6 +68,8 @@ public class CalculateSubTreeBounds implements HistoryGraphNodeVisitor<Object> {
             NodeLayoutData.get(join).setSubtreeWidth(width);
             NodeLayoutData.get(join).setPreferredWidth(data.getPreferredWidth());
         }
+        data.setHeight(HistoryGraphLayoutProperties.joinHeight);
+        data.setWidth(0);
     }
 
     @Override
@@ -79,42 +77,35 @@ public class CalculateSubTreeBounds implements HistoryGraphNodeVisitor<Object> {
         if (forkStack.peek() == null) {
             throw new InternalApplicationException("Graph build error: fork is not registered; join registration failed");
         }
-        HistoryGraphForkNodeModel forkNodeModel = forkStack.pop();
-        forkToJoin.put(forkNodeModel, node);
+        forkToJoin.put(forkStack.pop(), node);
         NodeLayoutData data = NodeLayoutData.get(node);
-        if (!data.widthHeightCalulationRequired()) {
+        if (!data.subtreeCalulationRequired()) {
             return;
         }
         HistoryGraphTransitionModel transition = node.getTransitions().size() == 0 ? null : node.getTransitions().get(0);
         if (transition != null) {
             transition.getToNode().processBy(this, o);
         }
-        int height = transition == null ? 0 : NodeLayoutData.get(transition.getToNode()).getSubtreeHeight();
         NodeModel nodeModel = diagramModel.getNodeNotNull(node.getNode().getNodeId());
-        data.setSubtreeHeight(height + HistoryGraphLayoutProperties.maxNodeHeight);
+        data.setSubtreeHeight(getSubtreeHeight(node) + HistoryGraphLayoutProperties.maxCellHeight);
         int width = transition == null ? nodeModel.getWidth() + HistoryGraphLayoutProperties.widthBetweenNodes : getSubtreeWidthForParent(transition
                 .getToNode());
         data.setSubtreeWidth(width);
-        data.setPreferredWidth(nodeModel.getWidth());
+        data.setHeight(HistoryGraphLayoutProperties.joinHeight);
+        data.setWidth(0);
     }
 
     @Override
     public void onParallelNode(HistoryGraphParallelNodeModel node, Object o) {
         NodeLayoutData data = NodeLayoutData.get(node);
-        if (!data.widthHeightCalulationRequired()) {
+        if (!data.subtreeCalulationRequired()) {
             return;
         }
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, o);
         }
-        int height = 0;
-        for (HistoryGraphTransitionModel transition : node.getTransitions()) {
-            if (height < NodeLayoutData.get(transition.getToNode()).getSubtreeHeight()) {
-                height = NodeLayoutData.get(transition.getToNode()).getSubtreeHeight();
-            }
-        }
         NodeModel nodeModel = diagramModel.getNodeNotNull(node.getNode().getNodeId());
-        data.setSubtreeHeight(height + HistoryGraphLayoutProperties.maxNodeHeight);
+        data.setSubtreeHeight(getSubtreeHeight(node) + HistoryGraphLayoutProperties.maxCellHeight);
         int width = 0;
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             width += getSubtreeWidthForParent(transition.getToNode());
@@ -123,25 +114,45 @@ public class CalculateSubTreeBounds implements HistoryGraphNodeVisitor<Object> {
         int subtreeWidth = width < nodeWidth ? nodeWidth : width;
         data.setSubtreeWidth(subtreeWidth);
         data.setPreferredWidth(subtreeWidth - HistoryGraphLayoutProperties.widthBetweenNodes);
+        data.setHeight(HistoryGraphLayoutProperties.joinHeight);
+        data.setWidth(0);
     }
 
     @Override
     public void onGenericNode(HistoryGraphGenericNodeModel node, Object o) {
         NodeLayoutData data = NodeLayoutData.get(node);
-        if (!data.widthHeightCalulationRequired()) {
+        if (!data.subtreeCalulationRequired()) {
             return;
         }
         HistoryGraphTransitionModel transition = node.getTransitions().size() == 0 ? null : node.getTransitions().get(0);
         if (transition != null) {
             transition.getToNode().processBy(this, o);
         }
-        int height = transition == null ? 0 : NodeLayoutData.get(transition.getToNode()).getSubtreeHeight();
         NodeModel nodeModel = diagramModel.getNodeNotNull(node.getNode().getNodeId());
-        data.setSubtreeHeight(height + HistoryGraphLayoutProperties.maxNodeHeight);
+        data.setSubtreeHeight(getSubtreeHeight(node) + HistoryGraphLayoutProperties.maxCellHeight);
         int treeWidth = transition == null ? 0 : getSubtreeWidthForParent(transition.getToNode());
         int nodeWidth = nodeModel.getWidth() + HistoryGraphLayoutProperties.widthBetweenNodes;
         data.setSubtreeWidth(treeWidth < nodeWidth ? nodeWidth : treeWidth);
         data.setPreferredWidth(nodeModel.getWidth());
+        data.setHeight(nodeModel.getHeight());
+        data.setWidth(nodeModel.getWidth());
+    }
+
+    /**
+     * Calculates max height of node subtrees.
+     * 
+     * @param node
+     *            Node, which subtree height is calculated.
+     * @return Returns max subtree height.
+     */
+    private int getSubtreeHeight(HistoryGraphNode node) {
+        int height = 0;
+        for (HistoryGraphTransitionModel transition : node.getTransitions()) {
+            if (height < NodeLayoutData.get(transition.getToNode()).getSubtreeHeight()) {
+                height = NodeLayoutData.get(transition.getToNode()).getSubtreeHeight();
+            }
+        }
+        return height;
     }
 
     /**

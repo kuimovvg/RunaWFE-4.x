@@ -42,6 +42,9 @@ public class CalculateGraphLayoutContext {
         int xOffset = widthOffset + getSubtreeOffset();
         nodeLayoutData.setX(xOffset + (nodeLayoutData.getSubtreeWidth() - nodeLayoutData.getPreferredWidth()) / 2);
         nodeLayoutData.setY(fullTreeHeight - nodeLayoutData.getSubtreeHeight());
+        nodeLayoutData.setWidth(nodeLayoutData.getPreferredWidth() > 0 ? nodeLayoutData.getPreferredWidth() : nodeLayoutData.getWidth());
+        nodeLayoutData.setHeight(nodeLayoutData.getHeight() > HistoryGraphLayoutProperties.maxNodeHeight ? HistoryGraphLayoutProperties.maxNodeHeight
+                : nodeLayoutData.getHeight());
     }
 
     /**
