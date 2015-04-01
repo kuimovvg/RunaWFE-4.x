@@ -25,6 +25,9 @@ public class CalculateGraphLayout implements HistoryGraphNodeVisitor<CalculateGr
             return;
         }
         context.calculateNodePosition(data);
+        if (data.getHeight() > HistoryGraphLayoutProperties.joinHeight) {
+            data.setHeight(HistoryGraphLayoutProperties.joinHeight);
+        }
         int subtreesOffset = data.getSubtreeWidth();
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             subtreesOffset -= NodeLayoutData.get(transition.getToNode()).getSubtreeWidth();
@@ -46,6 +49,9 @@ public class CalculateGraphLayout implements HistoryGraphNodeVisitor<CalculateGr
         }
         SubtreeOffset storedOffset = context.resetSubtreeOffset();
         context.calculateNodePosition(data);
+        if (data.getHeight() > HistoryGraphLayoutProperties.joinHeight) {
+            data.setHeight(HistoryGraphLayoutProperties.joinHeight);
+        }
         HistoryGraphTransitionModel transition = node.getTransitions().size() == 0 ? null : node.getTransitions().get(0);
         if (transition != null) {
             int widthOffset = context.getWidth();
@@ -64,6 +70,9 @@ public class CalculateGraphLayout implements HistoryGraphNodeVisitor<CalculateGr
             return;
         }
         context.calculateNodePosition(data);
+        if (data.getHeight() > HistoryGraphLayoutProperties.joinHeight) {
+            data.setHeight(HistoryGraphLayoutProperties.joinHeight);
+        }
         int widthOffset = context.getWidth();
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, context.createNew(widthOffset));
