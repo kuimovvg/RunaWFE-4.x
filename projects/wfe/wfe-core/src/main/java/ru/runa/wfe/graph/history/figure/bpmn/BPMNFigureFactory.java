@@ -18,6 +18,7 @@
 package ru.runa.wfe.graph.history.figure.bpmn;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.history.figure.AbstractFigure;
 import ru.runa.wfe.graph.history.figure.AbstractFigureFactory;
 import ru.runa.wfe.graph.history.figure.TransitionFigureBase;
@@ -32,7 +33,7 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
     }
 
     @Override
-    public AbstractFigure createFigure(NodeModel nodeModel, boolean useEgdingOnly) {
+    public AbstractFigure createFigure(NodeModel nodeModel, boolean useEgdingOnly, RenderHits renderHits) {
         AbstractFigure figure = null;
         switch (nodeModel.getType()) {
         case TASK_STATE:
@@ -85,11 +86,15 @@ public class BPMNFigureFactory extends AbstractFigureFactory {
             throw new InternalApplicationException("Unexpected figure type found: " + nodeModel.getType());
         }
         figure.initFigure(nodeModel, useEgdingOnly);
+        figure.setRenderHits(renderHits);
         return figure;
     }
 
     @Override
-    public TransitionFigureBase createTransitionFigure(TransitionModel transitionModel, AbstractFigure figureFrom, AbstractFigure figureTo) {
-        return new TransitionFigureBase();
+    public TransitionFigureBase createTransitionFigure(TransitionModel transitionModel, AbstractFigure figureFrom, AbstractFigure figureTo,
+            RenderHits renderHits) {
+        TransitionFigureBase transitionFigureBase = new TransitionFigureBase();
+        transitionFigureBase.setRenderHits(renderHits);
+        return transitionFigureBase;
     }
 }
