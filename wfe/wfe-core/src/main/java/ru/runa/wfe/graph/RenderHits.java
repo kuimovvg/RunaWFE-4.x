@@ -1,4 +1,4 @@
-package ru.runa.wfe.graph.history;
+package ru.runa.wfe.graph;
 
 import java.awt.Color;
 

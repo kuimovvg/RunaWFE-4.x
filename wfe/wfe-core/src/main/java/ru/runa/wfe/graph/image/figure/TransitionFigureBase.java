@@ -26,7 +26,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.image.GraphImage.RenderHits;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.util.ActionUtils;
 import ru.runa.wfe.graph.image.util.ExtraGraphics;
