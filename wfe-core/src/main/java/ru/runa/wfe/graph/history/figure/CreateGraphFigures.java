@@ -2,8 +2,8 @@ package ru.runa.wfe.graph.history.figure;
 
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.graph.DrawProperties;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.history.GraphImageHelper;
-import ru.runa.wfe.graph.history.RenderHits;
 import ru.runa.wfe.graph.history.figure.uml.UMLFigureFactory;
 import ru.runa.wfe.graph.history.model.BendpointModel;
 import ru.runa.wfe.graph.history.model.DiagramModel;
@@ -133,8 +133,8 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
     }
 
     private void createFigureForNode(HistoryGraphNode node, FiguresNodeData data, NodeModel model) {
-        AbstractFigure nodeFigure = factory.createFigure(model, false);
-        data.setFigureData(nodeFigure, new RenderHits(DrawProperties.getBaseColor()), model);
+        AbstractFigure nodeFigure = factory.createFigure(model, false, new RenderHits(DrawProperties.getBaseColor()));
+        data.setFigureData(nodeFigure, model);
     }
 
     private void createFigureForTransitions(HistoryGraphNode node, FiguresNodeData data, NodeModel model) {
@@ -166,11 +166,12 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
             transitionModel.addBendpoint(bendpointModel);
         }
 
-        TransitionFigureBase figure = factory.createTransitionFigure(transitionModel, fromNodeFigure.getFigure(), toNodeFigure.getFigure());
+        TransitionFigureBase figure = factory.createTransitionFigure(transitionModel, fromNodeFigure.getFigure(), toNodeFigure.getFigure(),
+                new RenderHits(DrawProperties.getTransitionColor()));
         figure.init(transitionModel, fromNodeFigure.getFigure(), toNodeFigure.getFigure());
         if (Objects.equal(fromNodeFigure.getNodeModel().getTimerTransitionName(), transitionModel.getName())) {
             figure.setTimerInfo(GraphImageHelper.getTimerInfo(transition.getFromNode().getNode()));
         }
-        data.addTransition(figure, new RenderHits(DrawProperties.getTransitionColor()));
+        data.addTransition(figure);
     }
 }

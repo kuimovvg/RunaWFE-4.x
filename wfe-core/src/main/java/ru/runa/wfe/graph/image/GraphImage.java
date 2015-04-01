@@ -18,7 +18,6 @@
 package ru.runa.wfe.graph.image;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -34,6 +33,7 @@ import javax.imageio.ImageIO;
 
 import ru.runa.wfe.definition.Language;
 import ru.runa.wfe.graph.DrawProperties;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
 import ru.runa.wfe.lang.ProcessDefinition;
@@ -48,8 +48,7 @@ public class GraphImage {
     private final Map<AbstractFigure, RenderHits> nodes;
     private final boolean useEdgingOnly = DrawProperties.useEdgingOnly();
 
-    public GraphImage(ProcessDefinition processDefinition, Map<TransitionFigureBase, RenderHits> transitions,
-            Map<AbstractFigure, RenderHits> nodes) {
+    public GraphImage(ProcessDefinition processDefinition, Map<TransitionFigureBase, RenderHits> transitions, Map<AbstractFigure, RenderHits> nodes) {
         try {
             origImage = ImageIO.read(new ByteArrayInputStream(processDefinition.getGraphImageBytesNotNull()));
         } catch (IOException e) {
@@ -117,37 +116,5 @@ public class GraphImage {
         graphics.setStroke(stroke);
         graphics.setColor(hits.getColor());
         figure.draw(graphics, false);
-    }
-
-    public static class RenderHits {
-        private final Color color;
-        private final boolean active;
-        private final boolean passed;
-
-        public RenderHits(Color color) {
-            this(color, false, false);
-        }
-
-        public RenderHits(Color color, boolean passed) {
-            this(color, passed, false);
-        }
-
-        public RenderHits(Color color, boolean passed, boolean active) {
-            this.color = color;
-            this.passed = passed;
-            this.active = active;
-        }
-
-        public Color getColor() {
-            return color;
-        }
-
-        public boolean isPassed() {
-            return passed;
-        }
-
-        public boolean isActive() {
-            return active;
-        }
     }
 }

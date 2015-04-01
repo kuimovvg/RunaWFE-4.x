@@ -12,9 +12,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import ru.runa.wfe.graph.DrawProperties;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.history.figure.AbstractFigure;
 import ru.runa.wfe.graph.history.figure.FiguresNodeData;
-import ru.runa.wfe.graph.history.figure.FiguresNodeData.TransitionFigureData;
+import ru.runa.wfe.graph.history.figure.TransitionFigureBase;
 import ru.runa.wfe.graph.history.model.DiagramModel;
 import ru.runa.wfe.history.graph.HistoryGraphForkNodeModel;
 import ru.runa.wfe.history.graph.HistoryGraphGenericNodeModel;
@@ -82,14 +83,13 @@ public class CreateHistoryGraphImage implements HistoryGraphNodeVisitor<CreateHi
     }
 
     private void drawTransitions(FiguresNodeData data) {
-        for (TransitionFigureData transition : data.getTransitions()) {
-            transition.getTransitionFigure().setRenderHits(transition.getRenderHits());
-            transition.getTransitionFigure().draw(graphics, transition.getRenderHits().getColor());
+        for (TransitionFigureBase transition : data.getTransitions()) {
+            transition.draw(graphics, transition.getRenderHits().getColor());
         }
     }
 
     private void drawNode(FiguresNodeData data) {
-        RenderHits hits = data.getRenderHits();
+        RenderHits hits = data.getFigure().getRenderHits();
         int lineWidth = 1;
         if (hits.isActive()) {
             lineWidth *= 2;

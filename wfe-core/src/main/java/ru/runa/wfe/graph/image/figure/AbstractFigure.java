@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.image.GraphImage.RenderHits;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.image.GraphImageHelper;
 import ru.runa.wfe.graph.image.figure.uml.TaskNodeFigure;
 import ru.runa.wfe.graph.image.util.ActionUtils;
@@ -99,7 +99,7 @@ public abstract class AbstractFigure {
     public boolean isHasTimer() {
         return hasTimer;
     }
-    
+
     public void setRenderHits(RenderHits renderHits) {
         this.renderHits = renderHits;
     }

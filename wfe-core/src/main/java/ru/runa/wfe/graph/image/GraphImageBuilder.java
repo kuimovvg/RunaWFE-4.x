@@ -29,7 +29,7 @@ import ru.runa.wfe.definition.Language;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.image.GraphImage.RenderHits;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.AbstractFigureFactory;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;

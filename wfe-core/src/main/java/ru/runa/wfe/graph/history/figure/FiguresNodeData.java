@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.graph.history.RenderHits;
 import ru.runa.wfe.graph.history.model.NodeModel;
 import ru.runa.wfe.history.graph.HistoryGraphNode;
 
@@ -30,13 +29,9 @@ public class FiguresNodeData {
      */
     private AbstractFigure figure;
     /**
-     * Render hits for figure.
-     */
-    private RenderHits renderHits;
-    /**
      * Figures for leaving transition.
      */
-    private final List<TransitionFigureData> transitions = new ArrayList<TransitionFigureData>();
+    private final List<TransitionFigureBase> transitions = new ArrayList<TransitionFigureBase>();
 
     public boolean isFiguresInitializeRequired() {
         boolean initialized = isFiguresInitialized;
@@ -52,18 +47,9 @@ public class FiguresNodeData {
         this.figure = figure;
     }
 
-    public void setFigureData(AbstractFigure figure, RenderHits renderHits, NodeModel nodeModel) {
+    public void setFigureData(AbstractFigure figure, NodeModel nodeModel) {
         this.nodeModel = nodeModel;
         this.figure = figure;
-        this.renderHits = renderHits;
-    }
-
-    public RenderHits getRenderHits() {
-        return renderHits;
-    }
-
-    public void setRenderHits(RenderHits renderHits) {
-        this.renderHits = renderHits;
     }
 
     public NodeModel getNodeModel() {
@@ -74,12 +60,12 @@ public class FiguresNodeData {
         this.nodeModel = nodeModel;
     }
 
-    public List<TransitionFigureData> getTransitions() {
+    public List<TransitionFigureBase> getTransitions() {
         return transitions;
     }
 
-    public void addTransition(TransitionFigureBase transition, RenderHits renderHits) {
-        transitions.add(new TransitionFigureData(transition, renderHits));
+    public void addTransition(TransitionFigureBase transition) {
+        transitions.add(transition);
     }
 
     /**
@@ -112,24 +98,5 @@ public class FiguresNodeData {
             throw new InternalApplicationException("figure data is not available.");
         }
         return data;
-    }
-
-    public final class TransitionFigureData {
-        private final TransitionFigureBase transitionFigure;
-        private final RenderHits renderHits;
-
-        public TransitionFigureData(TransitionFigureBase transitionFigure, RenderHits renderHits) {
-            super();
-            this.transitionFigure = transitionFigure;
-            this.renderHits = renderHits;
-        }
-
-        public TransitionFigureBase getTransitionFigure() {
-            return transitionFigure;
-        }
-
-        public RenderHits getRenderHits() {
-            return renderHits;
-        }
     }
 }

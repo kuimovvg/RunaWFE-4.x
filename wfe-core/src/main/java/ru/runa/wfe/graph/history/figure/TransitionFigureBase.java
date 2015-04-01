@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.history.RenderHits;
+import ru.runa.wfe.graph.RenderHits;
 import ru.runa.wfe.graph.history.model.BendpointModel;
 import ru.runa.wfe.graph.history.model.TransitionModel;
 import ru.runa.wfe.graph.history.util.ActionUtils;
@@ -66,6 +66,10 @@ public class TransitionFigureBase {
 
     public AbstractFigure getFigureTo() {
         return figureTo;
+    }
+
+    public RenderHits getRenderHits() {
+        return renderHits;
     }
 
     public void setRenderHits(RenderHits renderHits) {
