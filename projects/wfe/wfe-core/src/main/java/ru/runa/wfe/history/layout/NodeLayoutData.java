@@ -29,6 +29,14 @@ public class NodeLayoutData {
      */
     private int yPos = 0;
     /**
+     * Node width.
+     */
+    private int width = 0;
+    /**
+     * Node height.
+     */
+    private int height = 0;
+    /**
      * Preferred width for this node.
      */
     private int preferredWidth = 0;
@@ -36,7 +44,7 @@ public class NodeLayoutData {
      * Flag, equals true, if subtree width and height for this node is already
      * calculated; false otherwise.
      */
-    private boolean widthHeightCalulated = false;
+    private boolean subtreeWidthHeightCalulated = false;
     /**
      * Flag, equals true, if position for this node is already calculated; false
      * otherwise.
@@ -47,9 +55,9 @@ public class NodeLayoutData {
      * Flag, equals true, if subtree width and height for this node is already
      * calculated; false otherwise.
      */
-    public boolean widthHeightCalulationRequired() {
-        boolean calculated = widthHeightCalulated;
-        widthHeightCalulated = true;
+    public boolean subtreeCalulationRequired() {
+        boolean calculated = subtreeWidthHeightCalulated;
+        subtreeWidthHeightCalulated = true;
         return !calculated;
     }
 
@@ -120,6 +128,34 @@ public class NodeLayoutData {
     }
 
     /**
+     * Get node width.
+     */
+    public int getWidth() {
+        return width;
+    }
+
+    /**
+     * Set node width.
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    /**
+     * Get node height.
+     */
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * Set node height.
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    /**
      * Get preferred width.
      */
     public int getPreferredWidth() {
@@ -131,6 +167,13 @@ public class NodeLayoutData {
      */
     public void setPreferredWidth(int preferredWidth) {
         this.preferredWidth = preferredWidth;
+    }
+
+    /**
+     * Returns array with graph element constraints.
+     */
+    public int[] getConstraints() {
+        return new int[] { xPos, yPos, xPos + width, yPos + height };
     }
 
     /**

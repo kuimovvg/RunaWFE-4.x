@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.history.GraphImage.RenderHits;
+import ru.runa.wfe.graph.history.RenderHits;
 import ru.runa.wfe.graph.history.figure.uml.TaskNodeFigure;
 import ru.runa.wfe.graph.history.model.NodeModel;
 import ru.runa.wfe.graph.history.util.ActionUtils;

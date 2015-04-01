@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.graph.history.GraphImage.RenderHits;
+import ru.runa.wfe.graph.history.RenderHits;
 import ru.runa.wfe.graph.history.model.NodeModel;
 import ru.runa.wfe.history.graph.HistoryGraphNode;
 

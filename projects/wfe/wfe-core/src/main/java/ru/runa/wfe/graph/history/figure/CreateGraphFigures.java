@@ -2,8 +2,8 @@ package ru.runa.wfe.graph.history.figure;
 
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.graph.DrawProperties;
-import ru.runa.wfe.graph.history.GraphImage.RenderHits;
 import ru.runa.wfe.graph.history.GraphImageHelper;
+import ru.runa.wfe.graph.history.RenderHits;
 import ru.runa.wfe.graph.history.figure.uml.UMLFigureFactory;
 import ru.runa.wfe.graph.history.model.BendpointModel;
 import ru.runa.wfe.graph.history.model.DiagramModel;
@@ -42,9 +42,6 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
             return;
         }
         NodeModel model = createCommonModel(node);
-        if (model.getHeight() > 4) {
-            model.setHeight(4);
-        }
         createFigureForNode(node, data, model);
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, context);
@@ -59,9 +56,6 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
             return;
         }
         NodeModel model = createCommonModel(node);
-        if (model.getHeight() > 4) {
-            model.setHeight(4);
-        }
         createFigureForNode(node, data, model);
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, context);
@@ -76,9 +70,6 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
             return;
         }
         NodeModel model = createCommonModel(node);
-        if (model.getHeight() > 4) {
-            model.setHeight(4);
-        }
         createFigureForNode(node, data, model);
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, context);
@@ -101,33 +92,21 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
     }
 
     private NodeModel createCommonModel(HistoryGraphNode historyNode) {
+        NodeLayoutData nodeLayoutData = NodeLayoutData.get(historyNode);
         NodeModel nodeModelForClone = diagramModel.getNodeNotNull(historyNode.getNodeId());
         NodeModel nodeModel = new NodeModel();
+        GraphImageHelper.initNodeModel(historyNode.getNode(), nodeModel);
         nodeModel.setNodeId(nodeModelForClone.getNodeId());
         nodeModel.setMinimizedView(nodeModelForClone.isMinimizedView());
         nodeModel.setTimerTransitionName(nodeModelForClone.getTimerTransitionName());
         nodeModel.setAsync(nodeModelForClone.isAsync());
         nodeModel.setSwimlane(nodeModelForClone.getSwimlane());
-        nodeModel.setWidth(nodeModelForClone.getWidth());
-        nodeModel.setHeight(nodeModelForClone.getHeight());
-        for (TransitionModel transitionModelForClone : nodeModelForClone.getTransitions().values()) {
-            TransitionModel transitionModel = new TransitionModel();
-            transitionModel.setName(transitionModelForClone.getName());
-            transitionModel.setActionsCount(transitionModelForClone.getActionsCount());
-            transitionModel.setNodeFrom(transitionModelForClone.getNodeFrom());
-            transitionModel.setNodeTo(transitionModelForClone.getNodeTo());
-            nodeModel.addTransition(transitionModel);
-        }
-
+        nodeModel.setX(nodeLayoutData.getX());
+        nodeModel.setY(nodeLayoutData.getY());
+        nodeModel.setWidth(nodeLayoutData.getWidth());
+        nodeModel.setHeight(nodeLayoutData.getHeight());
         if (diagramModel.isShowActions()) {
             nodeModel.setActionsCount(GraphImageHelper.getNodeActionsCount(historyNode.getNode()));
-        }
-        GraphImageHelper.initNodeModel(historyNode.getNode(), nodeModel);
-
-        nodeModel.setX(NodeLayoutData.get(historyNode).getX());
-        nodeModel.setY(NodeLayoutData.get(historyNode).getY());
-        if (NodeLayoutData.get(historyNode).getPreferredWidth() > 0) {
-            nodeModel.setWidth(NodeLayoutData.get(historyNode).getPreferredWidth());
         }
         nodeModel.setType(getNodeType(historyNode));
         return nodeModel;
@@ -165,15 +144,15 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
     }
 
     private void createTransitionFigure(HistoryGraphTransitionModel transition, FiguresNodeData data) {
+        FiguresNodeData fromNodeFigure = FiguresNodeData.getOrThrow(transition.getFromNode());
+        FiguresNodeData toNodeFigure = FiguresNodeData.getOrThrow(transition.getToNode());
         TransitionModel transitionModel = new TransitionModel();
         transitionModel.setName(CalendarUtil.formatDateTime(transition.getLog().getCreateDate()));
-        transitionModel.setNodeFrom(FiguresNodeData.getOrThrow(transition.getFromNode()).getNodeModel());
-        transitionModel.setNodeTo(FiguresNodeData.getOrThrow(transition.getToNode()).getNodeModel());
+        transitionModel.setNodeFrom(fromNodeFigure.getNodeModel());
+        transitionModel.setNodeTo(toNodeFigure.getNodeModel());
         if (diagramModel.isShowActions()) {
             transitionModel.setActionsCount(GraphImageHelper.getTransitionActionsCount(transition.getTransition()));
         }
-        FiguresNodeData fromNodeFigure = FiguresNodeData.getOrThrow(transition.getFromNode());
-        FiguresNodeData toNodeFigure = FiguresNodeData.getOrThrow(transition.getToNode());
         if (getNodeType(transition.getFromNode()) == NodeType.FORK) {
             BendpointModel bendpointModel = new BendpointModel();
             bendpointModel.setX(toNodeFigure.getFigure().getCoords()[0] + toNodeFigure.getFigure().getCoords()[2] / 2);
