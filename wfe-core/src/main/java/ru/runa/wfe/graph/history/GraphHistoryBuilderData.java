@@ -73,7 +73,7 @@ public class GraphHistoryBuilderData {
         for (Executor executor : executors) {
             this.executors.put(executor.getName(), executor);
         }
-        embeddedLogsParser = new EmbeddedSubprocessLogsData(fullProcessLogs, transitions, getProcessDefinitionData());
+        embeddedLogsParser = new EmbeddedSubprocessLogsData(fullProcessLogs, transitions, getProcessInstanceData());
         processLogs = prepareLogs(fullProcessLogs, subProcessId);
     }
 
@@ -111,7 +111,7 @@ public class GraphHistoryBuilderData {
      * @return Returns {@link Node} or null, if node is not found.
      */
     public Node getNode(String nodeId) {
-        return getProcessDefinitionData().getNode(nodeId);
+        return getProcessInstanceData().getNode(nodeId);
     }
 
     /**
@@ -162,7 +162,7 @@ public class GraphHistoryBuilderData {
      * @return Returns subprocess definition.
      */
     public SubprocessDefinition getEmbeddedSubprocess(String subProcessName) {
-        return getProcessDefinitionData().getEmbeddedSubprocess(subProcessName);
+        return getProcessInstanceData().getEmbeddedSubprocess(subProcessName);
     }
 
     /**
@@ -179,7 +179,7 @@ public class GraphHistoryBuilderData {
         return transitions.findNextTransitionLog(log, nodeId);
     }
 
-    public ProcessInstanceData getProcessDefinitionData() {
+    public ProcessInstanceData getProcessInstanceData() {
         return processInstanceData;
     }
 }

@@ -39,6 +39,9 @@ import ru.runa.wfe.user.Executor;
  */
 public class GraphHistoryBuilder {
 
+    /**
+     * Data, required to build process history graph.
+     */
     private final GraphHistoryBuilderData data;
 
     public GraphHistoryBuilder(List<Executor> executors, Process processInstance, ProcessDefinition processDefinition,
@@ -52,12 +55,12 @@ public class GraphHistoryBuilder {
      * @return Returns image bytes.
      */
     public byte[] createDiagram() throws Exception {
-        HistoryGraphNode root = BuildHistoryGraph();
-        int height = NodeLayoutData.get(root).getSubtreeHeight();
-        int width = NodeLayoutData.get(root).getSubtreeWidth();
-        root.processBy(new CreateGraphFigures(data.getProcessDefinitionData()), new CreateGraphFiguresContext());
-        CreateHistoryGraphImage createImageOperation = new CreateHistoryGraphImage(data.getProcessDefinitionData(), height, width);
-        root.processBy(createImageOperation, new CreateHistoryGraphImageContext());
+        HistoryGraphNode historyGraph = BuildHistoryGraph();
+        int height = NodeLayoutData.get(historyGraph).getSubtreeHeight();
+        int width = NodeLayoutData.get(historyGraph).getSubtreeWidth();
+        historyGraph.processBy(new CreateGraphFigures(), new CreateGraphFiguresContext());
+        CreateHistoryGraphImage createImageOperation = new CreateHistoryGraphImage(height, width);
+        historyGraph.processBy(createImageOperation, new CreateHistoryGraphImageContext());
         return createImageOperation.getImageBytes();
     }
 
@@ -67,9 +70,9 @@ public class GraphHistoryBuilder {
      * @return Returns list of tooltips for history graph.
      */
     public List<GraphElementPresentation> getPresentations() throws Exception {
-        HistoryGraphNode root = BuildHistoryGraph();
+        HistoryGraphNode historyGraph = BuildHistoryGraph();
         CreateGraphElementPresentation createPresentationOperation = new CreateGraphElementPresentation(data);
-        root.processBy(createPresentationOperation, new CreateGraphElementPresentationContext());
+        historyGraph.processBy(createPresentationOperation, new CreateGraphElementPresentationContext());
         return createPresentationOperation.getPresentationElements();
     }
 
@@ -80,11 +83,11 @@ public class GraphHistoryBuilder {
      * @return Return created history graph.
      */
     private HistoryGraphNode BuildHistoryGraph() {
-        HistoryGraphNode root = HistoryGraphBuilder.buildHistoryGraph(data.getProcessLogs(), data.getProcessDefinitionData());
-        root.processBy(new CalculateSubTreeBounds(data.getProcessDefinitionData()), null);
-        root.processBy(new PushWidthDown(), -1);
-        root.processBy(new TransitionOrderer(), new TransitionOrdererContext());
-        root.processBy(new CalculateGraphLayout(), new CalculateGraphLayoutContext(NodeLayoutData.get(root).getSubtreeHeight()));
-        return root;
+        HistoryGraphNode historyGraph = HistoryGraphBuilder.buildHistoryGraph(data.getProcessLogs(), data.getProcessInstanceData());
+        historyGraph.processBy(new CalculateSubTreeBounds(data.getProcessInstanceData()), null);
+        historyGraph.processBy(new PushWidthDown(), -1);
+        historyGraph.processBy(new TransitionOrderer(), new TransitionOrdererContext());
+        historyGraph.processBy(new CalculateGraphLayout(), new CalculateGraphLayoutContext(NodeLayoutData.get(historyGraph).getSubtreeHeight()));
+        return historyGraph;
     }
 }
