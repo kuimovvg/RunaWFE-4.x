@@ -89,6 +89,10 @@ public class TransitionFigureBase {
         return figureTo;
     }
 
+    public RenderHits getRenderHits() {
+        return renderHits;
+    }
+
     public void setRenderHits(RenderHits renderHits) {
         this.renderHits = renderHits;
     }

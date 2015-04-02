@@ -58,8 +58,10 @@ import ru.runa.wfe.lang.Transition;
 public abstract class AbstractFigure {
     private final static Log log = LogFactory.getLog(AbstractFigure.class);
 
-    protected Node node;
+    protected String nodeName;
     protected int[] coords;
+    protected NodeType nodeType;
+
     protected String swimlane;
     protected int actionsCount;
     protected boolean async;
@@ -71,7 +73,8 @@ public abstract class AbstractFigure {
     protected RenderHits renderHits;
 
     public void initFigure(Node node, boolean useEgdingOnly) {
-        this.node = node;
+        this.nodeName = node.getName();
+        this.nodeType = node.getNodeType();
         this.coords = node.getGraphConstraints();
         this.hasTimer = node.getTimerActions(false).size() > 0;
         if (node.getProcessDefinition().isGraphActionsEnabled()) {
@@ -89,19 +92,31 @@ public abstract class AbstractFigure {
     }
 
     public String getName() {
-        return node.getName();
+        return nodeName;
     }
 
     public NodeType getType() {
-        return node.getNodeType();
+        return nodeType;
+    }
+
+    public void setType(NodeType nodeType) {
+        this.nodeType = nodeType;
     }
 
     public boolean isHasTimer() {
         return hasTimer;
     }
 
+    public RenderHits getRenderHits() {
+        return renderHits;
+    }
+
     public void setRenderHits(RenderHits renderHits) {
         this.renderHits = renderHits;
+    }
+
+    public int[] getCoords() {
+        return coords;
     }
 
     public void addTransition(TransitionFigureBase transitionFigure) {
