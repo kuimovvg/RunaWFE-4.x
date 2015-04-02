@@ -17,11 +17,13 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
+import ru.runa.gpd.util.FontsUtils;
+
 import com.google.common.collect.Lists;
 
 // from https://code.google.com/p/swtsplitbutton/
 public class DropDownButton extends Button {
-    private final static String EMPTY_SPACE = " "; // FontsUtils.getSpaceByWidth(21);
+    private final static String EMPTY_SPACE = FontsUtils.getSpaceByWidth(21);
     private final static Color COLOR_WIDGET_NORMAL_SHADOW = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
     private final static Color COLOR_WIDGET_HIGHLIGHT_SHADOW = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW);
     private final static Color COLOR__BLACK = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
