@@ -15,6 +15,7 @@ import ru.runa.wfe.audit.Severity;
 import ru.runa.wfe.audit.TransitionLog;
 import ru.runa.wfe.commons.dao.GenericDAO;
 import ru.runa.wfe.execution.Process;
+import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.lang.Transition;
@@ -172,9 +173,9 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
         return getHibernateTemplate().find("from NodeEnterLog where processId=? and nodeId=?", process.getId(), nodeId).size() > 0;
     }
 
-    public void addLog(ProcessLog processLog, Process process) {
+    public void addLog(ProcessLog processLog, Process process, Token token) {
         processLog.setProcessId(process.getId());
-        processLog.setTokenId(process.getRootToken().getId());
+        processLog.setTokenId(token == null ? process.getRootToken().getId() : token.getId());
         if (processLog.getNodeId() == null) {
             processLog.setNodeId(process.getRootToken().getNodeId());
         }
