@@ -21,9 +21,6 @@ import java.util.List;
 
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.execution.Process;
-import ru.runa.wfe.graph.history.figure.CreateGraphFigures;
-import ru.runa.wfe.graph.history.figure.CreateGraphFiguresContext;
-import ru.runa.wfe.graph.history.model.DiagramModel;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.history.graph.HistoryGraphBuilder;
 import ru.runa.wfe.history.graph.HistoryGraphNode;
@@ -42,14 +39,11 @@ import ru.runa.wfe.user.Executor;
  */
 public class GraphHistoryBuilder {
 
-    private final DiagramModel diagramModel;
     private final GraphHistoryBuilderData data;
 
     public GraphHistoryBuilder(List<Executor> executors, Process processInstance, ProcessDefinition processDefinition,
             List<ProcessLog> fullProcessLogs, String subProcessId) {
         this.data = new GraphHistoryBuilderData(executors, processInstance, processDefinition, fullProcessLogs, subProcessId);
-        diagramModel = (subProcessId != null && !"null".equals(subProcessId)) ? DiagramModel.load(processDefinition
-                .getEmbeddedSubprocessByIdNotNull(subProcessId)) : DiagramModel.load(processDefinition);
     }
 
     /**
@@ -59,8 +53,10 @@ public class GraphHistoryBuilder {
      */
     public byte[] createDiagram() throws Exception {
         HistoryGraphNode root = BuildHistoryGraph();
-        root.processBy(new CreateGraphFigures(diagramModel), new CreateGraphFiguresContext());
-        CreateHistoryGraphImage createImageOperation = new CreateHistoryGraphImage(diagramModel);
+        int height = NodeLayoutData.get(root).getSubtreeHeight();
+        int width = NodeLayoutData.get(root).getSubtreeWidth();
+        root.processBy(new CreateGraphFigures(data.getProcessDefinitionData()), new CreateGraphFiguresContext());
+        CreateHistoryGraphImage createImageOperation = new CreateHistoryGraphImage(data.getProcessDefinitionData(), height, width);
         root.processBy(createImageOperation, new CreateHistoryGraphImageContext());
         return createImageOperation.getImageBytes();
     }
@@ -85,12 +81,10 @@ public class GraphHistoryBuilder {
      */
     private HistoryGraphNode BuildHistoryGraph() {
         HistoryGraphNode root = HistoryGraphBuilder.buildHistoryGraph(data.getProcessLogs(), data.getProcessDefinitionData());
-        root.processBy(new CalculateSubTreeBounds(diagramModel), null);
+        root.processBy(new CalculateSubTreeBounds(data.getProcessDefinitionData()), null);
         root.processBy(new PushWidthDown(), -1);
         root.processBy(new TransitionOrderer(), new TransitionOrdererContext());
         root.processBy(new CalculateGraphLayout(), new CalculateGraphLayoutContext(NodeLayoutData.get(root).getSubtreeHeight()));
-        diagramModel.setHeight(NodeLayoutData.get(root).getSubtreeHeight());
-        diagramModel.setWidth(NodeLayoutData.get(root).getSubtreeWidth());
         return root;
     }
 }

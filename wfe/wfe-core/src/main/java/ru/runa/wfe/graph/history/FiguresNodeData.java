@@ -1,11 +1,13 @@
-package ru.runa.wfe.graph.history.figure;
+package ru.runa.wfe.graph.history;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.graph.history.model.NodeModel;
+import ru.runa.wfe.graph.image.figure.AbstractFigure;
+import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
 import ru.runa.wfe.history.graph.HistoryGraphNode;
+import ru.runa.wfe.lang.Node;
 
 /**
  * Node custom data with figures, requires to paint history graph.
@@ -23,7 +25,7 @@ public class FiguresNodeData {
     /**
      * Model for figure at this node.
      */
-    private NodeModel nodeModel;
+    private Node nodeModel;
     /**
      * Figure to draw this node.
      */
@@ -47,16 +49,16 @@ public class FiguresNodeData {
         this.figure = figure;
     }
 
-    public void setFigureData(AbstractFigure figure, NodeModel nodeModel) {
+    public void setFigureData(AbstractFigure figure, Node nodeModel) {
         this.nodeModel = nodeModel;
         this.figure = figure;
     }
 
-    public NodeModel getNodeModel() {
+    public Node getNodeModel() {
         return nodeModel;
     }
 
-    public void setNodeModel(NodeModel nodeModel) {
+    public void setNodeModel(Node nodeModel) {
         this.nodeModel = nodeModel;
     }
 

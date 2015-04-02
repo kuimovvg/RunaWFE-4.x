@@ -43,7 +43,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class GraphElement implements Serializable {
+public abstract class GraphElement implements Serializable, Cloneable {
     private static final long serialVersionUID = 1L;
     protected static final Log log = LogFactory.getLog("wfelang");
 
@@ -97,6 +97,22 @@ public abstract class GraphElement implements Serializable {
 
     public void setGraphConstraints(int x, int y, int width, int height) {
         this.graphConstraints = new int[] { x, y, width, height };
+    }
+
+    public int getGraphX() {
+        return graphConstraints[0];
+    }
+
+    public int getGraphY() {
+        return graphConstraints[1];
+    }
+
+    public int getGraphWidth() {
+        return graphConstraints[2];
+    }
+
+    public int getGraphHeight() {
+        return graphConstraints[3];
     }
 
     /**
@@ -177,8 +193,14 @@ public abstract class GraphElement implements Serializable {
     }
 
     @Override
+    public GraphElement clone() throws CloneNotSupportedException {
+        GraphElement clone = (GraphElement) super.clone();
+        clone.graphConstraints = graphConstraints == null ? null : graphConstraints.clone();
+        return clone;
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("id", getNodeId()).add("name", getName()).toString();
     }
-
 }
