@@ -295,7 +295,7 @@ public class ExecutionLogic extends WFCommonLogic {
         Deployment nextDeployment = deploymentDAO.findDeployment(deployment.getName(), deployment.getVersion() + 1);
         process.setDeployment(nextDeployment);
         processDAO.update(process);
-        processLogDAO.addLog(new AdminActionLog(user.getActor(), AdminActionLog.ACTION_UPGRADE_PROCESS_TO_NEXT_VERSION), process);
+        processLogDAO.addLog(new AdminActionLog(user.getActor(), AdminActionLog.ACTION_UPGRADE_PROCESS_TO_NEXT_VERSION), process, null);
     }
 
 }

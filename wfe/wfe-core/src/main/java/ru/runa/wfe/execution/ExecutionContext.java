@@ -233,7 +233,7 @@ public class ExecutionContext {
     }
 
     public void addLog(ProcessLog processLog) {
-        processLogDAO.addLog(processLog, getProcess());
+        processLogDAO.addLog(processLog, getProcess(), token);
     }
 
     @Override
