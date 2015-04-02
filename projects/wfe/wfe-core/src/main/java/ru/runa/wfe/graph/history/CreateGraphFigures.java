@@ -1,5 +1,6 @@
 package ru.runa.wfe.graph.history;
 
+import java.awt.Color;
 import java.util.List;
 
 import ru.runa.wfe.InternalApplicationException;
@@ -29,12 +30,10 @@ import ru.runa.wfe.lang.Transition;
  */
 public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFiguresContext> {
 
-    private final ProcessInstanceData processData;
     private final AbstractFigureFactory factory = new UMLFigureFactory();
 
-    public CreateGraphFigures(ProcessInstanceData processData) {
+    public CreateGraphFigures() {
         super();
-        this.processData = processData;
     }
 
     @Override
@@ -127,7 +126,10 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
     private void createFigureForNode(HistoryGraphNode node, FiguresNodeData data, Node model) {
         model.setGraphMinimazedView(false);
         AbstractFigure nodeFigure = factory.createFigure(model, false);
-        nodeFigure.setRenderHits(new RenderHits(DrawProperties.getBaseColor()));
+        boolean hasOutTransition = !node.getTransitions().isEmpty();
+        Color color = hasOutTransition ? DrawProperties.getHighlightColor() : DrawProperties.getBaseColor();
+        RenderHits renderHits = new RenderHits(color, hasOutTransition, !hasOutTransition);
+        nodeFigure.setRenderHits(renderHits);
         nodeFigure.setType(getNodeType(node));
         data.setFigureData(nodeFigure, model);
     }
