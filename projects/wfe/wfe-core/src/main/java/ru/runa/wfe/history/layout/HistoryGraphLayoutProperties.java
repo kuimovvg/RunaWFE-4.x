@@ -6,10 +6,10 @@ package ru.runa.wfe.history.layout;
 public class HistoryGraphLayoutProperties {
 
     /**
-     * Maximum node height + height between nodes. If node exceed this height, it will overlaps with
-     * other nodes.
+     * Node height + height between nodes. If node exceed this height, it will
+     * overlaps with other nodes.
      */
-    public static final int maxCellHeight = 150;
+    public static final int cellHeight = 150;
 
     /**
      * Maximum node height. If node exceed this height, it will overlaps with
@@ -21,6 +21,11 @@ public class HistoryGraphLayoutProperties {
      * Width between 2 nodes.
      */
     public static final int widthBetweenNodes = 20;
+
+    /**
+     * Minimal node width.
+     */
+    public static final int minNodeWidth = 100;
 
     /**
      * Height for join element.

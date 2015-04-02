@@ -1,4 +1,4 @@
-package ru.runa.wfe.graph.history.figure;
+package ru.runa.wfe.graph.history;
 
 public class CreateGraphFiguresContext {
 

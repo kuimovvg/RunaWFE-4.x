@@ -35,12 +35,14 @@ public class UMLFigureFactory extends AbstractFigureFactory {
         case MULTI_TASK_STATE:
             figure = new MultiTaskNodeFigure();
             break;
+        case EXCLUSIVE_GATEWAY:
         case DECISION:
             figure = new DecisionFigure();
             break;
         case MERGE:
             figure = new ConjunctionFigure();
             break;
+        case PARALLEL_GATEWAY:
         case FORK:
         case JOIN:
             figure = new ForkJoinFigure();

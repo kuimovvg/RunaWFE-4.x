@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.lang.Node;
@@ -73,6 +74,14 @@ public class ProcessInstanceData {
 
     public Node getNode(String nodeId) {
         return processDefinitionNodes.get(nodeId);
+    }
+
+    public Node getNodeNotNull(String nodeId) {
+        Node node = processDefinitionNodes.get(nodeId);
+        if (node == null) {
+            throw new InternalApplicationException("node with id " + nodeId + " is not found");
+        }
+        return node;
     }
 
     public SubprocessDefinition getEmbeddedSubprocess(String subProcessName) {

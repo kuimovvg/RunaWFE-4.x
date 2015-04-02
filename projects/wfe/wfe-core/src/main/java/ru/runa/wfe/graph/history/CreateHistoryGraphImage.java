@@ -13,10 +13,8 @@ import javax.imageio.ImageIO;
 
 import ru.runa.wfe.graph.DrawProperties;
 import ru.runa.wfe.graph.RenderHits;
-import ru.runa.wfe.graph.history.figure.AbstractFigure;
-import ru.runa.wfe.graph.history.figure.FiguresNodeData;
-import ru.runa.wfe.graph.history.figure.TransitionFigureBase;
-import ru.runa.wfe.graph.history.model.DiagramModel;
+import ru.runa.wfe.graph.image.figure.AbstractFigure;
+import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
 import ru.runa.wfe.history.graph.HistoryGraphForkNodeModel;
 import ru.runa.wfe.history.graph.HistoryGraphGenericNodeModel;
 import ru.runa.wfe.history.graph.HistoryGraphJoinNodeModel;
@@ -31,18 +29,18 @@ import ru.runa.wfe.history.graph.HistoryGraphTransitionModel;
 public class CreateHistoryGraphImage implements HistoryGraphNodeVisitor<CreateHistoryGraphImageContext> {
 
     private static final String FORMAT = "png";
-    private final DiagramModel diagramModel;
+    private final ProcessInstanceData processData;
     private final BufferedImage resultImage;
     private final Graphics2D graphics;
 
-    public CreateHistoryGraphImage(DiagramModel diagramModel) {
+    public CreateHistoryGraphImage(ProcessInstanceData processData, int maxHeight, int maxWidth) {
         super();
-        this.diagramModel = diagramModel;
-        resultImage = new BufferedImage(diagramModel.getWidth(), diagramModel.getHeight(), BufferedImage.TYPE_INT_RGB);
+        this.processData = processData;
+        resultImage = new BufferedImage(maxWidth, maxHeight, BufferedImage.TYPE_INT_RGB);
         graphics = resultImage.createGraphics();
         graphics.setFont(new Font(DrawProperties.getFontFamily(), Font.PLAIN, DrawProperties.getFontSize()));
         graphics.setColor(DrawProperties.getBackgroundColor());
-        graphics.fillRect(0, 0, diagramModel.getWidth(), diagramModel.getHeight());
+        graphics.fillRect(0, 0, maxWidth, maxHeight);
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
     }
@@ -75,11 +73,11 @@ public class CreateHistoryGraphImage implements HistoryGraphNodeVisitor<CreateHi
 
     private void commonProcessNode(HistoryGraphNode node, CreateHistoryGraphImageContext context) {
         FiguresNodeData data = FiguresNodeData.getOrThrow(node);
-        drawNode(data);
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, context);
         }
         drawTransitions(data);
+        drawNode(data);
     }
 
     private void drawTransitions(FiguresNodeData data) {
@@ -94,9 +92,9 @@ public class CreateHistoryGraphImage implements HistoryGraphNodeVisitor<CreateHi
         if (hits.isActive()) {
             lineWidth *= 2;
         }
-        if (!diagramModel.isUmlNotation()) {
-            lineWidth *= 2;
-        }
+        /*
+         * if (!diagramModel.isUmlNotation()) { lineWidth *= 2; }
+         */
         data.getFigure().setRenderHits(hits);
         drawAbstractFigure(graphics, data.getFigure(), hits, new BasicStroke(lineWidth));
     }

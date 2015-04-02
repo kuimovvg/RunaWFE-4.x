@@ -21,6 +21,7 @@
  */
 package ru.runa.wfe.lang;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ru.runa.wfe.audit.TransitionLog;
@@ -95,4 +96,10 @@ public class Transition extends GraphElement {
         to.enter(executionContext);
     }
 
+    @Override
+    public Transition clone() throws CloneNotSupportedException {
+        Transition clone = (Transition) super.clone();
+        clone.bendpoints = new ArrayList<Bendpoint>(bendpoints);
+        return clone;
+    }
 }
