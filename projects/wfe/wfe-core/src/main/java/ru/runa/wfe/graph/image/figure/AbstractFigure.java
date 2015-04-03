@@ -81,7 +81,7 @@ public abstract class AbstractFigure {
             this.actionsCount = GraphImageHelper.getNodeActionsCount(node);
         }
         this.async = (node instanceof Synchronizable && ((Synchronizable) node).isAsync());
-        this.minimized = node.isGraphMinimazedView();
+        this.minimized = node.isGraphMinimizedView();
         if (node instanceof InteractionNode && ((InteractionNode) node).getTasks().size() > 0) {
             TaskDefinition taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
             if (taskDefinition.getSwimlane() != null) {
@@ -117,6 +117,22 @@ public abstract class AbstractFigure {
 
     public int[] getCoords() {
         return coords;
+    }
+
+    public int getGraphX() {
+        return coords[0];
+    }
+
+    public int getGraphY() {
+        return coords[1];
+    }
+
+    public int getGraphWidth() {
+        return coords[2];
+    }
+
+    public int getGraphHeight() {
+        return coords[3];
     }
 
     public void addTransition(TransitionFigureBase transitionFigure) {

@@ -3,7 +3,6 @@ package ru.runa.wfe.graph.history;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 import ru.runa.wfe.audit.NodeEnterLog;
@@ -11,9 +10,7 @@ import ru.runa.wfe.audit.NodeLeaveLog;
 import ru.runa.wfe.audit.ProcessLog;
 import ru.runa.wfe.audit.SubprocessStartLog;
 import ru.runa.wfe.audit.TaskAssignLog;
-import ru.runa.wfe.audit.TaskCreateLog;
 import ru.runa.wfe.audit.TaskEndLog;
-import ru.runa.wfe.audit.TaskLog;
 import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.graph.view.GraphElementPresentation;
 import ru.runa.wfe.graph.view.MultiinstanceGraphElementPresentation;
@@ -119,18 +116,8 @@ public class CreateGraphElementPresentation implements HistoryGraphNodeVisitor<C
             break;
         case MULTI_SUBPROCESS:
             presentation = new MultiinstanceGraphElementPresentation();
-            Iterator<ProcessLog> logIterator = data.getProcessLogs().iterator();
-            boolean subProcessStartedLog = false;
-            while (logIterator.hasNext()) {
-                ProcessLog processLog = logIterator.next();
-                if (processLog.getId() > nodeEnterLog.getId() && processLog instanceof SubprocessStartLog) {
-                    ((MultiinstanceGraphElementPresentation) presentation).addSubprocessInfo(((SubprocessStartLog) processLog).getSubprocessId(),
-                            true, false);
-                    subProcessStartedLog = true;
-                } else if (processLog.getId() > nodeEnterLog.getId() && !(processLog instanceof SubprocessStartLog) && subProcessStartedLog) {
-                    subProcessStartedLog = false;
-                    break;
-                }
+            for (SubprocessStartLog subprocessStartLog : historyNode.getNodeLogs(SubprocessStartLog.class)) {
+                ((MultiinstanceGraphElementPresentation) presentation).addSubprocessInfo(subprocessStartLog.getSubprocessId(), true, false);
             }
             break;
         case TASK_STATE:
@@ -145,48 +132,16 @@ public class CreateGraphElementPresentation implements HistoryGraphNodeVisitor<C
         }
 
         presentation.initialize(historyNode.getNode(), layoutData.getConstraints());
-
-        Calendar startCal = Calendar.getInstance();
-        startCal.setTime(nodeEnterLog.getCreateDate());
-        Calendar endCal = Calendar.getInstance();
-        endCal.setTime(nodeLeaveLog.getCreateDate());
-        Long period = endCal.getTimeInMillis() - startCal.getTimeInMillis();
-        Calendar periodCal = Calendar.getInstance();
-        periodCal.setTimeInMillis(period);
-        String date = getPeriodDateString(startCal, endCal);
+        String executionPeriodString = getPeriodDateString(nodeEnterLog, nodeLeaveLog);
 
         if (nodeType.equals(NodeType.SUBPROCESS) || nodeType.equals(NodeType.MULTI_SUBPROCESS)) {
-            presentation.setData("Time period is " + date);
+            presentation.setData("Time period is " + executionPeriodString);
         } else if (nodeType.equals(NodeType.TASK_STATE)) {
             StringBuffer str = new StringBuffer();
-
-            TaskCreateLog taskCreateLog = null;
-            TaskEndLog taskEndLog = null;
-            for (ProcessLog processLog : data.getProcessLogs()) {
-                if (processLog.getId() > nodeEnterLog.getId()) {
-                    if (processLog instanceof TaskCreateLog) {
-                        taskCreateLog = (TaskCreateLog) processLog;
-                        continue;
-                    } else if (processLog instanceof TaskEndLog && taskCreateLog != null
-                            && taskCreateLog.getTaskName().equals(((TaskEndLog) processLog).getTaskName())) {
-                        taskEndLog = (TaskEndLog) processLog;
-                        break;
-                    }
-                }
-            }
-
+            TaskEndLog taskEndLog = historyNode.getNodeLog(TaskEndLog.class);
             if (taskEndLog != null) {
                 String actor = taskEndLog.getActorName();
-
-                TaskAssignLog prev = null;
-                for (TaskLog tempLog : data.getTaskLogs()) {
-                    if (tempLog instanceof TaskAssignLog) {
-                        prev = (TaskAssignLog) tempLog;
-                    } else if (tempLog.equals(taskEndLog)) {
-                        break;
-                    }
-                }
-
+                TaskAssignLog prev = historyNode.getNodeLog(TaskAssignLog.class);
                 if (prev != null) {
                     if (prev.getOldExecutorName() != null && !prev.getOldExecutorName().equals(actor)) {
                         actor = prev.getOldExecutorName();
@@ -202,29 +157,29 @@ public class CreateGraphElementPresentation implements HistoryGraphNodeVisitor<C
                 }
             }
 
-            str.append("Time period is " + date + ".");
+            str.append("Time period is " + executionPeriodString + ".");
             presentation.setData(str.toString());
         }
-
         presentationElements.add(presentation);
     }
 
-    private String getPeriodDateString(Calendar startCal, Calendar endCal) {
+    private String getPeriodDateString(ProcessLog firstLog, ProcessLog secondLog) {
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(firstLog.getCreateDate());
+        Calendar endCal = Calendar.getInstance();
+        endCal.setTime(secondLog.getCreateDate());
         long period = endCal.getTimeInMillis() - startCal.getTimeInMillis();
         Calendar periodCal = Calendar.getInstance();
         periodCal.setTimeInMillis(period);
         periodCal.setTimeInMillis(period - periodCal.getTimeZone().getOffset(period));
 
-        String result = "";
+        StringBuilder result = new StringBuilder();
         long days = period / (24 * 60 * 60 * 1000);
-
         if (days > 0) {
-            result = (days == 1) ? "1 day " : (String.valueOf(days) + " days ");
+            result.append((days == 1) ? "1 day " : (String.valueOf(days) + " days "));
         }
-
-        result = result + CalendarUtil.formatTime(periodCal.getTime());
-
-        return result;
+        result.append(CalendarUtil.formatTime(periodCal.getTime()));
+        return result.toString();
     }
 
     private void noTooltipNodeProcessing(HistoryGraphNode node, CreateGraphElementPresentationContext context) {

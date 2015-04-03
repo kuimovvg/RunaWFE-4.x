@@ -93,14 +93,10 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
     }
 
     private Node createCommonModel(HistoryGraphNode historyNode) {
-        try {
-            NodeLayoutData nodeLayoutData = NodeLayoutData.get(historyNode);
-            Node nodeModel = (Node) historyNode.getNode().clone();
-            nodeModel.setGraphConstraints(nodeLayoutData.getX(), nodeLayoutData.getY(), nodeLayoutData.getWidth(), nodeLayoutData.getHeight());
-            return nodeModel;
-        } catch (CloneNotSupportedException e) {
-            throw new InternalApplicationException("Clone graph element error", e);
-        }
+        NodeLayoutData nodeLayoutData = NodeLayoutData.get(historyNode);
+        Node nodeModel = historyNode.getNode();
+        nodeModel.setGraphConstraints(nodeLayoutData.getX(), nodeLayoutData.getY(), nodeLayoutData.getWidth(), nodeLayoutData.getHeight());
+        return nodeModel;
     }
 
     /**
@@ -124,14 +120,15 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
     }
 
     private void createFigureForNode(HistoryGraphNode node, FiguresNodeData data, Node model) {
-        model.setGraphMinimazedView(false);
+        model.setGraphMinimizedView(false);
         AbstractFigure nodeFigure = factory.createFigure(model, false);
         boolean hasOutTransition = !node.getTransitions().isEmpty();
-        Color color = hasOutTransition ? DrawProperties.getHighlightColor() : DrawProperties.getBaseColor();
+        boolean isFinalNode = model.getNodeType() == NodeType.END_TOKEN || model.getNodeType() == NodeType.END_PROCESS;
+        Color color = hasOutTransition || isFinalNode ? DrawProperties.getHighlightColor() : DrawProperties.getBaseColor();
         RenderHits renderHits = new RenderHits(color, hasOutTransition, !hasOutTransition);
         nodeFigure.setRenderHits(renderHits);
         nodeFigure.setType(getNodeType(node));
-        data.setFigureData(nodeFigure, model);
+        data.setFigure(nodeFigure);
     }
 
     private void createFigureForTransitions(HistoryGraphNode node, FiguresNodeData data, Node model) {
@@ -152,11 +149,11 @@ public class CreateGraphFigures implements HistoryGraphNodeVisitor<CreateGraphFi
         wfeTransition.getBendpoints().clear();
         if (getNodeType(transition.getFromNode()) == NodeType.FORK) {
             int x = toNodeFigure.getFigure().getCoords()[0] + toNodeFigure.getFigure().getCoords()[2] / 2;
-            int y = fromNodeFigure.getNodeModel().getGraphY() + fromNodeFigure.getNodeModel().getGraphHeight() / 2;
+            int y = fromNodeFigure.getFigure().getGraphY() + fromNodeFigure.getFigure().getGraphHeight() / 2;
             wfeTransition.getBendpoints().add(new Bendpoint(x, y));
         }
         if (getNodeType(transition.getFromNode()) == NodeType.JOIN) {
-            int x = fromNodeFigure.getNodeModel().getGraphX() + fromNodeFigure.getNodeModel().getGraphWidth() / 2;
+            int x = fromNodeFigure.getFigure().getGraphX() + fromNodeFigure.getFigure().getGraphWidth() / 2;
             int y = toNodeFigure.getFigure().getCoords()[1];
             wfeTransition.getBendpoints().add(new Bendpoint(x, y));
         }

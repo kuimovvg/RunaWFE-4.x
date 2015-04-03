@@ -40,6 +40,10 @@ public abstract class Node extends GraphElement {
     private final List<Transition> leavingTransitions = Lists.newArrayList();
     private final List<Transition> arrivingTransitions = Lists.newArrayList();
     private boolean graphMinimazedView;
+    /**
+     * Graph constraints on SetMinimized(true) moment call;
+     */
+    private int[] originalConstraints;
 
     public abstract NodeType getNodeType();
 
@@ -69,7 +73,7 @@ public abstract class Node extends GraphElement {
     /**
      * creates a bidirection relation between this node and the given leaving
      * transition.
-     *
+     * 
      * @throws IllegalArgumentException
      *             if leavingTransition is null.
      */
@@ -86,7 +90,7 @@ public abstract class Node extends GraphElement {
 
     /**
      * checks for the presence of a leaving transition with the given name.
-     *
+     * 
      * @return true if this node has a leaving transition with the given name,
      *         false otherwise.
      */
@@ -134,7 +138,7 @@ public abstract class Node extends GraphElement {
     /**
      * add a bidirection relation between this node and the given arriving
      * transition.
-     *
+     * 
      * @throws IllegalArgumentException
      *             if t is null.
      */
@@ -144,16 +148,21 @@ public abstract class Node extends GraphElement {
         return arrivingTransition;
     }
 
-    public boolean isGraphMinimazedView() {
+    public boolean isGraphMinimizedView() {
         return graphMinimazedView;
     }
 
-    public void setGraphMinimazedView(boolean graphMinimazedView) {
+    public void setGraphMinimizedView(boolean graphMinimazedView) {
         this.graphMinimazedView = graphMinimazedView;
         if (graphMinimazedView) {
+            originalConstraints = getGraphConstraints().clone();
             // adjust size
             getGraphConstraints()[2] = 3 * DrawProperties.GRID_SIZE;
             getGraphConstraints()[3] = 3 * DrawProperties.GRID_SIZE;
+        } else {
+            if (originalConstraints != null) {
+                setGraphConstraints(getGraphConstraints()[0], getGraphConstraints()[1], originalConstraints[2], originalConstraints[3]);
+            }
         }
     }
 
@@ -206,4 +215,12 @@ public abstract class Node extends GraphElement {
         executionContext.addLog(new NodeLeaveLog(this));
     }
 
+    @Override
+    public Node clone() throws CloneNotSupportedException {
+        Node clone = (Node) super.clone();
+        if (originalConstraints != null) {
+            clone.originalConstraints = originalConstraints.clone();
+        }
+        return clone;
+    }
 }
