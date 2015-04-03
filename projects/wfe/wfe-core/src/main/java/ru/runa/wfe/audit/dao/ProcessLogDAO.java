@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 
 /**
  * DAO for {@link ProcessLog}.
- * 
+ *
  * @author dofs
  * @since 4.0
  */
@@ -175,12 +175,14 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
 
     public void addLog(ProcessLog processLog, Process process, Token token) {
         processLog.setProcessId(process.getId());
-        processLog.setTokenId(token == null ? process.getRootToken().getId() : token.getId());
+        if (token == null) {
+            token = process.getRootToken();
+        }
+        processLog.setTokenId(token.getId());
         if (processLog.getNodeId() == null) {
-            processLog.setNodeId(process.getRootToken().getNodeId());
+            processLog.setNodeId(token.getNodeId());
         }
         processLog.setCreateDate(new Date());
         this.create(processLog);
     }
-
 }

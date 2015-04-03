@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.graph.image.figure.bpmn;
@@ -62,7 +62,7 @@ public class TaskNodeFigure extends AbstractFigure {
         if (actionsCount > 0) {
             Color color = graphics.getColor();
             graphics.setColor(DrawProperties.getBackgroundColor());
-            int shiftX = (ActionUtils.ACTION_DELIM + 2) + actionsCount * (ActionUtils.ACTION_SIZE + (ActionUtils.ACTION_DELIM + 3));
+            int shiftX = ActionUtils.ACTION_DELIM + 2 + actionsCount * (ActionUtils.ACTION_SIZE + ActionUtils.ACTION_DELIM + 3);
             int shiftY = ActionUtils.ACTION_SIZE + 6;
             graphics.fillRect(getTextBoundsRectangle().x + getTextBoundsRectangle().width - 4 - shiftX, getTextBoundsRectangle().y
                     + getTextBoundsRectangle().height - 4 - shiftY, shiftX, shiftY);
@@ -89,11 +89,4 @@ public class TaskNodeFigure extends AbstractFigure {
         return r;
     }
 
-    @Override
-    public Rectangle getRectangle() {
-        if (minimized) {
-            return new Rectangle(coords[0], coords[1], 3 * DrawProperties.GRID_SIZE, 3 * DrawProperties.GRID_SIZE);
-        }
-        return super.getRectangle();
-    }
 }

@@ -28,6 +28,7 @@ import ru.runa.wfe.audit.NodeEnterLog;
 import ru.runa.wfe.audit.NodeLeaveLog;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Token;
+import ru.runa.wfe.graph.DrawProperties;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -39,7 +40,7 @@ public abstract class Node extends GraphElement {
     private final List<Transition> leavingTransitions = Lists.newArrayList();
     private final List<Transition> arrivingTransitions = Lists.newArrayList();
     private boolean graphMinimazedView;
-    
+
     public abstract NodeType getNodeType();
 
     @Override
@@ -53,7 +54,7 @@ public abstract class Node extends GraphElement {
     public List<Transition> getLeavingTransitions() {
         return leavingTransitions;
     }
-    
+
     public String getTransitionNodeId(boolean arriving) {
         return getNodeId();
     }
@@ -68,7 +69,7 @@ public abstract class Node extends GraphElement {
     /**
      * creates a bidirection relation between this node and the given leaving
      * transition.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if leavingTransition is null.
      */
@@ -85,7 +86,7 @@ public abstract class Node extends GraphElement {
 
     /**
      * checks for the presence of a leaving transition with the given name.
-     * 
+     *
      * @return true if this node has a leaving transition with the given name,
      *         false otherwise.
      */
@@ -133,7 +134,7 @@ public abstract class Node extends GraphElement {
     /**
      * add a bidirection relation between this node and the given arriving
      * transition.
-     * 
+     *
      * @throws IllegalArgumentException
      *             if t is null.
      */
@@ -142,15 +143,20 @@ public abstract class Node extends GraphElement {
         arrivingTransition.setTo(this);
         return arrivingTransition;
     }
-    
+
     public boolean isGraphMinimazedView() {
         return graphMinimazedView;
     }
-    
+
     public void setGraphMinimazedView(boolean graphMinimazedView) {
         this.graphMinimazedView = graphMinimazedView;
+        if (graphMinimazedView) {
+            // adjust size
+            getGraphConstraints()[2] = 3 * DrawProperties.GRID_SIZE;
+            getGraphConstraints()[3] = 3 * DrawProperties.GRID_SIZE;
+        }
     }
-    
+
     /**
      * called by a transition to pass execution to this node.
      */
@@ -195,7 +201,7 @@ public abstract class Node extends GraphElement {
         // take the transition
         transition.take(executionContext);
     }
-    
+
     protected void addLeaveLog(ExecutionContext executionContext) {
         executionContext.addLog(new NodeLeaveLog(this));
     }
