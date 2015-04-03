@@ -57,9 +57,14 @@ public abstract class HistoryGraphBaseNodeModel implements HistoryGraphNode {
      *            Factory to create nodes.
      */
     protected HistoryGraphBaseNodeModel(ProcessLog processLog, ProcessInstanceData definitionModel, HistoryGraphNodeFactory nodeFactory) {
-        this.definitionModel = definitionModel;
-        this.nodeFactory = nodeFactory;
-        node = definitionModel.getNode(processLog.getNodeId());
+        try {
+            this.definitionModel = definitionModel;
+            this.nodeFactory = nodeFactory;
+            node = definitionModel.getNode(processLog.getNodeId()).clone();
+            node.setGraphMinimizedView(false);
+        } catch (CloneNotSupportedException e) {
+            throw new InternalApplicationException("Failed to clone node for graph history", e);
+        }
     }
 
     /**
@@ -75,9 +80,14 @@ public abstract class HistoryGraphBaseNodeModel implements HistoryGraphNode {
      *            Factory to create nodes.
      */
     protected HistoryGraphBaseNodeModel(ProcessLog processLog, Node node, ProcessInstanceData definitionModel, HistoryGraphNodeFactory nodeFactory) {
-        this.definitionModel = definitionModel;
-        this.nodeFactory = nodeFactory;
-        this.node = node;
+        try {
+            this.definitionModel = definitionModel;
+            this.nodeFactory = nodeFactory;
+            this.node = node.clone();
+            this.node.setGraphMinimizedView(false);
+        } catch (CloneNotSupportedException e) {
+            throw new InternalApplicationException("Failed to clone node for graph history", e);
+        }
     }
 
     @Override

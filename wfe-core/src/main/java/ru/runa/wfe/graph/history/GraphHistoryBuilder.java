@@ -84,7 +84,7 @@ public class GraphHistoryBuilder {
      */
     private HistoryGraphNode BuildHistoryGraph() {
         HistoryGraphNode historyGraph = HistoryGraphBuilder.buildHistoryGraph(data.getProcessLogs(), data.getProcessInstanceData());
-        historyGraph.processBy(new CalculateSubTreeBounds(data.getProcessInstanceData()), null);
+        historyGraph.processBy(new CalculateSubTreeBounds(), null);
         historyGraph.processBy(new PushWidthDown(), -1);
         historyGraph.processBy(new TransitionOrderer(), new TransitionOrdererContext());
         historyGraph.processBy(new CalculateGraphLayout(), new CalculateGraphLayoutContext(NodeLayoutData.get(historyGraph).getSubtreeHeight()));
