@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<forms>
-  <form state="before subprocess" file="before subprocess.ftl" type="ftl" validationFile="before subprocess.validation.xml" jsValidation="false"/>
-  <form state="after subprocess" file="after subprocess.ftl" type="ftl" validationFile="after subprocess.validation.xml" jsValidation="false"/>
-</forms>

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<forms>
-  <form state="Input data" file="Input data.ftl" type="ftl" validationFile="Input data.validation.xml" jsValidation="false"/>
-</forms>

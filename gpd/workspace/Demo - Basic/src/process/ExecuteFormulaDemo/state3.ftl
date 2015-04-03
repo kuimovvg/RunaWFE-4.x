@@ -1,2 +1,0 @@
-<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">variable = a&lt;5 &amp; a&gt;0.27</SPAN></SPAN></SPAN></SPAN></P>
-<P><SPAN style="background-color: #ffff99"><SPAN style="color: #ff0000"><SPAN style="font-size: medium"><SPAN style="font-family: Arial">variable =${DisplayVariable("variable")}</SPAN></SPAN></SPAN></SPAN></P>
