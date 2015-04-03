@@ -1,1 +1,0 @@
-<P style="text-align: center"><SPAN style="font-size: x-large"><SPAN style="font-family: Arial"><SPAN style="color: #333399"><SPAN style="background-color: #ffff99">Before bot activity</SPAN></SPAN></SPAN></SPAN></P>

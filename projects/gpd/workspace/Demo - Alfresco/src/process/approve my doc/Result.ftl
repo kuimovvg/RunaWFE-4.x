@@ -1,1 +1,0 @@
-<P>Status of the content fetched from Alfresco is: <span style="color:red;">${GetMyDocStatus()}</span></P>

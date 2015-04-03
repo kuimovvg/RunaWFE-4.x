@@ -1,1 +1,0 @@
-<P>${DisplayVariable("reply")}</P>

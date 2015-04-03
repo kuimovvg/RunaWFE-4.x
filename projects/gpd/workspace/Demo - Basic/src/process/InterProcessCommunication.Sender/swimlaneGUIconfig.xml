@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<swimlanes>
-  <swimlane name="swimlane" guiElementPath="SwimlaneElement.ManualLabel"/>
-  <swimlane name="manager" guiElementPath="SwimlaneElement.ManualLabel"/>
-</swimlanes>

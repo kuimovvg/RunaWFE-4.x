@@ -1,1 +1,0 @@
-<P>Message: ${DisplayVariable("msg_rec")}</P>
