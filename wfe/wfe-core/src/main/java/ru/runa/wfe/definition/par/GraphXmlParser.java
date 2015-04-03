@@ -53,7 +53,7 @@ public class GraphXmlParser implements ProcessArchiveParser {
                 Node transitionSource;
                 if (graphElement instanceof Node) {
                     boolean minimizedView = Boolean.parseBoolean(nodeElement.attributeValue("minimizedView", "false"));
-                    ((Node) graphElement).setGraphMinimazedView(minimizedView);
+                    ((Node) graphElement).setGraphMinimizedView(minimizedView);
                     transitionSource = (Node) graphElement;
                 } else if (graphElement instanceof Action) {
                     // in case of BPMN timer in task state

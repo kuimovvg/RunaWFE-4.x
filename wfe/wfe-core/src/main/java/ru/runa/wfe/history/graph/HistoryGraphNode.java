@@ -52,6 +52,11 @@ public interface HistoryGraphNode {
      */
     public <T extends ProcessLog> T getNodeLog(Class<T> clazz);
 
+    /**
+     * Returns all instances of of log with given type.
+     * 
+     * @return Returns all instances of of log with given type.
+     */
     public <T extends ProcessLog> List<T> getNodeLogs(Class<T> clazz);
 
     /**

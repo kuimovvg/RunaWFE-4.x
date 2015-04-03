@@ -37,8 +37,9 @@ public class TransitionOrderer implements HistoryGraphNodeVisitor<TransitionOrde
         }
         if (!node.isForkNode()) {
             moveForward(node, context);
+        } else {
+            reorderParallelFork(node, context);
         }
-        reorderParallelFork(node, context);
         for (HistoryGraphTransitionModel transition : node.getTransitions()) {
             transition.getToNode().processBy(this, context);
         }

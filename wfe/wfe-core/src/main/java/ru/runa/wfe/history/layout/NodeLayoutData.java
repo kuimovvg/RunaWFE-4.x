@@ -170,7 +170,8 @@ public class NodeLayoutData {
     }
 
     /**
-     * Returns array with graph element constraints.
+     * Returns array with graph element constraints. <i>xPos, yPos, xPos +
+     * width, yPos + height</i>
      */
     public int[] getConstraints() {
         return new int[] { xPos, yPos, xPos + width, yPos + height };

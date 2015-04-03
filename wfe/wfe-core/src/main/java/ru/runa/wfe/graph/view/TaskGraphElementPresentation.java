@@ -43,7 +43,7 @@ public class TaskGraphElementPresentation extends GraphElementPresentation {
         super.initialize(node, graphConstraints);
         TaskDefinition taskDefinition = ((InteractionNode) node).getFirstTaskNotNull();
         swimlaneName = taskDefinition.getSwimlane().getName();
-        minimized = node.isGraphMinimazedView();
+        minimized = node.isGraphMinimizedView();
     }
 
     /**

@@ -7,7 +7,6 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.graph.image.figure.AbstractFigure;
 import ru.runa.wfe.graph.image.figure.TransitionFigureBase;
 import ru.runa.wfe.history.graph.HistoryGraphNode;
-import ru.runa.wfe.lang.Node;
 
 /**
  * Node custom data with figures, requires to paint history graph.
@@ -22,10 +21,6 @@ public class FiguresNodeData {
      * Flag, equals true, if figures already initialized and false otherwise.
      */
     private boolean isFiguresInitialized = false;
-    /**
-     * Model for figure at this node.
-     */
-    private Node nodeModel;
     /**
      * Figure to draw this node.
      */
@@ -47,19 +42,6 @@ public class FiguresNodeData {
 
     public void setFigure(AbstractFigure figure) {
         this.figure = figure;
-    }
-
-    public void setFigureData(AbstractFigure figure, Node nodeModel) {
-        this.nodeModel = nodeModel;
-        this.figure = figure;
-    }
-
-    public Node getNodeModel() {
-        return nodeModel;
-    }
-
-    public void setNodeModel(Node nodeModel) {
-        this.nodeModel = nodeModel;
     }
 
     public List<TransitionFigureBase> getTransitions() {
