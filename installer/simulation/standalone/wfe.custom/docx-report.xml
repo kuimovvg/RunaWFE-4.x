@@ -17,7 +17,7 @@
   </parameters>
   <botconfig>
     <config strict="true"> 
-      <input path="botfile://Generate_DOCX.embedded.docx"/>  
+      <input path="bot/docx-template.docx"/>  
       <output variable="ParamReport" fileName="Report.docx"/> 
     </config>
   </botconfig>
