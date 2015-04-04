@@ -2138,12 +2138,6 @@
                menubarPath="file/export"
                style="push"
                toolbarPath="normal/syncproc"/>
-         <action
-               class="ru.runa.gpd.ui.action.ExitAction"
-               id="ru.runa.gpd.exit"
-               label="%label.menu.exit"
-               menubarPath="file/exit"
-               style="push"/>
           
          <action
                class="ru.runa.gpd.ui.action.ExportProject"
@@ -2250,12 +2244,6 @@
                style="push">
          </action>
          <action
-               class="ru.runa.gpd.ui.action.HelpAboutAction"
-               id="helpAbout"
-               label="%label.menu.helpAbout"
-               menubarPath="help/additions"
-               style="push"/>
-         <action
                class="ru.runa.gpd.ui.action.ShowGridAction"
                id="enableGrid"
                label="%label.menu.properties.enableGrid"
@@ -2268,6 +2256,18 @@
                menubarPath="file/command"
                style="push">
          </action>
+         <action
+               class="ru.runa.gpd.ui.action.HelpAboutAction"
+               id="ru.runa.gpd.help"
+               label="%label.menu.helpAbout"
+               menubarPath="file/about"
+               style="push"/>
+         <action
+               class="ru.runa.gpd.ui.action.ExitAction"
+               id="ru.runa.gpd.exit"
+               label="%label.menu.exit"
+               menubarPath="file/exit"
+               style="push"/>
       </actionSet>
    </extension>
 
