@@ -84,8 +84,65 @@ function Doc_OnPaste()
 	return ret ;
 }
 
+function _ShowPropElementDialog(tag) {
+	if (!tag) return;
+	
+	var cmdName = undefined;
+	
+	if (FCKSelection.HasAncestorNode('TABLE'))
+		cmdName = 'Table';
+	else if (FCK.GetNamedCommandState('Unlink') && tag.tagName == 'A')
+		cmdName = 'Unlink';
+	else if (FCKSelection.MoveToAncestorNode('A') && tag.tagName == 'IMG' && tag.tagName.getAttribute('_fckanchor'))
+		cmdName = 'Anchor';
+	else if (FCKSelection.HasAncestorNode('FORM'))
+		cmdName = 'Form';
+	else if (FCKSelection.HasAncestorNode('UL'))
+		cmdName = 'BulletedList';
+	else if (FCKSelection.HasAncestorNode('OL'))
+		cmdName = 'NumberedList';
+	else {
+		switch(tag.tagName)
+		{
+		case 'TABLE':
+			cmdName = 'Table';
+			break;
+		case 'A':
+			if (FCKSelection.HasAncestorNode('A')) cmdName = 'Link';
+			else cmdName = 'Unlink';
+			break;
+		case 'IMG':
+			if (!tag.getAttribute('_fckfakelement')) cmdName = 'Image';
+			else if (tag.getAttribute('_fckanchor')) cmdName = 'Anchor';
+			else if (tag.getAttribute('_fckflash')) cmdName = 'Flash';
+			else if (tag.getAttribute('_fckinputhidden')) cmdName = 'HiddenField';
+			break;
+		case 'INPUT':
+			if (tag.type == 'checkbox') cmdName = 'Checkbox';
+			else if (tag.type == 'radio') cmdName = 'Radio';
+			else if (tag.type == 'text' || tag.type == 'password') cmdName = 'TextField';
+			else if (tag.type == 'image') cmdName = 'ImageButton';
+			else if (tag.type == 'button' || tag.type == 'submit' || tag.type == 'reset') cmdName = 'Button';
+			break;
+		case 'SELECT':
+			cmdName = 'Select';
+			break;
+		case 'TEXTAREA':
+			cmdName = 'Textarea';
+			break;
+		};
+	}
+	
+	if (!cmdName) return;
+	
+	FCK.Focus() ;
+	FCKCommands.GetCommand(cmdName).Execute(tag) ;
+}
+
 function Doc_OnDblClick()
 {
+	if (FCKSelection.GetSelectedElement())_ShowPropElementDialog(FCKSelection.GetSelectedElement());
+	else _ShowPropElementDialog(FCK.EditorWindow.event.srcElement);
 	FCK.OnDoubleClick( FCK.EditorWindow.event.srcElement ) ;
 	FCK.EditorWindow.event.cancelBubble = true ;
 }
