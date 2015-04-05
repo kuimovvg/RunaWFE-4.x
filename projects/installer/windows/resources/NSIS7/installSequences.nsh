@@ -118,15 +118,15 @@ var cleanAllOldData ; Remove all artifacts from old installation if exists
     FileWrite $0 "  del /S /Q $\"%APPDATA%\runawfe\gpd\runawfe-ver-*$\" $\r$\n"
     FileWrite $0 "  time /T >$\"%APPDATA%\runawfe\gpd\runawfe-ver-$2$\" $\r$\n"
     FileWrite $0 "  del /S /Q $\"%APPDATA%\runawfe\gpd\workspace\.metadata$\" $\r$\n"
-    FileWrite $0 "  xcopy demo-workspace $\"%APPDATA%\runawfe\gpd\workspace$\" /I /S /Y /R$\r$\n"
+    FileWrite $0 "  xcopy demo-workspace $\"%APPDATA%\runawfe\gpd\workspace$\" /I /S /E /Y /R$\r$\n"
     FileWrite $0 ") else ($\r$\n"
     FileWrite $0 "  if not exist $\"%APPDATA%\runawfe\gpd\workspace$\" ($\r$\n"
-    FileWrite $0 "    xcopy demo-workspace $\"%APPDATA%\runawfe\gpd\workspace$\" /I /S /Y /R$\r$\n"
+    FileWrite $0 "    xcopy demo-workspace $\"%APPDATA%\runawfe\gpd\workspace$\" /I /S /E /Y /R$\r$\n"
     FileWrite $0 "  )$\r$\n"
     FileWrite $0 ")$\r$\n"
   ${else}
     FileWrite $0 "if not exist $\"%APPDATA%\runawfe\gpd\workspace$\" ($\r$\n"
-    FileWrite $0 "    xcopy demo-workspace $\"%APPDATA%\runawfe\gpd\workspace$\" /I /S /Y /R$\r$\n"
+    FileWrite $0 "    xcopy demo-workspace $\"%APPDATA%\runawfe\gpd\workspace$\" /I /S /E /Y /R$\r$\n"
     FileWrite $0 ")$\r$\n"
   ${endif}
   FileWrite $0 "start /B /D$\"%DIRNAME%$\" runa-gpd.exe -data $\"%APPDATA%\runawfe\gpd\workspace$\"$\r$\n"
