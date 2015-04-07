@@ -130,6 +130,17 @@ public class Component extends EventSupport implements IPropertySource {
         firePropertyChange(propertyId.toString(), old, value);
     }
 
+    private String stringQuotation(Object obj) {
+    	String result = obj.toString();
+    	if (result.contains("\"") && !result.contains("'")) {
+    		return String.format("'%s'", obj);
+    	} 
+    	else if (!result.contains("\"") && result.contains("'")) {
+    		return String.format("\"%s\"", obj);
+    	}
+    	return String.format("\"%s\"", result.replaceAll("\"", "\\\""));
+    }
+    
     @Override
     public String toString() {
         StringBuffer ftl = new StringBuffer();
@@ -142,18 +153,18 @@ public class Component extends EventSupport implements IPropertySource {
                 first = false;
             }
             boolean surroundWithBrackets = parameter.getType().isSurroundBrackets();
-            if (surroundWithBrackets) {
-                ftl.append("\"");
-            }
+            Object obj = null;
             if (parameter.getType().isMultiple()) {
                 List<String> list = (List<String>) getParameterValue(parameter);
                 String delim = surroundWithBrackets ? "\", \"" : ", ";
-                ftl.append(Joiner.on(delim).join(list));
+                obj = Joiner.on(delim).join(list);
             } else {
-                ftl.append(getParameterValue(parameter));
+            	obj = getParameterValue(parameter);
             }
             if (surroundWithBrackets) {
-                ftl.append("\"");
+                ftl.append(stringQuotation(obj));
+            } else {
+            	ftl.append(obj);
             }
         }
         ftl.append(")}");
