@@ -86,6 +86,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
 
     @Override
     public void dispose() {
+    	PluginLogger.logInfo(String.format("ProcessEditorBase.dispose: definition: %s", definition));
         try {
             if (definition != null) {
                 definition.removePropertyChangeListener(this);
@@ -349,6 +350,6 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     }
 
     public DiagramEditorPage getDiagramEditorPage() {
-        return (DiagramEditorPage) graphPage;
+        return graphPage instanceof DiagramEditorPage ? (DiagramEditorPage) graphPage : null;
     }
 }
