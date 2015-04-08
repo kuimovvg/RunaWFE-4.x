@@ -55,7 +55,7 @@ public class BotImportCommand extends BotSyncCommand {
             }
             byte[] scriptXml = files.remove("script.xml");
             Preconditions.checkNotNull(scriptXml, "No script.xml");
-            List<BotTask> botTasks = BotScriptUtils.getBotTasksFromScript(scriptXml, files);
+            List<BotTask> botTasks = BotScriptUtils.getBotTasksFromScript(botStationName, botFolderName, scriptXml, files);
 
             for (BotTask botTask : botTasks) {
                 IFile file = folder.getFile(botTask.getName());

@@ -154,6 +154,7 @@ public class WorkspaceOperations {
         for (IResource resource : resources) {
             refreshResource(resource);
         }
+        BotCache.reload();
     }
 
     public static void refreshResource(IResource resource) {

@@ -16,13 +16,16 @@ import com.google.common.collect.Lists;
 
 public class BotTask implements Delegable, Comparable<BotTask> {
     private BotTaskType type = BotTaskType.SIMPLE;
+    private String id;
     private String name;
     private String delegationClassName = "";
     private String delegationConfiguration = "";
     private ParamDefConfig paramDefConfig;
     private final List<String> filesToSave;
 
-    public BotTask() {
+	public BotTask(String station, String bot, String name) {
+		this.id = String.format("%s/%s/%s", station, bot, name);
+		this.name = name;
         filesToSave = Lists.newArrayList();
     }
 
@@ -120,21 +123,21 @@ public class BotTask implements Delegable, Comparable<BotTask> {
 
     @Override
     public int compareTo(BotTask o) {
-        if (name == null || o == null || o.name == null) {
+        if (id == null || o == null || o.id == null) {
             return -1;
         }
-        return name.compareTo(o.name);
+        return id.compareTo(o.id);
     }
 
     @Override
     public boolean equals(Object obj) {
         BotTask botTask = (BotTask) obj;
-        return name.equals(botTask.name);
+        return id.equals(botTask.id);
     }
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return id.hashCode();
     }
 
     @Override

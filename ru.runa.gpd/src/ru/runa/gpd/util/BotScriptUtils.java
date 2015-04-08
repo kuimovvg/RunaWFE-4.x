@@ -66,7 +66,7 @@ public class BotScriptUtils {
      *            xml script stream
      * @return map of bot task without configuration set -> configuration file name
      */
-    public static List<BotTask> getBotTasksFromScript(byte[] scriptXml, Map<String, byte[]> files) {
+    public static List<BotTask> getBotTasksFromScript(String botStationName, String botName, byte[] scriptXml, Map<String, byte[]> files) {
         List<BotTask> botTasks = Lists.newArrayList();
         Document document = XmlUtil.parseWithXSDValidation(scriptXml, "workflowScript.xsd");
         List<Element> taskElements = document.getRootElement().elements(ADD_BOT_CONFIGURATION_ELEMENT_NAME);
@@ -82,7 +82,7 @@ public class BotScriptUtils {
                 String configurationFileName = botElement.attributeValue(CONFIGURATION_STRING_ATTRIBUTE_NAME);
                 byte[] configurationFileData = files.remove(configurationFileName);
                 String configuration = configurationFileData != null ? new String(configurationFileData, Charsets.UTF_8) : "";
-                BotTask botTask = BotTaskUtils.createBotTask(name, handler, configuration);
+                BotTask botTask = BotTaskUtils.createBotTask(botStationName, botName, name, handler, configuration);
                 if (!Strings.isNullOrEmpty(embeddedFileName)) {
                     botTask.getFilesToSave().add(embeddedFileName);
                 }
