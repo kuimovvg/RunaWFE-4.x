@@ -107,9 +107,8 @@ public class BotTaskUtils {
         return new ByteArrayInputStream(buffer.toString().getBytes(Charsets.UTF_8));
     }
 
-    public static BotTask createBotTask(String botTaskName, String handlerClassName, String configuration) {
-        BotTask botTask = new BotTask();
-        botTask.setName(botTaskName);
+    public static BotTask createBotTask(String botStationName, String botName, String botTaskName, String handlerClassName, String configuration) {
+        BotTask botTask = new BotTask(botStationName, botName, botTaskName);
         botTask.setDelegationClassName(handlerClassName);
         if (isTaskHandlerParameterized(botTask.getDelegationClassName())) {
             botTask.setType(BotTaskType.PARAMETERIZED);
