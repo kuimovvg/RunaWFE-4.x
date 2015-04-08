@@ -46,8 +46,7 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
                     try {
                         monitor.beginTask("processing", 4);
                         IFolder botFolder = page.getBotFolder();
-                        BotTask botTask = new BotTask();
-                        botTask.setName(page.getBotTaskName());
+                        BotTask botTask = new BotTask(botFolder.getProject().getName(), botFolder.getName(), page.getBotTaskName());
                         if (extendedMode) {
                             botTask.setType(BotTaskType.EXTENDED);
                             botTask.setParamDefConfig(BotTaskUtils.createEmptyParamDefConfig());

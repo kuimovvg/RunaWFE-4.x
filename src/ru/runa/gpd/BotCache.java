@@ -61,13 +61,13 @@ public class BotCache {
                             if (taskResource instanceof IFile && (Strings.isNullOrEmpty(taskResource.getFileExtension()) || !taskResource.getFileExtension().equals(CONFIGURATION_FILE_EXTENSION))) {
                                 IFile botTaskFile = (IFile) taskResource;
                                 try {
-                                    cacheBotTask(botTaskFile, botTasks);
+                                    cacheBotTask(botStationProject.getName(), botName, botTaskFile, botTasks);
                                 } catch (Exception e) {
                                     if (e.getCause() != null && e.getCause().getMessage() != null
                                             && e.getCause().getMessage().startsWith("Resource is out of sync with the file system")) {
                                         // Workaround for 'resource out of sync'
                                         botTaskFile.getParent().refreshLocal(IResource.DEPTH_ONE, null);
-                                        cacheBotTask(botTaskFile, botTasks);
+                                        cacheBotTask(botStationProject.getName(), botName, botTaskFile, botTasks);
                                     } else {
                                         PluginLogger.logError(e);
                                     }
@@ -93,7 +93,7 @@ public class BotCache {
         }
     }
 
-    private static void cacheBotTask(IFile botTaskFile, List<BotTask> botTasks) {
+    private static void cacheBotTask(String botStationName, String botName, IFile botTaskFile, List<BotTask> botTasks) {
         try {
             InputStreamReader reader = null;
             try {
@@ -109,7 +109,7 @@ public class BotCache {
                         }
                     }
                 }
-                BotTask botTask = BotTaskUtils.createBotTask(botTaskFile.getName(), lines.get(0), configurationFileData);
+                BotTask botTask = BotTaskUtils.createBotTask(botStationName, botName, botTaskFile.getName(), lines.get(0), configurationFileData);
                 botTasks.add(botTask);
                 BOT_TASK_FILES.put(botTask, botTaskFile);
             } finally {
@@ -131,7 +131,7 @@ public class BotCache {
         }
         botTasks.remove(botTask);
         BOT_TASK_FILES.remove(botTask);
-        cacheBotTask(botTaskFile, botTasks);
+        cacheBotTask(botTaskFile.getProject().getName(), botName, botTaskFile, botTasks);
     }
 
     public static synchronized void botTaskHasBeenDeleted(IFile botTaskFile, BotTask botTask) {
