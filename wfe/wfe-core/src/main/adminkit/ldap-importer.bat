@@ -7,6 +7,8 @@ set PASSWORD="wf"
 
 REM ########End of Configuration###############
 
-set CLASSPATH=".\conf;.\lib\wfe-service.jar;.\lib\wfe-core.jar;.\lib\jbossall-client.jar;.\lib\commons-logging-1.1.0.jar;.\lib\commons-io-1.2.jar;.\lib\guava-14.0.1.jar"
+set CLASSPATH=".\conf;.\lib\*"
 
-java -cp %CLASSPATH% ru.runa.wfe.service.client.LDAPImporterClient %LOGIN% %PASSWORD%
+set JAVA_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,address=8789,server=y,suspend=n"
+
+java %JAVA_OPTS% -cp %CLASSPATH% ru.runa.wfe.service.client.LDAPImporterClient %LOGIN% %PASSWORD%
