@@ -250,6 +250,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     @Override
     public String getEmbeddedFileName(BotTask botTask) {
         String xml = botTask.getDelegationConfiguration();
+        if (!XmlUtil.isXml(xml)) return null;
         Document document = XmlUtil.parseWithoutValidation(xml);
         Element root = document.getRootElement();
         Element inputElement = root.element("input");
