@@ -16,7 +16,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.formeditor.BaseHtmlFormType;
 import ru.runa.gpd.formeditor.WebServerUtils;
 import ru.runa.gpd.formeditor.ftl.Component;
@@ -51,19 +50,26 @@ public class DesignUtils {
             try {
                 int id = Integer.valueOf(node.getAttributes().getNamedItem(ATTR_COMPONENT_ID).getNodeValue());
                 Component component = components.get(id);
+                if (component == null) {
+                    throw new Exception("Component not found by id " + id);
+                }
                 String ftl = component.toString();
                 Text ftlText = document.createTextNode(ftl);
                 node.getParentNode().replaceChild(ftlText, node);
             } catch (Exception e) {
-                PluginLogger.logErrorWithoutDialog("Unable to convert component from design html: " + node + " in " + html);
+                throw new Exception("Unable to convert component from design html: " + toString(node), e);
             }
         }
+        return toString(document);
+    }
+
+    private static String toString(Node node) throws Exception {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, Charsets.UTF_8.name());
-        transformer.transform(new DOMSource(document), new StreamResult(os));
+        transformer.transform(new DOMSource(node), new StreamResult(os));
         return new String(os.toByteArray(), Charsets.UTF_8.name());
     }
 
