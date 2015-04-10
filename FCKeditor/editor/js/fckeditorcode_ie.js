@@ -10136,7 +10136,7 @@ function FCKContextMenu_AttachedElement_OnContextMenu(A, B, C) {
 };
 
 function FCKContextMenu_MenuBlock_OnClick(A, B) {
-	alert('A: ' + A.Name + ' B: ' + B);
+	//alert('A: ' + A.Name + ' B: ' + B);
     B._Panel.Hide();
     FCKTools.RunFunction(B.OnItemClick, B, A);
 };
