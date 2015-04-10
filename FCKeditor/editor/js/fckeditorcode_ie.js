@@ -903,7 +903,33 @@ function _ShowPropElementDialog(tag) {
 		};
 	}
 	
+	//alert('cmdName: ' + cmdName + ' type: ' + tag.type)
+	
 	if (!cmdName) return;
+	
+	if (cmdName == 'Image') {
+		switch (tag.type)
+		{
+		case 'InputVariable':
+		case 'DisplayVariable':
+		case 'GroupMembers':
+		case 'ViewFile':
+		case 'AjaxGroupMembers':
+		case 'ChooseActorByRelation':
+		case 'ChooseExecutorByRelation':
+		case 'ChooseExecutorFromRelation':
+		case 'EditLinkedLists':
+		case 'DisplayLinkedLists':
+		case 'DisplayLinkedMaps':
+		case 'DisplayListElement':
+		case 'DisplayMapElement':
+		case 'MultipleSelectFromList':
+		case 'SelectFromList':
+		case 'TreeviewSupport':
+			cmdName = 'FreemarkerMethod';
+			break;
+		};
+	}
 	
 	FCK.Focus() ;
 	FCKCommands.GetCommand(cmdName).Execute(tag) ;
