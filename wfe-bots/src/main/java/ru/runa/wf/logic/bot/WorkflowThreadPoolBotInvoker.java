@@ -17,7 +17,6 @@
  */
 package ru.runa.wf.logic.bot;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -42,23 +41,26 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private final Log log = LogFactory.getLog(WorkflowThreadPoolBotInvoker.class);
     private ScheduledExecutorService executor = null;
     private long configurationVersion = -1;
-    private List<WorkflowBotExecutor> botExecutors;
+    private final Map<Bot, WorkflowBotExecutor> botExecutors = Maps.newHashMap();
     private Future<?> botInvokerInvocation = null;
-    private final Map<WorkflowBotTaskExecutor, ScheduledFuture<?>> scheduledTasks = new HashMap<WorkflowBotTaskExecutor, ScheduledFuture<?>>();
+    private final Map<WorkflowBotTaskExecutor, ScheduledFuture<?>> scheduledTasks = Maps.newConcurrentMap();
 
     private final long STUCK_TIMEOUT_SECONDS = 300;
     private BotStation botStation;
 
+    /**
+     * Checking botInvokerInvocation.isDone() leads to run() method called only
+     * once per moment.
+     */
     @Override
     public synchronized void invokeBots(BotStation botStation) {
         this.botStation = botStation;
-        checkStuckBots();
         if (botInvokerInvocation != null && !botInvokerInvocation.isDone()) {
             log.debug("botInvokerInvocation != null && !botInvokerInvocation.isDone()");
             return;
@@ -67,6 +69,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
             log.debug("Creating new executor(ScheduledExecutorService)");
             executor = new ScheduledThreadPoolExecutor(BotStationResources.getThreadPoolSize());
         }
+        checkStuckBots();
         botInvokerInvocation = executor.schedule(this, 1000, TimeUnit.MILLISECONDS);
         logBotsActivites();
     }
@@ -88,25 +91,32 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                 }
             }
         } catch (Exception e) {
-            log.warn("Stuck threads search/stop is throwung exception.", e);
+            log.warn("Stuck threads search/stop is throwing exception.", e);
         }
     }
 
     private void configure() {
         try {
             if (botStation.getVersion() != configurationVersion) {
-                botExecutors = Lists.newArrayList();
                 log.info("Will update bots configuration.");
                 String username = BotStationResources.getSystemUsername();
                 String password = BotStationResources.getSystemPassword();
                 User botStationUser = Delegates.getAuthenticationService().authenticateByLoginPassword(username, password);
+                Map<Bot, WorkflowBotExecutor> existingBotExecutors = Maps.newHashMap(botExecutors);
+                botExecutors.clear();
                 List<Bot> bots = Delegates.getBotService().getBots(botStationUser, botStation.getId());
                 for (Bot bot : bots) {
                     try {
                         log.info("Configuring " + bot.getUsername());
                         User user = Delegates.getAuthenticationService().authenticateByLoginPassword(bot.getUsername(), bot.getPassword());
                         List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
-                        botExecutors.add(new WorkflowBotExecutor(user, bot, tasks));
+                        if (existingBotExecutors.containsKey(bot)) {
+                            WorkflowBotExecutor botExecutor = existingBotExecutors.get(bot);
+                            botExecutor.reinitialize(tasks);
+                            botExecutors.put(bot, botExecutor);
+                        } else {
+                            botExecutors.put(bot, new WorkflowBotExecutor(user, bot, tasks));
+                        }
                         ProcessExecutionErrors.removeBotTaskConfigurationError(bot, null);
                     } catch (Exception e) {
                         log.error("Unable to configure " + bot);
@@ -122,6 +132,10 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
         }
     }
 
+    /**
+     * Checking botInvokerInvocation.isDone() in synchronized invokeBots method
+     * leads to run() method called only once per moment.
+     */
     @Override
     public void run() {
         configure();
@@ -129,7 +143,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
             log.warn("executor(ScheduledExecutorService) == null");
             return;
         }
-        for (WorkflowBotExecutor botExecutor : botExecutors) {
+        for (WorkflowBotExecutor botExecutor : botExecutors.values()) {
             try {
                 Set<WfTask> tasks = botExecutor.getNewTasks();
                 for (WfTask task : tasks) {

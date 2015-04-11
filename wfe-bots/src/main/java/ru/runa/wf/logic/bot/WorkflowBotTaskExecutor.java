@@ -20,6 +20,7 @@ package ru.runa.wf.logic.bot;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,9 +48,9 @@ import com.google.common.base.Throwables;
 
 /**
  * Execute task handlers for particular bot.
- *
+ * 
  * Configures and executes task handler in same method.
- *
+ * 
  * @author Dofs
  * @since 4.0
  */
@@ -64,7 +65,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
      * Next wait is 2*wait, but no more FAILED_EXECUTION_MAX_DELAY_SECONDS
      */
     private int failedDelaySeconds = BotStationResources.getFailedExecutionInitialDelay();
-    private Thread executionThread = null;
+    private final AtomicReference<Thread> executionThread = new AtomicReference<Thread>(null);
     private boolean threadInterrupting = false;
 
     public WorkflowBotTaskExecutor(WorkflowBotExecutor botExecutor, WfTask task) {
@@ -86,18 +87,19 @@ public class WorkflowBotTaskExecutor implements Runnable {
 
     @SuppressWarnings("deprecation")
     public boolean interruptExecution() {
-        if (executionThread == null) {
+        if (executionThread.get() == null) {
             return false;
         }
         executionStatus = WorkflowBotTaskExecutionStatus.FAILED;
         if (!threadInterrupting) {
             // Try to stop thread soft
             log.warn(this + " seems to be stuck (not completted at " + getExecutionInSeconds() + " sec). Interrupt signal will be send.");
-            executionThread.interrupt();
+            executionThread.get().interrupt();
+            threadInterrupting = true;
             return false;
         } else {
             log.error(this + " seems to be stuck (not completted at " + getExecutionInSeconds() + " sec). Will be terminated.");
-            executionThread.stop();
+            executionThread.get().stop();
             return true;
         }
     }
@@ -115,7 +117,6 @@ public class WorkflowBotTaskExecutor implements Runnable {
         User user = botExecutor.getUser();
         Bot bot = botExecutor.getBot();
         BotTask botTask = null;
-
         IVariableProvider variableProvider = new DelegateProcessVariableProvider(user, task.getProcessId());
         try {
             String botTaskName = BotTaskConfigurationUtils.getBotTaskName(user, task);
@@ -201,7 +202,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
     public void run() {
         try {
             started = Calendar.getInstance();
-            executionThread = Thread.currentThread();
+            executionThread.set(Thread.currentThread());
             executionStatus = WorkflowBotTaskExecutionStatus.STARTED;
             doHandle();
             executionStatus = WorkflowBotTaskExecutionStatus.COMPLETED;
@@ -219,7 +220,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
             log.info("FailedDelaySeconds = " + failedDelaySeconds + " for " + task);
             started.add(Calendar.SECOND, failedDelaySeconds);
         }
-        executionThread = null;
+        executionThread.set(null);
         return;
     }
 
