@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateCallback;
 
 import ru.runa.wfe.audit.NodeEnterLog;
@@ -25,12 +26,15 @@ import com.google.common.collect.Lists;
 
 /**
  * DAO for {@link ProcessLog}.
- *
+ * 
  * @author dofs
  * @since 4.0
  */
 @SuppressWarnings("unchecked")
 public class ProcessLogDAO extends GenericDAO<ProcessLog> {
+
+    @Autowired
+    private ProcessLogAwareDao customizationDao;
 
     /**
      * @return process logs.
@@ -184,5 +188,6 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
         }
         processLog.setCreateDate(new Date());
         this.create(processLog);
+        customizationDao.addLog(processLog, process, token);
     }
 }
