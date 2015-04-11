@@ -39,6 +39,8 @@ import com.google.common.collect.Maps;
  * 
  * Configures and executes task handler in same method.
  * 
+ * This class is not thread safe.
+ * 
  * @author Dofs
  * @since 4.0
  */
@@ -52,6 +54,11 @@ public class WorkflowBotExecutor {
         this.user = user;
         this.bot = bot;
         botTaskExecutors = new HashSet<WorkflowBotTaskExecutor>();
+        reinitialize(tasks);
+    }
+
+    public void reinitialize(List<BotTask> tasks) {
+        botTasks.clear();
         for (BotTask botTask : tasks) {
             botTasks.put(botTask.getName(), botTask);
         }
