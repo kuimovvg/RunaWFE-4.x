@@ -2681,6 +2681,7 @@ var FCKLanguageManager = FCK.Language = {
         this.ActiveLanguage = {};
         this.ActiveLanguage.Code = this.GetActiveLanguage();
         this.ActiveLanguage.Name = this.AvailableLanguages[this.ActiveLanguage.Code];
+        //alert("FCKLanguageManager.Initialize: Code: " + this.ActiveLanguage.Code + " Name: " + this.ActiveLanguage.Name);
     }
 };
 var FCKXHtmlEntities = {};
@@ -10434,14 +10435,16 @@ var FCKPlugin = function(A, B, C) {
     this.Name = A;
     this.BasePath = C ? C : FCKConfig.PluginsPath;
     this.Path = this.BasePath + A + '/';
+    //alert("FCKPlugin: AvailableLangs: " + B);
     if (!B || B.length == 0) this.AvailableLangs = [];
     else this.AvailableLangs = B.split(',');
 };
 FCKPlugin.prototype.Load = function() {
     if (this.AvailableLangs.length > 0) {
         var A;
+        //alert("FCKPlugin.prototype.Load: Code: " + FCKLanguageManager.ActiveLanguage.Code + " Name: " + FCKLanguageManager.ActiveLanguage.Name);
         if (this.AvailableLangs.IndexOf(FCKLanguageManager.ActiveLanguage.Code) >= 0) A = FCKLanguageManager.ActiveLanguage.Code;
-        else A = this.AvailableLangs[0];
+        else A = this.AvailableLangs[FCKLanguageManager.ActiveLanguage.Code];
         LoadScript(this.Path + 'lang/' + A + '.js');
     };
     LoadScript(this.Path + 'fckplugin.js');
@@ -10453,7 +10456,9 @@ FCKPlugins.Load = function() {
     var A = FCKPlugins.Items;
     for (var i = 0; i < FCKConfig.Plugins.Items.length; i++) {
         var B = FCKConfig.Plugins.Items[i];
-        var C = A[B[0]] = new FCKPlugin(B[0], B[1], B[2]);
+        //alert("FCKPlugins: B: " + B + " Code: " + FCKLanguageManager.ActiveLanguage.Code);
+        //var C = A[B[0]] = new FCKPlugin(B[0], B[1], B[2]);
+        var C = A[B[0]] = new FCKPlugin(B[0], FCKLanguageManager.ActiveLanguage.Code, B[2]);
         FCKPlugins.ItemsCount++;
     };
     for (var s in A) A[s].Load();
