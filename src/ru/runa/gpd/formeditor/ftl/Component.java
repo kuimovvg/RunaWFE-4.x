@@ -131,14 +131,7 @@ public class Component extends EventSupport implements IPropertySource {
     }
 
     private String stringQuotation(Object obj) {
-    	String result = obj.toString();
-    	if (result.contains("\"") && !result.contains("'")) {
-    		return String.format("'%s'", obj);
-    	} 
-    	else if (!result.contains("\"") && result.contains("'")) {
-    		return String.format("\"%s\"", obj);
-    	}
-    	return String.format("\"%s\"", result.replaceAll("\"", "\\\""));
+    	return String.format("\"%s\"", obj.toString().replaceAll("\"", "\\\\\""));
     }
     
     @Override
@@ -162,7 +155,7 @@ public class Component extends EventSupport implements IPropertySource {
             	obj = getParameterValue(parameter);
             }
             if (surroundWithBrackets) {
-                ftl.append(stringQuotation(obj));
+            	ftl.append(stringQuotation(obj));
             } else {
             	ftl.append(obj);
             }
