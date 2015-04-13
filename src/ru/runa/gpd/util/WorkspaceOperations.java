@@ -101,9 +101,7 @@ public class WorkspaceOperations {
                     throw new IllegalArgumentException("Unexpected " + resource);
                 }
                 if (Dialogs.confirm(Localization.getString(messageKey, resource.getName()))) {
-                	PluginLogger.logInfo(String.format("WorkspaceOperations.deleteResources: projectResource: %s folderResource: %s fileResource: %s",
-                			projectResource, folderResource, fileResource));
-                    List<IFile> tmpFiles = new ArrayList<IFile>();
+                	List<IFile> tmpFiles = new ArrayList<IFile>();
                     if (projectResource) {
                         tmpFiles.addAll(IOUtils.getProcessDefinitionFiles((IProject) resource));
                     } else if (folderResource) {

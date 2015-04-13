@@ -86,8 +86,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
 
     @Override
     public void dispose() {
-    	PluginLogger.logInfo(String.format("ProcessEditorBase.dispose: definition: %s", definition));
-        try {
+    	try {
             if (definition != null) {
                 definition.removePropertyChangeListener(this);
                 // If process definition is dirty (hasn't been saved) we should

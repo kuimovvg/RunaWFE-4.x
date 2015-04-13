@@ -23,6 +23,7 @@ import ru.runa.gpd.lang.model.NamedGraphElement;
 import ru.runa.gpd.lang.model.Node;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.StartState;
+import ru.runa.gpd.lang.model.Subprocess;
 import ru.runa.gpd.lang.model.SubprocessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.SwimlanedNode;
@@ -65,7 +66,7 @@ public class CopyGraphCommand extends Command {
 
     @Override
     public void execute() {
-        try {
+    	try {
             if (!copyBuffer.getLanguage().equals(targetDefinition.getLanguage())) {
                 Dialogs.warning(Localization.getString("CopyBuffer.DifferentVersion.warning"));
                 return;
@@ -74,7 +75,7 @@ public class CopyGraphCommand extends Command {
             List<NamedGraphElement> sourceNodeList = copyBuffer.getSourceNodes();
             // add nodes
             for (NamedGraphElement node : sourceNodeList) {
-                if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() != 0) {
+            	if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() != 0) {
                     continue;
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() != 0) {
                     continue;
@@ -87,6 +88,7 @@ public class CopyGraphCommand extends Command {
                     CopyVariableAction copyAction = new CopyVariableAction(variable);
                     copyActions.add(copyAction);
                 }
+                if (copy instanceof Subprocess) ((Subprocess) copy).setSubProcessName("");
                 targetNodeMap.put(node.getId(), copy);
                 if (node instanceof FormNode) {
                     FormNode formNode = (FormNode) node;
