@@ -339,29 +339,43 @@ public class DocxUtils {
             config.warn("No placeholder end '" + PLACEHOLDER_END + "' found for '" + PLACEHOLDER_START + "' in " + paragraphText);
             return;
         }
-        // TODO #904: multiple replacements in same run does not fit in this
-        // algorithm
-        boolean whetherSingleRunContainsPlaceholderStart = false;
-        boolean whetherSingleRunContainsPlaceholderEnd = false;
-        for (XWPFRun run : paragraph.getRuns()) {
-            if (run == null || run.getText(0) == null) {
-                continue;
-            }
-            if (!whetherSingleRunContainsPlaceholderStart && run.getText(0).contains(PLACEHOLDER_START)) {
-                whetherSingleRunContainsPlaceholderStart = true;
-            }
-            if (!whetherSingleRunContainsPlaceholderEnd && run.getText(0).contains(PLACEHOLDER_END)) {
-                whetherSingleRunContainsPlaceholderEnd = true;
-            }
+        List<XWPFRun> paragraphRuns = Lists.newArrayList(paragraph.getRuns());
+        int whetherSingleRunContainsPlaceholderStart = 0;
+        int whetherMultRunContainsPlaceholderStart = 0;
+        int whetherSingleRunContainsPlaceholderEnd = 0;
+        for (int i = 0; i < paragraphRuns.size(); i++) {
+        	XWPFRun run = paragraphRuns.get(i);
+        	XWPFRun next = (i + 1) < paragraphRuns.size() ? paragraphRuns.get(i + 1) : null;
+        	if (run == null || run.getText(0) == null) {
+        		continue;
+        	}
+        	if (run.getText(0).contains(PLACEHOLDER_START)) {
+        		whetherSingleRunContainsPlaceholderStart++;
+        	}
+        	if (run.getText(0).contains(PLACEHOLDER_END)) {
+        		whetherSingleRunContainsPlaceholderEnd++;
+        	}
+        	if (next == null || next.getText(0) == null || PLACEHOLDER_START.length() < 2) {
+        		continue;
+        	}
+        	int j = 1;
+        	String test = PLACEHOLDER_START.substring(0, j);
+        	while ((j < PLACEHOLDER_START.length()) && !run.getText(0).endsWith(test)) {
+        		test = PLACEHOLDER_START.substring(0, ++j);
+        	}
+        	if (j == PLACEHOLDER_START.length() || !next.getText(0).startsWith(PLACEHOLDER_START.substring(j, PLACEHOLDER_START.length()))) {
+        		continue;
+        	}
+        	whetherMultRunContainsPlaceholderStart++;
         }
-        if (!whetherSingleRunContainsPlaceholderStart) {
+        if (whetherMultRunContainsPlaceholderStart > 0) {
             fixRunsToStateInWhichSingleRunContainsPlaceholder(config, paragraph, PLACEHOLDER_START);
         }
-        if (!whetherSingleRunContainsPlaceholderEnd) {
+        if (whetherSingleRunContainsPlaceholderEnd < (whetherSingleRunContainsPlaceholderStart + whetherMultRunContainsPlaceholderStart)) {
             fixRunsToStateInWhichSingleRunContainsPlaceholder(config, paragraph, PLACEHOLDER_END);
         }
         List<ReplaceOperation> operations = Lists.newArrayList();
-        for (XWPFRun run : Lists.newArrayList(paragraph.getRuns())) {
+        for (XWPFRun run : paragraphRuns) {
             if (run == null) {
                 log.warn("Null run in paragraph " + paragraphText);
                 continue;
@@ -492,7 +506,7 @@ public class DocxUtils {
     }
 
     private static String replaceText(DocxConfig config, IVariableProvider variableProvider, List<ReplaceOperation> operations, String text) {
-        ReplaceOperation operation;
+    	ReplaceOperation operation;
         if (operations.size() > 0 && !operations.get(operations.size() - 1).isPlaceholderRead()) {
             operation = operations.get(operations.size() - 1);
         } else {
