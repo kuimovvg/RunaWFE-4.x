@@ -54,7 +54,7 @@ import com.google.common.base.Throwables;
  * @author Dofs
  * @since 4.0
  */
-public class WorkflowBotTaskExecutor implements Runnable {
+public class WorkflowBotTaskExecutor implements Runnable, BotExecutionStatus {
     private static final Log log = LogFactory.getLog(WorkflowBotTaskExecutor.class);
 
     private final WorkflowBotExecutor botExecutor;
@@ -73,6 +73,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
         this.task = task;
     }
 
+    @Override
     public WorkflowBotTaskExecutionStatus getExecutionStatus() {
         return executionStatus;
     }
@@ -85,6 +86,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
         return task;
     }
 
+    @Override
     @SuppressWarnings("deprecation")
     public boolean interruptExecution() {
         if (executionThread.get() == null) {
@@ -104,6 +106,7 @@ public class WorkflowBotTaskExecutor implements Runnable {
         }
     }
 
+    @Override
     public int getExecutionInSeconds() {
         return new CalendarInterval(started, Calendar.getInstance()).getLengthInSeconds();
     }
@@ -219,9 +222,9 @@ public class WorkflowBotTaskExecutor implements Runnable {
             }
             log.info("FailedDelaySeconds = " + failedDelaySeconds + " for " + task);
             started.add(Calendar.SECOND, failedDelaySeconds);
+        } finally {
+            executionThread.set(null);
         }
-        executionThread.set(null);
-        return;
     }
 
     @Override

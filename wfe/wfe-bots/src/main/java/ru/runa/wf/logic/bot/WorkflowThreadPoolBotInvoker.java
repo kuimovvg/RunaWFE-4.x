@@ -41,6 +41,7 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
@@ -49,7 +50,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private long configurationVersion = -1;
     private final Map<Bot, WorkflowBotExecutor> botExecutors = Maps.newHashMap();
     private Future<?> botInvokerInvocation = null;
-    private final Map<WorkflowBotTaskExecutor, ScheduledFuture<?>> scheduledTasks = Maps.newConcurrentMap();
+    private final Map<BotExecutionStatus, ScheduledFuture<?>> scheduledTasks = Maps.newConcurrentMap();
 
     private final long STUCK_TIMEOUT_SECONDS = 300;
     private BotStation botStation;
@@ -76,13 +77,13 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
 
     private void checkStuckBots() {
         try {
-            for (Iterator<Entry<WorkflowBotTaskExecutor, ScheduledFuture<?>>> iter = scheduledTasks.entrySet().iterator(); iter.hasNext();) {
-                Entry<WorkflowBotTaskExecutor, ScheduledFuture<?>> entry = iter.next();
+            for (Iterator<Entry<BotExecutionStatus, ScheduledFuture<?>>> iter = scheduledTasks.entrySet().iterator(); iter.hasNext();) {
+                Entry<BotExecutionStatus, ScheduledFuture<?>> entry = iter.next();
                 if (entry.getValue().isDone()) {
                     iter.remove();
                     continue;
                 }
-                WorkflowBotTaskExecutor executor = entry.getKey();
+                BotExecutionStatus executor = entry.getKey();
                 if (executor.getExecutionStatus() == WorkflowBotTaskExecutionStatus.STARTED
                         && executor.getExecutionInSeconds() > STUCK_TIMEOUT_SECONDS) {
                     if (executor.interruptExecution()) {
@@ -112,7 +113,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                         List<BotTask> tasks = Delegates.getBotService().getBotTasks(user, bot.getId());
                         if (existingBotExecutors.containsKey(bot)) {
                             WorkflowBotExecutor botExecutor = existingBotExecutors.get(bot);
-                            botExecutor.reinitialize(tasks);
+                            botExecutor.reinitialize(bot, tasks);
                             botExecutors.put(bot, botExecutor);
                         } else {
                             botExecutors.put(bot, new WorkflowBotExecutor(user, bot, tasks));
@@ -145,11 +146,11 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
         }
         for (WorkflowBotExecutor botExecutor : botExecutors.values()) {
             try {
-                Set<WfTask> tasks = botExecutor.getNewTasks();
-                for (WfTask task : tasks) {
-                    WorkflowBotTaskExecutor botTaskExecutor = botExecutor.createBotTaskExecutor(task);
-                    ScheduledFuture<?> future = executor.schedule(botTaskExecutor, 200, TimeUnit.MILLISECONDS);
-                    scheduledTasks.put(botTaskExecutor, future);
+                if (botExecutor.getBot().isSequentialExecution()) {
+                    scheduleSequentialBot(botExecutor);
+                } else {
+                    Set<WfTask> tasks = botExecutor.getNewTasks();
+                    scheduleTasks(botExecutor, tasks);
                 }
             } catch (AuthenticationException e) {
                 configurationVersion = -1;
@@ -158,6 +159,64 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
                 log.error("BotRunner execution failed.", e);
             }
         }
+    }
+
+    /**
+     * Schedules all task for bot. Each parallel tasks scheduled as self.
+     * Sequential tasks is grouped for sequential execution.
+     * 
+     * @param botExecutor
+     *            Bot execution data.
+     * @param tasks
+     *            Tasks to schedule.
+     */
+    private void scheduleTasks(WorkflowBotExecutor botExecutor, Set<WfTask> tasks) {
+        Map<String, List<WorkflowBotTaskExecutor>> sequentialTasks = Maps.newHashMap();
+        for (WfTask task : tasks) {
+            BotTask botTaskConfiguration = botExecutor.getBotTasks().get(task.getName());
+            if (botTaskConfiguration.isSequentialExecution()
+                    && scheduledTasks.containsKey(new WorkflowSequentialBotTaskExecutor(botExecutor.getBot(), botTaskConfiguration, null))) {
+                continue;
+            }
+            WorkflowBotTaskExecutor botTaskExecutor = botExecutor.createBotTaskExecutor(task);
+            if (botTaskConfiguration.isSequentialExecution()) {
+                List<WorkflowBotTaskExecutor> botTasks = sequentialTasks.get(task.getName());
+                if (botTasks == null) {
+                    botTasks = Lists.newLinkedList();
+                    sequentialTasks.put(task.getName(), botTasks);
+                }
+                botTasks.add(botTaskExecutor);
+            } else {
+                ScheduledFuture<?> future = executor.schedule(botTaskExecutor, 200, TimeUnit.MILLISECONDS);
+                scheduledTasks.put(botTaskExecutor, future);
+            }
+        }
+        for (String taskName : sequentialTasks.keySet()) {
+            WorkflowSequentialBotTaskExecutor botTaskExecutor = new WorkflowSequentialBotTaskExecutor(botExecutor.getBot(), botExecutor.getBotTasks()
+                    .get(taskName), sequentialTasks.get(taskName));
+            ScheduledFuture<?> future = executor.schedule(botTaskExecutor, 200, TimeUnit.MILLISECONDS);
+            scheduledTasks.put(botTaskExecutor, future);
+        }
+    }
+
+    /**
+     * Schedules new tasks for sequential bot.
+     * 
+     * @param botExecutor
+     *            Component, used to create new bot task executors.
+     */
+    private void scheduleSequentialBot(WorkflowBotExecutor botExecutor) {
+        if (scheduledTasks.containsKey(new WorkflowSequentialBotTaskExecutor(botExecutor.getBot(), null, null))) {
+            return;
+        }
+        List<WorkflowBotTaskExecutor> tasksToExecute = Lists.newLinkedList();
+        Set<WfTask> tasks = botExecutor.getNewTasks();
+        for (WfTask task : tasks) {
+            tasksToExecute.add(botExecutor.createBotTaskExecutor(task));
+        }
+        WorkflowSequentialBotTaskExecutor botTaskExecutor = new WorkflowSequentialBotTaskExecutor(botExecutor.getBot(), null, tasksToExecute);
+        ScheduledFuture<?> future = executor.schedule(botTaskExecutor, 200, TimeUnit.MILLISECONDS);
+        scheduledTasks.put(botTaskExecutor, future);
     }
 
     private void logBotsActivites() {

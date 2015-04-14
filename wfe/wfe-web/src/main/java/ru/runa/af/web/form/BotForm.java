@@ -32,11 +32,13 @@ public class BotForm extends ActionForm {
     public static final String BOT_STATION_ID = "botStationId";
     public static final String BOT_ID = "botId";
     public static final String BOT_TIMEOUT = "botTimeout";
+    public static final String IS_SEQUENTIAL = "sequential";
 
     private String wfeUser;
     private String wfePassword;
     private Long botId;
     private Long botStationId;
+    private boolean sequential;
 
     // private Long botTimeout;
 
@@ -70,6 +72,14 @@ public class BotForm extends ActionForm {
 
     public void setBotId(Long botId) {
         this.botId = botId;
+    }
+
+    public boolean isSequential() {
+        return sequential;
+    }
+
+    public void setSequential(boolean sequential) {
+        this.sequential = sequential;
     }
 
     // public Long getBotTimeout() {
