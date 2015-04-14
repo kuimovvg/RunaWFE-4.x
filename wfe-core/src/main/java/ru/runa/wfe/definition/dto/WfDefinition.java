@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.IFileDataProvider;
@@ -37,7 +38,7 @@ import com.google.common.base.Objects;
 public class WfDefinition extends Identifiable implements Comparable<WfDefinition> {
     private static final long serialVersionUID = -6032491529439317948L;
 
-    private ProcessDefinition definition = null;
+    @XmlTransient private ProcessDefinition definition = null;
     private Long id;
     private String name;
     private String description;
