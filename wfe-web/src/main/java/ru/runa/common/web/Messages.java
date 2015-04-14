@@ -240,10 +240,12 @@ public class Messages {
     public static final String LABEL_BOT_STATION_ADDRESS = "label.bot_station_address";
     public static final String LABEL_BOT_PASSWORD = "label.bot_password";
     public static final String LABEL_BOT_NAME = "label.bot_name";
+    public static final String LABEL_BOT_SEQUENTIAL = "label.bot_sequential";
     // public static final String LABEL_BOT_TIMEOUT = "label.bot_timeout";
     public static final String LABEL_BOT_TASK_NAME = "label.bot_task_name";
     public static final String LABEL_BOT_TASK_HANDLER = "label.bot_task_handler";
     public static final String LABEL_BOT_TASK_CONFIG = "label.bot_task_config";
+    public static final String LABEL_BOT_TASK_SEQUENTIAL = "label.bot_task_sequential";
     public static final String TITLE_BOT_STATION_DETAILS = "title.bot_station_details";
     public static final String TITLE_BOT_STATION_STATUS = "title.bot_station_status";
     public static final String TITLE_BOT_DETAILS = "title.bot_details";

@@ -39,6 +39,7 @@ public class BotTasksForm extends IdsForm {
     public static final String NAME_INPUT_NAME = ").name";
     public static final String HANDLER_INPUT_NAME = ").handler";
     public static final String CONFIG_FILE_INPUT_NAME = ").configFile";
+    public static final String SEQUENTIAL_INPUT_NAME = ").sequential";
     private static final Map<Long, BotTaskForm> taskBeans = Maps.newHashMap();
 
     @Override
@@ -69,6 +70,7 @@ public class BotTasksForm extends IdsForm {
         private String name;
         private String handler;
         private String config;
+        private boolean sequential;
         private FormFile configFile;
 
         public String getName() {
@@ -101,6 +103,14 @@ public class BotTasksForm extends IdsForm {
 
         public void setConfigFile(FormFile configFile) {
             this.configFile = configFile;
+        }
+
+        public boolean isSequential() {
+            return sequential;
+        }
+
+        public void setSequential(boolean sequential) {
+            this.sequential = sequential;
         }
     }
 }

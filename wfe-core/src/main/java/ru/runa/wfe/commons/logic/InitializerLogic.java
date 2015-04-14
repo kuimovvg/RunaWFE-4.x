@@ -46,6 +46,7 @@ import ru.runa.wfe.commons.dbpatch.impl.AddCreateDateColumns;
 import ru.runa.wfe.commons.dbpatch.impl.AddEmbeddedFileForBotTask;
 import ru.runa.wfe.commons.dbpatch.impl.AddHierarchyProcess;
 import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
+import ru.runa.wfe.commons.dbpatch.impl.AddSequentialFlagToBot;
 import ru.runa.wfe.commons.dbpatch.impl.AddSettingsTable;
 import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
 import ru.runa.wfe.commons.dbpatch.impl.ExpandDescriptionsPatch;
@@ -123,7 +124,7 @@ public class InitializerLogic {
         dbPatches.add(AddEmbeddedFileForBotTask.class);
         dbPatches.add(AddColumnForEmbeddedBotTaskFileName.class);
         dbPatches.add(AddSettingsTable.class);
-
+        dbPatches.add(AddSequentialFlagToBot.class);
     };
 
     @Autowired
@@ -160,8 +161,9 @@ public class InitializerLogic {
                 localizations.addAll(LocalizationParser.parseLocalizations(stream));
             }
             localizationDAO.saveLocalizations(localizations, false);
-            if (DatabaseProperties.isDynamicSettingsEnabled())
-            	PropertyResources.setDatabaseAvailable(true);
+            if (DatabaseProperties.isDynamicSettingsEnabled()) {
+                PropertyResources.setDatabaseAvailable(true);
+            }
             setScheduledTaskTimerSettings();
             JobTask.setSystemStartupCompleted(true);
         } catch (Exception e) {
