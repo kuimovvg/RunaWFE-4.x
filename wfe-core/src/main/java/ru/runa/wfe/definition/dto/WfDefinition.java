@@ -132,13 +132,10 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
 
     @Override
     public int compareTo(WfDefinition o) {
-        if (name == null && o.definition == null) {
-            return -1;
+        if (name != null && name.equals(o.name)) {
+            return 0;
         }
-        if (isSubprocessOf(o.definition.getEmbeddedSubprocesses())) return 1;
-        if (name != null) {
-            return name.compareTo(o.name);
-        }
+        if (o.definition != null && isSubprocessOf(o.definition.getEmbeddedSubprocesses())) return 1;
         return -1;
     }
     
