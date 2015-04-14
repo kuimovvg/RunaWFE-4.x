@@ -63,6 +63,7 @@ public class UpdateBotTasksAction extends ActionBase {
                         task.setTaskHandlerClassName(updatedTask.getHandler());
                     }
                     task.setConfiguration(updatedTask.getConfigFile().getFileData());
+                    task.setSequentialExecution(updatedTask.isSequential());
                     tasksToUpdate.add(task);
                 }
             }

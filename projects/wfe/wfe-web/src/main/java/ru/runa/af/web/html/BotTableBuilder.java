@@ -87,6 +87,8 @@ public class BotTableBuilder {
         table.addElement(HTMLUtils.createSelectRow(Messages.getMessage(Messages.LABEL_BOT_NAME, pageContext), actorSelect, true));
         table.addElement(HTMLUtils.createInputRow(Messages.getMessage(Messages.LABEL_BOT_PASSWORD, pageContext), BotForm.PASSWORD,
                 bot != null ? bot.getPassword() : "", true, false, Input.PASSWORD));
+        table.addElement(HTMLUtils.createCheckboxRow(Messages.getMessage(Messages.LABEL_BOT_SEQUENTIAL, pageContext), BotForm.IS_SEQUENTIAL,
+                bot != null ? bot.isSequentialExecution() : false, true, false));
         return table;
     }
 }

@@ -51,6 +51,11 @@ public class Bot implements Serializable {
     private String username;
     private String password;
     private Date createDate;
+    /**
+     * Flag, equals true, if all bot tasks must be executed sequential; false if
+     * parallel execution is allowed.
+     */
+    private boolean sequentialExecution;
 
     public Bot() {
     }
@@ -124,6 +129,15 @@ public class Bot implements Serializable {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    @Column(name = "IS_SEQUENTIAL", nullable = false)
+    public boolean isSequentialExecution() {
+        return sequentialExecution;
+    }
+
+    public void setSequentialExecution(boolean sequentialExecution) {
+        this.sequentialExecution = sequentialExecution;
     }
 
     @Override

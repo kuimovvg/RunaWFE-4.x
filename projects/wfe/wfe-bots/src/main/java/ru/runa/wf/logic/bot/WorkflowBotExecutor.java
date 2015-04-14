@@ -46,18 +46,18 @@ import com.google.common.collect.Maps;
  */
 public class WorkflowBotExecutor {
     private final User user;
-    private final Bot bot;
+    private Bot bot;
     private final Map<String, BotTask> botTasks = Maps.newHashMap();
     private final Set<WorkflowBotTaskExecutor> botTaskExecutors;
 
     public WorkflowBotExecutor(User user, Bot bot, List<BotTask> tasks) {
         this.user = user;
-        this.bot = bot;
         botTaskExecutors = new HashSet<WorkflowBotTaskExecutor>();
-        reinitialize(tasks);
+        reinitialize(bot, tasks);
     }
 
-    public void reinitialize(List<BotTask> tasks) {
+    public void reinitialize(Bot bot, List<BotTask> tasks) {
+        this.bot = bot;
         botTasks.clear();
         for (BotTask botTask : tasks) {
             botTasks.put(botTask.getName(), botTask);
@@ -98,15 +98,19 @@ public class WorkflowBotExecutor {
     public Set<WfTask> getNewTasks() {
         Set<WfTask> result = new HashSet<WfTask>();
         for (Iterator<WorkflowBotTaskExecutor> botIterator = botTaskExecutors.iterator(); botIterator.hasNext();) {
-            WorkflowBotTaskExecutor taskExecutor = botIterator.next();
+            BotExecutionStatus taskExecutor = botIterator.next();
             if (taskExecutor.getExecutionStatus() == WorkflowBotTaskExecutionStatus.COMPLETED) {
                 // Completed bot task hold time is elapsed
+                botIterator.remove();
+            }
+            if (taskExecutor.getExecutionStatus() == WorkflowBotTaskExecutionStatus.SCHEDULING_FAILURE) {
+                // Bot task must be rescheduled.
                 botIterator.remove();
             }
         }
         List<WfTask> currentTasks = Delegates.getExecutionService().getTasks(user, BatchPresentationFactory.TASKS.createNonPaged());
         for (WfTask task : currentTasks) {
-            WorkflowBotTaskExecutor testingExecutor = new WorkflowBotTaskExecutor(this, task);
+            BotExecutionStatus testingExecutor = new WorkflowBotTaskExecutor(this, task);
             if (!botTaskExecutors.contains(testingExecutor)) {
                 result.add(task);
                 continue;

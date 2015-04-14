@@ -128,6 +128,7 @@ public class BotTaskListTag extends TitledFormTag {
             tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_TASK_NAME, context)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_TASK_HANDLER, context)).setClass(Resources.CLASS_LIST_TABLE_TH));
             tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_TASK_CONFIG, context)).setClass(Resources.CLASS_LIST_TABLE_TH));
+            tr.addElement(new TH(Messages.getMessage(Messages.LABEL_BOT_TASK_SEQUENTIAL, context)).setClass(Resources.CLASS_LIST_TABLE_TH));
             return tr;
         }
     }
@@ -162,6 +163,7 @@ public class BotTaskListTag extends TitledFormTag {
             tr.addElement(buildNameTD(task));
             tr.addElement(buildHandlerTD(task));
             tr.addElement(buildConfigurationUploadTD(task));
+            tr.addElement(buildSequentialTD(task));
             return tr;
         }
 
@@ -212,6 +214,16 @@ public class BotTaskListTag extends TitledFormTag {
             checkBoxInput.setDisabled(disabled);
             checkboxTD.setClass(Resources.CLASS_LIST_TABLE_TD);
             checkboxTD.addElement(checkBoxInput);
+            return checkboxTD;
+        }
+
+        private TD buildSequentialTD(BotTask task) {
+            TD checkboxTD = new TD();
+            Input input = new Input(Input.CHECKBOX, BotTasksForm.BOT_TASK_INPUT_NAME_PREFIX + task.getId() + BotTasksForm.SEQUENTIAL_INPUT_NAME);
+            input.setDisabled(disabled);
+            input.setChecked(task.isSequentialExecution());
+            checkboxTD.setClass(Resources.CLASS_LIST_TABLE_TD);
+            checkboxTD.addElement(input);
             return checkboxTD;
         }
 
