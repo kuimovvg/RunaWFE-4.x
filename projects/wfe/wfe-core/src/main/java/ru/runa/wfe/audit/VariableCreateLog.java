@@ -55,4 +55,8 @@ public class VariableCreateLog extends VariableLog {
         return new Object[] { getVariableName(), getVariableNewValue() };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnVariableCreateLog(this);
+    }
 }

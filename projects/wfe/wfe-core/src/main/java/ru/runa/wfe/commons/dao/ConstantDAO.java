@@ -64,7 +64,7 @@ public class ConstantDAO extends GenericDAO<Constant> {
         setValue(DATABASE_VERSION_VARIABLE_NAME, String.valueOf(version));
     }
 
-    private Constant get(String name) {
+    public Constant get(String name) {
         return findFirstOrNull("from Constant where name = ?", name);
     }
 
@@ -75,7 +75,7 @@ public class ConstantDAO extends GenericDAO<Constant> {
      *            constant name.
      * @return constant value.
      */
-    private String getValue(String name) {
+    public String getValue(String name) {
         Constant constant = get(name);
         if (constant == null) {
             return null;
@@ -91,7 +91,7 @@ public class ConstantDAO extends GenericDAO<Constant> {
      * @param value
      *            constant value.
      */
-    private void setValue(String name, String value) {
+    public void setValue(String name, String value) {
         Constant constant = get(name);
         if (constant == null) {
             create(new Constant(name, value));
@@ -99,5 +99,4 @@ public class ConstantDAO extends GenericDAO<Constant> {
             constant.setValue(value);
         }
     }
-
 }

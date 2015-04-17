@@ -38,4 +38,8 @@ public class TaskRemovedOnProcessEndLog extends TaskEndLog {
         return new Object[] { getTaskName(), new ProcessIdValue(getEndedProcessId()) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTaskRemovedOnProcessEndLog(this);
+    }
 }

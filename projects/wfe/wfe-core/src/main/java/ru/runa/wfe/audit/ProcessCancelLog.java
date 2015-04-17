@@ -53,4 +53,13 @@ public class ProcessCancelLog extends ProcessLog {
         return new Object[] { new ExecutorNameValue(getAttributeNotNull(ATTR_ACTOR_NAME)) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnProcessCancelLog(this);
+    }
+
+    @Transient
+    public String getActorName() {
+        return getAttribute(ATTR_ACTOR_NAME);
+    }
 }

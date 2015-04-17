@@ -75,4 +75,8 @@ public class TransitionLog extends ProcessLog {
         return new Object[] { getAttributeNotNull(ATTR_TRANSITION_ID) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTransitionLog(this);
+    }
 }

@@ -45,4 +45,8 @@ public class SubprocessEndLog extends NodeLeaveLog {
         return new Object[] { new ProcessIdValue(getSubprocessId()) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnSubprocessEndLog(this);
+    }
 }

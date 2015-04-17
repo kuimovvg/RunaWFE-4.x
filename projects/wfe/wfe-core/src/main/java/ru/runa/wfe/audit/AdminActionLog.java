@@ -35,4 +35,8 @@ public class AdminActionLog extends ProcessLog {
         return new Object[] { new ExecutorNameValue(getAttributeNotNull(ATTR_ACTOR_NAME)) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnAdminActionLog(this);
+    }
 }
