@@ -37,7 +37,7 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WfDefinition extends Identifiable implements Comparable<WfDefinition> {
     private static final long serialVersionUID = -6032491529439317948L;
-
+    
     @XmlTransient private ProcessDefinition definition = null;
     private Long id;
     private String name;
@@ -133,22 +133,23 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
 
     @Override
     public int compareTo(WfDefinition o) {
-        if (name != null && name.equals(o.name)) {
+        if (this.definition != null && o.definition != null && this.definition.equals(o.definition)) {
             return 0;
         }
-        if (o.definition != null && isSubprocessOf(o.definition.getEmbeddedSubprocesses())) return 1;
+        if (o.definition == null) {
+            if (name != null) return name.compareTo(o.name);
+            return -1;
+        }
+        if (isSubprocessOf(o.definition.getEmbeddedSubprocesses())) return 1;
+        if (name != null) return name.compareTo(o.name);
         return -1;
     }
     
     private boolean isSubprocessOf(Map<String, SubprocessDefinition> supprocesses) {
         boolean result = false;
+        if (supprocesses == null) return result;
         for (Map.Entry<String, SubprocessDefinition> entry : supprocesses.entrySet()) {
-            if (this.equals(entry.getValue())) {
-                result = true;
-                break;
-            }
-            if (!isSubprocessOf(entry.getValue().getEmbeddedSubprocesses()))
-                continue;
+            if (!this.definition.equals(entry.getValue())) continue;
             result = true;
             break;
         }
