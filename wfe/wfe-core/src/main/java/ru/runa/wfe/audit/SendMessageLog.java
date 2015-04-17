@@ -52,4 +52,8 @@ public class SendMessageLog extends NodeEnterLog {
         return new Object[] { new HtmlValue(getAttributeNotNull(ATTR_MESSAGE)) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnSendMessageLog(this);
+    }
 }

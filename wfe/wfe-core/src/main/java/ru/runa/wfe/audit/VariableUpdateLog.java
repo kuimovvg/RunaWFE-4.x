@@ -62,4 +62,8 @@ public class VariableUpdateLog extends VariableLog {
         return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), getVariableNewValue() };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnVariableUpdateLog(this);
+    }
 }

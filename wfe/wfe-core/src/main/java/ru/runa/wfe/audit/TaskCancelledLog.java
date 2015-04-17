@@ -41,4 +41,8 @@ public class TaskCancelledLog extends TaskEndLog {
         return new Object[] { getTaskName(), getHandlerInfo() };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTaskCancelledLog(this);
+    }
 }

@@ -210,6 +210,14 @@ public abstract class ProcessLog implements IAttributes, Serializable, Comparabl
     public abstract Object[] getPatternArguments();
 
     /**
+     * Applies some operation to process log instance.
+     * 
+     * @param visitor
+     *            Operation to apply.
+     */
+    public abstract void processBy(ProcessLogVisitor visitor);
+
+    /**
      * Formats log message description
      * 
      * @param pattern

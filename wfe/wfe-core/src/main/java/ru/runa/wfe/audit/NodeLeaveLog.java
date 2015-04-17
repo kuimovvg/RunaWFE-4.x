@@ -44,4 +44,8 @@ public class NodeLeaveLog extends NodeLog {
         setSeverity(Severity.INFO);
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnNodeLeaveLog(this);
+    }
 }

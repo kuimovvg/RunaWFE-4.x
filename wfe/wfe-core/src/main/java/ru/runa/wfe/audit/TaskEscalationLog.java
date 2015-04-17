@@ -43,4 +43,8 @@ public class TaskEscalationLog extends TaskLog {
         return new Object[] { getTaskName(), new ExecutorIdsValue(getAttributeNotNull(ATTR_MESSAGE)) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTaskEscalationLog(this);
+    }
 }

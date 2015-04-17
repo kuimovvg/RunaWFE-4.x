@@ -52,10 +52,15 @@ public class TaskAssignLog extends TaskLog {
         }
         setSeverity(Severity.INFO);
     }
-    
+
     @Transient
     public String getOldExecutorName() {
         return getAttribute(ATTR_OLD_VALUE);
+    }
+
+    @Transient
+    public String getNewExecutorName() {
+        return getAttribute(ATTR_NEW_VALUE);
     }
 
     @Override
@@ -64,4 +69,8 @@ public class TaskAssignLog extends TaskLog {
         return new Object[] { getTaskName(), new ExecutorNameValue(getAttribute(ATTR_NEW_VALUE)) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTaskAssignLog(this);
+    }
 }

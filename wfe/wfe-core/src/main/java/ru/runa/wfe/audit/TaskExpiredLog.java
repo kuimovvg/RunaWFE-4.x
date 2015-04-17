@@ -30,4 +30,8 @@ public class TaskExpiredLog extends TaskEndLog {
         return new Object[] { getTaskName() };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTaskExpiredLog(this);
+    }
 }

@@ -51,4 +51,8 @@ public class ActionLog extends ProcessLog {
         return new Object[] { getAttributeNotNull(ATTR_ACTION) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnActionLog(this);
+    }
 }

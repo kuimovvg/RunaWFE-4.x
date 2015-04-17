@@ -45,4 +45,8 @@ public class SubprocessStartLog extends NodeEnterLog {
         return new Object[] { new ProcessIdValue(getSubprocessId()) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnSubprocessStartLog(this);
+    }
 }
