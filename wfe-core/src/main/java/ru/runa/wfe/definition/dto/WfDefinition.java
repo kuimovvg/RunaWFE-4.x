@@ -18,17 +18,14 @@
 package ru.runa.wfe.definition.dto;
 
 import java.util.Date;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlTransient;
 
 import ru.runa.wfe.definition.Deployment;
 import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import ru.runa.wfe.lang.ProcessDefinition;
-import ru.runa.wfe.lang.SubprocessDefinition;
 import ru.runa.wfe.security.Identifiable;
 import ru.runa.wfe.security.SecuredObjectType;
 
@@ -37,8 +34,7 @@ import com.google.common.base.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WfDefinition extends Identifiable implements Comparable<WfDefinition> {
     private static final long serialVersionUID = -6032491529439317948L;
-    
-    @XmlTransient private ProcessDefinition definition = null;
+
     private Long id;
     private String name;
     private String description;
@@ -56,7 +52,6 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
 
     public WfDefinition(ProcessDefinition definition, boolean canBeStarted) {
         this(definition.getDeployment());
-        this.definition = definition;
         hasHtmlDescription = definition.getFileData(IFileDataProvider.INDEX_FILE_NAME) != null;
         hasStartImage = definition.getFileData(IFileDataProvider.START_IMAGE_FILE_NAME) != null;
         hasDisabledImage = definition.getFileData(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME) != null;
@@ -133,27 +128,10 @@ public class WfDefinition extends Identifiable implements Comparable<WfDefinitio
 
     @Override
     public int compareTo(WfDefinition o) {
-        if (this.definition != null && o.definition != null && this.definition.equals(o.definition)) {
-            return 0;
-        }
-        if (o.definition == null) {
-            if (name != null) return name.compareTo(o.name);
+        if (name == null) {
             return -1;
         }
-        if (isSubprocessOf(o.definition.getEmbeddedSubprocesses())) return 1;
-        if (name != null) return name.compareTo(o.name);
-        return -1;
-    }
-    
-    private boolean isSubprocessOf(Map<String, SubprocessDefinition> supprocesses) {
-        boolean result = false;
-        if (supprocesses == null) return result;
-        for (Map.Entry<String, SubprocessDefinition> entry : supprocesses.entrySet()) {
-            if (!this.definition.equals(entry.getValue())) continue;
-            result = true;
-            break;
-        }
-        return result;
+        return name.compareTo(o.name);
     }
 
     @Override
