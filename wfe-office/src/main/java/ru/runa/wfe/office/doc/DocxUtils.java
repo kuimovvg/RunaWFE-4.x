@@ -375,7 +375,7 @@ public class DocxUtils {
             fixRunsToStateInWhichSingleRunContainsPlaceholder(config, paragraph, PLACEHOLDER_END);
         }
         List<ReplaceOperation> operations = Lists.newArrayList();
-        for (XWPFRun run : paragraphRuns) {
+        for (XWPFRun run : Lists.newArrayList(paragraph.getRuns())) {
             if (run == null) {
                 log.warn("Null run in paragraph " + paragraphText);
                 continue;
