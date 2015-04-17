@@ -188,6 +188,14 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
         }
         processLog.setCreateDate(new Date());
         this.create(processLog);
-        customizationDao.addLog(processLog, process, token);
+        registerInCustomizationDao(processLog, process, token);
+    }
+
+    private void registerInCustomizationDao(ProcessLog processLog, Process process, Token token) {
+        try {
+            customizationDao.addLog(processLog, process, token);
+        } catch (Throwable e) {
+            log.warn("Custom log handler throws exception", e);
+        }
     }
 }

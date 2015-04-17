@@ -203,7 +203,7 @@ public class TaskAggregatedLog {
     }
 
     @Column(name = "PROCESS_ID", nullable = false)
-    @Index(name = "IX_AGGLOG_TASKS_PROCESS_INSTANCE")
+    @Index(name = "IX_AGGLOG_TASKS_PROCESS")
     public long getProcessInstanceId() {
         return processInstanceId;
     }
