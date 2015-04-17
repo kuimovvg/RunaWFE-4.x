@@ -16,6 +16,7 @@ public class CreateAggregatedLogsTables extends DBPatch {
     @Override
     protected List<String> getDDLQueriesBefore() {
         List<String> sql = super.getDDLQueriesAfter();
+
         sql.addAll(CreateAssignmentHistoryTable());
         sql.addAll(CreateTaskHistoryTable());
         sql.addAll(CreateProcessHistoryTable());
@@ -42,9 +43,9 @@ public class CreateAggregatedLogsTables extends DBPatch {
         sql.add(getDDLCreateTable("BPM_AGGLOG_ASSIGNMENTS", columns, null));
 
         sql.add(getDDLCreateSequence("SEQ_BPM_AGGLOG_ASSIGNMENTS"));
-        sql.add(getDDLCreateIndex("BPM_AGGLOG_ASSIGNMENTS", "IX_AGGLOG_ASSIGNMENT_DATE", "ASSIGNMENT_DATE"));
-        sql.add(getDDLCreateIndex("BPM_AGGLOG_ASSIGNMENTS", "IX_AGGLOG_ASSIGNMENT_OBJECT", "ASSIGNMENT_OBJECT_ID", "IDX"));
-        sql.add(getDDLCreateIndex("BPM_AGGLOG_ASSIGNMENTS", "IX_AGGLOG_ASSIGNMENT_EXECUTOR", "NEW_EXECUTOR_NAME"));
+        sql.add(getDDLCreateIndex("BPM_AGGLOG_ASSIGNMENTS", "IX_AGGLOG_ASSIGN_DATE", "ASSIGNMENT_DATE"));
+        sql.add(getDDLCreateIndex("BPM_AGGLOG_ASSIGNMENTS", "IX_AGGLOG_ASSIGN_OBJECT", "ASSIGNMENT_OBJECT_ID", "IDX"));
+        sql.add(getDDLCreateIndex("BPM_AGGLOG_ASSIGNMENTS", "IX_AGGLOG_ASSIGN_EXECUTOR", "NEW_EXECUTOR_NAME"));
         return sql;
     }
 
@@ -74,7 +75,7 @@ public class CreateAggregatedLogsTables extends DBPatch {
         sql.add(getDDLCreateTable("BPM_AGGLOG_TASKS", columns, null));
 
         sql.add(getDDLCreateSequence("SEQ_BPM_AGGLOG_TASKS"));
-        sql.add(getDDLCreateIndex("BPM_AGGLOG_TASKS", "IX_AGGLOG_TASKS_PROCESS_INSTANCE", "PROCESS_ID"));
+        sql.add(getDDLCreateIndex("BPM_AGGLOG_TASKS", "IX_AGGLOG_TASKS_PROCESS", "PROCESS_ID"));
         sql.add(getDDLCreateIndex("BPM_AGGLOG_TASKS", "IX_AGGLOG_TASKS_CREATE_DATE", "CREATE_DATE"));
         sql.add(getDDLCreateIndex("BPM_AGGLOG_TASKS", "IX_AGGLOG_TASKS_END_DATE", "END_DATE"));
         return sql;

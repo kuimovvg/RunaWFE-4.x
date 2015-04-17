@@ -67,7 +67,7 @@ public class AssignmentHistory {
     }
 
     @Column(name = "ASSIGNMENT_DATE", nullable = false)
-    @Index(name = "IX_AGGLOG_ASSIGNMENT_DATE")
+    @Index(name = "IX_AGGLOG_ASSIGN_DATE")
     public Date getAssingnDate() {
         return assingnDate;
     }
@@ -86,7 +86,7 @@ public class AssignmentHistory {
     }
 
     @Column(name = "NEW_EXECUTOR_NAME")
-    @Index(name = "IX_AGGLOG_ASSIGNMENT_EXECUTOR")
+    @Index(name = "IX_AGGLOG_ASSIGN_EXECUTOR")
     public String getNewExecutorName() {
         return newExecutorName;
     }
