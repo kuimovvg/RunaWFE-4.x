@@ -33,4 +33,8 @@ public class CreateTimerActionLog extends ActionLog {
         return new Object[] { getAttributeNotNull(ATTR_ACTION), getAttributeNotNull(ATTR_DUE_DATE) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnCreateTimerActionLog(this);
+    }
 }

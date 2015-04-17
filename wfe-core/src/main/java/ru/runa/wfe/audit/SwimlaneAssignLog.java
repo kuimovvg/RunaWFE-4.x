@@ -38,4 +38,8 @@ public class SwimlaneAssignLog extends ProcessLog {
         return new Object[] { getAttributeNotNull(ATTR_MESSAGE), new ExecutorNameValue(getAttribute(ATTR_NEW_VALUE)) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnSwimlaneAssignLog(this);
+    }
 }

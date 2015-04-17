@@ -65,4 +65,8 @@ public class TaskEndLog extends TaskLog {
         return new Object[] { getTaskName(), new ExecutorNameValue(getActorName()) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTaskEndLog(this);
+    }
 }

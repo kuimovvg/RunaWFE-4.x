@@ -57,4 +57,8 @@ public class ProcessStartLog extends ProcessLog {
         return new Object[] { new ExecutorNameValue(getActorName()) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnProcessStartLog(this);
+    }
 }

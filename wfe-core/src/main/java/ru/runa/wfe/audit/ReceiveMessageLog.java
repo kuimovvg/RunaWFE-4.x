@@ -52,4 +52,8 @@ public class ReceiveMessageLog extends NodeEnterLog {
         return new Object[] { new HtmlValue(getAttributeNotNull(ATTR_MESSAGE)) };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnReceiveMessageLog(this);
+    }
 }

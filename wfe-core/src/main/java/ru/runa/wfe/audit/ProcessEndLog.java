@@ -45,4 +45,8 @@ public class ProcessEndLog extends ProcessLog {
         return new Object[] {};
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnProcessEndLog(this);
+    }
 }

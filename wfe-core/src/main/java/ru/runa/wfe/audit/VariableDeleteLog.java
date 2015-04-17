@@ -50,4 +50,8 @@ public class VariableDeleteLog extends VariableLog {
         return new Object[] { getVariableName() };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnVariableDeleteLog(this);
+    }
 }

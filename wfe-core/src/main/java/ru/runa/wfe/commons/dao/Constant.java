@@ -35,7 +35,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "WFE_CONSTANTS")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-class Constant {
+public class Constant {
     private Long id;
     private String name;
     private String value;

@@ -65,4 +65,8 @@ public class TaskCreateLog extends TaskLog {
         return new Object[] { getTaskName() };
     }
 
+    @Override
+    public void processBy(ProcessLogVisitor visitor) {
+        visitor.OnTaskCreateLog(this);
+    }
 }
