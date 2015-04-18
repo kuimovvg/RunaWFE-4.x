@@ -64,6 +64,6 @@ public class VariableUpdateLog extends VariableLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnVariableUpdateLog(this);
+        visitor.onVariableUpdateLog(this);
     }
 }

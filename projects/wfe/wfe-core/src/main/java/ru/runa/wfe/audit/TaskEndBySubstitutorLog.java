@@ -25,6 +25,6 @@ public class TaskEndBySubstitutorLog extends TaskEndLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnTaskEndBySubstitutorLog(this);
+        visitor.onTaskEndBySubstitutorLog(this);
     }
 }

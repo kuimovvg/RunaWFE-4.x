@@ -53,7 +53,7 @@ public class UpdateAggregatedLogOperation implements ProcessLogVisitor {
     }
 
     @Override
-    public void OnProcessStartLog(ProcessStartLog processStartLog) {
+    public void onProcessStartLog(ProcessStartLog processStartLog) {
         if (getProcessInstanceLog(processStartLog.getProcessId()) != null) {
             return;
         }
@@ -61,7 +61,7 @@ public class UpdateAggregatedLogOperation implements ProcessLogVisitor {
     }
 
     @Override
-    public void OnProcessEndLog(ProcessEndLog processEndLog) {
+    public void onProcessEndLog(ProcessEndLog processEndLog) {
         ProcessInstanceAggregatedLog logEntry = getProcessInstanceLog(processEndLog.getProcessId());
         if (logEntry == null) {
             return;
@@ -71,7 +71,7 @@ public class UpdateAggregatedLogOperation implements ProcessLogVisitor {
     }
 
     @Override
-    public void OnProcessCancelLog(ProcessCancelLog processCancelLog) {
+    public void onProcessCancelLog(ProcessCancelLog processCancelLog) {
         ProcessInstanceAggregatedLog logEntry = getProcessInstanceLog(processCancelLog.getProcessId());
         if (logEntry == null) {
             return;
@@ -81,39 +81,39 @@ public class UpdateAggregatedLogOperation implements ProcessLogVisitor {
     }
 
     @Override
-    public void OnNodeEnterLog(NodeEnterLog nodeEnterLog) {
+    public void onNodeEnterLog(NodeEnterLog nodeEnterLog) {
     }
 
     @Override
-    public void OnNodeLeaveLog(NodeLeaveLog nodeLeaveLog) {
+    public void onNodeLeaveLog(NodeLeaveLog nodeLeaveLog) {
     }
 
     @Override
-    public void OnReceiveMessageLog(ReceiveMessageLog receiveMessageLog) {
+    public void onReceiveMessageLog(ReceiveMessageLog receiveMessageLog) {
     }
 
     @Override
-    public void OnSendMessageLog(SendMessageLog sendMessageLog) {
+    public void onSendMessageLog(SendMessageLog sendMessageLog) {
     }
 
     @Override
-    public void OnSubprocessStartLog(SubprocessStartLog subprocessStartLog) {
+    public void onSubprocessStartLog(SubprocessStartLog subprocessStartLog) {
     }
 
     @Override
-    public void OnSubprocessEndLog(SubprocessEndLog subprocessEndLog) {
+    public void onSubprocessEndLog(SubprocessEndLog subprocessEndLog) {
     }
 
     @Override
-    public void OnActionLog(ActionLog actionLog) {
+    public void onActionLog(ActionLog actionLog) {
     }
 
     @Override
-    public void OnCreateTimerActionLog(CreateTimerActionLog createTimerActionLog) {
+    public void onCreateTimerActionLog(CreateTimerActionLog createTimerActionLog) {
     }
 
     @Override
-    public void OnTaskCreateLog(TaskCreateLog taskCreateLog) {
+    public void onTaskCreateLog(TaskCreateLog taskCreateLog) {
         if (getTaskLog(taskCreateLog.getTaskId()) != null) {
             return;
         }
@@ -121,7 +121,7 @@ public class UpdateAggregatedLogOperation implements ProcessLogVisitor {
     }
 
     @Override
-    public void OnTaskAssignLog(TaskAssignLog taskAssignLog) {
+    public void onTaskAssignLog(TaskAssignLog taskAssignLog) {
         TaskAggregatedLog logEntry = getTaskLog(taskAssignLog.getTaskId());
         if (logEntry == null) {
             return;
@@ -131,56 +131,56 @@ public class UpdateAggregatedLogOperation implements ProcessLogVisitor {
     }
 
     @Override
-    public void OnTaskEndLog(TaskEndLog taskEndLog) {
+    public void onTaskEndLog(TaskEndLog taskEndLog) {
         onTaskEnd(taskEndLog, EndReason.COMPLETED);
     }
 
     @Override
-    public void OnTaskEscalationLog(TaskEscalationLog taskEscalationLog) {
+    public void onTaskEscalationLog(TaskEscalationLog taskEscalationLog) {
     }
 
     @Override
-    public void OnTaskRemovedOnProcessEndLog(TaskRemovedOnProcessEndLog taskRemovedOnProcessEndLog) {
+    public void onTaskRemovedOnProcessEndLog(TaskRemovedOnProcessEndLog taskRemovedOnProcessEndLog) {
         onTaskEnd(taskRemovedOnProcessEndLog, EndReason.PROCESS_END);
     }
 
     @Override
-    public void OnTaskExpiredLog(TaskExpiredLog taskExpiredLog) {
+    public void onTaskExpiredLog(TaskExpiredLog taskExpiredLog) {
         onTaskEnd(taskExpiredLog, EndReason.TIMEOUT);
     }
 
     @Override
-    public void OnTaskEndBySubstitutorLog(TaskEndBySubstitutorLog taskEndBySubstitutorLog) {
+    public void onTaskEndBySubstitutorLog(TaskEndBySubstitutorLog taskEndBySubstitutorLog) {
         onTaskEnd(taskEndBySubstitutorLog, EndReason.SUBSTITUTOR_END);
     }
 
     @Override
-    public void OnTaskCancelledLog(TaskCancelledLog taskCancelledLog) {
+    public void onTaskCancelledLog(TaskCancelledLog taskCancelledLog) {
         onTaskEnd(taskCancelledLog, EndReason.CANCELLED);
     }
 
     @Override
-    public void OnSwimlaneAssignLog(SwimlaneAssignLog swimlaneAssignLog) {
+    public void onSwimlaneAssignLog(SwimlaneAssignLog swimlaneAssignLog) {
     }
 
     @Override
-    public void OnTransitionLog(TransitionLog transitionLog) {
+    public void onTransitionLog(TransitionLog transitionLog) {
     }
 
     @Override
-    public void OnVariableCreateLog(VariableCreateLog variableCreateLog) {
+    public void onVariableCreateLog(VariableCreateLog variableCreateLog) {
     }
 
     @Override
-    public void OnVariableDeleteLog(VariableDeleteLog variableDeleteLog) {
+    public void onVariableDeleteLog(VariableDeleteLog variableDeleteLog) {
     }
 
     @Override
-    public void OnVariableUpdateLog(VariableUpdateLog variableUpdateLog) {
+    public void onVariableUpdateLog(VariableUpdateLog variableUpdateLog) {
     }
 
     @Override
-    public void OnAdminActionLog(AdminActionLog adminActionLog) {
+    public void onAdminActionLog(AdminActionLog adminActionLog) {
     }
 
     private ProcessInstanceAggregatedLog getProcessInstanceLog(long processId) {

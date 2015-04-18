@@ -52,6 +52,6 @@ public class VariableDeleteLog extends VariableLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnVariableDeleteLog(this);
+        visitor.onVariableDeleteLog(this);
     }
 }

@@ -57,6 +57,6 @@ public class VariableCreateLog extends VariableLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnVariableCreateLog(this);
+        visitor.onVariableCreateLog(this);
     }
 }

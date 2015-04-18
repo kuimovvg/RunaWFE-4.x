@@ -55,7 +55,7 @@ public class ProcessCancelLog extends ProcessLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnProcessCancelLog(this);
+        visitor.onProcessCancelLog(this);
     }
 
     @Transient

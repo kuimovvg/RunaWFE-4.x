@@ -53,6 +53,6 @@ public class ActionLog extends ProcessLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnActionLog(this);
+        visitor.onActionLog(this);
     }
 }

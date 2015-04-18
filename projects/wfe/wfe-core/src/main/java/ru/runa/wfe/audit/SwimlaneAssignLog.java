@@ -40,6 +40,6 @@ public class SwimlaneAssignLog extends ProcessLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnSwimlaneAssignLog(this);
+        visitor.onSwimlaneAssignLog(this);
     }
 }
