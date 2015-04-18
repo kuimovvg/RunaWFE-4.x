@@ -402,6 +402,18 @@
       </component>
       <component
             enabled="true"
+            id="ChooseRelationName"
+            name="%Method.ChooseRelationName">
+         <param
+               name="%Param.RelationName"
+               optional="false"
+               type="varcombo"
+               variableAccess="WRITE"
+               variableTypeFilter="java.lang.String">
+         </param>
+      </component>
+      <component
+            enabled="true"
             id="ChooseActorByRelation"
             name="%Method.ChooseActorByRelation"
             order="-94">
@@ -774,6 +786,23 @@
                name="%Param.Variable"
                type="varcombo"
                variableTypeFilter="java.util.List"
+               variableAccess="READ">
+         </param>
+         <param
+               name="%Param.InputData"
+               type="varcombo"
+               variableTypeFilter="java.util.List"
+               variableAccess="READ">
+         </param>
+      </component>
+      <component
+            enabled="true"
+            id="DisplayMultipleSelectInList"
+            name="%Method.DisplayMultipleSelectInList">
+         <param
+               name="%Param.Variable"
+               type="varcombo"
+               variableTypeFilter="java.util.List"
                variableAccess="WRITE">
          </param>
          <param
@@ -799,6 +828,22 @@
                type="varcombo"
                variableTypeFilter="java.util.List"
                variableAccess="READ">
+         </param>
+      </component>
+      <component
+            enabled="true"
+            id="ChooseValueFromList"
+            name="%Method.ChooseValueFromList">
+         <param
+               name="%Param.Variable"
+               type="varcombo"
+               variableTypeFilter="java.lang.Object"
+               variableAccess="WRITE">
+         </param>
+         <param
+               name="%Param.Value"
+               type="textlist"
+               variableAccess="NONE">
          </param>
       </component>
       <component
