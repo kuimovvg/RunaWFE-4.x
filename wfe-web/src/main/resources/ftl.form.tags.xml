@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration xmlns="http://runa.ru/xml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://runa.ru/xml">
 	<ftltag name="AjaxGroupMembers" class="ru.runa.wf.web.ftl.method.AjaxGroupMembersTag" />
+	<ftltag name="ChooseRelationName" class="ru.runa.wf.web.ftl.method.ChooseRelationNameTag" />
 	<ftltag name="ChooseActorByRelation" class="ru.runa.wf.web.ftl.method.ChooseActorByRelationTag" />
 	<ftltag name="ChooseExecutorByRelation" class="ru.runa.wf.web.ftl.method.ChooseExecutorByRelationTag" />
 	<ftltag name="ChooseExecutorFromRelation" class="ru.runa.wf.web.ftl.method.ChooseExecutorFromRelationTag" />
@@ -14,7 +15,9 @@
 	<ftltag name="InputVariable" class="ru.runa.wf.web.ftl.method.InputVariableTag" />
 	<ftltag name="MultiLanguageExample" class="ru.runa.wf.web.ftl.method.MultiLanguageExampleTag" />
 	<ftltag name="MultipleSelectFromList" class="ru.runa.wf.web.ftl.method.MultipleSelectFromListTag" />
+	<ftltag name="DisplayMultipleSelectInList" class="ru.runa.wf.web.ftl.method.DisplayMultipleSelectInListTag" />
 	<ftltag name="SelectFromList" class="ru.runa.wf.web.ftl.method.SelectFromListTag" />
+	<ftltag name="ChooseValueFromList" class="ru.runa.wf.web.ftl.method.ChooseValueFromListTag" />
 	<ftltag name="ViewFile" class="ru.runa.wf.web.ftl.method.FileTag" />
 	<ftltag name="TreeviewSupport" class="ru.runa.wf.web.ftl.method.TreeviewSupportTag" />
 </configuration>
