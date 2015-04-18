@@ -2,53 +2,53 @@ package ru.runa.wfe.audit;
 
 public interface ProcessLogVisitor {
 
-    void OnProcessStartLog(ProcessStartLog processStartLog);
+    void onProcessStartLog(ProcessStartLog processStartLog);
 
-    void OnProcessEndLog(ProcessEndLog processEndLog);
+    void onProcessEndLog(ProcessEndLog processEndLog);
 
-    void OnProcessCancelLog(ProcessCancelLog processCancelLog);
+    void onProcessCancelLog(ProcessCancelLog processCancelLog);
 
-    void OnNodeEnterLog(NodeEnterLog nodeEnterLog);
+    void onNodeEnterLog(NodeEnterLog nodeEnterLog);
 
-    void OnNodeLeaveLog(NodeLeaveLog nodeLeaveLog);
+    void onNodeLeaveLog(NodeLeaveLog nodeLeaveLog);
 
-    void OnReceiveMessageLog(ReceiveMessageLog receiveMessageLog);
+    void onReceiveMessageLog(ReceiveMessageLog receiveMessageLog);
 
-    void OnSendMessageLog(SendMessageLog sendMessageLog);
+    void onSendMessageLog(SendMessageLog sendMessageLog);
 
-    void OnSubprocessStartLog(SubprocessStartLog subprocessStartLog);
+    void onSubprocessStartLog(SubprocessStartLog subprocessStartLog);
 
-    void OnSubprocessEndLog(SubprocessEndLog subprocessEndLog);
+    void onSubprocessEndLog(SubprocessEndLog subprocessEndLog);
 
-    void OnActionLog(ActionLog actionLog);
+    void onActionLog(ActionLog actionLog);
 
-    void OnCreateTimerActionLog(CreateTimerActionLog createTimerActionLog);
+    void onCreateTimerActionLog(CreateTimerActionLog createTimerActionLog);
 
-    void OnTaskCreateLog(TaskCreateLog taskCreateLog);
+    void onTaskCreateLog(TaskCreateLog taskCreateLog);
 
-    void OnTaskAssignLog(TaskAssignLog taskAssignLog);
+    void onTaskAssignLog(TaskAssignLog taskAssignLog);
 
-    void OnTaskEndLog(TaskEndLog taskEndLog);
+    void onTaskEndLog(TaskEndLog taskEndLog);
 
-    void OnTaskEscalationLog(TaskEscalationLog taskEscalationLog);
+    void onTaskEscalationLog(TaskEscalationLog taskEscalationLog);
 
-    void OnTaskRemovedOnProcessEndLog(TaskRemovedOnProcessEndLog taskRemovedOnProcessEndLog);
+    void onTaskRemovedOnProcessEndLog(TaskRemovedOnProcessEndLog taskRemovedOnProcessEndLog);
 
-    void OnTaskExpiredLog(TaskExpiredLog taskExpiredLog);
+    void onTaskExpiredLog(TaskExpiredLog taskExpiredLog);
 
-    void OnTaskEndBySubstitutorLog(TaskEndBySubstitutorLog taskEndBySubstitutorLog);
+    void onTaskEndBySubstitutorLog(TaskEndBySubstitutorLog taskEndBySubstitutorLog);
 
-    void OnTaskCancelledLog(TaskCancelledLog taskCancelledLog);
+    void onTaskCancelledLog(TaskCancelledLog taskCancelledLog);
 
-    void OnSwimlaneAssignLog(SwimlaneAssignLog swimlaneAssignLog);
+    void onSwimlaneAssignLog(SwimlaneAssignLog swimlaneAssignLog);
 
-    void OnTransitionLog(TransitionLog transitionLog);
+    void onTransitionLog(TransitionLog transitionLog);
 
-    void OnVariableCreateLog(VariableCreateLog variableCreateLog);
+    void onVariableCreateLog(VariableCreateLog variableCreateLog);
 
-    void OnVariableDeleteLog(VariableDeleteLog variableDeleteLog);
+    void onVariableDeleteLog(VariableDeleteLog variableDeleteLog);
 
-    void OnVariableUpdateLog(VariableUpdateLog variableUpdateLog);
+    void onVariableUpdateLog(VariableUpdateLog variableUpdateLog);
 
-    void OnAdminActionLog(AdminActionLog adminActionLog);
+    void onAdminActionLog(AdminActionLog adminActionLog);
 }

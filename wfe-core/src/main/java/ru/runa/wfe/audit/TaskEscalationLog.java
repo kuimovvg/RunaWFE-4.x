@@ -45,6 +45,6 @@ public class TaskEscalationLog extends TaskLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnTaskEscalationLog(this);
+        visitor.onTaskEscalationLog(this);
     }
 }

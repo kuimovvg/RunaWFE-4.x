@@ -67,6 +67,6 @@ public class TaskEndLog extends TaskLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnTaskEndLog(this);
+        visitor.onTaskEndLog(this);
     }
 }

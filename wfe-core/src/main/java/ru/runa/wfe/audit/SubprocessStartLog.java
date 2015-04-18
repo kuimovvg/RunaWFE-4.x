@@ -47,6 +47,6 @@ public class SubprocessStartLog extends NodeEnterLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnSubprocessStartLog(this);
+        visitor.onSubprocessStartLog(this);
     }
 }
