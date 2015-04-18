@@ -47,6 +47,6 @@ public class ProcessEndLog extends ProcessLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnProcessEndLog(this);
+        visitor.onProcessEndLog(this);
     }
 }

@@ -71,6 +71,6 @@ public class TaskAssignLog extends TaskLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnTaskAssignLog(this);
+        visitor.onTaskAssignLog(this);
     }
 }

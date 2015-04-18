@@ -23,6 +23,9 @@ import ru.runa.wfe.execution.dao.ProcessDAO;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+/**
+ * Loading process history one by one and aggregate it to aggregated logs.
+ */
 public class AggregatedHistoryImporter extends TransactionalExecutor {
 
     private static final Log log = LogFactory.getLog(AggregatedHistoryImporter.class);
@@ -51,20 +54,37 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
         }
         log.info("Importing logs for process " + processId + " into aggregated logs.");
         Process process = processDao.get(processId);
-        Map<Long, Token> tokens = fillTokensMap(process);
-        List<ProcessLog> logs = processLogDao.getAll(processId);
-        for (ProcessLog log : logs) {
-            processLogAwareDao.addLog(log, process, tokens.get(log.getTokenId()));
+        if (process != null) {
+            Map<Long, Token> tokens = createTokensMap(process);
+            List<ProcessLog> logs = processLogDao.getAll(processId);
+            for (ProcessLog log : logs) {
+                processLogAwareDao.addLog(log, process, tokens.get(log.getTokenId()));
+            }
         }
-        SaveProcessIdToImport(processId);
+        saveProcessIdToImport(processId);
     }
 
-    private Map<Long, Token> fillTokensMap(Process process) {
+    /**
+     * Creates map from token id to token for process.
+     * 
+     * @param process
+     *            Process, which tokens must be transformed to map.
+     * @return Returns map from token id to token.
+     */
+    private Map<Long, Token> createTokensMap(Process process) {
         Map<Long, Token> tokens = Maps.newHashMap();
         addTokenToMap(process.getRootToken(), tokens);
         return tokens;
     }
 
+    /**
+     * Add token to map and calling self recursive for all child tokens.
+     * 
+     * @param token
+     *            Token to add.
+     * @param tokens
+     *            Map from token id to token.
+     */
     private void addTokenToMap(Token token, Map<Long, Token> tokens) {
         tokens.put(token.getId(), token);
         for (Token child : token.getChildren()) {
@@ -72,6 +92,12 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
         }
     }
 
+    /**
+     * Get process id for history aggregation. Returns 0, if aggregation is not
+     * required.
+     * 
+     * @return Returns process id for history aggregate.
+     */
     private long getProcessIdToImport() {
         Constant importFromSettings = constantDao.get(importFromConstantName);
         if (importFromSettings == null || Strings.isNullOrEmpty(importFromSettings.getValue())) {
@@ -88,7 +114,13 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
         return processId;
     }
 
-    private void SaveProcessIdToImport(long processId) {
+    /**
+     * Updates constant after history aggregation for some process.
+     * 
+     * @param processId
+     *            Process id, which history was aggregated.
+     */
+    private void saveProcessIdToImport(long processId) {
         Constant importFromSettings = constantDao.get(importFromConstantName);
         if (importFromSettings == null) {
             constantDao.create(new Constant(importFromConstantName, String.valueOf(processId)));

@@ -77,6 +77,6 @@ public class TransitionLog extends ProcessLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnTransitionLog(this);
+        visitor.onTransitionLog(this);
     }
 }

@@ -40,6 +40,6 @@ public class TaskRemovedOnProcessEndLog extends TaskEndLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnTaskRemovedOnProcessEndLog(this);
+        visitor.onTaskRemovedOnProcessEndLog(this);
     }
 }

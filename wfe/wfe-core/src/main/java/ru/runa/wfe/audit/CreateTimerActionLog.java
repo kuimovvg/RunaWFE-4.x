@@ -35,6 +35,6 @@ public class CreateTimerActionLog extends ActionLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnCreateTimerActionLog(this);
+        visitor.onCreateTimerActionLog(this);
     }
 }

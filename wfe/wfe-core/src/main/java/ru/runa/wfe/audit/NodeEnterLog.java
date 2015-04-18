@@ -46,6 +46,6 @@ public class NodeEnterLog extends NodeLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnNodeEnterLog(this);
+        visitor.onNodeEnterLog(this);
     }
 }

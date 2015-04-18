@@ -59,6 +59,6 @@ public class ProcessStartLog extends ProcessLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnProcessStartLog(this);
+        visitor.onProcessStartLog(this);
     }
 }

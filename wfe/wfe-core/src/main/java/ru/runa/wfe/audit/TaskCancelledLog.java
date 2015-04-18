@@ -43,6 +43,6 @@ public class TaskCancelledLog extends TaskEndLog {
 
     @Override
     public void processBy(ProcessLogVisitor visitor) {
-        visitor.OnTaskCancelledLog(this);
+        visitor.onTaskCancelledLog(this);
     }
 }
