@@ -32,6 +32,7 @@ import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
 
 @SuppressWarnings("unchecked")
 public class ProcessDefinition extends NamedGraphElement implements Active, Describable, VariableContainer {
@@ -47,8 +48,11 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private final Map<String, SubprocessDefinition> embeddedSubprocesses = Maps.newHashMap();
     private ProcessDefinitionAccessType accessType = ProcessDefinitionAccessType.Process;
     private final List<VariableUserType> types = Lists.newArrayList();
+    private final IFile file;
+    private int hash32 = -1;
 
-    public ProcessDefinition() {
+    public ProcessDefinition(IFile file) {
+        this.file = file;
     }
 
     public ProcessDefinitionAccessType getAccessType() {
@@ -369,8 +373,10 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         List<IPropertyDescriptor> list = new ArrayList<IPropertyDescriptor>();
         list.add(new StartImagePropertyDescriptor("startProcessImage", Localization.getString("ProcessDefinition.property.startImage")));
         list.add(new PropertyDescriptor(PROPERTY_LANGUAGE, Localization.getString("ProcessDefinition.property.language")));
-        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, this, getDefaultTaskTimeoutDelay(), Localization.getString("default.task.deadline")));
-        String[] array = { Localization.getString("ProcessDefinition.property.accessType.Process"), Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
+        list.add(new DurationPropertyDescriptor(PROPERTY_TASK_DEADLINE, this, getDefaultTaskTimeoutDelay(), Localization
+                .getString("default.task.deadline")));
+        String[] array = { Localization.getString("ProcessDefinition.property.accessType.Process"),
+                Localization.getString("ProcessDefinition.property.accessType.OnlySubprocess") };
         list.add(new ComboBoxPropertyDescriptor(PROPERTY_ACCESS_TYPE, Localization.getString("ProcessDefinition.property.accessType"), array));
         return list;
     }
@@ -450,5 +456,22 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     @Override
     public ProcessDefinition getCopy(GraphElement parent) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final int hashCode() {
+        if (hash32 != -1) {
+            return hash32;
+        }
+        hash32 = Hashing.murmur3_32().hashString(file.getProjectRelativePath().toString() + "/" + file.getName()).asInt();
+        return hash32;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        return hashCode() == o.hashCode();
     }
 }

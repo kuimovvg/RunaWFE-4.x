@@ -118,7 +118,7 @@ public class NodeRegistry {
         for (Language language : Language.values()) {
             if (language.getSerializer().isSupported(document)) {
                 if (embeddedSubprocess) {
-                    SubprocessDefinition subprocessDefinition = new SubprocessDefinition();
+                    SubprocessDefinition subprocessDefinition = new SubprocessDefinition(definitionFile);
                     IFile parentDefinitionFile = IOUtils.getAdjacentFile(definitionFile, ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
                     ProcessDefinition mainProcessDefinition = ProcessCache.getProcessDefinition(parentDefinitionFile);
                     Preconditions.checkNotNull(mainProcessDefinition, "parentProcessDefinition");
@@ -127,7 +127,7 @@ public class NodeRegistry {
                     mainProcessDefinition.addEmbeddedSubprocess(subprocessDefinition);
                     return subprocessDefinition;
                 } else {
-                    ProcessDefinition definition = new ProcessDefinition();
+                    ProcessDefinition definition = new ProcessDefinition(definitionFile);
                     definition.setLanguage(language);
                     language.getSerializer().parseXML(document, definition);
                     return definition;
