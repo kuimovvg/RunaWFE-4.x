@@ -35,6 +35,7 @@ import ru.runa.wfe.definition.IFileDataProvider;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.definition.par.ProcessArchive;
+import ru.runa.wfe.execution.NodeProcess;
 import ru.runa.wfe.execution.ParentProcessExistsException;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.execution.ProcessFilter;
@@ -146,7 +147,7 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public List<WfDefinition> getLatestProcessDefinitions(User user, BatchPresentation batchPresentation) {
         List<Number> deploymentIds = new BatchPresentationHibernateCompiler(batchPresentation).getIdentities(false);
-        List<WfDefinition> result = Lists.newArrayListWithExpectedSize(deploymentIds.size());
+        List<WfDefinition> result = Lists.newArrayListWithCapacity(deploymentIds.size());
         for (Number definitionId : deploymentIds) {
             try {
                 ProcessDefinition definition = getDefinition(definitionId.longValue());
@@ -156,7 +157,39 @@ public class DefinitionLogic extends WFCommonLogic {
                 result.add(new WfDefinition(deployment));
             }
         }
+        sortBySubprocessDependencies(result);
         return filterIdentifiable(user, result, Permission.READ);
+    }
+
+    private final void sortBySubprocessDependencies(List<WfDefinition> processes) {
+        for (int i = 0; i < processes.size(); i++) {
+            WfDefinition bp1 = processes.get(i);
+            for (int j = 0; j < processes.size(); j++) {
+                if (i == j) {
+                    continue;
+                }
+                WfDefinition bp2 = processes.get(j);
+                if (!isSubprocessOf(bp1, bp2)) {
+                    continue;
+                }
+                processes.set(i, bp2);
+                processes.set(j, bp1);
+            }
+        }
+    }
+
+    private final boolean isSubprocessOf(WfDefinition bp1, WfDefinition bp2) {
+        List<Process> processes = processDAO.findAllProcesses(bp1.getId());
+        for (Process process : processes) {
+            NodeProcess np = nodeProcessDAO.getNodeProcessByChild(process.getId());
+            if (np == null) {
+                continue;
+            }
+            if (np.getProcess().getDeployment().getId().equals(bp2.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<WfDefinition> getProcessDefinitionHistory(User user, String name) {
