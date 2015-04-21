@@ -15,15 +15,18 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.action.ActionBase;
 import ru.runa.wf.web.FormSubmissionUtils;
 import ru.runa.wf.web.form.ProcessForm;
+import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.User;
-import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.ComplexVariable;
+import ru.runa.wfe.var.dto.WfVariable;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
 
 /**
  * Created on 24.06.2014
- * 
+ *
  * @struts:action path="/updateProcessVariable" name="commonProcessForm"
  *                validate="false"
  * @struts.action-forward name="success" path="/manage_process.do" redirect =
@@ -32,43 +35,64 @@ import com.google.common.base.Preconditions;
  *                        redirect = "false"
  */
 public class UpdateProcessVariableAction extends ActionBase {
-
     public static final String ACTION_PATH = "/updateProcessVariable";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {
-
         User user = Commons.getUser(request.getSession());
         Long processId = Long.valueOf(request.getParameter("id"));
-
         Map<String, Object> params = new HashMap<String, Object>();
         params.put(ProcessForm.ID_INPUT_NAME, processId);
-
         try {
             String variableName = request.getParameter("variableSelect");
-            Long definitionId = Delegates.getExecutionService().getProcess(user, processId).getDefinitionId();
-            VariableDefinition variableDefinition = Delegates.getDefinitionService().getVariableDefinition(user, definitionId, variableName);
-            Preconditions.checkNotNull(variableDefinition, variableName);
-            boolean nullValue = "on".equals(request.getParameter("isNullValue"));
-            Object variableValue = FormSubmissionUtils.extractVariable(request, form, variableDefinition);
-            HashMap<String, Object> variable = new HashMap<String, Object>();
-            variableValue = nullValue ? null : variableValue;
-            variable.put(variableName, variableValue);
-            Delegates.getExecutionService().updateVariables(user, processId, variable);
+            WfVariable variable = Delegates.getExecutionService().getVariable(user, processId, variableName);
+            Preconditions.checkNotNull(variable, variableName);
+            Object variableValue;
+            if ("on".equals(request.getParameter("isNullValue"))) {
+                variableValue = null;
+            } else {
+                variableValue = FormSubmissionUtils.extractVariable(request, form, variable.getDefinition());
+            }
+            Map<String, Object> map;
+            if (variableValue instanceof ComplexVariable && variable.getValue() instanceof ComplexVariable) {
+                map = getValues(variableName, (ComplexVariable) variable.getValue(), (ComplexVariable) variableValue);
+            } else {
+                map = new HashMap<String, Object>();
+                map.put(variableName, variableValue);
+            }
+            Delegates.getExecutionService().updateVariables(user, processId, map);
         } catch (Exception e) {
             addError(request, e);
-            return getErrorForward(mapping, params);
+            return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), params);
         }
         FormSubmissionUtils.getUploadedFilesMap(request).clear();
-        return getSuccessAction(mapping, params);
-    }
-
-    protected ActionForward getSuccessAction(ActionMapping mapping, Map<String, Object> params) {
         return Commons.forward(mapping.findForward(Resources.FORWARD_SUCCESS), params);
     }
 
-    protected ActionForward getErrorForward(ActionMapping mapping, Map<String, Object> params) {
-        return Commons.forward(mapping.findForward(Resources.FORWARD_FAILURE), params);
+    private Map<String, Object> getValues(String variableName, ComplexVariable existingVariable, ComplexVariable variable) {
+        Map<String, Object> existingMap = existingVariable.expand(variableName);
+        Map<String, Object> variableMap = variable.expand(variableName);
+        for (Map.Entry<String, Object> entry : Sets.newHashSet(variableMap.entrySet())) {
+            if (isDefaultValue(existingMap.get(entry.getKey())) && isDefaultValue(entry.getValue())) {
+                variableMap.remove(entry.getKey());
+            }
+        }
+        return variableMap;
     }
 
+    private boolean isDefaultValue(Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value instanceof String && ((String) value).length() == 0) {
+            return true;
+        }
+        if (value instanceof Boolean && (Boolean) value == Boolean.FALSE) {
+            return true;
+        }
+        if (TypeConversionUtil.isList(value) && TypeConversionUtil.getListSize(value) == 0) {
+            return true;
+        }
+        return false;
+    }
 }
