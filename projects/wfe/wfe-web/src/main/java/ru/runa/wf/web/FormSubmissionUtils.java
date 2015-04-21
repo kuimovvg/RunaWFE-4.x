@@ -23,6 +23,7 @@ import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionHandler;
 import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionPostProcessor;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.service.client.FileVariableProxy;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.file.FileVariable;
@@ -53,7 +54,7 @@ public class FormSubmissionUtils {
 
     /**
      * save in request user input with errors
-     * 
+     *
      * @param userInputErrors
      *            validation errors
      */
@@ -367,6 +368,10 @@ public class FormSubmissionUtils {
                 }
             } else if (value instanceof UploadedFile) {
                 UploadedFile uploadedFile = (UploadedFile) value;
+                if (uploadedFile.getFileVariable() instanceof FileVariableProxy) {
+                    // for process update value
+                    return uploadedFile.getFileVariable();
+                }
                 if (uploadedFile.getContent() == null) {
                     // null for display tag
                     return IGNORED_VALUE;
