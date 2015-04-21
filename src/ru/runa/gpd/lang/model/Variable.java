@@ -50,12 +50,19 @@ public class Variable extends NamedGraphElement implements Describable {
         return userType;
     }
 
-    public void setUserType(VariableUserType userType) {
-        this.userType = userType;
-        if (userType != null) {
-            setFormat(VariableUserType.PREFIX + userType.getName());
-        }
-    }
+	public void setUserType(VariableUserType userType) {
+		VariableUserType oldUserType = this.userType;
+		this.userType = userType;
+		if (userType != null) {
+			try {
+				userType.validate();
+			} catch (RuntimeException e) {
+				this.userType = oldUserType;
+				throw e;
+			}
+			setFormat(VariableUserType.PREFIX + userType.getName());
+		}
+	}
 
     @Override
     protected boolean canNameBeSetFromProperties() {

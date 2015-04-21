@@ -581,7 +581,19 @@ public class VariableTypeEditorPage extends EditorPartBase {
                 }
             }
             newType.addAttribute(attribute);
+            int position = getTypeSelection().getAttributes().indexOf(attribute);
             getTypeSelection().removeAttribute(attribute);
+			try {
+				newType.validate();
+			} catch (Exception e1) {
+				MessageDialog.openError(
+						Display.getCurrent().getActiveShell(),
+						Localization.getString("button.move"),
+						Localization.getString("VariableTypeEditorPage.error.attribute.move.loop"));
+	            newType.removeAttribute(attribute);
+	            getTypeSelection().addAttribute(attribute);
+	            getTypeSelection().changeAttributePosition(attribute, position);
+			}
             if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
                 for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
