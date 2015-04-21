@@ -28,7 +28,7 @@ public class VariableWizard extends Wizard {
         if (variableContainer instanceof VariableUserType) {
             excludedUserTypeName = ((VariableUserType) variableContainer).getName();
         }
-        formatPage = new VariableFormatPage(processDefinition, variable, editFormat, excludedUserTypeName);
+        formatPage = new VariableFormatPage(processDefinition, variableContainer, variable, editFormat, excludedUserTypeName);
         defaultValuePage = new VariableDefaultValuePage(variable);
         if (showAccessPage) {
             accessPage = new VariableAccessPage(variable);

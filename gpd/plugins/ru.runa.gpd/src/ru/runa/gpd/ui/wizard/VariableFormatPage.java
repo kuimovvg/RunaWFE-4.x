@@ -15,6 +15,7 @@ import ru.runa.gpd.extension.VariableFormatArtifact;
 import ru.runa.gpd.extension.VariableFormatRegistry;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.VariableContainer;
 import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.ui.custom.DynaContentWizardPage;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
@@ -28,6 +29,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class VariableFormatPage extends DynaContentWizardPage {
+    private VariableContainer variableContainer;
     private VariableFormatArtifact type;
     private VariableUserType userType;
     private String[] componentClassNames;
@@ -41,8 +43,9 @@ public class VariableFormatPage extends DynaContentWizardPage {
                 new String[] { Localization.getString("VariableFormatPage.components.map.key"), Localization.getString("VariableFormatPage.components.map.value") });
     }
 
-    public VariableFormatPage(ProcessDefinition processDefinition, Variable variable, boolean editFormat, String excludedUserTypeName) {
+    public VariableFormatPage(ProcessDefinition processDefinition, VariableContainer variableContainer, Variable variable, boolean editFormat, String excludedUserTypeName) {
     	this.processDefinition = processDefinition;
+        this.variableContainer = variableContainer;
     	this.excludedUserTypeName = excludedUserTypeName;
         if (variable != null) {
             if (variable.getUserType() != null) {
@@ -79,13 +82,24 @@ public class VariableFormatPage extends DynaContentWizardPage {
         combo.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
+                setErrorMessage(null);
             	String label = combo.getText();
-            	userType = processDefinition.getVariableUserType(label);
-            	if (userType != null) {
-            	    type = VariableFormatRegistry.getInstance().getArtifactNotNull(UserTypeFormat.class.getName());
-            	} else {
-            		type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(label);
-            	}
+            	VariableUserType newUserType = processDefinition.getVariableUserType(label);
+				if (newUserType != null) {
+					try {
+						if (variableContainer instanceof VariableUserType) {
+							((VariableUserType) variableContainer).validate(newUserType.getAttributes());
+						}
+						userType = newUserType;
+						type = VariableFormatRegistry.getInstance().getArtifactNotNull(UserTypeFormat.class.getName());
+					} catch (Exception e1) {
+						setErrorMessage(Localization.getString("VariableFormatPage.error.userType.loop"));
+					}
+				} else {
+					userType = null;
+					type = VariableFormatRegistry.getInstance()
+							.getArtifactNotNullByLabel(label);
+				}
                 createDefaultComponentClassNames();
                 updateContent();
             }
@@ -139,10 +153,18 @@ public class VariableFormatPage extends DynaContentWizardPage {
                 combo.addSelectionListener(new LoggingSelectionAdapter() {
                     @Override
                     protected void onSelection(SelectionEvent e) throws Exception {
+                        setErrorMessage(null);
                         int index = (Integer) combo.getData();
                         String label = combo.getText();
                         VariableUserType userType = processDefinition.getVariableUserType(label);
-                        if (userType != null) {
+						if (userType != null) {
+							if (variableContainer instanceof VariableUserType) {
+								try {
+									((VariableUserType) variableContainer).validate(userType.getAttributes());
+								} catch (Exception e1) {
+									setErrorMessage(Localization.getString("VariableFormatPage.error.userType.loop"));
+								}
+							}
                             componentClassNames[index] = label;
                         } else {
                             componentClassNames[index] = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(label).getName();

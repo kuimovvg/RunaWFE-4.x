@@ -2,6 +2,7 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
+import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.EventSupport;
 
 import com.google.common.base.Objects;
@@ -50,11 +51,31 @@ public class VariableUserType extends EventSupport implements VariableContainer,
     }
 
     public void addAttribute(Variable variable) {
+    	validate(variable);
         attributes.add(variable);
         firePropertyChange(PROPERTY_CHILDS_CHANGED, null, variable);
     }
 
-    public void changeAttributePosition(Variable attribute, int position) {
+	public void validate() {
+		validate(getAttributes());
+	}
+
+	public void validate(List<Variable> attributes) {
+		for (Variable attribute : attributes) {
+			if (this.equals(attribute.getUserType())) {
+				throw new RuntimeException(Localization.getString("VariableUserType.error.loop"));
+			}
+			validate(attribute);
+		}
+	}
+
+	private void validate(Variable variable) {
+		if (variable.getUserType() != null) {
+			validate(variable.getUserType().getAttributes());
+		}
+	}
+
+	public void changeAttributePosition(Variable attribute, int position) {
         if (position != -1 && attributes.remove(attribute)) {
             attributes.add(position, attribute);
             firePropertyChange(PROPERTY_CHILDS_CHANGED, null, attribute);
