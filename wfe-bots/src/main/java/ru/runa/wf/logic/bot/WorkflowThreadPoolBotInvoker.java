@@ -174,6 +174,10 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
         Map<String, List<WorkflowBotTaskExecutor>> sequentialTasks = Maps.newHashMap();
         for (WfTask task : tasks) {
             BotTask botTaskConfiguration = botExecutor.getBotTasks().get(task.getName());
+            if (botTaskConfiguration == null) {
+                log.error("No handler for bot task " + task.getName() + " in " + botExecutor.getBot());
+                continue;
+            }
             if (botTaskConfiguration.isSequentialExecution()
                     && scheduledTasks.containsKey(new WorkflowSequentialBotTaskExecutor(botExecutor.getBot(), botTaskConfiguration, null))) {
                 continue;
