@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.graph.image;
@@ -96,7 +96,8 @@ public class GraphImageBuilder {
                 TransitionFigureBase transitionFigureBase = factory.createTransitionFigure();
                 transitionFigureBase.init(transition, nodeFigure, figureTo, smoothTransitions);
                 if (processDefinition.getDeployment().getLanguage() == Language.BPMN2) {
-                    boolean exclusiveNode = (node.getNodeType() != NodeType.FORK && node.getNodeType() != NodeType.JOIN && node.getNodeType() != NodeType.PARALLEL_GATEWAY);
+                    boolean exclusiveNode = node.getNodeType() != NodeType.FORK && node.getNodeType() != NodeType.JOIN
+                            && node.getNodeType() != NodeType.PARALLEL_GATEWAY;
                     transitionFigureBase.setExclusive(exclusiveNode && leavingTransitionsCount > 1);
                 }
                 nodeFigure.addTransition(transitionFigureBase);
@@ -106,16 +107,18 @@ public class GraphImageBuilder {
             }
         }
         for (TransitionLog transitionLog : logs.getLogs(TransitionLog.class)) {
-            Transition transition = transitionLog.getTransition(processDefinition);
-            // Mark 'from' block as PASSED
-            AbstractFigure nodeModelFrom = allNodeFigures.get(transition.getFrom().getTransitionNodeId(false));
-            nodeFigures.put(nodeModelFrom, new RenderHits(DrawProperties.getHighlightColor(), true));
-            // Mark 'to' block as PASSED
-            AbstractFigure nodeModelTo = allNodeFigures.get(transition.getTo().getTransitionNodeId(true));
-            nodeFigures.put(nodeModelTo, new RenderHits(DrawProperties.getHighlightColor(), true));
-            // Mark transition as PASSED
-            TransitionFigureBase transitionFigureBase = nodeModelFrom.getTransition(transition.getName());
-            transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getHighlightColor(), true));
+            Transition transition = transitionLog.getTransitionOrNull(processDefinition);
+            if (transition != null) {
+                // Mark 'from' block as PASSED
+                AbstractFigure nodeModelFrom = allNodeFigures.get(transition.getFrom().getTransitionNodeId(false));
+                nodeFigures.put(nodeModelFrom, new RenderHits(DrawProperties.getHighlightColor(), true));
+                // Mark 'to' block as PASSED
+                AbstractFigure nodeModelTo = allNodeFigures.get(transition.getTo().getTransitionNodeId(true));
+                nodeFigures.put(nodeModelTo, new RenderHits(DrawProperties.getHighlightColor(), true));
+                // Mark transition as PASSED
+                TransitionFigureBase transitionFigureBase = nodeModelFrom.getTransition(transition.getName());
+                transitionFigureBases.put(transitionFigureBase, new RenderHits(DrawProperties.getHighlightColor(), true));
+            }
         }
         fillActiveSubprocesses(process.getRootToken());
         fillTasks(logs);
