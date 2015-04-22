@@ -31,7 +31,7 @@ import ru.runa.wfe.lang.Transition;
 
 /**
  * Logging transition passing.
- * 
+ *
  * @author Dofs
  */
 @Entity
@@ -64,9 +64,10 @@ public class TransitionLog extends ProcessLog {
         return getAttributeNotNull(ATTR_TRANSITION_ID);
     }
 
-    public Transition getTransition(ProcessDefinition processDefinition) {
+    public Transition getTransitionOrNull(ProcessDefinition processDefinition) {
         Node node = processDefinition.getNodeNotNull(getFromNodeId());
-        return node.getLeavingTransitionNotNull(getTransitionId());
+        // due to process definition version update it can be null
+        return node.getLeavingTransition(getTransitionId());
     }
 
     @Override

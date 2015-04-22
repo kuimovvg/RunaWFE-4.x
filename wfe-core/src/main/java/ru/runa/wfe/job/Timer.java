@@ -84,7 +84,7 @@ public class Timer extends Job {
                     task.setExecutor(null);
                     assignmentHelper.removeIfTemporaryGroup(oldExecutor);
                 } else {
-                    log.warn("Task is null in timer node '" + timerNodeId + "' when leaving by transition: " + outTransitionName);
+                    log.debug("Task is null in timer node '" + timerNodeId + "' when leaving by transition: " + outTransitionName);
                 }
                 log.info("Leaving " + this + " by transition " + outTransitionName);
                 getToken().signal(executionContext, executionContext.getNode().getLeavingTransitionNotNull(outTransitionName));
