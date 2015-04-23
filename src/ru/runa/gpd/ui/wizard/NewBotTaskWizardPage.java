@@ -1,5 +1,6 @@
 package ru.runa.gpd.ui.wizard;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -19,7 +20,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import ru.runa.gpd.BotCache;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.IOUtils;
 
@@ -27,6 +27,7 @@ public class NewBotTaskWizardPage extends WizardPage {
     private Combo botCombo;
     private Text nameText;
     private String startName;
+    private IFolder resource;
     private final IStructuredSelection selection;
 
     public NewBotTaskWizardPage(IStructuredSelection selection) {
@@ -61,21 +62,51 @@ public class NewBotTaskWizardPage extends WizardPage {
         nameText.setFocus();
     }
 
+    private IContainer getBotStation(IFolder bot) {
+        if (bot.getParent() == null || bot.getParent().getParent() == null) {
+            return null;
+        }
+        return bot.getParent().getParent().getParent();
+    }
+
     private void createBotField(Composite parent) {
         Label label = new Label(parent, SWT.NONE);
         label.setText(Localization.getString("NewBotTaskWizardPage.bot.name"));
         botCombo = new Combo(parent, SWT.SINGLE | SWT.READ_ONLY | SWT.BORDER);
-        for (String botName : BotCache.getAllBotNames()) {
-            botCombo.add(botName);
-        }
         botCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        IFolder resource = getInitialBotElement(selection);
+        for (IFolder folder : IOUtils.getAllBotFolders()) {
+            botCombo.add(String.format("%s/%s", folder.getParent().getParent().getParent().getName(), folder.getName()));
+        }
+        resource = getInitialBotElement(selection);
         if (resource != null) {
-            botCombo.setText(resource.getName());
+            IContainer station = getBotStation(resource);
+            if (station != null) {
+                botCombo.setText(String.format("%s/%s", station.getName(), resource.getName()));
+            }
         }
         botCombo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
+                if (botCombo.getText() == null) {
+                    verifyContentsValid();
+                    return;
+                }
+                String[] folders = botCombo.getText().split("/");
+                if (folders.length <= 1) {
+                    verifyContentsValid();
+                    return;
+                }
+                for (IFolder folder : IOUtils.getAllBotFolders()) {
+                    IContainer station = getBotStation(folder);
+                    if (station == null) {
+                        continue;
+                    }
+                    if (!station.getName().equals(folders[0]) || !folder.getName().equals(folders[1])) {
+                        continue;
+                    }
+                    resource = folder;
+                    break;
+                }
                 verifyContentsValid();
             }
         });
@@ -133,12 +164,7 @@ public class NewBotTaskWizardPage extends WizardPage {
     }
 
     public IFolder getBotFolder() {
-        for (IFolder folder : IOUtils.getAllBotFolders()) {
-            if (botCombo.getText().equals(folder.getName())) {
-                return folder;
-            }
-        }
-        return null;
+        return resource;
     }
 
     private boolean isBotFolderContainsBotTask() {
