@@ -21,7 +21,6 @@ import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
-@SuppressWarnings("unchecked")
 public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializable {
     private static final String RICH_COMBO_VALUE_PREFIX = "value@";
     private static final long serialVersionUID = 1L;
@@ -46,7 +45,6 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public final Object exec(List arguments) {
         try {
             this.arguments = arguments;

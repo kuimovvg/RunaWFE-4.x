@@ -261,7 +261,7 @@ public class Process extends IdentifiableBase {
 
     /**
      * Ends this process and all the tokens in it.
-     * 
+     *
      * @param canceller
      *            actor who cancels process (if any), can be <code>null</code>
      */
@@ -308,6 +308,7 @@ public class Process extends IdentifiableBase {
                         if (activeSuperProcessExists) {
                             continue;
                         }
+                    case ON_PROCESS_END:
                     }
                 }
             }
@@ -327,6 +328,7 @@ public class Process extends IdentifiableBase {
                             if (synchronizable.isAsync()) {
                                 switch (synchronizable.getCompletionMode()) {
                                 case NEVER:
+                                case ON_PROCESS_END:
                                     continue;
                                 case ON_MAIN_PROCESS_END:
                                     task.end(subExecutionContext, TaskCompletionInfo.createForProcessEnd(id));
