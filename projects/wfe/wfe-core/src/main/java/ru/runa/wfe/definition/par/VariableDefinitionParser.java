@@ -36,6 +36,10 @@ public class VariableDefinitionParser implements ProcessArchiveParser {
     @Autowired
     private LocalizationDAO localizationDAO;
 
+    public void setLocalizationDAO(LocalizationDAO localizationDAO) {
+        this.localizationDAO = localizationDAO;
+    }
+
     @Override
     public boolean isApplicableToEmbeddedSubprocess() {
         return false;
