@@ -7,14 +7,11 @@ import org.dom4j.Element;
 import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.office.excel.IExcelConstraints;
 import ru.runa.wfe.office.shared.FilesSupplierConfigParser;
-import ru.runa.wfe.office.storage.ConditionItem;
-import ru.runa.wfe.office.storage.Op;
 import ru.runa.wfe.office.storage.binding.DataBinding;
 import ru.runa.wfe.office.storage.binding.DataBindings;
 import ru.runa.wfe.office.storage.binding.QueryType;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 
 public class StorageBindingsParser extends FilesSupplierConfigParser<DataBindings> {
 
@@ -42,34 +39,21 @@ public class StorageBindingsParser extends FilesSupplierConfigParser<DataBinding
 
             constraints.configure(configElement);
 
+            Element conditionElement = bindingElement.element("condition");
+            if (bindings.getCondition() == null) {
+                bindings.setCondition(conditionElement.attributeValue("query"));
+            }
+
             Element conditionsElement = bindingElement.element("conditions");
             if (bindings.getQueryType() == null) {
                 bindings.setQueryType(QueryType.valueOf(conditionsElement.attributeValue("type")));
             }
 
             DataBinding binding = new DataBinding();
-            if (conditionsElement != null) {
-                binding.setConditions(configureConditions(conditionsElement));
-            }
             binding.setConstraints(constraints);
             binding.setVariableName(variableName);
 
             bindings.getBindings().add(binding);
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<ConditionItem> configureConditions(Element conditionsElement) {
-        List<ConditionItem> conditionItems = Lists.newArrayList();
-        List<Element> conditions = conditionsElement.elements("condition");
-        for (Element element : conditions) {
-            ConditionItem conditionItem = new ConditionItem();
-            Op op = Op.valueOf(element.attributeValue("is"));
-            Object val = element.attributeValue("val");
-            conditionItem.setOperator(op);
-            conditionItem.setValue(val);
-            conditionItems.add(conditionItem);
-        }
-        return conditionItems;
     }
 }

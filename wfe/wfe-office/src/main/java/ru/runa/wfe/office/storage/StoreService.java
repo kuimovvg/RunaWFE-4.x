@@ -14,15 +14,11 @@ public interface StoreService {
 
     void createFileIfNotExist(String path) throws Exception;
 
-    ExecutionResult findAll(Properties properties) throws Exception;
+    ExecutionResult findByFilter(Properties properties, String condition, List<WfVariable> variables) throws Exception;
 
-    ExecutionResult findByFilter(Properties properties, List<ConditionItem> conditions) throws Exception;
+    void update(Properties properties, WfVariable variable, String condition, List<WfVariable> variables) throws Exception;
 
-    void update(Properties properties, WfVariable variable, List<? extends ConditionItem> conditions) throws Exception;
-
-    void delete(Properties properties, WfVariable variable, List<ConditionItem> conditions) throws Exception;
-
-    void save(Properties properties, List<?> records, boolean appendTo) throws Exception;
+    void delete(Properties properties, WfVariable variable, String condition, List<WfVariable> variables) throws Exception;
 
     void save(Properties properties, WfVariable variable, boolean appendTo) throws Exception;
 
