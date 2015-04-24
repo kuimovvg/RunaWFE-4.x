@@ -58,10 +58,15 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
             Map<Long, Token> tokens = createTokensMap(process);
             List<ProcessLog> logs = processLogDao.getAll(processId);
             for (ProcessLog log : logs) {
-                processLogAwareDao.addLog(log, process, tokens.get(log.getTokenId()));
+                try {
+                    processLogAwareDao.addLog(log, process, tokens.get(log.getTokenId()));
+                } catch (Exception e) {
+                    AggregatedHistoryImporter.log.warn("Ignoring error on log aggregation for log instance " + log.getId(), e);
+                }
             }
         }
         saveProcessIdToImport(processId);
+        log.info("Importing logs for process " + processId + " into aggregated logs is done.");
     }
 
     /**
