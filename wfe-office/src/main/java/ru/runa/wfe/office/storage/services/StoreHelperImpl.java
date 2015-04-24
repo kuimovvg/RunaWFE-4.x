@@ -1,12 +1,15 @@
 package ru.runa.wfe.office.storage.services;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.office.storage.BlockedFileException;
 import ru.runa.wfe.office.storage.StoreHelper;
 import ru.runa.wfe.office.storage.StoreOperation;
 import ru.runa.wfe.office.storage.StoreService;
@@ -15,9 +18,11 @@ import ru.runa.wfe.office.storage.binding.DataBinding;
 import ru.runa.wfe.office.storage.binding.DataBindings;
 import ru.runa.wfe.office.storage.binding.ExecutionResult;
 import ru.runa.wfe.office.storage.binding.QueryType;
+import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.VariableFormat;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class StoreHelperImpl implements StoreHelper {
@@ -32,10 +37,22 @@ public class StoreHelperImpl implements StoreHelper {
 
     VariableFormat format;
 
-    public StoreHelperImpl(DataBindings config) {
+    IVariableProvider variableProvider;
+
+    List<WfVariable> variables;
+
+    public StoreHelperImpl(DataBindings config, IVariableProvider variableProvider) {
         setConfig(config);
         registerHandlers();
-        storeService = new StoreServiceImpl();        
+        storeService = new StoreServiceImpl();
+        this.variableProvider = variableProvider;
+        variables = Lists.newArrayList();
+        for (DataBinding b : config.getBindings()) {
+            WfVariable variable = variableProvider.getVariableNotNull(b.getVariableName());
+            if (!variables.contains(variable)) {
+                variables.add(variable);
+            }
+        }
     }
 
     private void setConfig(DataBindings config) {
@@ -51,33 +68,41 @@ public class StoreHelperImpl implements StoreHelper {
     public ExecutionResult execute(DataBinding binding, WfVariable variable) {
         try {
             Method method = invocationMap.get(config.getQueryType());
-            return (ExecutionResult) method.invoke(this, binding, variable);
+            return (ExecutionResult) method.invoke(this, binding, variable, config.getCondition(), variables);
         } catch (Exception e) {
+            if (e instanceof InvocationTargetException) {
+                Throwable targetEx = ((InvocationTargetException) e).getTargetException();
+                if (targetEx instanceof BlockedFileException) {
+                    throw (BlockedFileException) targetEx;
+                }
+            } else if (e instanceof BlockedFileException) {
+                throw (BlockedFileException) e;
+            }
             log.error("", e);
             return ExecutionResult.EMPTY;
         }
     }
 
-    @StoreOperation(QueryType.CREATE)
-    public ExecutionResult save(DataBinding binding, WfVariable variable) throws Exception {
-        storeService.save(extractProperties(binding), variable, false);
+    @StoreOperation(QueryType.INSERT)
+    public ExecutionResult save(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
+        storeService.save(extractProperties(binding), variable, true);
         return ExecutionResult.EMPTY;
     }
 
-    @StoreOperation(QueryType.READ)
-    public ExecutionResult findByFilter(DataBinding binding, WfVariable variable) throws Exception {
-        return storeService.findByFilter(extractProperties(binding), binding.getConditions());
+    @StoreOperation(QueryType.SELECT)
+    public ExecutionResult findByFilter(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
+        return storeService.findByFilter(extractProperties(binding), condition, variables);
     }
 
     @StoreOperation(QueryType.UPDATE)
-    public ExecutionResult update(DataBinding binding, WfVariable variable) throws Exception {
-        storeService.update(extractProperties(binding), variable, binding.getConditions());
+    public ExecutionResult update(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
+        storeService.update(extractProperties(binding), variable, condition, variables);
         return ExecutionResult.EMPTY;
     }
 
     @StoreOperation(QueryType.DELETE)
-    public ExecutionResult delete(DataBinding binding, WfVariable variable) throws Exception {
-        storeService.delete(extractProperties(binding), variable, binding.getConditions());
+    public ExecutionResult delete(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
+        storeService.delete(extractProperties(binding), variable, condition, variables);
         return ExecutionResult.EMPTY;
     }
 

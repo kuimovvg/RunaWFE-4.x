@@ -15,6 +15,8 @@ public class DataBindings extends FilesSupplierConfig {
 
     private QueryType queryType;
 
+    private String condition;
+
     @Override
     protected String getContentType() {
         if (isFileNameBelongsToXLSX(getOutputFileName(), false)) {
@@ -68,4 +70,11 @@ public class DataBindings extends FilesSupplierConfig {
         this.queryType = queryType;
     }
 
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
 }
