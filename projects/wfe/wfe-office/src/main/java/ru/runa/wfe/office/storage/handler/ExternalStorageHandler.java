@@ -24,7 +24,7 @@ public class ExternalStorageHandler extends OfficeFilesSupplierHandler<DataBindi
     @Override
     protected Map<String, Object> executeAction(IVariableProvider variableProvider, IFileDataProvider fileDataProvider) throws Exception {
         Map<String, Object> result = new HashMap<String, Object>();
-        StoreHelper storeHelper = new StoreHelperImpl(config);
+        StoreHelper storeHelper = new StoreHelperImpl(config, variableProvider);
         for (DataBinding binding : config.getBindings()) {
             WfVariable variable = variableProvider.getVariableNotNull(binding.getVariableName());
             binding.getConstraints().applyPlaceholders(variableProvider);

@@ -313,6 +313,8 @@ public class Messages {
     public static final String EXECUTOR_STATE_DONT_UPDATE = "executor.state.dont.update";
     public static final String IMPORT_DATA_SUCCESS = "import.data.success";
 
+    public static final String ERROR_BLOCKED_FILE = "error.blocked.file";
+
     private Messages() {
     }
 
