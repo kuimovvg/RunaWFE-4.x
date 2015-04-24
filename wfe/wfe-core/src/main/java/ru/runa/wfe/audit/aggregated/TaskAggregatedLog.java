@@ -114,8 +114,8 @@ public class TaskAggregatedLog {
         tokenId = taskCreateLog.getTokenId();
         nodeId = taskCreateLog.getNodeId();
         taskName = taskCreateLog.getTaskName();
-        Node node = processDefinitionLoader.getDefinition(process).getNodeNotNull(taskCreateLog.getNodeId());
-        if (node instanceof InteractionNode) {
+        Node node = processDefinitionLoader.getDefinition(process).getNode(taskCreateLog.getNodeId());
+        if (node != null && node instanceof InteractionNode) {
             List<TaskDefinition> tasks = ((InteractionNode) node).getTasks();
             if (tasks != null && !tasks.isEmpty() && tasks.get(0).getSwimlane() != null) {
                 swimlaneName = tasks.get(0).getSwimlane().getName();
