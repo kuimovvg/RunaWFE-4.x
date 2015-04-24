@@ -803,7 +803,7 @@
                name="%Param.Variable"
                type="varcombo"
                variableTypeFilter="java.util.List"
-               variableAccess="WRITE">
+               variableAccess="READ">
          </param>
          <param
                name="%Param.InputData"
