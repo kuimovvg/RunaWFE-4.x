@@ -13,7 +13,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,7 +29,6 @@ import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.office.FilesSupplierMode;
 import ru.runa.gpd.office.InputOutputComposite;
 import ru.runa.gpd.office.Messages;
-import ru.runa.gpd.office.excel.ConstraintsModel;
 import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingModifyTextAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
@@ -95,43 +93,40 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                 l.setText(Messages.getString("label.ExecutionAction"));
                 addActionCombo();
                 new Label(this, SWT.NONE);
-                SWTUtils.createLink(this, Messages.getString("label.AddCell"), new LoggingHyperlinkAdapter() {
-
-                    @Override
-                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                        model.constraints.add(new StorageConstraintsModel(ConstraintsModel.CELL, queryType));
-                        buildFromModel();
+                if (queryType != null && !queryType.equals(QueryType.INSERT)) {
+                    l = new Label(this, SWT.NONE);
+                    l.setText(Messages.getString("label.Query"));
+                    final Text queryText = new Text(this, SWT.BORDER);
+                    if (model != null && model.constraints != null && model.constraints.size() > 0) {
+                        queryString = model.constraints.get(0).getQueryString();
                     }
-                }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-                SWTUtils.createLink(this, Messages.getString("label.AddRow"), new LoggingHyperlinkAdapter() {
-
-                    @Override
-                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                        model.constraints.add(new StorageConstraintsModel(ConstraintsModel.ROW, queryType));
-                        buildFromModel();
+                    if (!Strings.isNullOrEmpty(queryString)) {
+                        queryText.setText(queryString);
                     }
-                }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
-                SWTUtils.createLink(this, Messages.getString("label.AddColumn"), new LoggingHyperlinkAdapter() {
+                    queryText.addModifyListener(new ModifyListener() {
+
+                        @Override
+                        public void modifyText(ModifyEvent e) {
+                            for (StorageConstraintsModel m : model.constraints) {
+                                m.setQueryString(queryText.getText());
+                            }
+                        }
+                    });
+                } else {
+                    new Label(this, SWT.NONE);
+                }
+
+                SWTUtils.createLink(this, Messages.getString("label.AddVar"), new LoggingHyperlinkAdapter() {
 
                     @Override
                     protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                        model.constraints.add(new StorageConstraintsModel(ConstraintsModel.COLUMN, queryType));
+                        model.constraints.add(new StorageConstraintsModel(StorageConstraintsModel.ATTR, queryType));
                         buildFromModel();
                     }
                 }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
                 new InputOutputComposite(this, delegable, model.getInOutModel(), getMode(), "xlsx");
                 for (StorageConstraintsModel c : model.constraints) {
-                    switch (c.type) {
-                    case ConstraintsModel.CELL:
-                        new CellComposite(c);
-                        break;
-                    case ConstraintsModel.ROW:
-                        new RowComposite(c);
-                        break;
-                    case ConstraintsModel.COLUMN:
-                        new ColumnComposite(c);
-                        break;
-                    }
+                    new ArrtibuteComposite(c);
                 }
                 ((ScrolledComposite) getParent()).setMinSize(computeSize(getSize().x, SWT.DEFAULT));
                 this.layout(true, true);
@@ -142,6 +137,8 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
         }
 
         private QueryType queryType;
+
+        private String queryString;
 
         private void addActionCombo() {
             final Combo combo = new Combo(this, SWT.READ_ONLY);
@@ -155,13 +152,13 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                     if (Strings.isNullOrEmpty(text)) {
                         return;
                     }
-                    if (!QueryType.valueOf(combo.getText()).equals(queryType)) {
-                        for (StorageConstraintsModel m : model.constraints) {
-                            if (m.getConditionModel() != null) {
-                                m.getConditionModel().getConditions().clear();
-                            }
-                        }
-                    }
+                    // if (!QueryType.valueOf(combo.getText()).equals(queryType)) {
+                    // for (StorageConstraintsModel m : model.constraints) {
+                    // if (m.getConditionModel() != null) {
+                    // m.getConditionModel().getConditions().clear();
+                    // }
+                    // }
+                    // }
                     queryType = QueryType.valueOf(combo.getText());
                     for (StorageConstraintsModel m : model.constraints) {
                         m.setQueryType(queryType);
@@ -263,92 +260,6 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                         }
                     }
                 });
-                l = new Label(group, SWT.None);
-                l.setText(getYcoordMessage());
-                final Text ty = new Text(group, SWT.BORDER);
-                ty.setText("" + cmodel.getRow());
-                ty.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-                ty.addModifyListener(new ModifyListener() {
-                    @Override
-                    public void modifyText(ModifyEvent arg0) {
-                        try {
-                            int y = Integer.parseInt(ty.getText());
-                            if (y > 0 && y < 65535) {
-                                cmodel.setRow(y);
-                            } else {
-                                ty.setText("1");
-                            }
-                        } catch (Exception e) {
-                            ty.setText("1");
-                        }
-                    }
-                });
-
-                if (queryType != null && !queryType.equals(QueryType.CREATE)) {
-                    final Button addButton = new Button(group, SWT.NONE);
-                    addButton.setText(Messages.getString("button.addCondition"));
-
-                    addButton.addSelectionListener(new SelectionAdapter() {
-                        @Override
-                        public void widgetSelected(SelectionEvent e) {
-                            if (cmodel.getConditionModel() == null) {
-                                cmodel.setConditionModel(new ConditionModel());
-                            }
-                            ConditionItem conditionItem = new ConditionItem(Op.EQUAL, "");
-                            cmodel.getConditionModel().getConditions().add(conditionItem);
-                            buildFromModel();
-                        }
-                    });
-                }
-                // condition part
-                if (cmodel.getConditionModel() != null) {
-                    if (cmodel.getConditionModel().getConditions() == null || cmodel.getConditionModel().getConditions().size() == 0) {
-                        layout(true, true);
-                        return;
-                    }
-                    Group condGroup = new Group(group, SWT.None);
-                    condGroup.setLayout(new GridLayout(5, false));
-                    condGroup.setText(Messages.getString("label.conditions"));
-                    for (final ConditionItem item : cmodel.getConditionModel().getConditions()) {
-                        l = new Label(condGroup, SWT.None);
-                        l.setText(Messages.getString("label.condition"));
-
-                        final Combo conditionCombo = new Combo(condGroup, SWT.READ_ONLY);
-                        for (Op operation : Op.values()) {
-                            conditionCombo.add(operation.getSymbol()/* + " (" + operation.getMessage() + ")" */);
-                        }
-                        if (item.getCondition() != null) {
-                            conditionCombo.setText(item.getCondition().getSymbol());
-                        }
-
-                        conditionCombo.addSelectionListener(new SelectionAdapter() {
-                            @Override
-                            public void widgetSelected(SelectionEvent e) {
-                                item.setCondition(Op.fromSymbol(conditionCombo.getText()));
-                            }
-                        });
-
-                        final Text valText = new Text(condGroup, SWT.BORDER);
-                        if (item.getValue() != null) {
-                            valText.setText(item.getValue().toString());
-                        }
-                        valText.addModifyListener(new ModifyListener() {
-
-                            @Override
-                            public void modifyText(ModifyEvent e) {
-                                item.setValue(valText.getText());
-                            }
-                        });
-                        SWTUtils.createLink(condGroup, "[X]", new LoggingHyperlinkAdapter() {
-
-                            @Override
-                            protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                                cmodel.getConditionModel().getConditions().remove(item);
-                                buildFromModel();
-                            }
-                        });
-                    }
-                }
                 layout(true, true);
             }
 
@@ -379,14 +290,10 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
             public String getXcoordMessage() {
                 return Messages.getString("label.xcoord");
             }
-
-            public String getYcoordMessage() {
-                return Messages.getString("label.ycoord");
-            }
         }
 
-        public class CellComposite extends ConstraintsComposite {
-            CellComposite(StorageConstraintsModel m) {
+        public class ArrtibuteComposite extends ConstraintsComposite {
+            ArrtibuteComposite(StorageConstraintsModel m) {
                 super(m);
             }
 
@@ -397,39 +304,7 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
 
             @Override
             public String getTitle() {
-                return Messages.getString("label.Cell");
-            }
-        }
-
-        public class RowComposite extends ConstraintsComposite {
-            RowComposite(StorageConstraintsModel m) {
-                super(m);
-            }
-
-            @Override
-            public String getTitle() {
-                return Messages.getString("label.Row");
-            }
-
-            @Override
-            public String getXcoordMessage() {
-                return Messages.getString("label.xcoord_start");
-            }
-        }
-
-        public class ColumnComposite extends ConstraintsComposite {
-            ColumnComposite(StorageConstraintsModel m) {
-                super(m);
-            }
-
-            @Override
-            public String getTitle() {
-                return Messages.getString("label.Column");
-            }
-
-            @Override
-            public String getYcoordMessage() {
-                return Messages.getString("label.ycoord_start");
+                return Messages.getString("label.Arrtibute");
             }
         }
     }
