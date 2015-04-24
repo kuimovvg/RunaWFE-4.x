@@ -49,6 +49,7 @@ import ru.runa.wfe.commons.dbpatch.impl.AddNodeIdToProcessLogPatch;
 import ru.runa.wfe.commons.dbpatch.impl.AddSequentialFlagToBot;
 import ru.runa.wfe.commons.dbpatch.impl.AddSettingsTable;
 import ru.runa.wfe.commons.dbpatch.impl.AddSubProcessIndexColumn;
+import ru.runa.wfe.commons.dbpatch.impl.CreateAggregatedLogsTables;
 import ru.runa.wfe.commons.dbpatch.impl.ExpandDescriptionsPatch;
 import ru.runa.wfe.commons.dbpatch.impl.JbpmRefactoringPatch;
 import ru.runa.wfe.commons.dbpatch.impl.NodeTypeChangePatch;
@@ -125,6 +126,7 @@ public class InitializerLogic {
         dbPatches.add(AddColumnForEmbeddedBotTaskFileName.class);
         dbPatches.add(AddSettingsTable.class);
         dbPatches.add(AddSequentialFlagToBot.class);
+        dbPatches.add(CreateAggregatedLogsTables.class);
     };
 
     @Autowired
