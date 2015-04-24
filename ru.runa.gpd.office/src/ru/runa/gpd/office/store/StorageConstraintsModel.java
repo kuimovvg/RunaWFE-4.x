@@ -9,7 +9,9 @@ public class StorageConstraintsModel {
     public static final int CELL = 0;
     public static final int ROW = 1;
     public static final int COLUMN = 2;
+    public static final int ATTR = 3;
     public static final String CELL_CLASS = "ru.runa.wfe.office.excel.CellConstraints";
+    public static final String ATTR_CLASS = "ru.runa.wfe.office.excel.AttributeConstraints";
     public static final String ROW_CLASS = "ru.runa.wfe.office.excel.RowConstraints";
     public static final String COLUMN_CLASS = "ru.runa.wfe.office.excel.ColumnConstraints";
     public String sheetName = "";
@@ -18,13 +20,12 @@ public class StorageConstraintsModel {
     public final int type;
     public int row = 1;
     public int column = 1;
-    private ConditionModel conditionModel;
     private QueryType queryType;
+    private String queryString;
 
     public StorageConstraintsModel(int type, QueryType queryType) {
         this.type = type;
         this.queryType = queryType;
-        this.conditionModel = new ConditionModel();
     }
 
     public String getSheetName() {
@@ -71,14 +72,6 @@ public class StorageConstraintsModel {
         return type;
     }
 
-    public ConditionModel getConditionModel() {
-        return conditionModel;
-    }
-
-    public void setConditionModel(ConditionModel conditionModel) {
-        this.conditionModel = conditionModel;
-    }
-
     public QueryType getQueryType() {
         return queryType;
     }
@@ -87,16 +80,32 @@ public class StorageConstraintsModel {
         this.queryType = queryType;
     }
 
+    public String getQueryString() {
+        return queryString;
+    }
+
+    public void setQueryString(String queryString) {
+        this.queryString = queryString;
+    }
+
     public static StorageConstraintsModel deserialize(Element element) {
         StorageConstraintsModel model;
         String className = element.attributeValue("class");
         className = BackCompatibilityUtils.getClassName(className);
+
+        Element conditionEl = element.element("condition");
+        String query = "";
+        if (conditionEl != null) {
+            query = conditionEl.attributeValue("query");
+        }
         Element conditions = element.element("conditions");
         QueryType queryType = null;
         if (conditions != null) {
             queryType = QueryType.valueOf(conditions.attributeValue("type"));
         }
-        if (CELL_CLASS.equals(className)) {
+        if (ATTR_CLASS.equals(className)) {
+            model = new StorageConstraintsModel(ATTR, queryType);
+        } else if (CELL_CLASS.equals(className)) {
             model = new StorageConstraintsModel(CELL, queryType);
         } else if (ROW_CLASS.equals(className)) {
             model = new StorageConstraintsModel(ROW, queryType);
@@ -105,6 +114,7 @@ public class StorageConstraintsModel {
         } else {
             throw new RuntimeException("Invaid class '" + className + "'");
         }
+        model.setQueryString(query);
         model.variableName = element.attributeValue("variable");
         Element conf = element.element("config");
         model.sheetName = conf.attributeValue("sheetName");
@@ -113,23 +123,13 @@ public class StorageConstraintsModel {
         }
         if (model.type == CELL || model.type == ROW) {
             model.row = Integer.parseInt(conf.attributeValue("row"));
-        } else {
+        } else if (model.type == COLUMN) {
             model.row = Integer.parseInt(conf.attributeValue("rowStart"));
         }
-        if (model.type == CELL || model.type == COLUMN) {
+        if (model.type == CELL || model.type == COLUMN || model.type == ATTR) {
             model.column = Integer.parseInt(conf.attributeValue("column"));
         } else {
             model.column = Integer.parseInt(conf.attributeValue("columnStart"));
-        }
-        if (conditions != null) {
-            model.setConditionModel(new ConditionModel());
-            for (Object condition : conditions.elements()) {
-                Element el = (Element) condition;
-                String is = el.attributeValue("is");
-                String val = el.attributeValue("val");
-                ConditionItem conditionItem = new ConditionItem(Op.valueOf(is), val);
-                model.getConditionModel().getConditions().add(conditionItem);
-            }
         }
         return model;
     }
@@ -139,6 +139,9 @@ public class StorageConstraintsModel {
         Element config = binding.addElement("config");
         binding.addAttribute("variable", variableName);
         switch (type) {
+        case ATTR:
+            binding.addAttribute("class", ATTR_CLASS);
+            break;
         case CELL:
             binding.addAttribute("class", CELL_CLASS);
             break;
@@ -156,27 +159,17 @@ public class StorageConstraintsModel {
         }
         if (type == CELL || type == ROW) {
             config.addAttribute("row", "" + row);
-        } else {
+        } else if (type == COLUMN) {
             config.addAttribute("rowStart", "" + row);
         }
-        if (type == CELL || type == COLUMN) {
+        if (type == CELL || type == COLUMN || type == ATTR) {
             config.addAttribute("column", "" + column);
         } else {
             config.addAttribute("columnStart", "" + column);
         }
-        if (conditionModel != null) {
-            Element conditions = binding.addElement("conditions");
-            conditions.addAttribute("type", getQueryType().toString());
-            if (QueryType.CREATE.equals(getQueryType())) {
-                return;
-            }
-            for (ConditionItem item : conditionModel.getConditions()) {
-                Element condition = conditions.addElement("condition");
-                if (item.getCondition() != null && item.getValue() != null) {
-                    condition.addAttribute("is", item.getCondition().toString());
-                    condition.addAttribute("val", item.getValue().toString());
-                }
-            }
-        }
+        Element conditionEl = binding.addElement("condition");
+        conditionEl.addAttribute("query", getQueryString());
+        Element conditions = binding.addElement("conditions");
+        conditions.addAttribute("type", getQueryType().toString());
     }
 }
