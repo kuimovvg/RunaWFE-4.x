@@ -48,8 +48,8 @@ import com.google.common.collect.Maps;
  */
 public class ProcessTaskAssignmentAction extends ActionBase {
     public static final String ACTION_PATH = "/processTaskAssignment";
-    private final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
-    private final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
+    private static final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
+    private static final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

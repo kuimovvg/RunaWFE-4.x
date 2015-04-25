@@ -36,8 +36,8 @@ import ru.runa.wfe.commons.ClassLoaderUtil;
 
 public class RunaWFEPortlet extends StrutsPortlet {
 
-    HttpServletRequest _request;
-    HttpServletResponse _response;
+    HttpServletRequest portletRequest;
+    HttpServletResponse portletResponse;
     PortletAuthenticator authenticator;
     PortletExceptionHandler exceptionHandler;
     boolean thinInterface = false;
@@ -70,13 +70,13 @@ public class RunaWFEPortlet extends StrutsPortlet {
     @Override
     protected void processRequest(PortletRequest request, PortletResponse response, String defaultPage, String requestType) throws PortletException,
             IOException {
-        _request = getServletContextProvider().getHttpServletRequest(this, request);
-        _response = getServletContextProvider().getHttpServletResponse(this, response);
+        portletRequest = getServletContextProvider().getHttpServletRequest(this, request);
+        portletResponse = getServletContextProvider().getHttpServletResponse(this, response);
         if (thinInterface) {
-            _request.setAttribute("runawfe.thin.interface", "true");
+            portletRequest.setAttribute("runawfe.thin.interface", "true");
         }
-        _request.setAttribute("runawfe.thin.interface.page", thinInterfacePage);
-        if (!authenticator.authenticate(_request, _response, request.getPortletSession())) {
+        portletRequest.setAttribute("runawfe.thin.interface.page", thinInterfacePage);
+        if (!authenticator.authenticate(portletRequest, portletResponse, request.getPortletSession())) {
             return;
         }
 
@@ -89,7 +89,7 @@ public class RunaWFEPortlet extends StrutsPortlet {
         try {
             Exception exception = errorContext.getError();
             while (exception != null
-                    && !exceptionHandler.processError(exception, getServletContextProvider().getServletContext(this), _request, response)) {
+                    && !exceptionHandler.processError(exception, getServletContextProvider().getServletContext(this), portletRequest, response)) {
                 exception = (Exception) exception.getCause();
             }
         } catch (ServletException e) {

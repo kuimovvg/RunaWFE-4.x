@@ -29,35 +29,35 @@ import ru.runa.wfe.security.Permission;
 
 public class PropertyTDBuilder extends BaseTDBuilder {
 
-    static enum AUTH_STATE {
+    static enum AuthState {
         ALWAYS_ENABLE, ALWAYS_DISABLE, ASK_WFE
     }
 
     private final String propertyName;
-    private final AUTH_STATE authState;
+    private final AuthState authState;
 
     public PropertyTDBuilder(Permission permission, String propertyName) {
         super(permission);
         this.propertyName = propertyName;
-        authState = permission.getName() == null ? AUTH_STATE.ALWAYS_ENABLE : AUTH_STATE.ASK_WFE;
+        authState = permission.getName() == null ? AuthState.ALWAYS_ENABLE : AuthState.ASK_WFE;
     }
 
     public PropertyTDBuilder(Permission permission, String propertyName, Boolean isAlwaysDisabled) {
         super(permission);
         this.propertyName = propertyName;
-        authState = isAlwaysDisabled ? AUTH_STATE.ALWAYS_DISABLE : AUTH_STATE.ASK_WFE;
+        authState = isAlwaysDisabled ? AuthState.ALWAYS_DISABLE : AuthState.ASK_WFE;
     }
 
     public PropertyTDBuilder(Permission permission, String propertyName, IdentifiableExtractor identifiableExtractor) {
         super(permission, identifiableExtractor);
         this.propertyName = propertyName;
-        authState = permission.getName() == null ? AUTH_STATE.ALWAYS_ENABLE : AUTH_STATE.ASK_WFE;
+        authState = permission.getName() == null ? AuthState.ALWAYS_ENABLE : AuthState.ASK_WFE;
     }
 
     @Override
     public TD build(Object object, Env env) {
         ConcreteElement element;
-        if (authState == AUTH_STATE.ALWAYS_ENABLE || (authState == AUTH_STATE.ASK_WFE && isEnabled(object, env))) {
+        if (authState == AuthState.ALWAYS_ENABLE || (authState == AuthState.ASK_WFE && isEnabled(object, env))) {
             element = new A(env.getURL(object), getValue(object, env));
             if (object instanceof WfDefinition && env.getConfirmationMessage(((WfDefinition) object).getId()) != null) {
                 element.addAttribute("onclick", env.getConfirmationMessage(((WfDefinition) object).getId()));

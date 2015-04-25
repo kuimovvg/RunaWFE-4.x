@@ -52,7 +52,7 @@ public class WorkflowThreadPoolBotInvoker implements BotInvoker, Runnable {
     private Future<?> botInvokerInvocation = null;
     private final Map<BotExecutionStatus, ScheduledFuture<?>> scheduledTasks = Maps.newConcurrentMap();
 
-    private final long STUCK_TIMEOUT_SECONDS = 300;
+    private static final long STUCK_TIMEOUT_SECONDS = 300;
     private BotStation botStation;
 
     /**

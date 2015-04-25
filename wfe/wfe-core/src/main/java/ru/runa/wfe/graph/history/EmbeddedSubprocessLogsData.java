@@ -91,14 +91,14 @@ public class EmbeddedSubprocessLogsData {
         for (ProcessLog log : processLogs) {
             Stack<String> subprocess = tokenIdToSubprocess.get(log.getTokenId());
             if (subprocess == null || subprocess.isEmpty()) {
-                ConsumeProcessLog(log, tokenIdToSubprocess);
+                consumeProcessLog(log, tokenIdToSubprocess);
             } else {
-                ConsumeSubprocessLog(subprocess.peek(), log, tokenIdToSubprocess);
+                consumeSubprocessLog(subprocess.peek(), log, tokenIdToSubprocess);
             }
         }
     }
 
-    private void ConsumeProcessLog(ProcessLog log, HashMap<Long, Stack<String>> tokenIdToSubprocess) {
+    private void consumeProcessLog(ProcessLog log, HashMap<Long, Stack<String>> tokenIdToSubprocess) {
         processLogsWithoutEmbedded.add(log);
         if (log instanceof NodeEnterLog && NodeType.SUBPROCESS == ((NodeEnterLog) log).getNodeType()) {
             SubProcessState node = getSubprocessNode(log.getNodeId());
@@ -112,7 +112,7 @@ public class EmbeddedSubprocessLogsData {
         }
     }
 
-    private void ConsumeSubprocessLog(String subprocessName, ProcessLog log, HashMap<Long, Stack<String>> tokenIdToSubprocess) {
+    private void consumeSubprocessLog(String subprocessName, ProcessLog log, HashMap<Long, Stack<String>> tokenIdToSubprocess) {
         ArrayList<ProcessLog> logs = embeddedSubprocessesLogs.get(subprocessName);
         if (logs == null) {
             logs = new ArrayList<ProcessLog>();

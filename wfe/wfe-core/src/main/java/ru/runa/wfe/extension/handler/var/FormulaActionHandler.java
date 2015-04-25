@@ -590,7 +590,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
                     incorrectParameters(s);
                     return null;
                 }
-                return NumberToString_ru.numberToString(number);
+                return NumberToStringRu.numberToString(number);
             }
             if (!tok.equals(",")) {
                 incorrectParameters(s);
@@ -631,7 +631,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             String s1 = param3.toString();
             String s2 = param4.toString();
             String s3 = param5.toString();
-            return NumberToString_ru.numberToString(number, new NumberToString_ru.Word(p, new String[] { s1, s2, s3 }));
+            return NumberToStringRu.numberToString(number, new NumberToStringRu.Word(p, new String[] { s1, s2, s3 }));
         }
         if (s.equals("FIO_case_ru")) {
             Object param1 = parsePriority0();
@@ -699,7 +699,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             String s1 = param3.toString();
             String s2 = param4.toString();
             String s3 = param5.toString();
-            return NumberToString_ru.numberToShortString(number, new NumberToString_ru.Word(p, new String[] { s1, s2, s3 }));
+            return NumberToStringRu.numberToShortString(number, new NumberToStringRu.Word(p, new String[] { s1, s2, s3 }));
         }
         if (s.equals("isExecutorInGroup")) {
             Object param1 = parsePriority0();

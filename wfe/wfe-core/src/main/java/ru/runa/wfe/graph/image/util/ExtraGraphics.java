@@ -105,10 +105,10 @@ public class ExtraGraphics {
 		
 		v1=new Point2D.Double((arcEntries[0].x-arcCenter.x), (arcEntries[0].y-arcCenter.y));
 		v2=new Point2D.Double((arcEntries[1].x-arcCenter.x), (arcEntries[1].y-arcCenter.y));
-		double ang_a = GraphicsMath.getVectorSignedAngle(new Point2D.Double(1, 0), v1);
-		double ang_ab = GraphicsMath.getVectorSignedAngle(v1, v2);
+		double angA = GraphicsMath.getVectorSignedAngle(new Point2D.Double(1, 0), v1);
+		double angAb = GraphicsMath.getVectorSignedAngle(v1, v2);
 		g.draw(new Arc2D.Double(arcCenter.x-radius, arcCenter.y-radius, radius*2, radius*2,
-				Math.toDegrees(ang_a), Math.toDegrees(ang_ab), Arc2D.OPEN));
+				Math.toDegrees(angA), Math.toDegrees(angAb), Arc2D.OPEN));
 		return arcEntries;
 	}
 

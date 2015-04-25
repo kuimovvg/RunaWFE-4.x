@@ -1,8 +1,8 @@
 package ru.runa.wfe.extension.handler.var;
 
-public class NumberToString_ru {
-    public static int MALE = 0;
-    public static int FEMALE = 1;
+public class NumberToStringRu {
+    public static final int MALE = 0;
+    public static final int FEMALE = 1;
 
     public static class Word {
         public int p;

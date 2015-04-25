@@ -155,7 +155,7 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
         }
         log.debug("Clearing cache for " + executor + " due to " + change);
         Set<Actor> actors = Sets.newHashSet();
-        if (!FillAffectedActors(executor, change, actors)) {
+        if (!fillAffectedActors(executor, change, actors)) {
             return;
         }
         for (Actor actor : actors) {
@@ -183,7 +183,7 @@ public class TaskCacheCtrl extends BaseCacheCtrl<TaskCacheImpl> implements TaskC
      * @param affectedActors Set of affected actors to fill.
      * @return true, if affected actors is filled and false if no other actions required.
      */
-    private boolean FillAffectedActors(Executor changedExecutor, Change change, Set<Actor> affectedActors) {
+    private boolean fillAffectedActors(Executor changedExecutor, Change change, Set<Actor> affectedActors) {
         if (changedExecutor instanceof Group) {
             ExecutorCacheImpl executorCache = ExecutorCacheCtrl.getInstance().getCache();
             if (executorCache == null) {

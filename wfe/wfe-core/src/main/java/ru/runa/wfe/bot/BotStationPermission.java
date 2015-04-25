@@ -27,7 +27,7 @@ public class BotStationPermission extends Permission {
     private static final long serialVersionUID = 4427423782185434181L;
 
     public static final Permission BOT_STATION_CONFIGURE = new BotStationPermission(4, "permission.bot_station_configure");
-    private static List<Permission> BOT_STATION_CONFIGURE_PERMISSIONS = fillPermissions();
+    private static final List<Permission> BOT_STATION_CONFIGURE_PERMISSIONS = fillPermissions();
 
     protected BotStationPermission(int maskPower, String name) {
         super(maskPower, name);

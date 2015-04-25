@@ -38,7 +38,7 @@ import com.google.common.collect.Lists;
 public class GrantPermissionsOnRelationAction extends GrantPermisionsOnIdentifiableAction {
     public static final String ACTION_PATH = "/grantPermissionsOnRelation";
 
-    private static List<Permission> PERMISSIONS = Lists.newArrayList(Permission.READ);
+    private static final List<Permission> PERMISSIONS = Lists.newArrayList(Permission.READ);
 
     @Override
     protected List<Permission> getIdentifiablePermissions() {

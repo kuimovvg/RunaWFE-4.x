@@ -53,7 +53,7 @@ public class GrantPermissionsOnProcessDefinitionAction extends GrantPermisionsOn
 
     public static final String ACTION_PATH = "/grantReadPermissionOnProcessDefinition";
 
-    private static List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
+    private static final List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
 
     @Override
     protected List<Permission> getIdentifiablePermissions() {

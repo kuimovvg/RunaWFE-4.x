@@ -19,7 +19,7 @@ import com.google.common.collect.Maps;
 public class PropertyResources {
     private static final Log log = LogFactory.getLog(PropertyResources.class);
     private final String fileName;
-    private final Properties PROPERTIES;
+    private final Properties properties;
     private final boolean useDatabase;
     private static boolean databaseAvailable = false;
 
@@ -42,17 +42,17 @@ public class PropertyResources {
     public PropertyResources(String fileName, boolean required, boolean useDatabase) {
         this.useDatabase = useDatabase;
         this.fileName = fileName;
-        PROPERTIES = ClassLoaderUtil.getProperties(fileName, required);
+        properties = ClassLoaderUtil.getProperties(fileName, required);
     }
 
     public Set<String> getAllPropertyNames() {
-        return PROPERTIES.stringPropertyNames();
+        return properties.stringPropertyNames();
     }
 
     public Map<String, String> getAllProperties() {
         Map<String, String> map = Maps.newHashMap();
-        for (String name : PROPERTIES.stringPropertyNames()) {
-            map.put(name, PROPERTIES.getProperty(name));
+        for (String name : properties.stringPropertyNames()) {
+            map.put(name, properties.getProperty(name));
         }
         return map;
     }
@@ -83,7 +83,7 @@ public class PropertyResources {
                 try {
                     String v = settingDAO.getValue(fileName, name);
                     if (v == null) {
-                        v = PROPERTIES.getProperty(name);
+                        v = properties.getProperty(name);
                     }
                     propertiesCache.put(fullName, v);
                     return v;
@@ -92,7 +92,7 @@ public class PropertyResources {
                 }
             }
         }
-        return PROPERTIES.getProperty(name);
+        return properties.getProperty(name);
     }
 
     public String getStringPropertyNotNull(String name) {
