@@ -55,7 +55,7 @@ public class GraphHistoryBuilder {
      * @return Returns image bytes.
      */
     public byte[] createDiagram() throws Exception {
-        HistoryGraphNode historyGraph = BuildHistoryGraph();
+        HistoryGraphNode historyGraph = buildHistoryGraph();
         int height = NodeLayoutData.get(historyGraph).getSubtreeHeight();
         int width = NodeLayoutData.get(historyGraph).getSubtreeWidth();
         historyGraph.processBy(new CreateGraphFigures(), new CreateGraphFiguresContext());
@@ -70,7 +70,7 @@ public class GraphHistoryBuilder {
      * @return Returns list of tooltips for history graph.
      */
     public List<GraphElementPresentation> getPresentations() throws Exception {
-        HistoryGraphNode historyGraph = BuildHistoryGraph();
+        HistoryGraphNode historyGraph = buildHistoryGraph();
         CreateGraphElementPresentation createPresentationOperation = new CreateGraphElementPresentation(data);
         historyGraph.processBy(createPresentationOperation, new CreateGraphElementPresentationContext());
         return createPresentationOperation.getPresentationElements();
@@ -82,7 +82,7 @@ public class GraphHistoryBuilder {
      * 
      * @return Return created history graph.
      */
-    private HistoryGraphNode BuildHistoryGraph() {
+    private HistoryGraphNode buildHistoryGraph() {
         HistoryGraphNode historyGraph = HistoryGraphBuilder.buildHistoryGraph(data.getProcessLogs(), data.getProcessInstanceData());
         historyGraph.processBy(new CalculateSubTreeBounds(), null);
         historyGraph.processBy(new PushWidthDown(), -1);

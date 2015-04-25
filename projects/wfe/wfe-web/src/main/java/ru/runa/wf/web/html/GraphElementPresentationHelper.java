@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
  * Helper class to create links to subprocesses in graph elements.
  */
 public class GraphElementPresentationHelper {
-    public static String MAP_NAME = "processMap";
+    public static final String MAP_NAME = "processMap";
 
     /**
      * Rendered page context.
@@ -52,7 +52,8 @@ public class GraphElementPresentationHelper {
     private final org.apache.ecs.html.Map map = new org.apache.ecs.html.Map();
 
     /**
-     * Creates instance of helper class to create links to subprocesses in graph elements.
+     * Creates instance of helper class to create links to subprocesses in graph
+     * elements.
      * 
      * @param taskId
      *            Current task identity. May be <= 0 if not applicable.
@@ -80,7 +81,8 @@ public class GraphElementPresentationHelper {
     }
 
     /**
-     * Creates links to subprocesses, forked in given multiple instance graph element.
+     * Creates links to subprocesses, forked in given multiple instance graph
+     * element.
      * 
      * @param element
      *            Multiple instance graph element to create links.
@@ -181,7 +183,8 @@ public class GraphElementPresentationHelper {
      * 
      * @param element
      *            Graph element, to create tool tip.
-     * @return {@link Area} instance with tool tip or null, if {@link Area} not created.
+     * @return {@link Area} instance with tool tip or null, if {@link Area} not
+     *         created.
      */
     public Area createTaskTooltip(TaskGraphElementPresentation element) {
         if (!element.isMinimized()) {

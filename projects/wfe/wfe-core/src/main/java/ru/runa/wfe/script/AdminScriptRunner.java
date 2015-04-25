@@ -644,19 +644,19 @@ public class AdminScriptRunner {
         return false;
     }
 
-    public enum setActiveMode {
+    public enum SetActiveMode {
         ALL, CHANGED, NONE
     };
 
-    private setActiveMode readSetActiveMode(Element element) {
+    private SetActiveMode readSetActiveMode(Element element) {
         String mode = element.attributeValue("setActive");
         if (mode != null && mode.equals("all")) {
-            return setActiveMode.ALL;
+            return SetActiveMode.ALL;
         }
         if (mode != null && mode.equals("changed")) {
-            return setActiveMode.CHANGED;
+            return SetActiveMode.CHANGED;
         }
-        return setActiveMode.NONE;
+        return SetActiveMode.NONE;
     }
 
     private boolean isTemplatesActive(Element element) {
@@ -669,10 +669,10 @@ public class AdminScriptRunner {
 
     public static class ReplicationDescr {
         private final Set<BatchPresentation> templates;
-        private final setActiveMode setActive;
+        private final SetActiveMode setActive;
         private final boolean useTemplates;
 
-        public ReplicationDescr(Set<BatchPresentation> templates, setActiveMode setActive, boolean useTemplates) {
+        public ReplicationDescr(Set<BatchPresentation> templates, SetActiveMode setActive, boolean useTemplates) {
             this.templates = templates;
             this.setActive = setActive;
             this.useTemplates = useTemplates;
@@ -694,10 +694,10 @@ public class AdminScriptRunner {
             // Replicate all batches
             for (BatchPresentation replicateMe : replicationDescr.keySet()) {
                 boolean useTemplates = replicationDescr.get(replicateMe).useTemplates;
-                setActiveMode activeMode = replicationDescr.get(replicateMe).setActive;
+                SetActiveMode activeMode = replicationDescr.get(replicateMe).setActive;
                 Set<BatchPresentation> templates = replicationDescr.get(replicateMe).templates;
                 if (useTemplates && !isBatchReplaceNeeded(getBatchFromProfile(profile, replicateMe.getCategory(), replicateMe.getName()), templates)) {
-                    if (activeMode.equals(setActiveMode.ALL)
+                    if (activeMode.equals(SetActiveMode.ALL)
                             && getBatchFromProfile(profile, replicateMe.getCategory(), replicateMe.getName()) != null) {
                         profile.setActiveBatchPresentation(replicateMe.getCategory(), replicateMe.getName());
                     }
@@ -706,7 +706,7 @@ public class AdminScriptRunner {
                 BatchPresentation clon = replicateMe.clone();
                 clon.setName(replicateMe.getName());
                 profile.addBatchPresentation(clon);
-                if (activeMode.equals(setActiveMode.ALL) || activeMode.equals(setActiveMode.CHANGED)) {
+                if (activeMode.equals(SetActiveMode.ALL) || activeMode.equals(SetActiveMode.CHANGED)) {
                     profile.setActiveBatchPresentation(replicateMe.getCategory(), replicateMe.getName());
                 }
             }
@@ -718,7 +718,7 @@ public class AdminScriptRunner {
         String batchPresentationNewName = element.attributeValue("batchName");
         boolean useTemplates = isTemplatesActive(element);
         List<Element> batchPresentations = element.elements("batchPresentation");
-        setActiveMode activeMode = readSetActiveMode(element);
+        SetActiveMode activeMode = readSetActiveMode(element);
         BatchPresentation srcBatch = null;
         Set<BatchPresentation> replaceableBatchPresentations = new HashSet<BatchPresentation>();
         for (Element batchElement : batchPresentations) {

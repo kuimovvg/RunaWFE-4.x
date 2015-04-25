@@ -44,7 +44,7 @@ import com.google.common.base.Strings;
 @DiscriminatorValue(value = "not_equals")
 public class SubstitutionCriteriaNotEquals extends SubstitutionCriteria {
     private static final long serialVersionUID = 1L;
-    private String SWIMLANE_PREFIX = "swimlane:";
+    private static final String SWIMLANE_PREFIX = "swimlane:";
 
     @Override
     public boolean isSatisfied(ExecutionContext executionContext, Task task, Actor asActor, Actor substitutorActor) {

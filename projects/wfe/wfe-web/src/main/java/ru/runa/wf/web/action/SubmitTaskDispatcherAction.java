@@ -50,9 +50,9 @@ import ru.runa.wfe.user.User;
  *                        = "false"
  */
 public class SubmitTaskDispatcherAction extends ActionBase {
-    private final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
-    private final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
-    private final String LOCAL_FORWARD_EXECUTE_TASK = "executeTask";
+    private static final String LOCAL_FORWARD_TASKS_LIST = "tasksList";
+    private static final String LOCAL_FORWARD_SUBMIT_TASK = "submitTask";
+    private static final String LOCAL_FORWARD_EXECUTE_TASK = "executeTask";
 
     @Override
     public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) {

@@ -46,7 +46,7 @@ public class GrantPermissionsOnSystemAction extends GrantPermisionsOnIdentifiabl
 
     public static final String ACTION_PATH = "/grantLoginPermissionOnSystem";
 
-    private static List<Permission> LOGIN_PERMISSONS = Lists.newArrayList(SystemPermission.LOGIN_TO_SYSTEM);
+    private static final List<Permission> LOGIN_PERMISSONS = Lists.newArrayList(SystemPermission.LOGIN_TO_SYSTEM);
 
     @Override
     protected List<Permission> getIdentifiablePermissions() {

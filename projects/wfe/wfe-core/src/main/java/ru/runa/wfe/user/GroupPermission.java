@@ -34,7 +34,7 @@ public class GroupPermission extends ExecutorPermission {
     public static final Permission ADD_TO_GROUP = new GroupPermission((byte) 4, "permission.add_to_group");
     public static final Permission REMOVE_FROM_GROUP = new GroupPermission((byte) 5, "permission.remove_from_group");
 
-    private static List<Permission> GROUP_PERMISSIONS = fillPermissions();
+    private static final List<Permission> GROUP_PERMISSIONS = fillPermissions();
 
     private GroupPermission(byte maskPower, String name) {
         super(maskPower, name);

@@ -49,7 +49,7 @@ public class GrantPermissionsOnExecutorAction extends GrantPermisionsOnIdentifia
 
     public static final String ACTION_PATH = "/grantReadPermissionOnExecutor";
 
-    private static List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
+    private static final List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
 
     @Override
     protected Identifiable getIdentifiable(User user, Long identifiableId) {

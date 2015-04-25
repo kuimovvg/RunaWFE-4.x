@@ -30,7 +30,7 @@ import org.hibernate.annotations.Index;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AssignmentHistory {
 
-    private long Id;
+    private long id;
     /**
      * Date of assignment.
      */
@@ -59,11 +59,11 @@ public class AssignmentHistory {
     @SequenceGenerator(name = "sequence", sequenceName = "SEQ_BPM_AGGLOG_ASSIGNMENTS", allocationSize = 1)
     @Column(name = "ID")
     public long getId() {
-        return Id;
+        return id;
     }
 
     public void setId(long id) {
-        Id = id;
+        this.id = id;
     }
 
     @Column(name = "ASSIGNMENT_DATE", nullable = false)

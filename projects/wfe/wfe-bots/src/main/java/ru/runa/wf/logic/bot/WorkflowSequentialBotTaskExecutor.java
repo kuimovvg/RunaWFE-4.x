@@ -85,7 +85,7 @@ public class WorkflowSequentialBotTaskExecutor implements Runnable, BotExecution
         try {
             while (!executors.isEmpty() && !stopExecution) {
                 WorkflowBotTaskExecutor currentExecutor = executors.peek();
-                ProcessTaskSafe(currentExecutor);
+                processTaskSafe(currentExecutor);
                 executors.poll();
             }
         } finally {
@@ -99,7 +99,7 @@ public class WorkflowSequentialBotTaskExecutor implements Runnable, BotExecution
      * @param currentExecutor
      *            Bot task to execute.
      */
-    private void ProcessTaskSafe(WorkflowBotTaskExecutor currentExecutor) {
+    private void processTaskSafe(WorkflowBotTaskExecutor currentExecutor) {
         try {
             currentExecutor.run();
         } catch (Throwable e) {
