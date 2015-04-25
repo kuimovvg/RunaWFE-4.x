@@ -46,7 +46,7 @@ public class GrantPermissionsOnBotStationAction extends GrantPermisionsOnIdentif
 
     public static final String ACTION_PATH = "/grantBotStationPermission";
 
-    private static List<Permission> BOT_STATION_READ_PERMISSION = Lists.newArrayList(BotStationPermission.READ);
+    private static final List<Permission> BOT_STATION_READ_PERMISSION = Lists.newArrayList(BotStationPermission.READ);
 
     @Override
     protected List<Permission> getIdentifiablePermissions() {

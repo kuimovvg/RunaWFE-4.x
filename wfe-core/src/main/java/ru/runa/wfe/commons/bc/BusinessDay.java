@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 
 public class BusinessDay {
     private final List<CalendarInterval> workingIntervals;
-    public static BusinessDay HOLIDAY = new BusinessDay(new ArrayList<CalendarInterval>());
+    public static final BusinessDay HOLIDAY = new BusinessDay(new ArrayList<CalendarInterval>());
 
     public BusinessDay(List<CalendarInterval> workingIntervals) {
         this.workingIntervals = workingIntervals;

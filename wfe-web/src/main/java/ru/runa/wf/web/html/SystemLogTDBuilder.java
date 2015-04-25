@@ -38,27 +38,27 @@ public class SystemLogTDBuilder implements TDBuilder {
      * Process place holder name. All occurrences of this place holder will be
      * replaced with process instance identity.
      */
-    private static String PH_PROCESS = null;
+    private static String placeHolderProcess = null;
 
     /**
      * Process definition name place holder name. All occurrences of this place
      * holder will be replaced with process definition name.
      */
-    private static String PH_PROCESS_DEFINITION = null;
+    private static String placeHolderProcessDefinition = null;
 
     /**
      * Process definition version place holder name. All occurrences of this
      * place holder will be replaced with process definition version.
      */
-    private static String PH_VERSION = null;
+    private static String placeHolderVersion = null;
 
     private static synchronized void initPlacehlders(PageContext pageContext) {
-        if (PH_PROCESS != null) {
+        if (placeHolderProcess != null) {
             return;
         }
-        PH_PROCESS = Messages.getMessage(Messages.HISTORY_SYSTEM_PH_PI, pageContext);
-        PH_PROCESS_DEFINITION = Messages.getMessage(Messages.HISTORY_SYSTEM_PH_PD, pageContext);
-        PH_VERSION = Messages.getMessage(Messages.HISTORY_SYSTEM_PH_VERSION, pageContext);
+        placeHolderProcess = Messages.getMessage(Messages.HISTORY_SYSTEM_PH_PI, pageContext);
+        placeHolderProcessDefinition = Messages.getMessage(Messages.HISTORY_SYSTEM_PH_PD, pageContext);
+        placeHolderVersion = Messages.getMessage(Messages.HISTORY_SYSTEM_PH_VERSION, pageContext);
     }
 
     @Override
@@ -75,13 +75,13 @@ public class SystemLogTDBuilder implements TDBuilder {
         if (systemLog instanceof ProcessDeleteLog) {
             ProcessDeleteLog log = (ProcessDeleteLog) systemLog;
             return Messages.getMessage(Messages.SYSTEM_LOG_PROCESS_DELETED, env.getPageContext())
-                    .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", log.getName() != null ? log.getName() : "")
-                    .replaceAll("\\{" + PH_PROCESS + "\\}", String.valueOf(log.getProcessId()));
+                    .replaceAll("\\{" + placeHolderProcessDefinition + "\\}", log.getName() != null ? log.getName() : "")
+                    .replaceAll("\\{" + placeHolderProcess + "\\}", String.valueOf(log.getProcessId()));
         } else if (systemLog instanceof ProcessDefinitionDeleteLog) {
             ProcessDefinitionDeleteLog log = (ProcessDefinitionDeleteLog) systemLog;
             return Messages.getMessage(Messages.SYSTEM_LOG_DEFINITION_DELETED, env.getPageContext())
-                    .replaceAll("\\{" + PH_PROCESS_DEFINITION + "\\}", log.getName())
-                    .replaceAll("\\{" + PH_VERSION + "\\}", String.valueOf(log.getVersion()));
+                    .replaceAll("\\{" + placeHolderProcessDefinition + "\\}", log.getName())
+                    .replaceAll("\\{" + placeHolderVersion + "\\}", String.valueOf(log.getVersion()));
         }
         return "Unsupported log instance";
     }

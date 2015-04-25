@@ -13,7 +13,7 @@ import ru.runa.wfe.lang.NodeType;
 import com.google.common.collect.Maps;
 
 public class NodeTypeChangePatch extends DBPatch {
-    private static Map<String, String> CHANGES = Maps.newHashMap();
+    private static final Map<String, String> CHANGES = Maps.newHashMap();
     static {
         CHANGES.put("StartState", NodeType.START_EVENT.name());
         CHANGES.put("ActionNode", NodeType.ACTION_NODE.name());

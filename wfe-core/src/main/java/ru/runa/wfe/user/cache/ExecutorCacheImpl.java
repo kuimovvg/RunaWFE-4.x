@@ -150,7 +150,7 @@ public class ExecutorCacheImpl extends BaseCacheImpl implements ExecutorCache {
         }
     }
 
-    public <T extends Executor> boolean onExecutorChange(String executorName, Class<T> executorClass, boolean new_delete) {
+    public <T extends Executor> boolean onExecutorChange(String executorName, Class<T> executorClass, boolean createOrDelete) {
         Executor executor = nameToExecutorCache.get(executorName);
         if (executor == null) {
             return true;

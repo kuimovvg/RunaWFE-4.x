@@ -17,9 +17,9 @@ public class CreateAggregatedLogsTables extends DBPatch {
     protected List<String> getDDLQueriesBefore() {
         List<String> sql = super.getDDLQueriesAfter();
 
-        sql.addAll(CreateAssignmentHistoryTable());
-        sql.addAll(CreateTaskHistoryTable());
-        sql.addAll(CreateProcessHistoryTable());
+        sql.addAll(createAssignmentHistoryTable());
+        sql.addAll(createTaskHistoryTable());
+        sql.addAll(createProcessHistoryTable());
         return sql;
     }
 
@@ -28,7 +28,7 @@ public class CreateAggregatedLogsTables extends DBPatch {
      * 
      * @return Returns list of sql commands for history table creation.
      */
-    private List<String> CreateAssignmentHistoryTable() {
+    private List<String> createAssignmentHistoryTable() {
         List<String> sql = new LinkedList<String>();
         List<ColumnDef> columns = new LinkedList<DBPatch.ColumnDef>();
         ColumnDef id = new ColumnDef("ID", Types.BIGINT, false);
@@ -54,7 +54,7 @@ public class CreateAggregatedLogsTables extends DBPatch {
      * 
      * @return Returns list of sql commands for history table creation.
      */
-    private List<String> CreateTaskHistoryTable() {
+    private List<String> createTaskHistoryTable() {
         List<String> sql = new LinkedList<String>();
         List<ColumnDef> columns = new LinkedList<DBPatch.ColumnDef>();
         ColumnDef id = new ColumnDef("ID", Types.BIGINT, false);
@@ -86,7 +86,7 @@ public class CreateAggregatedLogsTables extends DBPatch {
      * 
      * @return Returns list of sql commands for history table creation.
      */
-    private List<String> CreateProcessHistoryTable() {
+    private List<String> createProcessHistoryTable() {
         List<String> sql = new LinkedList<String>();
         List<ColumnDef> columns = new LinkedList<DBPatch.ColumnDef>();
         ColumnDef id = new ColumnDef("ID", Types.BIGINT, false);

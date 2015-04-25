@@ -48,7 +48,7 @@ import com.google.common.collect.Lists;
 public class GrantPermissionsOnProcessAction extends GrantPermisionsOnIdentifiableAction {
     public static final String ACTION_PATH = "/grantReadPermissionOnProcess";
 
-    private static List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
+    private static final List<Permission> READ_PERMISSONS = Lists.newArrayList(Permission.READ);
 
     @Override
     protected List<Permission> getIdentifiablePermissions() {

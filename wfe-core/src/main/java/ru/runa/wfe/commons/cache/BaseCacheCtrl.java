@@ -109,7 +109,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
 
     @Override
     public final void markTransactionComplete() {
-        if (dirtyThreads.ResetDirty()) {
+        if (dirtyThreads.resetDirty()) {
             CachingLogic.class.notifyAll();
         }
         doMarkTransactionComplete();
@@ -177,7 +177,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
      * it will be removed from changing threads.
      */
     private void registerChange() {
-        dirtyThreads.MarkAsDirty();
+        dirtyThreads.markAsDirty();
     }
 
     /**
@@ -221,7 +221,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
         /**
          * Mark current thread as dirty thread.
          */
-        public synchronized void MarkAsDirty() {
+        public synchronized void markAsDirty() {
             dirtyThreads.add(Thread.currentThread());
             hasDirty.set(true);
         }
@@ -232,7 +232,7 @@ public abstract class BaseCacheCtrl<CacheImpl extends CacheImplementation> imple
          * @return true, if no dirty threads in cache control and false
          *         otherwise.
          */
-        public synchronized boolean ResetDirty() {
+        public synchronized boolean resetDirty() {
             dirtyThreads.remove(Thread.currentThread());
             if (!dirtyThreads.isEmpty()) {
                 return false;

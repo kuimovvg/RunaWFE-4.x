@@ -36,8 +36,8 @@ public class TransitionLogData {
             }
             TransitionLog transitionLog = (TransitionLog) log;
             getTransitionLogs().add(transitionLog);
-            AddToArrayMap(fromNodeToTransition, transitionLog.getFromNodeId(), transitionLog);
-            AddToArrayMap(toNodeToTransition, transitionLog.getToNodeId(), transitionLog);
+            addToArrayMap(fromNodeToTransition, transitionLog.getFromNodeId(), transitionLog);
+            addToArrayMap(toNodeToTransition, transitionLog.getToNodeId(), transitionLog);
         }
     }
 
@@ -51,7 +51,7 @@ public class TransitionLogData {
      * @param transitionLog
      *            Transition log to add to the map.
      */
-    private void AddToArrayMap(HashMap<String, ArrayList<TransitionLog>> nodeToTransition, String nodeId, TransitionLog transitionLog) {
+    private void addToArrayMap(HashMap<String, ArrayList<TransitionLog>> nodeToTransition, String nodeId, TransitionLog transitionLog) {
         ArrayList<TransitionLog> logs = nodeToTransition.get(nodeId);
         if (logs == null) {
             logs = new ArrayList<TransitionLog>();

@@ -44,7 +44,7 @@ import com.google.common.io.ByteStreams;
 
 public class ProcessArchive {
     private final Deployment deployment;
-    public static List<String> UNSECURED_FILE_NAMES = Lists.newArrayList();
+    public static final List<String> UNSECURED_FILE_NAMES = Lists.newArrayList();
     static {
         UNSECURED_FILE_NAMES.add(IFileDataProvider.START_IMAGE_FILE_NAME);
         UNSECURED_FILE_NAMES.add(IFileDataProvider.START_DISABLED_IMAGE_FILE_NAME);

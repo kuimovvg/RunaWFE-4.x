@@ -141,11 +141,11 @@ public class EditSettingsTag extends TitledFormTag {
     	PropertyResources properties = new PropertyResources(resource);
     	Table table = new Table();
     	table.setClass("list");
-    	String header_title = Messages.getMessage(Messages.LABEL_SETTING_TITLE, pageContext);
-    	String header_description = Messages.getMessage(Messages.LABEL_SETTING_DESCRIPTION, pageContext);
-    	String header_value = Messages.getMessage(Messages.LABEL_SETTING_VALUE, pageContext);
-    	table.addElement("<tr><th class='list'>"+header_title+"</th><th class='list'>"+header_description+
-    			"</th><th class='list' style='width:300px'>"+header_value+"</th></tr>");
+    	String headerTitle = Messages.getMessage(Messages.LABEL_SETTING_TITLE, pageContext);
+    	String headerDescription = Messages.getMessage(Messages.LABEL_SETTING_DESCRIPTION, pageContext);
+    	String headerValue = Messages.getMessage(Messages.LABEL_SETTING_VALUE, pageContext);
+    	table.addElement("<tr><th class='list'>"+headerTitle+"</th><th class='list'>"+headerDescription+
+    			"</th><th class='list' style='width:300px'>"+headerValue+"</th></tr>");
     	List<Setting> lp = pf.settings;
     	if (lp.size() == 0) {
     		lp = new LinkedList<Setting>();
@@ -159,16 +159,16 @@ public class EditSettingsTag extends TitledFormTag {
     	for (Setting p : lp) {
     		String description = getDescription(pageContext, resource + "_" + p.title);
     		String value = properties.getStringProperty(p.title, "");
-    		Input old_input = new Input(Input.hidden, SettingsFileForm.OLD_VALUE_INPUT_NAME(p.title), value);
+    		Input oldInput = new Input(Input.hidden, SettingsFileForm.oldValueInputName(p.title), value);
     		String input;
     		if (p.values.size() == 0) {
-    			Input i = new Input(Input.text, SettingsFileForm.NEW_VALUE_INPUT_NAME(p.title), value);
+    			Input i = new Input(Input.text, SettingsFileForm.newValueInputName(p.title), value);
     			i.addAttribute("style", "width: 290px");
     			if (p.pattern != null) i.addAttribute("pattern", p.pattern);
     			input = i.toString();
     		} else {
     			StringBuilder b = new StringBuilder();
-    			b.append("<select style='width: 300px' name='" + SettingsFileForm.NEW_VALUE_INPUT_NAME(p.title) + "'>");
+    			b.append("<select style='width: 300px' name='" + SettingsFileForm.newValueInputName(p.title) + "'>");
     			b.append("<option selected>");
     			b.append(value);
     			b.append("</option>");
@@ -183,7 +183,7 @@ public class EditSettingsTag extends TitledFormTag {
     		}
     		table.addElement("<tr><td class='list'>"+p.title+"</td>" +
     						     "<td class='list'>"+description+"</td>" +
-    				             "<td class='list'>"+old_input.toString()+input+"</td>" +
+    				             "<td class='list'>"+oldInput.toString()+input+"</td>" +
     						 "</tr>");
     	}
     	tdFormElement.addElement(table);

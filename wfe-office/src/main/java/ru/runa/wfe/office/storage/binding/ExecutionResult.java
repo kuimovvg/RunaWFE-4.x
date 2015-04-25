@@ -5,7 +5,7 @@ public class ExecutionResult {
     private Object value;
     private boolean needReturn = false;
 
-    public static ExecutionResult EMPTY = new ExecutionResult();
+    public static final ExecutionResult EMPTY = new ExecutionResult();
 
     private ExecutionResult() {
     }

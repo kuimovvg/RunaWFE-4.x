@@ -31,7 +31,7 @@ public class ActorPermission extends ExecutorPermission {
     private static final long serialVersionUID = 7900437485850107134L;
 
     public static final Permission UPDATE_STATUS = new ActorPermission((byte) 3, "permission.update_actor_status");
-    private static List<Permission> PERMISSIONS = fillPermissions();
+    private static final List<Permission> PERMISSIONS = fillPermissions();
 
     public ActorPermission() {
         super();

@@ -21,20 +21,20 @@ import ru.runa.wf.logic.bot.BotStationResources;
 
 /**
  * Created on 23.03.2005
- *
+ * 
  */
 public class BotInvokerFactory {
-    private static BotInvoker INSTANCE = null;
+    private static BotInvoker instance = null;
 
     public static synchronized BotInvoker getBotInvoker() {
-        if (INSTANCE == null) {
-            INSTANCE = BotStationResources.createBotInvoker();
+        if (instance == null) {
+            instance = BotStationResources.createBotInvoker();
         }
-        return INSTANCE;
+        return instance;
     }
 
     public static synchronized void unsetBotInvoker() {
-        INSTANCE = null;
+        instance = null;
     }
 
 }
