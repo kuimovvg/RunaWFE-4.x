@@ -475,6 +475,12 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
                 if (editor != null && !editor.isDirty()) {
                     editor.setDirty(true);
                 }
+				try {
+					syncBrowser2Editor();
+					syncEditor2Browser();
+				} catch (Exception e) {
+					PluginLogger.logError(e);
+				}
             }
         });
         components.put(component.getId(), component);
@@ -492,13 +498,15 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
     public void componentSelected(int componentId) throws PartInitException, ExecutionException, NotDefinedException, NotEnabledException,
             NotHandledException {
         Component component = components.get(componentId);
-        final ISelection selection = new StructuredSelection(component);
-        Display.getDefault().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                selectionProvider.setSelection(selection);
-            }
-        });
+		if (component != null) {
+			final ISelection selection = new StructuredSelection(component);
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					selectionProvider.setSelection(selection);
+				}
+			});
+		}
     }
 
     public void componentDeselected() {
