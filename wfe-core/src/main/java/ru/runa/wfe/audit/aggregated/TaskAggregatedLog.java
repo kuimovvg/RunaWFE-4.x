@@ -126,7 +126,7 @@ public class TaskAggregatedLog {
 
     /**
      * Updates information on task assignment.
-     * 
+     *
      * @param taskAssignLog
      *            Task assignment log to update information.
      */
@@ -140,7 +140,7 @@ public class TaskAggregatedLog {
 
     /**
      * Updates information on task end.
-     * 
+     *
      * @param endDate
      *            Task instance end date.
      * @param actorName
@@ -157,7 +157,7 @@ public class TaskAggregatedLog {
 
     /**
      * Save assignment if actor name is changed.
-     * 
+     *
      * @param assignmentDate
      *            Assignment date.
      * @param newExecutorName
@@ -295,7 +295,7 @@ public class TaskAggregatedLog {
         this.taskName = taskName;
     }
 
-    @Column(name = "SWIMLANE_NAME", nullable = false)
+    @Column(name = "SWIMLANE_NAME")
     public String getSwimlaneName() {
         return swimlaneName;
     }
