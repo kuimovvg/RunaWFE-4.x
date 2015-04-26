@@ -58,11 +58,12 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
             Map<Long, Token> tokens = createTokensMap(process);
             List<ProcessLog> logs = processLogDao.getAll(processId);
             for (ProcessLog log : logs) {
-                try {
-                    processLogAwareDao.addLog(log, process, tokens.get(log.getTokenId()));
-                } catch (Exception e) {
-                    AggregatedHistoryImporter.log.warn("Ignoring error on log aggregation for log instance " + log.getId(), e);
-                }
+                // try {
+                processLogAwareDao.addLog(log, process, tokens.get(log.getTokenId()));
+                // } catch (Exception e) {
+                // AggregatedHistoryImporter.log.warn("Ignoring error on log aggregation for log instance "
+                // + log.getId(), e);
+                // }
             }
         }
         saveProcessIdToImport(processId);
@@ -71,7 +72,7 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
 
     /**
      * Creates map from token id to token for process.
-     * 
+     *
      * @param process
      *            Process, which tokens must be transformed to map.
      * @return Returns map from token id to token.
@@ -84,7 +85,7 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
 
     /**
      * Add token to map and calling self recursive for all child tokens.
-     * 
+     *
      * @param token
      *            Token to add.
      * @param tokens
@@ -100,7 +101,7 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
     /**
      * Get process id for history aggregation. Returns 0, if aggregation is not
      * required.
-     * 
+     *
      * @return Returns process id for history aggregate.
      */
     private long getProcessIdToImport() {
@@ -121,7 +122,7 @@ public class AggregatedHistoryImporter extends TransactionalExecutor {
 
     /**
      * Updates constant after history aggregation for some process.
-     * 
+     *
      * @param processId
      *            Process id, which history was aggregated.
      */
