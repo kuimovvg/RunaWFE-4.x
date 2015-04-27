@@ -86,7 +86,7 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
 
     @Override
     public void dispose() {
-        try {
+    	try {
             if (definition != null) {
                 definition.removePropertyChangeListener(this);
                 // If process definition is dirty (hasn't been saved) we should
@@ -349,6 +349,6 @@ public abstract class ProcessEditorBase extends MultiPageEditorPart implements I
     }
 
     public DiagramEditorPage getDiagramEditorPage() {
-        return (DiagramEditorPage) graphPage;
+        return graphPage instanceof DiagramEditorPage ? (DiagramEditorPage) graphPage : null;
     }
 }
