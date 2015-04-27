@@ -50,8 +50,6 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
     private final List<VariableUserType> types = Lists.newArrayList();
     private final IFile file;
     private int hash32 = -1;
-    private static int globalId = 0;
-    private int internalId = globalId++;
 
     public ProcessDefinition(IFile file) {
         this.file = file;
@@ -216,7 +214,7 @@ public class ProcessDefinition extends NamedGraphElement implements Active, Desc
         if (name.length() == 0) {
             name = "Process";
         }
-        super.setName(name + "(id:" + internalId + ")");
+        super.setName(name);
     }
 
     @Override
