@@ -2,6 +2,7 @@ package ru.runa.gpd.ui.view;
 
 import java.util.List;
 
+import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -39,12 +40,14 @@ import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.lang.model.ProcessDefinition;
+import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.search.SubprocessSearchQuery;
 import ru.runa.gpd.ui.custom.LoggingDoubleClickAdapter;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
+@SuppressWarnings("restriction")
 public class ProcessExplorerTreeView extends ViewPart implements ISelectionListener {
     private TreeViewer viewer;
 
@@ -126,10 +129,20 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked" })
     protected void fillContextMenu(IMenuManager manager) {
         final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
         final Object selectedObject = selection.getFirstElement();
+        boolean menuOnSubprocess = false;
+        if (selectedObject instanceof File) {
+        	try {
+	        	File file = (File) selectedObject;
+	            if (file.getName().endsWith(ParContentProvider.PROCESS_DEFINITION_FILE_NAME) && file.getName().startsWith("sub"))
+	            	menuOnSubprocess = true;
+            } catch (Exception e) {
+	            
+            }
+        }
         final List<IResource> resources = selection.toList();
         boolean menuOnContainer = selectedObject instanceof IProject || selectedObject instanceof IFolder;
         boolean menuOnProcess = selectedObject instanceof IFile;
@@ -176,12 +189,16 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
             });
         }
         if (menuOnProcess) {
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.copyProcess"), SharedImages.getImageDescriptor("icons/copy.gif")) {
+        	Action copy = new Action(Localization.getString("ExplorerTreeView.menu.label.copyProcess"), SharedImages.getImageDescriptor("icons/copy.gif")) {
                 @Override
                 public void run() {
                     WorkspaceOperations.copyProcessDefinition(selection);
                 }
-            });
+            };
+        	if (menuOnSubprocess) {
+        		copy.setEnabled(false);
+        	}
+        	manager.add(copy);
             manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.exportProcess"), SharedImages.getImageDescriptor("icons/export.gif")) {
                 @Override
                 public void run() {
