@@ -101,7 +101,7 @@ public class WorkspaceOperations {
                     throw new IllegalArgumentException("Unexpected " + resource);
                 }
                 if (Dialogs.confirm(Localization.getString(messageKey, resource.getName()))) {
-                    List<IFile> tmpFiles = new ArrayList<IFile>();
+                	List<IFile> tmpFiles = new ArrayList<IFile>();
                     if (projectResource) {
                         tmpFiles.addAll(IOUtils.getProcessDefinitionFiles((IProject) resource));
                     } else if (folderResource) {
@@ -115,6 +115,13 @@ public class WorkspaceOperations {
                         try {
                             SubprocessDefinition subprocessDefinition = (SubprocessDefinition) ProcessCache.getProcessDefinition(definitionFile);
                             subprocessDefinition.getParent().getEmbeddedSubprocesses().remove(subprocessDefinition.getId());
+                            for (Subprocess sp : subprocessDefinition.getParent().getChildren(Subprocess.class))
+                            {
+                            	if (!sp.getSubProcessName().equals(subprocessDefinition.getName())) continue;
+                            	sp.setSubProcessName("");
+                            	break;
+                            }
+                            subprocessDefinition.setName("");
                         } catch (Exception e) {
                             PluginLogger.logErrorWithoutDialog("Unable to deregister embedded subprocess", e);
                         }

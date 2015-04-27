@@ -29,7 +29,7 @@ public class DrawAfterPasteCommand extends Command {
 	
 	@Override
 	public boolean canExecute() {
-		return  Language.BPMN.equals(processDefinition.getLanguage());
+		return  Language.BPMN.equals(processDefinition.getLanguage()) && diagramPage != null;
 	}
 	
 	@Override
