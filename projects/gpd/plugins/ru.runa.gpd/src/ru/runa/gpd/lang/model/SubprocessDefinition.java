@@ -17,7 +17,8 @@ import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
 public class SubprocessDefinition extends ProcessDefinition {
 
-    public SubprocessDefinition() {
+    public SubprocessDefinition(IFile file) {
+        super(file);
         setAccessType(ProcessDefinitionAccessType.EmbeddedSubprocess);
     }
 
