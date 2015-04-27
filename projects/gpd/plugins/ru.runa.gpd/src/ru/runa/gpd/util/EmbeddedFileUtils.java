@@ -58,7 +58,7 @@ public class EmbeddedFileUtils {
     }
 
     public static boolean isBotTaskFileName(String fileName, String botTaskName) {
-    	String botTaskNameWithoutSpaces = botTaskName.replace(' ', '_');
+        String botTaskNameWithoutSpaces = botTaskName.replace(' ', '_');
         if (fileName.startsWith(botTaskNameWithoutSpaces + BotTaskUtils.EMBEDDED_SUFFIX)) {
             return true;
         } else {
@@ -67,7 +67,10 @@ public class EmbeddedFileUtils {
     }
 
     public static String getBotTaskFileName(String path) {
-        return path.substring(IFileDataProvider.BOT_TASK_FILE_PROTOCOL.length());
+        if (!Strings.isNullOrEmpty(path)) {
+            return path.replace(IFileDataProvider.BOT_TASK_FILE_PROTOCOL, "");
+        }
+        return path;
     }
 
     public static String getBotTaskFilePath(String fileName) {
@@ -100,9 +103,9 @@ public class EmbeddedFileUtils {
             return id + ".template." + fileExtension;
         }
         if (delegable instanceof BotTask) {
-        	String name = ((BotTask) delegable).getName();
-        	name = name.replace(' ', '_');
-            return  name + BotTaskUtils.EMBEDDED_SUFFIX + "." + fileExtension;
+            String name = ((BotTask) delegable).getName();
+            name = name.replace(' ', '_');
+            return name + BotTaskUtils.EMBEDDED_SUFFIX + "." + fileExtension;
         }
         return null;
     }
