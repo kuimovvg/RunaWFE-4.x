@@ -56,10 +56,9 @@ public class BotTask implements Serializable {
     private String embeddedFileName;
     private Date createDate;
     /**
-     * Flag, equals true, if tasks from different process instances must be
-     * executed sequential; false if parallel execution is allowed.
+     * Flag, equals true, if tasks from different process instances must be executed sequential; false if parallel execution is allowed.
      */
-    private boolean sequentialExecution;
+    private Boolean sequentialExecution = Boolean.FALSE;
 
     public BotTask() {
 
@@ -161,13 +160,13 @@ public class BotTask implements Serializable {
         this.createDate = createDate;
     }
 
-    @Column(name = "IS_SEQUENTIAL", nullable = false)
-    public boolean isSequentialExecution() {
+    @Column(name = "IS_SEQUENTIAL")
+    public Boolean isSequentialExecution() {
         return sequentialExecution;
     }
 
-    public void setSequentialExecution(boolean sequentialExecution) {
-        this.sequentialExecution = sequentialExecution;
+    public void setSequentialExecution(Boolean sequentialExecution) {
+        this.sequentialExecution = sequentialExecution == null ? Boolean.FALSE : sequentialExecution;
     }
 
     @Override
