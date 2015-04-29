@@ -2641,7 +2641,7 @@ var FCKLanguageManager = FCK.Language = {
     GetActiveLanguage: function() {
         if (FCKConfig.AutoDetectLanguage) {
             var A;
-            if (navigator.userLanguage) A = navigator.userLanguage.toLowerCase();
+            if (navigator.browserLanguage) A = navigator.browserLanguage.toLowerCase();
             else if (navigator.language) A = navigator.language.toLowerCase();
             else {
                 return FCKConfig.DefaultLanguage;

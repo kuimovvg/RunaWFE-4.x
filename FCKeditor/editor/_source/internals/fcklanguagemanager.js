@@ -91,8 +91,9 @@ var FCKLanguageManager = FCK.Language =
 			var sUserLang ;
 
 			// IE accepts "navigator.userLanguage" while Gecko "navigator.language".
-			if ( navigator.userLanguage )
-				sUserLang = navigator.userLanguage.toLowerCase() ;
+			// https://msdn.microsoft.com/library/ms533542(v=vs.85).aspx
+			if ( navigator.browserLanguage )
+				sUserLang = navigator.browserLanguage.toLowerCase() ;
 			else if ( navigator.language )
 				sUserLang = navigator.language.toLowerCase() ;
 			else
