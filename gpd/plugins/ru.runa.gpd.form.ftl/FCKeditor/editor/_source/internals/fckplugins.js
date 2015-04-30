@@ -33,7 +33,8 @@ FCKPlugins.Load = function()
 	for ( var i = 0 ; i < FCKConfig.Plugins.Items.length ; i++ )
 	{
 		var oItem = FCKConfig.Plugins.Items[i] ;
-		var oPlugin = oItems[ oItem[0] ] = new FCKPlugin( oItem[0], oItem[1], oItem[2] ) ;
+		//var oPlugin = oItems[ oItem[0] ] = new FCKPlugin( oItem[0], oItem[1], oItem[2] ) ;
+		var oPlugin = oItems[ oItem[0] ] = new FCKPlugin( oItem[0], FCKLanguageManager.ActiveLanguage.Code, oItem[2] ) ;
 		FCKPlugins.ItemsCount++ ;
 	}
 
