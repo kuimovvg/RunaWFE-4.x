@@ -43,7 +43,11 @@ public class TaskFactory {
         executionContext.addLog(new TaskCreateLog(task));
         taskDefinition.fireEvent(executionContext, Event.TASK_CREATE);
         task.setSwimlane(swimlane);
-        task.assignExecutor(executionContext, swimlane.getExecutor(), false);
+        if (swimlane != null) {
+            task.assignExecutor(executionContext, swimlane.getExecutor(), false);
+        } else {
+            task.assignExecutor(executionContext, executor, false);
+        }
         return task;
     }
 
