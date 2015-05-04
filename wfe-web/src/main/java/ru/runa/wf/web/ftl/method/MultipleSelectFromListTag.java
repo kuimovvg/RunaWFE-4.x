@@ -2,10 +2,15 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
+
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionPostProcessor;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.ISelectable;
+import ru.runa.wfe.var.dto.WfVariable;
+import ru.runa.wfe.var.format.UserTypeFormat;
 
 import com.google.common.collect.Lists;
 
@@ -37,6 +42,16 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
                 Executor executor = (Executor) option;
                 optionValue = "ID" + executor.getId();
                 optionLabel = executor.getLabel();
+            } else if (option instanceof ComplexVariable) {
+                ComplexVariable cvar = (ComplexVariable) option;
+                optionValue = new JSONObject(cvar).toJSONString();
+                optionValue = optionValue.replaceAll("\"", "&quot");
+                WfVariable variable = ViewUtil.createVariable(variableName, cvar.getUserType().getName(), new UserTypeFormat(cvar.getUserType()),
+                        cvar);
+                String hid = cvar.getUserType().getAttributes().get(0) != null ? cvar.getUserType().getAttributes().get(0).getName() + " "
+                        + cvar.get(cvar.getUserType().getAttributes().get(0).getName()) : cvar.getUserType().getName();
+                optionLabel = variableName + " " + hid + "<br>"
+                        + ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variable);
             } else {
                 optionValue = String.valueOf(option);
                 optionLabel = String.valueOf(option);
