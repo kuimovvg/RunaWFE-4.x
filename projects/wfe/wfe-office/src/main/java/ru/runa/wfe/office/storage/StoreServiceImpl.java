@@ -187,17 +187,8 @@ public class StoreServiceImpl implements StoreService {
 
             ComplexVariable targetVariable = (ComplexVariable) object;
 
-            int columnIndex = 0;
-            if (constraints instanceof AttributeConstraints) {
-                columnIndex = ((AttributeConstraints) constraints).getColumnIndex();
-            }
-            int indexAttribute = 0;
             for (VariableDefinition sourceAttribute : sourceAttributes) {
-                if (indexAttribute == columnIndex) {
-                    targetVariable.put(sourceAttribute.getName(), sourceVariable.get(sourceAttribute.getName()));
-                    break;
-                }
-                indexAttribute++;
+                targetVariable.put(sourceAttribute.getName(), sourceVariable.get(sourceAttribute.getName()));
             }
             list.set(i, targetVariable);
         }
