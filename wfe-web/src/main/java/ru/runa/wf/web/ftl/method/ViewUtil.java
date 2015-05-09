@@ -319,7 +319,7 @@ public class ViewUtil {
             String inputTag = ViewUtil.getComponentInput(user, webHelper, templateComponentVariable);
             inputTag = inputTag.replaceAll("\"", "'").replaceAll("\t", "").replaceAll("\n", "");
             substitutions.put("COMPONENT_INPUT", inputTag);
-            substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(componentFormat));
+            substitutions.put("COMPONENT_JS_HANDLER", ViewUtil.getComponentJSFunction(variable));
             StringBuffer html = new StringBuffer();
             InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.EditListTag.js", ViewUtil.class);
             html.append(WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions));
@@ -522,6 +522,45 @@ public class ViewUtil {
             return displaySupport.formatHtml(user, webHelper, processId, variable.getDefinition().getName(), variable.getValue());
         }
         throw new InternalApplicationException("No output method implemented for " + variableFormat);
+    }
+
+    public static String getComponentJSFunction(WfVariable variable) {
+        VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
+        if (DateFormat.class == variableFormat.getClass() || TimeFormat.class == variableFormat.getClass()
+                || DateTimeFormat.class == variableFormat.getClass() || FileFormat.class == variableFormat.getClass()
+                && WebResources.isAjaxFileInputEnabled()) {
+            return getComponentJSFunction(variableFormat);
+        }
+        if (ListFormat.class == variableFormat.getClass()) {
+            boolean hasDate = false;
+            boolean hasTime = false;
+            boolean hasDateTime = false;
+            boolean hasFile = false;
+            String componentJsHandlers = "";
+            for (Map.Entry<String, VariableUserType> entry : ((ListFormat) variableFormat).getUserTypes().entrySet()) {
+                VariableUserType varUserType = entry.getValue();
+                for (VariableDefinition varDef : varUserType.getAttributes()) {
+                    VariableFormat innerFormat = FormatCommons.create(varDef);
+                    if (DateFormat.class == innerFormat.getClass() && !hasDate) {
+                        hasDate = true;
+                        componentJsHandlers += getComponentJSFunction(innerFormat);
+                    } else if (TimeFormat.class == innerFormat.getClass() && !hasTime) {
+                        hasTime = true;
+                        componentJsHandlers += getComponentJSFunction(innerFormat);
+                    } else if (DateTimeFormat.class == innerFormat.getClass() && !hasDateTime) {
+                        hasDateTime = true;
+                        componentJsHandlers += getComponentJSFunction(innerFormat);
+                    } else if (FileFormat.class == innerFormat.getClass() && !hasFile) {
+                        hasFile = true;
+                        componentJsHandlers += getComponentJSFunction(innerFormat);
+                    } else if (ListFormat.class == innerFormat.getClass()) {
+                        // TODO: handle inner list-type entries
+                    }
+                }
+            }
+            return componentJsHandlers;
+        }
+        return "";
     }
 
     public static String getComponentJSFunction(VariableFormat variableFormat) {
