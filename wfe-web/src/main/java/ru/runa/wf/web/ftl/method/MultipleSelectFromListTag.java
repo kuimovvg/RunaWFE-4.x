@@ -2,8 +2,6 @@ package ru.runa.wf.web.ftl.method;
 
 import java.util.List;
 
-import org.json.simple.JSONObject;
-
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionPostProcessor;
 import ru.runa.wfe.user.Executor;
@@ -44,7 +42,8 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
                 optionLabel = executor.getLabel();
             } else if (option instanceof ComplexVariable) {
                 ComplexVariable cvar = (ComplexVariable) option;
-                optionValue = new JSONObject(cvar).toJSONString();
+                UserTypeFormat formatter = new UserTypeFormat(cvar.getUserType());
+                optionValue = formatter.formatJSON(cvar);
                 optionValue = optionValue.replaceAll("\"", "&quot");
                 WfVariable variable = ViewUtil.createVariable(variableName, cvar.getUserType().getName(), new UserTypeFormat(cvar.getUserType()),
                         cvar);
