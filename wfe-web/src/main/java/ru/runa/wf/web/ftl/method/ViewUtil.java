@@ -527,8 +527,8 @@ public class ViewUtil {
     public static String getComponentJSFunction(WfVariable variable) {
         VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
         if (DateFormat.class == variableFormat.getClass() || TimeFormat.class == variableFormat.getClass()
-                || DateTimeFormat.class == variableFormat.getClass() || FileFormat.class == variableFormat.getClass()
-                && WebResources.isAjaxFileInputEnabled()) {
+                || DateTimeFormat.class == variableFormat.getClass()
+                || (FileFormat.class == variableFormat.getClass() && WebResources.isAjaxFileInputEnabled())) {
             return getComponentJSFunction(variableFormat);
         }
         if (ListFormat.class == variableFormat.getClass()) {
@@ -540,21 +540,21 @@ public class ViewUtil {
             for (Map.Entry<String, VariableUserType> entry : ((ListFormat) variableFormat).getUserTypes().entrySet()) {
                 VariableUserType varUserType = entry.getValue();
                 for (VariableDefinition varDef : varUserType.getAttributes()) {
-                    VariableFormat innerFormat = FormatCommons.create(varDef);
-                    if (DateFormat.class == innerFormat.getClass() && !hasDate) {
+                    VariableFormat nestedFormat = FormatCommons.create(varDef);
+                    if (DateFormat.class == nestedFormat.getClass() && !hasDate) {
                         hasDate = true;
-                        componentJsHandlers += getComponentJSFunction(innerFormat);
-                    } else if (TimeFormat.class == innerFormat.getClass() && !hasTime) {
+                        componentJsHandlers += getComponentJSFunction(nestedFormat);
+                    } else if (TimeFormat.class == nestedFormat.getClass() && !hasTime) {
                         hasTime = true;
-                        componentJsHandlers += getComponentJSFunction(innerFormat);
-                    } else if (DateTimeFormat.class == innerFormat.getClass() && !hasDateTime) {
+                        componentJsHandlers += getComponentJSFunction(nestedFormat);
+                    } else if (DateTimeFormat.class == nestedFormat.getClass() && !hasDateTime) {
                         hasDateTime = true;
-                        componentJsHandlers += getComponentJSFunction(innerFormat);
-                    } else if (FileFormat.class == innerFormat.getClass() && !hasFile) {
+                        componentJsHandlers += getComponentJSFunction(nestedFormat);
+                    } else if (FileFormat.class == nestedFormat.getClass() && !hasFile) {
                         hasFile = true;
-                        componentJsHandlers += getComponentJSFunction(innerFormat);
-                    } else if (ListFormat.class == innerFormat.getClass()) {
-                        // TODO: handle inner list-type entries
+                        componentJsHandlers += getComponentJSFunction(nestedFormat);
+                    } else if (ListFormat.class == nestedFormat.getClass()) {
+                        // TODO: handle nested list-type entries
                     }
                 }
             }
