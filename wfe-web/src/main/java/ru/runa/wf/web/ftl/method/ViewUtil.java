@@ -527,8 +527,7 @@ public class ViewUtil {
     public static String getComponentJSFunction(WfVariable variable) {
         VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
         if (DateFormat.class == variableFormat.getClass() || TimeFormat.class == variableFormat.getClass()
-                || DateTimeFormat.class == variableFormat.getClass()
-                || (FileFormat.class == variableFormat.getClass() && WebResources.isAjaxFileInputEnabled())) {
+                || DateTimeFormat.class == variableFormat.getClass() || FileFormat.class == variableFormat.getClass()) {
             return getComponentJSFunction(variableFormat);
         }
         if (ListFormat.class == variableFormat.getClass()) {
