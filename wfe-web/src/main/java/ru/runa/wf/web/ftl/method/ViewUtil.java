@@ -536,6 +536,25 @@ public class ViewUtil {
             boolean hasDateTime = false;
             boolean hasFile = false;
             String componentJsHandlers = "";
+            String className;
+            int i = 0;
+            while ((className = ((ListFormat) variableFormat).getComponentClassName(i++)) != null) {
+                if (DateFormat.class.getName().equals(className) && !hasDate) {
+                    hasDate = true;
+                    componentJsHandlers += "$('.inputDate').datepicker({ dateFormat: 'dd.mm.yy', buttonImage: '/wfe/images/calendar.gif' });\n";
+                } else if (TimeFormat.class.getName().equals(className) && !hasTime) {
+                    hasTime = true;
+                    componentJsHandlers += "$('.inputTime').timepicker({ ampm: false, seconds: false });\n";
+                } else if (DateTimeFormat.class.getName().equals(className) && !hasDateTime) {
+                    hasDateTime = true;
+                    componentJsHandlers += "$('.inputDateTime').datetimepicker({ dateFormat: 'dd.mm.yy' });\n";
+                } else if (FileFormat.class.getName().equals(className) && !hasFile && WebResources.isAjaxFileInputEnabled()) {
+                    hasFile = true;
+                    componentJsHandlers += "$('.dropzone').each(function () { initFileInput($(this)) });\n";
+                } else if (ListFormat.class.getName().equals(className)) {
+                    // TODO: handle nested list-type entries
+                }
+            }
             for (Map.Entry<String, VariableUserType> entry : ((ListFormat) variableFormat).getUserTypes().entrySet()) {
                 VariableUserType varUserType = entry.getValue();
                 for (VariableDefinition varDef : varUserType.getAttributes()) {
