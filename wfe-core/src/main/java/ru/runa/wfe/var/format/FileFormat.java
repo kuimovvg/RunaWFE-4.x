@@ -22,6 +22,7 @@ import java.util.HashMap;
 import javax.xml.bind.DatatypeConverter;
 
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.web.WebHelper;
@@ -53,7 +54,7 @@ public class FileFormat extends VariableFormat implements VariableDisplaySupport
 
     @Override
     public IFileVariable convertFromStringValue(String string) throws Exception {
-        throw new UnsupportedOperationException("file variable cannot be deserializes from string");
+        return (IFileVariable) convertFromJSONValue(JSONValue.parse(string.replaceAll("&quot", "\"")));
     }
 
     @Override
