@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.extension.handler.var;
@@ -49,7 +49,6 @@ import ru.runa.wfe.extension.function.ToList;
 
 import com.google.common.collect.Maps;
 
-@SuppressWarnings("unchecked")
 public class FormulaActionHandlerOperations {
     private static final Log log = LogFactory.getLog(FormulaActionHandlerOperations.class);
     private static final Map<String, Function<? extends Object>> functions = Maps.newHashMap();
@@ -62,11 +61,11 @@ public class FormulaActionHandlerOperations {
         registerFunction(new ToList());
         registerFunction(new GetSize());
     }
-    
+
     private static void registerFunction(Function<? extends Object> function) {
         functions.put(function.getName(), function);
     }
-    
+
     public static Function<? extends Object> getFunction(String name) {
         return functions.get(name);
     }
@@ -106,7 +105,7 @@ public class FormulaActionHandlerOperations {
             return new Double(((Number) o1).doubleValue() - ((Number) o2).doubleValue());
         }
         if (Number.class.isInstance(o1) && Double.class.isInstance(o2)) {
-            return new Double((((Number) o1).doubleValue() - ((Number) o2).doubleValue()));
+            return new Double(((Number) o1).doubleValue() - ((Number) o2).doubleValue());
         }
         if (Long.class.isInstance(o1) && Long.class.isInstance(o2)) {
             return new Long((long) (((Number) o1).doubleValue() - ((Number) o2).doubleValue()));
@@ -308,7 +307,7 @@ public class FormulaActionHandlerOperations {
         while (num-- > 0) {
             st *= 10;
         }
-        return ((double) roundUpFunction(d * st)) / st;
+        return (double) roundUpFunction(d * st) / st;
     }
 
     public Double roundDownFunction(double d, int num) {
@@ -316,7 +315,7 @@ public class FormulaActionHandlerOperations {
         while (num-- > 0) {
             st *= 10;
         }
-        return ((double) roundDownFunction(d * st)) / st;
+        return (double) roundDownFunction(d * st) / st;
     }
 
     public Double roundFunction(double d, int num) {
@@ -324,16 +323,18 @@ public class FormulaActionHandlerOperations {
         while (num-- > 0) {
             st *= 10;
         }
-        return ((double) roundFunction(d * st)) / st;
+        return (double) roundFunction(d * st) / st;
     }
 
     private String wordCaseRussian(String word, int caseNumber, boolean sex, int wordType, boolean onlyOneChar) {
         // sex : male = true, female = false
         // wordType : 1 = family name, 2 = name, 3 = parent
-    	
-    	// http://sourceforge.net/p/runawfe/bugs/624/
-    	if ((word == null) || (word.length() == 0)) return "";
-    	
+
+        // http://sourceforge.net/p/runawfe/bugs/624/
+        if (word == null || word.length() == 0) {
+            return "";
+        }
+
         if (onlyOneChar) {
             return "" + Character.toUpperCase(word.replaceAll(" ", "").charAt(0)) + '.';
         }
@@ -361,7 +362,7 @@ public class FormulaActionHandlerOperations {
             String part1 = word.substring(0, i);
             String part2 = word.substring(i + 1);
             return wordCaseRussian(part1, caseNumber, sex, wordType, onlyOneChar) + "-"
-                    + wordCaseRussian(part2, caseNumber, sex, wordType, onlyOneChar);
+            + wordCaseRussian(part2, caseNumber, sex, wordType, onlyOneChar);
         }
 
         int len = word.length();
@@ -370,9 +371,9 @@ public class FormulaActionHandlerOperations {
         String suf3 = word.length() >= 3 ? word.substring(len - 3, len) : "___";
         String suf2 = word.length() >= 2 ? word.substring(len - 2, len) : "__";
         String suf1 = word.length() >= 1 ? word.substring(len - 1, len) : "_";// String
-                                                                              // z9
-                                                                              // =
-                                                                              // suf1;
+        // z9
+        // =
+        // suf1;
 
         if (suf3.equals("кий") && wordType == 1 && !onlyOneChar && word.length() > 4) {
             String prefix = upcaseFirstChar(word.substring(0, len - 3));
@@ -403,110 +404,108 @@ public class FormulaActionHandlerOperations {
         // zd=?(za=4,5,Найти("айяь",z9));
         String fs1 = "оиеу" + (sex ? "" : "бвгджзклмнпрстфхцчшщъ");
         String fs2 = "мия мяэ лия кия жая лея";
-        boolean b = (caseNumber == 1) || suf1.equals(".") || ((wordType == 2) && (fs1.indexOf(suf1) >= 0))
-                || ((wordType == 1) && (fs2.indexOf(suf3) >= 0));
-        if (b) {
-            zd = 9;
-        } else {
-            boolean b2 = (zd == 4) && sex;
-            if (b2) {
-                zd = 2;
-            } else {
-                if (wordType == 1) {
-                    if ("оеиую".indexOf(suf1) + "их ых аа еа ёа иа оа уа ыа эа юа яа".indexOf(suf2) + 2 > 0) {
-                        zd = 9;
+        boolean b = caseNumber == 1 || suf1.equals(".") || wordType == 2 && fs1.indexOf(suf1) >= 0 || wordType == 1 && fs2.indexOf(suf3) >= 0;
+                if (b) {
+                    zd = 9;
+                } else {
+                    boolean b2 = zd == 4 && sex;
+                    if (b2) {
+                        zd = 2;
                     } else {
-                        if (!sex) {
-                            if (za == 1) {
-                                zd = 7;
+                        if (wordType == 1) {
+                            if ("оеиую".indexOf(suf1) + "их ых аа еа ёа иа оа уа ыа эа юа яа".indexOf(suf2) + 2 > 0) {
+                                zd = 9;
                             } else {
-                                if (suf1.equals("а")) {
-                                    zd = za > 18 ? 1 : 6;
+                                if (!sex) {
+                                    if (za == 1) {
+                                        zd = 7;
+                                    } else {
+                                        if (suf1.equals("а")) {
+                                            zd = za > 18 ? 1 : 6;
+                                        } else {
+                                            zd = 9;
+                                        }
+                                    }
                                 } else {
-                                    zd = 9;
+                                    boolean b3 = "ой ый".indexOf(suf2) >= 0 && wordType > 4 && !word.substring(len - 4, len).equals("опой") || zb > 10
+                                    && za > 16;
+                                            // zd = b3 ? 8 : zd;
+                                            if (b3) {
+                                                zd = 8;
+                                            }
                                 }
-                            }
-                        } else {
-                            boolean b3 = ("ой ый".indexOf(suf2) >= 0 && wordType > 4 && !word.substring(len - 4, len).equals("опой"))
-                                    || (zb > 10 && za > 16);
-                            // zd = b3 ? 8 : zd;
-                            if (b3) {
-                                zd = 8;
                             }
                         }
                     }
                 }
-            }
-        }
 
-        /*
-         * zd= ?( (zc=1)или(z9=".")или(
-         * (z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0) )
-         * или ( (z4=1) и (Найти("мия мяэ лия кия жая лея",z7)>0) ) ,9 ,?(
-         * (zd=4)и(z3="ч") ,2, ?( z4=1 ,?(
-         * Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0
-         * ,9 ,?( z3<>"ч" ,?( za=1 ,7 ,?( z9="а" ,?( za>18 ,1 ,6 ) ,9 ) ) ,?( (
-         * (Найти("ой ый",z8)>0) и (z5>4) и (Прав(z1,4)<>"опой") ) или
-         * ((zb>10)и(za=16)) ,8 ,zd ) ) ) ,zd ) ) );
-         */
-        // zd=?((zc=1)или(z9=".")или((z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0))или((z4=1)и(Найти("мия мяэ лия кия жая лея",z7)>0)),9,?((zd=4)и(z3="ч"),2,?(z4=1,?(Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0,9,?(z3<>"ч",?(za=1,7,?(z9="а",?(za>18,1,6),9)),?(((Найти("ой ый",z8)>0)и(z5>4)и(Прав(z1,4)<>"опой"))или((zb>10)и(za=16)),8,zd))),zd)));
-        // if (debug) System.out.println("zd = " + zd);
+                /*
+                 * zd= ?( (zc=1)или(z9=".")или(
+                 * (z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0) )
+                 * или ( (z4=1) и (Найти("мия мяэ лия кия жая лея",z7)>0) ) ,9 ,?(
+                 * (zd=4)и(z3="ч") ,2, ?( z4=1 ,?(
+                 * Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0
+                 * ,9 ,?( z3<>"ч" ,?( za=1 ,7 ,?( z9="а" ,?( za>18 ,1 ,6 ) ,9 ) ) ,?( (
+                 * (Найти("ой ый",z8)>0) и (z5>4) и (Прав(z1,4)<>"опой") ) или
+                 * ((zb>10)и(za=16)) ,8 ,zd ) ) ) ,zd ) ) );
+                 */
+                // zd=?((zc=1)или(z9=".")или((z4=2)и(Найти("оиеу"+?(z3="ч","","бвгджзклмнпрстфхцчшщъ"),z9)>0))или((z4=1)и(Найти("мия мяэ лия кия жая лея",z7)>0)),9,?((zd=4)и(z3="ч"),2,?(z4=1,?(Найти("оеиую",z9)+Найти("их ых аа еа ёа иа оа уа ыа эа юа яа",z8)>0,9,?(z3<>"ч",?(za=1,7,?(z9="а",?(za>18,1,6),9)),?(((Найти("ой ый",z8)>0)и(z5>4)и(Прав(z1,4)<>"опой"))или((zb>10)и(za=16)),8,zd))),zd)));
+                // if (debug) System.out.println("zd = " + zd);
 
-        int ze = "лец вей бей дец пец мец нец рец вец аец иец ыец бер".indexOf(suf3) + 1;
-        // ze=Найти("лец вей бей дец пец мец нец рец вец аец иец ыец бер",z7);
-        // if (debug) System.out.println("ze = " + ze);
+                int ze = "лец вей бей дец пец мец нец рец вец аец иец ыец бер".indexOf(suf3) + 1;
+                // ze=Найти("лец вей бей дец пец мец нец рец вец аец иец ыец бер",z7);
+                // if (debug) System.out.println("ze = " + ze);
 
-        String zf = (zd == 8) && (caseNumber != 5) ? ((zb > 15) || ("жий ний".indexOf(suf3) >= 0) ? "е" : "о") : (word.equals("лев") ? "ьв"
-                : ((len - 4 >= 0 && "аеёийоуэюя".indexOf(word.substring(len - 4, len - 3)) < 0) && ((zb > 11) || (zb == 0)) && (ze != 45) ? ""
-                        : (za == 7 ? "л" : (za == 10 ? "к" : (za == 13 ? "йц" : (ze == 0 ? "" : (ze < 12 ? "ь" + (ze == 1 ? "ц" : "")
-                                : (ze < 37 ? "ц" : (ze < 49 ? "йц" : "р")))))))));
-        /*
-         * zf=?( (zd=8)и(zc<>5) ,?( (zb>15)или (Найти("жий ний",z7)>0) ,"е" ,"о"
-         * ) ,?( z1="лев" ,"ьв" ,?( (Найти("аеёийоуэюя",Сред(z1,z5-3 ,1))=0) и
-         * ((zb>11)или(zb=0)) и (ze<>45) ,"" ,?( za=7 ,"л" ,?( za=10 ,"к" ,?(
-         * za=13 ,"йц" ,?( ze=0 ,"" ,?( ze<12 ,"ь"+ ?(ze=1,"ц","") ,?( ze<37
-         * ,"ц" ,?(ze<49,"йц","р") ) ) ) ) ) ) ) ) );
-         */
+                String zf = zd == 8 && caseNumber != 5 ? zb > 15 || "жий ний".indexOf(suf3) >= 0 ? "е" : "о" : word.equals("лев") ? "ьв" : len - 4 >= 0
+                && "аеёийоуэюя".indexOf(word.substring(len - 4, len - 3)) < 0 && (zb > 11 || zb == 0) && ze != 45 ? "" : za == 7 ? "л"
+                : za == 10 ? "к" : za == 13 ? "йц" : ze == 0 ? "" : ze < 12 ? "ь" + (ze == 1 ? "ц" : "") : ze < 37 ? "ц" : ze < 49 ? "йц" : "р";
+                                /*
+                                 * zf=?( (zd=8)и(zc<>5) ,?( (zb>15)или (Найти("жий ний",z7)>0) ,"е" ,"о"
+                                 * ) ,?( z1="лев" ,"ьв" ,?( (Найти("аеёийоуэюя",Сред(z1,z5-3 ,1))=0) и
+                                 * ((zb>11)или(zb=0)) и (ze<>45) ,"" ,?( za=7 ,"л" ,?( za=10 ,"к" ,?(
+                                 * za=13 ,"йц" ,?( ze=0 ,"" ,?( ze<12 ,"ь"+ ?(ze=1,"ц","") ,?( ze<37
+                                 * ,"ц" ,?(ze<49,"йц","р") ) ) ) ) ) ) ) ) );
+                                 */
 
-        // zf=?((zd=8)и(zc<>5),?((zb>15)или(Найти("жий ний",z7)>0),"е","о"),?(z1="лев","ьв",?((Найти("аеёийоуэюя",Сред(z1,z5-3
-        // ,1))=0)и((zb>11)или(zb=0))и(ze<>45),"",?(za=7,"л",?(za=10,"к",?(za=13,"йц",?(ze=0,"",?(ze<12,"ь"+?(ze=1,"ц",""),?(ze<37,"ц",?(ze<49,"йц","р"))))))))));
+                                // zf=?((zd=8)и(zc<>5),?((zb>15)или(Найти("жий ний",z7)>0),"е","о"),?(z1="лев","ьв",?((Найти("аеёийоуэюя",Сред(z1,z5-3
+                                // ,1))=0)и((zb>11)или(zb=0))и(ze<>45),"",?(za=7,"л",?(za=10,"к",?(za=13,"йц",?(ze=0,"",?(ze<12,"ь"+?(ze=1,"ц",""),?(ze<37,"ц",?(ze<49,"йц","р"))))))))));
 
-        if (zd != 9) {
-            int nm = len;
-            if ((zd > 6) || (zf.length() > 0)) {
-                nm -= 2;
-            } else {
-                nm -= zd > 0 ? 1 : 0;
-            }
-            String ns = word.substring(0, nm);
-            ns += zf;
-            String ss = "а у а " + "оыые".substring("внч".indexOf(suf1) + 1).charAt(0) + "ме " + ("гжкхш".indexOf(suf2.charAt(0)) > 0 ? "и" : "ы")
-                    + " е у ойе я ю я ем" + (za == 16 ? "и" : "е") + " и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
-                    + (zf.equals("е") || (za == 16) || ((zb > 12) && (zb < 16)) ? "и" : "ы") + "мм";
-            ns += ss.substring(10 * zd + 2 * caseNumber - 3 - 1, 10 * zd + 2 * caseNumber - 3 + 1);
-            zf = ns;
-        } else {
-            zf = word;
-        }
+                                if (zd != 9) {
+                                    int nm = len;
+                                    if (zd > 6 || zf.length() > 0) {
+                                        nm -= 2;
+                                    } else {
+                                        nm -= zd > 0 ? 1 : 0;
+                                    }
+                                    String ns = word.substring(0, nm);
+                                    ns += zf;
+                                    String ss = "а у а " + "оыые".substring("внч".indexOf(suf1) + 1).charAt(0) + "ме " + ("гжкхш".indexOf(suf2.charAt(0)) > 0 ? "и" : "ы")
+                                            + " е у ойе я ю я ем" + (za == 16 ? "и" : "е") + " и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
+                                            + (zf.equals("е") || za == 16 || zb > 12 && zb < 16 ? "и" : "ы") + "мм";
+                                    ns += ss.substring(10 * zd + 2 * caseNumber - 3 - 1, 10 * zd + 2 * caseNumber - 3 + 1);
+                                    zf = ns;
+                                } else {
+                                    zf = word;
+                                }
 
-        /*
-         * 
-         * zf=?( (zd=9) или ((z4=3)и(z3="ы")) ,z1 ,Лев(z1,z5- ?(
-         * (zd>6)или(zf<>"") ,2 , ?(zd>0,1,0) )) + zf + СокрП( Сред( "а у а "
-         * +Сред("оыые",Найти("внч",z9)+1,1) +"ме "
-         * +?(Найти("гжкхш",Лев(z8,1))>0,"и","ы") +" е у ойе я ю я ем"
-         * +?(za=16,"и","е")
-         * +" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
-         * +?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы") +"мм"
-         * ,10*zd+2*zc-3 ,2 ) ) );
-         */
+                                /*
+                                 *
+                                 * zf=?( (zd=9) или ((z4=3)и(z3="ы")) ,z1 ,Лев(z1,z5- ?(
+                                 * (zd>6)или(zf<>"") ,2 , ?(zd>0,1,0) )) + zf + СокрП( Сред( "а у а "
+                                 * +Сред("оыые",Найти("внч",z9)+1,1) +"ме "
+                                 * +?(Найти("гжкхш",Лев(z8,1))>0,"и","ы") +" е у ойе я ю я ем"
+                                 * +?(za=16,"и","е")
+                                 * +" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"
+                                 * +?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы") +"мм"
+                                 * ,10*zd+2*zc-3 ,2 ) ) );
+                                 */
 
-        // zf=?((zd=9)или((z4=3)и(z3="ы")),z1,Лев(z1,z5-?((zd>6)или(zf<>""),2,?(zd>0,1,0)))+zf+СокрП(Сред("а у а "+Сред("оыые",Найти("внч",z9)+1,1)+"ме "+?(Найти("гжкхш",Лев(z8,1))>0,"и","ы")+" е у ойе я ю я ем"+?(za=16,"и","е")+" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"+?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы")+"мм",10*zd+2*zc-3,2)));
+                                // zf=?((zd=9)или((z4=3)и(z3="ы")),z1,Лев(z1,z5-?((zd>6)или(zf<>""),2,?(zd>0,1,0)))+zf+СокрП(Сред("а у а "+Сред("оыые",Найти("внч",z9)+1,1)+"ме "+?(Найти("гжкхш",Лев(z8,1))>0,"и","ы")+" е у ойе я ю я ем"+?(za=16,"и","е")+" и е ю ейе и и ь ьюи и и ю ейи ойойу ойойойойуюойойгомуго"+?((zf="е")или(za=16)или((zb>12)и(zb<16)),"и","ы")+"мм",10*zd+2*zc-3,2)));
 
-        String ans = zf;
-        ans = ans.replace(" ", "");
-        ans = upcaseFirstChar(ans);
-        return ans;
+                                String ans = zf;
+                                ans = ans.replace(" ", "");
+                                ans = upcaseFirstChar(ans);
+                                return ans;
     }
 
     private String upcaseFirstChar(String ans) {
