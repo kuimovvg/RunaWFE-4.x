@@ -53,7 +53,9 @@ import com.google.common.collect.Lists;
  */
 public class VariableLogic extends WFCommonLogic {
 
-    private static final Pattern COMPONENT_QUALIFIER = Pattern.compile("(.+)\\[\\s*(\\d+)\\s*\\]\\s*\\.\\s*(.+)");
+    private static final Pattern HAS_QUALIFIER = Pattern.compile("\\[[^\\]]+\\]");
+    private static final Pattern DICT_QUALIFIER = Pattern.compile("(.+)\\[\\s*([^\\]]+)\\]");
+    private static final Pattern DICT_COMPLEX_QUALIFIER = Pattern.compile("(.+)\\[\\s*([^\\]]+)\\]\\s*\\.\\s*(.+)");
 
     public List<WfVariable> getVariables(User user, Long processId) throws ProcessDoesNotExistException {
         List<WfVariable> result = Lists.newArrayList();
@@ -101,20 +103,32 @@ public class VariableLogic extends WFCommonLogic {
     }
 
     public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
+        log.info(String.format("getVariable: user: %s processId: %s variableName: %s", user, processId, variableName));
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
         String qualifier = null;
         String variableSubName = null;
-        Matcher m = COMPONENT_QUALIFIER.matcher(variableName);
-        if (m.find()) {
-            MatchResult mr = m.toMatchResult();
-            if (mr.groupCount() == 3) {
-                variableName = mr.group(1).trim();
-                qualifier = mr.group(2);
-                variableSubName = mr.group(3);
+
+        if (HAS_QUALIFIER.matcher(variableName).find()) {
+            Matcher dictMatcher = DICT_QUALIFIER.matcher(variableName);
+            Matcher dictComplexMatcher = DICT_COMPLEX_QUALIFIER.matcher(variableName);
+            if (dictComplexMatcher.find()) {
+                MatchResult mr = dictComplexMatcher.toMatchResult();
+                if (mr.groupCount() == 3) {
+                    variableName = mr.group(1).trim();
+                    qualifier = mr.group(2).trim();
+                    variableSubName = mr.group(3);
+                }
+            } else if (dictMatcher.find()) {
+                MatchResult mr = dictMatcher.toMatchResult();
+                if (mr.groupCount() == 2) {
+                    variableName = mr.group(1).trim();
+                    qualifier = mr.group(2).trim();
+                }
             }
         }
+
         WfVariable variable = executionContext.getVariableProvider().getVariable(variableName);
         if (qualifier != null) {
             if (ListFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
@@ -136,7 +150,6 @@ public class VariableLogic extends WFCommonLogic {
                 return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()), value);
             }
             if (MapFormat.class.getName().equals(variable.getDefinition().getFormatClassName())) {
-                // TODO: implement map-qualifiers (keywords) regexp pattern
                 if (MapFormat.KEY_NULL_VALUE.equals(qualifier)) {
                     qualifier = "";
                 }
@@ -148,8 +161,17 @@ public class VariableLogic extends WFCommonLogic {
                 for (Map.Entry<Object, Object> entry : map.entrySet()) {
                     String keyInQualifierFormat = qualifierFormat.format(entry.getKey());
                     if (Objects.equal(keyInQualifierFormat, qualifier) || (keyInQualifierFormat == null && Strings.isNullOrEmpty(qualifier))) {
-                        return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()),
-                                entry.getValue());
+                        Object value = entry.getValue();
+                        if (value instanceof ComplexVariable) {
+                            VariableUserType userType = ((ComplexVariable) value).getUserType();
+                            for (VariableDefinition def : userType.getAttributes()) {
+                                if (!def.getName().equals(variableSubName)) {
+                                    continue;
+                                }
+                                return new WfVariable(def, ((ComplexVariable) value).get(variableSubName));
+                            }
+                        }
+                        return new WfVariable(new VariableDefinition(true, variableName, variableName, qualifierFormat.getClass().getName()), value);
                     }
                 }
                 throw new IllegalArgumentException("Invalid key = '" + qualifier + "'; all values: " + map);
@@ -157,6 +179,7 @@ public class VariableLogic extends WFCommonLogic {
             throw new IllegalArgumentException("Key '" + qualifier + "' was provided but variable format is "
                     + variable.getDefinition().getFormatClassName());
         }
+        log.info(String.format("getVariable: variable: %s", variable));
         return variable;
     }
 
