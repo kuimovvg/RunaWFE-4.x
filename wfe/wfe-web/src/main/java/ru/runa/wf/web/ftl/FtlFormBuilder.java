@@ -27,6 +27,7 @@ public class FtlFormBuilder extends TaskFormBuilder {
 
     protected String processFreemarkerTemplate(String template, IVariableProvider variableProvider) {
         FormHashModel model = new FormHashModel(user, variableProvider, new StrutsWebHelper(pageContext));
+        model.clearSession();
         // #173
         model.put("context", new BeanModel(new Context(this), BeansWrapper.getDefaultInstance()));
         return FreemarkerProcessor.process(template, model);
