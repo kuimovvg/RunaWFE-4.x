@@ -54,7 +54,6 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
                 Variable variable = parse(attributeElement, definition);
                 type.addAttribute(variable);
             }
-            type.validate();
         }
         List<Element> elementsList = document.getRootElement().elements(VARIABLE);
         for (Element element : elementsList) {

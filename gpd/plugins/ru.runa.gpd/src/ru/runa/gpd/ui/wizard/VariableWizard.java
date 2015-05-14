@@ -6,7 +6,6 @@ import ru.runa.gpd.Localization;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableContainer;
-import ru.runa.gpd.lang.model.VariableUserType;
 
 public class VariableWizard extends Wizard {
     private VariableNamePage namePage;
@@ -24,11 +23,7 @@ public class VariableWizard extends Wizard {
         if (showNamePage) {
             namePage = new VariableNamePage(variableContainer, variable);
         }
-        String excludedUserTypeName = null;
-        if (variableContainer instanceof VariableUserType) {
-            excludedUserTypeName = ((VariableUserType) variableContainer).getName();
-        }
-        formatPage = new VariableFormatPage(processDefinition, variableContainer, variable, editFormat, excludedUserTypeName);
+        formatPage = new VariableFormatPage(processDefinition, variableContainer, variable, editFormat);
         defaultValuePage = new VariableDefaultValuePage(variable);
         if (showAccessPage) {
             accessPage = new VariableAccessPage(variable);

@@ -25,17 +25,15 @@ import ru.runa.wfe.var.format.MapFormat;
 import ru.runa.wfe.var.format.StringFormat;
 import ru.runa.wfe.var.format.UserTypeFormat;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 
 public class VariableFormatPage extends DynaContentWizardPage {
-    private VariableContainer variableContainer;
+    private final VariableContainer variableContainer;
     private VariableFormatArtifact type;
     private VariableUserType userType;
     private String[] componentClassNames;
     private final ProcessDefinition processDefinition;
     private final boolean editFormat;
-    private final String excludedUserTypeName;
     private static Map<String, String[]> containerFormats = Maps.newHashMap();
     static {
         containerFormats.put(ListFormat.class.getName(), new String[] { Localization.getString("VariableFormatPage.components.list.value") });
@@ -43,10 +41,9 @@ public class VariableFormatPage extends DynaContentWizardPage {
                 new String[] { Localization.getString("VariableFormatPage.components.map.key"), Localization.getString("VariableFormatPage.components.map.value") });
     }
 
-    public VariableFormatPage(ProcessDefinition processDefinition, VariableContainer variableContainer, Variable variable, boolean editFormat, String excludedUserTypeName) {
+    public VariableFormatPage(ProcessDefinition processDefinition, VariableContainer variableContainer, Variable variable, boolean editFormat) {
     	this.processDefinition = processDefinition;
-        this.variableContainer = variableContainer;
-    	this.excludedUserTypeName = excludedUserTypeName;
+    	this.variableContainer = variableContainer;
         if (variable != null) {
             if (variable.getUserType() != null) {
                 this.userType = variable.getUserType();
@@ -82,24 +79,13 @@ public class VariableFormatPage extends DynaContentWizardPage {
         combo.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-                setErrorMessage(null);
             	String label = combo.getText();
-            	VariableUserType newUserType = processDefinition.getVariableUserType(label);
-				if (newUserType != null) {
-					try {
-						if (variableContainer instanceof VariableUserType) {
-							((VariableUserType) variableContainer).validate(newUserType.getAttributes());
-						}
-						userType = newUserType;
-						type = VariableFormatRegistry.getInstance().getArtifactNotNull(UserTypeFormat.class.getName());
-					} catch (Exception e1) {
-						setErrorMessage(Localization.getString("VariableFormatPage.error.userType.loop"));
-					}
-				} else {
-					userType = null;
-					type = VariableFormatRegistry.getInstance()
-							.getArtifactNotNullByLabel(label);
-				}
+            	userType = processDefinition.getVariableUserType(label);
+            	if (userType != null) {
+            	    type = VariableFormatRegistry.getInstance().getArtifactNotNull(UserTypeFormat.class.getName());
+            	} else {
+            		type = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(label);
+            	}
                 createDefaultComponentClassNames();
                 updateContent();
             }
@@ -128,10 +114,10 @@ public class VariableFormatPage extends DynaContentWizardPage {
             }
         }
         for (VariableUserType userType : processDefinition.getVariableUserTypes()) {
-        	if (!Objects.equal(excludedUserTypeName, userType.getName())) {
-        		combo.add(userType.getName());
-        	}
-		}
+            if (!(variableContainer instanceof VariableUserType) || ((VariableUserType) variableContainer).canUseAsAttributeType(userType)) {
+                combo.add(userType.getName());
+            }
+        }
         combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         return combo;
     }
@@ -153,18 +139,10 @@ public class VariableFormatPage extends DynaContentWizardPage {
                 combo.addSelectionListener(new LoggingSelectionAdapter() {
                     @Override
                     protected void onSelection(SelectionEvent e) throws Exception {
-                        setErrorMessage(null);
                         int index = (Integer) combo.getData();
                         String label = combo.getText();
                         VariableUserType userType = processDefinition.getVariableUserType(label);
-						if (userType != null) {
-							if (variableContainer instanceof VariableUserType) {
-								try {
-									((VariableUserType) variableContainer).validate(userType.getAttributes());
-								} catch (Exception e1) {
-									setErrorMessage(Localization.getString("VariableFormatPage.error.userType.loop"));
-								}
-							}
+                        if (userType != null) {
                             componentClassNames[index] = label;
                         } else {
                             componentClassNames[index] = VariableFormatRegistry.getInstance().getArtifactNotNullByLabel(label).getName();

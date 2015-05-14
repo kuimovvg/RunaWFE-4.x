@@ -552,6 +552,11 @@ public class VariableTypeEditorPage extends EditorPartBase {
             if (newType == null) {
                 return;
             }
+            if (!newType.canUseAsAttribute(attribute)) {
+                MessageDialog.openError(Display.getCurrent().getActiveShell(), Localization.getString("button.move"),
+                        Localization.getString("VariableTypeEditorPage.error.attribute.move.loop"));
+                return;
+            }
             boolean useLtk = false;
             IResource projectRoot = editor.getDefinitionFile().getParent();
             List<Variable> variables = editor.getDefinition().getVariables(false, false, newType.getName());
@@ -580,23 +585,8 @@ public class VariableTypeEditorPage extends EditorPartBase {
                     }
                 }
             }
-			int position = -1;
-			try {
-				newType.addAttribute(attribute);
-				position = getTypeSelection().getAttributes().indexOf(attribute);
-				getTypeSelection().removeAttribute(attribute);
-				newType.validate();
-			} catch (RuntimeException re) {
-				newType.removeAttribute(attribute);
-				if (position > -1) {
-					getTypeSelection().addAttribute(attribute);
-					getTypeSelection().changeAttributePosition(attribute, position);
-				}
-				MessageDialog.openError(
-						Display.getCurrent().getActiveShell(),
-						Localization.getString("button.move"),
-						Localization.getString("VariableTypeEditorPage.error.attribute.move.loop"));
-			}
+            newType.addAttribute(attribute);
+            getTypeSelection().removeAttribute(attribute);
             if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
                 IDE.saveAllEditors(new IResource[] { projectRoot }, false);
                 for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
