@@ -345,7 +345,7 @@ public class DocxUtils {
         int whetherSingleRunContainsPlaceholderEnd = 0;
         for (int i = 0; i < paragraphRuns.size(); i++) {
             XWPFRun run = paragraphRuns.get(i);
-            XWPFRun next = (i + 1) < paragraphRuns.size() ? paragraphRuns.get(i + 1) : null;
+            XWPFRun next = i + 1 < paragraphRuns.size() ? paragraphRuns.get(i + 1) : null;
             if (run == null || run.getText(0) == null) {
                 continue;
             }
@@ -360,7 +360,7 @@ public class DocxUtils {
             }
             int j = 1;
             String test = PLACEHOLDER_START.substring(0, j);
-            while ((j < PLACEHOLDER_START.length()) && !run.getText(0).endsWith(test)) {
+            while (j < PLACEHOLDER_START.length() && !run.getText(0).endsWith(test)) {
                 test = PLACEHOLDER_START.substring(0, ++j);
             }
             if (j == PLACEHOLDER_START.length() || !next.getText(0).startsWith(PLACEHOLDER_START.substring(j, PLACEHOLDER_START.length()))) {
@@ -371,7 +371,7 @@ public class DocxUtils {
         if (whetherMultRunContainsPlaceholderStart > 0) {
             fixRunsToStateInWhichSingleRunContainsPlaceholder(config, paragraph, PLACEHOLDER_START);
         }
-        if (whetherSingleRunContainsPlaceholderEnd < (whetherSingleRunContainsPlaceholderStart + whetherMultRunContainsPlaceholderStart)) {
+        if (whetherSingleRunContainsPlaceholderEnd < whetherSingleRunContainsPlaceholderStart + whetherMultRunContainsPlaceholderStart) {
             fixRunsToStateInWhichSingleRunContainsPlaceholder(config, paragraph, PLACEHOLDER_END);
         }
         List<ReplaceOperation> operations = Lists.newArrayList();
@@ -542,7 +542,7 @@ public class DocxUtils {
                         IFileVariable fileVariable = (IFileVariable) value;
                         InsertImageOperation imageOperation = new InsertImageOperation(operation.getPlaceholder(), fileVariable);
                         imageOperation.setValue("");
-                        int imageType = getPictureType(config, fileVariable.getName());
+                        int imageType = getPictureType(config, fileVariable.getName().toLowerCase());
                         if (imageType > 0) {
                             BufferedImage image = ImageIO.read(new ByteArrayInputStream(fileVariable.getData()));
                             // TODO does not work without
