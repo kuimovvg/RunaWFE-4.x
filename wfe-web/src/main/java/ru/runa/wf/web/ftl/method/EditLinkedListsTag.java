@@ -60,7 +60,10 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             variables.add(variable);
             componentFormats.add(componentFormat);
             lists.add(list);
-            jsHandlers.append(ViewUtil.getComponentJSFunction(componentFormat));
+            String jsHandler = ViewUtil.getComponentJSFunction(variable);
+            if (jsHandlers.indexOf(jsHandler, 0) == -1) {
+                jsHandlers.append(jsHandler);
+            }
             rowTemplate.append("<td>");
             WfVariable templateComponentVariable = ViewUtil.createListComponentVariable(variable, -1, componentFormat, null);
             String inputTag = getComponentInput(templateComponentVariable, true);
