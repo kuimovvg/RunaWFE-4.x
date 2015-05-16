@@ -2,13 +2,13 @@ package ru.runa.wfe.office.storage.services;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.extension.handler.ParamDef;
 import ru.runa.wfe.office.storage.BlockedFileException;
 import ru.runa.wfe.office.storage.StoreHelper;
 import ru.runa.wfe.office.storage.StoreOperation;
@@ -22,7 +22,6 @@ import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.dto.WfVariable;
 import ru.runa.wfe.var.format.VariableFormat;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class StoreHelperImpl implements StoreHelper {
@@ -39,20 +38,13 @@ public class StoreHelperImpl implements StoreHelper {
 
     IVariableProvider variableProvider;
 
-    List<WfVariable> variables;
+    Map<String, ParamDef> inputParams;
 
     public StoreHelperImpl(DataBindings config, IVariableProvider variableProvider) {
         setConfig(config);
         registerHandlers();
-        storeService = new StoreServiceImpl();
         this.variableProvider = variableProvider;
-        variables = Lists.newArrayList();
-        for (DataBinding b : config.getBindings()) {
-            WfVariable variable = variableProvider.getVariableNotNull(b.getVariableName());
-            if (!variables.contains(variable)) {
-                variables.add(variable);
-            }
-        }
+        storeService = new StoreServiceImpl(variableProvider);
     }
 
     private void setConfig(DataBindings config) {
@@ -68,7 +60,7 @@ public class StoreHelperImpl implements StoreHelper {
     public ExecutionResult execute(DataBinding binding, WfVariable variable) {
         try {
             Method method = invocationMap.get(config.getQueryType());
-            return (ExecutionResult) method.invoke(this, binding, variable, config.getCondition(), variables);
+            return (ExecutionResult) method.invoke(this, binding, variable, config.getCondition());
         } catch (Exception e) {
             if (e instanceof InvocationTargetException) {
                 Throwable targetEx = ((InvocationTargetException) e).getTargetException();
@@ -84,25 +76,25 @@ public class StoreHelperImpl implements StoreHelper {
     }
 
     @StoreOperation(QueryType.INSERT)
-    public ExecutionResult save(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
+    public ExecutionResult save(DataBinding binding, WfVariable variable, String condition) throws Exception {
         storeService.save(extractProperties(binding), variable, true);
         return ExecutionResult.EMPTY;
     }
 
     @StoreOperation(QueryType.SELECT)
-    public ExecutionResult findByFilter(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
-        return storeService.findByFilter(extractProperties(binding), condition, variables);
+    public ExecutionResult findByFilter(DataBinding binding, WfVariable variable, String condition) throws Exception {
+        return storeService.findByFilter(extractProperties(binding), condition);
     }
 
     @StoreOperation(QueryType.UPDATE)
-    public ExecutionResult update(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
-        storeService.update(extractProperties(binding), variable, condition, variables);
+    public ExecutionResult update(DataBinding binding, WfVariable variable, String condition) throws Exception {
+        storeService.update(extractProperties(binding), variable, condition);
         return ExecutionResult.EMPTY;
     }
 
     @StoreOperation(QueryType.DELETE)
-    public ExecutionResult delete(DataBinding binding, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
-        storeService.delete(extractProperties(binding), variable, condition, variables);
+    public ExecutionResult delete(DataBinding binding, WfVariable variable, String condition) throws Exception {
+        storeService.delete(extractProperties(binding), variable, condition);
         return ExecutionResult.EMPTY;
     }
 
