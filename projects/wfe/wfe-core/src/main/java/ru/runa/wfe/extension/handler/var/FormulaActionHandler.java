@@ -128,6 +128,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             log.error("Configuration not found in " + context);
             return;
         }
+        log.debug(configuration);
         formula = configuration.toCharArray();
         nowPosition = 0;
         stringVariableToken = false;
@@ -400,16 +401,16 @@ public class FormulaActionHandler extends ActionHandlerBase {
         if ("(".equals(nextToken)) {
             return tryParseFunction(s);
         }
+        Object answer = tryParseNumericalValue(s);
+        if (answer != null) {
+            return answer;
+        }
         WfVariable variable = context.getVariableProvider().getVariable(s);
         if (variable != null) {
             if (variable.getValue() == null) {
                 log.warn("Null value will be returned for variable '" + s + "'");
             }
             return variable.getValue();
-        }
-        Object answer = tryParseNumericalValue(s);
-        if (answer != null) {
-            return answer;
         }
         error("Cannot parse '" + s + "' at position " + (nowPosition - s.length() + 1));
         return null;
