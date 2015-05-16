@@ -25,6 +25,7 @@ import ru.runa.wfe.office.excel.IExcelConstraints;
 import ru.runa.wfe.office.excel.utils.ExcelHelper;
 import ru.runa.wfe.office.storage.binding.ExecutionResult;
 import ru.runa.wfe.var.ComplexVariable;
+import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -36,6 +37,7 @@ import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 public class StoreServiceImpl implements StoreService {
@@ -47,6 +49,11 @@ public class StoreServiceImpl implements StoreService {
     private IExcelConstraints constraints;
     private VariableFormat format;
     private String fullPath;
+    IVariableProvider variableProvider;
+
+    public StoreServiceImpl(IVariableProvider variableProvider) {
+        this.variableProvider = variableProvider;
+    }
 
     @Override
     public void createFileIfNotExist(String path) throws Exception {
@@ -67,6 +74,7 @@ public class StoreServiceImpl implements StoreService {
             workbook.write(os);
         } catch (Exception e) {
             log.error("", e);
+            Throwables.propagate(e);
         } finally {
             if (os != null) {
                 os.close();
@@ -75,17 +83,17 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public ExecutionResult findByFilter(Properties properties, String condition, List<WfVariable> variables) throws Exception {
+    public ExecutionResult findByFilter(Properties properties, String condition) throws Exception {
         initParams(properties);
         Workbook wb = getWorkbook(fullPath);
-        return new ExecutionResult(find(wb, constraints, format, condition, variables));
+        return new ExecutionResult(find(wb, constraints, format, condition));
     }
 
     @Override
-    public void update(Properties properties, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
+    public void update(Properties properties, WfVariable variable, String condition) throws Exception {
         initParams(properties);
         Workbook wb = getWorkbook(fullPath);
-        update(wb, constraints, variable.getValue(), format, condition, variables, false);
+        update(wb, constraints, variable.getValue(), format, condition, false);
         OutputStream os = null;
         try {
             os = new FileOutputStream(fullPath);
@@ -99,10 +107,10 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public void delete(Properties properties, WfVariable variable, String condition, List<WfVariable> variables) throws Exception {
+    public void delete(Properties properties, WfVariable variable, String condition) throws Exception {
         initParams(properties);
         Workbook wb = getWorkbook(fullPath);
-        update(wb, constraints, variable.getValue(), format, condition, variables, true);
+        update(wb, constraints, variable.getValue(), format, condition, true);
         OutputStream os = null;
         try {
             os = new FileOutputStream(fullPath);
@@ -147,7 +155,7 @@ public class StoreServiceImpl implements StoreService {
 
     @SuppressWarnings("unchecked")
     private void update(Workbook workbook, IExcelConstraints constraints, Object variable, VariableFormat variableFormat, String condition,
-            List<WfVariable> variables, boolean clear) {
+            boolean clear) {
         List list = findAll(workbook, constraints, variableFormat);
         boolean changed = false;
         if (Strings.isNullOrEmpty(condition)) {
@@ -161,7 +169,7 @@ public class StoreServiceImpl implements StoreService {
             int i = 0;
             for (Object object : list) {
                 if (variableFormat instanceof UserTypeFormat) {
-                    if (ConditionProcessor.filter(condition, (Map<String, Object>) object, variables)) {
+                    if (ConditionProcessor.filter(condition, (Map<String, Object>) object, variableProvider)) {
                         changeVariable(constraints, variable, clear, list, i, object);
                         changed = true;
                     }
@@ -189,6 +197,25 @@ public class StoreServiceImpl implements StoreService {
 
             for (VariableDefinition sourceAttribute : sourceAttributes) {
                 targetVariable.put(sourceAttribute.getName(), sourceVariable.get(sourceAttribute.getName()));
+            }
+            list.set(i, targetVariable);
+        } else {
+            ComplexVariable targetVariable = (ComplexVariable) object;
+
+            VariableUserType userType = targetVariable.getUserType();
+            List<VariableDefinition> targetAttributes = userType.getAttributes();
+
+            int columnIndex = 0;
+            if (constraints instanceof AttributeConstraints) {
+                columnIndex = ((AttributeConstraints) constraints).getColumnIndex();
+            }
+            int indexAttribute = 0;
+            for (VariableDefinition targetAttribute : targetAttributes) {
+                if (indexAttribute == columnIndex) {
+                    targetVariable.put(targetAttribute.getName(), variable);
+                    break;
+                }
+                indexAttribute++;
             }
             list.set(i, targetVariable);
         }
@@ -225,21 +252,21 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @SuppressWarnings("rawtypes")
-    private List find(Workbook workbook, IExcelConstraints constraints, VariableFormat variableFormat, String condition, List<WfVariable> variables) {
+    private List find(Workbook workbook, IExcelConstraints constraints, VariableFormat variableFormat, String condition) {
         boolean all = Strings.isNullOrEmpty(condition);
         List result = findAll(workbook, constraints, variableFormat);
         if (!all) {
-            return filter(result, condition, variables);
+            return filter(result, condition);
         }
         return result;
     }
 
-    private List filter(List records, String condition, List<WfVariable> wfVariables) {
+    private List filter(List records, String condition) {
         List filtered = Lists.newArrayList();
         for (Object object : records) {
             boolean conditionResult = true;
             if (object instanceof ComplexVariable) {
-                if (!ConditionProcessor.filter(condition, (ComplexVariable) object, wfVariables)) {
+                if (!ConditionProcessor.filter(condition, (ComplexVariable) object, variableProvider)) {
                     conditionResult = false;
                     break;
                 }
@@ -309,7 +336,7 @@ public class StoreServiceImpl implements StoreService {
 
     private void fillResultFromCell(Workbook workbook, IExcelConstraints constraints, VariableFormat variableFormat, List result) {
         AttributeConstraints attributeConstraints = (AttributeConstraints) constraints;
-        int columnIndex = attributeConstraints.getColumnIndex();
+        int columnIndex = 0;// attributeConstraints.getColumnIndex();
         Sheet sheet = ExcelHelper.getSheet(workbook, attributeConstraints.getSheetName(), attributeConstraints.getSheetIndex());
         int rowIndex = getLastRowIndex(sheet, columnIndex, variableFormat);
         int currentRow = START_ROW_INDEX;

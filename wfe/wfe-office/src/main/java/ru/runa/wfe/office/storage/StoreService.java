@@ -1,6 +1,5 @@
 package ru.runa.wfe.office.storage;
 
-import java.util.List;
 import java.util.Properties;
 
 import ru.runa.wfe.office.storage.binding.ExecutionResult;
@@ -14,11 +13,11 @@ public interface StoreService {
 
     void createFileIfNotExist(String path) throws Exception;
 
-    ExecutionResult findByFilter(Properties properties, String condition, List<WfVariable> variables) throws Exception;
+    ExecutionResult findByFilter(Properties properties, String condition) throws Exception;
 
-    void update(Properties properties, WfVariable variable, String condition, List<WfVariable> variables) throws Exception;
+    void update(Properties properties, WfVariable variable, String condition) throws Exception;
 
-    void delete(Properties properties, WfVariable variable, String condition, List<WfVariable> variables) throws Exception;
+    void delete(Properties properties, WfVariable variable, String condition) throws Exception;
 
     void save(Properties properties, WfVariable variable, boolean appendTo) throws Exception;
 
