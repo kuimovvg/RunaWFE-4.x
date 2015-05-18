@@ -8,6 +8,10 @@ import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 import ru.runa.gpd.BotCache;
@@ -16,6 +20,7 @@ import ru.runa.gpd.SharedImages;
 import ru.runa.gpd.extension.DelegableProvider;
 import ru.runa.gpd.extension.HandlerArtifact;
 import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
 import ru.runa.gpd.extension.handler.ConfigBasedProvider;
 import ru.runa.gpd.extension.handler.ParamBasedProvider;
 import ru.runa.gpd.extension.handler.ParamDefConfig;
@@ -191,5 +196,41 @@ public class BotTaskUtils {
                 taskState.setDirty();
             }
         }
+    }
+
+    /**
+     * Copy or move a bot task configuration file and an existing embedded file.
+     * 
+     * @param botTaskFile
+     * @param botTask
+     * @param newName
+     * @param targetBotFolder
+     * @throws CoreException
+     */
+    public static void copyBotTaskConfig(IFile botTaskFile, BotTask botTask, String newName, IFolder targetBotFolder) throws CoreException {
+        String oldName = botTask.getName();
+        if (!Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
+            DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
+            if (provider instanceof IBotFileSupportProvider) {
+                IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
+                // Copy templates if them exist
+                String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
+                if (!Strings.isNullOrEmpty(oldEmbeddedFileName) && oldEmbeddedFileName.startsWith(oldName)) {
+                    IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
+                    if (embeddedFile.exists()) {
+                        String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
+                        IPath newEmbeddedFilePath = targetBotFolder.getFullPath().append(newEmbeddedFileName);
+                        if (botTaskFile.exists()) {
+                            embeddedFile.copy(newEmbeddedFilePath, true, null);
+                        } else {
+                            embeddedFile.move(newEmbeddedFilePath, true, null);
+                        }
+                    }
+                }
+                botFileProvider.taskRenamed(botTask, oldName, newName);
+            }
+        }
+        botTask.setName(newName);
+        WorkspaceOperations.saveBotTask(targetBotFolder.getFile(newName), botTask);
     }
 }

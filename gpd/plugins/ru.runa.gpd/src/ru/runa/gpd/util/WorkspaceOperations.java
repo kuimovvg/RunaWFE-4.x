@@ -36,9 +36,6 @@ import ru.runa.gpd.editor.BotTaskEditor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
-import ru.runa.gpd.extension.DelegableProvider;
-import ru.runa.gpd.extension.HandlerRegistry;
-import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
@@ -497,7 +494,6 @@ public class WorkspaceOperations {
                 return;
             }
 
-            String newName = dialog.getName();
             try {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.findEditor(new FileEditorInput(botTaskFile));
@@ -505,26 +501,7 @@ public class WorkspaceOperations {
                     page.closeEditor(editor, true);
                 }
                 deleteBotTask(botTaskFile, botTask);
-                String oldName = botTask.getName();
-                if (!Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
-                    DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
-                    if (provider instanceof IBotFileSupportProvider) {
-                        IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
-                        // Move templates if them exist
-                        String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
-                        if (!Strings.isNullOrEmpty(oldEmbeddedFileName) && oldEmbeddedFileName.startsWith(oldName)) {
-                            IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
-                            if (embeddedFile.exists()) {
-                                String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
-                                IPath newEmbeddedFilePath = embeddedFile.getParent().getFullPath().append(newEmbeddedFileName);
-                                embeddedFile.move(newEmbeddedFilePath, true, null);
-                            }
-                        }
-                        botFileProvider.taskRenamed(botTask, oldName, newName);
-                    }
-                }
-                botTask.setName(newName);
-                saveBotTask(((IFolder) botTaskFile.getParent()).getFile(newName), botTask);
+                BotTaskUtils.copyBotTaskConfig(botTaskFile, botTask, dialog.getName(), botFolder);
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }
