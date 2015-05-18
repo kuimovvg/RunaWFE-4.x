@@ -1,13 +1,17 @@
 package ru.runa.wfe.commons.ftl;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.ClassLoaderUtil;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.web.WebHelper;
+import ru.runa.wfe.commons.web.WebUtils;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.AbstractVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
@@ -124,6 +128,30 @@ public abstract class FreemarkerTag implements TemplateMethodModelEx, Serializab
             return defaultValue;
         }
         return value;
+    }
+
+    protected String exportScript(Map<String, String> substitutions, boolean globalScope) {
+        return exportScript(substitutions, globalScope, getClass().getSimpleName());
+    }
+
+    protected String exportScript(Map<String, String> substitutions, boolean globalScope, String name) {
+        String path = "scripts/" + name + ".js";
+        try {
+            if (webHelper == null) {
+                return "";
+            }
+            if (globalScope) {
+                if (webHelper.getRequest().getAttribute(path) != null) {
+                    return "";
+                }
+                webHelper.getRequest().setAttribute(path, Boolean.TRUE);
+            }
+            InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull(path, getClass());
+            return WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions);
+        } catch (Exception e) {
+            LogFactory.getLog(getClass()).error("Tag execution error", e);
+            return "<p style='color: red;'>Unable to export script <b>" + path + "</b> to page</p>";
+        }
     }
 
 }
