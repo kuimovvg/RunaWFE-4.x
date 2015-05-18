@@ -13,7 +13,7 @@ public interface StoreService {
 
     void createFileIfNotExist(String path) throws Exception;
 
-    ExecutionResult findByFilter(Properties properties, String condition) throws Exception;
+    ExecutionResult findByFilter(Properties properties, WfVariable variable, String condition) throws Exception;
 
     void update(Properties properties, WfVariable variable, String condition) throws Exception;
 

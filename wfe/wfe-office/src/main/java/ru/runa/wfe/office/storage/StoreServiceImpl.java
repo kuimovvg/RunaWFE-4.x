@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -20,12 +21,15 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import ru.runa.wfe.extension.handler.ParamDef;
+import ru.runa.wfe.extension.handler.ParamsDef;
 import ru.runa.wfe.office.excel.AttributeConstraints;
 import ru.runa.wfe.office.excel.IExcelConstraints;
 import ru.runa.wfe.office.excel.utils.ExcelHelper;
 import ru.runa.wfe.office.storage.binding.ExecutionResult;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.ParamBasedVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -83,7 +87,10 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public ExecutionResult findByFilter(Properties properties, String condition) throws Exception {
+    public ExecutionResult findByFilter(Properties properties, WfVariable variable, String condition) throws Exception {
+        if (!existOutputParamByVariableName(variable)) {
+            return ExecutionResult.EMPTY;
+        }
         initParams(properties);
         Workbook wb = getWorkbook(fullPath);
         return new ExecutionResult(find(wb, constraints, format, condition));
@@ -448,5 +455,24 @@ public class StoreServiceImpl implements StoreService {
             format = variableFormat;
         }
         return format;
+    }
+
+    private boolean existOutputParamByVariableName(WfVariable variable) {
+        Preconditions.checkNotNull(variable);
+        if (variableProvider instanceof ParamBasedVariableProvider) {
+            ParamsDef paramsDef = ((ParamBasedVariableProvider) variableProvider).getParamsDef();
+            if (paramsDef != null) {
+                Map<String, ParamDef> outputParams = paramsDef.getOutputParams();
+                if (outputParams != null) {
+                    for (Entry<String, ParamDef> entry : outputParams.entrySet()) {
+                        String variableName = entry.getValue().getVariableName();
+                        if (variable.getDefinition().getName().equals(variableName)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

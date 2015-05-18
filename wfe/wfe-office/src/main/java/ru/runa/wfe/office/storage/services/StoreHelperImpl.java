@@ -83,7 +83,7 @@ public class StoreHelperImpl implements StoreHelper {
 
     @StoreOperation(QueryType.SELECT)
     public ExecutionResult findByFilter(DataBinding binding, WfVariable variable, String condition) throws Exception {
-        return storeService.findByFilter(extractProperties(binding), condition);
+        return storeService.findByFilter(extractProperties(binding), variable, condition);
     }
 
     @StoreOperation(QueryType.UPDATE)
