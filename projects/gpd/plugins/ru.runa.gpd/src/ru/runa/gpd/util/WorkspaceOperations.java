@@ -234,6 +234,52 @@ public class WorkspaceOperations {
         }
     }
 
+    public static void renameSubProcessDefinition(IStructuredSelection selection) {
+        IFile subdefinitionFile = (IFile) selection.getFirstElement();
+        IFolder definitionFolder = (IFolder) subdefinitionFile.getParent();
+        SubprocessDefinition subprocessDefinition = (SubprocessDefinition) ProcessCache.getProcessDefinition(subdefinitionFile);
+        ProcessDefinition definition = subprocessDefinition.getParent();
+
+        RenameProcessDefinitionDialog dialog = new RenameProcessDefinitionDialog(definition);
+        dialog.setName(subprocessDefinition.getName());
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            String newName = dialog.getName();
+            try {
+                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                IEditorPart editor = page.findEditor(new FileEditorInput(subdefinitionFile));
+                if (editor != null) {
+                    page.closeEditor(editor, false);
+                }
+
+                for (Subprocess sp : definition.getChildren(Subprocess.class)) {
+                    if (sp.getSubProcessName().equals(subprocessDefinition.getName())) {
+                        sp.setSubProcessName(newName);
+                        IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
+                        saveProcessDefinition(definitionFile, definition);
+                        break;
+                    }
+                }
+                for (SubprocessDefinition subdefinition : definition.getEmbeddedSubprocesses().values()) {
+                    for (Subprocess sp : subdefinition.getChildren(Subprocess.class)) {
+                        if (sp.getSubProcessName().equals(subprocessDefinition.getName())) {
+                            sp.setSubProcessName(newName);
+                            IFile file = IOUtils.getFile(subdefinition.getId() + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                            saveProcessDefinition(file, subdefinition);
+                            break;
+                        }
+                    }
+                }
+                subprocessDefinition.setName(newName);
+                
+                saveProcessDefinition(subdefinitionFile, subprocessDefinition);
+                refreshResource(definitionFolder);
+            } catch (Exception e) {
+                PluginLogger.logError(e);
+            }
+        }
+    }
+
+
     public static void saveProcessDefinition(IFile definitionFile, ProcessDefinition definition) throws Exception {
         ProcessSerializer serializer = definition.getLanguage().getSerializer();
         Document document = serializer.getInitialProcessDefinitionDocument(definition.getName(), null);

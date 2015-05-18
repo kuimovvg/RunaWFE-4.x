@@ -2,7 +2,6 @@ package ru.runa.gpd.ui.view;
 
 import java.util.List;
 
-import org.eclipse.core.internal.resources.File;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -47,7 +46,6 @@ import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.WorkspaceOperations;
 import ru.runa.wfe.definition.ProcessDefinitionAccessType;
 
-@SuppressWarnings("restriction")
 public class ProcessExplorerTreeView extends ViewPart implements ISelectionListener {
     private TreeViewer viewer;
 
@@ -133,16 +131,8 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
     protected void fillContextMenu(IMenuManager manager) {
         final IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
         final Object selectedObject = selection.getFirstElement();
-        boolean menuOnSubprocess = false;
-        if (selectedObject instanceof File) {
-        	try {
-	        	File file = (File) selectedObject;
-	            if (file.getName().endsWith(ParContentProvider.PROCESS_DEFINITION_FILE_NAME) && file.getName().startsWith("sub"))
-	            	menuOnSubprocess = true;
-            } catch (Exception e) {
-	            
-            }
-        }
+        final boolean menuOnSubprocess = selectedObject instanceof IFile
+                && ((IFile) selectedObject).getName().matches("sub.*\\Q" + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
         final List<IResource> resources = selection.toList();
         boolean menuOnContainer = selectedObject instanceof IProject || selectedObject instanceof IFolder;
         boolean menuOnProcess = selectedObject instanceof IFile;
@@ -205,10 +195,15 @@ public class ProcessExplorerTreeView extends ViewPart implements ISelectionListe
                     WorkspaceOperations.exportProcessDefinition(selection);
                 }
             });
-            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.renameProcess"), SharedImages.getImageDescriptor("icons/rename.gif")) {
+            manager.add(new Action(Localization.getString("ExplorerTreeView.menu.label.renameProcess"), SharedImages
+                    .getImageDescriptor("icons/rename.gif")) {
                 @Override
                 public void run() {
-                    WorkspaceOperations.renameProcessDefinition(selection);
+                    if (menuOnSubprocess) {
+                        WorkspaceOperations.renameSubProcessDefinition(selection);
+                    } else {
+                        WorkspaceOperations.renameProcessDefinition(selection);
+                    }
                 }
             });
         }
