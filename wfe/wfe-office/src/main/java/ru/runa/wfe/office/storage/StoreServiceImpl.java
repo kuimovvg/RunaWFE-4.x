@@ -264,11 +264,11 @@ public class StoreServiceImpl implements StoreService {
     private List filter(List records, String condition) {
         List filtered = Lists.newArrayList();
         for (Object object : records) {
-            boolean conditionResult = true;
+            boolean conditionResult = false;
             if (object instanceof ComplexVariable) {
-                if (!ConditionProcessor.filter(condition, (ComplexVariable) object, variableProvider)) {
-                    conditionResult = false;
-                    break;
+                conditionResult = ConditionProcessor.filter(condition, (ComplexVariable) object, variableProvider);
+                if (!conditionResult) {
+                    continue;
                 }
             } else {
                 // TODO need implement filter for non complex variables
