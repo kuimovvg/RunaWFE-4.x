@@ -83,6 +83,14 @@
             class="ru.runa.gpd.formeditor.ftl.parameter.TextListParameter"
             id="textlist">
       </type>
+      <type
+            class="ru.runa.gpd.formeditor.ftl.parameter.UserVariableFieldsComboParameter"
+            id="uservarfields">
+      </type>
+      <type
+            class="ru.runa.gpd.formeditor.ftl.parameter.UserVariablesListComboParameter"
+            id="uservarlistcombo">
+      </type>
    </extension>
    
    <extension
@@ -851,6 +859,40 @@
             id="TreeviewSupport"
             name="%Method.TreeviewSupport"
             order="-84">
+      </component>
+      <component
+            enabled="true"
+            id="DisplayListUserVariables"
+            imageProvider="ru.runa.gpd.formeditor.ftl.image.VariableComponentImageProvider"
+            name="%Method.DisplayListUserVariables"
+            order="-83">
+         <param
+               name="%Param.Variable"
+               type="uservarlistcombo"
+               variableAccess="READ"
+               variableTypeFilter="java.util.List">
+         </param>
+         <param
+               name="%Param.DisplayFormat"
+               type="combo"
+               variableAccess="NONE"
+               variableTypeFilter="java.lang.String">
+            <paramValue
+                  name="%Format.Variable.TwoDimensionalTable"
+                  value="two-dimentional">
+            </paramValue>
+            <paramValue
+                  name="%Format.Variable.MultiDimensionalTable"
+                  value="multi-dimentional">
+            </paramValue>
+         </param>
+         <param
+               name="%Param.UseToSortField"
+               optional="true"
+               type="uservarfields"
+               variableAccess="NONE"
+               variableTypeFilter="java.lang.String">
+         </param>
       </component>
    </extension>
     

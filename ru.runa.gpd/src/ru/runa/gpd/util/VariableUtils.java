@@ -2,17 +2,39 @@ package ru.runa.gpd.util;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableContainer;
 import ru.runa.gpd.lang.model.VariableUserType;
+import ru.runa.wfe.var.format.ListFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class VariableUtils {
+
+    private static final Pattern LIST_ENTRY_PATTERN = Pattern.compile("\\(\\s*([^\\)]+)\\)");
+
+    public static final String getListVariableComponent(Variable variable) {
+        String formatStr = variable.getFormat();
+        if (!formatStr.contains(ListFormat.class.getName())) {
+            return null;
+        }
+        Matcher m = LIST_ENTRY_PATTERN.matcher(formatStr);
+        if (!m.find()) {
+            return null;
+        }
+        MatchResult mr = m.toMatchResult();
+        if (mr.groupCount() != 1) {
+            return null;
+        }
+        return mr.group(1).trim();
+    }
 
     public static Map<String, Variable> toMap(List<Variable> variables) {
         Map<String, Variable> result = Maps.newHashMapWithExpectedSize(variables.size());
@@ -149,16 +171,18 @@ public class VariableUtils {
         return "";
     }
 
-    private static void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent, List<Variable> children) {
+    private static void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent,
+            List<Variable> children) {
         for (Variable variable : children) {
             if (variable.getUserType() == null) {
                 continue;
             }
             String syntheticName = (parent != null ? (parent.getName() + VariableUserType.DELIM) : "") + variable.getName();
-            String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "") + variable.getScriptingName();
+            String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "")
+                    + variable.getScriptingName();
             if (Objects.equal(variable.getUserType(), searchType)) {
-                Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName + VariableUserType.DELIM
-                        + searchAttribute.getScriptingName(), variable);
+                Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName
+                        + VariableUserType.DELIM + searchAttribute.getScriptingName(), variable);
                 result.add(syntheticVariable);
             } else {
                 Variable syntheticVariable = new Variable(syntheticName, syntheticScriptingName, variable);
@@ -167,7 +191,8 @@ public class VariableUtils {
         }
     }
 
-    public static List<Variable> findVariablesOfTypeWithAttributeExpanded(VariableContainer variableContainer, VariableUserType searchType, Variable searchAttribute) {
+    public static List<Variable> findVariablesOfTypeWithAttributeExpanded(VariableContainer variableContainer, VariableUserType searchType,
+            Variable searchAttribute) {
         List<Variable> result = Lists.newArrayList();
         searchInVariables(result, searchType, searchAttribute, null, variableContainer.getVariables(false, false));
         return result;

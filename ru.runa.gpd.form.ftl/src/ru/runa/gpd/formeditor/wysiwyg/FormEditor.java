@@ -68,6 +68,7 @@ import ru.runa.gpd.htmleditor.editors.HTMLSourceEditor;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Variable;
+import ru.runa.gpd.lang.model.VariableUserType;
 import ru.runa.gpd.lang.par.ParContentProvider;
 import ru.runa.gpd.ui.view.SelectionProvider;
 import ru.runa.gpd.util.EditorUtils;
@@ -182,6 +183,10 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         List<String> list = Lists.newArrayList(getVariables(typeClassNameFilter).keySet());
         Collections.sort(list);
         return list;
+    }
+
+    public List<VariableUserType> getUserVariablesTypes() {
+        return formNode.getProcessDefinition().getVariableUserTypes();
     }
 
     public synchronized Map<String, Variable> getVariables(String typeClassNameFilter) {
@@ -475,12 +480,12 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
                 if (editor != null && !editor.isDirty()) {
                     editor.setDirty(true);
                 }
-				try {
-					syncBrowser2Editor();
-					syncEditor2Browser();
-				} catch (Exception e) {
-					PluginLogger.logError(e);
-				}
+                try {
+                    syncBrowser2Editor();
+                    syncEditor2Browser();
+                } catch (Exception e) {
+                    PluginLogger.logError(e);
+                }
             }
         });
         components.put(component.getId(), component);
@@ -498,15 +503,15 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
     public void componentSelected(int componentId) throws PartInitException, ExecutionException, NotDefinedException, NotEnabledException,
             NotHandledException {
         Component component = components.get(componentId);
-		if (component != null) {
-			final ISelection selection = new StructuredSelection(component);
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					selectionProvider.setSelection(selection);
-				}
-			});
-		}
+        if (component != null) {
+            final ISelection selection = new StructuredSelection(component);
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    selectionProvider.setSelection(selection);
+                }
+            });
+        }
     }
 
     public void componentDeselected() {
