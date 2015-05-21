@@ -211,6 +211,24 @@ public class ViewUtil {
         return html;
     }
 
+    public static final String getActiveJsonTable(User user, WebHelper webHelper, WfVariable variable, String sortFieldName, boolean isMultiDim,
+            boolean isSelectable) {
+        VariableFormat formatter = FormatCommons.create(variable.getDefinition());
+        String jsonObjectsList = formatter.formatJSON(variable.getValue());
+        String result = "<script src=\"/wfe/js/tidy-table.js\"></script>\n";
+        InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.ActiveJsonTable.js", ViewUtil.class);
+        Map<String, String> substitutions = new HashMap<String, String>();
+        substitutions.put("UNIQUENAME", variable.getDefinition().getScriptingName());
+        substitutions.put("JSONDATATEMPLATE", jsonObjectsList);
+        substitutions.put("SORTFIELDNAMEVALUE", String.format("%s", sortFieldName));
+        substitutions.put("DIMENTIONALVALUE", String.format("%s", isMultiDim));
+        substitutions.put("SELECTABLEVALUE", String.format("%s", isSelectable));
+        result += WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions);
+        result += "<link rel=\"stylesheet\" type=\"text/css\" href=\"/wfe/css/tidy-table.css\">\n";
+        result += String.format("<div id='container%s'></div>", variable.getDefinition().getScriptingName());
+        return result;
+    }
+
     public static String getComponentInput(User user, WebHelper webHelper, WfVariable variable) {
         String variableName = variable.getDefinition().getName();
         VariableFormat variableFormat = variable.getDefinition().getFormatNotNull();
