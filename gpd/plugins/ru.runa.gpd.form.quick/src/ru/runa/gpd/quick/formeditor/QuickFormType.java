@@ -7,6 +7,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -59,6 +60,11 @@ public class QuickFormType extends FormType {
         if (!formNode.hasFormTemplate()) {
             errors.add(ValidationError.createLocalizedError(formNode, "formNode.templateIsRequired"));
         }
+    }
+
+    @Override
+    public MultiTextEdit searchVariableReplacements(IFile file, String variableName, String replacement) throws Exception {
+        return super.searchVariableReplacements(file, "<param>" + variableName + "</param>", "<param>" + replacement + "</param>");
     }
 
 }
