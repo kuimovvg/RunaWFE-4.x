@@ -8,6 +8,7 @@ import java.util.Map;
 import org.cyberneko.html.parsers.DOMParser;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -87,5 +88,13 @@ public abstract class BaseHtmlFormType extends FormType {
         inputSource.setEncoding(Charsets.UTF_8.name());
         parser.parse(inputSource);
         return parser.getDocument();
+    }
+
+    /**
+     * Variable name is used double quotes around in file
+     */
+    @Override
+    public MultiTextEdit searchVariableReplacements(IFile file, String variableName, String replacement) throws Exception {
+        return super.searchVariableReplacements(file, "\"" + variableName + "\"", "\"" + replacement + "\"");
     }
 }
