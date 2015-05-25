@@ -25,6 +25,7 @@ import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.var.ScriptingVariableProvider;
 
 /**
  * Send email.
@@ -49,7 +50,9 @@ public class SendEmailActionHandler extends ActionHandlerBase {
                 }
                 interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
             }
-            EmailUtils.prepareTaskMessage(UserHolder.get(), config, interaction, executionContext.getVariableProvider());
+            ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext.getProcessDefinition(),
+                    executionContext.getVariableProvider());
+            EmailUtils.prepareTaskMessage(UserHolder.get(), config, interaction, scriptingVariableProvider);
             EmailUtils.sendMessageRequest(config);
         } catch (Exception e) {
             if (config.isThrowErrorOnFailure()) {
