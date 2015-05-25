@@ -21,8 +21,6 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.handler.ParamDef.Presentation;
 import ru.runa.gpd.lang.model.Delegable;
-import ru.runa.gpd.lang.model.GraphElement;
-import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
@@ -114,14 +112,7 @@ public class ParamDefComposite extends Composite {
         }
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
-            List<String> variableNames;
-            if (delegable instanceof GraphElement) {
-                List<Variable> variables = ((GraphElement) delegable).getProcessDefinition().getVariables(true, true,
-                        paramDef.getFormatFiltersAsArray());
-                variableNames = VariableUtils.getVariableNamesForScripting(variables);
-            } else {
-                variableNames = delegable.getVariableNames(true, paramDef.getFormatFiltersAsArray());
-            }
+            List<String> variableNames = VariableUtils.getVariableNamesForScripting(delegable, paramDef.getFormatFiltersAsArray());
             new InsertVariableTextMenuDetectListener(textInput, variableNames);
         }
         return textInput;

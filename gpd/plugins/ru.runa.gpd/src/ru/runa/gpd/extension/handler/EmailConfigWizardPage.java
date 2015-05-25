@@ -198,8 +198,8 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
             SWTUtils.createLink(this, Localization.getString("button.insert_variable"), new LoggingHyperlinkAdapter() {
                 @Override
                 protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                    List<String> ftlVariableNames = VariableUtils.getValidVariableNames(delegable.getVariableNames(true));
-                    ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(ftlVariableNames);
+                    List<String> variableNames = VariableUtils.getVariableNamesForScripting(delegable);
+                    ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(variableNames);
                     String variableName = dialog.openDialog();
                     if (variableName != null) {
                         String r = VariableUtils.wrapVariableName(variableName);
@@ -279,7 +279,7 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         private class AddSelectionAdapter extends LoggingSelectionAdapter {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-                List<String> fileVariableNames = VariableUtils.getValidVariableNames(delegable.getVariableNames(true, FileVariable.class.getName()));
+                List<String> fileVariableNames = delegable.getVariableNames(true, FileVariable.class.getName());
                 ChooseVariableNameDialog dialog = new ChooseVariableNameDialog(fileVariableNames);
                 String variableName = dialog.openDialog();
                 if (variableName != null) {
