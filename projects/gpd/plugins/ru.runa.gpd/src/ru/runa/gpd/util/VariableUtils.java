@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableContainer;
 import ru.runa.gpd.lang.model.VariableUserType;
@@ -74,6 +76,15 @@ public class VariableUtils {
             }
         }
         return result;
+    }
+
+    public static List<String> getVariableNamesForScripting(Delegable delegable, String... typeClassNameFilters) {
+        if (delegable instanceof GraphElement) {
+            List<Variable> variables = ((GraphElement) delegable).getProcessDefinition().getVariables(true, true, typeClassNameFilters);
+            return getVariableNamesForScripting(variables);
+        } else {
+            return getValidVariableNames(delegable.getVariableNames(true, typeClassNameFilters));
+        }
     }
 
     public static List<String> getVariableNames(List<? extends Variable> variables) {
@@ -149,16 +160,18 @@ public class VariableUtils {
         return "";
     }
 
-    private static void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent, List<Variable> children) {
+    private static void searchInVariables(List<Variable> result, VariableUserType searchType, Variable searchAttribute, Variable parent,
+            List<Variable> children) {
         for (Variable variable : children) {
             if (variable.getUserType() == null) {
                 continue;
             }
             String syntheticName = (parent != null ? (parent.getName() + VariableUserType.DELIM) : "") + variable.getName();
-            String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "") + variable.getScriptingName();
+            String syntheticScriptingName = (parent != null ? (parent.getScriptingName() + VariableUserType.DELIM) : "")
+                    + variable.getScriptingName();
             if (Objects.equal(variable.getUserType(), searchType)) {
-                Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName + VariableUserType.DELIM
-                        + searchAttribute.getScriptingName(), variable);
+                Variable syntheticVariable = new Variable(syntheticName + VariableUserType.DELIM + searchAttribute.getName(), syntheticScriptingName
+                        + VariableUserType.DELIM + searchAttribute.getScriptingName(), variable);
                 result.add(syntheticVariable);
             } else {
                 Variable syntheticVariable = new Variable(syntheticName, syntheticScriptingName, variable);
@@ -167,7 +180,8 @@ public class VariableUtils {
         }
     }
 
-    public static List<Variable> findVariablesOfTypeWithAttributeExpanded(VariableContainer variableContainer, VariableUserType searchType, Variable searchAttribute) {
+    public static List<Variable> findVariablesOfTypeWithAttributeExpanded(VariableContainer variableContainer, VariableUserType searchType,
+            Variable searchAttribute) {
         List<Variable> result = Lists.newArrayList();
         searchInVariables(result, searchType, searchAttribute, null, variableContainer.getVariables(false, false));
         return result;
