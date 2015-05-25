@@ -1,7 +1,9 @@
 package ru.runa.wfe.commons.email;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -24,28 +26,29 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.email.EmailConfig.Attachment;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.form.Interaction;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.user.dao.ExecutorDAO;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.file.IFileVariable;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class EmailUtils {
     private static final Log log = LogFactory.getLog(EmailConfig.class);
-    public static final String MAIL_ID = "mail.id";
-    private static final String MAIL_TRANSPORT = "mail.transport.protocol";
-    private static final String MAIL_HOST = "mail.host";
-    private static final String MAIL_USER = "mail.user";
-    private static final String MAIL_PASSWORD = "mail.password";
-
     private static MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
-
     static {
         System.setProperty("mail.mime.encodefilename", "true");
     }
@@ -65,11 +68,13 @@ public class EmailUtils {
             log.info("Sending " + config.getMessageId());
         }
         config.checkValid();
+        if (Strings.isNullOrEmpty(config.getHeaderProperties().get(EmailConfig.HEADER_TO))) {
+            log.warn("Ignored message with empty 'To' recipients");
+            return;
+        }
         Properties props = new Properties();
         props.putAll(config.getConnectionProperties());
-
-        String protocol = props.getProperty(MAIL_TRANSPORT);
-
+        String protocol = props.getProperty(EmailConfig.CONNECTION_MAIL_TRANSPORT);
         String connectionTimepoutPropName = "mail." + protocol + ".connectiontimeout";
         if (!props.contains(connectionTimepoutPropName)) {
             props.put(connectionTimepoutPropName, SystemProperties.getEmailDefaultTimeoutInMilliseconds());
@@ -88,10 +93,10 @@ public class EmailUtils {
         PasswordAuthenticator authenticator = null;
         boolean auth = "true".equals(props.getProperty("mail." + protocol + ".auth"));
         if (auth) {
-            String username = props.getProperty(MAIL_USER);
-            String password = props.getProperty(MAIL_PASSWORD);
-            Preconditions.checkNotNull(username, "Authenticaton enabled but property " + MAIL_USER + " is not set");
-            Preconditions.checkNotNull(password, "Authenticaton enabled but property " + MAIL_PASSWORD + " is not set");
+            String username = props.getProperty(EmailConfig.CONNECTION_MAIL_USER);
+            String password = props.getProperty(EmailConfig.CONNECTION_MAIL_PASSWORD);
+            Preconditions.checkNotNull(username, "Authenticaton enabled but property " + EmailConfig.CONNECTION_MAIL_USER + " is not set");
+            Preconditions.checkNotNull(password, "Authenticaton enabled but property " + EmailConfig.CONNECTION_MAIL_PASSWORD + " is not set");
             authenticator = new PasswordAuthenticator(username, password);
             if (!config.getHeaderProperties().containsKey("From")) {
                 config.getHeaderProperties().put("From", username);
@@ -120,7 +125,8 @@ public class EmailUtils {
             multipart.addBodyPart(attach);
         }
         msg.setContent(multipart);
-        log.info("Connecting to [" + protocol + "]: " + props.getProperty(MAIL_HOST) + ":" + props.getProperty("mail." + protocol + ".port"));
+        log.info("Connecting to [" + protocol + "]: " + props.getProperty(EmailConfig.CONNECTION_MAIL_HOST) + ":"
+                + props.getProperty("mail." + protocol + ".port"));
         Transport transport = session.getTransport();
         try {
             transport.connect();
@@ -178,6 +184,29 @@ public class EmailUtils {
         }
         config.setMessage(formMessage);
         log.debug(formMessage);
+    }
+
+    public static List<String> getEmails(Executor executor) {
+        List<String> emails = Lists.newArrayList();
+        if (executor instanceof Actor) {
+            Actor actor = (Actor) executor;
+            if (actor.getEmail() != null && actor.getEmail().trim().length() > 0) {
+                emails.add(actor.getEmail().trim());
+            }
+        } else if (executor instanceof Group) {
+            ExecutorDAO executorDAO = ApplicationContextFactory.getExecutorDAO();
+            Collection<Actor> actors = executorDAO.getGroupActors((Group) executor);
+            for (Actor actor : actors) {
+                if (actor.getEmail() != null && actor.getEmail().trim().length() > 0) {
+                    emails.add(actor.getEmail().trim());
+                }
+            }
+        }
+        return emails;
+    }
+
+    public static String concatenateEmails(List<String> emails) {
+        return Joiner.on(", ").join(emails);
     }
 
     private static class PasswordAuthenticator extends Authenticator {

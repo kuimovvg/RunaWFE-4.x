@@ -11,7 +11,6 @@ import ru.runa.wfe.commons.CalendarInterval;
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.bc.BusinessCalendar;
 import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
 
@@ -21,18 +20,18 @@ import com.google.common.base.Strings;
 public class ExpressionEvaluator {
     private static final Pattern VARIABLE_REGEXP = Pattern.compile("\\$\\{(.*?[^\\\\])\\}");
 
-    public static Date evaluateDueDate(ExecutionContext executionContext, String expression) {
+    public static Date evaluateDueDate(IVariableProvider variableProvider, String expression) {
         Date baseDate;
         String durationString = null;
         if (expression != null && expression.startsWith("#")) {
             String baseDateVariableName = expression.substring(2, expression.indexOf("}"));
-            Object o = executionContext.getVariableValue(baseDateVariableName);
+            Object o = variableProvider.getValue(baseDateVariableName);
             baseDate = TypeConversionUtil.convertTo(Date.class, o);
             if (baseDate == null) {
                 throw new InternalApplicationException("Invalid base date, not defined by name '" + baseDateVariableName + "'");
             }
             int endOfELIndex = expression.indexOf("}");
-            if (endOfELIndex < (expression.length() - 1)) {
+            if (endOfELIndex < expression.length() - 1) {
                 String durationSeparator = expression.substring(endOfELIndex + 1).trim().substring(0, 1);
                 if (!(durationSeparator.equals("+") || durationSeparator.equals("-"))) {
                     throw new InternalApplicationException("Invalid duedate, + or - missing after EL");
@@ -53,11 +52,11 @@ public class ExpressionEvaluator {
 
     /**
      * Calculates duration between current moment and due date.
-     * 
+     *
      * @return duration in milliseconds, always >= 0
      */
-    public static long evaluateDuration(ExecutionContext executionContext, String expression) {
-        Date dueDate = evaluateDueDate(executionContext, expression);
+    public static long evaluateDuration(IVariableProvider variableProvider, String expression) {
+        Date dueDate = evaluateDueDate(variableProvider, expression);
         long duration = new CalendarInterval(new Date(), dueDate).getLengthInMillis();
         return duration > 0 ? duration : 0;
     }

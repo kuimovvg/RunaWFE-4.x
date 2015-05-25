@@ -50,8 +50,8 @@ public class EmailConfigParser {
                     config.getCommonProperties().put(name, value);
                 }
             }
-            if (loadPropertiesFromBaseFile && config.getCommonProperties().containsKey(EmailConfig.BASE_PROPERTY_FILE_NAME)) {
-                EmailConfig baseConfig = parseFromFile(config.getCommonProperties().get(EmailConfig.BASE_PROPERTY_FILE_NAME));
+            if (loadPropertiesFromBaseFile && config.getCommonProperties().containsKey(EmailConfig.COMMON_BASE_PROPERTY_FILE_NAME)) {
+                EmailConfig baseConfig = parseFromFile(config.getCommonProperties().get(EmailConfig.COMMON_BASE_PROPERTY_FILE_NAME));
                 config.getConnectionProperties().putAll(baseConfig.getConnectionProperties());
                 config.getHeaderProperties().putAll(baseConfig.getHeaderProperties());
             }
