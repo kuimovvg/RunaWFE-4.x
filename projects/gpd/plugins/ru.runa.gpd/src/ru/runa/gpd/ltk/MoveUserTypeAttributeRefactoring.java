@@ -17,7 +17,6 @@ import ru.runa.gpd.util.VariableUtils;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
-@SuppressWarnings("unchecked")
 public class MoveUserTypeAttributeRefactoring extends Refactoring {
     private final IFile definitionFile;
     private final ProcessDefinition processDefinition;
@@ -26,6 +25,20 @@ public class MoveUserTypeAttributeRefactoring extends Refactoring {
     private final Variable substitutionVariable;
     private final List<Refactoring> refactorings = Lists.newArrayList();
 
+    /**
+     * Move to top level variables mode
+     */
+    public MoveUserTypeAttributeRefactoring(IFile definitionFile, ProcessDefinition processDefinition, VariableUserType oldType, Variable attribute) {
+        this.definitionFile = definitionFile;
+        this.processDefinition = processDefinition;
+        this.oldType = oldType;
+        this.attribute = attribute;
+        this.substitutionVariable = null;
+    }
+
+    /**
+     * Move to another user type mode
+     */
     public MoveUserTypeAttributeRefactoring(IFile definitionFile, ProcessDefinition processDefinition, VariableUserType oldType, Variable attribute,
             Variable substitutionVariable) {
         this.definitionFile = definitionFile;
@@ -41,10 +54,17 @@ public class MoveUserTypeAttributeRefactoring extends Refactoring {
         List<Variable> result = VariableUtils.findVariablesOfTypeWithAttributeExpanded(processDefinition, oldType, attribute);
         for (Variable variable : result) {
             String rootName = variable.getName().substring(0, variable.getName().indexOf(VariableUserType.DELIM));
-            String newName = variable.getName().replace(rootName + VariableUserType.DELIM, substitutionVariable.getName() + VariableUserType.DELIM);
             String rootScriptingName = variable.getScriptingName().substring(0, variable.getScriptingName().indexOf(VariableUserType.DELIM));
-            String newScriptingName = variable.getScriptingName().replace(rootScriptingName + VariableUserType.DELIM,
-                    substitutionVariable.getScriptingName() + VariableUserType.DELIM);
+            String newName;
+            String newScriptingName;
+            if (substitutionVariable != null) {
+                newName = variable.getName().replace(rootName + VariableUserType.DELIM, substitutionVariable.getName() + VariableUserType.DELIM);
+                newScriptingName = variable.getScriptingName().replace(rootScriptingName + VariableUserType.DELIM,
+                        substitutionVariable.getScriptingName() + VariableUserType.DELIM);
+            } else {
+                newName = variable.getName().replace(rootName + VariableUserType.DELIM, "");
+                newScriptingName = variable.getScriptingName().replace(rootScriptingName + VariableUserType.DELIM, "");
+            }
             RenameVariableRefactoring refactoring = new RenameVariableRefactoring(definitionFile, processDefinition, variable, newName,
                     newScriptingName);
             status.merge(refactoring.checkInitialConditions(progressMonitor));

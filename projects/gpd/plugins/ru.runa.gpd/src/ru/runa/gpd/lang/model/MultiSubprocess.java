@@ -23,8 +23,13 @@ public class MultiSubprocess extends Subprocess implements IMultiInstancesContai
     @Override
     protected boolean isCompatibleVariables(VariableMapping mapping, Variable variable1, Variable variable2) {
         if (mapping.isMultiinstanceLink() && VariableFormatRegistry.isApplicable(variable1, List.class.getName())) {
-            VariableFormatArtifact elementArtifact = VariableFormatRegistry.getInstance().getArtifact(variable1.getFormatComponentClassNames()[0]);
-            return VariableFormatRegistry.isApplicable(variable2, elementArtifact.getJavaClassName());
+            if (variable1.getFormatComponentClassNames().length > 0) {
+                VariableFormatArtifact elementArtifact = VariableFormatRegistry.getInstance()
+                        .getArtifact(variable1.getFormatComponentClassNames()[0]);
+                return VariableFormatRegistry.isApplicable(variable2, elementArtifact.getJavaClassName());
+            }
+            // back compatibility
+            return true;
         }
         return super.isCompatibleVariables(mapping, variable1, variable2);
     }
