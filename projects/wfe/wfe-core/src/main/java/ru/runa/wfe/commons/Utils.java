@@ -68,6 +68,27 @@ public class Utils {
         }
     }
 
+    private static void releaseJmsSession(Connection connection, Session session, MessageProducer sender) {
+        if (sender != null) {
+            try {
+                sender.close();
+            } catch (Exception ignore) {
+            }
+        }
+        if (session != null) {
+            try {
+                session.close();
+            } catch (Exception ignore) {
+            }
+        }
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (Exception ignore) {
+            }
+        }
+    }
+
     public static ObjectMessage sendMessage(List<VariableMapping> data, IVariableProvider variableProvider, long ttl) {
         Connection connection = null;
         Session session = null;
@@ -77,7 +98,6 @@ public class Utils {
             connection = connectionFactory.createConnection();
             session = connection.createSession(true, Session.SESSION_TRANSACTED);
             sender = session.createProducer(bpmMessageQueue);
-
             HashMap<String, Object> map = new HashMap<String, Object>();
             for (VariableMapping variableMapping : data) {
                 if (!variableMapping.isPropertySelector()) {
@@ -99,24 +119,7 @@ public class Utils {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         } finally {
-            if (sender != null) {
-                try {
-                    sender.close();
-                } catch (Exception ignore) {
-                }
-            }
-            if (session != null) {
-                try {
-                    session.close();
-                } catch (Exception ignore) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (Exception ignore) {
-                }
-            }
+            releaseJmsSession(connection, session, sender);
         }
     }
 
@@ -129,7 +132,6 @@ public class Utils {
             connection = connectionFactory.createConnection();
             session = connection.createSession(true, Session.SESSION_TRANSACTED);
             sender = session.createProducer(emailQueue);
-
             ObjectMessage message = session.createObjectMessage(config);
             sender.send(message);
             sender.close();
@@ -138,24 +140,7 @@ public class Utils {
         } catch (Exception e) {
             throw Throwables.propagate(e);
         } finally {
-            if (sender != null) {
-                try {
-                    sender.close();
-                } catch (Exception ignore) {
-                }
-            }
-            if (session != null) {
-                try {
-                    session.close();
-                } catch (Exception ignore) {
-                }
-            }
-            if (connection != null) {
-                try {
-                    connection.close();
-                } catch (Exception ignore) {
-                }
-            }
+            releaseJmsSession(connection, session, sender);
         }
     }
 

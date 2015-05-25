@@ -68,15 +68,19 @@ public class EmailSenderBean implements MessageListener {
             EmailUtils.sendMessage(config);
             return;
         } catch (IOException e) {
+            log.warn(config);
             log.error("unable to send email: " + e);
         } catch (MessagingException e) {
+            log.warn(config);
             log.error("unable to send email: " + e);
         } catch (Exception e) {
+            log.warn(config);
             log.error("unable to send email", e);
+            if (!config.isThrowErrorOnFailure()) {
+                return;
+            }
         }
-        // TODO unused config.isThrowErrorOnFailure()
         if (SystemProperties.isEmailGuaranteedDeliveryEnabled()) {
-            // 1 minute interval retrying
             throw new MessagePostponedException("email guaranteed delivery requested");
         }
     }
