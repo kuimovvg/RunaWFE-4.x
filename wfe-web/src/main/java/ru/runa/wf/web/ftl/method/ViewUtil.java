@@ -11,6 +11,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Resources;
@@ -211,10 +213,27 @@ public class ViewUtil {
         return html;
     }
 
-    public static final String getActiveJsonTable(User user, WebHelper webHelper, WfVariable variable, String sortFieldName, boolean isMultiDim,
-            boolean isSelectable) {
-        VariableFormat formatter = FormatCommons.create(variable.getDefinition());
-        String jsonObjectsList = formatter.formatJSON(variable.getValue());
+    @SuppressWarnings("unchecked")
+    public static final String getActiveJsonTable(User user, WebHelper webHelper, WfVariable variable, Long processId, String sortFieldName,
+            boolean isMultiDim, boolean isSelectable) {
+        if (!(variable.getValue() instanceof List)) {
+            return "";
+        }
+        JSONArray objectsList = new JSONArray();
+        List<?> values = (List<?>) variable.getValue();
+        for (Object value : values) {
+            if (!(value instanceof ComplexVariable)) {
+                return "";
+            }
+            ComplexVariable cvar = (ComplexVariable) value;
+            JSONObject cvarObj = new JSONObject();
+            for (VariableDefinition varDef : cvar.getUserType().getAttributes()) {
+                WfVariable wfVar = new WfVariable(varDef, cvar.get(varDef.getName()));
+                cvarObj.put(varDef.getName(), ViewUtil.getComponentOutput(user, webHelper, processId, wfVar));
+            }
+            objectsList.add(cvarObj);
+        }
+        String jsonObjectsList = objectsList.toJSONString();
         String result = "<script src=\"/wfe/js/tidy-table.js\"></script>\n";
         InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.ActiveJsonTable.js", ViewUtil.class);
         Map<String, String> substitutions = new HashMap<String, String>();
@@ -225,7 +244,7 @@ public class ViewUtil {
         substitutions.put("SELECTABLEVALUE", String.format("%s", isSelectable));
         result += WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions);
         result += "<link rel=\"stylesheet\" type=\"text/css\" href=\"/wfe/css/tidy-table.css\">\n";
-        result += String.format("<div id='container%s'></div>", variable.getDefinition().getScriptingName());
+        result += String.format("<div id=\"container%s\"></div>", variable.getDefinition().getScriptingName());
         return result;
     }
 

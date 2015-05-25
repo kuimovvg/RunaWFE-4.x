@@ -9,7 +9,8 @@ public class DisplayListUserVariablesTag extends AbstractListUserVariables {
     protected Object executeTag() throws Exception {
         initFields();
         WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        return ViewUtil.getActiveJsonTable(user, webHelper, variable, sortField, displayMode == DisplayMode.MULTI_DIMENTIONAL_TABLE, false);
+        return ViewUtil.getActiveJsonTable(user, webHelper, variable, variableProvider.getProcessId(), sortField,
+                displayMode == DisplayMode.MULTI_DIMENTIONAL_TABLE, false);
     }
 
 }

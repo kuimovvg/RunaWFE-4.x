@@ -103,7 +103,6 @@ public class VariableLogic extends WFCommonLogic {
     }
 
     public WfVariable getVariable(User user, Long processId, String variableName) throws ProcessDoesNotExistException {
-        log.info(String.format("getVariable: user: %s processId: %s variableName: %s", user, processId, variableName));
         Process process = processDAO.getNotNull(processId);
         ProcessDefinition processDefinition = getDefinition(process);
         ExecutionContext executionContext = new ExecutionContext(processDefinition, process);
@@ -179,7 +178,6 @@ public class VariableLogic extends WFCommonLogic {
             throw new IllegalArgumentException("Key '" + qualifier + "' was provided but variable format is "
                     + variable.getDefinition().getFormatClassName());
         }
-        log.info(String.format("getVariable: variable: %s", variable));
         return variable;
     }
 
