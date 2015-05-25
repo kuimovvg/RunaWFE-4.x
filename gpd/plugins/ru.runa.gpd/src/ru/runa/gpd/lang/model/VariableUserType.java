@@ -16,7 +16,10 @@ public class VariableUserType extends EventSupport implements VariableContainer,
     private ProcessDefinition processDefinition;
 
     public VariableUserType() {
+    }
 
+    public VariableUserType(String name) {
+        setName(name);
     }
 
     public ProcessDefinition getProcessDefinition() {

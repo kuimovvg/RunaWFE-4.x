@@ -21,9 +21,12 @@ import org.eclipse.swt.widgets.Text;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.extension.handler.ParamDef.Presentation;
 import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
+import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
 
@@ -35,7 +38,7 @@ public class ParamDefComposite extends Composite {
     private MessageDisplay messageDisplay;
     private boolean helpInlined = false;
     private boolean menuForSettingVariable = false;
-    private String[] booleanValues = { Localization.getString("yes"), Localization.getString("no") };
+    private final String[] booleanValues = { Localization.getString("yes"), Localization.getString("no") };
 
     public ParamDefComposite(Composite parent, Delegable delegable, ParamDefConfig config, Map<String, String> properties) {
         super(parent, SWT.NONE);
@@ -111,7 +114,15 @@ public class ParamDefComposite extends Composite {
         }
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
-            new InsertVariableTextMenuDetectListener(textInput, delegable.getVariableNames(false, String.class.getName()));
+            List<String> variableNames;
+            if (delegable instanceof GraphElement) {
+                List<Variable> variables = ((GraphElement) delegable).getProcessDefinition().getVariables(true, true,
+                        paramDef.getFormatFiltersAsArray());
+                variableNames = VariableUtils.getVariableNamesForScripting(variables);
+            } else {
+                variableNames = delegable.getVariableNames(true, paramDef.getFormatFiltersAsArray());
+            }
+            new InsertVariableTextMenuDetectListener(textInput, variableNames);
         }
         return textInput;
     }

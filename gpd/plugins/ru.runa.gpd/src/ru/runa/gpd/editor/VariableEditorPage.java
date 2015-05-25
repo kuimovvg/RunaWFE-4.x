@@ -49,6 +49,9 @@ import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
+import ru.runa.gpd.ui.dialog.ChooseUserTypeDialog;
+import ru.runa.gpd.ui.dialog.ChooseVariableDialog;
+import ru.runa.gpd.ui.dialog.ErrorDialog;
 import ru.runa.gpd.ui.dialog.UpdateVariableNameDialog;
 import ru.runa.gpd.ui.wizard.CompactWizardDialog;
 import ru.runa.gpd.ui.wizard.VariableWizard;
@@ -66,6 +69,7 @@ public class VariableEditorPage extends EditorPartBase {
     private Button deleteButton;
     private Button copyButton;
     private Button pasteButton;
+    private Button moveToTypeAttributeButton;
 
     public VariableEditorPage(ProcessEditorBase editor) {
         super(editor);
@@ -115,6 +119,7 @@ public class VariableEditorPage extends EditorPartBase {
         moveUpButton = addButton(buttonsBar, "button.up", new MoveVariableSelectionListener(true), true);
         moveDownButton = addButton(buttonsBar, "button.down", new MoveVariableSelectionListener(false), true);
         deleteButton = addButton(buttonsBar, "button.delete", new DeleteVariableSelectionListener(), true);
+        moveToTypeAttributeButton = addButton(buttonsBar, "button.move", new MoveToTypeAttributeSelectionListener(), true);
         tableViewer.addSelectionChangedListener(new LoggingSelectionChangedAdapter() {
             @Override
             protected void onSelectionChanged(SelectionChangedEvent event) throws Exception {
@@ -150,6 +155,7 @@ public class VariableEditorPage extends EditorPartBase {
             }
         }
         enableAction(pasteButton, pasteEnabled);
+        enableAction(moveToTypeAttributeButton, selected.size() == 1);
     }
 
     public void select(Variable variable) {
@@ -355,6 +361,70 @@ public class VariableEditorPage extends EditorPartBase {
                     VariableUserType userType = newVariable.getUserType().getCopy();
                     getDefinition().addVariableUserType(userType);
                     newVariable.setUserType(userType);
+                }
+            }
+        }
+    }
+
+    private class MoveToTypeAttributeSelectionListener extends LoggingSelectionAdapter {
+
+        @Override
+        protected void onSelection(SelectionEvent e) throws Exception {
+            IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
+            Variable variable = (Variable) selection.getFirstElement();
+            ChooseUserTypeDialog dialog = new ChooseUserTypeDialog(getDefinition().getVariableUserTypes());
+            VariableUserType newType = dialog.openDialog();
+            if (newType == null) {
+                return;
+            }
+            moveToUserType(variable, newType);
+        }
+
+        private void moveToUserType(Variable variable, VariableUserType newType) throws Exception {
+            if (!newType.canUseAsAttribute(variable)) {
+                ErrorDialog.open(Localization.getString("VariableTypeEditorPage.error.attribute.move.loop"));
+                return;
+            }
+            boolean useLtk = false;
+            IResource projectRoot = editor.getDefinitionFile().getParent();
+            List<Variable> variables = editor.getDefinition().getVariables(false, false, newType.getName());
+            if (variables.size() == 0) {
+                ErrorDialog.open(Localization.getString("VariableTypeEditorPage.error.variable.move.without.substitution.variable"));
+                return;
+            }
+            if (variables.size() > 0) {
+                Variable substitutionVariable;
+                if (variables.size() > 1) {
+                    ChooseVariableDialog variableDialog = new ChooseVariableDialog(variables);
+                    substitutionVariable = variableDialog.openDialog();
+                } else {
+                    substitutionVariable = variables.get(0);
+                }
+                if (substitutionVariable == null) {
+                    return;
+                }
+                IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+                String newName = substitutionVariable.getName() + VariableUserType.DELIM + variable.getName();
+                String newScriptingName = substitutionVariable.getScriptingName() + VariableUserType.DELIM + variable.getScriptingName();
+                RenameVariableRefactoring refactoring = new RenameVariableRefactoring(editor.getDefinitionFile(), editor.getDefinition(), variable,
+                        newName, newScriptingName);
+                useLtk = refactoring.isUserInteractionNeeded();
+                if (useLtk) {
+                    RenameRefactoringWizard wizard = new RenameRefactoringWizard(refactoring);
+                    wizard.setDefaultPageTitle(Localization.getString("Refactoring.variable.name"));
+                    RefactoringWizardOpenOperation operation = new RefactoringWizardOpenOperation(wizard);
+                    int result = operation.run(Display.getCurrent().getActiveShell(), "");
+                    if (result != IDialogConstants.OK_ID) {
+                        return;
+                    }
+                }
+            }
+            newType.addAttribute(variable);
+            getDefinition().removeChild(variable);
+            if (useLtk && editor.getDefinition().getEmbeddedSubprocesses().size() > 0) {
+                IDE.saveAllEditors(new IResource[] { projectRoot }, false);
+                for (SubprocessDefinition subprocessDefinition : editor.getDefinition().getEmbeddedSubprocesses().values()) {
+                    WorkspaceOperations.saveProcessDefinition(ProcessCache.getProcessDefinitionFile(subprocessDefinition), subprocessDefinition);
                 }
             }
         }
