@@ -492,6 +492,17 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         return component;
     }
 
+    public Component getSelectedComponent() {
+        if (selectionProvider.getSelection().isEmpty()) {
+            return null;
+        }
+        Object result = ((StructuredSelection) selectionProvider.getSelection()).getFirstElement();
+        if (!(result instanceof Component)) {
+            return null;
+        }
+        return (Component) result;
+    }
+
     public Component getComponentNotNull(int componentId) {
         Component component = components.get(componentId);
         if (component == null) {

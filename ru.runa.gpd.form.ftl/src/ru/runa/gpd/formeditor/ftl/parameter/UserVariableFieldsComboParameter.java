@@ -25,8 +25,6 @@ import com.google.common.collect.Lists;
 public class UserVariableFieldsComboParameter extends ComboParameter implements IParameterChangeConsumer {
 
     private Combo combo;
-    private ComponentParameter parameter;
-    private List<String> items;
 
     @Override
     protected List<String> getOptionLabels(ComponentParameter parameter) {
@@ -40,9 +38,6 @@ public class UserVariableFieldsComboParameter extends ComboParameter implements 
 
     private List<String> getOptions(VariableUserType type) {
         List<String> result = Lists.newArrayList();
-        if (parameter == null) {
-            return result;
-        }
         if (type == null) {
             UserVariablesListComboParameter varListCombo = searchVarListCombo();
             if (varListCombo != null) {
@@ -61,23 +56,17 @@ public class UserVariableFieldsComboParameter extends ComboParameter implements 
 
     private final UserVariablesListComboParameter searchVarListCombo() {
         UserVariablesListComboParameter result = null;
-        try {
-            for (int i = 1;; i++) {
-                Component component = FormEditor.getCurrent().getComponentNotNull(i);
-                List<ComponentParameter> parameters = component.getType().getParameters();
-                if (!parameters.contains(parameter)) {
-                    continue;
-                }
-                for (ComponentParameter tested : parameters) {
-                    if (!(tested.getType() instanceof UserVariablesListComboParameter)) {
-                        continue;
-                    }
-                    result = (UserVariablesListComboParameter) tested.getType();
-                    break;
-                }
-                break;
+        Component component = FormEditor.getCurrent().getSelectedComponent();
+        if (component == null) {
+            return result;
+        }
+        List<ComponentParameter> parameters = component.getType().getParameters();
+        for (ComponentParameter tested : parameters) {
+            if (!(tested.getType() instanceof UserVariablesListComboParameter)) {
+                continue;
             }
-        } catch (RuntimeException e) {
+            result = (UserVariablesListComboParameter) tested.getType();
+            break;
         }
         return result;
     }
@@ -86,18 +75,13 @@ public class UserVariableFieldsComboParameter extends ComboParameter implements 
     public Composite createEditor(Composite parent, ComponentParameter parameter, final Object oldValue, final PropertyChangeListener listener) {
         combo = new Combo(parent, SWT.READ_ONLY);
         combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        this.parameter = parameter;
         UserVariablesListComboParameter varListCombo = searchVarListCombo();
         if (varListCombo != null) {
             varListCombo.addParameterChangeListener(this);
         }
-        if (oldValue != null && items != null) {
-            for (String variableFieldName : items) {
-                combo.add(variableFieldName);
-            }
+        rebuildComboSelection(null);
+        if (oldValue != null) {
             combo.setText((String) oldValue);
-        } else {
-            rebuildComboSelection(null);
         }
         if (listener != null) {
             combo.addSelectionListener(new LoggingSelectionAdapter() {
@@ -112,7 +96,10 @@ public class UserVariableFieldsComboParameter extends ComboParameter implements 
     }
 
     private void rebuildComboSelection(VariableUserType type) {
-        items = getOptions(type);
+        List<String> items = getOptions(type);
+        if (combo.getItemCount() > 0) {
+            combo.removeAll();
+        }
         for (String variableFieldName : items) {
             combo.add(variableFieldName);
         }

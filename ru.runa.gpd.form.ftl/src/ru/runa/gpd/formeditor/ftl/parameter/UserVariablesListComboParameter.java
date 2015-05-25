@@ -27,7 +27,7 @@ import com.google.common.collect.Maps;
 public class UserVariablesListComboParameter extends ComboParameter implements IParameterChangeCustomer {
 
     private List<IParameterChangeConsumer> consumers;
-    private Map<String, VariableUserType> variables;
+    private final Map<String, VariableUserType> variables = Maps.newHashMap();
     private Combo combo;
 
     @Override
@@ -60,7 +60,10 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
     }
 
     public final VariableUserType getSelectedVariableListGenericType() {
-        if (combo == null || combo.getText() == null || combo.getText().isEmpty()) {
+        if (combo == null || combo.isDisposed() || combo.getText() == null || combo.getText().isEmpty()) {
+            return null;
+        }
+        if (variables == null) {
             return null;
         }
         return variables.get(combo.getText());
@@ -69,7 +72,6 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
     @Override
     public Composite createEditor(Composite parent, ComponentParameter parameter, final Object oldValue, final PropertyChangeListener listener) {
         consumers = Lists.newArrayList();
-        variables = Maps.newHashMap();
         combo = new Combo(parent, SWT.READ_ONLY);
         combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         for (String variableName : getOptions(parameter)) {
