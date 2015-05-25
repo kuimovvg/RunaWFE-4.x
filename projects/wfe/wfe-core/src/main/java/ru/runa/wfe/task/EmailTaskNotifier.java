@@ -17,14 +17,10 @@ import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.logic.ITaskNotifier;
 import ru.runa.wfe.user.Executor;
-import ru.runa.wfe.var.ComplexVariable;
-import ru.runa.wfe.var.DelegableVariableProvider;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.MapDelegableVariableProvider;
-import ru.runa.wfe.var.ScriptingComplexVariable;
-import ru.runa.wfe.var.VariableDefinition;
+import ru.runa.wfe.var.ScriptingVariableProvider;
 
-import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
@@ -82,29 +78,4 @@ public class EmailTaskNotifier implements ITaskNotifier {
         }
     }
 
-    public static class ScriptingVariableProvider extends DelegableVariableProvider {
-        private final ProcessDefinition processDefinition;
-
-        public ScriptingVariableProvider(ProcessDefinition processDefinition, IVariableProvider variableProvider) {
-            super(variableProvider);
-            this.processDefinition = processDefinition;
-        }
-
-        @Override
-        public Object getValue(String variableName) {
-            Object object = super.getValue(variableName);
-            if (object == null) {
-                for (VariableDefinition definition : processDefinition.getVariables()) {
-                    if (Objects.equal(variableName, definition.getScriptingName())) {
-                        object = super.getValue(definition.getName());
-                        break;
-                    }
-                }
-            }
-            if (object instanceof ComplexVariable) {
-                object = new ScriptingComplexVariable((ComplexVariable) object);
-            }
-            return object;
-        }
-    }
 }
