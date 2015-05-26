@@ -8,7 +8,7 @@ import ru.runa.gpd.util.WorkspaceOperations;
 public class NewBotTaskAction extends BaseActionDelegate {
     @Override
     public void run(IAction action) {
-        WorkspaceOperations.createNewBotTask(getStructuredSelection(), false);
+        WorkspaceOperations.createNewBotTask(getStructuredSelection());
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.runa.gpd.editor;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -55,7 +57,6 @@ import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.PropertyNames;
-import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
@@ -72,7 +73,6 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
     private BotTask botTask;
     private boolean dirty;
     private IFile botTaskFile;
-    private boolean extendedMode;
     private Composite editorComposite;
     private Text handlerText;
     private Button chooseTaskHandlerClassButton;
@@ -101,14 +101,11 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
     }
 
-    public void setExtendedMode(boolean extendedMode) {
-        this.extendedMode = extendedMode;
-    }
-
     @Override
     public void doSave(IProgressMonitor monitor) {
         try {
             WorkspaceOperations.saveBotTask(botTaskFile, botTask);
+            setTitleImage(SharedImages.getImage(botTask.getType() == BotTaskType.SIMPLE ? "icons/bot_task.gif" : "icons/bot_task_formal.gif"));
             setDirty(false);
         } catch (Exception e) {
             PluginLogger.logError(e);
@@ -166,22 +163,19 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         if (botTask.getType() == BotTaskType.PARAMETERIZED) {
             createConfTableViewer(composite, ParamDefGroup.NAME_INPUT);
             createConfTableViewer(composite, ParamDefGroup.NAME_OUTPUT);
-        } else if (botTask.getType() == BotTaskType.EXTENDED) {
+        } else {
             ScrolledComposite scrolledComposite = new ScrolledComposite(composite, SWT.V_SCROLL | SWT.BORDER);
             scrolledComposite.setExpandHorizontal(true);
             scrolledComposite.setExpandVertical(true);
             scrolledComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+
             Composite innerComposite = new Composite(scrolledComposite, SWT.NONE);
             innerComposite.setLayout(new GridLayout());
-            createConfTableViewer(innerComposite, ParamDefGroup.NAME_INPUT);
-            createConfTableViewer(innerComposite, ParamDefGroup.NAME_OUTPUT);
+            createParamteresFields(composite, innerComposite);
             createConfigurationFields(innerComposite);
             createConfigurationArea(innerComposite);
             scrolledComposite.setMinSize(SWT.DEFAULT, 700);
             scrolledComposite.setContent(innerComposite);
-        } else {
-            createConfigurationFields(composite);
-            createConfigurationArea(composite);
         }
         populateFields();
         composite.layout(true, true);
@@ -208,10 +202,6 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 String className = dialog.openDialog();
                 if (className != null) {
                     boolean taskHandlerParameterized = BotTaskUtils.isTaskHandlerParameterized(className);
-                    if (extendedMode && taskHandlerParameterized) {
-                        Dialogs.warning(Localization.getString("BotTaskEditor.parameterizedTaskInExtendedModeNotAllowed"));
-                        return;
-                    }
                     handlerText.setText(className);
                     botTask.setDelegationClassName(className);
                     if (taskHandlerParameterized) {
@@ -219,7 +209,11 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                         String xml = XmlUtil.getParamDefConfig(provider.getBundle(), className);
                         botTask.setParamDefConfig(ParamDefConfig.parse(xml));
                         botTask.setType(BotTaskType.PARAMETERIZED);
+                    } else {
+                        botTask.setType(BotTaskType.EXTENDED);
+                        botTask.setParamDefConfig(BotTaskUtils.createEmptyParamDefConfig());
                     }
+                    botTask.setDelegationConfiguration("");
                     setDirty(true);
                     rebuildView(parent);
                 }
@@ -227,17 +221,66 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         });
     }
 
+    private void createParamteresFields(final Composite mainComposite, Composite parent) {
+        Composite dynaComposite = new Composite(parent, SWT.NONE);
+        dynaComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        dynaComposite.setLayout(new GridLayout(3, false));
+        Label label = new Label(dynaComposite, SWT.NONE);
+        GridData gridData = new GridData(GridData.BEGINNING);
+        gridData.widthHint = 150;
+        label.setLayoutData(gridData);
+        label.setText(Localization.getString("BotTaskEditor.params"));
+        label.setToolTipText(Localization.getString("BotTaskEditor.formalParams"));
+        Button button = new Button(dynaComposite, SWT.NONE);
+        button.setLayoutData(new GridData(SWT.BEGINNING));
+        button.setText(Localization.getString(botTask.getType() == BotTaskType.SIMPLE ? "button.add" : "button.delete"));
+        button.addSelectionListener(new LoggingSelectionAdapter() {
+            @Override
+            protected void onSelection(SelectionEvent e) throws Exception {
+                switch (botTask.getType()) {
+                case SIMPLE:
+                    botTask.setType(BotTaskType.EXTENDED);
+                    botTask.setParamDefConfig(BotTaskUtils.createEmptyParamDefConfig());
+                    break;
+                default:
+                case EXTENDED:
+                    botTask.setType(BotTaskType.SIMPLE);
+                    botTask.setParamDefConfig(null);
+                    break;
+                }
+                setDirty(true);
+                rebuildView(mainComposite);
+            }
+        });
+        button.setEnabled(!botTask.getDelegationClassName().isEmpty());
+        button = new Button(dynaComposite, SWT.NONE);
+        button.setImage(SharedImages.getImage("icons/bot_task_formal.gif"));
+        button.setToolTipText(Localization.getString("label.menu.help"));
+        button.addSelectionListener(new LoggingSelectionAdapter() {
+            @Override
+            protected void onSelection(SelectionEvent e) throws Exception {
+                PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser()
+                        .openURL(new URL(Localization.getString("BotTaskEditor.formalParams.help")));
+            }
+        });
+
+        if (botTask.getType() == BotTaskType.EXTENDED) {
+            createConfTableViewer(parent, ParamDefGroup.NAME_INPUT);
+            createConfTableViewer(parent, ParamDefGroup.NAME_OUTPUT);
+        }
+    }
+
     private void createConfigurationFields(Composite parent) {
         Composite dynaComposite = new Composite(parent, SWT.NONE);
         dynaComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         dynaComposite.setLayout(new GridLayout(2, false));
-        GridData gridData;
         Label label = new Label(dynaComposite, SWT.NONE);
-        gridData = new GridData(GridData.BEGINNING);
+        GridData gridData = new GridData(GridData.BEGINNING);
         gridData.widthHint = 150;
         label.setLayoutData(gridData);
         label.setText(Localization.getString("BotTaskEditor.configuration"));
         editConfigurationButton = new Button(dynaComposite, SWT.NONE);
+        editConfigurationButton.setLayoutData(new GridData(GridData.BEGINNING));
         editConfigurationButton.setText(Localization.getString("button.change"));
         editConfigurationButton.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
@@ -251,7 +294,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 }
             }
         });
-        editConfigurationButton.setEnabled(botTask.getDelegationClassName() != null);
+        editConfigurationButton.setEnabled(!botTask.getDelegationClassName().isEmpty());
     }
 
     private void createConfigurationArea(Composite parent) {
@@ -304,6 +347,12 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         confTableViewer.setLabelProvider(new TableLabelProvider());
         confTableViewer.setContentProvider(new ArrayContentProvider());
         setTableInput(parameterType);
+        if ((botTask.getType() != BotTaskType.PARAMETERIZED)) {
+            createConfTableButtons(dynaConfComposite, confTableViewer, parameterType);
+        }
+    }
+
+    private void createConfTableButtons(Composite dynaConfComposite, TableViewer confTableViewer, final String parameterType) {
         Composite buttonArea = new Composite(dynaConfComposite, SWT.NONE);
         buttonArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttonArea.setLayout(new GridLayout(3, false));

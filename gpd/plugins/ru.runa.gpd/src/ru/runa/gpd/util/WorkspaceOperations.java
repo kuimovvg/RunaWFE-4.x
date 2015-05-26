@@ -388,8 +388,8 @@ public class WorkspaceOperations {
         }
     }
 
-    public static void createNewBotTask(IStructuredSelection selection, boolean parameterized) {
-        NewBotTaskWizard wizard = new NewBotTaskWizard(parameterized);
+    public static void createNewBotTask(IStructuredSelection selection) {
+        NewBotTaskWizard wizard = new NewBotTaskWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
         dialog.open();
