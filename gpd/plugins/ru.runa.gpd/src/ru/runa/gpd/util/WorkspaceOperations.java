@@ -256,6 +256,7 @@ public class WorkspaceOperations {
                         sp.setSubProcessName(newName);
                         IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
                         saveProcessDefinition(definitionFile, definition);
+                        ProcessCache.invalidateProcessDefinition(definitionFile);
                         break;
                     }
                 }
@@ -265,6 +266,7 @@ public class WorkspaceOperations {
                             sp.setSubProcessName(newName);
                             IFile file = IOUtils.getFile(subdefinition.getId() + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
                             saveProcessDefinition(file, subdefinition);
+                            ProcessCache.invalidateProcessDefinition(file);
                             break;
                         }
                     }
@@ -272,6 +274,7 @@ public class WorkspaceOperations {
                 subprocessDefinition.setName(newName);
                 
                 saveProcessDefinition(subdefinitionFile, subprocessDefinition);
+                ProcessCache.invalidateProcessDefinition(subdefinitionFile);
                 refreshResource(definitionFolder);
             } catch (Exception e) {
                 PluginLogger.logError(e);
