@@ -2036,15 +2036,6 @@
                toolbarPath="normal/processes"
                tooltip="%tooltip.menu.newProject"/>
          <action
-         		class="ru.runa.gpd.ui.action.NewBotTaskWithFormalAction"
-         		icon="icons/bot_task_formal.gif"
-         		id="ru.runa.gpd.ui.newBotTaskWithFormal"
-         		label="%label.menu.newBotTaskWithFormal"
-         		menubarPath="file/newFile/common"
-         		style="push"
-                toolbarPath="normal/bots"
-                tooltip="%tooltip.menu.newBotTaskWithFormal"/>
-         <action
          		class="ru.runa.gpd.ui.action.NewBotTaskAction"
          		icon="icons/bot_task.gif"
          		id="ru.runa.gpd.ui.action.newBotTask"

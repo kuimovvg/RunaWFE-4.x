@@ -168,13 +168,7 @@ public class BotExplorerTreeView extends ViewPart implements ISelectionListener 
             manager.add(new Action(Localization.getString("BotExplorerTreeView.menu.label.newBotTask"), SharedImages.getImageDescriptor("icons/bot_task.gif")) {
                 @Override
                 public void run() {
-                    WorkspaceOperations.createNewBotTask(selection, false);
-                }
-            });
-            manager.add(new Action(Localization.getString("BotExplorerTreeView.menu.label.newBotTaskWithFormal"), SharedImages.getImageDescriptor("icons/bot_task_formal.gif")) {
-                @Override
-                public void run() {
-                    WorkspaceOperations.createNewBotTask(selection, true);
+                    WorkspaceOperations.createNewBotTask(selection);
                 }
             });
             manager.add(new Action(Localization.getString("BotExplorerTreeView.menu.label.importBotTask"), SharedImages.getImageDescriptor("icons/import_bot.gif")) {

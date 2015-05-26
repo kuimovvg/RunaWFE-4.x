@@ -22,12 +22,10 @@ import ru.runa.gpd.util.WorkspaceOperations;
 
 public class NewBotTaskWizard extends Wizard implements INewWizard {
     private NewBotTaskWizardPage page;
-    private final boolean extendedMode;
     private IStructuredSelection selection;
     private IWorkbench workbench;
 
-    public NewBotTaskWizard(boolean extendedMode) {
-        this.extendedMode = extendedMode;
+    public NewBotTaskWizard() {
     }
 
     @Override
@@ -47,15 +45,12 @@ public class NewBotTaskWizard extends Wizard implements INewWizard {
                         monitor.beginTask("processing", 4);
                         IFolder botFolder = page.getBotFolder();
                         BotTask botTask = new BotTask(botFolder.getProject().getName(), botFolder.getName(), page.getBotTaskName());
-                        if (extendedMode) {
-                            botTask.setType(BotTaskType.EXTENDED);
-                            botTask.setParamDefConfig(BotTaskUtils.createEmptyParamDefConfig());
-                        }
+                        botTask.setType(BotTaskType.EXTENDED);
+                        botTask.setParamDefConfig(BotTaskUtils.createEmptyParamDefConfig());
                         IFile botTaskFile = botFolder.getFile(botTask.getName());
                         WorkspaceOperations.saveBotTask(botTaskFile, botTask);
                         monitor.worked(1);
-                        BotTaskEditor editor = (BotTaskEditor) IDE.openEditor(getActivePage(), botTaskFile, BotTaskEditor.ID, true);
-                        editor.setExtendedMode(extendedMode);
+                        IDE.openEditor(getActivePage(), botTaskFile, BotTaskEditor.ID, true);
                         monitor.done();
                     } catch (Exception e) {
                         throw new InvocationTargetException(e);
