@@ -1,126 +1,162 @@
 
 var jsonInputArrayUNIQUENAME = JSONDATATEMPLATE;
-var isMultiDimentionalUNIQUENAME = DIMENTIONALVALUE;
-var sortFieldNameUNIQUENAME = "SORTFIELDNAMEVALUE";
 
 $(document).ready(function() {
 	try {
-		console.debug("ready: isMultiDimentional: %s", isMultiDimentionalUNIQUENAME);
-		convertStringsToJsonObjects();
-		if (isMultiDimentionalUNIQUENAME) {
-			makeAsMultiDimentionalTable();
-		} else {
-			makeAsTwoDimentionalTable();
-		}
+		
+		$(this).tableConstructorUNIQUENAME(jsonInputArrayUNIQUENAME, "SORTFIELDNAMEVALUE", DIMENTIONALVALUE);
+		
 	} catch(e) {
 		console.error("ready: %s", e.message);
 	}
 });
 
-function getPreferedTitles() {
-	var titles = [];
-	for (var i = 0; i < jsonInputArrayUNIQUENAME.length; i++) {
-		for (var field in jsonInputArrayUNIQUENAME[i]) {
-			if ($.inArray(field, titles) == -1) {
-				titles.push(field);
-			}
-		}
-	}
-	return titles;
-}
-
-function makeAsTwoDimentionalTable() {
-	var titles = getPreferedTitles();
-	var columns = [];
-	try {
-		for (var i = 0; i < jsonInputArrayUNIQUENAME.length; i++) {
-			var row = [];
-			for (var j = 0; j < titles.length; j++) {
-				if (jsonInputArrayUNIQUENAME[i][titles[j]]) {
-					row.push(jsonInputArrayUNIQUENAME[i][titles[j]]);
-				} else {
-					row.push("");
+(function($) {
+	
+	
+	var methods = {
+	
+		"init" : function (input, sort, dim) {
+			
+			console.info("init: input: %s sort: %s dim: %s", input, sort, dim);
+			
+			$(this).data({
+				jsonInputArray : input,	
+				sortFieldName : sort,
+				containerName : "#containerUNIQUENAME"
+				});
+			
+			try {
+				for (var i = 0; i < $(this).data().jsonInputArray.length; i++) {
+					console.debug("constructor: entry: %s", $(this).data().jsonInputArray[i]);
+					if (typeof $(this).data().jsonInputArray[i] != "string") {
+						continue;
+					}
+					$(this).data().jsonInputArray[i] = JSON.parse($(this).data().jsonInputArray[i]);
 				}
+			} catch(e) {
+				console.error("init: %s", e.message);
 			}
-			columns.push(row);
-		}
-		$("#containerUNIQUENAME").TidyTable({
-			enableCheckbox: SELECTABLEVALUE,
-			enableMenu:     false,
-			reverseSortDir: false,
-			responsive:     false
-		},
-		{
-			columnTitles: titles,
-			columnValues: columns
-		});
-	} catch(e) {
-		console.error("makeAsTwoDimentionalTable: %s", e.message);
-	}
-}
-
-function makeAsMultiDimentionalTable() {
-	var titles = [];
-	var columns = [];
-	var fields = getPreferedTitles();
-	try {
-		console.debug("makeAsMultiDimentionalTable: sortFieldName: %s length: %s", sortFieldNameUNIQUENAME, jsonInputArrayUNIQUENAME.length);
-		if (sortFieldNameUNIQUENAME != "null" && $.inArray(sortFieldNameUNIQUENAME, fields) != -1) {
-			titles.push(sortFieldNameUNIQUENAME);
-			titles.push("");
-		}
-		console.debug("makeAsMultiDimentionalTable: titles: %s", titles);
-		for (var i = 0; i < jsonInputArrayUNIQUENAME.length; i++) {
-			var subrows = [];
-			for (var j = 0; j < fields.length; j++) {
-				if (jsonInputArrayUNIQUENAME[i][fields[j]]) {
-					subrows.push([fields[j], jsonInputArrayUNIQUENAME[i][fields[j]]]);
-				} else {
-					subrows.push([fields[j], ""]);
-				}
-			}
-			var subtable = $("<div>").TidyTable({
-				enableCheckbox: false,
-				enableMenu:     false,
-				reverseSortDir: false,
-				responsive:     false
-			},
-			{
-				columnTitles: [],
-				columnValues: subrows
-			});
-			if (sortFieldNameUNIQUENAME != "null" && jsonInputArrayUNIQUENAME[i][sortFieldNameUNIQUENAME]) {
-				columns.push([jsonInputArrayUNIQUENAME[i][sortFieldNameUNIQUENAME], subtable]);
+			
+			if (dim) {
+				$(this).tableConstructorUNIQUENAME("makeAsMultiDimentionalTable");
 			} else {
-				columns.push([subtable]);
+				$(this).tableConstructorUNIQUENAME("makeAsTwoDimentionalTable");
 			}
-			console.debug("makeAsMultiDimentionalTable: subtable: %s", subtable);
-		}
-		$("#containerUNIQUENAME").TidyTable({
-			enableCheckbox: SELECTABLEVALUE,
-			enableMenu:     false,
-			reverseSortDir: false,
-			responsive:     false
 		},
-		{
-			columnTitles: titles,
-			columnValues: columns
-		});
-	} catch(e) {
-		console.error("makeAsMultiDimentionalTable: %s", e.message);
-	}
-}
-
-function convertStringsToJsonObjects() {
-	try {
-		for (var i = 0; i < jsonInputArrayUNIQUENAME.length; i++) {
-			console.debug("convertStringsToJsonObjects: entry: %s", jsonInputArrayUNIQUENAME[i]);
-			if (typeof jsonInputArrayUNIQUENAME[i] != 'string') {
-				continue;
+		
+		"getPreferedTitles" : function () {
+			
+			var titles = [];
+			for (var i = 0; i < $(this).data().jsonInputArray.length; i++) {
+				for (var field in $(this).data().jsonInputArray[i]) {
+					if ($.inArray(field, titles) == -1) {
+						titles.push(field);
+					}
+				}
 			}
-			jsonInputArrayUNIQUENAME[i] = JSON.parse(jsonInputArrayUNIQUENAME[i]);
+			return titles;
+		},
+		
+		"makeAsTwoDimentionalTable" : function () {
+			
+			var titles = $(this).tableConstructorUNIQUENAME("getPreferedTitles");
+			var columns = [];
+			try {
+				for (var i = 0; i < $(this).data().jsonInputArray.length; i++) {
+					var row = [];
+					for (var j = 0; j < titles.length; j++) {
+						if ($(this).data().jsonInputArray[i][titles[j]]) {
+							row.push($(this).data().jsonInputArray[i][titles[j]]);
+						} else {
+							row.push("");
+						}
+					}
+					columns.push(row);
+				}
+				$($(this).data().containerName).TidyTable({
+					enableCheckbox: SELECTABLEVALUE,
+					enableMenu:     false,
+					reverseSortDir: false,
+					responsive:     false
+				},
+				{
+					columnTitles: titles,
+					columnValues: columns
+				});
+			} catch(e) {
+				console.error("makeAsTwoDimentionalTable: %s", e.message);
+			}
+		},
+		
+		"makeAsMultiDimentionalTable" : function () {
+			
+			var titles = [];
+			var columns = [];
+			var fields = $(this).tableConstructorUNIQUENAME("getPreferedTitles");
+			try {
+				console.debug("makeAsMultiDimentionalTable: sortFieldName: %s length: %s", 
+									$(this).data().sortFieldName, 
+									$(this).data().jsonInputArray.length);
+				if ($(this).data().sortFieldName != "null" && $.inArray($(this).data().sortFieldName, fields) != -1) {
+					titles.push($(this).data().sortFieldName);
+					titles.push("");
+				}
+				console.debug("makeAsMultiDimentionalTable: titles: %s", titles);
+				for (var i = 0; i < $(this).data().jsonInputArray.length; i++) {
+					var subrows = [];
+					for (var j = 0; j < fields.length; j++) {
+						if ($(this).data().jsonInputArray[i][fields[j]]) {
+							subrows.push([fields[j], $(this).data().jsonInputArray[i][fields[j]]]);
+						} else {
+							subrows.push([fields[j], ""]);
+						}
+					}
+					var subtable = $("<div>").TidyTable({
+						enableCheckbox: false,
+						enableMenu:     false,
+						reverseSortDir: false,
+						responsive:     false
+					},
+					{
+						columnTitles: [],
+						columnValues: subrows
+					});
+					if ($(this).data().sortFieldName != "null" && $(this).data().jsonInputArray[i][$(this).data().sortFieldName]) {
+						columns.push([$(this).data().jsonInputArray[i][$(this).data().sortFieldName], subtable]);
+					} else {
+						columns.push([subtable]);
+					}
+					console.debug("makeAsMultiDimentionalTable: subtable: %s", subtable);
+				}
+				$($(this).data().containerName).TidyTable({
+					enableCheckbox: SELECTABLEVALUE,
+					enableMenu:     false,
+					reverseSortDir: false,
+					responsive:     false
+				},
+				{
+					columnTitles: titles,
+					columnValues: columns
+				});
+			} catch(e) {
+				console.error("makeAsMultiDimentionalTable: %s", e.message);
+			}
 		}
-	} catch(e) {
-		console.error("convertStringsToJsonObjects: %s", e.message);
-	}
-}
+	
+	};
+	
+	$.fn.tableConstructorUNIQUENAME = function(method) {
+		if (methods[method]) {
+			return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+		}
+		else
+		if (typeof method === 'object' || !method) {
+			return methods.init.apply(this, arguments);
+		}
+		else {
+			console.error('call: method: %s does not exist', method);
+		}
+	};
+	
+})(jQuery);

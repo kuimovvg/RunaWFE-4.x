@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,6 +64,8 @@ import com.google.common.collect.Maps;
 
 public class ViewUtil {
     private static final Log log = LogFactory.getLog(ViewUtil.class);
+
+    private static final Random random = new Random(System.currentTimeMillis());
 
     public static String createExecutorSelect(User user, WfVariable variable) {
         return createExecutorSelect(user, variable.getDefinition().getName(), variable.getDefinition().getFormatNotNull(), variable.getValue(), true);
@@ -233,18 +236,19 @@ public class ViewUtil {
             }
             objectsList.add(cvarObj);
         }
+        String uniquename = String.format("%s_%x", variable.getDefinition().getScriptingNameWithoutDots(), random.nextInt());
         String jsonObjectsList = objectsList.toJSONString();
         String result = "<script src=\"/wfe/js/tidy-table.js\"></script>\n";
         InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.ActiveJsonTable.js", ViewUtil.class);
         Map<String, String> substitutions = new HashMap<String, String>();
-        substitutions.put("UNIQUENAME", variable.getDefinition().getScriptingName());
+        substitutions.put("UNIQUENAME", uniquename);
         substitutions.put("JSONDATATEMPLATE", jsonObjectsList);
         substitutions.put("SORTFIELDNAMEVALUE", String.format("%s", sortFieldName));
         substitutions.put("DIMENTIONALVALUE", String.format("%s", isMultiDim));
         substitutions.put("SELECTABLEVALUE", String.format("%s", isSelectable));
         result += WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions);
         result += "<link rel=\"stylesheet\" type=\"text/css\" href=\"/wfe/css/tidy-table.css\">\n";
-        result += String.format("<div id=\"container%s\"></div>", variable.getDefinition().getScriptingName());
+        result += String.format("<div id=\"container%s\"></div>", uniquename);
         return result;
     }
 
