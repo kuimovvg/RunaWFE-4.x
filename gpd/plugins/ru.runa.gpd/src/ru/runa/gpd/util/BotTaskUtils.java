@@ -215,10 +215,12 @@ public class BotTaskUtils {
                 IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
                 // Copy templates if them exist
                 String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
-                if (!Strings.isNullOrEmpty(oldEmbeddedFileName) && oldEmbeddedFileName.startsWith(oldName)) {
+                botFileProvider.taskRenamed(botTask, oldName, newName);
+                botTask.setName(newName);
+                if (!Strings.isNullOrEmpty(oldEmbeddedFileName) && EmbeddedFileUtils.isBotTaskFileName(oldEmbeddedFileName, oldName)) {
                     IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
                     if (embeddedFile.exists()) {
-                        String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
+                        String newEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
                         IPath newEmbeddedFilePath = targetBotFolder.getFullPath().append(newEmbeddedFileName);
                         if (botTaskFile.exists()) {
                             embeddedFile.copy(newEmbeddedFilePath, true, null);
@@ -227,7 +229,6 @@ public class BotTaskUtils {
                         }
                     }
                 }
-                botFileProvider.taskRenamed(botTask, oldName, newName);
             }
         }
         botTask.setName(newName);
