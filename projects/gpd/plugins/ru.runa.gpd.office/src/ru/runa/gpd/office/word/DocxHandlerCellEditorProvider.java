@@ -269,8 +269,10 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         String oldPath = inputElement.attributeValue("path");
         if (!Strings.isNullOrEmpty(oldPath) && EmbeddedFileUtils.isBotTaskFile(oldPath)) {
             String oldEmbeddedFileName = EmbeddedFileUtils.getBotTaskFileName(oldPath);
-            if (oldEmbeddedFileName.startsWith(oldName)) {
-                String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
+            if (EmbeddedFileUtils.isBotTaskFileName(oldEmbeddedFileName, botTask.getName())) {
+                oldName = EmbeddedFileUtils.generateBotTaskEmbeddedFileName(oldName);
+                String newEmbeddedFileName = EmbeddedFileUtils.generateBotTaskEmbeddedFileName(newName)
+                        + oldEmbeddedFileName.substring(oldName.length());
                 String newPath = EmbeddedFileUtils.getBotTaskFilePath(newEmbeddedFileName);
                 inputElement.addAttribute("path", newPath);
             }
