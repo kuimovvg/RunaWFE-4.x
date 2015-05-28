@@ -4,16 +4,28 @@ import java.util.Map;
 
 import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.collect.Maps;
+
 public class MapDelegableVariableProvider extends DelegableVariableProvider {
-    private final Map<String, Object> values;
+    private final Map<String, Object> values = Maps.newHashMap();
 
     public MapDelegableVariableProvider(Map<String, ? extends Object> variables, IVariableProvider delegate) {
         super(delegate);
-        this.values = (Map<String, Object>) variables;
+        for (Map.Entry<String, Object> entry : ((Map<String, Object>) variables).entrySet()) {
+            add(entry.getKey(), entry.getValue());
+        }
     }
 
     public void add(String variableName, Object object) {
         values.put(variableName, object);
+        if (object instanceof ComplexVariable) {
+            Map<String, Object> expanded = ((ComplexVariable) object).expand(variableName);
+            for (Map.Entry<String, Object> entry : expanded.entrySet()) {
+                if (entry.getValue() != null) {
+                    values.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
     }
 
     public void add(WfVariable variable) {

@@ -179,9 +179,9 @@ public class ExecutionContext {
         }
         if (value instanceof ComplexVariable) {
             ComplexVariable complexVariable = (ComplexVariable) value;
-            for (Map.Entry<String, Object> entry : complexVariable.entrySet()) {
-                String fullName = name + "." + entry.getKey();
-                setVariableValue(fullName, entry.getValue());
+            Map<String, Object> expanded = complexVariable.expand(name);
+            for (Map.Entry<String, Object> entry : expanded.entrySet()) {
+                setVariableValue(entry.getKey(), entry.getValue());
             }
             return;
         }

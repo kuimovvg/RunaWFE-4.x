@@ -9,6 +9,7 @@ import java.util.Map;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.MapDelegableVariableProvider;
 
 /**
  * Base class for field validators.
@@ -23,7 +24,8 @@ public abstract class FieldValidator extends Validator {
             Map<String, Object> variables, IVariableProvider variableProvider) {
         super.init(user, processDefinition, config, validatorContext, variables, variableProvider);
         fieldName = config.getParams().get(FIELD_NAME_PARAMETER_NAME);
-        fieldValue = variables.get(fieldName);
+        IVariableProvider newVariableProvider = new MapDelegableVariableProvider(variables, variableProvider);
+        fieldValue = newVariableProvider.getValue(fieldName);
     }
 
     public String getFieldName() {
