@@ -69,7 +69,7 @@ public class EmailUtils {
         }
         config.checkValid();
         if (Strings.isNullOrEmpty(config.getHeaderProperties().get(EmailConfig.HEADER_TO))) {
-            log.warn("Ignored message with empty 'To' recipients");
+            log.warn("Ignored message with empty 'To' recipients: " + config);
             return;
         }
         Properties props = new Properties();
