@@ -24,7 +24,7 @@ public abstract class FieldValidator extends Validator {
             Map<String, Object> variables, IVariableProvider variableProvider) {
         super.init(user, processDefinition, config, validatorContext, variables, variableProvider);
         fieldName = config.getParams().get(FIELD_NAME_PARAMETER_NAME);
-        IVariableProvider newVariableProvider = new MapDelegableVariableProvider(variables, variableProvider);
+        IVariableProvider newVariableProvider = new MapDelegableVariableProvider(variables, null);
         fieldValue = newVariableProvider.getValue(fieldName);
     }
 
