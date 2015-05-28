@@ -173,8 +173,7 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 						var val = vals[j][k];
 
 						var col = $('<td></td>')
-							.append(val)
-							.attr('title', val);
+							.append(val);
 						row.append(col);
 
 						// post-process table column HTML object
@@ -435,6 +434,12 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 	 * @protected
 	 */
 	function cmpAny(a, b) {
+		if (typeof a == 'string' && typeof b == 'string') {
+			var r = b - a;
+			if (!isNaN(r)) {
+				return r;
+			}
+		}
 		return (a > b) ? 1 : (a < b) ? -1 : 0;
 	}
 

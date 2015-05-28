@@ -13,7 +13,6 @@ import java.util.Random;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import ru.runa.common.WebResources;
 import ru.runa.common.web.Resources;
@@ -27,9 +26,11 @@ import ru.runa.wfe.commons.web.WebHelper;
 import ru.runa.wfe.commons.web.WebUtils;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
+import ru.runa.wfe.service.client.FileVariableProxy;
 import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.User;
+import ru.runa.wfe.util.OrderedJSONObject;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.VariableDefinition;
@@ -229,10 +230,21 @@ public class ViewUtil {
                 return "";
             }
             ComplexVariable cvar = (ComplexVariable) value;
-            JSONObject cvarObj = new JSONObject();
+            OrderedJSONObject cvarObj = new OrderedJSONObject();
             for (VariableDefinition varDef : cvar.getUserType().getAttributes()) {
-                WfVariable wfVar = new WfVariable(varDef, cvar.get(varDef.getName()));
-                cvarObj.put(varDef.getName(), ViewUtil.getComponentOutput(user, webHelper, processId, wfVar));
+                if (cvar.get(varDef.getName()) == null) {
+                    cvarObj.put(varDef.getName(), "");
+                    continue;
+                }
+                VariableFormat format = FormatCommons.create(varDef);
+                if (format instanceof FileFormat) {
+                    FileVariableProxy proxy = (FileVariableProxy) cvar.get(varDef.getName());
+                    cvarObj.put(varDef.getName(), getFileComponent(webHelper, proxy.getName(), proxy, false));
+                } else if (format instanceof ExecutorFormat) {
+                    cvarObj.put(varDef.getName(), createExecutorSelect(user, varDef.getName(), format, cvar.get(varDef.getName()), false));
+                } else {
+                    cvarObj.put(varDef.getName(), format.format(cvar.get(varDef.getName())));
+                }
             }
             objectsList.add(cvarObj);
         }

@@ -32,14 +32,17 @@ table.tidy_table tr.check_off {
 
 table.tidy_table th {
 	background-color: #DDDDDD;
+	color: #000040
 }
 
 table.tidy_table th.sort_asc {
-	background: #EEEEEE url( images/arrow_asc.gif ) no-repeat right center;
+	background: #EEEEEE url("images/arrow_asc.gif") no-repeat right center;
+	color: Black
 }
 
 table.tidy_table th.sort_desc {
-	background: #EEEEEE url( images/arrow_desc.gif ) no-repeat right center;
+	background: #EEEEEE url("images/arrow_desc.gif") no-repeat right center;
+	color: Black
 }
 
 table.tidy_table th,
