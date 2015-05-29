@@ -2,6 +2,21 @@
 var jsonInputArrayUNIQUENAME = JSONDATATEMPLATE;
 
 $(document).ready(function() {
+	
+	if (!window.console) {
+		
+		window.console = {};
+		
+		var safeconsole = {
+			log : function(msg) {},	
+			info : function(msg) {},
+			debug : function(msg) {},
+			error : function(msg) {}
+		};
+			
+		$.extend(window.console, safeconsole);
+	}
+	
 	try {
 		
 		$(this).tableConstructorUNIQUENAME(jsonInputArrayUNIQUENAME, "SORTFIELDNAMEVALUE", DIMENTIONALVALUE);
