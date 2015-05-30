@@ -255,6 +255,10 @@ public class WorkspaceOperations {
                     if (sp.getSubProcessName().equals(subprocessDefinition.getName())) {
                         sp.setSubProcessName(newName);
                         IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
+                        editor = page.findEditor(new FileEditorInput(definitionFile));
+                        if (editor != null) {
+                            page.closeEditor(editor, false);
+                        }
                         saveProcessDefinition(definitionFile, definition);
                         ProcessCache.invalidateProcessDefinition(definitionFile);
                         break;
@@ -265,6 +269,10 @@ public class WorkspaceOperations {
                         if (sp.getSubProcessName().equals(subprocessDefinition.getName())) {
                             sp.setSubProcessName(newName);
                             IFile file = IOUtils.getFile(subdefinition.getId() + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                            editor = page.findEditor(new FileEditorInput(file));
+                            if (editor != null) {
+                                page.closeEditor(editor, false);
+                            }
                             saveProcessDefinition(file, subdefinition);
                             ProcessCache.invalidateProcessDefinition(file);
                             break;
