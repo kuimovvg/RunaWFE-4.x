@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.service;
@@ -36,7 +36,7 @@ import ru.runa.wfe.var.VariableDefinition;
 
 /**
  * Process definition service.
- * 
+ *
  * @author Dofs
  * @since 4.0
  */
@@ -44,7 +44,7 @@ public interface DefinitionService {
 
     /**
      * Deploys new process definition.
-     * 
+     *
      * @param user
      *            authorized user
      * @param archive
@@ -56,11 +56,11 @@ public interface DefinitionService {
      * @throws DefinitionArchiveFormatException
      */
     public WfDefinition deployProcessDefinition(User user, byte[] archive, List<String> categories) throws DefinitionAlreadyExistException,
-            DefinitionArchiveFormatException;
+    DefinitionArchiveFormatException;
 
     /**
      * Redeploys process definition by name.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -79,7 +79,7 @@ public interface DefinitionService {
 
     /**
      * Gets only last version from each process definition.
-     * 
+     *
      * @param user
      *            authorized user
      * @param batchPresentation
@@ -89,7 +89,7 @@ public interface DefinitionService {
 
     /**
      * Gets only last version from process definition by name.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionName
@@ -101,7 +101,7 @@ public interface DefinitionService {
 
     /**
      * Gets process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -111,12 +111,22 @@ public interface DefinitionService {
      */
     public WfDefinition getProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException;
 
+    /**
+     * Gets parsed process definition by id.
+     * 
+     * @param user
+     *            authorized user
+     * @param definitionId
+     *            process definition id
+     * @return not <code>null</code>
+     * @throws DefinitionDoesNotExistException
+     */
     public ProcessDefinition getParsedProcessDefinition(User user, Long definitionId) throws DefinitionDoesNotExistException;
 
     /**
      * Deletes process definition by name. If version is not specified all
      * versions will be deleted.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionName
@@ -126,11 +136,11 @@ public interface DefinitionService {
      * @throws DefinitionDoesNotExistException
      */
     public void undeployProcessDefinition(User user, String definitionName, Long version) throws DefinitionDoesNotExistException,
-            ParentProcessExistsException;
+    ParentProcessExistsException;
 
     /**
      * Retrieves file data from process definition archive.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -145,7 +155,7 @@ public interface DefinitionService {
     /**
      * Retrieves processimage.png (or earlier equivalent) file data from process
      * definition archive.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -160,10 +170,10 @@ public interface DefinitionService {
     /**
      * Gets available output transition names. Process definition id or task id
      * is required.
-     * 
+     *
      * @param user
      *            authorized user
-     * 
+     *
      * @param definitionId
      *            process definition id, can be <code>null</code>
      * @param taskId
@@ -175,7 +185,7 @@ public interface DefinitionService {
 
     /**
      * Gets task user interaction.
-     * 
+     *
      * @param user
      *            authorized user
      * @param taskId
@@ -187,7 +197,7 @@ public interface DefinitionService {
 
     /**
      * Gets start task user interaction.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -199,7 +209,7 @@ public interface DefinitionService {
 
     /**
      * Gets all role definitions for process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -211,7 +221,7 @@ public interface DefinitionService {
 
     /**
      * Gets all variable definitions for process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -223,7 +233,7 @@ public interface DefinitionService {
 
     /**
      * Gets variable definition for process definition by name.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -237,7 +247,7 @@ public interface DefinitionService {
 
     /**
      * Gets all graph elements for process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -250,7 +260,7 @@ public interface DefinitionService {
 
     /**
      * Gets all versions of process definition specified by name.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionName
