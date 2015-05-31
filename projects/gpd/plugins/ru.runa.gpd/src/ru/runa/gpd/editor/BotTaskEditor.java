@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
@@ -37,6 +38,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -57,6 +59,7 @@ import ru.runa.gpd.extension.handler.ParamDefGroup;
 import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.PropertyNames;
+import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
@@ -233,7 +236,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         label.setToolTipText(Localization.getString("BotTaskEditor.formalParams"));
         Button button = new Button(dynaComposite, SWT.NONE);
         button.setLayoutData(new GridData(SWT.BEGINNING));
-        button.setText(Localization.getString(botTask.getType() == BotTaskType.SIMPLE ? "button.add" : "button.delete"));
+        button.setText(Localization.getString(botTask.getType() == BotTaskType.SIMPLE ? "button.switch.on" : "button.switch.off"));
         button.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
@@ -241,26 +244,46 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 case SIMPLE:
                     botTask.setType(BotTaskType.EXTENDED);
                     botTask.setParamDefConfig(BotTaskUtils.createEmptyParamDefConfig());
+                    setDirty(true);
+                    rebuildView(mainComposite);
                     break;
                 default:
                 case EXTENDED:
-                    botTask.setType(BotTaskType.SIMPLE);
-                    botTask.setParamDefConfig(null);
+                    if (Dialogs.confirm(Localization.getString("button.switch.off"))) {
+                        botTask.setType(BotTaskType.SIMPLE);
+                        botTask.setParamDefConfig(null);
+                        setDirty(true);
+                        rebuildView(mainComposite);
+                    }
                     break;
                 }
-                setDirty(true);
-                rebuildView(mainComposite);
             }
         });
         button.setEnabled(!botTask.getDelegationClassName().isEmpty());
         button = new Button(dynaComposite, SWT.NONE);
-        button.setImage(SharedImages.getImage("icons/bot_task_formal.gif"));
+        button.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_LCL_LINKTO_HELP));
         button.setToolTipText(Localization.getString("label.menu.help"));
         button.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
-                PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser()
-                        .openURL(new URL(Localization.getString("BotTaskEditor.formalParams.help")));
+                Shell shell = new Shell(mainComposite.getShell(), SWT.CLOSE | SWT.RESIZE | SWT.SYSTEM_MODAL);
+                shell.setSize(600, 400);
+                shell.setLayout(new GridLayout());
+                shell.setText(Localization.getString("label.menu.help"));
+                Label help = new Label(shell, SWT.WRAP);
+                help.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+                help.setText(Localization.getString("BotTaskEditor.formalParams"));
+                Button button = new Button(shell, SWT.NONE);
+                button.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_LCL_LINKTO_HELP));
+                button.setText(Localization.getString("label.menu.help"));
+                button.addSelectionListener(new LoggingSelectionAdapter() {
+                    @Override
+                    protected void onSelection(SelectionEvent e) throws Exception {
+                        PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser()
+                                .openURL(new URL(Localization.getString("BotTaskEditor.formalParams.help")));
+                    }
+                });
+                shell.open();
             }
         });
 
