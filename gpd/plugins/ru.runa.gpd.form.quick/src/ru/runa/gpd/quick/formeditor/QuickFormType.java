@@ -25,6 +25,9 @@ import com.google.common.collect.Maps;
 public class QuickFormType extends FormType {
     public static final String READ_TAG = "DisplayVariable";
     public static final String WRITE_TAG = "InputVariable";
+    public static final String FILE_EXTENSION = "quick";
+    private static final String FORMAT_QUICK = "<param>%s</param>";
+    private static final String FORMAT_OTHER = "\"%s\"";
 
     @Override
     public IEditorPart openForm(IFile formFile, FormNode formNode) throws CoreException {
@@ -64,7 +67,10 @@ public class QuickFormType extends FormType {
 
     @Override
     public MultiTextEdit searchVariableReplacements(IFile file, String variableName, String replacement) throws Exception {
-        return super.searchVariableReplacements(file, "<param>" + variableName + "</param>", "<param>" + replacement + "</param>");
+        if (FILE_EXTENSION.equals(file.getFileExtension())) {
+            return super.searchVariableReplacements(file, String.format(FORMAT_QUICK, variableName), String.format(FORMAT_QUICK, replacement));
+        }
+        return super.searchVariableReplacements(file, String.format(FORMAT_OTHER, variableName), String.format(FORMAT_OTHER, replacement));
     }
 
 }
