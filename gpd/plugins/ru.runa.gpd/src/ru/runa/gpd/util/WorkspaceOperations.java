@@ -36,6 +36,9 @@ import ru.runa.gpd.editor.BotTaskEditor;
 import ru.runa.gpd.editor.ProcessEditorBase;
 import ru.runa.gpd.editor.gef.GEFProcessEditor;
 import ru.runa.gpd.editor.graphiti.GraphitiProcessEditor;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.extension.bot.IBotFileSupportProvider;
 import ru.runa.gpd.lang.Language;
 import ru.runa.gpd.lang.ProcessSerializer;
 import ru.runa.gpd.lang.model.BotTask;
@@ -430,16 +433,33 @@ public class WorkspaceOperations {
 
     public static void deleteBotTask(IFile botTaskFile, BotTask botTask) {
         try {
-            botTaskFile.delete(true, null);
-            String configurationFileName = botTask.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION;
-            IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
-            if (configurationFile.exists()) {
-                configurationFile.delete(true, null);
+            if (!Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
+                DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
+                if (provider instanceof IBotFileSupportProvider) {
+                    IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
+                    String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
+                    if (!Strings.isNullOrEmpty(oldEmbeddedFileName)) {
+                        IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
+                        if (embeddedFile.exists()) {
+                            embeddedFile.delete(true, null);
+                        }
+                    }
+                }
             }
-            BotCache.botTaskHasBeenDeleted(botTaskFile, botTask);
+            deleteBotTaskFile(botTaskFile, botTask);
         } catch (CoreException e) {
             throw new InternalApplicationException(e);
         }
+    }
+
+    private static void deleteBotTaskFile(IFile botTaskFile, BotTask botTask) throws CoreException {
+        botTaskFile.delete(true, null);
+        String configurationFileName = botTask.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION;
+        IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
+        if (configurationFile.exists()) {
+            configurationFile.delete(true, null);
+        }
+        BotCache.botTaskHasBeenDeleted(botTaskFile, botTask);
     }
 
     public static void openBotTask(IFile botTaskFile) {
@@ -557,7 +577,7 @@ public class WorkspaceOperations {
                 if (editor != null) {
                     page.closeEditor(editor, true);
                 }
-                deleteBotTask(botTaskFile, botTask);
+                deleteBotTaskFile(botTaskFile, botTask);
                 BotTaskUtils.copyBotTaskConfig(botTaskFile, botTask, dialog.getName(), botFolder);
             } catch (Exception e) {
                 PluginLogger.logError(e);
