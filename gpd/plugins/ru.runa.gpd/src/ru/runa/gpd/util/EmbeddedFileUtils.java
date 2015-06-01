@@ -39,6 +39,23 @@ public class EmbeddedFileUtils {
         }
     }
 
+    public static String copyProcessFile(String path, String oldName, String newName) {
+        String fileName = EmbeddedFileUtils.getProcessFileName(path);
+        IFile file = EmbeddedFileUtils.getProcessFile(fileName);
+        if (file.exists()) {
+            fileName = fileName.replace(oldName, newName);
+            path = EmbeddedFileUtils.getProcessFilePath(fileName);
+            IFile newFile = EmbeddedFileUtils.getProcessFile(path);
+            try {
+                file.copy(newFile.getFullPath(), true, null);
+                return path;
+            } catch (CoreException e) {
+                PluginLogger.logError("Unable to copy file " + file + " from process definition", e);
+            }
+        }
+        return null;
+    }
+
     public static void deleteProcessFile(IFile file) {
         if (file.exists()) {
             try {
