@@ -42,6 +42,7 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -60,8 +61,10 @@ import ru.runa.gpd.lang.model.BotTask;
 import ru.runa.gpd.lang.model.BotTaskType;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.ui.custom.Dialogs;
+import ru.runa.gpd.ui.custom.LoggingHyperlinkAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionChangedAdapter;
+import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.XmlHighlightTextStyling;
 import ru.runa.gpd.ui.dialog.ChooseHandlerClassDialog;
 import ru.runa.gpd.ui.wizard.BotTaskParamDefWizard;
@@ -236,7 +239,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
         label.setToolTipText(Localization.getString("BotTaskEditor.formalParams"));
         Button button = new Button(dynaComposite, SWT.NONE);
         button.setLayoutData(new GridData(SWT.BEGINNING));
-        button.setText(Localization.getString(botTask.getType() == BotTaskType.SIMPLE ? "button.switch.on" : "button.switch.off"));
+        button.setText(Localization.getString(botTask.getType() == BotTaskType.SIMPLE ? "button.parameters.enable" : "button.parameters.disable"));
         button.addSelectionListener(new LoggingSelectionAdapter() {
             @Override
             protected void onSelection(SelectionEvent e) throws Exception {
@@ -249,7 +252,7 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                     break;
                 default:
                 case EXTENDED:
-                    if (Dialogs.confirm(Localization.getString("button.switch.off"))) {
+                    if (Dialogs.confirm(Localization.getString("button.parameters.disable"))) {
                         botTask.setType(BotTaskType.SIMPLE);
                         botTask.setParamDefConfig(null);
                         setDirty(true);
@@ -273,12 +276,10 @@ public class BotTaskEditor extends EditorPart implements ISelectionListener, IRe
                 Label help = new Label(shell, SWT.WRAP);
                 help.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
                 help.setText(Localization.getString("BotTaskEditor.formalParams"));
-                Button button = new Button(shell, SWT.NONE);
-                button.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_LCL_LINKTO_HELP));
-                button.setText(Localization.getString("label.menu.help"));
-                button.addSelectionListener(new LoggingSelectionAdapter() {
+                SWTUtils.createLink(shell, Localization.getString("label.menu.moreDetails"), new LoggingHyperlinkAdapter() {
+
                     @Override
-                    protected void onSelection(SelectionEvent e) throws Exception {
+                    protected void onLinkActivated(HyperlinkEvent e) throws Exception {
                         PlatformUI.getWorkbench().getBrowserSupport().getExternalBrowser()
                                 .openURL(new URL(Localization.getString("BotTaskEditor.formalParams.help")));
                     }
