@@ -1,8 +1,5 @@
 package ru.runa.gpd.extension.handler;
 
-import java.util.Observable;
-import java.util.Observer;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -55,7 +52,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
         return model.hasFields() ? 1 : 0;
     }
 
-    private class ConstructorView extends ConstructorComposite implements Observer {
+    private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, SQLTasksModel model) {
             super(parent, delegable, model);
@@ -64,11 +61,7 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
         }
 
         @Override
-        public void update(Observable o, Object arg) {
-            buildFromModel();
-        }
-
-        public void buildFromModel() {
+        protected void buildFromModel() {
             try {
                 for (Control control : getChildren()) {
                     control.dispose();
@@ -97,13 +90,14 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             GridData data = new GridData();
             data.widthHint = 200;
             text.setLayoutData(data);
-            SWTUtils.createLink(this, Localization.getString("button.add") + " " + Localization.getString("label.SQLQuery"), new LoggingHyperlinkAdapter() {
+            SWTUtils.createLink(this, Localization.getString("button.add") + " " + Localization.getString("label.SQLQuery"),
+                    new LoggingHyperlinkAdapter() {
 
-                @Override
-                protected void onLinkActivated(HyperlinkEvent e) throws Exception {
-                    model.getFirstTask().addQuery();
-                }
-            }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
+                        @Override
+                        protected void onLinkActivated(HyperlinkEvent e) throws Exception {
+                            model.getFirstTask().addQuery();
+                        }
+                    }).setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_END));
             for (SQLQueryModel queryModel : taskModel.queries) {
                 addQuerySection(queryModel, taskModel.queries.indexOf(queryModel));
             }
@@ -172,7 +166,8 @@ public class SQLHandlerCellEditorProvider extends XmlBasedConstructorProvider<SQ
             return composite;
         }
 
-        private void addParamSection(Composite parent, final SQLQueryParameterModel parameterModel, final int queryIndex, final int paramIndex, boolean input) {
+        private void addParamSection(Composite parent, final SQLQueryParameterModel parameterModel, final int queryIndex, final int paramIndex,
+                boolean input) {
             final Combo combo = new Combo(parent, SWT.READ_ONLY);
             for (String variableName : delegable.getVariableNames(true)) {
                 combo.add(variableName);

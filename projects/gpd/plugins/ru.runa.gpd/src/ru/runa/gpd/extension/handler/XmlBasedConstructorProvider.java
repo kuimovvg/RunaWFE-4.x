@@ -97,8 +97,8 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         return 0;
     }
 
-    public abstract class ConstructorComposite extends Composite {
-        protected final T model;
+    public abstract class ConstructorComposite extends Composite implements Observer {
+        protected T model;
         protected final Delegable delegable;
 
         public ConstructorComposite(Composite parent, Delegable delegable, T model) {
@@ -106,6 +106,14 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
             this.delegable = delegable;
             this.model = model;
         }
+
+        @Override
+        public final void update(Observable model, Object o) {
+            this.model = (T) model;
+            buildFromModel();
+        }
+
+        protected abstract void buildFromModel();
 
     }
 
@@ -185,12 +193,16 @@ public abstract class XmlBasedConstructorProvider<T extends Observable> extends 
         private void populateToConstructorView() {
             try {
                 String xml = xmlContentView.getValue();
+                if (constructorView instanceof Observer && model != null) {
+                    Observer observer = (Observer) constructorView;
+                    model.deleteObserver(observer);
+                }
                 model = fromXml(xml);
                 if (constructorView instanceof Observer) {
                     Observer observer = (Observer) constructorView;
                     model.addObserver(observer);
                     // constructorView.buildFromModel();
-                    observer.update(null, null);
+                    observer.update(model, null);
                     constructorView.layout(true, true);
                 }
             } catch (Exception ex) {

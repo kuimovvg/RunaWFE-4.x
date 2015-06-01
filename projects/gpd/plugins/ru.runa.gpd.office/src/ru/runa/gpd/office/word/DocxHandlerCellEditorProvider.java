@@ -1,8 +1,6 @@
 package ru.runa.gpd.office.word;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
@@ -80,7 +78,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         }
     }
 
-    private class ConstructorView extends ConstructorComposite implements Observer {
+    private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, DocxModel model) {
             super(parent, delegable, model);
@@ -89,11 +87,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         }
 
         @Override
-        public void update(Observable arg0, Object arg1) {
-            buildFromModel();
-        }
-
-        public void buildFromModel() {
+        protected void buildFromModel() {
             try {
                 for (Control control : getChildren()) {
                     control.dispose();
@@ -250,7 +244,9 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     @Override
     public String getEmbeddedFileName(BotTask botTask) {
         String xml = botTask.getDelegationConfiguration();
-        if (!XmlUtil.isXml(xml)) return null;
+        if (!XmlUtil.isXml(xml)) {
+            return null;
+        }
         Document document = XmlUtil.parseWithoutValidation(xml);
         Element root = document.getRootElement();
         Element inputElement = root.element("input");
