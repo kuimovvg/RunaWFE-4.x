@@ -434,12 +434,6 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 	 * @protected
 	 */
 	function cmpAny(a, b) {
-		if (typeof a == 'string' && typeof b == 'string') {
-			var r = b - a;
-			if (!isNaN(r)) {
-				return r;
-			}
-		}
 		return (a > b) ? 1 : (a < b) ? -1 : 0;
 	}
 
