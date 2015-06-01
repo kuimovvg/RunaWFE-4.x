@@ -57,6 +57,26 @@ public class DelegableProvider {
     public void onDelete(Delegable delegable) {
     }
 
+    /**
+     * Callback is invoked when delegable is renamed in process definition.
+     * 
+     * @param delegable
+     * @param oldName
+     * @param newName
+     */
+    public void onRename(Delegable delegable, String oldName, String newName) {
+    }
+
+    /**
+     * Callback is invoked when delegable is copied in process definition.
+     * 
+     * @param delegable
+     * @param oldName
+     * @param newName
+     */
+    public void onCopy(Delegable delegable, String oldName, String newName) {
+    }
+
     public List<String> getUsedVariableNames(Delegable delegable) throws Exception {
         String configuration = delegable.getDelegationConfiguration();
         if (Strings.isNullOrEmpty(configuration)) {

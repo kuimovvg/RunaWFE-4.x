@@ -412,10 +412,6 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
         if (this instanceof Describable) {
             copy.setDescription(getDescription());
         }
-        if (this instanceof Delegable) {
-            copy.setDelegationClassName(getDelegationClassName());
-            copy.setDelegationConfiguration(getDelegationConfiguration());
-        }
         if (this instanceof Active) {
             List<? extends Action> actions = ((Active) this).getActions();
             for (Action action : actions) {
@@ -434,6 +430,12 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
         }
         fillCopyCustomFields(copy);
         parent.addChild(copy);
+        if (this instanceof Delegable) {
+            copy.setDelegationClassName(getDelegationClassName());
+            copy.setDelegationConfiguration(getDelegationConfiguration());
+            DelegableProvider provider = HandlerRegistry.getProvider(getDelegationClassName());
+            provider.onCopy((Delegable) copy, this.getId(), copy.getId());
+        }
         return copy;
     }
 

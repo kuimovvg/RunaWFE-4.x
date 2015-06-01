@@ -78,6 +78,22 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         }
     }
 
+    @Override
+    public void onCopy(Delegable delegable, String oldName, String newName) {
+        try {
+            DocxModel model = fromXml(delegable.getDelegationConfiguration());
+            if (EmbeddedFileUtils.isProcessFile(model.getInOutModel().inputPath)) {
+                String newInputPath = EmbeddedFileUtils.copyProcessFile(model.getInOutModel().inputPath, oldName, newName);
+                if (newInputPath != null) {
+                    model.getInOutModel().inputPath = newInputPath;
+                    delegable.setDelegationConfiguration(model.toString());
+                }
+            }
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Failed to copy embedded file in " + delegable, e);
+        }
+    }
+
     private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, DocxModel model) {
