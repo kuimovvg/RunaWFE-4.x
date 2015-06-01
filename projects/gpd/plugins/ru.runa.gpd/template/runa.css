@@ -35,7 +35,7 @@
 .taskform input, .taskform select {
 	width: 90%;
 }
-.taskform .inputBoolean {
+.taskform .inputBoolean, .taskform input[type="radio"] {
 	width: 20px;
 }
 .taskform a {
