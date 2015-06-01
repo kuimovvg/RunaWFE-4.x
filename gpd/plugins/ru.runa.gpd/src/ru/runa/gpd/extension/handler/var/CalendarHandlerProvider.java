@@ -2,8 +2,6 @@ package ru.runa.gpd.extension.handler.var;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -77,7 +75,7 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
         return model.toString();
     }
 
-    private class ConstructorView extends ConstructorComposite implements Observer {
+    private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, CalendarConfig config) {
             super(parent, delegable, config);
@@ -86,11 +84,7 @@ public class CalendarHandlerProvider extends XmlBasedConstructorProvider<Calenda
         }
 
         @Override
-        public void update(Observable o, Object arg) {
-            buildFromModel();
-        }
-
-        public void buildFromModel() {
+        protected void buildFromModel() {
             try {
                 for (Control control : getChildren()) {
                     control.dispose();
