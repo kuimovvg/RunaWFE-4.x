@@ -28,17 +28,18 @@ public class FormHashModel extends SimpleHash {
         this.user = user;
         this.variableProvider = variableProvider;
         this.webHelper = webHelper;
-        if (webHelper != null && webHelper.getRequest() != null) {
-            HttpSession session = webHelper.getRequest().getSession();
-            java.util.Enumeration<String> attributeNames = session.getAttributeNames();
-            while (attributeNames.hasMoreElements()) {
-                String attributeName = attributeNames.nextElement();
-                if (attributeName.startsWith(AjaxFreemarkerTag.TAG_SESSION_PREFIX)) {
-                    session.removeAttribute(attributeName);
-                }
-                if (attributeName.startsWith(FtlTagVariableHandler.HANDLER_KEY_PREFIX)) {
-                    session.removeAttribute(attributeName);
-                }
+    }
+
+    public void clearSession() {
+        HttpSession session = webHelper.getRequest().getSession();
+        java.util.Enumeration<String> attributeNames = session.getAttributeNames();
+        while (attributeNames.hasMoreElements()) {
+            String attributeName = attributeNames.nextElement();
+            if (attributeName.startsWith(AjaxFreemarkerTag.TAG_SESSION_PREFIX)) {
+                session.removeAttribute(attributeName);
+            }
+            if (attributeName.startsWith(FtlTagVariableHandler.HANDLER_KEY_PREFIX)) {
+                session.removeAttribute(attributeName);
             }
         }
     }
