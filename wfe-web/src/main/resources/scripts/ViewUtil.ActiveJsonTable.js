@@ -198,21 +198,23 @@ $(document).ready(function() {
 	
 	function getSortValuePattern(col_num, val) {
 		/*int pattern*/
+		if (isNumber(val)) {
+			return val;
+		}
+		/*skip objects*/
+		if (typeof val != "string") {
+			val = val.toString();
+		}
+		/*direct convert to number*/
 		try {
-			if (!isNaN(val)) {
-				return val + 0;
-			}
 			var num = parseInt(val);
-			if (!isNaN(val)) {
+			if (!(/\D/g).test(val) && isNumber(num)) {
 				return num;
 			}
 		} catch(e) {
 			
 		}
-		/*skip objects*/
-		if (typeof val != "string") {
-			return val;
-		}
+		/*other convert to number patterns*/
 		var res;
 		try {
 			/*date pattern*/
@@ -225,6 +227,10 @@ $(document).ready(function() {
 			return val;
 		}
 		return res;
+	};
+	
+	function isNumber(val) {
+		return typeof val == "number" || (typeof val == "object" && val.constructor === Number);
 	};
 	
 })(jQuery);
