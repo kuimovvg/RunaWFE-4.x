@@ -894,6 +894,40 @@
                variableTypeFilter="java.lang.String">
          </param>
       </component>
+      <component
+            enabled="true"
+            id="MultipleSelectFromListUserVariables"
+            name="%Method.MultipleSelectFromListUserVariables"
+            order="-82">
+         <param
+               name="%Param.Variable"
+               optional="false"
+               type="uservarlistcombo"
+               variableAccess="READ"
+               variableTypeFilter="java.util.List">
+         </param>
+         <param
+               name="%Param.DisplayFormat"
+               type="combo"
+               variableAccess="NONE"
+               variableTypeFilter="java.lang.String">
+            <paramValue
+                  name="%Format.Variable.TwoDimensionalTable"
+                  value="two-dimentional">
+            </paramValue>
+            <paramValue
+                  name="%Format.Variable.MultiDimensionalTable"
+                  value="multi-dimentional">
+            </paramValue>
+         </param>
+         <param
+               name="%Param.UseToSortField"
+               optional="true"
+               type="uservarfields"
+               variableAccess="NONE"
+               variableTypeFilter="java.lang.String">
+         </param>
+      </component>
    </extension>
     
 </plugin>
