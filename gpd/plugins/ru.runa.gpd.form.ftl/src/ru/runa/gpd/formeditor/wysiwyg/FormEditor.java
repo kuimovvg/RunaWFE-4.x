@@ -422,6 +422,17 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         super.pageChange(newPageIndex);
     }
 
+    public void insertText(String text) {
+    	String escapedText = text.replaceAll("\'", "\\\'");
+        try {
+        	browser.execute("CKEDITOR.instances.editor.insertText('"+escapedText+"');");
+            syncBrowser2Editor();
+            syncEditor2Browser();
+        } catch (Exception e) {
+            PluginLogger.logError(e);
+        }
+	}
+    
     private boolean syncBrowser2Editor() {
         if (browser != null) {
             boolean result = browser.execute("getHTML()");
