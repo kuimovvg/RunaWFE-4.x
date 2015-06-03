@@ -119,7 +119,6 @@ $(document).ready(function() {
 					titles.push($(this).data().sortFieldName);
 					titles.push("");
 				}
-				console.debug("makeAsMultiDimentionalTable: titles: %s", titles);
 				for (var i = 0; i < $(this).data().jsonInputArray.length; i++) {
 					var subrows = [];
 					for (var j = 0; j < fields.length; j++) {
@@ -148,7 +147,6 @@ $(document).ready(function() {
 					} else {
 						columns.push([subtable]);
 					}
-					console.debug("makeAsMultiDimentionalTable: subtable: %s", subtable);
 				}
 				if ($(this).data().sortFieldName != "null" && 
 						$.inArray($(this).data().sortFieldName, fields) != -1) {
@@ -186,7 +184,7 @@ $(document).ready(function() {
 	};
 	
 	function sortRows (col_num, rows) {
-		if (col_num < 0 || col_num >= rows.length) {
+		if (rows.length <= 1 || col_num < 0 || col_num >= rows[0].length) {
 			return;
 		}
 		rows.sort(function(a, b) {
@@ -218,8 +216,11 @@ $(document).ready(function() {
 		var res;
 		try {
 			/*date pattern*/
-			if ((/\d{2}\.\d{2}\.\d{4}\s+\d{2}:\d{2}/g).test(val)) {
-				res = parseInt(val.replace(/[\s\.:]/g, ""));
+			var datere = /(\d{2})\.(\d{2})\.(\d{4})\s+(\d{2}):(\d{2})/g;
+			var matchdate = datere.exec(val)
+			if (matchdate) {
+				res = matchdate[3] + matchdate[2] + matchdate[1] + matchdate[4] + matchdate[5];
+				res = parseInt(res);
 			} else {
 				res = val;
 			}
