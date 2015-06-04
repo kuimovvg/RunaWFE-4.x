@@ -14,6 +14,7 @@ import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
+import ru.runa.wfe.validation.ValidationException;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.ScriptingComplexVariable;
@@ -23,7 +24,6 @@ import ru.runa.wfe.var.VariableUserType;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-@SuppressWarnings("unchecked")
 public class GroovyScriptExecutor implements IScriptExecutor {
     protected static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
 
@@ -49,6 +49,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(ClassLoaderUtil.getExtensionClassLoader(), binding);
             return shell.evaluate(script);
+        } catch (ValidationException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Groovy evaluation failed, script=" + script, e);
             if (e instanceof GroovyExceptionInterface) {
