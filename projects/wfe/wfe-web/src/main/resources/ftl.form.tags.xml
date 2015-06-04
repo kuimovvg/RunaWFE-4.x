@@ -20,4 +20,5 @@
 	<ftltag name="ChooseValueFromList" class="ru.runa.wf.web.ftl.method.ChooseValueFromListTag" />
 	<ftltag name="ViewFile" class="ru.runa.wf.web.ftl.method.FileTag" />
 	<ftltag name="TreeviewSupport" class="ru.runa.wf.web.ftl.method.TreeviewSupportTag" />
+	<ftltag name="GetExecutorEmails" class="ru.runa.wf.web.ftl.method.GetExecutorEmailsTag" />
 </configuration>

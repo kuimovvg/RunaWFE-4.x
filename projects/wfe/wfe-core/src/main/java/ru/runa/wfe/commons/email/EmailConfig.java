@@ -8,9 +8,7 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.IVariableProvider;
 
 import com.google.common.base.Objects;
@@ -113,36 +111,17 @@ public class EmailConfig implements Serializable {
     }
 
     public void applySubstitutions(IVariableProvider variableProvider) {
-        for (Map.Entry<String, String> entry : new HashMap<String, String>(connectionProperties).entrySet()) {
+        applySubstitutions(variableProvider, connectionProperties);
+        applySubstitutions(variableProvider, headerProperties);
+    }
+
+    private void applySubstitutions(IVariableProvider variableProvider, Map<String, String> map) {
+        for (Map.Entry<String, String> entry : new HashMap<String, String>(map).entrySet()) {
             String substitutedValue = ExpressionEvaluator.process(null, entry.getValue(), variableProvider, null);
             if (!Objects.equal(substitutedValue, entry.getValue())) {
                 log.debug("Substituted " + entry + " -> " + substitutedValue);
             }
-            connectionProperties.put(entry.getKey(), substitutedValue);
-        }
-        for (Map.Entry<String, String> entry : new HashMap<String, String>(headerProperties).entrySet()) {
-            String substitutedValue;
-            if (HEADER_TO.equals(entry.getKey()) || HEADER_CC.equals(entry.getKey())) {
-                Object value = ExpressionEvaluator.evaluateVariable(variableProvider, entry.getValue());
-                if (value == null) {
-                    substitutedValue = "";
-                } else if (value instanceof Executor) {
-                    List<String> emails = EmailUtils.getEmails((Executor) value);
-                    substitutedValue = EmailUtils.concatenateEmails(emails);
-                } else if (value instanceof List) {
-                    substitutedValue = EmailUtils.concatenateEmails((List<String>) value);
-                } else if (value instanceof String) {
-                    substitutedValue = (String) value;
-                } else {
-                    throw new InternalApplicationException("Unexpected '" + value + "' for " + entry);
-                }
-            } else {
-                substitutedValue = ExpressionEvaluator.process(null, entry.getValue(), variableProvider, null);
-            }
-            if (!Objects.equal(substitutedValue, entry.getValue())) {
-                log.debug("Substituted " + entry + " -> " + substitutedValue);
-            }
-            headerProperties.put(entry.getKey(), substitutedValue);
+            map.put(entry.getKey(), substitutedValue);
         }
     }
 
