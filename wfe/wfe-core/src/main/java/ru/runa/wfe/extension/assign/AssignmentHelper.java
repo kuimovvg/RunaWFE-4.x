@@ -1,38 +1,38 @@
 package ru.runa.wfe.extension.assign;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Swimlane;
+import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.Assignable;
+import ru.runa.wfe.lang.SwimlaneDefinition;
 import ru.runa.wfe.task.Task;
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.TemporaryGroup;
-import ru.runa.wfe.user.logic.ExecutorLogic;
 
 public class AssignmentHelper {
     private static final Log log = LogFactory.getLog(AssignmentHelper.class);
-    @Autowired
-    private ExecutorLogic executorLogic;
 
-    public void reassignTask(ExecutionContext executionContext, Task task, Executor newExecutor, boolean reassignSwimlane) {
+    public static void reassignTask(ExecutionContext executionContext, Task task, Executor newExecutor, boolean reassignSwimlane) {
         Executor oldExecutor = task.getExecutor();
         task.assignExecutor(executionContext, newExecutor, reassignSwimlane);
         removeIfTemporaryGroup(oldExecutor);
     }
 
-    public void removeIfTemporaryGroup(Executor oldExecutor) {
+    public static void removeIfTemporaryGroup(Executor oldExecutor) {
         if (oldExecutor instanceof TemporaryGroup) {
-            executorLogic.remove(oldExecutor);
+            ApplicationContextFactory.getExecutorLogic().remove(oldExecutor);
         }
     }
 
-    public void assignSwimlane(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
+    public static void assign(ExecutionContext executionContext, Assignable assignable, Collection<? extends Executor> executors) {
         try {
             if (executors == null || executors.size() == 0) {
                 log.warn("Assigning null executor in " + executionContext + ": " + assignable + ", check swimlane initializer");
@@ -54,11 +54,19 @@ public class AssignmentHelper {
                 return;
             }
             Group tmpGroup = TemporaryGroup.create(executionContext.getProcess().getId(), swimlaneName);
-            executorLogic.saveTemporaryGroup(tmpGroup, executors);
+            ApplicationContextFactory.getExecutorLogic().saveTemporaryGroup(tmpGroup, executors);
             assignable.assignExecutor(executionContext, tmpGroup, true);
         } catch (Exception e) {
             log.warn("Unable to assign " + assignable + " in " + executionContext.getProcess(), e);
         }
     }
+    
+    public static void assignSwimlane(ExecutionContext executionContext, String swimlaneName, String swimlaneInitializer) {
+        List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(swimlaneInitializer, executionContext.getVariableProvider());
+        SwimlaneDefinition swimlaneDefinition = executionContext.getProcessDefinition().getSwimlaneNotNull(swimlaneName);
+        Swimlane swimlane = executionContext.getProcess().getSwimlaneNotNull(swimlaneDefinition);
+        assign(executionContext, swimlane, executors);
+    }
+
 
 }

@@ -152,10 +152,6 @@ public class ApplicationContextFactory {
         return getContext().getBean(SubstitutionDAO.class);
     }
 
-    public static AssignmentHelper getAssignmentHelper() {
-        return getContext().getBean(AssignmentHelper.class);
-    }
-
     public static ExecutorLogic getExecutorLogic() {
         return getContext().getBean(ExecutorLogic.class);
     }

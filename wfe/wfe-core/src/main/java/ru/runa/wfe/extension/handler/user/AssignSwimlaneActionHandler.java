@@ -17,28 +17,18 @@
  */
 package ru.runa.wfe.extension.handler.user;
 
-import java.util.List;
-
 import org.dom4j.Element;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import ru.runa.wfe.commons.xml.XmlUtils;
 import ru.runa.wfe.execution.ExecutionContext;
-import ru.runa.wfe.execution.Swimlane;
-import ru.runa.wfe.execution.logic.SwimlaneInitializerHelper;
 import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.extension.assign.AssignmentHelper;
-import ru.runa.wfe.lang.SwimlaneDefinition;
-import ru.runa.wfe.user.Executor;
 
 import com.google.common.base.Preconditions;
 
 public class AssignSwimlaneActionHandler extends ActionHandlerBase {
     private static final String SWIMLANE_INITITALIZER = "swimlaneInititalizer";
     private static final String SWIMLANE = "swimlaneName";
-
-    @Autowired
-    protected AssignmentHelper assignmentHelper;
     private String swimlaneName;
     private String swimlaneInitializer;
 
@@ -60,9 +50,6 @@ public class AssignSwimlaneActionHandler extends ActionHandlerBase {
 
     @Override
     public void execute(ExecutionContext executionContext) throws Exception {
-        List<? extends Executor> executors = SwimlaneInitializerHelper.evaluate(swimlaneInitializer, executionContext.getVariableProvider());
-        SwimlaneDefinition swimlaneDefinition = executionContext.getProcessDefinition().getSwimlaneNotNull(swimlaneName);
-        Swimlane swimlane = executionContext.getProcess().getSwimlaneNotNull(swimlaneDefinition);
-        assignmentHelper.assignSwimlane(executionContext, swimlane, executors);
+        AssignmentHelper.assignSwimlane(executionContext, swimlaneName, swimlaneInitializer);
     }
 }
