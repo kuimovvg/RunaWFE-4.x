@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -332,7 +334,6 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         }
     }
 
-    // Used from servlets
     public static FormEditor getCurrent() {
         IEditorPart editor = EditorsPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getActivePage().getActiveEditor();
         if (editor instanceof FormEditor) {
@@ -423,16 +424,22 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
     }
 
     public void insertText(String text) {
-    	String escapedText = text.replaceAll("\'", "\\\'");
+        String escapedText = text.replaceAll("\'", "\\\'");
         try {
-        	browser.execute("CKEDITOR.instances.editor.insertText('"+escapedText+"');");
-            syncBrowser2Editor();
-            syncEditor2Browser();
+            if (browser != null) {
+                browser.execute("CKEDITOR.instances.editor.insertText('" + escapedText + "');");
+                syncBrowser2Editor();
+                syncEditor2Browser();
+            } else {
+                IDocument document = sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput());
+                ITextSelection selection = (ITextSelection) sourceEditor.getSelectionProvider().getSelection();
+                document.replace(selection.getOffset(), selection.getLength(), escapedText);
+            }
         } catch (Exception e) {
             PluginLogger.logError(e);
         }
-	}
-    
+    }
+
     private boolean syncBrowser2Editor() {
         if (browser != null) {
             boolean result = browser.execute("getHTML()");
@@ -486,12 +493,12 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
                 if (editor != null && !editor.isDirty()) {
                     editor.setDirty(true);
                 }
-				try {
-					syncBrowser2Editor();
-					syncEditor2Browser();
-				} catch (Exception e) {
-					PluginLogger.logError(e);
-				}
+                try {
+                    syncBrowser2Editor();
+                    syncEditor2Browser();
+                } catch (Exception e) {
+                    PluginLogger.logError(e);
+                }
             }
         });
         components.put(component.getId(), component);
@@ -509,15 +516,15 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
     public void componentSelected(int componentId) throws PartInitException, ExecutionException, NotDefinedException, NotEnabledException,
             NotHandledException {
         Component component = components.get(componentId);
-		if (component != null) {
-			final ISelection selection = new StructuredSelection(component);
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					selectionProvider.setSelection(selection);
-				}
-			});
-		}
+        if (component != null) {
+            final ISelection selection = new StructuredSelection(component);
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    selectionProvider.setSelection(selection);
+                }
+            });
+        }
     }
 
     public void componentDeselected() {

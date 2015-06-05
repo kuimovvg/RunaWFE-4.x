@@ -87,6 +87,11 @@ public class ParamDefComposite extends Composite {
         this.menuForSettingVariable = menuForSettingVariable;
     }
 
+    protected List<String> getMenuVariables(ParamDef paramDef) {
+        List<String> variableNames = VariableUtils.getVariableNamesForScripting(delegable, paramDef.getFormatFiltersAsArray());
+        return variableNames;
+    }
+
     private Text addTextField(final ParamDef paramDef) {
         Label label = new Label(this, SWT.NONE);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -112,7 +117,7 @@ public class ParamDefComposite extends Composite {
         }
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
-            List<String> variableNames = VariableUtils.getVariableNamesForScripting(delegable, paramDef.getFormatFiltersAsArray());
+            List<String> variableNames = getMenuVariables(paramDef);
             new InsertVariableTextMenuDetectListener(textInput, variableNames);
         }
         return textInput;

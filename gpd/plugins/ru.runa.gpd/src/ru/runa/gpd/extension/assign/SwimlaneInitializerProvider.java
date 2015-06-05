@@ -20,6 +20,7 @@ public class SwimlaneInitializerProvider extends DelegableProvider {
         ProcessDefinition definition = swimlane.getProcessDefinition();
         SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(definition, swimlane);
         if (dialog.open() == IDialogConstants.OK_ID) {
+            swimlane.setPublicVisibility(dialog.isPublicVisibility());
             swimlane.setEditorPath(dialog.getPath());
             return dialog.getConfiguration();
         }

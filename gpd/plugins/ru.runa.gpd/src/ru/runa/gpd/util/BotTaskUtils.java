@@ -151,7 +151,8 @@ public class BotTaskUtils {
      * @return bot name or <code>null</code>.
      */
     public static String getBotName(Swimlane swimlane) {
-        if (swimlane != null && swimlane.getDelegationConfiguration() != null) {
+        if (swimlane != null && swimlane.getDelegationConfiguration() != null
+                && Swimlane.DEFAULT_DELEGATION_CLASS_NAME.equals(swimlane.getDelegationClassName())) {
             try {
                 SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(swimlane.getDelegationConfiguration());
                 if (swimlaneInitializer instanceof BotSwimlaneInitializer) {
