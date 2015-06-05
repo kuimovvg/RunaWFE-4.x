@@ -15,12 +15,12 @@ import ru.runa.wfe.extension.assign.DefaultAssignmentHandler;
 import ru.runa.wfe.var.format.ExecutorFormat;
 
 public class Swimlane extends Variable implements Delegable {
-    private static final String DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
+    public static final String DEFAULT_DELEGATION_CLASS_NAME = DefaultAssignmentHandler.class.getName();
     private String editorPath;
 
     public Swimlane() {
         setFormat(ExecutorFormat.class.getName());
-        setDelegationClassName(DELEGATION_CLASS_NAME);
+        setDelegationClassName(DEFAULT_DELEGATION_CLASS_NAME);
     }
 
     public String getEditorPath() {
@@ -50,9 +50,11 @@ public class Swimlane extends Variable implements Delegable {
     public void validate(List<ValidationError> errors, IFile definitionFile) {
         super.validate(errors, definitionFile);
         try {
-            SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(getDelegationConfiguration());
-            if (swimlaneInitializer != null) {
-                swimlaneInitializer.validate(this, errors);
+            if (DEFAULT_DELEGATION_CLASS_NAME.equals(getDelegationClassName())) {
+                SwimlaneInitializer swimlaneInitializer = SwimlaneInitializerParser.parse(getDelegationConfiguration());
+                if (swimlaneInitializer != null) {
+                    swimlaneInitializer.validate(this, errors);
+                }
             }
         } catch (RuntimeException e) {
             if (e.getMessage() != null && e.getMessage().startsWith(OrgFunctionDefinition.MISSED_DEFINITION)) {

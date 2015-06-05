@@ -45,6 +45,7 @@ import ru.runa.gpd.ui.dialog.ChooseVariableNameDialog;
 import ru.runa.gpd.util.IOUtils;
 import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.FileVariable;
 
 public class EmailConfigWizardPage extends WizardPage implements MessageDisplay {
@@ -115,7 +116,20 @@ public class EmailConfigWizardPage extends WizardPage implements MessageDisplay 
         scrolledComposite.setContent(connectionComposite);
         scrolledComposite = createScrolledTab(Localization.getString("EmailDialog.title.message"));
         messageComposite = new ParamDefDynaComposite(scrolledComposite, delegable, messageConfig, messageConfig.parseConfiguration(initValue),
-                messageConfig.getGroups().get(0), Localization.getString("EmailDialog.message.descDynaParams"));
+                messageConfig.getGroups().get(0), Localization.getString("EmailDialog.message.descDynaParams")) {
+            @Override
+            protected List<String> getMenuVariables(ParamDef paramDef) {
+                if (paramDef.getFormatFilters().contains("emailAddress")) {
+                    List<String> variableNames = VariableUtils.getVariableNamesForScripting(delegable, String.class.getName());
+                    List<String> executorVariableNames = VariableUtils.getVariableNamesForScripting(delegable, Executor.class.getName());
+                    for (String executorVariableName : executorVariableNames) {
+                        variableNames.add("GetExecutorEmails(" + executorVariableName + ")");
+                    }
+                    return variableNames;
+                }
+                return super.getMenuVariables(paramDef);
+            }
+        };
         messageComposite.setMenuForSettingVariable(true);
         messageComposite.createUI();
         messageComposite.setMessageDisplay(this);

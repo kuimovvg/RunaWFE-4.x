@@ -1,5 +1,6 @@
 package ru.runa.gpd.util;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,20 +25,11 @@ public class VariableUtils {
         return result;
     }
 
-    /**
-     * Filtering by whitespace, etc...
-     */
-    public static List<String> getValidVariableNames(List<String> variableNames) {
-        List<String> result = Lists.newArrayList(variableNames);
-        for (String variableName : variableNames) {
-            if (variableName.indexOf(" ") != -1) {
-                result.remove(variableName);
-            }
-        }
-        return result;
+    public static boolean isValidScriptingName(String name) {
+        return Objects.equal(name, toScriptingName(name));
     }
 
-    public static String generateNameForScripting(VariableContainer variableContainer, String variableName, Variable excludedVariable) {
+    public static String toScriptingName(String variableName) {
         char[] chars = variableName.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == 0) {
@@ -54,6 +46,11 @@ public class VariableUtils {
             }
         }
         String scriptingName = new String(chars);
+        return scriptingName;
+    }
+
+    public static String generateNameForScripting(VariableContainer variableContainer, String variableName, Variable excludedVariable) {
+        String scriptingName = toScriptingName(variableName);
         if (excludedVariable != null) {
             if (excludedVariable.getScriptingName() == null || Objects.equal(excludedVariable.getScriptingName(), scriptingName)) {
                 return scriptingName;
@@ -83,7 +80,14 @@ public class VariableUtils {
             List<Variable> variables = ((GraphElement) delegable).getProcessDefinition().getVariables(true, true, typeClassNameFilters);
             return getVariableNamesForScripting(variables);
         } else {
-            return getValidVariableNames(delegable.getVariableNames(true, typeClassNameFilters));
+            List<String> list = delegable.getVariableNames(true, typeClassNameFilters);
+            for (Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
+                String string = iterator.next();
+                if (!isValidScriptingName(string)) {
+                    iterator.remove();
+                }
+            }
+            return list;
         }
     }
 
