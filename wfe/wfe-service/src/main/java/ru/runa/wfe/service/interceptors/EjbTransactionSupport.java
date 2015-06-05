@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
+import ru.runa.wfe.commons.ITransactionListener;
+import ru.runa.wfe.commons.TransactionListeners;
 import ru.runa.wfe.commons.Utils;
 import ru.runa.wfe.commons.cache.CachingLogic;
 import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
@@ -50,6 +52,14 @@ public class EjbTransactionSupport {
         } finally {
             UserHolder.reset();
             CachingLogic.onTransactionComplete();
+            for (ITransactionListener listener : TransactionListeners.get()) {
+                try {
+                    listener.onTransactionComplete();
+                } catch (Throwable th) {
+                    log.error(th);
+                }
+            }
+            TransactionListeners.reset();
         }
     }
 

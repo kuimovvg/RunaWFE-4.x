@@ -79,10 +79,9 @@ public class Timer extends Job {
                 Task task = executionContext.getTask();
                 if (task != null) {
                     // mark task completed by timer [without history]
-                    AssignmentHelper assignmentHelper = ApplicationContextFactory.getAssignmentHelper();
                     Executor oldExecutor = task.getExecutor();
                     task.setExecutor(null);
-                    assignmentHelper.removeIfTemporaryGroup(oldExecutor);
+                    AssignmentHelper.removeIfTemporaryGroup(oldExecutor);
                 } else {
                     log.debug("Task is null in timer node '" + timerNodeId + "' when leaving by transition: " + outTransitionName);
                 }

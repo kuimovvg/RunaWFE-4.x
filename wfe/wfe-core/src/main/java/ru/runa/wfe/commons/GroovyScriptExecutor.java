@@ -11,16 +11,18 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.GroovyExceptionInterface;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
-import ru.runa.wfe.validation.ValidationException;
+import ru.runa.wfe.validation.ValidatorException;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.ScriptingComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
@@ -28,9 +30,10 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     protected static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
 
     @Override
-    public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
+    public Map<String, Object> executeScript(ExecutionContext executionContext, String script) {
         try {
-            GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
+            GroovyScriptBinding binding = createBinding(executionContext.getProcessDefinition(), executionContext.getVariableProvider());
+            binding.setVariable(GroovyScriptBinding.EXECUTION_CONTEXT_VARIABLE_NAME, executionContext);
             GroovyShell shell = new GroovyShell(ClassLoaderUtil.getExtensionClassLoader(), binding);
             shell.evaluate(script);
             return binding.getAdjustedVariables();
@@ -49,7 +52,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(ClassLoaderUtil.getExtensionClassLoader(), binding);
             return shell.evaluate(script);
-        } catch (ValidationException e) {
+        } catch (ValidatorException e) {
             throw e;
         } catch (Exception e) {
             log.error("Groovy evaluation failed, script=" + script, e);
@@ -65,6 +68,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     }
 
     public static class GroovyScriptBinding extends Binding {
+        private final static String EXECUTION_CONTEXT_VARIABLE_NAME = "executionContext";
         private final IVariableProvider variableProvider;
         private final Map<String, String> variableScriptingNameToNameMap = Maps.newHashMap();
         // complex variables does not returned from binding...
@@ -140,6 +144,9 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             Map<String, Object> scriptingVariables = getVariables();
             Map<String, Object> result = Maps.newHashMapWithExpectedSize(scriptingVariables.size());
             for (Map.Entry<String, Object> entry : scriptingVariables.entrySet()) {
+                if (Objects.equal(entry.getKey(), EXECUTION_CONTEXT_VARIABLE_NAME)) {
+                    continue;
+                }
                 String variableName = getVariableNameByScriptingName(entry.getKey());
                 result.put(variableName, entry.getValue());
             }
