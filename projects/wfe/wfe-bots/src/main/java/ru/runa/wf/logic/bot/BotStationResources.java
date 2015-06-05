@@ -91,10 +91,6 @@ public class BotStationResources {
         return periodInSeconds * 1000;
     }
 
-    public static long getBotInvokerHandlerTimeout() {
-        return RESOURCES.getLongProperty("botstation.invocation.handler.timeout.milliseconds", 1000);
-    }
-
     public static List<String> getTaskHandlerJarNames() {
         return RESOURCES.getMultipleStringProperty("taskhandler.jar.names");
     }

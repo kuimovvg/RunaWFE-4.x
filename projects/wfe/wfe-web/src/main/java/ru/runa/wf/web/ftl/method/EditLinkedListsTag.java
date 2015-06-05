@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import ru.runa.wfe.commons.TypeConversionUtil;
 import ru.runa.wfe.commons.ftl.AjaxFreemarkerTag;
 import ru.runa.wfe.var.dto.WfVariable;
@@ -18,7 +15,7 @@ import com.google.common.collect.Lists;
 
 /**
  * shared code with {@link InputVariableTag}.
- * 
+ *
  * @author dofs
  * @since 4.0.5
  */
@@ -107,7 +104,7 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
             List<VariableFormat> componentFormats, int row, boolean allowToChangeElements, boolean allowToDeleteElements) {
         html.append("<tr row=\"").append(row).append("\">");
         for (int column = 0; column < variables.size(); column++) {
-            Object o = (lists.get(column).size() > row) ? lists.get(column).get(row) : null;
+            Object o = lists.get(column).size() > row ? lists.get(column).get(row) : null;
             VariableFormat componentFormat = componentFormats.get(column);
             renderColumn(html, variables.get(column), componentFormat, o, row, column, allowToChangeElements);
         }
@@ -132,10 +129,6 @@ public class EditLinkedListsTag extends AjaxFreemarkerTag {
         String html = ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), componentVariable);
         html += ViewUtil.getHiddenInput(componentVariable);
         return html;
-    }
-
-    @Override
-    public void processAjaxRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
     }
 
 }

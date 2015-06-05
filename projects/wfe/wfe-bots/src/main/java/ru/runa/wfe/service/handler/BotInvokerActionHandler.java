@@ -18,17 +18,16 @@
 package ru.runa.wfe.service.handler;
 
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
-import ru.runa.wf.logic.bot.BotStationResources;
 import ru.runa.wfe.bot.BotStation;
+import ru.runa.wfe.commons.DeferredTransactionListener;
+import ru.runa.wfe.commons.TransactionListeners;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.service.delegate.BotInvokerServiceDelegate;
 import ru.runa.wfe.service.delegate.Delegates;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
 /**
@@ -37,7 +36,6 @@ import com.google.common.base.Strings;
  * @since 2.0
  */
 public class BotInvokerActionHandler extends ActionHandlerBase {
-    private static final ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
 
     @Override
     public void execute(ExecutionContext executionContext) {
@@ -64,18 +62,16 @@ public class BotInvokerActionHandler extends ActionHandlerBase {
                 log.warn("No botstation can be found for invocation " + configuration);
                 return;
             }
-            long timeout = BotStationResources.getBotInvokerHandlerTimeout();
-            log.debug("Scheduling invocation of " + botStation + " for " + timeout + "ms");
-            scheduledExecutorService.schedule(new InvokerRunnable(botStation), timeout, TimeUnit.MILLISECONDS);
+            TransactionListeners.addListener(new BotInvokerRunnable(botStation), true);
         } catch (Exception e) {
             log.error("Unable to invoke bot station due to " + e);
         }
     }
 
-    private class InvokerRunnable implements Runnable {
+    public class BotInvokerRunnable extends DeferredTransactionListener {
         private final BotStation botStation;
 
-        public InvokerRunnable(BotStation botStation) {
+        public BotInvokerRunnable(BotStation botStation) {
             this.botStation = botStation;
         }
 
@@ -89,6 +85,23 @@ public class BotInvokerActionHandler extends ActionHandlerBase {
             }
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof BotInvokerRunnable) {
+                return Objects.equal(botStation, ((BotInvokerRunnable) obj).botStation);
+            }
+            return super.equals(obj);
+        }
+
+        @Override
+        public int hashCode() {
+            return botStation.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(getClass()).add("botStation", botStation).toString();
+        }
     }
 
 }

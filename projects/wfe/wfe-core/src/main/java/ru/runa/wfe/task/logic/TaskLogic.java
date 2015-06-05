@@ -56,8 +56,6 @@ public class TaskLogic extends WFCommonLogic {
     private WfTaskFactory taskObjectFactory;
     @Autowired
     private ITaskListBuilder taskListBuilder;
-    @Autowired
-    private AssignmentHelper assignmentHelper;
 
     public void completeTask(User user, Long taskId, Map<String, Object> variables, Long swimlaneActorId) throws TaskDoesNotExistException {
         Task task = taskDAO.getNotNull(taskId);
@@ -73,7 +71,7 @@ public class TaskLogic extends WFCommonLogic {
                 Actor swimlaneActor = executorDAO.getActor(swimlaneActorId);
                 checkCanParticipate(swimlaneActor, task);
                 boolean reassignSwimlane = node.getFirstTaskNotNull().isReassignSwimlaneToTaskPerformer();
-                assignmentHelper.reassignTask(executionContext, task, swimlaneActor, reassignSwimlane);
+                AssignmentHelper.reassignTask(executionContext, task, swimlaneActor, reassignSwimlane);
             }
             // don't persist selected transition name
             String transitionName = (String) variables.remove(WfProcess.SELECTED_TRANSITION_KEY);
@@ -181,7 +179,7 @@ public class TaskLogic extends WFCommonLogic {
         ProcessDefinition processDefinition = getDefinition(process);
         SwimlaneDefinition swimlaneDefinition = processDefinition.getSwimlaneNotNull(swimlaneName);
         Swimlane swimlane = process.getSwimlaneNotNull(swimlaneDefinition);
-        assignmentHelper.assign(new ExecutionContext(processDefinition, process), swimlane, Lists.newArrayList(executor));
+        AssignmentHelper.assign(new ExecutionContext(processDefinition, process), swimlane, Lists.newArrayList(executor));
     }
 
     public void assignTask(User user, Long taskId, Executor previousOwner, Executor newExecutor) throws TaskAlreadyAcceptedException {
@@ -194,7 +192,7 @@ public class TaskLogic extends WFCommonLogic {
             checkCanParticipate(user.getActor(), task);
         }
         ProcessDefinition processDefinition = getDefinition(task);
-        assignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, newExecutor, false);
+        AssignmentHelper.reassignTask(new ExecutionContext(processDefinition, task), task, newExecutor, false);
     }
 
 }

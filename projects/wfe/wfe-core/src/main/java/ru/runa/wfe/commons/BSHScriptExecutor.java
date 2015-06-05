@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.user.Executor;
@@ -12,9 +13,9 @@ import ru.runa.wfe.var.IVariableProvider;
 public class BSHScriptExecutor extends GroovyScriptExecutor {
 
     @Override
-    public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
+    public Map<String, Object> executeScript(ExecutionContext executionContext, String script) {
         try {
-            return super.executeScript(processDefinition, variableProvider, adjustScript(script));
+            return super.executeScript(executionContext, adjustScript(script));
         } catch (RuntimeException e) {
             log.error("BSH adjusted conf: " + script);
             throw e;
