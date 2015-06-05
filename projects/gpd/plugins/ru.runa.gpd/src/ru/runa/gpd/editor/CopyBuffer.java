@@ -17,6 +17,7 @@ public class CopyBuffer {
     public static final String GROUP_SWIMLANES = Localization.getString("CopyBuffer.Swimlane");
     public static final String GROUP_FORM_FILES = Localization.getString("CopyBuffer.FormFiles");
     public static final String GROUP_VARIABLES = Localization.getString("CopyBuffer.Variable");
+    public static final String GROUP_DELEGABLE = Localization.getString("CopyBuffer.Delegable");
 
     private IFolder sourceFolder;
     private Language sourceLanguage;

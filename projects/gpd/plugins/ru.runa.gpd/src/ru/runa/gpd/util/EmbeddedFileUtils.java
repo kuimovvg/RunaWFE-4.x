@@ -1,6 +1,7 @@
 package ru.runa.gpd.util;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 
 import ru.runa.gpd.PluginLogger;
@@ -39,9 +40,9 @@ public class EmbeddedFileUtils {
         }
     }
 
-    public static String copyProcessFile(String path, String oldName, String newName) {
+    public static String copyProcessFile(IFolder sourceFolder, String path, String oldName, String newName) {
         String fileName = EmbeddedFileUtils.getProcessFileName(path);
-        IFile file = EmbeddedFileUtils.getProcessFile(fileName);
+        IFile file = IOUtils.getFile(sourceFolder, fileName);
         if (file.exists()) {
             fileName = fileName.replace(oldName, newName);
             path = EmbeddedFileUtils.getProcessFilePath(fileName);
