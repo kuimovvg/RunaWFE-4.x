@@ -17,6 +17,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.PluginLogger;
 import ru.runa.gpd.editor.CopyBuffer.ExtraCopyAction;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
+import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.lang.model.EndState;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.NamedGraphElement;
@@ -46,7 +49,7 @@ public class CopyGraphCommand extends Command {
     private final CopyBuffer copyBuffer;
     private final Map<String, NamedGraphElement> targetNodeMap = Maps.newHashMap();
     private final List<ExtraCopyAction> executedCopyActions = Lists.newArrayList();
-    private final Map<String,String> nodeToSwimlaneNameMap = Maps.newHashMap();
+    private final Map<String, String> nodeToSwimlaneNameMap = Maps.newHashMap();
 
     public CopyGraphCommand(ProcessDefinition targetDefinition, IFolder targetFolder) {
         this.targetDefinition = targetDefinition;
@@ -66,7 +69,7 @@ public class CopyGraphCommand extends Command {
 
     @Override
     public void execute() {
-    	try {
+        try {
             if (!copyBuffer.getLanguage().equals(targetDefinition.getLanguage())) {
                 Dialogs.warning(Localization.getString("CopyBuffer.DifferentVersion.warning"));
                 return;
@@ -75,20 +78,21 @@ public class CopyGraphCommand extends Command {
             List<NamedGraphElement> sourceNodeList = copyBuffer.getSourceNodes();
             // add nodes
             for (NamedGraphElement node : sourceNodeList) {
-            	if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() != 0) {
+                if (node instanceof StartState && targetDefinition.getChildren(StartState.class).size() != 0) {
                     continue;
                 } else if (node instanceof EndState && targetDefinition.getChildren(EndState.class).size() != 0) {
                     continue;
-                // if swimlane is copied as graph element twice
+                    // if swimlane is copied as graph element twice
                 } else if (node instanceof Swimlane && targetDefinition.getSwimlaneByName(node.getName()) != null) {
-                	continue;
+                    continue;
                 }
                 NamedGraphElement copy = node.getCopy(targetDefinition);
                 for (Variable variable : node.getUsedVariables(copyBuffer.getSourceFolder())) {
                     CopyVariableAction copyAction = new CopyVariableAction(variable);
                     copyActions.add(copyAction);
                 }
-                if (copy instanceof Subprocess) ((Subprocess) copy).setSubProcessName("");
+                if (copy instanceof Subprocess)
+                    ((Subprocess) copy).setSubProcessName("");
                 targetNodeMap.put(node.getId(), copy);
                 if (node instanceof FormNode) {
                     FormNode formNode = (FormNode) node;
@@ -108,13 +112,22 @@ public class CopyGraphCommand extends Command {
                         nodeToSwimlaneNameMap.put(node.getId(), swimlane.getName());
                     }
                 }
+                if (node instanceof Delegable) {
+                    Delegable source = (Delegable) node;
+                    if (source.getDelegationClassName() != null) {
+                        CopyDelegableElementAction copyAction = new CopyDelegableElementAction(node, copy);
+                        copyAction.setSourceFolder(copyBuffer.getSourceFolder());
+                        copyAction.setTargetFolder(targetFolder);
+                        copyActions.add(copyAction);
+                    }
+                }
             }
             // add transitions
             for (NamedGraphElement node : sourceNodeList) {
                 List<Transition> transitions = node.getChildren(Transition.class);
                 for (Transition transition : transitions) {
-                	NamedGraphElement source = targetNodeMap.get(transition.getSource().getId());
-                	NamedGraphElement target = targetNodeMap.get(transition.getTarget().getId());
+                    NamedGraphElement source = targetNodeMap.get(transition.getSource().getId());
+                    NamedGraphElement target = targetNodeMap.get(transition.getTarget().getId());
                     if (source != null && target != null) {
                         Transition copy = transition.getCopy(source);
                         copy.setTarget((Node) target);
@@ -160,9 +173,11 @@ public class CopyGraphCommand extends Command {
                     boolean ignoreSwimlane = targetDefinition instanceof SubprocessDefinition && entry.getValue() instanceof StartState;
                     if (!ignoreSwimlane) {
                         Swimlane swimlane = targetDefinition.getSwimlaneByName(nodeToSwimlaneNameMap.get(entry.getKey()));
-                        // this crazy line created because element.getConstraint() == null is checking of visibility for swimlane in many places
-                        if ( targetDefinition.getSwimlaneDisplayMode().equals(SwimlaneDisplayMode.none) && swimlane !=null ) {
-                        	swimlane.setConstraint(null);
+                        // this crazy line created because
+                        // element.getConstraint() == null is checking of
+                        // visibility for swimlane in many places
+                        if (targetDefinition.getSwimlaneDisplayMode().equals(SwimlaneDisplayMode.none) && swimlane != null) {
+                            swimlane.setConstraint(null);
                         }
                         ((SwimlanedNode) entry.getValue()).setSwimlane(swimlane);
                     }
@@ -188,9 +203,9 @@ public class CopyGraphCommand extends Command {
             }
         }
     }
-    
+
     public List<NamedGraphElement> getFilteredElements() {
-    	return  new ArrayList<NamedGraphElement>( targetNodeMap.values());
+        return new ArrayList<NamedGraphElement>(targetNodeMap.values());
     }
 
     private class CopyFormFilesAction extends ExtraCopyAction {
@@ -273,6 +288,40 @@ public class CopyGraphCommand extends Command {
             if (templateFile != null) {
                 templateFile.delete(true, null);
             }
+        }
+
+    }
+
+    private class CopyDelegableElementAction extends ExtraCopyAction {
+        private final NamedGraphElement source;
+        private final NamedGraphElement target;
+        private IFolder sourceFolder;
+        private IFolder targetFolder;
+
+        public CopyDelegableElementAction(NamedGraphElement source, NamedGraphElement target) {
+            super(CopyBuffer.GROUP_DELEGABLE, source.getName() + " (" + source.getId() + ")");
+            this.source = source;
+            this.target = target;
+        }
+
+        public void setSourceFolder(IFolder sourceFolder) {
+            this.sourceFolder = sourceFolder;
+        }
+
+        public void setTargetFolder(IFolder targetFolder) {
+            this.targetFolder = targetFolder;
+        }
+
+        @Override
+        public void execute() throws CoreException {
+            DelegableProvider provider = HandlerRegistry.getProvider(source.getDelegationClassName());
+            provider.onCopy(sourceFolder, (Delegable) source, source.getId(), targetFolder, (Delegable) target, target.getId());
+        }
+
+        @Override
+        public void undo() throws CoreException {
+            DelegableProvider provider = HandlerRegistry.getProvider(source.getDelegationClassName());
+            provider.onDelete((Delegable) target);
         }
 
     }

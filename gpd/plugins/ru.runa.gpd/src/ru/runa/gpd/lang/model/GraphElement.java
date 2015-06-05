@@ -430,12 +430,6 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
         }
         fillCopyCustomFields(copy);
         parent.addChild(copy);
-        if (this instanceof Delegable) {
-            copy.setDelegationClassName(getDelegationClassName());
-            copy.setDelegationConfiguration(getDelegationConfiguration());
-            DelegableProvider provider = HandlerRegistry.getProvider(getDelegationClassName());
-            provider.onCopy((Delegable) copy, this.getId(), copy.getId());
-        }
         return copy;
     }
 

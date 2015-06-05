@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -79,18 +80,19 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     }
 
     @Override
-    public void onCopy(Delegable delegable, String oldName, String newName) {
+    public void onCopy(IFolder sourceFolder, Delegable source, String sourceName, IFolder targetFolder, Delegable target, String targetName) {
+        super.onCopy(sourceFolder, source, sourceName, targetFolder, target, targetName);
         try {
-            DocxModel model = fromXml(delegable.getDelegationConfiguration());
+            DocxModel model = fromXml(source.getDelegationConfiguration());
             if (EmbeddedFileUtils.isProcessFile(model.getInOutModel().inputPath)) {
-                String newInputPath = EmbeddedFileUtils.copyProcessFile(model.getInOutModel().inputPath, oldName, newName);
+                String newInputPath = EmbeddedFileUtils.copyProcessFile(sourceFolder, model.getInOutModel().inputPath, sourceName, targetName);
                 if (newInputPath != null) {
                     model.getInOutModel().inputPath = newInputPath;
-                    delegable.setDelegationConfiguration(model.toString());
+                    target.setDelegationConfiguration(model.toString());
                 }
             }
         } catch (Exception e) {
-            PluginLogger.logErrorWithoutDialog("Failed to copy embedded file in " + delegable, e);
+            PluginLogger.logErrorWithoutDialog("Failed to copy embedded file in " + source.getDelegationClassName(), e);
         }
     }
 
