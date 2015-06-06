@@ -99,11 +99,11 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
         substitutionCriteria_requester = new SubstitutionCriteriaSwimlane();
         substitutionCriteria_requester.setConfiguration(PROCESS_NAME + ".requester");
         substitutionCriteria_requester.setName(PROCESS_NAME + ".requester");
-        testHelper.createSubstitutionCriteria(substitutionCriteria_requester);
+        substitutionCriteria_requester = testHelper.createSubstitutionCriteria(substitutionCriteria_requester);
         substitutionCriteria_no_requester = new SubstitutionCriteriaSwimlane();
         substitutionCriteria_no_requester.setConfiguration(PROCESS_NAME + ".No_requester");
         substitutionCriteria_no_requester.setName(PROCESS_NAME + ".No_requester");
-        testHelper.createSubstitutionCriteria(substitutionCriteria_no_requester);
+        substitutionCriteria_no_requester = testHelper.createSubstitutionCriteria(substitutionCriteria_no_requester);
 
         byte[] parBytes = WfServiceTestHelper.readBytesFromFile(PROCESS_FILE_URL);
         testHelper.getDefinitionService().deployProcessDefinition(testHelper.getAdminUser(), parBytes, Lists.newArrayList("testProcess"));
@@ -126,8 +126,7 @@ public class GetNewSubstitutorTaskListTest extends ServletTestCase {
     }
 
     /*
-     * Simple test case. Using process one_swimline_process and one substitutor
-     * with always subsitution rules. Checking correct task's list on
+     * Simple test case. Using process one_swimline_process and one substitutor with always subsitution rules. Checking correct task's list on
      * active/inactive actors.
      */
     public void testSubstitutionSimple() throws Exception {

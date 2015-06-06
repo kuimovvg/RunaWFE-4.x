@@ -186,8 +186,7 @@ public class ServiceTestHelper {
     }
 
     /**
-     * Creates groups and actors group contains subGroup and subActor subGroup
-     * contains subGroupActor
+     * Creates groups and actors group contains subGroup and subActor subGroup contains subGroupActor
      */
     public void createDefaultExecutorsMap() throws InternalApplicationException {
         baseGroup = executorService.create(adminUser, new Group(testClassName + BASE_GROUP_NAME, testClassName + BASE_GROUP_DESC));
@@ -242,8 +241,7 @@ public class ServiceTestHelper {
     }
 
     /**
-     * This method removes executor from createdExecutors set bun not from db,
-     * call this method when you want to remove executor manually.
+     * This method removes executor from createdExecutors set bun not from db, call this method when you want to remove executor manually.
      */
     public void removeCreatedExecutor(Executor executor) {
         createdExecutorsSet.remove(executor);
@@ -602,17 +600,14 @@ public class ServiceTestHelper {
     }
 
     /*
-     * TODO: remove public Profile getDefaultProfile(Subject subject) throws
-     * InternalApplicationException, AuthenticationException { Profile profile =
-     * profileService.getProfile(subject);
-     * subjectOfActorsWithProfileSet.add(subject); return profile; }
+     * TODO: remove public Profile getDefaultProfile(Subject subject) throws InternalApplicationException, AuthenticationException { Profile profile =
+     * profileService.getProfile(subject); subjectOfActorsWithProfileSet.add(subject); return profile; }
      * 
      * public Identifiable getFakeIdentifiable() { return new Identifiable() {
      * 
      * @Override public Long getId() { return 0L; }
      * 
-     * @Override public SecuredObjectType getSecuredObjectType() { return
-     * SecuredObjectType.DEFINITION; } }; }
+     * @Override public SecuredObjectType getSecuredObjectType() { return SecuredObjectType.DEFINITION; } }; }
      */
 
     public Substitution createTerminator(User user, SubstitutionCriteria substitutionCriteria, boolean isEnabled) throws AuthorizationException,
@@ -623,18 +618,6 @@ public class ServiceTestHelper {
         terminatorSubstitution.setCriteria(substitutionCriteria);
         terminatorSubstitution.setEnabled(isEnabled);
         return substitutionService.createSubstitution(getAdminUser(), terminatorSubstitution);
-
-        // List<Substitution> alreadySubstitutedBy =
-        // substitutionServiceDelegate.get(getAdminUser(),
-        // SubjectPrincipalsHelper.getActor(user)
-        // .getId());
-        // alreadySubstitutedBy.get(alreadySubstitutedBy.size() -
-        // 1).setCriteria(substitutionCriteria);
-        // alreadySubstitutedBy.get(alreadySubstitutedBy.size() -
-        // 1).setEnabled(isEnabled);
-        // substitutionServiceDelegate.store(getAdminUser(),
-        // alreadySubstitutedBy);
-        // return alreadySubstitutedBy[alreadySubstitutedBy.length - 1];
     }
 
     public Substitution createActorSubstitutor(User user, String orgFunction, SubstitutionCriteria substitutionCriteria, boolean isEnabled)
@@ -644,16 +627,6 @@ public class ServiceTestHelper {
         substitution.setOrgFunction(orgFunction);
         substitution.setCriteria(substitutionCriteria);
         substitution.setEnabled(isEnabled);
-
-        // Substitution[] alreadySubstitutedBy =
-        // substitutionServiceDelegate.get(getAdminUser(),
-        // SubjectPrincipalsHelper.getActor(user)
-        // .getId());
-        // if (alreadySubstitutedBy == null) {
-        // substitution.setPosition(0);
-        // } else {
-        // substitution.setPosition(alreadySubstitutedBy.length);
-        // }
         return substitutionService.createSubstitution(getAdminUser(), substitution);
     }
 
@@ -679,12 +652,13 @@ public class ServiceTestHelper {
         relationService.removeRelation(adminUser, relationId);
     }
 
-    public <T extends SubstitutionCriteria> void createSubstitutionCriteria(T substitutionCriteria) throws AuthorizationException,
+    public <T extends SubstitutionCriteria> T createSubstitutionCriteria(T substitutionCriteria) throws AuthorizationException,
             ExecutorDoesNotExistException, AuthenticationException {
         if (substitutionCriteria == null) {
-            return;
+            return null;
         }
         substitutionService.createCriteria(getAdminUser(), substitutionCriteria);
+        return (T) substitutionService.getCriteriaByName(getAdminUser(), substitutionCriteria.getName());
     }
 
     public void removeSubstitutionCriteria(SubstitutionCriteria substitutionCriteria) throws AuthorizationException, AuthenticationException,
