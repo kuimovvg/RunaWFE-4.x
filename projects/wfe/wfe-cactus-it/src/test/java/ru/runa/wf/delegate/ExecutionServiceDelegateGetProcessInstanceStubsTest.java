@@ -205,7 +205,7 @@ public class ExecutionServiceDelegateGetProcessInstanceStubsTest extends Servlet
         // due to
         // ru.runa.wfe.presentation.BatchPresentation.setFilteredFieldsMap(Map<Integer,
         // FilterCriteria>) in hibernate.update
-        ArrayAssert.assertEqualArrays("Incorrect returned", processes, wrongPageProcesses);
+        ArrayAssert.assertEqualArrays("Incorrect returned", firstTenProcesses, wrongPageProcesses);
     }
 
 }

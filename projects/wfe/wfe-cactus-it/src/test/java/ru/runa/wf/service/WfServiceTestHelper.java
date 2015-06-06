@@ -17,17 +17,28 @@
  */
 package ru.runa.wf.service;
 
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteStreams;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import ru.runa.af.service.ServiceTestHelper;
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.commons.PropertyResources;
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.WorkflowSystemPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.presentation.BatchPresentation;
 import ru.runa.wfe.presentation.BatchPresentationFactory;
-import ru.runa.wfe.security.*;
+import ru.runa.wfe.security.ASystem;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.service.DefinitionService;
 import ru.runa.wfe.service.ExecutionService;
 import ru.runa.wfe.service.delegate.Delegates;
@@ -36,12 +47,8 @@ import ru.runa.wfe.user.ExecutorDoesNotExistException;
 import ru.runa.wfe.user.Group;
 import ru.runa.wfe.user.User;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
 
 public class WfServiceTestHelper extends ServiceTestHelper {
 
@@ -243,12 +250,11 @@ public class WfServiceTestHelper extends ServiceTestHelper {
     public void deployValidProcessDefinition(String parResourceName) throws IOException {
         Collection<Permission> deployPermissions = Lists.newArrayList(WorkflowSystemPermission.DEPLOY_DEFINITION);
         setPermissionsToAuthorizedPerformerOnSystem(deployPermissions);
-        definitionService.deployProcessDefinition(getAuthorizedPerformerUser(), readBytesFromFile(parResourceName),
-                Lists.newArrayList("testProcess"));
+        definitionService
+                .deployProcessDefinition(getAuthorizedPerformerUser(), readBytesFromFile(parResourceName), Lists.newArrayList("testProcess"));
     }
 
-    public void undeployValidProcessDefinition(String parDefinitionName) throws InternalApplicationException
-             {
+    public void undeployValidProcessDefinition(String parDefinitionName) throws InternalApplicationException {
         Collection<Permission> undeployPermissions = Lists.newArrayList(DefinitionPermission.UNDEPLOY_DEFINITION);
         setPermissionsToAuthorizedPerformerOnDefinitionByName(undeployPermissions, parDefinitionName);
         definitionService.undeployProcessDefinition(getAuthorizedPerformerUser(), parDefinitionName, null);
@@ -257,6 +263,8 @@ public class WfServiceTestHelper extends ServiceTestHelper {
     private void createDelegates() {
         definitionService = Delegates.getDefinitionService();
         executionService = Delegates.getExecutionService();
+        PropertyResources.setDatabaseAvailable(true);
+        Delegates.getSystemService().setSetting(SystemProperties.CONFIG_FILE_NAME, "undefined.variables.allowed", "true");
     }
 
     public DefinitionService getDefinitionService() {

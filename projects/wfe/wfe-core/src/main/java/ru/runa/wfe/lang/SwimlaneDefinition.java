@@ -79,6 +79,9 @@ public class SwimlaneDefinition extends GraphElement {
     }
 
     public boolean isBotExecutor() {
+        if (delegation == null) {
+            return false;
+        }
         return BotSwimlaneInitializer.isValid(delegation.getConfiguration());
     }
 }

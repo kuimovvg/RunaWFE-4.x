@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 
 import ru.runa.wfe.InternalApplicationException;
-import ru.runa.wfe.commons.ApplicationContextFactory;
-import ru.runa.wfe.commons.DBType;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.execution.dto.WfProcess;
@@ -40,31 +38,15 @@ public class WfScriptServiceTestHelper extends WfServiceTestHelper {
     }
 
     public boolean areExecutorsWeaklyEqual(Executor e1, Executor e2) {
-        if (ApplicationContextFactory.getDBType() == DBType.ORACLE) {
-            if (e1 == null || e2 == null) {
-                return false;
-            }
-            if (!e1.getName().equals(e2.getName())) {
-                return false;
-            }
-            if (!Objects.equal(e1.getDescription(), e2.getDescription())) {
-                if (e1.getDescription() == null || e2.getDescription() == null) {
-                    return false;
-                }
-                if (!Objects.equal(e1.getDescription().trim(), e2.getDescription().trim())) {
-                    return false;
-                }
-            }
-            if ((e1 instanceof Actor) && (e2 instanceof Actor)) {
-                Actor a1 = (Actor) e1;
-                Actor a2 = (Actor) e2;
-                if (!a1.getFullName().trim().equals(a2.getFullName().trim())) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        /*
+         * if (ApplicationContextFactory.getDBType() == DBType.ORACLE) { if (e1 == null || e2 == null) { return false; } if
+         * (!e1.getName().equals(e2.getName())) { return false; } if (!Objects.equal(e1.getDescription(), e2.getDescription())) { if
+         * (e1.getDescription() == null || e2.getDescription() == null) { return false; } if (!Objects.equal(e1.getDescription().trim(),
+         * e2.getDescription().trim())) { return false; } } if ((e1 instanceof Actor) && (e2 instanceof Actor)) { Actor a1 = (Actor) e1; Actor a2 =
+         * (Actor) e2; if (!a1.getFullName().trim().equals(a2.getFullName().trim())) { return false; } }
+         * 
+         * return true; }
+         */
         if (e1 == null || e2 == null) {
             return false;
         }
