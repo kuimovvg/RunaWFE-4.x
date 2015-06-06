@@ -8,6 +8,7 @@ import org.eclipse.gef.ui.actions.GEFActionConstants;
 import org.eclipse.gef.ui.actions.ZoomInRetargetAction;
 import org.eclipse.gef.ui.actions.ZoomOutRetargetAction;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -22,8 +23,11 @@ public class ProcessEditorContributor extends ActionBarContributor {
         keyHandler.put(KeyStroke.getPressed((char) 1, 'a', SWT.CTRL), registry.getAction(ActionFactory.SELECT_ALL.getId()));
         keyHandler.put(KeyStroke.getPressed((char) 3, 'c', SWT.CTRL), registry.getAction(ActionFactory.COPY.getId()));
         keyHandler.put(KeyStroke.getPressed((char) 22, 'v', SWT.CTRL), registry.getAction(ActionFactory.PASTE.getId()));
+        keyHandler.put(KeyStroke.getPressed((char) 26, 'z', SWT.CTRL), registry.getAction(ActionFactory.UNDO.getId()));
+        keyHandler.put(KeyStroke.getPressed((char) 25, 'y', SWT.CTRL), registry.getAction(ActionFactory.REDO.getId()));
         return keyHandler;
     }
+
     /**
      * Creates and initialises all Actions. See the corresponding method in the
      * super class.
@@ -39,8 +43,12 @@ public class ProcessEditorContributor extends ActionBarContributor {
         addRetargetAction((RetargetAction) ActionFactory.PRINT.create(PlatformUI.getWorkbench().getActiveWorkbenchWindow()));
         addRetargetAction(new ZoomInRetargetAction());
         addRetargetAction(new ZoomOutRetargetAction());
-        //        addRetargetAction(new AlignmentRetargetAction(PositionConstants.LEFT));
-        //        addRetargetAction(new AlignmentRetargetAction(PositionConstants.TOP));
+        // addRetargetAction(new
+        // AlignmentRetargetAction(PositionConstants.LEFT));
+        // addRetargetAction(new
+        // AlignmentRetargetAction(PositionConstants.TOP));
+        addRetargetAction((RetargetAction) ActionFactory.UNDO.create(PlatformUI.getWorkbench().getActiveWorkbenchWindow()));
+        addRetargetAction((RetargetAction) ActionFactory.REDO.create(PlatformUI.getWorkbench().getActiveWorkbenchWindow()));
     }
 
     /**
@@ -65,7 +73,12 @@ public class ProcessEditorContributor extends ActionBarContributor {
      */
     @Override
     public void contributeToToolBar(IToolBarManager tbm) {
-        //        tbm.add(getAction(GEFActionConstants.ALIGN_TOP));
-        //        tbm.add(getAction(GEFActionConstants.ALIGN_LEFT));
+        // tbm.add(getAction(GEFActionConstants.ALIGN_TOP));
+        // tbm.add(getAction(GEFActionConstants.ALIGN_LEFT));
+        tbm.add(getAction(ActionFactory.UNDO.getId()));
+        tbm.add(getAction(ActionFactory.REDO.getId()));
+        tbm.add(new Separator());
+        tbm.add(getAction(ActionFactory.COPY.getId()));
+        tbm.add(getAction(ActionFactory.PASTE.getId()));
     }
 }

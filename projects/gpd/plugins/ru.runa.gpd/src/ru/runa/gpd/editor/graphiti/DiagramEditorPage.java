@@ -163,6 +163,11 @@ public class DiagramEditorPage extends DiagramEditor implements PropertyChangeLi
                 drawTransitions(editor.getDefinition().getChildrenRecursive(Transition.class));
                 getDefinition().setDirty(false);
             }
+
+            @Override
+            public boolean canUndo() {
+                return false;
+            }
         });
     }
 
