@@ -2,7 +2,6 @@ package ru.runa.wfe.commons;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import groovy.lang.MissingPropertyException;
 
 import java.util.Map;
 
@@ -98,12 +97,31 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         }
 
         @Override
-        public Object getVariable(String name) {
-            try {
-                return super.getVariable(name);
-            } catch (MissingPropertyException e) {
-                return getVariableFromProcess(name);
+        public Object getVariable(String scriptingName) {
+            if (super.hasVariable(scriptingName)) {
+                return super.getVariable(scriptingName);
             }
+            Object value = getVariableFromProcess(scriptingName);
+            if (value == null) {
+                log.warn("Variable '" + scriptingName + "' passed to script as null (not defined in process)");
+            }
+            log.debug("Passing to script '" + scriptingName + "' as '" + value + "'" + (value != null ? " of " + value.getClass() : ""));
+            setVariable(scriptingName, value);
+            return value;
+        }
+
+        protected Object getVariableFromProcess(String scriptingName) {
+            String name = getVariableNameByScriptingName(scriptingName);
+            Object value = variableProvider.getValue(name);
+            if (value instanceof ComplexVariable) {
+                if (complexVariables.containsKey(name)) {
+                    value = complexVariables.get(name);
+                } else {
+                    value = new ScriptingComplexVariable((ComplexVariable) value);
+                    complexVariables.put(name, (ScriptingComplexVariable) value);
+                }
+            }
+            return value;
         }
 
         private String getVariableNameByScriptingName(String name) {
@@ -115,24 +133,6 @@ public class GroovyScriptExecutor implements IScriptExecutor {
                 return name;
             }
             return variableName;
-        }
-
-        protected Object getVariableFromProcess(String name) {
-            name = getVariableNameByScriptingName(name);
-            Object value = variableProvider.getValue(name);
-            if (value == null) {
-                log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
-            }
-            if (value instanceof ComplexVariable) {
-                if (complexVariables.containsKey(name)) {
-                    value = complexVariables.get(name);
-                } else {
-                    value = new ScriptingComplexVariable((ComplexVariable) value);
-                    complexVariables.put(name, (ScriptingComplexVariable) value);
-                }
-            }
-            log.debug("Passing to script '" + name + "' as '" + value + "'" + (value != null ? " of " + value.getClass() : ""));
-            return value;
         }
 
         @Override
