@@ -54,8 +54,8 @@ public class BSHScriptExecutor extends GroovyScriptExecutor {
         }
 
         @Override
-        protected Object getVariableFromProcess(String name) {
-            Object value = super.getVariableFromProcess(name);
+        protected Object getVariableFromProcess(String scriptingName) {
+            Object value = super.getVariableFromProcess(scriptingName);
             if (value instanceof Executor) {
                 log.debug("Converting Executor -> String");
                 value = TypeConversionUtil.convertTo(String.class, value);
