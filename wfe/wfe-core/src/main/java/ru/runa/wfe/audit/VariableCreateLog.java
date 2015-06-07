@@ -30,7 +30,7 @@ import ru.runa.wfe.var.Variable;
 
 /**
  * Logging variable creation.
- * 
+ *
  * @author Dofs
  */
 @Entity
@@ -50,7 +50,7 @@ public class VariableCreateLog extends VariableLog {
     @Transient
     public Object[] getPatternArguments() {
         if (isFileValue()) {
-            return new Object[] { getVariableName(), new FileValue(getId(), getVariableNewValue()) };
+            return new Object[] { getVariableName(), new FileValue(getId(), (String) getVariableNewValue()) };
         }
         return new Object[] { getVariableName(), getVariableNewValue() };
     }

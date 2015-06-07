@@ -31,7 +31,7 @@ import ru.runa.wfe.var.matcher.FileVariableMatcher;
 
 /**
  * Logging variable update.
- * 
+ *
  * @author Dofs
  */
 @Entity
@@ -57,7 +57,7 @@ public class VariableUpdateLog extends VariableLog {
     @Transient
     public Object[] getPatternArguments() {
         if (isFileValue()) {
-            return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), new FileValue(getId(), getVariableNewValue()) };
+            return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), new FileValue(getId(), (String) getVariableNewValue()) };
         }
         return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), getVariableNewValue() };
     }

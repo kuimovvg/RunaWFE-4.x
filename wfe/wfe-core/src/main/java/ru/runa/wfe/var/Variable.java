@@ -217,7 +217,11 @@ public abstract class Variable<T extends Object> {
         if (SystemProperties.isV3CompatibilityMode() && value != null && String[].class == value.getClass()) {
             string = Arrays.toString((String[]) value);
         } else if (value instanceof Executor) {
-            string = ((Executor) value).getLabel();
+            if (SystemProperties.isExecutorVariableSavedToStringAsName()) {
+                string = ((Executor) value).getName();
+            } else {
+                string = ((Executor) value).getLabel();
+            }
         } else {
             string = String.valueOf(value);
         }

@@ -113,7 +113,7 @@ public interface DefinitionService {
 
     /**
      * Gets parsed process definition by id.
-     * 
+     *
      * @param user
      *            authorized user
      * @param definitionId
@@ -184,6 +184,18 @@ public interface DefinitionService {
             throws TaskDoesNotExistException;
 
     /**
+     * Gets start task user interaction.
+     *
+     * @param user
+     *            authorized user
+     * @param definitionId
+     *            process definition id
+     * @return not <code>null</code>
+     * @throws DefinitionDoesNotExistException
+     */
+    public Interaction getStartInteraction(User user, Long definitionId) throws DefinitionDoesNotExistException;
+
+    /**
      * Gets task user interaction.
      *
      * @param user
@@ -196,16 +208,17 @@ public interface DefinitionService {
     public Interaction getTaskInteraction(User user, Long taskId) throws TaskDoesNotExistException;
 
     /**
-     * Gets start task user interaction.
+     * Gets task user interaction.
      *
      * @param user
      *            authorized user
      * @param definitionId
      *            process definition id
-     * @return not <code>null</code>
-     * @throws DefinitionDoesNotExistException
+     * @param nodeId
+     *            node id
+     * @return interaction or <code>null</code> in case of invalid node id
      */
-    public Interaction getStartInteraction(User user, Long definitionId) throws DefinitionDoesNotExistException;
+    public Interaction getTaskNodeInteraction(User user, Long definitionId, String nodeId);
 
     /**
      * Gets all role definitions for process definition by id.
