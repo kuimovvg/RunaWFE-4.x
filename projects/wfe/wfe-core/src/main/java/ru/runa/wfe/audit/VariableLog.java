@@ -32,7 +32,7 @@ import ru.runa.wfe.var.file.IFileVariable;
 
 /**
  * Variables base logging class.
- * 
+ *
  * @author Dofs
  */
 @Entity
@@ -53,12 +53,12 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     @Transient
-    public String getVariableNewValue() {
+    public Object getVariableNewValue() {
         String content = getAttribute(ATTR_NEW_VALUE);
         if (content != null) {
             return content;
         }
-        return String.valueOf(getBytesObject());
+        return getBytesObject();
     }
 
     public void setVariableNewValue(Variable<?> variable, Object newValue) {

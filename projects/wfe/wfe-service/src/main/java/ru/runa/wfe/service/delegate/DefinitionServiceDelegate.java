@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.service.delegate;
@@ -116,6 +116,15 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
+    public Interaction getStartInteraction(User user, Long definitionId) {
+        try {
+            return getDefinitionService().getStartInteraction(user, definitionId);
+        } catch (Exception e) {
+            throw handleException(e);
+        }
+    }
+
+    @Override
     public Interaction getTaskInteraction(User user, Long taskId) {
         try {
             return getDefinitionService().getTaskInteraction(user, taskId);
@@ -125,9 +134,9 @@ public class DefinitionServiceDelegate extends EJB3Delegate implements Definitio
     }
 
     @Override
-    public Interaction getStartInteraction(User user, Long definitionId) {
+    public Interaction getTaskNodeInteraction(User user, Long definitionId, String nodeId) {
         try {
-            return getDefinitionService().getStartInteraction(user, definitionId);
+            return getDefinitionService().getTaskNodeInteraction(user, definitionId, nodeId);
         } catch (Exception e) {
             throw handleException(e);
         }

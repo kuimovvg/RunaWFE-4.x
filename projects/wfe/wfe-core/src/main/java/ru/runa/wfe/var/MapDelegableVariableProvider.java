@@ -7,7 +7,7 @@ import ru.runa.wfe.var.dto.WfVariable;
 import com.google.common.collect.Maps;
 
 public class MapDelegableVariableProvider extends DelegableVariableProvider {
-    private final Map<String, Object> values = Maps.newHashMap();
+    protected final Map<String, Object> values = Maps.newHashMap();
 
     public MapDelegableVariableProvider(Map<String, ? extends Object> variables, IVariableProvider delegate) {
         super(delegate);

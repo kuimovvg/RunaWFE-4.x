@@ -113,7 +113,7 @@ public class ProcessLogs implements Serializable {
     public <T extends ProcessLog> List<T> getLogs(Class<T> logClass) {
         List<T> list = Lists.newArrayList();
         for (ProcessLog log : logs) {
-            if (log.getClass() == logClass) {
+            if (logClass.isAssignableFrom(log.getClass())) {
                 list.add((T) log);
             }
         }
