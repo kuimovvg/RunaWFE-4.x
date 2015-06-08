@@ -25,6 +25,8 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import org.apache.commons.logging.LogFactory;
+
 import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.converter.FileVariableToByteArrayConverter;
@@ -82,7 +84,11 @@ public abstract class VariableLog extends ProcessLog {
             if (isFileValue()) {
                 return new FileVariableToByteArrayConverter().revert(bytes);
             }
-            return new SerializableToByteArrayConverter().revert(bytes);
+            try {
+                return new SerializableToByteArrayConverter().revert(bytes);
+            } catch (Exception e) {
+                LogFactory.getLog(getClass()).warn("Unable to revert '" + getVariableName() + "': " + e);
+            }
         }
         return getVariableNewValueString();
     }
