@@ -25,6 +25,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.converter.FileVariableToByteArrayConverter;
 import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
@@ -53,22 +54,19 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     @Transient
-    public Object getVariableNewValue() {
-        String content = getAttribute(ATTR_NEW_VALUE);
-        if (content != null) {
-            return content;
-        }
-        return getBytesObject();
+    public String getVariableNewValueString() {
+        return getAttribute(ATTR_NEW_VALUE);
     }
 
     public void setVariableNewValue(Variable<?> variable, Object newValue) {
+        addAttributeWithTruncation(ATTR_NEW_VALUE, variable.toString(newValue));
         boolean file = newValue instanceof IFileVariable;
         // TODO FileVariableMatcher
         addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(file));
         if (variable.getStorableValue() instanceof byte[]) {
             setBytes((byte[]) variable.getStorableValue());
-        } else {
-            addAttributeWithTruncation(ATTR_NEW_VALUE, variable.toString(newValue));
+        } else if (newValue instanceof Executor) {
+            setBytes((byte[]) new SerializableToByteArrayConverter().convert(null, variable, newValue));
         }
     }
 
@@ -78,8 +76,7 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     @Transient
-    @Override
-    public Object getBytesObject() {
+    public Object getVariableNewValue() {
         byte[] bytes = getBytes();
         if (bytes != null) {
             if (isFileValue()) {
@@ -87,6 +84,6 @@ public abstract class VariableLog extends ProcessLog {
             }
             return new SerializableToByteArrayConverter().revert(bytes);
         }
-        return super.getBytesObject();
+        return getVariableNewValueString();
     }
 }

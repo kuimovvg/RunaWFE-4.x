@@ -145,10 +145,6 @@ public class SystemProperties {
         return RESOURCES.getBooleanProperty("variables.autocast.enabled", true);
     }
 
-    public static boolean isExecutorVariableSavedToStringAsName() {
-        return RESOURCES.getBooleanProperty("executor.variable.saved.as.name", false);
-    }
-
     public static boolean isEscalationEnabled() {
         return RESOURCES.getBooleanProperty("escalation.enabled", true);
     }

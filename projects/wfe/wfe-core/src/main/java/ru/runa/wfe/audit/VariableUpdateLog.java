@@ -57,9 +57,9 @@ public class VariableUpdateLog extends VariableLog {
     @Transient
     public Object[] getPatternArguments() {
         if (isFileValue()) {
-            return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), new FileValue(getId(), (String) getVariableNewValue()) };
+            return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), new FileValue(getId(), getVariableNewValueString()) };
         }
-        return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), getVariableNewValue() };
+        return new Object[] { getVariableName(), getAttribute(ATTR_OLD_VALUE), getVariableNewValueString() };
     }
 
     @Override

@@ -50,9 +50,9 @@ public class VariableCreateLog extends VariableLog {
     @Transient
     public Object[] getPatternArguments() {
         if (isFileValue()) {
-            return new Object[] { getVariableName(), new FileValue(getId(), (String) getVariableNewValue()) };
+            return new Object[] { getVariableName(), new FileValue(getId(), getVariableNewValueString()) };
         }
-        return new Object[] { getVariableName(), getVariableNewValue() };
+        return new Object[] { getVariableName(), getVariableNewValueString() };
     }
 
     @Override
