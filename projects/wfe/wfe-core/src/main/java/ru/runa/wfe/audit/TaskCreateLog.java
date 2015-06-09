@@ -32,7 +32,7 @@ import ru.runa.wfe.task.Task;
 
 /**
  * Logging task creation.
- * 
+ *
  * @author Dofs
  */
 @Entity
@@ -47,12 +47,18 @@ public class TaskCreateLog extends TaskLog {
         super(task);
         if (task.getDeadlineDate() != null) {
             addAttribute(ATTR_DUE_DATE, CalendarUtil.formatDateTime(task.getDeadlineDate()));
-        }
+        }// TODO patch
+        setSeverity(Severity.INFO);
+    }
+
+    @Transient
+    public String getDeadlineDateString() {
+        return getAttribute(ATTR_DUE_DATE);
     }
 
     @Transient
     public Date getDeadlineDate() {
-        String dateAsString = getAttribute(ATTR_DUE_DATE);
+        String dateAsString = getDeadlineDateString();
         if (dateAsString == null) {
             return null;
         }
@@ -62,7 +68,7 @@ public class TaskCreateLog extends TaskLog {
     @Override
     @Transient
     public Object[] getPatternArguments() {
-        return new Object[] { getTaskName() };
+        return new Object[] { getTaskName(), getDeadlineDateString() };
     }
 
     @Override
