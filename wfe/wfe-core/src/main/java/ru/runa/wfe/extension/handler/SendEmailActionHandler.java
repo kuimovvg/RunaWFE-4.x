@@ -17,6 +17,8 @@
  */
 package ru.runa.wfe.extension.handler;
 
+import java.util.Map;
+
 import ru.runa.wfe.commons.email.EmailConfig;
 import ru.runa.wfe.commons.email.EmailConfigParser;
 import ru.runa.wfe.commons.email.EmailUtils;
@@ -25,7 +27,11 @@ import ru.runa.wfe.extension.ActionHandlerBase;
 import ru.runa.wfe.form.Interaction;
 import ru.runa.wfe.security.auth.UserHolder;
 import ru.runa.wfe.task.Task;
+import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.MapDelegableVariableProvider;
 import ru.runa.wfe.var.ScriptingVariableProvider;
+
+import com.google.common.collect.Maps;
 
 /**
  * Send email.
@@ -42,17 +48,14 @@ public class SendEmailActionHandler extends ActionHandlerBase {
         }
         EmailConfig config = EmailConfigParser.parse(configuration);
         try {
-            Interaction interaction = null;
-            if (config.isUseMessageFromTaskForm()) {
-                Task task = executionContext.getTask();
-                if (task == null) {
-                    throw new Exception("task is null");
-                }
-                interaction = executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId());
-            }
-            ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext.getProcessDefinition(),
-                    executionContext.getVariableProvider());
-            EmailUtils.prepareTaskMessage(UserHolder.get(), config, interaction, scriptingVariableProvider);
+            Task task = executionContext.getTask();
+            Interaction interaction = task != null ? executionContext.getProcessDefinition().getInteractionNotNull(task.getNodeId()) : null;
+            Map<String, Object> map = Maps.newHashMap();
+            map.put("interaction", interaction);
+            map.put("process", executionContext.getProcess());
+            ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(executionContext.getVariableProvider());
+            IVariableProvider emailVariableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
+            EmailUtils.prepareTaskMessage(UserHolder.get(), config, interaction, emailVariableProvider);
             EmailUtils.sendMessageRequest(config);
         } catch (Exception e) {
             if (config.isThrowErrorOnFailure()) {

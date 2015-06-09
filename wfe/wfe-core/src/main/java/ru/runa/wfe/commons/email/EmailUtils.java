@@ -26,6 +26,7 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.Utils;
@@ -147,22 +148,22 @@ public class EmailUtils {
         }
     }
 
-    public static void prepareTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider)
-            throws Exception {
+    public static void prepareTaskMessage(User user, EmailConfig config, Interaction interaction, IVariableProvider variableProvider) {
         config.setMessageId(variableProvider.getProcessId() + ": " + (interaction != null ? interaction.getName() : "no interaction"));
         config.applySubstitutions(variableProvider);
         String formTemplate;
         if (config.isUseMessageFromTaskForm()) {
+            Preconditions.checkNotNull(interaction, "Interaction is null but property bodyInlined=true");
             if (interaction.hasForm()) {
                 formTemplate = new String(interaction.getFormData(), Charsets.UTF_8);
                 if (!"ftl".equals(interaction.getType())) {
-                    throw new Exception("Property 'UseMessageFromTaskForm' is applicable only to free form layout form (ftl)");
+                    throw new InternalApplicationException("Property bodyInlined=true is applicable only to free form layout form (ftl)");
                 }
             } else {
                 if (SystemProperties.isV3CompatibilityMode()) {
                     formTemplate = " ";
                 } else {
-                    throw new Exception("Property 'UseMessageFromTaskForm' is set but form does not exist");
+                    throw new InternalApplicationException("Property bodyInlined=true but form does not exist");
                 }
             }
         } else {

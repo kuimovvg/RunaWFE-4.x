@@ -69,7 +69,7 @@ public class EmailTaskNotifier implements ITaskNotifier {
             map.put("interaction", interaction);
             map.put("task", task);
             map.put("emails", emails);
-            ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(processDefinition, variableProvider);
+            ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(variableProvider);
             IVariableProvider emailVariableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
             EmailUtils.prepareTaskMessage(UserHolder.get(), config, interaction, emailVariableProvider);
             EmailUtils.sendMessageRequest(config);

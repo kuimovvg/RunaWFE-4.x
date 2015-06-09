@@ -29,6 +29,10 @@ import ru.runa.wfe.service.delegate.Delegates;
 import ru.runa.wfe.task.dto.WfTask;
 import ru.runa.wfe.user.User;
 import ru.runa.wfe.var.IVariableProvider;
+import ru.runa.wfe.var.MapDelegableVariableProvider;
+import ru.runa.wfe.var.ScriptingVariableProvider;
+
+import com.google.common.collect.Maps;
 
 /**
  * Created on 04.07.2005
@@ -48,24 +52,13 @@ public class EmailTaskHandler extends TaskHandlerBase {
     @Override
     public Map<String, Object> handle(final User user, IVariableProvider variableProvider, final WfTask task) throws Exception {
         try {
-            Interaction interaction = null;
-            if (config.isUseMessageFromTaskForm()) {
-                interaction = Delegates.getDefinitionService().getTaskInteraction(user, task.getId());
-            }
-            // FileDataProvider fileDataProvider = new FileDataProvider() {
-            //
-            // @Override
-            // public byte[] getFileData(String fileName) {
-            // try {
-            // return
-            // Delegates.getDefinitionService().getProcessDefinitionFile(user,
-            // task.getDefinitionId(), fileName);
-            // } catch (Exception e) {
-            // throw new RuntimeException(e);
-            // }
-            // }
-            // };
-            EmailUtils.prepareTaskMessage(user, config, interaction, variableProvider);
+            Interaction interaction = Delegates.getDefinitionService().getTaskInteraction(user, task.getId());
+            Map<String, Object> map = Maps.newHashMap();
+            map.put("interaction", interaction);
+            map.put("task", task);
+            ScriptingVariableProvider scriptingVariableProvider = new ScriptingVariableProvider(variableProvider);
+            IVariableProvider emailVariableProvider = new MapDelegableVariableProvider(map, scriptingVariableProvider);
+            EmailUtils.prepareTaskMessage(user, config, interaction, emailVariableProvider);
             EmailUtils.sendMessage(config);
         } catch (Exception e) {
             if (config.isThrowErrorOnFailure()) {
