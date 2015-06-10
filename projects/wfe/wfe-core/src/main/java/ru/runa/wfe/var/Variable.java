@@ -56,6 +56,7 @@ import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.Process;
 import ru.runa.wfe.user.Executor;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Objects;
 
@@ -164,13 +165,13 @@ public abstract class Variable<T extends Object> {
      */
     protected abstract void setStorableValue(T object);
 
-    private void addLog(ExecutionContext executionContext, Object oldValue, Object newValue) {
+    private void addLog(ExecutionContext executionContext, Object oldValue, Object newValue, VariableFormat format) {
         if (oldValue == null) {
-            executionContext.addLog(new VariableCreateLog(this, newValue));
+            executionContext.addLog(new VariableCreateLog(this, newValue, format));
         } else if (newValue == null) {
             executionContext.addLog(new VariableDeleteLog(this));
         } else {
-            executionContext.addLog(new VariableUpdateLog(this, oldValue, newValue));
+            executionContext.addLog(new VariableUpdateLog(this, oldValue, newValue, format));
         }
     }
 
@@ -182,7 +183,7 @@ public abstract class Variable<T extends Object> {
         return converter != null && converter.supports(value);
     }
 
-    public void setValue(ExecutionContext executionContext, Object newValue) {
+    public void setValue(ExecutionContext executionContext, Object newValue, VariableFormat format) {
         Object newStorableValue;
         if (supports(newValue)) {
             if (converter != null && converter.supports(newValue)) {
@@ -195,12 +196,12 @@ public abstract class Variable<T extends Object> {
             throw new InternalApplicationException(this + " does not support new value '" + newValue + "' of '" + newValue.getClass() + "'");
         }
         Object oldValue = getStorableValue();
-        setStringValue(newValue != null ? toString(newValue) : null);
+        setStringValue(newValue != null ? toString(newValue, format) : null);
         if (converter != null && oldValue != null) {
             oldValue = converter.revert(oldValue);
         }
         setStorableValue((T) newStorableValue);
-        addLog(executionContext, oldValue, newValue);
+        addLog(executionContext, oldValue, newValue, format);
     }
 
     @Transient
@@ -212,14 +213,14 @@ public abstract class Variable<T extends Object> {
         return value;
     }
 
-    public String toString(Object value) {
+    public String toString(Object value, VariableFormat format) {
         String string;
         if (SystemProperties.isV3CompatibilityMode() && value != null && String[].class == value.getClass()) {
             string = Arrays.toString((String[]) value);
         } else if (value instanceof Executor) {
             string = ((Executor) value).getLabel();
         } else {
-            string = String.valueOf(value);
+            string = format.format(value);
         }
         if (string.length() > MAX_STRING_SIZE) {
             string = string.substring(0, MAX_STRING_SIZE);

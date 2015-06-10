@@ -32,6 +32,7 @@ import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.converter.FileVariableToByteArrayConverter;
 import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
 import ru.runa.wfe.var.file.IFileVariable;
+import ru.runa.wfe.var.format.VariableFormat;
 
 /**
  * Variables base logging class.
@@ -60,8 +61,8 @@ public abstract class VariableLog extends ProcessLog {
         return getAttribute(ATTR_NEW_VALUE);
     }
 
-    public void setVariableNewValue(Variable<?> variable, Object newValue) {
-        addAttributeWithTruncation(ATTR_NEW_VALUE, variable.toString(newValue));
+    protected void setVariableNewValue(Variable<?> variable, Object newValue, VariableFormat format) {
+        addAttributeWithTruncation(ATTR_NEW_VALUE, variable.toString(newValue, format));
         boolean file = newValue instanceof IFileVariable;
         // TODO FileVariableMatcher
         addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(file));

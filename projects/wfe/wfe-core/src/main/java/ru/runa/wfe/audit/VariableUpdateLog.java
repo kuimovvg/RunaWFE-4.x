@@ -27,6 +27,7 @@ import javax.persistence.Transient;
 
 import ru.runa.wfe.audit.presentation.FileValue;
 import ru.runa.wfe.var.Variable;
+import ru.runa.wfe.var.format.VariableFormat;
 import ru.runa.wfe.var.matcher.FileVariableMatcher;
 
 /**
@@ -42,15 +43,15 @@ public class VariableUpdateLog extends VariableLog {
     public VariableUpdateLog() {
     }
 
-    public VariableUpdateLog(Variable<?> variable, Object oldValue, Object newValue) {
+    public VariableUpdateLog(Variable<?> variable, Object oldValue, Object newValue, VariableFormat format) {
         super(variable);
         boolean saveOldValue = !(variable.getStorableValue() instanceof byte[]) || FileVariableMatcher.isFileOrListOfFiles(oldValue);
         if (saveOldValue) {
             // don't save previous big values, it can be found from previous
             // records
-            addAttributeWithTruncation(ATTR_OLD_VALUE, variable.toString(oldValue));
+            addAttributeWithTruncation(ATTR_OLD_VALUE, variable.toString(oldValue, format));
         }
-        setVariableNewValue(variable, newValue);
+        setVariableNewValue(variable, newValue, format);
     }
 
     @Override

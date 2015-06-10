@@ -27,6 +27,7 @@ import javax.persistence.Transient;
 
 import ru.runa.wfe.audit.presentation.FileValue;
 import ru.runa.wfe.var.Variable;
+import ru.runa.wfe.var.format.VariableFormat;
 
 /**
  * Logging variable creation.
@@ -41,9 +42,9 @@ public class VariableCreateLog extends VariableLog {
     public VariableCreateLog() {
     }
 
-    public VariableCreateLog(Variable<?> variable, Object newValue) {
+    public VariableCreateLog(Variable<?> variable, Object newValue, VariableFormat format) {
         super(variable);
-        setVariableNewValue(variable, newValue);
+        setVariableNewValue(variable, newValue, format);
     }
 
     @Override

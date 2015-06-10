@@ -47,7 +47,7 @@ public class TaskCreateLog extends TaskLog {
         super(task);
         if (task.getDeadlineDate() != null) {
             addAttribute(ATTR_DUE_DATE, CalendarUtil.formatDateTime(task.getDeadlineDate()));
-        }// TODO patch
+        }
         setSeverity(Severity.INFO);
     }
 
