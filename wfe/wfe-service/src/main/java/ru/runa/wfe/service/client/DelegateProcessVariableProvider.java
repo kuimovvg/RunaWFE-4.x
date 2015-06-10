@@ -11,7 +11,7 @@ import ru.runa.wfe.var.dto.WfVariable;
 /**
  * Implementation which uses service call for each variable retrieval (through
  * RunaWFE delegates).
- * 
+ *
  * @author Dofs
  * @since 4.0
  */
@@ -19,6 +19,7 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
     private final ExecutionService executionService;
     private final User user;
     private final Long processId;
+    private Long processDefinitionId;
 
     public DelegateProcessVariableProvider(ExecutionService executionService, User user, Long processId) {
         this.executionService = executionService;
@@ -37,8 +38,11 @@ public class DelegateProcessVariableProvider extends AbstractVariableProvider {
 
     @Override
     public Long getProcessDefinitionId() {
-        WfProcess process = executionService.getProcess(user, processId);
-        return process.getDefinitionId();
+        if (processDefinitionId == null) {
+            WfProcess process = executionService.getProcess(user, processId);
+            processDefinitionId = process.getDefinitionId();
+        }
+        return processDefinitionId;
     }
 
     @Override
