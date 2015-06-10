@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ru.runa.wfe</groupId>
 	<artifactId>wfe-app</artifactId>
-	<version>4.2.0-SNAPSHOT</version>
+	<version>4.2.mc</version>
 	<packaging>pom</packaging>
 	<name>RunaWFE application</name>
 
@@ -12,11 +12,9 @@
 		<module>../wfe-core</module>
 		<module>../wfe-service</module>
 		<module>../wfe-bots</module>
-		<module>../wfe-remotebots</module>
 		<module>../wfe-office</module>
 		<module>../wfe-web</module>
 		<module>../wfe-ear</module>
-		<module>../wfe-cactus-it</module>
 	</modules>
 
 	<properties>
@@ -25,6 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.organization.name>runawfe.org</project.organization.name>
 		<spring.version>3.1.2.RELEASE</spring.version>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<profiles>
