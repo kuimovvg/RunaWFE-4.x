@@ -868,12 +868,14 @@
             order="-83">
          <param
                name="%Param.Variable"
+               optional="false"
                type="uservarlistcombo"
                variableAccess="READ"
                variableTypeFilter="java.util.List">
          </param>
          <param
                name="%Param.DisplayFormat"
+               optional="false"
                type="combo"
                variableAccess="NONE"
                variableTypeFilter="java.lang.String">
@@ -903,11 +905,19 @@
                name="%Param.Variable"
                optional="false"
                type="uservarlistcombo"
+               variableAccess="WRITE"
+               variableTypeFilter="java.util.List">
+         </param>
+         <param
+               name="%Param.InputData"
+               optional="false"
+               type="uservarlistcombo"
                variableAccess="READ"
                variableTypeFilter="java.util.List">
          </param>
          <param
                name="%Param.DisplayFormat"
+               optional="false"
                type="combo"
                variableAccess="NONE"
                variableTypeFilter="java.lang.String">

@@ -22,9 +22,7 @@ import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 
 import com.google.common.collect.Lists;
 
-public class UserVariableFieldsComboParameter extends ComboParameter implements IParameterChangeConsumer {
-
-    private Combo combo;
+public class UserVariableFieldsComboParameter extends ComboParameter {
 
     @Override
     protected List<String> getOptionLabels(ComponentParameter parameter) {
@@ -41,7 +39,7 @@ public class UserVariableFieldsComboParameter extends ComboParameter implements 
         if (type == null) {
             UserVariablesListComboParameter varListCombo = searchVarListCombo();
             if (varListCombo != null) {
-                type = varListCombo.getSelectedVariableListGenericType();
+                type = varListCombo.getSelectedVariableListGenericType(null);
             }
         }
         if (type == null) {
@@ -73,13 +71,25 @@ public class UserVariableFieldsComboParameter extends ComboParameter implements 
 
     @Override
     public Composite createEditor(Composite parent, ComponentParameter parameter, final Object oldValue, final PropertyChangeListener listener) {
-        combo = new Combo(parent, SWT.READ_ONLY);
+        final Combo combo = new Combo(parent, SWT.READ_ONLY);
         combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         UserVariablesListComboParameter varListCombo = searchVarListCombo();
         if (varListCombo != null) {
-            varListCombo.addParameterChangeListener(this);
+            varListCombo.addParameterChangeListener(new IParameterChangeConsumer() {
+
+                @Override
+                public void onParameterChange(IParameterChangeCustomer customer, ComponentParameter parameter) {
+                    if (!(customer instanceof UserVariablesListComboParameter)) {
+                        return;
+                    }
+                    rebuildComboSelection(((UserVariablesListComboParameter) customer).getSelectedVariableListGenericType(parameter), combo);
+                }
+
+            });
         }
-        rebuildComboSelection(null);
+        for (String variableFieldName : getOptions(null)) {
+            combo.add(variableFieldName);
+        }
         if (oldValue != null) {
             combo.setText((String) oldValue);
         }
@@ -95,22 +105,15 @@ public class UserVariableFieldsComboParameter extends ComboParameter implements 
         return combo;
     }
 
-    private void rebuildComboSelection(VariableUserType type) {
-        List<String> items = getOptions(type);
+    private void rebuildComboSelection(VariableUserType type, Combo combo) {
+        if (combo.isDisposed()) {
+            return;
+        }
         if (combo.getItemCount() > 0) {
             combo.removeAll();
         }
-        for (String variableFieldName : items) {
+        for (String variableFieldName : getOptions(type)) {
             combo.add(variableFieldName);
         }
     }
-
-    @Override
-    public void onParameterChange(IParameterChangeCustomer customer) {
-        if (!(customer instanceof UserVariablesListComboParameter)) {
-            return;
-        }
-        rebuildComboSelection(((UserVariablesListComboParameter) customer).getSelectedVariableListGenericType());
-    }
-
 }
