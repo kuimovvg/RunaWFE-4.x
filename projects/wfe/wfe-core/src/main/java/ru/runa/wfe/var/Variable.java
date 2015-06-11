@@ -220,7 +220,7 @@ public abstract class Variable<T extends Object> {
         } else if (value instanceof Executor) {
             string = ((Executor) value).getLabel();
         } else {
-            string = format.format(value);
+            string = String.valueOf(value);
         }
         if (string.length() > MAX_STRING_SIZE) {
             string = string.substring(0, MAX_STRING_SIZE);
