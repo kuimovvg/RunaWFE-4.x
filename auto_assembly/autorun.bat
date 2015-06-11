@@ -56,7 +56,7 @@ call mvn versions:set -DnewVersion=%1
 cd ..\installer\windows\
 copy ..\..\..\..\createIso.bat .
 
-mvn clean package -Djboss.zip.file=../../../../jboss7.zip -Djboss.zip.folder=jboss7 -Declipse.home.dir=../../../../eclipse -Dappserver=jboss7
+mvn clean package -Djboss.zip.file=../../../../jboss7.zip -Djboss.zip.folder=jboss7 -Declipse.home.dir=../../../../eclipse -Dappserver=jboss7 -Djdk.dir="%~dp0%jdk"
 call createIso.bat
 
 xcopy /E /Q target\test-result ..\..\..\..\..\..\results\test-result\

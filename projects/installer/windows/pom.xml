@@ -8,6 +8,15 @@
   <version>4.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>RunaWFE application windows installer</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.github.stephenc.java-iso-tools</groupId>
+      <artifactId>iso9660-maven-plugin</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -21,29 +30,6 @@
               <target>
 
                 <mkdir dir="target/artifacts"/>
-                <mkdir dir="target/test-result"/>
-
-                <exec executable="cmd" dir="../../wfe/wfe-app" failonerror="false" resultproperty="testResult">
-                  <arg value="/C"/>
-                  <arg value="mvn clean integration-test -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
-                </exec>
-                <exec executable="cmd" dir="../../wfe/wfe-cactus-it" failonerror="false">
-                  <arg value="/C"/>
-                  <arg value="mvn surefire-report:report-only"/>
-                </exec>
-                <copy toDir="target/test-result">
-                  <fileset dir="../../wfe/wfe-cactus-it/target">
-                    <include name="site/*"/>
-                    <include name="surefire-reports/*"/>
-                  </fileset>
-                </copy>
-                <fail message="Build or testin is failed">
-                  <condition>
-                    <not>
-                      <matches string="${testResult}" pattern="0"/>
-                    </not>
-                  </condition>
-                </fail>		
                 
                 <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">
                   <arg value="/C"/>
@@ -169,7 +155,6 @@
                   <arg value="/C"/>
                   <arg value="ant -f antbuild.xml makeInstaller -Dproject.version=${version}"/>
                 </exec>
-
               </target>
             </configuration>
             <goals>
@@ -177,8 +162,26 @@
             </goals>
           </execution>
         </executions>
-        <dependencies>
-        </dependencies>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.stephenc.java-iso-tools</groupId>
+        <artifactId>iso9660-maven-plugin</artifactId>
+        <version>2.0.0</version>
+        <executions>
+          <execution>
+            <id>generate-iso</id>
+            <goals>
+                <goal>iso</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <volumeId>RunaWFE ${project.version}</volumeId>
+              <finalName>installer.iso</finalName>
+              <inputDirectory>target/artifacts/installer</inputDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
