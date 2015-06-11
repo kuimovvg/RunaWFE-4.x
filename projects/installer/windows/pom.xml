@@ -156,9 +156,18 @@
                   <arg value="ant -f antbuild.xml makeInstaller -Dproject.version=${version}"/>
                 </exec>
               </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
 
-              <target name="copyJdk" if="jdk.dir">
-                <copy todir="${artifacts.dir}/Installer">
+          <execution>
+            <id>package</id>
+            <phase>package</phase>
+            <configuration>
+              <target if="jdk.dir">
+                <copy todir="target/artifacts/Installer">
                   <fileset dir="${jdk.dir}">
                     <include name="*"/>
                   </fileset>
