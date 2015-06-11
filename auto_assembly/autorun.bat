@@ -15,7 +15,6 @@ mkdir results
 
 copy jboss7.zip build
 copy eclipse-3.7.2-with-deltapack.zip build
-copy createIso.bat build
 copy readme build
 
 REM start unrar x eclipse.rar 
@@ -54,10 +53,8 @@ cd ../../wfe/wfe-cactus-it
 call mvn versions:set -DnewVersion=%1
 
 cd ..\installer\windows\
-copy ..\..\..\..\createIso.bat .
 
 mvn clean package -Djboss.zip.file=../../../../jboss7.zip -Djboss.zip.folder=jboss7 -Declipse.home.dir=../../../../eclipse -Dappserver=jboss7 -Djdk.dir="%~dp0%jdk"
-call createIso.bat
 
 xcopy /E /Q target\test-result ..\..\..\..\..\..\results\test-result\
 xcopy /E /Q target\artifacts\Installer ..\..\..\..\..\..\results\Execution\

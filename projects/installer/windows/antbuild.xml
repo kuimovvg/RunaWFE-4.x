@@ -135,15 +135,6 @@
 				<include name="*"/>
 			</fileset>
 		</copy>
-		<antcall target="copyJdk"/>
-	</target>
-
-	<target name="copyJdk" if="jdk.dir">
-		<copy todir="${artifacts.dir}/Installer">
-			<fileset dir="${jdk.dir}">
-				<include name="*"/>
-			</fileset>
-		</copy>
 	</target>
 
 </project>

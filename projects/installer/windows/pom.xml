@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.runa.wfe</groupId>
   <artifactId>wfe-win-installer</artifactId>
-  <version>4.1.1-SNAPSHOT</version>
+  <version>4.2</version>
   <packaging>pom</packaging>
   <name>RunaWFE application windows installer</name>
 
@@ -155,6 +155,14 @@
                   <arg value="/C"/>
                   <arg value="ant -f antbuild.xml makeInstaller -Dproject.version=${version}"/>
                 </exec>
+              </target>
+
+              <target name="copyJdk" if="jdk.dir">
+                <copy todir="${artifacts.dir}/Installer">
+                  <fileset dir="${jdk.dir}">
+                    <include name="*"/>
+                  </fileset>
+                </copy>
               </target>
             </configuration>
             <goals>
