@@ -24,7 +24,7 @@
         <version>1.7</version>
         <executions>
           <execution>
-            <id>package</id>
+            <id>create exe</id>
             <phase>package</phase>
             <configuration>
               <target>
@@ -163,7 +163,7 @@
           </execution>
 
           <execution>
-            <id>package</id>
+            <id>add jdk files</id>
             <phase>package</phase>
             <configuration>
               <target if="jdk.dir">
