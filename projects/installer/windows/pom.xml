@@ -33,7 +33,7 @@
                 
                 <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${project.version}"/>
                 </exec>
                 <copy toDir="target/artifacts/app-server">
                   <fileset dir="../../wfe/wfe-appserver/target">
@@ -48,7 +48,7 @@
 
                 <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -P simulation -Dproject.version=${version}"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -P simulation -Dproject.version=${project.version}"/>
                 </exec>
                 <copy toDir="target/artifacts/app-simulation">
                   <fileset dir="../../wfe/wfe-appserver/target">
@@ -74,7 +74,7 @@
 		<sleep seconds="60"/>
                 <exec executable="cmd" dir="../../wfe/wfe-webservice-client" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean install -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
+                  <arg value="mvn clean install -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${project.version}"/>
                 </exec>
                 <get src="http://localhost:8080/wfe/login.do?login=Administrator&amp;password=wf&amp;forwardUrl=/admin_scripts.do?action=executeUploadedScript&amp;fileName=deploy-samples-script.xml" dest="target/artifacts/jboss/tmp"/>
 
@@ -99,7 +99,7 @@
 		<delete dir="target/artifacts/jboss/"/>
 
                 <exec executable="cmd" dir="../../gpd" failonerror="true">
-                  <arg line="/C ant -Dproject.version=${version}"/>
+                  <arg line="/C ant -Dproject.version=${project.version}"/>
                 </exec>
                 <copy toDir="target/artifacts/gpd/32">
                   <fileset dir="../../gpd/build">
@@ -114,7 +114,7 @@
 
                 <exec executable="cmd" dir="../../rtn" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${project.version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86"/>
                 </exec>
                 <copy toDir="target/artifacts/rtn/32">
                   <fileset dir="../../rtn/target">
@@ -127,7 +127,7 @@
 
                 <exec executable="cmd" dir="../../rtn" failonerror="true">
                   <arg value="/C"/>
-                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86_64"/>
+                  <arg value="mvn clean package -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Djboss.version=7 -Dproject.version=${project.version} -Dswt.artifactId=org.eclipse.swt.win32.win32.x86_64"/>
                 </exec>
                 <copy toDir="target/artifacts/rtn/64">
                   <fileset dir="../../rtn/target">
@@ -153,7 +153,7 @@
 
                 <exec executable="cmd" dir="." failonerror="true">
                   <arg value="/C"/>
-                  <arg value="ant -f antbuild.xml makeInstaller -Dproject.version=${version}"/>
+                  <arg value="ant -f antbuild.xml makeInstaller -Dproject.version=${project.version}"/>
                 </exec>
               </target>
             </configuration>
