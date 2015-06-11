@@ -140,7 +140,7 @@
 
 	<target name="copyJdk" if="jdk.dir">
 		<copy todir="${artifacts.dir}/Installer">
-			<fileset dir="${jdk.dir}/CDStartup">
+			<fileset dir="${jdk.dir}">
 				<include name="*"/>
 			</fileset>
 		</copy>
