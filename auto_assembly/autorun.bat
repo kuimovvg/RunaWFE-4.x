@@ -9,7 +9,9 @@ exit
 )
 
 rd /S /Q build
+rd /S /Q results
 mkdir build
+mkdir results
 
 copy jboss7.zip build
 copy eclipse-3.7.2-with-deltapack.zip build
@@ -56,3 +58,6 @@ copy ..\..\..\..\createIso.bat .
 
 mvn clean package -Djboss.zip.file=../../../../jboss7.zip -Djboss.zip.folder=jboss7 -Declipse.home.dir=../../../../eclipse -Dappserver=jboss7
 call createIso.bat
+
+xcopy /E /Q target\test-result ..\..\..\..\..\..\results\test-result\
+xcopy /E /Q target\artifacts\Installer ..\..\..\..\..\..\results\Execution\
