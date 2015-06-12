@@ -246,7 +246,7 @@
         <version>2.0.0</version>
         <executions>
           <execution>
-            <id>generate-iso</id>
+            <id>generate-iso-64</id>
             <goals>
                 <goal>iso</goal>
             </goals>

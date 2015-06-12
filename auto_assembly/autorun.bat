@@ -61,3 +61,4 @@ mkdir ..\..\..\..\..\results\Execution
 copy target\artifacts\Installer\RunaWFE-Installer.exe ..\..\..\..\..\results\Execution\
 mkdir ..\..\..\..\..\results\ISO
 copy target\installer.iso ..\..\..\..\..\results\ISO\
+copy target\installer64.iso ..\..\..\..\..\results\ISO\
