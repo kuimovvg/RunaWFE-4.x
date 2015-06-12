@@ -1,4 +1,4 @@
-run autoran.bat
+run autorun.bat
 
 Requirements (into $PATH): jdk, maven, subversion, ant
 
