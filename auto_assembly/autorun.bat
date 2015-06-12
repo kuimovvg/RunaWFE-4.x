@@ -57,4 +57,5 @@ cd ..\installer\windows\
 call mvn clean package -Djboss.zip.file=../../../../jboss7.zip -Djboss.zip.folder=jboss7 -Declipse.home.dir=../../../../eclipse -Dappserver=jboss7 -Djdk.dir="%~dp0%jdk"
 
 xcopy /E /Q target\test-result ..\..\..\..\..\results\test-result\
-xcopy /E /Q target\artifacts\Installer ..\..\..\..\..\results\Execution\
+xcopy /E /Q target\artifacts\Installer\RunaWFE-Installer.exe ..\..\..\..\..\results\Execution\
+xcopy /E /Q target\installer.iso ..\..\..\..\..\results\ISO\
