@@ -174,10 +174,30 @@
                   <arg value="mvn clean -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot;"/>
                 </exec>
 
+		<replace file="resources\NSIS7\JDKInstallSupport.nsh"
+		  token="X64ONLY &quot;no&quot;"
+                  value="X64ONLY &quot;yes&quot;"
+                />
                 <exec executable="cmd" dir="." failonerror="true">
                   <arg value="/C"/>
                   <arg value="ant -f antbuild.xml makeInstaller -Dproject.version=${project.version}"/>
                 </exec>
+                <copy todir="target/artifacts/Installer64">
+                  <fileset dir="target/artifacts/Installer">
+                    <include name="*"/>
+                  </fileset>
+                </copy>
+		<delete dir="target/artifacts/Installer"/>
+
+		<replace file="resources\NSIS7\JDKInstallSupport.nsh"
+		  token="X64ONLY &quot;yes&quot;"
+                  value="X64ONLY &quot;no&quot;"
+                />
+                <exec executable="cmd" dir="." failonerror="true">
+                  <arg value="/C"/>
+                  <arg value="ant -f antbuild.xml makeInstaller -Dproject.version=${project.version}"/>
+                </exec>
+
               </target>
             </configuration>
             <goals>
@@ -202,7 +222,7 @@
                   </fileset>
                 </copy>
                 <copy todir="target/artifacts/Installer64">
-                  <fileset dir="target/artifacts/Installer">
+                  <fileset dir="${jdk.dir}">
                     <include name="*"/>
                   </fileset>
                 </copy>

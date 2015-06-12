@@ -6,6 +6,7 @@
 !include WinVer.nsh
 
 !define JAVA_VERSION "1.5.0"
+!define X64ONLY "no" ; set to yes if only 64 bit java searching
 
 Var InstallJava
 Var JavaPath
@@ -34,7 +35,7 @@ Function checkJDKinit
 FunctionEnd
 
 Function checkAndInstallJDK
- Push $0
+  Push $0
   Push $1
   !insertmacro MUI_INSTALLOPTIONS_READ $0 "InstallJDKPage.ini" "Settings" "State"
   ${if} $0 == "3"
@@ -123,6 +124,7 @@ Function DetectJava64
   Push $0
   Goto DetectJava64_Complete
 DetectJava64_32:
+  StrCmp $X64ONLY "yes" DetectJava64_Fail
   SetRegView 32
   StrCpy $JdkArch "32"
   Push "${JAVA_VERSION}"
@@ -151,6 +153,7 @@ Function CheckInstalledJava64
   StrCpy $JdkArch "64"
   call CheckInstalledJava
   StrCmp $InstallJava "yes" 0 SearchJdkComplete
+  StrCmp $X64ONLY "yes" SearchJdkComplete
   SetRegView 32
   StrCpy $JdkArch "32"
   call CheckInstalledJava
