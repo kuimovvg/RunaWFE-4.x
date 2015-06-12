@@ -36,7 +36,7 @@ call mvn versions:set -DnewVersion=%wfeVersion%
 
 cd ..\installer\windows\
 
-call mvn clean package -Djboss.zip.file=../../../../jboss7.zip -Djboss.zip.folder=jboss7 -Declipse.home.dir=../../../../eclipse -Dappserver=jboss7 -Djdk.dir="%~dp0%jdk"
+call mvn clean package -Djboss.zip.file=../../../../jboss7.zip -Djboss.zip.folder=jboss7 -Declipse.home.dir=../../../../eclipse -Dappserver=jboss7 -Djdk.dir="%~dp0%jdk" -l build.log
 
 xcopy /E /Q target\test-result ..\..\..\..\..\results\test-result\
 mkdir ..\..\..\..\..\results\Execution
