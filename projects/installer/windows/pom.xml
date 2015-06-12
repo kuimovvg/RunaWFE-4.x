@@ -201,6 +201,16 @@
                     <include name="*"/>
                   </fileset>
                 </copy>
+                <copy todir="target/artifacts/Installer64">
+                  <fileset dir="target/artifacts/Installer">
+                    <include name="*"/>
+                  </fileset>
+                </copy>
+		<delete file="target/artifacts/Installer64/jdk-7u7-windows-i586.exe"/>
+		<replace file="target/artifacts/Installer64/runawfe.ini"
+		  token="jdk-7u7-windows-i586.exe"
+                  value="jdk-7u7-windows-x64.exe"
+                />
               </target>
             </configuration>
             <goals>
@@ -225,6 +235,26 @@
               <volumeId>RunaWFE ${project.version}</volumeId>
               <finalName>installer.iso</finalName>
               <inputDirectory>target/artifacts/installer</inputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>com.github.stephenc.java-iso-tools</groupId>
+        <artifactId>iso9660-maven-plugin</artifactId>
+        <version>2.0.0</version>
+        <executions>
+          <execution>
+            <id>generate-iso</id>
+            <goals>
+                <goal>iso</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <volumeId>RunaWFE ${project.version}</volumeId>
+              <finalName>installer64.iso</finalName>
+              <inputDirectory>target/artifacts/installer64</inputDirectory>
             </configuration>
           </execution>
         </executions>
