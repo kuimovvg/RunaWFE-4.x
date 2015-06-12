@@ -33,7 +33,6 @@
 			<fileset dir="${artifacts.dir}/simulation-data"/>
 		</copy>
 		<delete dir="${nsis.src.dir}/jboss"/>
-		<delete dir="${artifacts.dir}/app-simulation"/>
 
 		<unzip dest="${nsis.src.dir}" overwrite="true">
 			<fileset dir="${artifacts.dir}/app-server">
@@ -55,7 +54,6 @@
 			<fileset dir="${basedir}/../jboss7"/>
 		</copy>
 		<delete dir="${nsis.src.dir}/jboss"/>
-		<delete dir="${artifacts.dir}/app-server"/>
 
 		<unzip dest="${nsis.src.dir}" overwrite="true">
 			<fileset dir="${artifacts.dir}/app-botstation">
@@ -65,7 +63,6 @@
 		<copy todir="${nsis.src.dir}/wfe-botstation-config" overwrite="true">
 			<fileset dir="${nsis.src.dir}/jboss"/>
 		</copy>
-		<delete dir="${artifacts.dir}/app-botstation"/>
 
 		<copy file="${distr.root.dir}/simulation.properties" tofile="${nsis.src.dir}/simulation.properties"/>
 		<copy file="${nsis.settings}/nircmd.exe" tofile="${nsis.src.dir}/wfe-simulator/bin/nircmd.exe"/>
@@ -78,12 +75,10 @@
 		</unzip>
 		<move file="${nsis.src.dir}/gpd/32/gpd-${project.version}/workspace" tofile="${nsis.src.dir}/gpd/32/gpd-${project.version}/demo-workspace"/>
 		<move file="${nsis.src.dir}/gpd/64/gpd-${project.version}/workspace" tofile="${nsis.src.dir}/gpd/64/gpd-${project.version}/demo-workspace"/>
-		<delete dir="${artifacts.dir}/gpd"/>
 
 		<copy todir="${nsis.src.dir}/rtn-${project.version}" overwrite="true">
 			<fileset dir="${artifacts.dir}/rtn"/>
 		</copy>
-		<delete dir="${artifacts.dir}/rtn"/>
 		<unzip dest="${nsis.dir}" overwrite="true">
 			<fileset dir="${nsis.settings}" includes="nsis-2.46.zip"/>
 		</unzip>
