@@ -30,6 +30,29 @@
               <target>
 
                 <mkdir dir="target/artifacts"/>
+                <mkdir dir="target/test-result"/>
+
+                <exec executable="cmd" dir="../../wfe/wfe-app" failonerror="false" resultproperty="testResult">
+                  <arg value="/C"/>
+                  <arg value="mvn clean integration-test -Djboss.zip.file=&quot;${jboss.zip.file}&quot; -Djboss.zip.folder=&quot;${jboss.zip.folder}&quot; -Dappserver=&quot;${appserver}&quot; -Dproject.version=${version}"/>
+                </exec>
+                <exec executable="cmd" dir="../../wfe/wfe-cactus-it" failonerror="false">
+                  <arg value="/C"/>
+                  <arg value="mvn surefire-report:report-only"/>
+                </exec>
+                <copy toDir="target/test-result">
+                  <fileset dir="../../wfe/wfe-cactus-it/target">
+                    <include name="site/*"/>
+                    <include name="surefire-reports/*"/>
+                  </fileset>
+                </copy>
+                <fail message="Build or testin is failed">
+                  <condition>
+                    <not>
+                      <matches string="${testResult}" pattern="0"/>
+                    </not>
+                  </condition>
+                </fail>		
                 
                 <exec executable="cmd" dir="../../wfe/wfe-appserver" failonerror="true">
                   <arg value="/C"/>
