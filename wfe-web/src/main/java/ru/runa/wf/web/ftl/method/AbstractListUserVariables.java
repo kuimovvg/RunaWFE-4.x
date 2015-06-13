@@ -2,17 +2,25 @@ package ru.runa.wf.web.ftl.method;
 
 import ru.runa.wfe.commons.ftl.FreemarkerTag;
 
-public abstract class AbstractListUserVariables extends FreemarkerTag {
+abstract class AbstractListUserVariables extends FreemarkerTag {
     private static final long serialVersionUID = 1L;
 
     protected String variableName;
+    protected String dectVariableName;
     protected DisplayMode displayMode;
     protected String sortField;
 
     protected void initFields() {
-        variableName = getParameterAsString(0);
-        displayMode = DisplayMode.fromString(getParameterAsString(1));
-        sortField = getParameterAsString(2);
+        if (getClass().equals(DisplayListUserVariablesTag.class)) {
+            variableName = getParameterAsString(0);
+            displayMode = DisplayMode.fromString(getParameterAsString(1));
+            sortField = getParameterAsString(2);
+        } else if (getClass().equals(MultipleSelectFromListUserVariablesTag.class)) {
+            variableName = getParameterAsString(1);
+            dectVariableName = getParameterAsString(0);
+            displayMode = DisplayMode.fromString(getParameterAsString(2));
+            sortField = getParameterAsString(3);
+        }
     }
 
     @Override

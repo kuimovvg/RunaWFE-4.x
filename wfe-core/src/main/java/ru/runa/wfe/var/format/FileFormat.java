@@ -54,7 +54,7 @@ public class FileFormat extends VariableFormat implements VariableDisplaySupport
 
     @Override
     public IFileVariable convertFromStringValue(String string) throws Exception {
-        return (IFileVariable) convertFromJSONValue(JSONValue.parse(string.replaceAll("&quot", "\"")));
+        return (IFileVariable) convertFromJSONValue(JSONValue.parse(string.replaceAll("&quot;", "\"")));
     }
 
     @Override

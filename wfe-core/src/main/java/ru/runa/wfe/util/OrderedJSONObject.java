@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.simple.JSONObject;
 
@@ -16,19 +15,19 @@ public class OrderedJSONObject extends JSONObject {
      */
     private static final long serialVersionUID = 1L;
 
-    private final AtomicInteger order = new AtomicInteger(0);
+    @SuppressWarnings("rawtypes")
+    private final Set entries = new ArraySet();
 
     @SuppressWarnings("rawtypes")
     @Override
     public final Object get(Object key) {
-        Iterator iter = super.entrySet().iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            Entry e = (Entry) entry.getValue();
-            if (!e.getKey().equals(key)) {
+            if (!entry.getKey().equals(key)) {
                 continue;
             }
-            return e.getValue();
+            return entry.getValue();
         }
         return null;
     }
@@ -36,45 +35,47 @@ public class OrderedJSONObject extends JSONObject {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public final Object put(Object key, Object value) {
-        super.put(order.getAndIncrement(), new Entry(key, value));
+        entries.add(new Entry(key, value));
         return value;
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes" })
     @Override
     public final Object remove(Object key) {
-        Iterator iter = super.entrySet().iterator();
+        Iterator iter = entries.iterator();
+        Map.Entry entry = null;
+        Object result = null;
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Entry e = (Entry) entry.getValue();
-            if (!e.getKey().equals(key)) {
+            entry = (Map.Entry) iter.next();
+            if (!entry.getKey().equals(key)) {
+                entry = null;
                 continue;
             }
-            Object result = e.getValue();
-            super.remove(entry.getKey());
-            return result;
+            result = entry.getValue();
+            break;
         }
-        return null;
+        if (entry != null) {
+            entries.remove(entry);
+        }
+        return result;
     }
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     public final void putAll(Map m) {
         Iterator iter = m.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            put(entry.getKey(), entry.getValue());
+            entries.add(iter.next());
         }
     }
 
     @SuppressWarnings("rawtypes")
     @Override
     public final boolean containsKey(Object key) {
-        Iterator iter = super.entrySet().iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            Entry e = (Entry) entry.getValue();
-            if (!e.getKey().equals(key)) {
+            if (!entry.getKey().equals(key)) {
                 continue;
             }
             return true;
@@ -85,11 +86,10 @@ public class OrderedJSONObject extends JSONObject {
     @Override
     @SuppressWarnings("rawtypes")
     public final boolean containsValue(Object value) {
-        Iterator iter = super.entrySet().iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            Entry e = (Entry) entry.getValue();
-            if (!e.getValue().equals(value)) {
+            if (!entry.getValue().equals(value)) {
                 continue;
             }
             return true;
@@ -101,37 +101,28 @@ public class OrderedJSONObject extends JSONObject {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public final Set keySet() {
         Set result = new ArraySet();
-        Iterator iter = super.entrySet().iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            Entry e = (Entry) entry.getValue();
-            result.add(e.getKey());
+            result.add(entry.getKey());
         }
         return result;
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     public final Set entrySet() {
-        Set result = new ArraySet();
-        Iterator iter = super.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry entry = (Map.Entry) iter.next();
-            Entry e = (Entry) entry.getValue();
-            result.add(e);
-        }
-        return result;
+        return entries;
     }
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public Collection values() {
         Collection result = Collections.emptyList();
-        Iterator iter = super.entrySet().iterator();
+        Iterator iter = entries.iterator();
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
-            Entry e = (Entry) entry.getValue();
-            result.add(e.getValue());
+            result.add(entry.getValue());
         }
         return result;
     }

@@ -46,7 +46,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
                 ComplexVariable cvar = (ComplexVariable) option;
                 UserTypeFormat formatter = new UserTypeFormat(cvar.getUserType());
                 optionValue = formatter.formatJSON(cvar);
-                optionValue = optionValue.replaceAll("\"", "&quot");
+                optionValue = optionValue.replaceAll("\"", "&quot;");
                 WfVariable variable = ViewUtil.createVariable(variableName, cvar.getUserType().getName(), formatter, cvar);
                 String hid = cvar.getUserType().getAttributes().get(0) != null ? cvar.getUserType().getAttributes().get(0).getName() + " "
                         + cvar.get(cvar.getUserType().getAttributes().get(0).getName()) : cvar.getUserType().getName();
@@ -56,7 +56,7 @@ public class MultipleSelectFromListTag extends FreemarkerTag implements FtlTagVa
                 FileFormat formatter = new FileFormat();
                 IFileVariable file = (IFileVariable) option;
                 optionValue = formatter.formatJSON(file);
-                optionValue = optionValue.replaceAll("\"", "&quot");
+                optionValue = optionValue.replaceAll("\"", "&quot;");
                 WfVariable variable = ViewUtil.createVariable(file.getName(), variableName, formatter, file);
                 optionLabel = variableName + ": " + file.getName() + "<br>"
                         + ViewUtil.getComponentOutput(user, webHelper, variableProvider.getProcessId(), variable);

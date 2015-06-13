@@ -22,7 +22,13 @@ $(document).ready(function() {
 	
 	try {
 		
-		$(this).tableConstructorUNIQUENAME(jsonInputArrayUNIQUENAME, "SORTFIELDNAMEVALUE", DIMENTIONALVALUE);
+		$(this).tableConstructorUNIQUENAME(
+							jsonInputArrayUNIQUENAME, 
+							"#containerUNIQUENAME", 
+							"SORTFIELDNAMEVALUE", 
+							DIMENTIONALVALUE, 
+							SELECTABLEVALUE,
+							"DECTSELECTNAME");
 		
 	} catch(e) {
 		console.error("ready: %s", e.message);
@@ -34,22 +40,36 @@ $(document).ready(function() {
 	
 	var methods = {
 	
-		"init" : function (input, sort, dim) {
+		"init" : function (input, container, sort, dim, sel, outname) {
 			
-			console.info("init: input: %s sort: %s dim: %s", input, sort, dim);
+			console.info("init: input: %s container: %s sort: %s dim: %s sel: %s outname: %s", input, container, sort, dim, sel, outname);
+			
+			var out;
+			
+			if (sel) {
+				out = $("<input>");
+				out.attr("type", "hidden");
+				out.attr("name", outname);
+				out.attr("value", "");
+				$(container).append(out);
+			}
 			
 			$(this).data({
 				jsonInputArray : input,	
 				sortFieldName : sort,
-				containerName : "#containerUNIQUENAME"
+				containerName : container,
+				isSelectable : sel,
+				outContainer : out
 				});
 			
 			try {
 				for (var i = 0; i < $(this).data().jsonInputArray.length; i++) {
 					if (typeof $(this).data().jsonInputArray[i] != "string") {
+						stringifyValues($(this).data().jsonInputArray[i]);
 						continue;
 					}
 					$(this).data().jsonInputArray[i] = JSON.parse($(this).data().jsonInputArray[i]);
+					stringifyValues($(this).data().jsonInputArray[i]);
 				}
 			} catch(e) {
 				console.error("init: %s", e.message);
@@ -92,8 +112,8 @@ $(document).ready(function() {
 					columns.push(row);
 				}
 				sortRows($.inArray($(this).data().sortFieldName, titles), columns);
-				$($(this).data().containerName).TidyTable({
-					enableCheckbox: SELECTABLEVALUE,
+				var table = $($(this).data().containerName).TidyTable({
+					enableCheckbox: $(this).data().isSelectable,
 					enableMenu:     false,
 					reverseSortDir: false,
 					responsive:     false
@@ -101,8 +121,11 @@ $(document).ready(function() {
 				{
 					columnTitles: titles,
 					columnValues: columns,
-					sortByPattern: getSortValuePattern
+					sortByPattern: getSortValuePattern,
 				});
+				if ($(this).data().isSelectable) {
+					$(this).tableConstructorUNIQUENAME("setSelectCallbacks", table);
+				}
 			} catch(e) {
 				console.error("makeAsTwoDimentionalTable: %s", e.message);
 			}
@@ -152,8 +175,8 @@ $(document).ready(function() {
 						$.inArray($(this).data().sortFieldName, fields) != -1) {
 					sortRows(0, columns);
 				}
-				$($(this).data().containerName).TidyTable({
-					enableCheckbox: SELECTABLEVALUE,
+				var table = $($(this).data().containerName).TidyTable({
+					enableCheckbox: $(this).data().isSelectable,
 					enableMenu:     false,
 					reverseSortDir: false,
 					responsive:     false
@@ -163,11 +186,65 @@ $(document).ready(function() {
 					columnValues: columns,
 					sortByPattern: getSortValuePattern
 				});
+				if ($(this).data().isSelectable) {
+					$(this).tableConstructorUNIQUENAME("setSelectCallbacks", table);
+				}
 			} catch(e) {
 				console.error("makeAsMultiDimentionalTable: %s", e.message);
 			}
-		}
+		},
 	
+		"setSelectCallbacks" : function(table) {
+			try {
+				var data = {
+						rows : table.find("tr"),
+						inputArray : $(this).data().jsonInputArray,
+						out : $(this).data().outContainer
+				};
+				for (var i = 0; i < data.rows.length; i++) {
+					var input = $(data.rows[i]).find(":checkbox").first();
+					if (!input) {
+						return;
+					}
+					input.bind("click", function() {
+						var selectedArray = [];
+						for (var i = 0; i < data.inputArray.length; i++) {
+							var jsonObjValues = [];
+							jsonObjValues[0] = null;
+							var jsonObj = data.inputArray[i];
+							for (key in jsonObj) {
+								jsonObjValues.push(jsonObj[key]);
+							}
+							for (var j = 0; j < data.rows.length; j++) {
+								var match = true;
+								var row = $(data.rows[j]).find("td");
+								for (var k = 1; k < row.length; k++) {
+									try {
+										if ($(row[k]).text() != jsonObjValues[k]) {
+											match = false;
+											break;
+										}
+									} catch(e) {
+										match = false;
+										break;
+									}
+								}
+								try {
+									if (match && $(data.rows[j]).find(':checkbox').first().prop('checked')) {
+										selectedArray.push(jsonObj);
+									}
+								} catch(e) { 
+									console.error("setSelectCallbacks.click: %s", e.message);
+								}
+							}
+						}
+						setOutValue(data.out, selectedArray);
+					});
+				}
+			} catch(ex) {
+				console.error("setSelectCallbacks: %s", ex.message);
+			}
+		}
 	};
 	
 	$.fn.tableConstructorUNIQUENAME = function(method) {
@@ -230,8 +307,43 @@ $(document).ready(function() {
 		return res;
 	};
 	
+	function setOutValue(elem, jsonvalobj) {
+		try {
+			var stringify = "";
+			for (var i = 0; i < jsonvalobj.length; i++) {
+				if (i != 0) {
+					stringify += ", "
+				}
+				stringify += JSON.stringify(jsonvalobj[i]);
+			}
+			console.debug("setOutValue: elem: %s stringify: %s", elem, stringify);
+			elem.attr("value", stringify);
+		} catch(e) {
+			console.error("setOutValue: %s", e.message);
+		}
+	};
+	
+	function stringifyValues(jsonObj) {
+		for (key in jsonObj) {
+			if (typeof jsonObj[key] == "string") {
+				continue;
+			}
+			if (jsonObj[key]) {
+				if (typeof jsonObj[key] === "object") {
+					if (jsonObj[key]["fileName"]) {
+						jsonObj[key] = jsonObj[key]["fileName"];
+						continue;
+					}
+				}
+				jsonObj[key] = jsonObj[key].toString();
+			} else {
+				jsonObj[key] = "";
+			}
+		}
+	}
+	
 	function isNumber(val) {
 		return typeof val == "number" || (typeof val == "object" && val.constructor === Number);
 	};
-	
 })(jQuery);
+

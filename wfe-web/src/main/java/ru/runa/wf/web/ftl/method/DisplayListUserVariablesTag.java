@@ -1,6 +1,5 @@
 package ru.runa.wf.web.ftl.method;
 
-import ru.runa.wfe.var.dto.WfVariable;
 
 public class DisplayListUserVariablesTag extends AbstractListUserVariables {
     private static final long serialVersionUID = 1L;
@@ -8,9 +7,8 @@ public class DisplayListUserVariablesTag extends AbstractListUserVariables {
     @Override
     protected Object executeTag() throws Exception {
         initFields();
-        WfVariable variable = variableProvider.getVariableNotNull(variableName);
-        return ViewUtil.getActiveJsonTable(user, webHelper, variable, variableProvider.getProcessId(), sortField,
-                displayMode == DisplayMode.MULTI_DIMENTIONAL_TABLE, false);
+        return ViewUtil.getActiveJsonTable(user, webHelper, variableProvider.getVariableNotNull(variableName), null, variableProvider.getProcessId(),
+                sortField, displayMode == DisplayMode.MULTI_DIMENTIONAL_TABLE);
     }
 
 }

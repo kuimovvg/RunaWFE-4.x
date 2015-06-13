@@ -52,7 +52,7 @@ public class UserTypeFormat extends VariableFormat implements VariableDisplaySup
 
     @Override
     protected ComplexVariable convertFromStringValue(String source) {
-        return convertFromJSONValue(JSONValue.parse(source.replaceAll("&quot", "\"")));
+        return convertFromJSONValue(JSONValue.parse(source.replaceAll("&quot;", "\"")));
     }
 
     @Override

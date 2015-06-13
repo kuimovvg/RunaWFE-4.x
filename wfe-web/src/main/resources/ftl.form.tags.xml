@@ -21,4 +21,5 @@
 	<ftltag name="ViewFile" class="ru.runa.wf.web.ftl.method.FileTag" />
 	<ftltag name="TreeviewSupport" class="ru.runa.wf.web.ftl.method.TreeviewSupportTag" />
 	<ftltag name="DisplayListUserVariables" class="ru.runa.wf.web.ftl.method.DisplayListUserVariablesTag" />
+	<ftltag name="MultipleSelectFromListUserVariables" class="ru.runa.wf.web.ftl.method.MultipleSelectFromListUserVariablesTag" />
 </configuration>

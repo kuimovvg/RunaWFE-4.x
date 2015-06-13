@@ -218,38 +218,46 @@ public class ViewUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static final String getActiveJsonTable(User user, WebHelper webHelper, WfVariable variable, Long processId, String sortFieldName,
-            boolean isMultiDim, boolean isSelectable) {
+    public static final String getActiveJsonTable(User user, WebHelper webHelper, WfVariable variable, WfVariable dectSelectVariable, Long processId,
+            String sortFieldName, boolean isMultiDim) {
         if (!(variable.getValue() instanceof List)) {
             return "";
         }
-        JSONArray objectsList = new JSONArray();
-        List<?> values = (List<?>) variable.getValue();
-        for (Object value : values) {
-            if (!(value instanceof ComplexVariable)) {
-                return "";
-            }
-            ComplexVariable cvar = (ComplexVariable) value;
-            OrderedJSONObject cvarObj = new OrderedJSONObject();
-            for (VariableDefinition varDef : cvar.getUserType().getAttributes()) {
-                if (cvar.get(varDef.getName()) == null) {
-                    cvarObj.put(varDef.getName(), "");
-                    continue;
+        String jsonObjectsList;
+        if (dectSelectVariable == null) {
+            JSONArray objectsList = new JSONArray();
+            List<?> values = (List<?>) variable.getValue();
+            for (Object value : values) {
+                if (!(value instanceof ComplexVariable)) {
+                    return "";
                 }
-                VariableFormat format = FormatCommons.create(varDef);
-                if (format instanceof FileFormat) {
-                    FileVariableProxy proxy = (FileVariableProxy) cvar.get(varDef.getName());
-                    cvarObj.put(varDef.getName(), getFileComponent(webHelper, proxy.getName(), proxy, false));
-                } else if (format instanceof ExecutorFormat) {
-                    cvarObj.put(varDef.getName(), createExecutorSelect(user, varDef.getName(), format, cvar.get(varDef.getName()), false));
-                } else {
-                    cvarObj.put(varDef.getName(), format.format(cvar.get(varDef.getName())));
+                ComplexVariable cvar = (ComplexVariable) value;
+                OrderedJSONObject cvarObj = new OrderedJSONObject();
+                for (VariableDefinition varDef : cvar.getUserType().getAttributes()) {
+                    if (cvar.get(varDef.getName()) == null) {
+                        cvarObj.put(varDef.getName(), "");
+                        continue;
+                    }
+                    VariableFormat format = FormatCommons.create(varDef);
+                    if (format instanceof FileFormat) {
+                        FileVariableProxy proxy = (FileVariableProxy) cvar.get(varDef.getName());
+                        cvarObj.put(varDef.getName(), getFileComponent(webHelper, proxy.getName(), proxy, false));
+                    } else if (format instanceof ExecutorFormat) {
+                        cvarObj.put(varDef.getName(), createExecutorSelect(user, varDef.getName(), format, cvar.get(varDef.getName()), false));
+                    } else {
+                        cvarObj.put(varDef.getName(), format.format(cvar.get(varDef.getName())));
+                    }
                 }
+                objectsList.add(cvarObj);
             }
-            objectsList.add(cvarObj);
+            jsonObjectsList = objectsList.toJSONString();
+        } else {
+            jsonObjectsList = FormatCommons.create(variable.getDefinition()).format(variable.getValue());
+        }
+        if (jsonObjectsList == null) {
+            return "";
         }
         String uniquename = String.format("%s_%x", variable.getDefinition().getScriptingNameWithoutDots(), random.nextInt());
-        String jsonObjectsList = objectsList.toJSONString();
         String result = "<script src=\"/wfe/js/tidy-table.js\"></script>\n";
         InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.ActiveJsonTable.js", ViewUtil.class);
         Map<String, String> substitutions = new HashMap<String, String>();
@@ -257,7 +265,12 @@ public class ViewUtil {
         substitutions.put("JSONDATATEMPLATE", jsonObjectsList);
         substitutions.put("SORTFIELDNAMEVALUE", String.format("%s", sortFieldName));
         substitutions.put("DIMENTIONALVALUE", String.format("%s", isMultiDim));
-        substitutions.put("SELECTABLEVALUE", String.format("%s", isSelectable));
+        substitutions.put("SELECTABLEVALUE", String.format("%s", dectSelectVariable != null));
+        if (dectSelectVariable != null) {
+            substitutions.put("DECTSELECTNAME", dectSelectVariable.getDefinition().getName());
+        } else {
+            substitutions.put("DECTSELECTNAME", "");
+        }
         result += WebUtils.getFreemarkerTagScript(webHelper, javascriptStream, substitutions);
         result += "<link rel=\"stylesheet\" type=\"text/css\" href=\"/wfe/css/tidy-table.css\">\n";
         result += String.format("<div id=\"container%s\"></div>", uniquename);
