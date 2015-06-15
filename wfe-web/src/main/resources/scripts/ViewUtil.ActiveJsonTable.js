@@ -329,12 +329,6 @@ $(document).ready(function() {
 				continue;
 			}
 			if (jsonObj[key]) {
-				if (typeof jsonObj[key] === "object") {
-					if (jsonObj[key]["fileName"]) {
-						jsonObj[key] = jsonObj[key]["fileName"];
-						continue;
-					}
-				}
 				jsonObj[key] = jsonObj[key].toString();
 			} else {
 				jsonObj[key] = "";
