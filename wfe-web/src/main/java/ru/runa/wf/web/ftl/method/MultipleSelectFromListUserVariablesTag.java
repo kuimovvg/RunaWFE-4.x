@@ -18,7 +18,6 @@ import ru.runa.wfe.var.format.ExecutorFormat;
 import ru.runa.wfe.var.format.FileFormat;
 import ru.runa.wfe.var.format.FormatCommons;
 import ru.runa.wfe.var.format.VariableFormat;
-import ru.runa.wfe.var.format.VariableFormatContainer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -65,7 +64,6 @@ public class MultipleSelectFromListUserVariablesTag extends AbstractListUserVari
             return result;
         }
         try {
-            VariableFormat typeFormat = FormatCommons.createComponent((VariableFormatContainer) format, 0);
             List<ComplexVariable> selected = Lists.newArrayList();
             JSONArray input = (JSONArray) JSONValue.parse(json);
             for (Object o : input) {
@@ -73,7 +71,9 @@ public class MultipleSelectFromListUserVariablesTag extends AbstractListUserVari
                     if (!compareByValue(var, (JSONObject) o)) {
                         continue;
                     }
-                    selected.add(var);
+                    if (!selected.contains(var)) {
+                        selected.add(var);
+                    }
                     break;
                 }
             }

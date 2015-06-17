@@ -122,6 +122,11 @@ $(document).ready(function() {
 					columnTitles: titles,
 					columnValues: columns,
 					sortByPattern: getSortValuePattern,
+					postProcess: {
+						table:  applyCheboxStyle,
+						column: function(col){},
+						menu:   function(menu){}
+					}
 				});
 				if ($(this).data().isSelectable) {
 					$(this).tableConstructorUNIQUENAME("setSelectCallbacks", table);
@@ -159,7 +164,12 @@ $(document).ready(function() {
 					},
 					{
 						columnTitles: [],
-						columnValues: subrows
+						columnValues: subrows,
+						postProcess: {
+							table:  applyCheboxStyle,
+							column: function(col){},
+							menu:   function(menu){}
+						}
 					});
 					if ($(this).data().sortFieldName != "null") {
 						if ($(this).data().jsonInputArray[i][$(this).data().sortFieldName]) {
@@ -184,7 +194,12 @@ $(document).ready(function() {
 				{
 					columnTitles: titles,
 					columnValues: columns,
-					sortByPattern: getSortValuePattern
+					sortByPattern: getSortValuePattern,
+					postProcess: {
+						table:  applyCheboxStyle,
+						column: function(col){},
+						menu:   function(menu){}
+					}
 				});
 				if ($(this).data().isSelectable) {
 					$(this).tableConstructorUNIQUENAME("setSelectCallbacks", table);
@@ -206,35 +221,34 @@ $(document).ready(function() {
 					if (!input) {
 						return;
 					}
-					input.bind("click", function() {
+					input.on("click", function() {
 						var selectedArray = [];
-						for (var i = 0; i < data.inputArray.length; i++) {
+						for (var ind = 0; ind < data.inputArray.length; ind++) {
 							var jsonObjValues = [];
 							jsonObjValues[0] = null;
-							var jsonObj = data.inputArray[i];
-							for (key in jsonObj) {
+							var jsonObj = data.inputArray[ind];
+							for (var key in jsonObj) {
 								jsonObjValues.push(jsonObj[key]);
 							}
 							for (var j = 0; j < data.rows.length; j++) {
+								var row = $(data.rows[j]);
 								var match = true;
-								var row = $(data.rows[j]).find("td");
-								for (var k = 1; k < row.length; k++) {
-									try {
-										if ($(row[k]).text() != jsonObjValues[k]) {
-											match = false;
-											break;
-										}
-									} catch(e) {
-										match = false;
-										break;
-									}
+								var cells = row.find("td");
+								if (cells.length < 2) {
+									match = false;
 								}
-								try {
-									if (match && $(data.rows[j]).find(':checkbox').first().prop('checked')) {
-										selectedArray.push(jsonObj);
+								for (var k = 1; k < cells.length; k++) {
+									if ($(cells[k]).text() == jsonObjValues[k]) {
+										continue;
 									}
-								} catch(e) { 
-									console.error("setSelectCallbacks.click: %s", e.message);
+									match = false;
+									break;
+								}
+								if (match && row.find(":checkbox").first().prop("checked")) {
+									selectedArray.push(jsonObj);
+								}
+								if (match) {
+									break;
 								}
 							}
 						}
@@ -316,7 +330,7 @@ $(document).ready(function() {
 				}
 				stringify += JSON.stringify(jsonvalobj[i]);
 			}
-			console.debug("setOutValue: elem: %s stringify: %s", elem, stringify);
+			console.debug("setOutValue: elem: %s stringify: %s", elem.attr("name"), stringify);
 			elem.attr("value", stringify);
 		} catch(e) {
 			console.error("setOutValue: %s", e.message);
@@ -334,10 +348,16 @@ $(document).ready(function() {
 				jsonObj[key] = "";
 			}
 		}
-	}
+	};
 	
 	function isNumber(val) {
 		return typeof val == "number" || (typeof val == "object" && val.constructor === Number);
 	};
+	
+	function applyCheboxStyle(table) {
+		table.find(":checkbox").css("margin","3px 3px 3px 4px");
+		table.find(":checkbox").css("width","30px");
+	};
+
 })(jQuery);
 
