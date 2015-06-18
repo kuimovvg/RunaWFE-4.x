@@ -156,7 +156,8 @@ $(document).ready(function() {
 							subrows.push([fields[j], ""]);
 						}
 					}
-					var subtable = $("<div>").TidyTable({
+					var subtable = $("<div>");
+					subtable.TidyTable({
 						enableCheckbox: false,
 						enableMenu:     false,
 						reverseSortDir: false,

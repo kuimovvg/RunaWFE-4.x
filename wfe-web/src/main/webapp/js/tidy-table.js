@@ -190,7 +190,7 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 
 				// append check boxes to beginning each row
 				if (data.settings && data.settings.enableCheckbox) {
-					var rows = table.find('tr');
+					var rows = table.find('tr').not("table table tr");
 
 					rows.each(function(index) {
 						var input = $('<input></input>')
