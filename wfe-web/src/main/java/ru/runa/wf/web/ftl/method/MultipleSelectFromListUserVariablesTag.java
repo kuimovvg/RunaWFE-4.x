@@ -85,19 +85,23 @@ public class MultipleSelectFromListUserVariablesTag extends AbstractListUserVari
         return result;
     }
 
-    private static final boolean compareByValue(ComplexVariable who, JSONObject with) {
+    private final boolean compareByValue(ComplexVariable who, JSONObject with) {
         boolean result = true;
         VariableUserType type = who.getUserType();
         for (Object keyName : with.keySet()) {
             VariableDefinition def = type.getAttribute((String) keyName);
             VariableFormat format = FormatCommons.create(def);
-            String toCompare;
+            String toCompare = null;
             if (format instanceof FileFormat) {
                 IFileVariable file = (IFileVariable) who.get(keyName);
-                toCompare = file.getName();
+                if (file != null) {
+                    toCompare = file.getName();
+                }
             } else if (format instanceof ExecutorFormat) {
                 Executor exe = (Executor) who.get(keyName);
-                toCompare = exe.getName();
+                if (exe != null) {
+                    toCompare = exe.getName();
+                }
             } else {
                 toCompare = format.format(who.get(keyName));
             }
