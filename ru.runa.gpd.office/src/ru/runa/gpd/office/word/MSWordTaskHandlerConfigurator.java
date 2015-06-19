@@ -1,8 +1,6 @@
 package ru.runa.gpd.office.word;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -91,7 +89,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
         return model.toString();
     }
 
-    private class ConstructorView extends ConstructorComposite implements Observer {
+    private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, MSWordConfig model) {
             super(parent, delegable, model);
@@ -100,11 +98,7 @@ public class MSWordTaskHandlerConfigurator extends XmlBasedConstructorProvider<M
         }
 
         @Override
-        public void update(Observable o, Object arg) {
-            buildFromModel();
-        }
-
-        public void buildFromModel() {
+        protected void buildFromModel() {
             try {
                 for (Control control : getChildren()) {
                     control.dispose();

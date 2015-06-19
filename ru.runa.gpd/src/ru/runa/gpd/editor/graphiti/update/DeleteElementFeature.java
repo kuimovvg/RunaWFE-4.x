@@ -12,14 +12,15 @@ import org.eclipse.graphiti.ui.features.DefaultDeleteFeature;
 import ru.runa.gpd.editor.graphiti.HasTextDecorator;
 import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Node;
+import ru.runa.gpd.lang.model.TextDecorationNode;
 import ru.runa.gpd.lang.model.Transition;
 
 public class DeleteElementFeature extends DefaultDeleteFeature implements ICustomUndoableFeature {
-	
-	private GraphElement element;
-	private List<Transition> leavingTransitions;
-	private List<Transition> arrivingTransitions;
-	
+
+    private GraphElement element;
+    private List<Transition> leavingTransitions;
+    private List<Transition> arrivingTransitions;
+
     public DeleteElementFeature(IFeatureProvider provider) {
         super(provider);
     }
@@ -28,74 +29,91 @@ public class DeleteElementFeature extends DefaultDeleteFeature implements ICusto
     protected boolean getUserDecision(IDeleteContext context) {
         return true;
     }
-    
+
     @Override
     protected boolean getUserDecision() {
-    	return true;
+        return true;
     }
-    
+
     @Override
     protected void deleteBusinessObject(Object bo) {
-    	if (bo == null) return;
-    	element = (GraphElement) bo;
-        if (element instanceof HasTextDecorator) {
-        	HasTextDecorator withDefinition = (HasTextDecorator) element;
+        if (bo == null)
+            return;
+        element = (GraphElement) bo;
+        if (element instanceof TextDecorationNode) {
+            TextDecorationNode textDecoration = (TextDecorationNode) element;
+            textDecoration.getTarget().getParent().removeChild(textDecoration.getTarget());
+            removeAndStoreTransitions(textDecoration.getTarget());
+        } else if (element instanceof HasTextDecorator) {
+            HasTextDecorator withDefinition = (HasTextDecorator) element;
             IDeleteContext delContext = new DeleteContext(withDefinition.getTextDecoratorEmulation().getDefinition().getUiContainer().getOwner());
             delete(delContext);
-        }
-        else if (element instanceof Node) {
-        	Node node = (Node) element;
-            leavingTransitions = node.getLeavingTransitions();
-            for (Transition transition : leavingTransitions) {
-                transition.getSource().removeLeavingTransition(transition);
-            }
-            arrivingTransitions = node.getArrivingTransitions();
-            for (Transition transition : arrivingTransitions) {
-                transition.getSource().removeLeavingTransition(transition);
-            }
-        }
-        else if (element instanceof Transition) {
-        	Transition transition = (Transition) element;
+        } else if (element instanceof Node) {
+            Node node = (Node) element;
+            removeAndStoreTransitions(node);
+        } else if (element instanceof Transition) {
+            Transition transition = (Transition) element;
             transition.getSource().removeLeavingTransition(transition);
             return;
-        } 
+        }
         element.getParent().removeChild(element);
     }
-    
-	@Override
-	public boolean canUndo(IContext context) {
-		return element != null;
-	}
-    
+
     @Override
-	public void undo(IContext context) {
-		if (element instanceof Transition) {
-			Transition transition = (Transition) element;
+    public boolean canUndo(IContext context) {
+        return element != null;
+    }
+
+    @Override
+    public void undo(IContext context) {
+        if (element instanceof Transition) {
+            Transition transition = (Transition) element;
             transition.getSource().addChild(transition);
             return;
-		}
-		element.getParent().addChild(element);
-		if (element instanceof Node) {
-			if (leavingTransitions != null) {
-				for (Transition transition : leavingTransitions) {
-					transition.getSource().addChild(transition);
-	            }
-			}
-			if (arrivingTransitions != null) {
-				for (Transition transition : arrivingTransitions) {
-					transition.getSource().addChild(transition);
-	            }
-			}
-		}
-	}
+        }
 
-	@Override
-	public boolean canRedo(IContext context) {
-		return element != null;
-	}
+        if (element instanceof TextDecorationNode) {
+            TextDecorationNode textDecoration = (TextDecorationNode) element;
+            textDecoration.getTarget().getParent().addChild(textDecoration.getTarget());
+            restoreTransitions();
+        } else {
+            element.getParent().addChild(element);
+        }
+        if (element instanceof Node)
+            restoreTransitions();
+    }
 
-	@Override
-	public void redo(IContext context) {
-		deleteBusinessObject(element);
-	}
+    @Override
+    public boolean canRedo(IContext context) {
+        return element != null;
+    }
+
+    @Override
+    public void redo(IContext context) {
+        deleteBusinessObject(element);
+    }
+
+    private void removeAndStoreTransitions(Node node) {
+        leavingTransitions = node.getLeavingTransitions();
+        for (Transition transition : leavingTransitions) {
+            transition.getSource().removeLeavingTransition(transition);
+        }
+        arrivingTransitions = node.getArrivingTransitions();
+        for (Transition transition : arrivingTransitions) {
+            transition.getSource().removeLeavingTransition(transition);
+        }
+    }
+
+    private void restoreTransitions() {
+        if (leavingTransitions != null) {
+            for (Transition transition : leavingTransitions) {
+                transition.getSource().addChild(transition);
+            }
+        }
+        if (arrivingTransitions != null) {
+            for (Transition transition : arrivingTransitions) {
+                transition.getSource().addChild(transition);
+            }
+        }
+    }
 }

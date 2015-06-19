@@ -2,8 +2,6 @@ package ru.runa.gpd.extension.handler.var;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -48,7 +46,7 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
         return Localization.getString("ConvertMapsToListsConfig.title");
     }
 
-    private class ConstructorView extends ConstructorComposite implements Observer {
+    private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, ConvertMapsToListsConfig model) {
             super(parent, delegable, model);
@@ -57,11 +55,7 @@ public class ConvertMapsToListsHandlerProvider extends XmlBasedConstructorProvid
         }
 
         @Override
-        public void update(Observable o, Object arg) {
-            buildFromModel();
-        }
-
-        public void buildFromModel() {
+        protected void buildFromModel() {
             try {
                 for (Control control : getChildren()) {
                     control.dispose();

@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -337,7 +339,6 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
         }
     }
 
-    // Used from servlets
     public static FormEditor getCurrent() {
         IEditorPart editor = EditorsPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getActivePage().getActiveEditor();
         if (editor instanceof FormEditor) {
@@ -425,6 +426,23 @@ public class FormEditor extends MultiPageEditorPart implements IResourceChangeLi
             PluginLogger.logInfo("pageChange to = " + newPageIndex + " but editor is not loaded yet");
         }
         super.pageChange(newPageIndex);
+    }
+
+    public void insertText(String text) {
+        String escapedText = text.replaceAll("\'", "\\\'");
+        try {
+            if (browser != null) {
+                browser.execute("CKEDITOR.instances.editor.insertText('" + escapedText + "');");
+                syncBrowser2Editor();
+                syncEditor2Browser();
+            } else {
+                IDocument document = sourceEditor.getDocumentProvider().getDocument(sourceEditor.getEditorInput());
+                ITextSelection selection = (ITextSelection) sourceEditor.getSelectionProvider().getSelection();
+                document.replace(selection.getOffset(), selection.getLength(), escapedText);
+            }
+        } catch (Exception e) {
+            PluginLogger.logError(e);
+        }
     }
 
     private boolean syncBrowser2Editor() {

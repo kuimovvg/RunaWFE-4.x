@@ -412,10 +412,6 @@ public abstract class GraphElement extends EventSupport implements IPropertySour
         if (this instanceof Describable) {
             copy.setDescription(getDescription());
         }
-        if (this instanceof Delegable) {
-            copy.setDelegationClassName(getDelegationClassName());
-            copy.setDelegationConfiguration(getDelegationConfiguration());
-        }
         if (this instanceof Active) {
             List<? extends Action> actions = ((Active) this).getActions();
             for (Action action : actions) {

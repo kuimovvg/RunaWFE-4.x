@@ -7,6 +7,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
@@ -24,6 +25,9 @@ import com.google.common.collect.Maps;
 public class QuickFormType extends FormType {
     public static final String READ_TAG = "DisplayVariable";
     public static final String WRITE_TAG = "InputVariable";
+    public static final String FILE_EXTENSION = "quick";
+    private static final String FORMAT_QUICK = "<param>%s</param>";
+    private static final String FORMAT_OTHER = "\"%s\"";
 
     @Override
     public IEditorPart openForm(IFile formFile, FormNode formNode) throws CoreException {
@@ -59,6 +63,14 @@ public class QuickFormType extends FormType {
         if (!formNode.hasFormTemplate()) {
             errors.add(ValidationError.createLocalizedError(formNode, "formNode.templateIsRequired"));
         }
+    }
+
+    @Override
+    public MultiTextEdit searchVariableReplacements(IFile file, String variableName, String replacement) throws Exception {
+        if (FILE_EXTENSION.equals(file.getFileExtension())) {
+            return super.searchVariableReplacements(file, String.format(FORMAT_QUICK, variableName), String.format(FORMAT_QUICK, replacement));
+        }
+        return super.searchVariableReplacements(file, String.format(FORMAT_OTHER, variableName), String.format(FORMAT_OTHER, replacement));
     }
 
 }

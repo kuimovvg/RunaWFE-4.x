@@ -24,6 +24,7 @@ import ru.runa.gpd.lang.model.Delegable;
 import ru.runa.gpd.ui.custom.InsertVariableTextMenuDetectListener;
 import ru.runa.gpd.ui.custom.SWTUtils;
 import ru.runa.gpd.ui.custom.TypedUserInputCombo;
+import ru.runa.gpd.util.VariableUtils;
 
 import com.google.common.base.Objects;
 
@@ -35,7 +36,7 @@ public class ParamDefComposite extends Composite {
     private MessageDisplay messageDisplay;
     private boolean helpInlined = false;
     private boolean menuForSettingVariable = false;
-    private String[] booleanValues = { Localization.getString("yes"), Localization.getString("no") };
+    private final String[] booleanValues = { Localization.getString("yes"), Localization.getString("no") };
 
     public ParamDefComposite(Composite parent, Delegable delegable, ParamDefConfig config, Map<String, String> properties) {
         super(parent, SWT.NONE);
@@ -86,6 +87,11 @@ public class ParamDefComposite extends Composite {
         this.menuForSettingVariable = menuForSettingVariable;
     }
 
+    protected List<String> getMenuVariables(ParamDef paramDef) {
+        List<String> variableNames = VariableUtils.getVariableNamesForScripting(delegable, paramDef.getFormatFiltersAsArray());
+        return variableNames;
+    }
+
     private Text addTextField(final ParamDef paramDef) {
         Label label = new Label(this, SWT.NONE);
         GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
@@ -111,7 +117,8 @@ public class ParamDefComposite extends Composite {
         }
         textInput.setText(selectedValue != null ? selectedValue : "");
         if (menuForSettingVariable) {
-            new InsertVariableTextMenuDetectListener(textInput, delegable.getVariableNames(false, String.class.getName()));
+            List<String> variableNames = getMenuVariables(paramDef);
+            new InsertVariableTextMenuDetectListener(textInput, variableNames);
         }
         return textInput;
     }

@@ -2,7 +2,6 @@ package ru.runa.gpd.lang.model;
 
 import java.util.List;
 
-import ru.runa.gpd.Localization;
 import ru.runa.gpd.util.EventSupport;
 
 import com.google.common.base.Objects;
@@ -17,7 +16,10 @@ public class VariableUserType extends EventSupport implements VariableContainer,
     private ProcessDefinition processDefinition;
 
     public VariableUserType() {
+    }
 
+    public VariableUserType(String name) {
+        setName(name);
     }
 
     public ProcessDefinition getProcessDefinition() {
@@ -50,32 +52,40 @@ public class VariableUserType extends EventSupport implements VariableContainer,
         return attributes;
     }
 
+    public boolean canUseAsAttribute(Variable attribute) {
+        if (attribute.isComplex()) {
+            return canUseAsAttributeType(attribute.getUserType());
+        } else {
+            VariableUserType usertype;
+            String[] components = attribute.getFormatComponentClassNames();
+            for (String component : components) {
+                if ((usertype = processDefinition.getVariableUserType(component)) != null && !canUseAsAttributeType(usertype)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    public boolean canUseAsAttributeType(VariableUserType usertype) {
+        if (Objects.equal(name, usertype.name)) {
+            return false;
+        } else {
+            for (Variable attribute : usertype.getAttributes()) {
+                if (!canUseAsAttribute(attribute)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
     public void addAttribute(Variable variable) {
-    	validate(variable);
         attributes.add(variable);
         firePropertyChange(PROPERTY_CHILDS_CHANGED, null, variable);
     }
 
-	public void validate() {
-		validate(getAttributes());
-	}
-
-	public void validate(List<Variable> attributes) {
-		for (Variable attribute : attributes) {
-			if (this.equals(attribute.getUserType())) {
-				throw new RuntimeException(Localization.getString("VariableUserType.error.loop"));
-			}
-			validate(attribute);
-		}
-	}
-
-	private void validate(Variable variable) {
-		if (variable.getUserType() != null) {
-			validate(variable.getUserType().getAttributes());
-		}
-	}
-
-	public void changeAttributePosition(Variable attribute, int position) {
+    public void changeAttributePosition(Variable attribute, int position) {
         if (position != -1 && attributes.remove(attribute)) {
             attributes.add(position, attribute);
             firePropertyChange(PROPERTY_CHILDS_CHANGED, null, attribute);

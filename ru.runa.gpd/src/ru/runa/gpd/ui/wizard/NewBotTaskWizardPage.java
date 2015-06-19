@@ -116,6 +116,8 @@ public class NewBotTaskWizardPage extends WizardPage {
         } else if (!isBotTaskNameValid()) {
             setErrorMessage(Localization.getString("error.bottask_name_not_valid"));
             setPageComplete(false);
+        } else if (botCombo.getText().isEmpty()) {
+            setPageComplete(false);
         } else if (isBotFolderContainsBotTask()) {
             setErrorMessage(Localization.getString("error.bottask_already_exists"));
             setPageComplete(false);

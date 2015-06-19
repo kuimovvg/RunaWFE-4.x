@@ -40,6 +40,7 @@ public class FormComponentsView extends ViewPart implements IPartListener2 {
         int operations = DND.DROP_COPY | DND.DROP_MOVE;
         Transfer[] transferTypes = new Transfer[] { TextTransfer.getInstance() };
         viewer.addDragSupport(operations, transferTypes, new ComponentDragListener(viewer));
+        viewer.addDoubleClickListener(new ComponentDoubleClickListener(viewer));
         viewer.setContentProvider(ArrayContentProvider.getInstance());
         viewer.setLabelProvider(new TableLabelProvider());
         viewer.setInput(ComponentTypeContentProvider.INSTANCE.getModel());

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.jface.window.Window;
 import org.osgi.framework.Bundle;
 
@@ -55,6 +56,31 @@ public class DelegableProvider {
      * @param delegable
      */
     public void onDelete(Delegable delegable) {
+    }
+
+    /**
+     * Callback is invoked when delegable is renamed in process definition.
+     * 
+     * @param delegable
+     * @param oldName
+     * @param newName
+     */
+    public void onRename(Delegable delegable, String oldName, String newName) {
+    }
+
+    /**
+     * Callback is invoked when delegable is copied in process definition.
+     * 
+     * @param sourceFolder 
+     * @param source
+     * @param sourceName
+     * @param target 
+     * @param targetFolder 
+     * @param targetName
+     */
+    public void onCopy(IFolder sourceFolder, Delegable source, String sourceName, IFolder targetFolder, Delegable target, String targetName) {
+        target.setDelegationClassName(source.getDelegationClassName());
+        target.setDelegationConfiguration(source.getDelegationConfiguration());
     }
 
     public List<String> getUsedVariableNames(Delegable delegable) throws Exception {

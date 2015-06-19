@@ -1,11 +1,10 @@
 package ru.runa.gpd.office.word;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ModifyEvent;
@@ -80,7 +79,24 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         }
     }
 
-    private class ConstructorView extends ConstructorComposite implements Observer {
+    @Override
+    public void onCopy(IFolder sourceFolder, Delegable source, String sourceName, IFolder targetFolder, Delegable target, String targetName) {
+        super.onCopy(sourceFolder, source, sourceName, targetFolder, target, targetName);
+        try {
+            DocxModel model = fromXml(source.getDelegationConfiguration());
+            if (EmbeddedFileUtils.isProcessFile(model.getInOutModel().inputPath)) {
+                sourceName = EmbeddedFileUtils.getProcessFileName(model.getInOutModel().inputPath);
+                targetName = EmbeddedFileUtils.generateEmbeddedFileName(target, sourceName.replaceAll(".+\\.", ""));
+                EmbeddedFileUtils.copyProcessFile(sourceFolder, model.getInOutModel().inputPath, sourceName, targetName);
+                model.getInOutModel().inputPath = EmbeddedFileUtils.getProcessFilePath(targetName);
+                target.setDelegationConfiguration(model.toString());
+            }
+        } catch (Exception e) {
+            PluginLogger.logErrorWithoutDialog("Failed to copy embedded file in " + source.getDelegationClassName(), e);
+        }
+    }
+
+    private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, DocxModel model) {
             super(parent, delegable, model);
@@ -89,11 +105,7 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         }
 
         @Override
-        public void update(Observable arg0, Object arg1) {
-            buildFromModel();
-        }
-
-        public void buildFromModel() {
+        protected void buildFromModel() {
             try {
                 for (Control control : getChildren()) {
                     control.dispose();
@@ -250,7 +262,9 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
     @Override
     public String getEmbeddedFileName(BotTask botTask) {
         String xml = botTask.getDelegationConfiguration();
-        if (!XmlUtil.isXml(xml)) return null;
+        if (!XmlUtil.isXml(xml)) {
+            return null;
+        }
         Document document = XmlUtil.parseWithoutValidation(xml);
         Element root = document.getRootElement();
         Element inputElement = root.element("input");
@@ -269,8 +283,10 @@ public class DocxHandlerCellEditorProvider extends XmlBasedConstructorProvider<D
         String oldPath = inputElement.attributeValue("path");
         if (!Strings.isNullOrEmpty(oldPath) && EmbeddedFileUtils.isBotTaskFile(oldPath)) {
             String oldEmbeddedFileName = EmbeddedFileUtils.getBotTaskFileName(oldPath);
-            if (oldEmbeddedFileName.startsWith(oldName)) {
-                String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
+            if (EmbeddedFileUtils.isBotTaskFileName(oldEmbeddedFileName, botTask.getName())) {
+                oldName = EmbeddedFileUtils.generateBotTaskEmbeddedFileName(oldName);
+                String newEmbeddedFileName = EmbeddedFileUtils.generateBotTaskEmbeddedFileName(newName)
+                        + oldEmbeddedFileName.substring(oldName.length());
                 String newPath = EmbeddedFileUtils.getBotTaskFilePath(newEmbeddedFileName);
                 inputElement.addAttribute("path", newPath);
             }

@@ -14,5 +14,6 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.ide,
  ru.runa.gpd.form.ftl,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.eclipse.jface.text
 Bundle-ActivationPolicy: lazy

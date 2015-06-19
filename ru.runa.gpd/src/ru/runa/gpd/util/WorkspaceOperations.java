@@ -237,6 +237,63 @@ public class WorkspaceOperations {
         }
     }
 
+    public static void renameSubProcessDefinition(IStructuredSelection selection) {
+        IFile subdefinitionFile = (IFile) selection.getFirstElement();
+        IFolder definitionFolder = (IFolder) subdefinitionFile.getParent();
+        SubprocessDefinition subprocessDefinition = (SubprocessDefinition) ProcessCache.getProcessDefinition(subdefinitionFile);
+        ProcessDefinition definition = subprocessDefinition.getParent();
+
+        RenameProcessDefinitionDialog dialog = new RenameProcessDefinitionDialog(definition);
+        dialog.setName(subprocessDefinition.getName());
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            String newName = dialog.getName();
+            try {
+                IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+                IEditorPart editor = page.findEditor(new FileEditorInput(subdefinitionFile));
+                if (editor != null) {
+                    page.closeEditor(editor, false);
+                }
+
+                for (Subprocess sp : definition.getChildren(Subprocess.class)) {
+                    if (sp.getSubProcessName().equals(subprocessDefinition.getName())) {
+                        sp.setSubProcessName(newName);
+                        IFile definitionFile = IOUtils.getProcessDefinitionFile(definitionFolder);
+                        editor = page.findEditor(new FileEditorInput(definitionFile));
+                        if (editor != null) {
+                            page.closeEditor(editor, false);
+                        }
+                        saveProcessDefinition(definitionFile, definition);
+                        ProcessCache.invalidateProcessDefinition(definitionFile);
+                        break;
+                    }
+                }
+                for (SubprocessDefinition subdefinition : definition.getEmbeddedSubprocesses().values()) {
+                    for (Subprocess sp : subdefinition.getChildren(Subprocess.class)) {
+                        if (sp.getSubProcessName().equals(subprocessDefinition.getName())) {
+                            sp.setSubProcessName(newName);
+                            IFile file = IOUtils.getFile(subdefinition.getId() + "." + ParContentProvider.PROCESS_DEFINITION_FILE_NAME);
+                            editor = page.findEditor(new FileEditorInput(file));
+                            if (editor != null) {
+                                page.closeEditor(editor, false);
+                            }
+                            saveProcessDefinition(file, subdefinition);
+                            ProcessCache.invalidateProcessDefinition(file);
+                            break;
+                        }
+                    }
+                }
+                subprocessDefinition.setName(newName);
+                
+                saveProcessDefinition(subdefinitionFile, subprocessDefinition);
+                ProcessCache.invalidateProcessDefinition(subdefinitionFile);
+                refreshResource(definitionFolder);
+            } catch (Exception e) {
+                PluginLogger.logError(e);
+            }
+        }
+    }
+
+
     public static void saveProcessDefinition(IFile definitionFile, ProcessDefinition definition) throws Exception {
         ProcessSerializer serializer = definition.getLanguage().getSerializer();
         Document document = serializer.getInitialProcessDefinitionDocument(definition.getName(), null);
@@ -345,8 +402,8 @@ public class WorkspaceOperations {
         }
     }
 
-    public static void createNewBotTask(IStructuredSelection selection, boolean parameterized) {
-        NewBotTaskWizard wizard = new NewBotTaskWizard(parameterized);
+    public static void createNewBotTask(IStructuredSelection selection) {
+        NewBotTaskWizard wizard = new NewBotTaskWizard();
         wizard.init(PlatformUI.getWorkbench(), selection);
         WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
         dialog.open();
@@ -376,16 +433,33 @@ public class WorkspaceOperations {
 
     public static void deleteBotTask(IFile botTaskFile, BotTask botTask) {
         try {
-            botTaskFile.delete(true, null);
-            String configurationFileName = botTask.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION;
-            IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
-            if (configurationFile.exists()) {
-                configurationFile.delete(true, null);
+            if (!Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
+                DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
+                if (provider instanceof IBotFileSupportProvider) {
+                    IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
+                    String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
+                    if (!Strings.isNullOrEmpty(oldEmbeddedFileName)) {
+                        IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
+                        if (embeddedFile.exists()) {
+                            embeddedFile.delete(true, null);
+                        }
+                    }
+                }
             }
-            BotCache.botTaskHasBeenDeleted(botTaskFile, botTask);
+            deleteBotTaskFile(botTaskFile, botTask);
         } catch (CoreException e) {
             throw new InternalApplicationException(e);
         }
+    }
+
+    private static void deleteBotTaskFile(IFile botTaskFile, BotTask botTask) throws CoreException {
+        botTaskFile.delete(true, null);
+        String configurationFileName = botTask.getName() + "." + BotCache.CONFIGURATION_FILE_EXTENSION;
+        IFile configurationFile = ((IFolder) botTaskFile.getParent()).getFile(configurationFileName);
+        if (configurationFile.exists()) {
+            configurationFile.delete(true, null);
+        }
+        BotCache.botTaskHasBeenDeleted(botTaskFile, botTask);
     }
 
     public static void openBotTask(IFile botTaskFile) {
@@ -497,34 +571,14 @@ public class WorkspaceOperations {
                 return;
             }
 
-            String newName = dialog.getName();
             try {
                 IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
                 IEditorPart editor = page.findEditor(new FileEditorInput(botTaskFile));
                 if (editor != null) {
                     page.closeEditor(editor, true);
                 }
-                deleteBotTask(botTaskFile, botTask);
-                String oldName = botTask.getName();
-                if (!Strings.isNullOrEmpty(botTask.getDelegationClassName())) {
-                    DelegableProvider provider = HandlerRegistry.getProvider(botTask.getDelegationClassName());
-                    if (provider instanceof IBotFileSupportProvider) {
-                        IBotFileSupportProvider botFileProvider = (IBotFileSupportProvider) provider;
-                        // Move templates if them exist
-                        String oldEmbeddedFileName = botFileProvider.getEmbeddedFileName(botTask);
-                        if (!Strings.isNullOrEmpty(oldEmbeddedFileName) && oldEmbeddedFileName.startsWith(oldName)) {
-                            IFile embeddedFile = ((IFolder) botTaskFile.getParent()).getFile(oldEmbeddedFileName);
-                            if (embeddedFile.exists()) {
-                                String newEmbeddedFileName = newName + oldEmbeddedFileName.substring(oldName.length());
-                                IPath newEmbeddedFilePath = embeddedFile.getParent().getFullPath().append(newEmbeddedFileName);
-                                embeddedFile.move(newEmbeddedFilePath, true, null);
-                            }
-                        }
-                        botFileProvider.taskRenamed(botTask, oldName, newName);
-                    }
-                }
-                botTask.setName(newName);
-                saveBotTask(((IFolder) botTaskFile.getParent()).getFile(newName), botTask);
+                deleteBotTaskFile(botTaskFile, botTask);
+                BotTaskUtils.copyBotTaskConfig(botTaskFile, botTask, dialog.getName(), botFolder);
             } catch (Exception e) {
                 PluginLogger.logError(e);
             }

@@ -34,6 +34,8 @@ import org.eclipse.ui.ide.IDE;
 import ru.runa.gpd.Localization;
 import ru.runa.gpd.ProcessCache;
 import ru.runa.gpd.editor.gef.command.ProcessDefinitionRemoveSwimlaneCommand;
+import ru.runa.gpd.extension.DelegableProvider;
+import ru.runa.gpd.extension.HandlerRegistry;
 import ru.runa.gpd.lang.NodeRegistry;
 import ru.runa.gpd.lang.model.FormNode;
 import ru.runa.gpd.lang.model.ProcessDefinition;
@@ -51,7 +53,6 @@ import ru.runa.gpd.ui.custom.Dialogs;
 import ru.runa.gpd.ui.custom.DragAndDropAdapter;
 import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import ru.runa.gpd.ui.custom.TableViewerLocalDragAndDropSupport;
-import ru.runa.gpd.ui.dialog.SwimlaneConfigDialog;
 import ru.runa.gpd.ui.dialog.UpdateSwimlaneNameDialog;
 import ru.runa.gpd.util.SwimlaneDisplayMode;
 import ru.runa.gpd.util.WorkspaceOperations;
@@ -224,7 +225,8 @@ public class SwimlaneEditorPage extends EditorPartBase {
         if (searchResult.getMatchCount() > 0) {
             confirmationInfo.append(Localization.getString("Swimlane.ExistInProcess")).append("\n");
             for (Object element : searchResult.getElements()) {
-                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element).append("\n");
+                confirmationInfo.append(" - ").append(element instanceof ElementMatch ? ((ElementMatch) element).toString(searchResult) : element)
+                        .append("\n");
             }
             confirmationRequired = true;
         }
@@ -281,7 +283,8 @@ public class SwimlaneEditorPage extends EditorPartBase {
             IDE.saveAllEditors(new IResource[] { projectRoot }, false);
             String newScriptingName = renameDialog.getScriptingName();
             if (useLtk) {
-                RenameVariableRefactoring ref = new RenameVariableRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane, newName, newScriptingName);
+                RenameVariableRefactoring ref = new RenameVariableRefactoring(editor.getDefinitionFile(), editor.getDefinition(), swimlane, newName,
+                        newScriptingName);
                 useLtk &= ref.isUserInteractionNeeded();
                 if (useLtk) {
                     RenameRefactoringWizard wizard = new RenameRefactoringWizard(ref);
@@ -335,11 +338,10 @@ public class SwimlaneEditorPage extends EditorPartBase {
         protected void onSelection(SelectionEvent e) throws Exception {
             IStructuredSelection selection = (IStructuredSelection) tableViewer.getSelection();
             Swimlane swimlane = (Swimlane) selection.getFirstElement();
-            SwimlaneConfigDialog dialog = new SwimlaneConfigDialog(getDefinition(), swimlane);
-            if (dialog.open() == IDialogConstants.OK_ID) {
-                swimlane.setDelegationConfiguration(dialog.getConfiguration());
-                swimlane.setPublicVisibility(dialog.isPublicVisibility());
-                swimlane.setEditorPath(dialog.getPath());
+            DelegableProvider provider = HandlerRegistry.getProvider(swimlane.getDelegationClassName());
+            String configuration = provider.showConfigurationDialog(swimlane);
+            if (configuration != null) {
+                swimlane.setDelegationConfiguration(configuration);
                 tableViewer.setSelection(selection);
             }
         }

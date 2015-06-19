@@ -1,8 +1,6 @@
 package ru.runa.gpd.office.store;
 
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -71,7 +69,7 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
         }
     }
 
-    private class ConstructorView extends ConstructorComposite implements Observer {
+    private class ConstructorView extends ConstructorComposite {
 
         public ConstructorView(Composite parent, Delegable delegable, DataModel model) {
             super(parent, delegable, model);
@@ -80,11 +78,7 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
         }
 
         @Override
-        public void update(Observable arg0, Object arg1) {
-            buildFromModel();
-        }
-
-        public void buildFromModel() {
+        protected void buildFromModel() {
             try {
                 for (Control control : getChildren()) {
                     control.dispose();
@@ -152,7 +146,8 @@ public abstract class BaseCommonStorageHandlerCellEditorProvider extends XmlBase
                     if (Strings.isNullOrEmpty(text)) {
                         return;
                     }
-                    // if (!QueryType.valueOf(combo.getText()).equals(queryType)) {
+                    // if
+                    // (!QueryType.valueOf(combo.getText()).equals(queryType)) {
                     // for (StorageConstraintsModel m : model.constraints) {
                     // if (m.getConditionModel() != null) {
                     // m.getConditionModel().getConditions().clear();

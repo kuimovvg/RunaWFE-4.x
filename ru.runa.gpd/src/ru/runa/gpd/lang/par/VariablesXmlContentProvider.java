@@ -10,6 +10,7 @@ import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.Swimlane;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
+import ru.runa.gpd.util.VariableUtils;
 import ru.runa.gpd.util.XmlUtil;
 import ru.runa.wfe.commons.BackCompatibilityClassNames;
 import ru.runa.wfe.var.format.UserTypeFormat;
@@ -54,13 +55,16 @@ public class VariablesXmlContentProvider extends AuxContentProvider {
                 Variable variable = parse(attributeElement, definition);
                 type.addAttribute(variable);
             }
-            type.validate();
         }
         List<Element> elementsList = document.getRootElement().elements(VARIABLE);
         for (Element element : elementsList) {
             if ("true".equals(element.attributeValue(SWIMLANE, "false"))) {
                 String variableName = element.attributeValue(NAME);
                 String scriptingName = element.attributeValue(SCRIPTING_NAME, variableName);
+                // old version processes may contain invalid names
+                if (!VariableUtils.isValidScriptingName(scriptingName)) {
+                    scriptingName = VariableUtils.toScriptingName(scriptingName);
+                }
                 try {
                     String publicVisibilityStr = element.attributeValue(PUBLIC);
                     boolean publicVisibility = "true".equals(publicVisibilityStr);

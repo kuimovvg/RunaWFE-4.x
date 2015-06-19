@@ -10,10 +10,12 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 import ru.runa.gpd.util.EventSupport;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 public class Component extends EventSupport implements IPropertySource {
+    private static final String PARAMETERS_DELIM = ", ";
     private final int id;
     private final ComponentType type;
     private final List<Object> parameterValues = Lists.newArrayList();
@@ -141,24 +143,31 @@ public class Component extends EventSupport implements IPropertySource {
         boolean first = true;
         for (ComponentParameter parameter : type.getParameters()) {
             if (!first) {
-                ftl.append(", ");
+                ftl.append(PARAMETERS_DELIM);
             } else {
                 first = false;
             }
-            boolean surroundWithBrackets = parameter.getType().isSurroundBrackets();
+            final boolean surroundWithBrackets = parameter.getType().isSurroundBrackets();
             Object obj = null;
             if (parameter.getType().isMultiple()) {
                 List<String> list = (List<String>) getParameterValue(parameter);
-                String delim = surroundWithBrackets ? "\", \"" : ", ";
-                obj = Joiner.on(delim).join(list);
+                obj = Joiner.on(PARAMETERS_DELIM).join(Lists.transform(list, new Function<String, String>() {
+
+                    @Override
+                    public String apply(String string) {
+                        if (surroundWithBrackets) {
+                            return stringQuotation(string);
+                        }
+                        return string;
+                    }
+                }));
             } else {
                 obj = getParameterValue(parameter);
+                if (surroundWithBrackets) {
+                    obj = stringQuotation(obj);
+                }
             }
-            if (surroundWithBrackets) {
-                ftl.append(stringQuotation(obj));
-            } else {
-                ftl.append(obj);
-            }
+            ftl.append(obj);
         }
         ftl.append(")}");
         return ftl.toString();

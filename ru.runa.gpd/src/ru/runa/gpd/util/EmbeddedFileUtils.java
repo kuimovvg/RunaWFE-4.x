@@ -1,6 +1,7 @@
 package ru.runa.gpd.util;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 
 import ru.runa.gpd.PluginLogger;
@@ -39,6 +40,23 @@ public class EmbeddedFileUtils {
         }
     }
 
+    public static String copyProcessFile(IFolder sourceFolder, String path, String oldName, String newName) {
+        String fileName = EmbeddedFileUtils.getProcessFileName(path);
+        IFile file = IOUtils.getFile(sourceFolder, fileName);
+        if (file.exists()) {
+            fileName = fileName.replace(oldName, newName);
+            path = EmbeddedFileUtils.getProcessFilePath(fileName);
+            IFile newFile = EmbeddedFileUtils.getProcessFile(path);
+            try {
+                file.copy(newFile.getFullPath(), true, null);
+                return path;
+            } catch (CoreException e) {
+                PluginLogger.logError("Unable to copy file " + file + " from process definition", e);
+            }
+        }
+        return null;
+    }
+
     public static void deleteProcessFile(IFile file) {
         if (file.exists()) {
             try {
@@ -58,7 +76,7 @@ public class EmbeddedFileUtils {
     }
 
     public static boolean isBotTaskFileName(String fileName, String botTaskName) {
-        String botTaskNameWithoutSpaces = botTaskName.replace(' ', '_');
+        String botTaskNameWithoutSpaces = generateBotTaskEmbeddedFileName(botTaskName);
         if (fileName.startsWith(botTaskNameWithoutSpaces + BotTaskUtils.EMBEDDED_SUFFIX)) {
             return true;
         } else {
@@ -104,10 +122,14 @@ public class EmbeddedFileUtils {
         }
         if (delegable instanceof BotTask) {
             String name = ((BotTask) delegable).getName();
-            name = name.replace(' ', '_');
+            name = generateBotTaskEmbeddedFileName(name);
             return name + BotTaskUtils.EMBEDDED_SUFFIX + "." + fileExtension;
         }
         return null;
+    }
+
+    public static String generateBotTaskEmbeddedFileName(String botTaskName) {
+        return botTaskName.replace(' ', '_');
     }
 
 }

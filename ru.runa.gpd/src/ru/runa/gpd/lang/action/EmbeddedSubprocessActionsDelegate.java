@@ -120,7 +120,7 @@ public class EmbeddedSubprocessActionsDelegate extends BaseModelDropDownActionDe
 
     private class CreateEmbeddedSubprocessAction extends Action {
         public CreateEmbeddedSubprocessAction() {
-            setText(Localization.getString("ExplorerTreeView.menu.label.newSubprocess"));
+            setText(Localization.getString("ExplorerTreeView.menu.label.newEmbeddedSubprocess"));
         }
 
         @Override

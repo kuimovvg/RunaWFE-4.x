@@ -1,5 +1,6 @@
 package ru.runa.gpd.util;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.MatchResult;
@@ -7,6 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ru.runa.gpd.PluginLogger;
+import ru.runa.gpd.lang.model.Delegable;
+import ru.runa.gpd.lang.model.GraphElement;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableContainer;
 import ru.runa.gpd.lang.model.VariableUserType;
@@ -44,20 +47,11 @@ public class VariableUtils {
         return result;
     }
 
-    /**
-     * Filtering by whitespace, etc...
-     */
-    public static List<String> getValidVariableNames(List<String> variableNames) {
-        List<String> result = Lists.newArrayList(variableNames);
-        for (String variableName : variableNames) {
-            if (variableName.indexOf(" ") != -1) {
-                result.remove(variableName);
-            }
-        }
-        return result;
+    public static boolean isValidScriptingName(String name) {
+        return Objects.equal(name, toScriptingName(name));
     }
 
-    public static String generateNameForScripting(VariableContainer variableContainer, String variableName, Variable excludedVariable) {
+    public static String toScriptingName(String variableName) {
         char[] chars = variableName.toCharArray();
         for (int i = 0; i < chars.length; i++) {
             if (i == 0) {
@@ -74,6 +68,11 @@ public class VariableUtils {
             }
         }
         String scriptingName = new String(chars);
+        return scriptingName;
+    }
+
+    public static String generateNameForScripting(VariableContainer variableContainer, String variableName, Variable excludedVariable) {
+        String scriptingName = toScriptingName(variableName);
         if (excludedVariable != null) {
             if (excludedVariable.getScriptingName() == null || Objects.equal(excludedVariable.getScriptingName(), scriptingName)) {
                 return scriptingName;
@@ -96,6 +95,22 @@ public class VariableUtils {
             }
         }
         return result;
+    }
+
+    public static List<String> getVariableNamesForScripting(Delegable delegable, String... typeClassNameFilters) {
+        if (delegable instanceof GraphElement) {
+            List<Variable> variables = ((GraphElement) delegable).getProcessDefinition().getVariables(true, true, typeClassNameFilters);
+            return getVariableNamesForScripting(variables);
+        } else {
+            List<String> list = delegable.getVariableNames(true, typeClassNameFilters);
+            for (Iterator<String> iterator = list.iterator(); iterator.hasNext();) {
+                String string = iterator.next();
+                if (!isValidScriptingName(string)) {
+                    iterator.remove();
+                }
+            }
+            return list;
+        }
     }
 
     public static List<String> getVariableNames(List<? extends Variable> variables) {

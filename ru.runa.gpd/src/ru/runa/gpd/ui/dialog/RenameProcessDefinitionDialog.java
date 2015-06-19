@@ -19,15 +19,22 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ru.runa.gpd.Localization;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.util.IOUtils;
 
 public class RenameProcessDefinitionDialog extends Dialog {
     private String name;
-    private final IFolder definitionFolder;
+    private IFolder definitionFolder;
+    private ProcessDefinition definition;
 
     public RenameProcessDefinitionDialog(IFolder definitionFolder) {
         super(Display.getDefault().getActiveShell());
         this.definitionFolder = definitionFolder;
+    }
+
+    public RenameProcessDefinitionDialog(ProcessDefinition definition) {
+        super(Display.getDefault().getActiveShell());
+        this.definition = definition;
     }
 
     public void setName(String name) {
@@ -77,8 +84,12 @@ public class RenameProcessDefinitionDialog extends Dialog {
 
     private void updateButtons() {
     	IWorkspace workspace = ResourcesPlugin.getWorkspace();
-    	boolean allowCreation = workspace.validateName(name, IResource.FOLDER).isOK();
-    	allowCreation &= !IOUtils.isChildFolderExists(definitionFolder.getParent(), name);
+        boolean allowCreation = workspace.validateName(name, IResource.FOLDER).isOK();
+        if (definitionFolder != null) {
+            allowCreation &= !IOUtils.isChildFolderExists(definitionFolder.getParent(), name);
+        } else if (definition != null) {
+            allowCreation &= definition.getEmbeddedSubprocessByName(name) == null;
+        }
         getButton(IDialogConstants.OK_ID).setEnabled(allowCreation);
     }
 
