@@ -2,7 +2,6 @@ package ru.runa.wfe.commons;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-import groovy.lang.MissingPropertyException;
 
 import java.util.Map;
 
@@ -11,26 +10,29 @@ import org.apache.commons.logging.LogFactory;
 import org.codehaus.groovy.GroovyExceptionInterface;
 
 import ru.runa.wfe.InternalApplicationException;
+import ru.runa.wfe.execution.ExecutionContext;
 import ru.runa.wfe.execution.dto.WfProcess;
 import ru.runa.wfe.lang.ProcessDefinition;
 import ru.runa.wfe.lang.SwimlaneDefinition;
+import ru.runa.wfe.validation.ValidatorException;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.IVariableProvider;
 import ru.runa.wfe.var.ScriptingComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 
-@SuppressWarnings("unchecked")
 public class GroovyScriptExecutor implements IScriptExecutor {
     protected static final Log log = LogFactory.getLog(GroovyScriptExecutor.class);
 
     @Override
-    public Map<String, Object> executeScript(ProcessDefinition processDefinition, IVariableProvider variableProvider, String script) {
+    public Map<String, Object> executeScript(ExecutionContext executionContext, String script) {
         try {
-            GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
+            GroovyScriptBinding binding = createBinding(executionContext.getProcessDefinition(), executionContext.getVariableProvider());
+            binding.setVariable(GroovyScriptBinding.EXECUTION_CONTEXT_VARIABLE_NAME, executionContext);
             GroovyShell shell = new GroovyShell(ClassLoaderUtil.getExtensionClassLoader(), binding);
             shell.evaluate(script);
             return binding.getAdjustedVariables();
@@ -49,6 +51,8 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             GroovyScriptBinding binding = createBinding(processDefinition, variableProvider);
             GroovyShell shell = new GroovyShell(ClassLoaderUtil.getExtensionClassLoader(), binding);
             return shell.evaluate(script);
+        } catch (ValidatorException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Groovy evaluation failed, script=" + script, e);
             if (e instanceof GroovyExceptionInterface) {
@@ -63,6 +67,7 @@ public class GroovyScriptExecutor implements IScriptExecutor {
     }
 
     public static class GroovyScriptBinding extends Binding {
+        private final static String EXECUTION_CONTEXT_VARIABLE_NAME = "executionContext";
         private final IVariableProvider variableProvider;
         private final Map<String, String> variableScriptingNameToNameMap = Maps.newHashMap();
         // complex variables does not returned from binding...
@@ -92,12 +97,31 @@ public class GroovyScriptExecutor implements IScriptExecutor {
         }
 
         @Override
-        public Object getVariable(String name) {
-            try {
-                return super.getVariable(name);
-            } catch (MissingPropertyException e) {
-                return getVariableFromProcess(name);
+        public Object getVariable(String scriptingName) {
+            if (super.hasVariable(scriptingName)) {
+                return super.getVariable(scriptingName);
             }
+            Object value = getVariableFromProcess(scriptingName);
+            if (value == null) {
+                log.warn("Variable '" + scriptingName + "' passed to script as null (not defined in process)");
+            }
+            log.debug("Passing to script '" + scriptingName + "' as '" + value + "'" + (value != null ? " of " + value.getClass() : ""));
+            setVariable(scriptingName, value);
+            return value;
+        }
+
+        protected Object getVariableFromProcess(String scriptingName) {
+            String name = getVariableNameByScriptingName(scriptingName);
+            Object value = variableProvider.getValue(name);
+            if (value instanceof ComplexVariable) {
+                if (complexVariables.containsKey(name)) {
+                    value = complexVariables.get(name);
+                } else {
+                    value = new ScriptingComplexVariable((ComplexVariable) value);
+                    complexVariables.put(name, (ScriptingComplexVariable) value);
+                }
+            }
+            return value;
         }
 
         private String getVariableNameByScriptingName(String name) {
@@ -111,24 +135,6 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             return variableName;
         }
 
-        protected Object getVariableFromProcess(String name) {
-            name = getVariableNameByScriptingName(name);
-            Object value = variableProvider.getValue(name);
-            if (value == null) {
-                log.warn("Variable '" + name + "' passed to script as null (not defined in process)");
-            }
-            if (value instanceof ComplexVariable) {
-                if (complexVariables.containsKey(name)) {
-                    value = complexVariables.get(name);
-                } else {
-                    value = new ScriptingComplexVariable((ComplexVariable) value);
-                    complexVariables.put(name, (ScriptingComplexVariable) value);
-                }
-            }
-            log.debug("Passing to script '" + name + "' as '" + value + "'" + (value != null ? " of " + value.getClass() : ""));
-            return value;
-        }
-
         @Override
         public boolean hasVariable(String name) {
             throw new UnsupportedOperationException("Implement if will be used");
@@ -138,6 +144,9 @@ public class GroovyScriptExecutor implements IScriptExecutor {
             Map<String, Object> scriptingVariables = getVariables();
             Map<String, Object> result = Maps.newHashMapWithExpectedSize(scriptingVariables.size());
             for (Map.Entry<String, Object> entry : scriptingVariables.entrySet()) {
+                if (Objects.equal(entry.getKey(), EXECUTION_CONTEXT_VARIABLE_NAME)) {
+                    continue;
+                }
                 String variableName = getVariableNameByScriptingName(entry.getKey());
                 result.put(variableName, entry.getValue());
             }

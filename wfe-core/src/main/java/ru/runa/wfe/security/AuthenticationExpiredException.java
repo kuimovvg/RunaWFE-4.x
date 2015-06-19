@@ -17,19 +17,15 @@
  */
 package ru.runa.wfe.security;
 
-import ru.runa.wfe.InternalApplicationException;
-
 /**
- * Thrown when authentication expired (due to server restart or session
- * timeout).
+ * Thrown when authentication expired (due to server restart or session timeout).
  * 
  * @since 4.2.0
  */
-public class AuthenticationExpiredException extends InternalApplicationException {
+public class AuthenticationExpiredException extends AuthenticationException {
     private static final long serialVersionUID = -6105784417275728348L;
 
     public AuthenticationExpiredException(String message) {
         super(message);
     }
-
 }

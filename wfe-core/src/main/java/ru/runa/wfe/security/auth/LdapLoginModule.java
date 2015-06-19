@@ -1,18 +1,18 @@
 /*
  * This file is part of the RUNA WFE project.
- * 
- * This program is free software; you can redistribute it and/or 
- * modify it under the terms of the GNU Lesser General Public License 
- * as published by the Free Software Foundation; version 2.1 
- * of the License. 
- * 
- * This program is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
- * GNU Lesser General Public License for more details. 
- * 
- * You should have received a copy of the GNU Lesser General Public License 
- * along with this program; if not, write to the Free Software 
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; version 2.1
+ * of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
  */
 package ru.runa.wfe.security.auth;
@@ -30,31 +30,24 @@ import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginException;
 
-import org.springframework.beans.factory.annotation.Value;
-
+import ru.runa.wfe.commons.SystemProperties;
 import ru.runa.wfe.commons.ftl.ExpressionEvaluator;
 import ru.runa.wfe.user.Actor;
 
 import com.google.common.collect.Maps;
 
 /**
- * MS Active Directory based login module. 
+ * MS Active Directory based login module.
+ *
  * @since 2.0
  */
 public class LdapLoginModule extends LoginModuleBase {
     private Hashtable<String, String> env = new Hashtable<String, String>();
-    // Non-ASCII symbols are not allowed here in UTF-8 encoded property files
-    @Value(value = "${authentication.domain.name}")
-    private String domainName;
-    @Value(value = "${authentication.ldap.server.url}")
-    private String serverUrl;
-    @Value(value = "${authentication.ldap.userName.format}")
-    private String userNameFormat;
 
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler, Map<String, ?> sharedState, Map<String, ?> options) {
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        env.put(Context.PROVIDER_URL, serverUrl);
+        env.put(Context.PROVIDER_URL, SystemProperties.getResources().getStringProperty("authentication.ldap.server.url"));
         env.put(Context.SECURITY_AUTHENTICATION, "simple");
         env.put("java.naming.ldap.version", "3");
         super.initialize(subject, callbackHandler, sharedState, options);
@@ -62,9 +55,9 @@ public class LdapLoginModule extends LoginModuleBase {
 
     private String getCredential(String username) {
         Map<String, String> variables = Maps.newHashMap();
-        variables.put("domain.name", domainName);
+        variables.put("domain.name", SystemProperties.getResources().getStringProperty("authentication.domain.name"));
         variables.put("username", username);
-        return ExpressionEvaluator.substitute(userNameFormat, variables);
+        return ExpressionEvaluator.substitute(SystemProperties.getResources().getStringProperty("authentication.ldap.userName.format"), variables);
     }
 
     @Override
@@ -78,7 +71,7 @@ public class LdapLoginModule extends LoginModuleBase {
             throw new LoginException("No actor name was provided.");
         }
         char[] tmpPasswordChars = ((PasswordCallback) callbacks[1]).getPassword();
-        if ((tmpPasswordChars == null) || (tmpPasswordChars.length == 0)) {
+        if (tmpPasswordChars == null || tmpPasswordChars.length == 0) {
             throw new LoginException("No password was provided.");
         }
         String password = new String(tmpPasswordChars);

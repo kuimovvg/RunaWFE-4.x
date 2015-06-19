@@ -1,28 +1,34 @@
 package ru.runa.wf.delegate;
 
-import com.google.common.collect.Lists;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.cactus.ServletTestCase;
+
 import ru.runa.wf.service.WfServiceTestHelper;
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.definition.DefinitionPermission;
 import ru.runa.wfe.definition.dto.WfDefinition;
 import ru.runa.wfe.presentation.BatchPresentation;
-import ru.runa.wfe.security.*;
-import ru.runa.wfe.security.auth.SubjectPrincipalsHelper;
+import ru.runa.wfe.security.ASystem;
+import ru.runa.wfe.security.AuthenticationException;
+import ru.runa.wfe.security.AuthorizationException;
+import ru.runa.wfe.security.Permission;
+import ru.runa.wfe.security.SystemPermission;
 import ru.runa.wfe.ss.Substitution;
 import ru.runa.wfe.ss.SubstitutionCriteria;
 import ru.runa.wfe.task.TaskAlreadyAcceptedException;
 import ru.runa.wfe.task.TaskDoesNotExistException;
 import ru.runa.wfe.task.dto.WfTask;
-import ru.runa.wfe.user.*;
+import ru.runa.wfe.user.Actor;
+import ru.runa.wfe.user.ActorPermission;
+import ru.runa.wfe.user.ExecutorDoesNotExistException;
+import ru.runa.wfe.user.Group;
+import ru.runa.wfe.user.User;
 import ru.runa.wfe.validation.ValidationException;
 
-import javax.security.auth.Subject;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import com.google.common.collect.Lists;
 
 /**
  * This test class is to check substitution logic concerning "Assign task" function.<br />
@@ -91,7 +97,7 @@ public class ExecutionServiceDelegateSubstitutionAssignTaskTest extends ServletT
         substituteUser = testHelper.getAuthenticationService().authenticateByLoginPassword(nameSubstitute, pwdSubstitute);
 
         substitutionCriteria_always = null;
-        testHelper.createSubstitutionCriteria(substitutionCriteria_always);
+        substitutionCriteria_always = testHelper.createSubstitutionCriteria(substitutionCriteria_always);
 
         byte[] parBytes = WfServiceTestHelper.readBytesFromFile(PROCESS_NAME + ".par");
         testHelper.getDefinitionService().deployProcessDefinition(testHelper.getAdminUser(), parBytes, Lists.newArrayList("testProcess"));

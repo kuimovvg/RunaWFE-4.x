@@ -146,7 +146,6 @@ public class ViewUtil {
     }
 
     public static WfVariable createMapKeyComponentVariable(WfVariable mapVariable, int index, Object key) {
-        Map<?, ?> map = (Map<?, ?>) mapVariable.getValue();
         VariableFormat keyFormat = FormatCommons.createComponent(mapVariable, 0);
         String nameSuffix = VariableFormatContainer.COMPONENT_QUALIFIER_START;
         if (index != -1) {
@@ -283,7 +282,7 @@ public class ViewUtil {
             String html = "";
             html += "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" ";
             if (value != null) {
-                html += "value=\"" + value + "\" ";
+                html += "value=\"" + ((StringFormat) variableFormat).formatHtml(user, webHelper, 0L, variableName, value) + "\" ";
             }
             html += "/>";
             return html;
@@ -292,7 +291,7 @@ public class ViewUtil {
             String html = "";
             html += "<textarea name=\"" + variableName + "\" class=\"inputText\">";
             if (value != null) {
-                html += value;
+                html += ((TextFormat) variableFormat).formatHtml(user, webHelper, 0L, variableName, value);
             }
             html += "</textarea>";
             return html;
@@ -397,11 +396,11 @@ public class ViewUtil {
                 WfVariable componentVariable = ViewUtil.createListComponentVariable(variable, row, componentFormat, o);
                 html.append(ViewUtil.getComponentInput(user, webHelper, componentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
-                        .append("(this);\" style=\"width: 30px;\" />");
+                .append("(this);\" style=\"width: 30px;\" />");
                 html.append("</div></div>");
             }
             html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName)
-                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
+            .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
             html.append("</div>");
             return html.toString();
         }
@@ -441,11 +440,11 @@ public class ViewUtil {
                 WfVariable valueComponentVariable = ViewUtil.createMapValueComponentVariable(variable, row, key);
                 html.append(ViewUtil.getComponentInput(user, webHelper, valueComponentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
-                        .append("(this);\" style=\"width: 30px;\" />");
+                .append("(this);\" style=\"width: 30px;\" />");
                 html.append("</div></div>");
             }
             html.append("<div><input type=\"button\" id=\"btnAddMap").append(scriptingVariableName)
-                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
+            .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
             html.append("</div>");
             return html.toString();
         }
@@ -463,7 +462,7 @@ public class ViewUtil {
         if (StringFormat.class == variableFormat.getClass()) {
             String html = "<input type=\"text\" name=\"" + variableName + "\" class=\"inputString\" disabled=\"true\" ";
             if (value != null) {
-                html += "value=\"" + value + "\" ";
+                html += "value=\"" + ((StringFormat) variableFormat).formatHtml(user, webHelper, processId, variableName, value) + "\" ";
             }
             html += "/>";
             return html;
@@ -471,7 +470,7 @@ public class ViewUtil {
         if (TextFormat.class == variableFormat.getClass()) {
             String html = "<textarea name=\"" + variableName + "\" class=\"inputText\" disabled=\"true\">";
             if (value != null) {
-                html += value;
+                html += ((TextFormat) variableFormat).formatHtml(user, webHelper, processId, variableName, value);
             }
             html += "</textarea>";
             return html;
@@ -704,7 +703,7 @@ public class ViewUtil {
                     file.setContent(value.getData());
                 }
                 FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest())
-                        .put(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName, file);
+                .put(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName, file);
             }
         }
         String attachImageUrl = "";

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import ru.runa.wfe.InternalApplicationException;
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.var.format.VariableFormat;
 import ru.runa.wfe.var.impl.NullVariable;
 
 public class VariableCreator {
@@ -23,7 +24,7 @@ public class VariableCreator {
 
     /**
      * Creates new variable of the corresponding type.
-     * 
+     *
      * @param value
      *            initial value
      * @return variable
@@ -46,12 +47,12 @@ public class VariableCreator {
     /**
      * Creates new variable of the corresponding type. This method does not
      * persisit it.
-     * 
+     *
      * @param value
      *            initial value
      * @return variable
      */
-    public Variable<?> create(ExecutionContext executionContext, String name, Object value) {
+    public Variable<?> create(ExecutionContext executionContext, String name, Object value, VariableFormat format) {
         log.debug("Creating variable '" + name + "' in '" + executionContext.getProcess() + "' with value '" + value + "'"
                 + (value != null ? " of " + value.getClass() : ""));
         Variable<?> variable;
@@ -62,7 +63,7 @@ public class VariableCreator {
         }
         variable.setName(name);
         variable.setProcess(executionContext.getProcess());
-        variable.setValue(executionContext, value);
+        variable.setValue(executionContext, value, format);
         variable.setCreateDate(new Date());
         return variable;
     }

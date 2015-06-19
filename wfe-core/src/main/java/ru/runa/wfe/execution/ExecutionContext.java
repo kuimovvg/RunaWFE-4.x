@@ -47,7 +47,8 @@ import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.VariableCreator;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.dao.VariableDAO;
-import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.StringFormat;
+import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
@@ -161,7 +162,7 @@ public class ExecutionContext {
                         + "' is not defined in process definition and setting 'undefined.variables.allowed'=false");
             }
             if (value != null && variableDefinition != null && SystemProperties.isStrongVariableFormatEnabled()) {
-                Class<?> definedClass = FormatCommons.create(variableDefinition).getJavaClass();
+                Class<?> definedClass = variableDefinition.getFormatNotNull().getJavaClass();
                 if (!definedClass.isAssignableFrom(value.getClass())) {
                     if (SystemProperties.isVariableAutoCastingEnabled()) {
                         try {
@@ -179,9 +180,9 @@ public class ExecutionContext {
         }
         if (value instanceof ComplexVariable) {
             ComplexVariable complexVariable = (ComplexVariable) value;
-            for (Map.Entry<String, Object> entry : complexVariable.entrySet()) {
-                String fullName = name + "." + entry.getKey();
-                setVariableValue(fullName, entry.getValue());
+            Map<String, Object> expanded = complexVariable.expand(name);
+            for (Map.Entry<String, Object> entry : expanded.entrySet()) {
+                setVariableValue(entry.getKey(), entry.getValue());
             }
             return;
         }
@@ -201,7 +202,8 @@ public class ExecutionContext {
         }
         if (variable == null) {
             if (value != null) {
-                variable = variableCreator.create(this, name, value);
+                VariableFormat format = variableDefinition != null ? variableDefinition.getFormatNotNull() : new StringFormat();
+                variable = variableCreator.create(this, name, value, format);
                 variableDAO.create(variable);
             }
         } else {
@@ -211,7 +213,8 @@ public class ExecutionContext {
             }
             log.debug("Updating variable '" + name + "' in '" + getProcess() + "' to '" + value + "'"
                     + (value != null ? " of " + value.getClass() : ""));
-            variable.setValue(this, value);
+            VariableFormat format = variableDefinition != null ? variableDefinition.getFormatNotNull() : new StringFormat();
+            variable.setValue(this, value, format);
         }
     }
 

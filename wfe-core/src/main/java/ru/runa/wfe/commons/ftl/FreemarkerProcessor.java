@@ -5,6 +5,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 
@@ -16,6 +19,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 
 public class FreemarkerProcessor {
+    private static final Log log = LogFactory.getLog(FreemarkerProcessor.class);
 
     private final static Configuration cfg = new Configuration();
     static {
@@ -35,6 +39,7 @@ public class FreemarkerProcessor {
             out.flush();
             return out.toString();
         } catch (Exception e) {
+            log.warn(ftlTemplate);
             throw Throwables.propagate(e);
         }
     }

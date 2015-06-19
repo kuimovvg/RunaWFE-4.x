@@ -37,7 +37,7 @@ public class TaskFactory {
         Token token = executionContext.getToken();
         task.setToken(token);
         task.setProcess(process);
-        task.setDeadlineDate(ExpressionEvaluator.evaluateDueDate(executionContext, getDeadlineDuration(taskDefinition)));
+        task.setDeadlineDate(ExpressionEvaluator.evaluateDueDate(executionContext.getVariableProvider(), getDeadlineDuration(taskDefinition)));
         process.getTasks().add(task);
         ApplicationContextFactory.getTaskDAO().flushPendingChanges();
         executionContext.addLog(new TaskCreateLog(task));

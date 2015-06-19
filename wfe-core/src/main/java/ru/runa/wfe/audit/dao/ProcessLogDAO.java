@@ -28,7 +28,6 @@ import com.google.common.collect.Lists;
  * @author dofs
  * @since 4.0
  */
-@SuppressWarnings("unchecked")
 public class ProcessLogDAO extends GenericDAO<ProcessLog> {
 
     @Autowired
@@ -125,6 +124,18 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
             public List<ProcessLog> doInHibernate(Session session) {
                 boolean filterBySeverity = filter.getSeverities().size() != 0 && filter.getSeverities().size() != Severity.values().length;
                 String hql = "from ProcessLog where processId = :processId";
+                if (filter.getIdFrom() != null) {
+                    hql += " and id >= :idFrom)";
+                }
+                if (filter.getIdTo() != null) {
+                    hql += " and id <= :idTo)";
+                }
+                if (filter.getCreateDateFrom() != null) {
+                    hql += " and createDate >= :createDateFrom)";
+                }
+                if (filter.getCreateDateTo() != null) {
+                    hql += " and createDate <= :createDateTo)";
+                }
                 if (filter.getTokenId() != null) {
                     hql += " and tokenId = :tokenId)";
                 }
@@ -137,6 +148,18 @@ public class ProcessLogDAO extends GenericDAO<ProcessLog> {
                 hql += " order by id asc";
                 Query query = session.createQuery(hql);
                 query.setParameter("processId", filter.getProcessId());
+                if (filter.getIdFrom() != null) {
+                    query.setParameter("idFrom", filter.getIdFrom());
+                }
+                if (filter.getIdTo() != null) {
+                    query.setParameter("idTo", filter.getIdTo());
+                }
+                if (filter.getCreateDateFrom() != null) {
+                    query.setParameter("createDateFrom", filter.getCreateDateFrom());
+                }
+                if (filter.getCreateDateTo() != null) {
+                    query.setParameter("createDateTo", filter.getCreateDateTo());
+                }
                 if (filter.getTokenId() != null) {
                     query.setParameter("tokenId", filter.getTokenId());
                 }

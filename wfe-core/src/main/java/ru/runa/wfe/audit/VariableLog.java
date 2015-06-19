@@ -25,14 +25,17 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
+import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.Variable;
 import ru.runa.wfe.var.converter.FileVariableToByteArrayConverter;
 import ru.runa.wfe.var.converter.SerializableToByteArrayConverter;
+import ru.runa.wfe.var.converter.StringToByteArrayConverter;
 import ru.runa.wfe.var.file.IFileVariable;
+import ru.runa.wfe.var.format.VariableFormat;
 
 /**
  * Variables base logging class.
- * 
+ *
  * @author Dofs
  */
 @Entity
@@ -53,22 +56,19 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     @Transient
-    public String getVariableNewValue() {
-        String content = getAttribute(ATTR_NEW_VALUE);
-        if (content != null) {
-            return content;
-        }
-        return String.valueOf(getBytesObject());
+    public String getVariableNewValueString() {
+        return getAttribute(ATTR_NEW_VALUE);
     }
 
-    public void setVariableNewValue(Variable<?> variable, Object newValue) {
+    protected void setVariableNewValue(Variable<?> variable, Object newValue, VariableFormat format) {
+        addAttributeWithTruncation(ATTR_NEW_VALUE, variable.toString(newValue, format));
         boolean file = newValue instanceof IFileVariable;
         // TODO FileVariableMatcher
         addAttribute(ATTR_IS_FILE_VALUE, String.valueOf(file));
         if (variable.getStorableValue() instanceof byte[]) {
             setBytes((byte[]) variable.getStorableValue());
-        } else {
-            addAttributeWithTruncation(ATTR_NEW_VALUE, variable.toString(newValue));
+        } else if (newValue instanceof Executor) {
+            setBytes((byte[]) new SerializableToByteArrayConverter().convert(null, variable, newValue));
         }
     }
 
@@ -78,15 +78,18 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     @Transient
-    @Override
-    public Object getBytesObject() {
+    public Object getVariableNewValue() {
         byte[] bytes = getBytes();
         if (bytes != null) {
             if (isFileValue()) {
                 return new FileVariableToByteArrayConverter().revert(bytes);
             }
-            return new SerializableToByteArrayConverter().revert(bytes);
+            try {
+                return new SerializableToByteArrayConverter().revert(bytes);
+            } catch (Exception e) {
+                return new StringToByteArrayConverter().revert(bytes);
+            }
         }
-        return super.getBytesObject();
+        return getVariableNewValueString();
     }
 }

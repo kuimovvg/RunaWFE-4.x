@@ -4,16 +4,28 @@ import java.util.Map;
 
 import ru.runa.wfe.var.dto.WfVariable;
 
+import com.google.common.collect.Maps;
+
 public class MapDelegableVariableProvider extends DelegableVariableProvider {
-    private final Map<String, Object> values;
+    protected final Map<String, Object> values = Maps.newHashMap();
 
     public MapDelegableVariableProvider(Map<String, ? extends Object> variables, IVariableProvider delegate) {
         super(delegate);
-        this.values = (Map<String, Object>) variables;
+        for (Map.Entry<String, Object> entry : ((Map<String, Object>) variables).entrySet()) {
+            add(entry.getKey(), entry.getValue());
+        }
     }
 
     public void add(String variableName, Object object) {
         values.put(variableName, object);
+        if (object instanceof ComplexVariable) {
+            Map<String, Object> expanded = ((ComplexVariable) object).expand(variableName);
+            for (Map.Entry<String, Object> entry : expanded.entrySet()) {
+                if (entry.getValue() != null) {
+                    values.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
     }
 
     public void add(WfVariable variable) {
@@ -50,7 +62,7 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
     @Override
     public WfVariable getVariable(String variableName) {
         if (values.containsKey(variableName)) {
-            Object object = values.get(variableName);
+            Object object = getValue(variableName);
             if (object instanceof WfVariable) {
                 return (WfVariable) object;
             }
@@ -61,7 +73,24 @@ public class MapDelegableVariableProvider extends DelegableVariableProvider {
             }
             return variable;
         }
-        return super.getVariable(variableName);
+        WfVariable variable = super.getVariable(variableName);
+        if (variable != null) {
+            if (variable.getValue() instanceof ComplexVariable) {
+                ComplexVariable complexVariable = (ComplexVariable) variable.getValue();
+                for (String componentVariableName : values.keySet()) {
+                    if (componentVariableName.startsWith(variableName + VariableUserType.DELIM)) {
+                        String attributeName = componentVariableName.substring(variableName.length() + VariableUserType.DELIM.length());
+                        Object componentValue = getValue(componentVariableName);
+                        if (componentValue instanceof WfVariable) {
+                            componentValue = ((WfVariable) componentValue).getValue();
+                        }
+                        log.debug("Setting " + variable + "." + attributeName + " value to " + componentValue);
+                        complexVariable.mergeAttribute(attributeName, componentValue);
+                    }
+                }
+            }
+        }
+        return variable;
     }
 
     @Override

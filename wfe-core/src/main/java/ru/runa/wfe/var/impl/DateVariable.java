@@ -27,8 +27,8 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
-import ru.runa.wfe.commons.CalendarUtil;
 import ru.runa.wfe.var.Variable;
+import ru.runa.wfe.var.format.VariableFormat;
 
 @Entity
 @DiscriminatorValue(value = "D")
@@ -55,7 +55,7 @@ public class DateVariable extends Variable<Date> {
     }
 
     @Override
-    public String toString(Object value) {
-        return CalendarUtil.formatDateTime((Date) value);
+    public String toString(Object value, VariableFormat format) {
+        return format.format(value);
     }
 }

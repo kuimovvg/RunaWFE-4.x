@@ -209,11 +209,15 @@ public class DefinitionLogic extends WFCommonLogic {
 
     public Interaction getInteraction(User user, Long taskId) {
         Task task = taskDAO.getNotNull(taskId);
+        checkCanParticipate(user.getActor(), task);
         ProcessDefinition definition = getDefinition(task);
-        if (!isPermissionAllowed(user, definition.getDeployment(), DefinitionPermission.READ)) {
-            checkCanParticipate(user.getActor(), task);
-        }
         return definition.getInteractionNotNull(task.getNodeId());
+    }
+
+    public Interaction getInteraction(User user, Long definitionId, String nodeId) {
+        ProcessDefinition definition = getDefinition(definitionId);
+        checkPermissionAllowed(user, definition.getDeployment(), Permission.READ);
+        return definition.getInteraction(nodeId);
     }
 
     public List<String> getOutputTransitionNames(User user, Long definitionId, Long taskId, boolean withTimerTransitions) {

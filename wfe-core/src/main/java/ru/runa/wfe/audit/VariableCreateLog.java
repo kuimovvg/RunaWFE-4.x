@@ -27,10 +27,11 @@ import javax.persistence.Transient;
 
 import ru.runa.wfe.audit.presentation.FileValue;
 import ru.runa.wfe.var.Variable;
+import ru.runa.wfe.var.format.VariableFormat;
 
 /**
  * Logging variable creation.
- * 
+ *
  * @author Dofs
  */
 @Entity
@@ -41,18 +42,18 @@ public class VariableCreateLog extends VariableLog {
     public VariableCreateLog() {
     }
 
-    public VariableCreateLog(Variable<?> variable, Object newValue) {
+    public VariableCreateLog(Variable<?> variable, Object newValue, VariableFormat format) {
         super(variable);
-        setVariableNewValue(variable, newValue);
+        setVariableNewValue(variable, newValue, format);
     }
 
     @Override
     @Transient
     public Object[] getPatternArguments() {
         if (isFileValue()) {
-            return new Object[] { getVariableName(), new FileValue(getId(), getVariableNewValue()) };
+            return new Object[] { getVariableName(), new FileValue(getId(), getVariableNewValueString()) };
         }
-        return new Object[] { getVariableName(), getVariableNewValue() };
+        return new Object[] { getVariableName(), getVariableNewValueString() };
     }
 
     @Override

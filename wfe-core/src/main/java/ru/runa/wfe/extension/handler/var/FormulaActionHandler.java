@@ -128,6 +128,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             log.error("Configuration not found in " + context);
             return;
         }
+        log.debug(configuration);
         formula = configuration.toCharArray();
         nowPosition = 0;
         stringVariableToken = false;
@@ -171,11 +172,8 @@ public class FormulaActionHandler extends ActionHandlerBase {
         }
     }
 
-    private String errorMessage = null;
-
     private void parseFormula() {
         nowPosition = 0;
-        errorMessage = null;
         String variableName = nextToken();
         if (stringVariableToken) {
             error("Incorrect variable name: use ' instead \"");
@@ -195,27 +193,16 @@ public class FormulaActionHandler extends ActionHandlerBase {
             return;
         }
         Object value = parsePriority0();
-        if (value == null) {
-            if (errorMessage == null) {
-                errorMessage = "Error at position " + nowPosition;
-            }
-            error(errorMessage);
-            return;
-        }
         WfVariable variable = context.getVariableProvider().getVariable(variableName);
         if (variable != null) {
             Class<?> definedClass = variable.getDefinition().getFormatNotNull().getJavaClass();
-            boolean appropriateType = definedClass.isAssignableFrom(value.getClass());
+            boolean appropriateType = value == null || definedClass.isAssignableFrom(value.getClass());
             if (!appropriateType) {
                 appropriateType = variable.getValue() != null && variable.getValue().getClass() == value.getClass();
             }
             if (!appropriateType) {
                 value = TypeConversionUtil.convertTo(definedClass, value);
             }
-        }
-        if (value == null) {
-            error("Type mismatch");
-            return;
         }
         if (IFileVariable.class.isInstance(value)) {
             IFileVariable fileVariable = (IFileVariable) value;
@@ -253,7 +240,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
                 answer = actions.xor(answer, operand);
                 continue;
             }
-            errorMessage = "Operator expected, but '" + s + "' found at position " + nowPosition;
+            error("Operator expected, but '" + s + "' found at position " + nowPosition);
             return null;
         }
     }
@@ -323,7 +310,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
                 return actions.not(actions.equal(o1, o2));
             }
         }
-        errorMessage = "Operator expected, but '" + s + "' found at position " + nowPosition;
+        error("Operator expected, but '" + s + "' found at position " + nowPosition);
         return null;
     }
 
@@ -351,7 +338,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
                 answer = actions.sub(answer, operand);
                 continue;
             }
-            errorMessage = "Operator expected, but '" + s + "' found at position " + nowPosition;
+            error("Operator expected, but '" + s + "' found at position " + nowPosition);
             return null;
         }
     }
@@ -380,7 +367,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
                 answer = actions.div(answer, operand);
                 continue;
             }
-            errorMessage = "Operator expected, but '" + s + "' found at position " + nowPosition;
+            error("Operator expected, but '" + s + "' found at position " + nowPosition);
             return null;
         }
     }
@@ -388,7 +375,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
     private Object parseSimple() {
         String s = nextToken();
         if (s == null) {
-            errorMessage = "Incorrect token at position " + nowPosition;
+            error("Incorrect token at position " + nowPosition);
             return null;
         }
         if (s.equals("-")) {
@@ -401,7 +388,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             Object answer = parsePriority0();
             nextToken = nextToken();
             if (nextToken == null || !nextToken.equals(")")) {
-                errorMessage = "')' expected at position " + nowPosition;
+                error("')' expected at position " + nowPosition);
                 return null;
             }
             nextToken = null;
@@ -414,15 +401,18 @@ public class FormulaActionHandler extends ActionHandlerBase {
         if ("(".equals(nextToken)) {
             return tryParseFunction(s);
         }
-        Object answer = context.getVariableProvider().getValue(s);
+        Object answer = tryParseNumericalValue(s);
         if (answer != null) {
             return answer;
         }
-        answer = tryParseNumericalValue(s);
-        if (answer != null) {
-            return answer;
+        WfVariable variable = context.getVariableProvider().getVariable(s);
+        if (variable != null) {
+            if (variable.getValue() == null) {
+                log.warn("Null value will be returned for variable '" + s + "'");
+            }
+            return variable.getValue();
         }
-        errorMessage = "Cannot parse '" + s + "' at position " + (nowPosition - s.length() + 1);
+        error("Cannot parse '" + s + "' at position " + (nowPosition - s.length() + 1));
         return null;
     }
 
@@ -711,7 +701,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             try {
                 group = TypeConversionUtil.convertTo(Group.class, param1);
             } catch (Exception e) {
-                errorMessage = "param1 cannot is not group: " + e.toString();
+                error("param1 cannot is not group: " + e);
                 return null;
             }
             Object param2 = parsePriority0();
@@ -723,7 +713,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
             try {
                 executor = TypeConversionUtil.convertTo(Executor.class, param2);
             } catch (Exception e) {
-                errorMessage = "param2 cannot is not executor: " + e.toString();
+                error("param2 cannot is not executor: " + e);
                 return null;
             }
             return ApplicationContextFactory.getExecutorDAO().isExecutorInGroup(executor, group);
@@ -747,7 +737,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
     }
 
     private void incorrectParameters(String function) {
-        errorMessage = "Incorrect parameters for " + function + " function at position " + nowPosition;
+        error("Incorrect parameters for " + function + " function at position " + nowPosition);
     }
 
     private Object tryParseNumericalValue(String s) {
@@ -792,7 +782,7 @@ public class FormulaActionHandler extends ActionHandlerBase {
     }
 
     private void error(String message) {
-        String details = "Incorrect formula in " + context + " -> " + new String(formula);
+        String details = "Incorrect formula in " + context.getProcess().toString() + " -> " + new String(formula);
         if (message != null) {
             details += "\n - " + message;
         }
