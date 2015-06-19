@@ -3,6 +3,7 @@ package ru.runa.gpd.formeditor.ftl.parameter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -23,6 +24,8 @@ import ru.runa.gpd.ui.custom.LoggingSelectionAdapter;
 import com.google.common.collect.Lists;
 
 public class UserVariableFieldsComboParameter extends ComboParameter {
+
+    private final AtomicReference<String> selected = new AtomicReference<String>();
 
     @Override
     protected List<String> getOptionLabels(ComponentParameter parameter) {
@@ -82,7 +85,12 @@ public class UserVariableFieldsComboParameter extends ComboParameter {
                     if (!(customer instanceof UserVariablesListComboParameter)) {
                         return;
                     }
+                    if (combo.isDisposed()) {
+                        customer.removeParameterChangeListener(this);
+                        return;
+                    }
                     rebuildComboSelection(((UserVariablesListComboParameter) customer).getSelectedVariableListGenericType(parameter), combo);
+                    combo.setText(selected.get());
                 }
 
             });
@@ -92,12 +100,16 @@ public class UserVariableFieldsComboParameter extends ComboParameter {
         }
         if (oldValue != null) {
             combo.setText((String) oldValue);
+            selected.set((String) oldValue);
+        } else {
+            selected.set("");
         }
         if (listener != null) {
             combo.addSelectionListener(new LoggingSelectionAdapter() {
 
                 @Override
                 protected void onSelection(SelectionEvent e) throws Exception {
+                    selected.set(combo.getText());
                     listener.propertyChange(new PropertyChangeEvent(combo, PropertyNames.PROPERTY_VALUE, oldValue, combo.getText()));
                 }
             });
@@ -106,9 +118,6 @@ public class UserVariableFieldsComboParameter extends ComboParameter {
     }
 
     private void rebuildComboSelection(VariableUserType type, Combo combo) {
-        if (combo.isDisposed()) {
-            return;
-        }
         if (combo.getItemCount() > 0) {
             combo.removeAll();
         }
