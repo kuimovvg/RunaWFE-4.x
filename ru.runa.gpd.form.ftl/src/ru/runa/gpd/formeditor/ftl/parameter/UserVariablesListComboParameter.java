@@ -5,6 +5,7 @@ import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -16,6 +17,7 @@ import ru.runa.gpd.formeditor.ftl.ComponentParameter;
 import ru.runa.gpd.formeditor.ftl.parameter.interfaces.IParameterChangeConsumer;
 import ru.runa.gpd.formeditor.ftl.parameter.interfaces.IParameterChangeCustomer;
 import ru.runa.gpd.formeditor.wysiwyg.FormEditor;
+import ru.runa.gpd.lang.model.ProcessDefinition;
 import ru.runa.gpd.lang.model.PropertyNames;
 import ru.runa.gpd.lang.model.Variable;
 import ru.runa.gpd.lang.model.VariableUserType;
@@ -30,6 +32,7 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
     private final List<IParameterChangeConsumer> consumers = Lists.newArrayList();
     private final Map<String, VariableUserType> variables = Maps.newHashMap();
     private final Map<ComponentParameter, Combo> combos = Maps.newHashMap();
+    private final AtomicReference<ProcessDefinition> currentProcess = new AtomicReference<ProcessDefinition>();
 
     @Override
     protected List<String> getOptionLabels(ComponentParameter parameter) {
@@ -42,6 +45,11 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
     }
 
     private List<String> getOptions(ComponentParameter parameter) {
+        ProcessDefinition current = FormEditor.getCurrent().getProcessDefinition();
+        ProcessDefinition reference = currentProcess.getAndSet(current);
+        if (current != null && !current.equals(reference)) {
+            variables.clear();
+        }
         Map<String, Variable> vars = FormEditor.getCurrent().getVariables(parameter.getVariableTypeFilter());
         List<VariableUserType> userTypes = FormEditor.getCurrent().getUserVariablesTypes();
         for (Map.Entry<String, Variable> var : vars.entrySet()) {
@@ -76,9 +84,6 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
     public final VariableUserType getSelectedVariableListGenericType(ComponentParameter parameter) {
         Combo combo = parameter == null ? combos.get(getFirstCombo()) : combos.get(parameter);
         if (combo == null || combo.isDisposed() || combo.getText() == null || combo.getText().isEmpty()) {
-            return null;
-        }
-        if (variables == null) {
             return null;
         }
         return variables.get(combo.getText());
