@@ -240,8 +240,6 @@ public class ViewUtil {
                     if (format instanceof FileFormat) {
                         FileVariableProxy proxy = (FileVariableProxy) cvar.get(varDef.getName());
                         cvarObj.put(varDef.getName(), getFileComponent(webHelper, proxy.getName(), proxy, false));
-                    } else if (format instanceof ExecutorFormat) {
-                        cvarObj.put(varDef.getName(), createExecutorSelect(user, varDef.getName(), format, cvar.get(varDef.getName()), false));
                     } else {
                         cvarObj.put(varDef.getName(), format.format(cvar.get(varDef.getName())));
                     }
@@ -396,11 +394,11 @@ public class ViewUtil {
                 WfVariable componentVariable = ViewUtil.createListComponentVariable(variable, row, componentFormat, o);
                 html.append(ViewUtil.getComponentInput(user, webHelper, componentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
-                .append("(this);\" style=\"width: 30px;\" />");
+                        .append("(this);\" style=\"width: 30px;\" />");
                 html.append("</div></div>");
             }
             html.append("<div><input type=\"button\" id=\"btnAdd").append(scriptingVariableName)
-            .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
+                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
             html.append("</div>");
             return html.toString();
         }
@@ -440,11 +438,11 @@ public class ViewUtil {
                 WfVariable valueComponentVariable = ViewUtil.createMapValueComponentVariable(variable, row, key);
                 html.append(ViewUtil.getComponentInput(user, webHelper, valueComponentVariable));
                 html.append("<input type='button' value=' - ' onclick=\"remove").append(scriptingVariableName)
-                .append("(this);\" style=\"width: 30px;\" />");
+                        .append("(this);\" style=\"width: 30px;\" />");
                 html.append("</div></div>");
             }
             html.append("<div><input type=\"button\" id=\"btnAddMap").append(scriptingVariableName)
-            .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
+                    .append("\" value=\" + \" style=\"width: 30px;\" /></div>");
             html.append("</div>");
             return html.toString();
         }
@@ -703,7 +701,7 @@ public class ViewUtil {
                     file.setContent(value.getData());
                 }
                 FormSubmissionUtils.getUploadedFilesMap(webHelper.getRequest())
-                .put(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName, file);
+                        .put(id + FormSubmissionUtils.FILES_MAP_QUALIFIER + variableName, file);
             }
         }
         String attachImageUrl = "";

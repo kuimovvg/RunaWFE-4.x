@@ -9,14 +9,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 import ru.runa.wfe.commons.ftl.FtlTagVariableSubmissionHandler;
-import ru.runa.wfe.user.Executor;
 import ru.runa.wfe.var.ComplexVariable;
 import ru.runa.wfe.var.VariableDefinition;
 import ru.runa.wfe.var.VariableUserType;
 import ru.runa.wfe.var.file.IFileVariable;
-import ru.runa.wfe.var.format.ExecutorFormat;
 import ru.runa.wfe.var.format.FileFormat;
 import ru.runa.wfe.var.format.FormatCommons;
+import ru.runa.wfe.var.format.TextFormat;
 import ru.runa.wfe.var.format.VariableFormat;
 
 import com.google.common.collect.Lists;
@@ -97,18 +96,19 @@ public class MultipleSelectFromListUserVariablesTag extends AbstractListUserVari
                 if (file != null) {
                     toCompare = file.getName();
                 }
-            } else if (format instanceof ExecutorFormat) {
-                Executor exe = (Executor) who.get(keyName);
-                if (exe != null) {
-                    toCompare = exe.getName();
-                }
             } else {
                 toCompare = format.format(who.get(keyName));
             }
             if (toCompare == null) {
                 toCompare = "";
             }
-            if (toCompare.equals(with.get(keyName))) {
+            if (format instanceof TextFormat) {
+                String[] words1 = toCompare.split("\\s+");
+                String[] words2 = ((String) with.get(keyName)).split("\\s+");
+                if (Arrays.equals(words1, words2)) {
+                    continue;
+                }
+            } else if (toCompare.equals(with.get(keyName))) {
                 continue;
             }
             result = false;

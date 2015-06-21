@@ -239,9 +239,7 @@ $(document).ready(function() {
 									match = false;
 								}
 								for (var k = 1; k < cells.length; k++) {
-									var cellText = $(cells[k]).html();
-									var jVal = jsonObjValues[k];
-									if (cellText == jVal) {
+									if ($(cells[k]).html() == jsonObjValues[k]) {
 										continue;
 									}
 									match = false;
@@ -331,7 +329,7 @@ $(document).ready(function() {
 				if (i != 0) {
 					stringify += ", "
 				}
-				stringify += JSON.stringify(jsonvalobj[i]).replace(/<br>/g, "\\n");
+				stringify += JSON.stringify(jsonvalobj[i]).replace(/<br>/g, "\\r\\n");
 			}
 			console.debug("setOutValue: elem: %s stringify: %s", elem.attr("name"), stringify);
 			elem.attr("value", stringify);
