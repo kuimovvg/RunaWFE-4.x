@@ -56,7 +56,7 @@ public abstract class VariableLog extends ProcessLog {
     }
 
     @Transient
-    public String getVariableNewValueString() {
+    public String getVariableNewValueAttribute() {
         return getAttribute(ATTR_NEW_VALUE);
     }
 
@@ -90,6 +90,6 @@ public abstract class VariableLog extends ProcessLog {
                 return new StringToByteArrayConverter().revert(bytes);
             }
         }
-        return getVariableNewValueString();
+        return getVariableNewValueAttribute();
     }
 }

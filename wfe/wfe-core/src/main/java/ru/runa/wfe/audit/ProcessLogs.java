@@ -103,7 +103,16 @@ public class ProcessLogs implements Serializable {
 
     public <T extends ProcessLog> T getFirstOrNull(Class<T> logClass) {
         for (ProcessLog log : logs) {
-            if (log.getClass() == logClass) {
+            if (logClass.isAssignableFrom(log.getClass())) {
+                return (T) log;
+            }
+        }
+        return null;
+    }
+
+    public <T extends ProcessLog> T getLastOrNull(Class<T> logClass) {
+        for (ProcessLog log : Lists.reverse(logs)) {
+            if (logClass.isAssignableFrom(log.getClass())) {
                 return (T) log;
             }
         }
