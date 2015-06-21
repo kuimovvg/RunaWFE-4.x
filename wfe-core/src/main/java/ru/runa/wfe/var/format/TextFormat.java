@@ -1,8 +1,5 @@
 package ru.runa.wfe.var.format;
 
-import ru.runa.wfe.commons.web.WebHelper;
-import ru.runa.wfe.user.User;
-
 /**
  * Text format for string representable as text areas.
  * 
@@ -16,9 +13,12 @@ public class TextFormat extends StringFormat implements VariableDisplaySupport {
         return "text";
     }
 
-    @Override
-    public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) {
-        return super.formatHtml(user, webHelper, processId, name, object).replaceAll("\n", "<br>");
-    }
+    /**
+     * FIXME: need or need't formatting?
+     * 
+     * @Override public String formatHtml(User user, WebHelper webHelper, Long processId, String name, Object object) { return super.formatHtml(user,
+     *           webHelper, processId, name, object).replaceAll("\n", "<br>
+     *           "); }
+     */
 
 }

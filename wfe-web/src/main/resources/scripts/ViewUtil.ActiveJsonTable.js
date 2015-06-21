@@ -239,7 +239,9 @@ $(document).ready(function() {
 									match = false;
 								}
 								for (var k = 1; k < cells.length; k++) {
-									if ($(cells[k]).text() == jsonObjValues[k]) {
+									var cellText = $(cells[k]).html();
+									var jVal = jsonObjValues[k];
+									if (cellText == jVal) {
 										continue;
 									}
 									match = false;
@@ -329,7 +331,7 @@ $(document).ready(function() {
 				if (i != 0) {
 					stringify += ", "
 				}
-				stringify += JSON.stringify(jsonvalobj[i]);
+				stringify += JSON.stringify(jsonvalobj[i]).replace(/<br>/g, "\\n");
 			}
 			console.debug("setOutValue: elem: %s stringify: %s", elem.attr("name"), stringify);
 			elem.attr("value", stringify);
@@ -341,13 +343,13 @@ $(document).ready(function() {
 	function stringifyValues(jsonObj) {
 		for (key in jsonObj) {
 			if (typeof jsonObj[key] == "string") {
-				continue;
-			}
-			if (jsonObj[key]) {
+				
+			} else if (jsonObj[key]) {
 				jsonObj[key] = jsonObj[key].toString();
 			} else {
 				jsonObj[key] = "";
 			}
+			jsonObj[key] = jsonObj[key].replace(/\r\n/g, "<br>").replace(/\n/g, "<br>");
 		}
 	};
 	
