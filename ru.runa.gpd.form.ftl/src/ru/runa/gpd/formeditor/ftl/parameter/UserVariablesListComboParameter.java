@@ -2,6 +2,7 @@ package ru.runa.gpd.formeditor.ftl.parameter;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
                 if (listener != null) {
                     listener.propertyChange(new PropertyChangeEvent(combo, PropertyNames.PROPERTY_VALUE, oldValue, combo.getText()));
                 }
-                for (IParameterChangeConsumer consumer : consumers) {
+                for (IParameterChangeConsumer consumer : new ArrayList<IParameterChangeConsumer>(consumers)) {
                     consumer.onParameterChange(UserVariablesListComboParameter.this, parameter);
                 }
             }
