@@ -21,8 +21,11 @@
  */
 package ru.runa.wfe.lang.bpmn2;
 
+import java.util.List;
+
 import ru.runa.wfe.commons.ApplicationContextFactory;
 import ru.runa.wfe.execution.ExecutionContext;
+import ru.runa.wfe.execution.Token;
 import ru.runa.wfe.lang.Node;
 import ru.runa.wfe.lang.NodeType;
 import ru.runa.wfe.lang.Transition;
@@ -39,8 +42,16 @@ public class EndToken extends Node {
     public void execute(ExecutionContext executionContext) {
         executionContext.getToken().end(executionContext, null);
         if (!executionContext.getProcess().hasEnded()) {
-            int count = ApplicationContextFactory.getTokenDAO().findActiveTokens(executionContext.getProcess()).size();
-            if (count == 0) {
+            boolean activeTokensFound = false;
+            List<Token> tokens = ApplicationContextFactory.getTokenDAO().findActiveTokens(executionContext.getProcess());
+            for (Token token : tokens) {
+                // for https://sourceforge.net/p/runawfe/bugs/850/#4102
+                if (token.getNodeType() != NodeType.PARALLEL_GATEWAY) {
+                    activeTokensFound = true;
+                    break;
+                }
+            }
+            if (!activeTokensFound) {
                 executionContext.getProcess().end(executionContext, null);
             }
         }
