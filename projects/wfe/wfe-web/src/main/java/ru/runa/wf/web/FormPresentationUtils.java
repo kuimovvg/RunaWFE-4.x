@@ -80,7 +80,7 @@ public class FormPresentationUtils {
     private static final String CSS_CLASS_ATTR = "class";
     private static final String ERROR_CONTAINER = "span";
 
-    public static byte[] adjustUrls(PageContext pageContext, Long definitionId, String htmlHref, byte[] originalBytes) {
+    public static String adjustUrls(PageContext pageContext, Long definitionId, String htmlHref, byte[] originalBytes) {
         Document document = HTMLUtils.readHtml(originalBytes);
         adjustUrls(pageContext, document, definitionId, htmlHref);
         return HTMLUtils.writeHtml(document);
@@ -305,7 +305,7 @@ public class FormPresentationUtils {
                 }
                 document.getLastChild().appendChild(font);
             }
-            return new String(HTMLUtils.writeHtml(document), Charsets.UTF_8);
+            return HTMLUtils.writeHtml(document);
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }

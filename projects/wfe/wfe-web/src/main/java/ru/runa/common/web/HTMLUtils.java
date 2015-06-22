@@ -80,14 +80,18 @@ public class HTMLUtils {
     private HTMLUtils() {
     }
 
-    public static byte[] writeHtml(Document document) {
+    public static String writeHtml(Document document) {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.METHOD, "html");
             transformer.setOutputProperty(OutputKeys.ENCODING, Charsets.UTF_8.name());
             transformer.transform(new DOMSource(document), new StreamResult(outputStream));
-            return outputStream.toByteArray();
+            String string = new String(outputStream.toByteArray(), Charsets.UTF_8);
+            // crunch to fix issue #646
+            // setting xalan property "{http://xml.apache.org/xalan}line-separator" to "\n" did not work
+            string = string.replaceAll("&#13;\r\n", "\n"); 
+            return string;
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
