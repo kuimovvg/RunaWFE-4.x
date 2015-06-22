@@ -7,7 +7,7 @@ public class DisplayListUserVariablesTag extends AbstractListUserVariables {
     @Override
     protected Object executeTag() throws Exception {
         initFields();
-        return ViewUtil.getActiveJsonTable(user, webHelper, variableProvider.getVariableNotNull(variableName), null, variableProvider.getProcessId(),
+        return ViewUtil.getUserTypeListTable(user, webHelper, variableProvider.getVariableNotNull(variableName), null, variableProvider.getProcessId(),
                 sortField, displayMode == DisplayMode.MULTI_DIMENTIONAL_TABLE);
     }
 

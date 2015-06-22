@@ -30,7 +30,7 @@ public class MultipleSelectFromListUserVariablesTag extends AbstractListUserVari
 
         registerVariableHandler(dectVariableName);
 
-        return ViewUtil.getActiveJsonTable(user, webHelper, variableProvider.getVariableNotNull(variableName),
+        return ViewUtil.getUserTypeListTable(user, webHelper, variableProvider.getVariableNotNull(variableName),
                 variableProvider.getVariableNotNull(dectVariableName), variableProvider.getProcessId(), sortField,
                 displayMode == DisplayMode.MULTI_DIMENTIONAL_TABLE);
     }

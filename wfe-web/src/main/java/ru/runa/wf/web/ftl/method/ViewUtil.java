@@ -217,8 +217,8 @@ public class ViewUtil {
     }
 
     @SuppressWarnings("unchecked")
-    public static final String getActiveJsonTable(User user, WebHelper webHelper, WfVariable variable, WfVariable dectSelectVariable, Long processId,
-            String sortFieldName, boolean isMultiDim) {
+    public static final String getUserTypeListTable(User user, WebHelper webHelper, WfVariable variable, WfVariable dectSelectVariable,
+            Long processId, String sortFieldName, boolean isMultiDim) {
         if (!(variable.getValue() instanceof List)) {
             return "";
         }
@@ -251,7 +251,7 @@ public class ViewUtil {
         }
         String uniquename = String.format("%s_%x", variable.getDefinition().getScriptingNameWithoutDots(), random.nextInt());
         String result = "<script src=\"/wfe/js/tidy-table.js\"></script>\n";
-        InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.ActiveJsonTable.js", ViewUtil.class);
+        InputStream javascriptStream = ClassLoaderUtil.getAsStreamNotNull("scripts/ViewUtil.UserTypeListTable.js", ViewUtil.class);
         Map<String, String> substitutions = new HashMap<String, String>();
         substitutions.put("UNIQUENAME", uniquename);
         substitutions.put("JSONDATATEMPLATE", objectsList.toJSONString());
