@@ -3,7 +3,6 @@ package ru.runa.gpd.formeditor.ftl.parameter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,7 +31,7 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
 
     private final List<IParameterChangeConsumer> consumers = Lists.newArrayList();
     private final Map<String, VariableUserType> variables = Maps.newHashMap();
-    private final Map<ComponentParameter, Combo> combos = Maps.newHashMap();
+    private final Map<Composite, List<ComboPair>> combos = Maps.newHashMap();
     private final AtomicReference<ProcessDefinition> currentProcess = new AtomicReference<ProcessDefinition>();
 
     @Override
@@ -69,12 +68,21 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
         return Lists.newArrayList(variables.keySet());
     }
 
-    private final ComponentParameter getFirstCombo() {
-        ComponentParameter result = null;
+    private final Combo getByParent(Composite parent, ComponentParameter parameter) {
+        Combo result = null;
         try {
-            Iterator<Map.Entry<ComponentParameter, Combo>> i = combos.entrySet().iterator();
-            if (i.hasNext()) {
-                result = i.next().getKey();
+            List<ComboPair> pairs = combos.get(parent);
+            if (parameter != null) {
+                for (ComboPair pair : pairs) {
+                    if (!parameter.equals(pair.parameter)) {
+                        continue;
+                    }
+                    result = pair.combo;
+                    break;
+                }
+
+            } else {
+                result = pairs.get(0).combo;
             }
         } catch (Exception e) {
 
@@ -82,8 +90,22 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
         return result;
     }
 
-    public final VariableUserType getSelectedVariableListGenericType(ComponentParameter parameter) {
-        Combo combo = parameter == null ? combos.get(getFirstCombo()) : combos.get(parameter);
+    public final VariableUserType getSelectedVariableListGenericType(Composite parent, ComponentParameter parameter) {
+        Combo combo = getByParent(parent, parameter);
+        if (combo == null && parameter != null) {
+            for (List<ComboPair> pairs : combos.values()) {
+                for (ComboPair pair : pairs) {
+                    if (!parameter.equals(pair.parameter)) {
+                        continue;
+                    }
+                    combo = pair.combo;
+                    break;
+                }
+                if (combo != null) {
+                    break;
+                }
+            }
+        }
         if (combo == null || combo.isDisposed() || combo.getText() == null || combo.getText().isEmpty()) {
             return null;
         }
@@ -92,11 +114,17 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
 
     @Override
     public Composite createEditor(Composite parent, final ComponentParameter parameter, final Object oldValue, final PropertyChangeListener listener) {
+        if (!combos.containsKey(parent)) {
+            combos.put(parent, new ArrayList<ComboPair>());
+        }
         final Combo combo = new Combo(parent, SWT.READ_ONLY);
         for (String variableName : getOptions(parameter)) {
             combo.add(variableName);
         }
-        combos.put(parameter, combo);
+
+        List<ComboPair> pairs = combos.get(parent);
+        pairs.add(new ComboPair(parameter, combo));
+
         combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         if (oldValue != null) {
             combo.setText((String) oldValue);
@@ -124,6 +152,17 @@ public class UserVariablesListComboParameter extends ComboParameter implements I
     @Override
     public void removeParameterChangeListener(IParameterChangeConsumer consumer) {
         consumers.remove(consumer);
+    }
+
+    private static class ComboPair {
+
+        private final ComponentParameter parameter;
+        private final Combo combo;
+
+        private ComboPair(ComponentParameter parameter, Combo combo) {
+            this.parameter = parameter;
+            this.combo = combo;
+        }
     }
 
 }

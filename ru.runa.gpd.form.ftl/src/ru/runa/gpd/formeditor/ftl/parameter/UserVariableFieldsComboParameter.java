@@ -25,8 +25,6 @@ import com.google.common.collect.Lists;
 
 public class UserVariableFieldsComboParameter extends ComboParameter {
 
-    private final AtomicReference<String> selected = new AtomicReference<String>();
-
     @Override
     protected List<String> getOptionLabels(ComponentParameter parameter) {
         return getOptions(null);
@@ -39,12 +37,6 @@ public class UserVariableFieldsComboParameter extends ComboParameter {
 
     private List<String> getOptions(VariableUserType type) {
         List<String> result = Lists.newArrayList();
-        if (type == null) {
-            UserVariablesListComboParameter varListCombo = searchVarListCombo();
-            if (varListCombo != null) {
-                type = varListCombo.getSelectedVariableListGenericType(null);
-            }
-        }
         if (type == null) {
             return result;
         }
@@ -73,8 +65,9 @@ public class UserVariableFieldsComboParameter extends ComboParameter {
     }
 
     @Override
-    public Composite createEditor(Composite parent, ComponentParameter parameter, final Object oldValue, final PropertyChangeListener listener) {
+    public Composite createEditor(final Composite parent, ComponentParameter parameter, final Object oldValue, final PropertyChangeListener listener) {
         final Combo combo = new Combo(parent, SWT.READ_ONLY);
+        final AtomicReference<String> selected = new AtomicReference<String>();
         combo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         UserVariablesListComboParameter varListCombo = searchVarListCombo();
         if (varListCombo != null) {
@@ -89,15 +82,17 @@ public class UserVariableFieldsComboParameter extends ComboParameter {
                         customer.removeParameterChangeListener(this);
                         return;
                     }
-                    rebuildComboSelection(((UserVariablesListComboParameter) customer).getSelectedVariableListGenericType(parameter), combo);
+                    rebuildComboSelection(((UserVariablesListComboParameter) customer).getSelectedVariableListGenericType(parent, parameter), combo);
                     combo.setText(selected.get());
                 }
 
             });
+
+            for (String variableFieldName : getOptions(varListCombo.getSelectedVariableListGenericType(parent, null))) {
+                combo.add(variableFieldName);
+            }
         }
-        for (String variableFieldName : getOptions(null)) {
-            combo.add(variableFieldName);
-        }
+
         if (oldValue != null) {
             combo.setText((String) oldValue);
             selected.set((String) oldValue);
