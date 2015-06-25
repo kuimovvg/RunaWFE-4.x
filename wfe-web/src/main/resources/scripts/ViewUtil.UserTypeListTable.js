@@ -112,7 +112,7 @@ $(document).ready(function() {
 					columns.push(row);
 				}
 				sortRows($.inArray($(this).data().sortFieldName, titles), columns);
-				var table = $($(this).data().containerName).TidyTable({
+				$($(this).data().containerName).TidyTable({
 					enableCheckbox: $(this).data().isSelectable,
 					enableMenu:     false,
 					reverseSortDir: false,
@@ -122,15 +122,13 @@ $(document).ready(function() {
 					columnTitles: titles,
 					columnValues: columns,
 					sortByPattern: getSortValuePattern,
+					selectCallback : $(this).tableConstructorUNIQUENAME("getSelectCallback"),
 					postProcess: {
 						table:  applyCheboxStyle,
 						column: function(col){},
 						menu:   function(menu){}
 					}
 				});
-				if ($(this).data().isSelectable) {
-					$(this).tableConstructorUNIQUENAME("setSelectCallbacks", table);
-				}
 			} catch(e) {
 				console.error("makeAsTwoDimentionalTable: %s", e.message);
 			}
@@ -186,7 +184,7 @@ $(document).ready(function() {
 						$.inArray($(this).data().sortFieldName, fields) != -1) {
 					sortRows(0, columns);
 				}
-				var table = $($(this).data().containerName).TidyTable({
+				$($(this).data().containerName).TidyTable({
 					enableCheckbox: $(this).data().isSelectable,
 					enableMenu:     false,
 					reverseSortDir: false,
@@ -196,69 +194,65 @@ $(document).ready(function() {
 					columnTitles: titles,
 					columnValues: columns,
 					sortByPattern: getSortValuePattern,
+					selectCallback: $(this).tableConstructorUNIQUENAME("getSelectCallback"),
 					postProcess: {
 						table:  applyCheboxStyle,
 						column: function(col){},
 						menu:   function(menu){}
 					}
 				});
-				if ($(this).data().isSelectable) {
-					$(this).tableConstructorUNIQUENAME("setSelectCallbacks", table);
-				}
 			} catch(e) {
 				console.error("makeAsMultiDimentionalTable: %s", e.message);
 			}
 		},
 	
-		"setSelectCallbacks" : function(table) {
-			try {
-				var data = {
-						rows : table.find("tr"),
-						inputArray : $(this).data().jsonInputArray,
-						out : $(this).data().outContainer
-				};
-				for (var i = 0; i < data.rows.length; i++) {
-					var input = $(data.rows[i]).find(":checkbox").first();
-					if (!input) {
-						return;
-					}
-					input.on("click", function() {
-						var selectedArray = [];
-						for (var ind = 0; ind < data.inputArray.length; ind++) {
-							var jsonObjValues = [];
-							jsonObjValues[0] = null;
-							var jsonObj = data.inputArray[ind];
-							for (var key in jsonObj) {
-								jsonObjValues.push(jsonObj[key]);
+		"getSelectCallback" : function() {
+			var data = {
+					inputArray : $(this).data().jsonInputArray,
+					out : $(this).data().outContainer
+			};
+			return function(table) {
+				if (!table) {
+					setOutValue(data.out, []);
+					return;
+				}
+				try {
+					var rows = table.find("tr");
+					var selectedArray = [];
+					for (var i = 0; i < data.inputArray.length; i++) {
+						var jsonObjValues = [];
+						jsonObjValues[0] = null;
+						var jsonObj = data.inputArray[i];
+						for (var key in jsonObj) {
+							jsonObjValues.push(jsonObj[key]);
+						}
+						for (var j = 0; j < rows.length; j++) {
+							var row = $(rows[j]);
+							var match = true;
+							var cells = row.find("td");
+							if (cells.length < 2) {
+								match = false;
 							}
-							for (var j = 0; j < data.rows.length; j++) {
-								var row = $(data.rows[j]);
-								var match = true;
-								var cells = row.find("td");
-								if (cells.length < 2) {
-									match = false;
+							for (var k = 1; k < cells.length; k++) {
+								if ($(cells[k]).html() == jsonObjValues[k]) {
+									continue;
 								}
-								for (var k = 1; k < cells.length; k++) {
-									if ($(cells[k]).html() == jsonObjValues[k]) {
-										continue;
-									}
-									match = false;
-									break;
-								}
-								if (match && row.find(":checkbox").first().prop("checked")) {
-									selectedArray.push(jsonObj);
-								}
-								if (match) {
-									break;
-								}
+								match = false;
+								break;
+							}
+							if (match && row.find(":checkbox").first().prop("checked")) {
+								selectedArray.push(jsonObj);
+							}
+							if (match) {
+								break;
 							}
 						}
-						setOutValue(data.out, selectedArray);
-					});
+					}
+					setOutValue(data.out, selectedArray);
+				} catch(ex) {
+					console.error("getSelectCallback.callback: %s", ex.message);
 				}
-			} catch(ex) {
-				console.error("setSelectCallbacks: %s", ex.message);
-			}
+			};
 		}
 	};
 	

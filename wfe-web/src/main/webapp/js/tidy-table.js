@@ -54,7 +54,8 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 					if ( $.trim(col_num) ) {
 						return String(val).replace(/$|%|#/g, '');
 					}
-				}
+				},
+				selectCallback : function(table) { }
 			}, config);
 
 			if ( $.isEmptyObject(data) ) {
@@ -156,6 +157,7 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 					},
 					function(event) {
 						$this.TidyTable('_sortByColumn', event.data.col_number, event.data.sort_order);
+						data.config.selectCallback(undefined);
 					});
 				}
 
@@ -205,6 +207,7 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 							// attach event to check all boxes
 							input.on('click', function() {
 								$this.TidyTable('_toggleSelRows', rows);
+								data.config.selectCallback(table);
 							});
 						}
 						else {
@@ -216,6 +219,7 @@ if (!window.jQuery || (window.jQuery && parseInt(window.jQuery.fn.jquery.replace
 							},
 							function(event) {
 								$this.TidyTable('_toggleSelRows', rows, event.data.box_number);
+								data.config.selectCallback(table);
 							});
 						}
 
