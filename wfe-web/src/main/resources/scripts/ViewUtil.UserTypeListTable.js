@@ -223,6 +223,7 @@ $(document).ready(function() {
 						var jsonObjValues = [];
 						jsonObjValues[0] = null;
 						var jsonObj = data.inputArray[i];
+						console.debug("getSelectCallback.callback: i: %s jsonObj: %s", i, JSON.stringify(jsonObj));
 						for (var key in jsonObj) {
 							jsonObjValues.push(jsonObj[key]);
 						}
@@ -234,12 +235,16 @@ $(document).ready(function() {
 								match = false;
 							}
 							for (var k = 1; k < cells.length; k++) {
-								if ($(cells[k]).html() == jsonObjValues[k]) {
+								var cellvalue = $(cells[k]).html().replace(/<BR>/g, "<br>");
+								var jsonvalue = jsonObjValues[k];
+								console.debug("getSelectCallback.callback: i: %s j: %s k: %s cellvalue: %s value: %s", i, j, k, cellvalue, jsonvalue);
+								if (cellvalue == jsonvalue) {
 									continue;
 								}
 								match = false;
 								break;
 							}
+							console.debug("getSelectCallback.callback: i: %s j: %s match: %s checked: %s", i, j, match, row.find(":checkbox").first().prop("checked"));
 							if (match && row.find(":checkbox").first().prop("checked")) {
 								selectedArray.push(jsonObj);
 							}
@@ -325,7 +330,7 @@ $(document).ready(function() {
 				}
 				stringify += JSON.stringify(jsonvalobj[i]).replace(/<br>/g, "\\r\\n");
 			}
-			console.debug("setOutValue: elem: %s stringify: %s", elem.attr("name"), stringify);
+			console.info("setOutValue: elem: %s stringify: %s", elem.attr("name"), stringify);
 			elem.attr("value", stringify);
 		} catch(e) {
 			console.error("setOutValue: %s", e.message);
