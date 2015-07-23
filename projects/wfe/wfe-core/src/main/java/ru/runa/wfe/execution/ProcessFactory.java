@@ -122,7 +122,6 @@ public class ProcessFactory {
     private void grantSubprocessPermissions(ProcessDefinition processDefinition, Process subProcess, Process parentProcess) {
         Set<Executor> executors = new HashSet<Executor>();
         executors.addAll(permissionDAO.getExecutorsWithPermission(processDefinition.getDeployment()));
-        executors.addAll(permissionDAO.getExecutorsWithPermission(parentProcess));
         for (Executor executor : executors) {
             List<Permission> permissionsByParentProcess = permissionDAO.getIssuedPermissions(executor, parentProcess);
             Set<Permission> permissionsByDefinition = getProcessPermissions(executor, processDefinition);
