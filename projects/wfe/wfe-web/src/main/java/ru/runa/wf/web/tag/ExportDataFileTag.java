@@ -15,6 +15,7 @@ import ru.runa.common.web.Resources;
 import ru.runa.common.web.tag.VisibleTag;
 import ru.runa.wf.web.action.ExportDataFileAction;
 import ru.runa.wfe.commons.web.PortletUrlType;
+import ru.runa.wfe.service.delegate.Delegates;
 
 /**
  * 
@@ -29,10 +30,15 @@ public class ExportDataFileTag extends VisibleTag {
         Table table = new Table();
         TR tr = new TR();
         TD td = new TD();
-        String downloadUrl = Commons.getActionUrl(ExportDataFileAction.ACTION_PATH, pageContext, PortletUrlType.Render);
-        A a = new A(downloadUrl, Messages.getMessage("label.export", pageContext));
-        a.setClass(Resources.CLASS_LINK);
-        td.addElement(a);
+        if (Delegates.getExecutorService().isAdministrator(getUser())){
+	        String downloadUrl = Commons.getActionUrl(ExportDataFileAction.ACTION_PATH, pageContext, PortletUrlType.Render);
+	        A a = new A(downloadUrl, Messages.getMessage("label.export", pageContext));
+	        a.setClass(Resources.CLASS_LINK);
+	        td.addElement(a);
+        }
+        else{
+        	td.addElement(Messages.getMessage("label.export", pageContext));
+        }
         tr.addElement(td);
         table.addElement(tr);
 
